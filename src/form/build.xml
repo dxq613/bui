@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project name="lpmodule.build" default="build" basedir=".">
+	
+    <property name="tools.dir" location="../../../tools/"/>
+    <property name="build.dir" location="./"/>
+    <property name="des.dir" location="../../build"/>
+    <property name="component.files" value="*"/>
+    <property name="charset" value="utf-8"/>
+	
+	<target name="build" depends="prepare,combine.js">
+    </target>
+	
+	<!-- 删除 build 目录下的 -min 样式和脚本 --> 
+    <target name="prepare">
+        <delete>
+            <fileset dir="${des.dir}" includes="form.js"/>
+        </delete>
+    </target>
+
+	<!-- 合并js --> 
+	<target name="combine.js" depends="prepare">
+        <concat destfile="${des.dir}/form.js" encoding="${charset}" outputencoding="${charset}">
+			<path path="base.js"/>
+			<path path="tips.js"/>
+            <path path="field/base.js"/>
+            <path path="field/text.js"/>
+            <path path="field/number.js"/>
+            <path path="field/hidden.js"/>
+            <path path="field/readonly.js"/>
+            <path path="field/select.js"/>
+            <path path="field/date.js"/>
+			<path path="field/check.js"/>
+            <path path="field/checkbox.js"/>
+			<path path="field/radio.js"/>
+			<path path="field/plain.js"/>
+			<path path="field.js"/>
+            <path path="valid.js"/>
+			<path path="groupvalid.js"/>
+            <path path="fieldcontainer.js"/>
+			<path path="group/base.js"/>
+			<path path="group/range.js"/>
+			<path path="group/check.js"/>
+            <path path="group/select.js"/>
+            <path path="fieldgroup.js"/>
+            <path path="form.js"/>
+            <path path="hform.js"/>
+            <path path="row.js"/>
+			<path path="rule.js"/>
+            <path path="rules.js"/>
+            <path path="remote.js"/>
+			
+		</concat>
+    </target>
+
+</project>

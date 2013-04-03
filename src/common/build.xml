@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project name="lpmodule.build" default="build" basedir=".">
+	
+    <property name="tools.dir" location="../../../tools/"/>
+    <property name="build.dir" location="./"/>
+	<property name="comp.dir" location="./component/"/>
+    <property name="des.dir" location="../../build/"/>
+    <property name="component.files" value="*"/>
+    <property name="charset" value="utf-8"/>
+	
+	<target name="build" depends="prepare,mixins.js,component.js,combine.js,clear">
+    </target>
+	
+	<!-- 删除 build 目录下的 -min 样式和脚本 --> 
+    <target name="prepare">
+        <delete>
+            <fileset dir="${des.dir}" includes="common.js"/>
+        </delete>
+    </target>
+
+	<!-- 合并mixins js --> 
+	<target name="mixins.js" depends="prepare">
+      <concat destfile="${comp.dir}/uimixins.js" encoding="${charset}" outputencoding="${charset}">
+      <path path="${comp.dir}/uibase/base.js"/>
+      <path path="${comp.dir}/uibase/align.js"/>
+      <path path="${comp.dir}/uibase/autoshow.js"/>
+      <path path="${comp.dir}/uibase/autohide.js"/>
+      <path path="${comp.dir}/uibase/close.js"/>
+      <path path="${comp.dir}/uibase/drag.js"/>
+      <path path="${comp.dir}/uibase/keynav.js"/>
+      <path path="${comp.dir}/uibase/mask.js"/>
+      <path path="${comp.dir}/uibase/position.js"/>
+      <path path="${comp.dir}/uibase/listitem.js"/>
+      <path path="${comp.dir}/uibase/stdmod.js"/>
+	  <path path="${comp.dir}/uibase/decorate.js"/>
+      <path path="${comp.dir}/uibase/tpl.js"/> 
+	    <path path="${comp.dir}/uibase/collapseable.js"/> 
+      <path path="${comp.dir}/uibase/selection.js"/> 
+      <path path="${comp.dir}/uibase/list.js"/> 
+      <path path="${comp.dir}/uibase/childcfg.js"/> 
+	  <path path="${comp.dir}/uibase/depends.js"/> 
+      <!--
+			 <fileset dir="${build.dir}/uimixins/" includes="*.js"/>
+      -->
+
+		</concat>
+    </target>
+	<!-- 合并component js --> 
+	<target name="component.js" depends="prepare">
+      <concat destfile="${build.dir}/component-tmp.js" encoding="${charset}" outputencoding="${charset}">
+      <path path="${comp.dir}/manage.js"/>
+      <path path="${comp.dir}/uibase.js"/>
+      <path path="${comp.dir}/uimixins.js"/>
+      <path path="${comp.dir}/view.js"/>
+      <path path="${comp.dir}/controller.js"/>
+		</concat>
+    </target>
+	<!-- 合并js --> 
+	<target name="combine.js" depends="prepare">
+		<concat destfile="${des.dir}/common.js" encoding="${charset}" outputencoding="${charset}">
+      <path path="common.js"/>
+			<path path="util.js"/>
+			<path path="array.js"/>
+			<path path="observable.js"/>
+			<path path="ua.js"/>
+			<path path="json.js"/>
+			<path path="keycode.js"/>
+			<path path="date.js"/>
+			<path path="base.js"/>
+			<path path="component.js"/>
+      <path path="component-tmp.js"/>
+		</concat>
+    </target>
+
+	<target name="clear">
+        <delete>
+            <fileset dir="${comp.dir}" includes="uimixins.js"/>
+			      <fileset dir="${build.dir}" includes="component-tmp.js"/>
+        </delete>
+    </target>
+</project>

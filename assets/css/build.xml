@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="bui.css.build" default="build" basedir=".">
+	
+	<property name="tools.dir" location="../../tools/"/>
+    <property name="build.dir" location="./"/>
+	<property name="less.dir" location="./less"/>
+    <property name="component.files" value="*"/>
+    <property name="charset" value="UTF-8"/>
+	
+	
+	<target name="build" depends="prepare,less,compress.css">
+    </target>
+	<target name="prepare">
+        <delete>
+			<fileset dir="${build.dir}" includes="**/*.css"/>
+        </delete>
+    </target>
+
+	<target name="less">
+		<exec executable="cmd" failonerror="true">
+			<arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/base/dpl.less > ${build.dir}/dpl.css"/>
+		</exec>
+		<exec executable="cmd" failonerror="true">
+			<arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/bui/controls.less > ${build.dir}/bui.css"/>
+		</exec>
+	</target>
+	
+	<!-- 用 YUICompressor 压缩 CSS -->
+    <target name="compress.css"> 	        
+        <apply executable="java" verbose="true" dest="${build.dir}">
+			<fileset dir="${build.dir}" includes="**/*.css"/>
+            <arg line="-jar"/>
+            <arg path="${tools.dir}/yuicompressor.jar"/>
+            <arg line="--charset ${charset}"/>
+            <srcfile/>
+            <arg line="-o"/>
+            <targetfile/>
+            <mapper type="regexp" from="^(.*)\.(css)$" to="\1-min.\2"/>
+        </apply>
+    </target>
+
+</project>

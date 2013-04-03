@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project name="lpmodule.build" default="build" basedir=".">
+	
+    <property name="tools.dir" location="../../../tools/"/>
+    <property name="build.dir" location="./"/>
+    <property name="des.dir" location="../../build"/>
+    <property name="component.files" value="*"/>
+    <property name="charset" value="utf-8"/>
+	
+	<target name="build" depends="prepare,combine.js">
+    </target>
+	
+	<!-- 删除 build 目录下的 -min 样式和脚本 --> 
+    <target name="prepare">
+        <delete>
+            <fileset dir="${des.dir}" includes="toolbar.js"/>
+        </delete>
+    </target>
+
+	<!-- 合并js --> 
+	<target name="combine.js" depends="prepare">
+        <concat destfile="${des.dir}/toolbar.js" encoding="${charset}" outputencoding="${charset}">
+			<path path="base.js"/>
+			<path path="baritem.js"/>
+			<path path="bar.js"/>
+			<path path="pagingbar.js"/>
+			<path path="numberpagingbar.js"/>
+		</concat>
+    </target>
+
+	
+</project>

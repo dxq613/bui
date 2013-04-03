@@ -1,0 +1,75 @@
+
+
+//控件高度
+.detail-rowX(@rows){
+	height: (@controlRowHeight * @rows) + @controlAppendHeight;
+}
+	.detail-row{
+		margin-bottom:20px;
+	}
+.detail-page{
+	h2{
+		margin-top:20px;
+		margin-bottom:20px;
+	}
+	h3{
+		margin-bottom:20px;
+	}
+
+	
+	.detail-link{
+		margin-left:20px;
+		vertical-align: bottom;
+	}
+
+	.detail-actions{
+		margin-left:10px;	
+	}
+
+}
+
+.detail-section-icon{
+	margin-left: 10px;
+	display: inline-block;
+	height: 15px;
+	width: 15px;
+	border: 1px solid @sectionIconBorder;
+	margin-bottom: -4px;
+	.border-radius(2px);
+	.buttonBackground(@sectionArrowBack,@sectionArrowBackHighlight);
+	cursor:pointer;
+	position: relative;
+}
+
+
+.detail-section-icon:hover .arrow{
+	border-top-color:darken(@sectionArrowColor,10%);
+	border-bottom-color:darken(@sectionArrowColor,10%);
+}
+.detail-section-icon .arrow{
+	border:5px solid @sectionArrowColor;
+	border-left-color:transparent;
+	border-right-color:transparent;
+
+	height: 0;
+	width: 0;
+	.inline-block();
+	line-height:0;
+	_border-color:tomato;
+	_filter:chroma(color=tomato);
+
+	position: absolute;
+	top: 5px;
+	left: 2px;
+}
+
+.detail-section-icon .expand{
+	border-bottom:none;
+	*border-width:4px;
+	border-top-color:@sectionArrowColor;
+}
+
+.detail-section-icon .collapse{
+	border-top:none;
+	border-bottom-color:@sectionArrowColor;
+}

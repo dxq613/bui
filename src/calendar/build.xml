@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project name="lpmodule.build" default="build" basedir=".">
+	
+    <property name="tools.dir" location="../../../tools/"/>
+    <property name="build.dir" location="./"/>
+    <property name="des.dir" location="../../build"/>
+    <property name="component.files" value="*"/>
+    <property name="charset" value="utf-8"/>
+	
+	<target name="build" depends="prepare,combine.js">
+    </target>
+	
+	<!-- 删除 build 目录下的 -min 样式和脚本 --> 
+    <target name="prepare">
+        <delete>
+            <fileset dir="${des.dir}" includes="calendar.js"/>
+        </delete>
+    </target>
+
+	<!-- 合并js --> 
+	<target name="combine.js" depends="prepare">
+        <concat destfile="${des.dir}/calendar.js" encoding="${charset}" outputencoding="${charset}">
+			<!--<fileset dir="${build.dir}" includes="bindable.js,store.js"/>-->
+			<path path="base.js"/>
+			<path path="monthpicker.js"/>
+			<path path="header.js"/>
+			<path path="panel.js"/>
+			<path path="calendar.js"/>
+			<path path="datepicker.js"/>
+		</concat>
+    </target>
+
+	
+</project>

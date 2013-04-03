@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="lplib.build" default="build" basedir=".">
+	
+	<property name="tools.dir" location="tools/"/>
+	<property name="build.dir" location="./"/>
+	<property name="base.dir" location="./"/>
+	<property name="des.dir" location="./build"/>
+	<property name="component.files" value="*"/>
+	<property name="charset" value="UTF-8"/>
+	
+	<target name="build" depends="prepare,build-all,combine.js,seed.js,compress.js,native2ascii,copy">
+    </target>
+	<target name="prepare">
+        <delete>
+            <fileset dir="${des.dir}" includes="**/*-min.js,*.js"/>
+			
+        </delete>
+    </target>
+
+	 <target name="build-all">
+        <!--
+        各个组件构建
+        -->
+        <subant target="" failonerror="false" inheritall="false">
+            <fileset dir="${build.dir}/src" includes="**/build.xml"/>
+        </subant>
+		<subant target="" failonerror="false" inheritall="false">
+            <fileset dir="${build.dir}/assets/css" includes="**/build.xml"/>
+        </subant>
+    </target>
+	
+	<!-- 合并js --> 
+	<target name="combine.js" depends="prepare">
+    <concat destfile="${des.dir}/bui.js" encoding="${charset}" outputencoding="${charset}">
+			<path path="${des.dir}/loader.js"/>
+			<path path="${des.dir}/common.js"/>
+			<path path="${des.dir}/cookie.js"/>
+			<path path="${des.dir}/data.js"/>
+			<path path="${des.dir}/overlay.js"/>
+			<path path="${des.dir}/list.js"/>
+			<path path="${des.dir}/form.js"/>
+			<path path="${des.dir}/select.js"/>
+			<path path="${des.dir}/mask.js"/>
+			<path path="${des.dir}/menu.js"/>
+			<path path="${des.dir}/tab.js"/>
+			<path path="${des.dir}/toolbar.js"/>	
+			<path path="${des.dir}/progressbar.js"/>	
+			<path path="${des.dir}/calendar.js"/>
+			<path path="${des.dir}/grid.js"/>
+			<path path="${build.dir}/src/all.js"/>
+		</concat>
+  </target>
+
+  <!-- 合并js --> 
+  <target name="seed.js" depends="prepare">
+    <concat destfile="${des.dir}/seed.js" encoding="${charset}" outputencoding="${charset}">
+      <path path="${des.dir}/loader.js"/>
+      <path path="${des.dir}/common.js"/>
+      <path path="${des.dir}/cookie.js"/>
+      <path path="${build.dir}/src/seed.js"/>
+    </concat>
+  </target>
+    <!-- 使用uglify 压缩js -->
+    <target name="compress.js">           
+        <apply executable="node" verbose="true" dest="${des.dir}">
+            <fileset dir="${des.dir}" includes="**/*.js"/>
+            <arg path="${tools.dir}/uglify/bin/uglifyjs"/>
+            <arg line="--reserved-names require"/>
+            <arg line="-o"/>
+            <targetfile/>
+            <srcfile/>
+            <mapper type="regexp" from="^(.*)\.(js)$" to="\1-min.\2"/>
+        </apply>
+    </target>
+	<!-- 对 JS 文件 ASCII 化 -->
+    <target name="native2ascii" depends="compress.js">
+        <mkdir dir="${build.dir}/tmp"/>
+        <move todir="${build.dir}/tmp">
+            <fileset dir="${des.dir}" includes="*-min.js, bui.js"/>
+        </move>
+        <native2ascii encoding="${charset}"
+                      src="${build.dir}/tmp"
+                      dest="${des.dir}"
+                      includes="*.js"/>
+        <delete dir="${build.dir}/tmp"/>
+    </target>
+
+	<target name="copy"  depends="native2ascii">
+	    <copy todir="${des.dir}/css">
+          <fileset dir="${base.dir}/assets/css"  includes="*.css">
+          </fileset>
+      </copy>
+  </target>
+</project>

@@ -1,0 +1,262 @@
+/**
+ * @fileOverview 兼容kissy 和 jQuery 的适配器
+ * @ignore
+ */
+
+/**
+ * @private
+ * @class jQuery
+ * 原生的jQuery对象或者使用kissy时适配出来的对象
+ */
+var jQuery = jQuery || (function () {
+
+  function excuteDuration(self,fn,speed, easing,callback){
+    var params = getDurationParams(speed, easing,callback);
+
+    fn.call(self,params.duration,params.complete,params.easing);
+  }
+
+  function getDurationParams(speed, easing,callback){
+
+    if(S.isPlainObject(speed)){
+      var obj = speed;
+      if(S.isNumber(obj.duration)){
+        obj.duration = obj.duration / 1000;
+      }
+      return obj;
+    }
+
+    if(S.isNumber(speed)){
+      speed = speed / 1000;
+    }else if(S.isString(speed)){
+      callback = easing;
+      easing = speed;
+      speed = undefined;
+    }else if(S.isFunction(speed)){
+      callback = speed;
+      speed = undefined;
+    }
+
+    if(S.isFunction(easing)){
+      callback = easing;
+      easing = undefined;
+    }
+    return {duration : speed,complete : callback,easing : easing};
+  }
+
+  function getOffsetParent(element) {
+    var doc = element.ownerDocument,
+        body = doc.body,
+        parent,
+        positionStyle = $(element).css('position'),
+        skipStatic = positionStyle == 'fixed' || positionStyle == 'absolute';
+
+    if (!skipStatic) {
+        return element.nodeName.toLowerCase() == 'html' ? null : element.parentNode;
+    }
+
+    for (parent = element.parentNode; parent && parent != body; parent = parent.parentNode) {
+        positionStyle = $(parent).css('position');
+        if (positionStyle != 'static') {
+            return parent;
+        }
+    }
+    return null;
+  }
+
+  var S = KISSY,
+    DOM = S.DOM,
+    NLP = S.Node.prototype,
+    wrapNode = function(selector,content){
+      if(!(this instanceof wrapNode)){
+        return new wrapNode(selector,content);
+      }
+      //S.ready
+      if(S.isFunction(selector)){
+        return S.ready(selector);
+      }
+      if(S.isString(selector)){
+        if(content){
+          return new wrapNode(content).find(selector);
+        }
+        return new wrapNode(S.all(selector));
+      }
+      S.Node.call(this,selector);
+    };
+
+  S.extend(wrapNode,S.Node);
+
+  S.augment(wrapNode,{
+    bind : NLP.on,
+    off : NLP.detach,
+    trigger : NLP.fire,
+    //返回的结果不一致
+    /*children : function(selector){
+      return new wrapNode(DOM.children(this[0],selector));
+    },*/
+    filter : function(selector){
+      if(!selector){
+        return new wrapNode();
+      }
+      if(S.isString(selector)){
+        return new wrapNode(DOM.filter(this[0],selector));
+      } 
+      var nodes = this.getDOMNodes(),
+        rst;
+      if(S.isFunction(selector)){
+        rst = [];
+        S.each(nodes,function(node,index){
+          var r = selector.call(node,index);
+          if(r){
+            rst.push(node);
+          }
+        });
+        return new wrapNode(rst);
+      }
+
+      S.each(nodes,function(node,index){
+        if(node === selector){
+          rst = node;
+          return false;
+        }
+      });
+      return new wrapNode(rst);
+    },
+    //返回的结果不一致
+    find : function(selector){
+      return new wrapNode(DOM.query(selector,this[0]));
+    },
+    //复写delegate，更改参数顺序
+    delegate : function(selector,eventType,fn){
+     return wrapNode.superclass.delegate.call(this,eventType,selector,fn);
+    },
+    //更改 便遍历函数的顺序
+    //修改this,和对象
+    each : function(fn){
+      return wrapNode.superclass.each.call(this,function(value,index){
+        return fn.call(this[0],index,value[0]);
+      });
+    },
+    /**
+     * kissy 未提供此方法
+     */
+    offsetParent : function(){
+      return new wrapNode(getOffsetParent(this[0]));
+    },
+    //参数顺序不一致
+    animate : function(properties,speed, easing,callback){
+      var params = getDurationParams(speed, easing,callback);
+      wrapNode.superclass.animate.call(this,properties,params.duration,params.easing,params.complete);
+    },
+    /**
+     * kissy 未提供此方法
+     */
+    position : function(){
+      var _self = this,
+        offset = this.offset(),
+        parent = _self.offsetParent();
+      if(parent.length){
+        var parentOffset = parent.offset();
+        offset.left -= parentOffset.left;
+        offset.top -= parentOffset.top;
+      }
+      return offset;
+    }
+  });
+
+  //由于 kissy的动画单位和参数位置跟 jquery的不一致
+  var durationMethods = ['fadeIn','fadeOut','fadeToggle','slideDown','slideUp','slideToggle','show','hide'];
+  S.each(durationMethods,function(fnName){
+    wrapNode.prototype[fnName] = function(speed, easing,callback){
+      excuteDuration(this,NLP[fnName],speed,easing,callback);
+    };
+  });
+  //jquery上的很多DOM的方法在kissy的Node上不支持
+  var domMethods = ['change','blur','focus','select'];
+  S.each(domMethods,function(fnName){
+    wrapNode.prototype[fnName] = function(){
+      var el = this[0];
+      if(el){
+        if(el[fnName]){
+          el[fnName]();
+        }else{
+          this.fire(fnName);
+        }
+        
+      }
+    }
+  });
+
+  //由于返回的对象的类型是S.Node，所以要更改类型
+  var nodeMethods = ['children','parent','first','last','next','prev','siblings','closest'];
+  S.each(nodeMethods,function(fnName){
+    wrapNode.prototype[fnName] = function(selector){
+      return new wrapNode(DOM[fnName](this[0],selector));
+    }
+  });
+
+  S.mix(wrapNode,S);
+  S.mix(wrapNode,{
+    /**
+     * 是否包含指定DOM
+     */
+    contains : function(container, contained){
+      return S.DOM.contains(container, contained);
+    },
+    /**
+     * 实现$.extend
+     * @return {Object} 结果
+     */
+    extend : function(){
+      var args = S.makeArray(arguments),
+        deep = false,
+        obj;
+      if(S.isBoolean(arguments[0])){
+        deep = args.shift();
+      }
+      obj = args[0];
+      if(obj){
+        for(var i = 1; i < args.length;i++){
+          S.mix(obj,args[i],undefined,undefined,deep);
+        }
+      }
+      return obj;
+    },
+    /**
+     * kissy 的此方法跟 jQuery的接口不一致
+     */
+    each : function(elements,fn){
+      S.each(elements,function(value,index){
+        return fn(index,value);
+      });
+    },
+    /**
+     * 返回结果不一致
+     */
+    inArray : function(elem,arr){
+      return S.indexOf(elem,arr);
+    },
+    /**
+     * jQuery 的map函数将返回为 null 和 undefined的项不返回
+     */
+    map : function(arr,callback){
+      var rst = [];
+      S.each(arr,function(item,index){
+        var val = callback(item,index);
+        if(val != null){
+          rst.push(val);
+        }
+      });
+      return rst;
+    },
+    /**
+     * 空操作
+     */
+    noop : function(){},
+    
+    parseJSON : S.JSON.parse
+  })
+  return wrapNode;
+})();
+
+var $ = $ || jQuery;

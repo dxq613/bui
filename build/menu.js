@@ -1,0 +1,753 @@
+/**
+ * @fileOverview 菜单命名空间入口文件
+ * @ignore
+ */
+
+define('bui/menu',function (require) {
+  
+  var BUI = require('bui/common'),
+    Menu = BUI.namespace('Menu');
+  BUI.mix(Menu,{
+    Menu : require('bui/menu/menu'),
+    MenuItem : require('bui/menu/menuitem'),
+    ContextMenu : require('bui/memu/contextmenu'),
+    PopMenu : require('bui/menu/popmenu'),
+    SideMenu : require('bui/menu/sidemenu')
+  });
+
+  Menu.ContextMenuItem = Menu.ContextMenu.Item;
+  return Menu;
+});/**
+ * @fileOverview 菜单项
+ * @ignore
+ */
+define('bui/menu/menuitem',function(require){
+
+  var BUI = require('bui/common'),
+      Component =  BUI.Component,
+      UIBase = Component.UIBase,
+      PREFIX = BUI.prefix,
+      CLS_OPEN = PREFIX + 'menu-item-open',
+      CLS_CARET = 'x-caret',
+      CLS_COLLAPSE = PREFIX + 'menu-item-collapsed',
+      DATA_ID = 'data-id';
+
+  /**
+   * @private
+   * @class BUI.Menu.MenuItemView
+   * @mixins BUI.Component.UIBase.ListItemView
+   * @mixins BUI.Component.UIBase.CollapseableView
+   * 菜单项的视图类
+   */
+  var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapseableView],{
+
+    _uiSetOpen : function (v) {
+      var _self = this,
+        cls = _self.getStatusCls('open');
+      if(v){
+        _self.get('el').addClass(cls);
+      }else{
+        _self.get('el').removeClass(cls);
+      }
+    }
+  },{
+    ATTRS : {
+    }
+  },{
+    xclass:'menu-item-view'
+  });
+
+  /**
+   * 菜单项
+   * @class BUI.Menu.MenuItem
+   * @extends BUI.Component.Controller
+   * @mixins BUI.Component.UIBase.ListItem
+   */
+  var menuItem = Component.Controller.extend([UIBase.ListItem,UIBase.Collapseable],{
+    /**
+     * 渲染
+     * @protected
+     */
+    renderUI : function(){
+      var _self = this,
+        el = _self.get('el'),
+        id = _self.get('id'),
+        temp = null;
+      //未设置id时自动生成
+      if(!id){
+        id = BUI.guid('menu-item');
+        _self.set('id',id);
+      }
+      el.attr(DATA_ID,id);   
+    },
+     /**
+     * 处理鼠标移入
+     * @protected
+     */
+    handleMouseEnter : function (ev) {
+      var _self = this;
+      if(this.get('subMenu')){
+        this.set('open',true);
+      }
+      menuItem.superclass.handleMouseEnter.call(this,ev);
+    },
+    /**
+     * 处理鼠标移出
+     * @protected
+     */
+    handleMouseLeave :function (ev) {
+      var _self = this,
+        subMenu = _self.get('subMenu'),
+        toElement = ev.toElement;
+      if(toElement && subMenu && subMenu.containsElement(toElement)){
+        _self.set('open',true);
+      }else{
+        _self.set('open',false);
+      }
+      menuItem.superclass.handleMouseLeave.call(this,ev);
+    },
+    /**
+     * 自己和子菜单是否包含
+     * @override
+     */
+    containsElement:function (elem) {
+      var _self = this,
+        subMenu,
+        contains = menuItem.superclass.containsElement.call(_self,elem);
+      if(!contains){
+        subMenu = _self.get('subMenu');
+        contains = subMenu && subMenu.containsElement(elem);
+      }
+      return contains;
+    }, 
+    //设置打开子菜单 
+    _uiSetOpen : function (v) {
+      var _self = this,
+        subMenu = _self.get('subMenu'),
+        subMenuAlign = _self.get('subMenuAlign');
+      if(subMenu){
+        if(v){
+          subMenuAlign.node = _self.get('el');
+          subMenu.set('align',subMenuAlign);
+          subMenu.show();
+        }else{
+          var menuAlign = subMenu.get('align');
+          //防止子菜单被公用时
+          if(!menuAlign || menuAlign.node == _self.get('el')){
+            subMenu.hide();
+          }
+          
+        }
+      }
+    },
+    //设置下级菜单
+    _uiSetSubMenu : function (subMenu) {
+      if(subMenu){
+        var _self = this,
+          el = _self.get('el'),
+          parent = _self.get('parent');
+        //设置菜单项所属的菜单为上一级菜单
+        if(!subMenu.get('parentMenu')){
+          subMenu.set('parentMenu',parent);
+          if(parent.get('autoHide')){
+            subMenu.set('autoHide',false);
+          } 
+        }
+        $(_self.get('arrowTpl')).appendTo(el);
+      }
+    },
+    /** 
+     * 析构函数
+     * @protected
+     */
+    destructor : function () {
+      var _self = this,
+        subMenu = _self.get('subMenu');
+      if(subMenu){
+        subMenu.destroy();
+      }
+    }
+
+  },{
+    ATTRS : 
+    /**
+     * @lends BUI.Menu.MenuItem#
+     * @ignore
+     */
+    {
+      /**
+       * 默认的Html 标签
+       * @type {String}
+       */
+      elTagName : {
+          value: 'li'
+      },
+      xview : {
+        value : menuItemView
+      },
+      /**
+       * 菜单项是否展开，显示子菜单
+       * @cfg {Boolean} [open=false]
+       */
+      /**
+       * 菜单项是否展开，显示子菜单
+       * @type {Boolean}
+       * @default false
+       */
+      open :{
+        view : true,
+        value : false
+      },
+      /**
+       * 下级菜单
+       * @cfg {BUI.Menu.Menu} subMenu
+       */
+      /**
+       * 下级菜单
+       * @type {BUI.Menu.Menu}
+       */
+      subMenu : {
+        view : true
+      },
+       /**
+       * 下级菜单和菜单项的对齐方式
+       * @type {Object}
+       * @protected
+       * @default 默认在下面显示
+       */
+      subMenuAlign : {
+        valueFn : function (argument) {
+          return {
+             //node: this.get('el'), // 参考元素, falsy 或 window 为可视区域, 'trigger' 为触发元素, 其他为指定元素
+             points: ['tr','tl'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
+             offset: [-5, 0]      // 有效值为 [n, m]
+          }
+        }
+      },
+      /**
+       * 当存在子菜单时的箭头模版
+       * @protected
+       * @type {String}
+       */
+      arrowTpl : {
+        value : '<span class="' + CLS_CARET + ' ' + CLS_CARET + '-left"></span>'
+      },
+      events : {
+        value : {
+          'afterOpenChange' : true
+        }
+      }
+    }
+  },{
+    xclass : 'menu-item',
+    priority : 0
+  });
+
+  var separator = menuItem.extend({
+
+  },{
+    ATTRS : {
+      focusable : {
+        value : false
+      },
+      selectable:{
+        value : false
+      },
+      handleMouseEvents:{
+        value:false
+      }
+    }
+  },{
+    xclass:'menu-item-sparator'
+  });
+
+  menuItem.View = menuItemView;
+  menuItem.Separator = separator;
+  
+  return menuItem;
+});/**
+ * @fileOverview 菜单基类
+ * @author dxq613@gmail.com
+ * @ignore
+ */
+
+define('bui/menu/menu',function(require){
+
+  var BUI = require('bui/common'),
+    Component =  BUI.Component,
+    UIBase = Component.UIBase;
+
+  /**
+   * 菜单的视图类
+   * @class BUI.Menu.MenuView
+   * @extends BUI.Component.View
+   * @mixins BUI.Component.UIBase.PositionView
+   * @private
+   */
+  var menuView = Component.View.extend([UIBase.PositionView],{
+    
+  });
+
+  /**
+   * 菜单
+   * xclass:'menu'
+   * <img src="../assets/img/class-menu.jpg"/>
+   * @class BUI.Menu.Menu
+   * @extends BUI.Component.Controller
+   * @mixins BUI.Component.UIBase.ChildList
+   * @mixins BUI.Component.UIBase.Position
+   * @mixins BUI.Component.UIBase.Align
+   * @mixins BUI.Component.UIBase.AutoHide
+   */
+  var Menu = Component.Controller.extend([UIBase.Position,UIBase.Align,UIBase.ChildList,UIBase.AutoHide],{
+	  /**
+     * 绑定事件
+     * @protected
+     */
+	  bindUI:function(){
+      var _self = this;
+
+      _self.on('click',function(e){
+        var item = e.target,
+          multipleSelect = _self.get('multipleSelect');
+        if(_self != item){
+          //单选情况下，允许自动隐藏，且没有子菜单的情况下，菜单隐藏
+          if(!multipleSelect && _self.get('clickHide') && !item.get('subMenu')){
+            _self.getTopAutoHideMenu().hide();
+          }
+        }
+      });
+
+      _self.on('afterOpenChange',function (ev) {
+        var target = ev.target,
+          opened = ev.newVal,
+          children = _self.get('children');
+        if(opened){
+          BUI.each(children,function(item) {
+            if(item !== target && item.get('open')){
+              item.set('open',false);
+            }
+          });
+        }
+      });
+
+      _self.on('afterVisibleChange',function (ev) {
+        var visible = ev.newVal,
+          parent = _self.get('parentMenu');
+        _self._clearOpen();
+      });
+    },
+   
+    //点击自动隐藏时
+    getTopAutoHideMenu : function() {
+      var _self = this,
+        parentMenu = _self.get('parentMenu'),
+        topHideMenu;
+      if(parentMenu && parentMenu.get('autoHide')){
+        return parentMenu.getTopAutoHideMenu();
+      }
+      if(_self.get('autoHide')){
+        return _self;
+      }
+      return null;
+    },
+    //清除菜单项的激活状态
+    _clearOpen : function () {
+      var _self = this,
+        children = _self.get('children');
+      BUI.each(children,function (item) {
+        if(item.set){
+          item.set('open',false);
+        }
+      });
+    },
+    /**
+     * 根据ID查找菜单项
+     * @param  {String} id 编号
+     * @return {BUI.Menu.MenuItem} 菜单项
+     */
+    findItemById : function(id){ 
+
+      return this.findItemByField('id',id);
+    },
+    _uiSetSelectedItem : function(item){
+      if(item){
+        _self.setSelected(item);
+      }
+    }
+  },{
+    ATTRS:
+    /**
+     * @lends BUI.Menu.Menu#
+     * @ignore
+     */
+    {
+
+      elTagName:{
+        view : true,
+        value : 'ul'
+      },
+		  idField:{
+        value:'id'
+      },
+      /**
+       * 子类的默认类名，即类的 xclass
+       * @type {String}
+       * @default 'menu-item'
+       */
+      defaultChildClass : {
+        value : 'menu-item'
+      },
+      /**
+       * 选中的菜单项
+       * @type {Object}
+       */
+      selectedItem : {
+
+      },
+      /**
+       * 点击或移出菜单外时，菜单是否隐藏
+       * @type {Boolean} 
+       * @protected
+       */
+      autoHide : {
+        value : false
+      },
+      /**
+       * 点击菜单时，菜单是否隐藏，多选时不隐藏
+       * @type {Boolean} 
+       * @protected
+       */
+      clickHide : {
+        value : false
+      },
+      /**
+       * 上一级菜单
+       * @type {BUI.Menu.Menu}
+       * @readOnly
+       */
+      parentMenu : {
+
+      },
+      xview:{
+        value:menuView
+      }
+    }
+    
+  },{
+    xclass : 'menu',
+    priority : 0
+  });
+  
+  Menu.View = menuView;
+  return Menu;
+});/**
+ * @fileOverview 下拉菜单，一般用于下拉显示菜单
+ * @author dxq613@gmail.com
+ * @ignore
+ */
+
+define('bui/menu/popmenu',function (require) {
+
+  var BUI = require('bui/common'),
+    UIBase = BUI.Component.UIBase,
+    Menu = require('bui/menu/menu');
+
+   /**
+   * @class BUI.Menu.PopMenu
+   * 上下文菜单，一般用于弹出菜单
+   * xclass:'drop-menu'
+   * @extends BUI.Menu.Menu
+   * @mixins BUI.Component.UIBase.AutoShow
+   */
+  var popMenu =  Menu.extend([UIBase.AutoShow],{
+
+  },{
+    ATTRS:{
+       /** 点击菜单项，如果菜单不是多选，菜单隐藏
+       * @type {Boolean} 
+       * @default true
+       */
+      clickHide : {
+        value : true
+      },
+      align : {
+        value : {
+           points: ['bl','tl'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
+           offset: [0, 0]      // 有效值为 [n, m]
+        }
+      },
+      /**
+       * 点击菜单外面，菜单隐藏
+       * 点击菜单项，如果菜单不是多选，菜单隐藏
+       * @type {Boolean} 
+       * @default true
+       */
+      autoHide : {
+        value : true
+      },
+      visible : {
+        value : false
+      }
+    }
+  },{
+    xclass:'pop-menu'
+  });
+  
+  return popMenu;
+
+});/**
+ * @fileOverview 弹出菜单，一般用于右键菜单
+ * @author dxq613@gmail.com
+ * @ignore
+ */
+
+define('bui/memu/contextmenu',function (require) {
+
+  var BUI = require('bui/common'),
+    MenuItem = require('bui/menu/menuitem'),
+    PopMenu = require('bui/menu/popmenu'),
+    PREFIX = BUI.prefix,
+    CLS_Link = PREFIX + 'menu-item-link',
+    CLS_ITEM_ICON =  PREFIX + 'menu-item-icon',
+    Component = BUI.Component,
+    UIBase = Component.UIBase;
+
+  /**
+   * 上下文菜单项
+   * xclass:'context-menu-item'
+   * @class BUI.Menu.ContextMenuItem 
+   * @extends BUI.Menu.MenuItem
+   */
+  var contextMenuItem = MenuItem.extend({
+   
+    bindUI:function(){
+      var _self = this;
+
+      _self.get('el').delegate('.' + CLS_Link,'click',function(ev){
+        ev.preventDefault();
+      });
+    }, 
+    //设置图标样式
+    _uiSetIconCls : function (v,ev) {
+      var _self = this,
+        preCls = ev.prevVal,
+        iconEl = _self.get('el').find('.'+CLS_ITEM_ICON);
+      iconEl.removeClass(preCls);
+      iconEl.addClass(v);
+    }
+  },{
+
+    ATTRS:
+    /**
+     * @lends BUI.Menu.MenuItem#
+     * @ignore
+     */
+    {
+      /**
+       * 显示的文本
+       * @type {String}
+       */
+      text:{
+        veiw:true,
+        value:''
+      },
+      /**
+       * 菜单项图标的样式
+       * @type {String}
+       */
+      iconCls:{
+        sync:false,
+        value:''
+      },
+      tpl:{
+        value:'<a class="' + CLS_Link + '" href="#">\
+        <span class="' + CLS_ITEM_ICON + ' {iconCls}"></span><span class="' + PREFIX + 'menu-item-text">{text}</span></a>'
+      }
+    }
+  },{
+    xclass:'context-menu-item'
+  });
+
+  /**
+   * 上下文菜单，一般用于弹出菜单
+   * xclass:'context-menu'
+   * @class BUI.Menu.ContextMenu
+   * @extends BUI.Menu.PopMenu
+   */
+  var contextMenu = PopMenu.extend({
+
+  },{
+    ATTRS:{
+      /**
+       * 子类的默认类名，即类的 xclass
+       * @type {String}
+       * @override
+       * @default 'menu-item'
+       */
+      defaultChildClass : {
+        value : 'context-menu-item'
+      },
+      align : {
+        value : null
+      }
+    }
+  },{
+    xclass:'context-menu'
+  });
+
+  contextMenu.Item = contextMenuItem;
+  return contextMenu;
+});
+/**
+ * @fileOverview 侧边栏菜单
+ * @author dxq613@gmail.com
+ * @ignore
+ */
+define('bui/menu/sidemenu',function(require){
+
+  var BUI = require('bui/common'),
+    Menu = require('bui/menu/menu'),
+    Component =  BUI.Component,
+    CLS_MENU_TITLE = BUI.prefix + 'menu-title',
+    CLS_MENU_LEAF = 'menu-leaf';
+    
+  /**
+   * 侧边栏菜单
+   * xclass:'side-menu'
+   * @class BUI.Menu.SideMenu
+   * @extends BUI.Menu.Menu
+   */
+  var sideMenu = Menu.extend(
+  /**
+   * @lends BUI.Menu.SideMenu.prototype
+   * @ignore
+   */
+  {
+    //初始化配置项
+    initializer : function(){
+      var _self = this,
+        items = _self.get('items'),
+        children = _self.get('children');
+
+      BUI.each(items,function(item){
+        var menuCfg = _self._initMenuCfg(item);
+        children.push(menuCfg);
+      });
+    },
+    bindUI : function(){
+      var _self = this,
+        children = _self.get('children');
+      BUI.each(children,function(item){
+        var menu = item.get('children')[0];
+        if(menu){
+          menu.publish('click',{
+            bubbles:1
+          });
+        }
+      });
+      //防止链接跳转
+      _self.get('el').delegate('a','click',function(ev){
+        ev.preventDefault();
+      });
+      //处理点击事件，展开、折叠、选中
+      _self.on('itemclick',function(ev){
+        var item = ev.item,
+          titleEl = $(ev.domTarget).closest('.' + CLS_MENU_TITLE);
+        if(titleEl.length){
+          var collapsed = item.get('collapsed');
+            item.set('collapsed',!collapsed);
+        }else if(item.get('el').hasClass(CLS_MENU_LEAF)){
+          _self.fire('menuclick',{item:item});
+          _self.clearSelection();
+          _self.setSelected(item);
+        }
+      });
+    },
+    /**
+     * @protected
+     * @ignore
+     */
+    getItems:function(){
+      var _self = this,
+        items = [],
+        children = _self.get('children');
+      BUI.each(children,function(item){
+        var menu = item.get('children')[0];
+        items = items.concat(menu.get('children'));
+      }); 
+      return items;
+    },
+    //初始化菜单配置项
+    _initMenuCfg : function(item){
+      var _self = this,
+        items = item.items,
+        subItems = [],
+        cfg = {
+          xclass : 'menu-item',
+          elCls : 'menu-second',
+          collapsed : item.collapsed,
+          selectable: false,
+          children : [{
+            xclass : 'menu',
+            children : subItems
+          }],
+          content: '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">'+item.text+'</span></div>'
+        };
+      BUI.each(items,function(subItem){
+        var subItemCfg = _self._initSubMenuCfg(subItem);
+        subItems.push(subItemCfg);
+      });
+
+      return cfg;
+
+    },
+    //初始化二级菜单
+    _initSubMenuCfg : function(subItem){
+      var _self = this,
+        cfg = {
+          id : subItem.id,
+          xclass : 'menu-item',
+          elCls : 'menu-leaf',
+          tpl : '<a href="{href}"><em>{text}</em></a>',
+          href : subItem.href,
+          text : subItem.text
+        };
+      return cfg;
+    }
+  },{
+
+    ATTRS : 
+    /**
+     * @lends BUI.Menu.SideMenu.prototype
+     * @ignore
+     */
+    {
+      
+      /**
+       * 配置的items 项是在初始化时作为children
+       * @protected
+       * @type {Boolean}
+       */
+      autoInitItems : {
+          value : false
+      },
+      events : {
+        value : {
+          /**
+           * 点击菜单项
+		       * @name BUI.Menu.SideMenu#menuclick
+           * @event 
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前选中的项
+           */
+          'menuclick' : false
+        }
+      }
+    }
+  },{
+    xclass :'side-menu'
+  });
+
+  return sideMenu;
+});

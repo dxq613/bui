@@ -1,0 +1,155 @@
+
+.x-icon{
+	.inline-block();
+	font-size:20px;
+	font-weight:bold;
+	font-family:"Arial";
+	text-align:center;
+	height:22px;
+	width:22px;
+	line-height:22px;
+	.border-radius(2px);
+	text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+	border: 1px solid transparent;
+	*position:relative;
+	cursor: inherit;
+	//使用图片icon时，使用此标签
+	i{
+		vertical-align: baseline;
+		*position:absolute;
+		*top:4px;
+		*left:2px;
+	}
+}
+
+.x-icon-normal{
+	text-shadow: none;
+	color: @iconColor;
+	.buttonBackground(@iconBackground, @iconBackgroundHighlight);
+	border: 1px solid darken(@btnBorder, 10%);
+}
+
+.x-icon-small{
+	font-size:17px;
+	*font-size:15px;
+	height:14px;
+	width:14px;
+	line-height:14px;
+	.border-radius(2px);
+	i{
+		*position:absolute;
+		*top:0;
+		*left:0;
+	}
+}
+
+.x-icon-mini{
+	font-size:14px;
+	*font-size:12px;
+	height:12px;
+	width:12px;
+	line-height:12px;
+	.border-radius(2px);
+	i{
+		*position:absolute;
+		*top:0;
+		*left:0;
+	}
+}
+
+.x-icon-disable{
+	.buttonBackground(@iconBackground, @iconDisableBackGroundHighlight);
+	color:@iconDisableColor;
+	border: 1px solid @iconDisableBorderColor;			
+}
+.x-icon-hover,.x-icon-normal:hover{
+	.buttonBackground(@iconBackground, @iconHoverBackGroundHighlight);
+	color:@iconHoverColor;
+	border: 1px solid @iconHoverBorderColor;	
+}
+
+.x-icon-success{
+	color: @white;
+	.buttonBackground(@btnSuccessBackground, @btnSuccessBackgroundHighlight);
+}
+
+.x-icon-warning{
+	color: @white;
+	.buttonBackground(@btnWarningBackground, @btnWarningBackgroundHighlight);
+}
+
+.x-icon-error{
+	color: @white;
+	.buttonBackground(@btnDangerBackground, @btnDangerBackgroundHighlight);
+}
+.x-icon-info,.x-icon-question{
+	color: @white;
+	.buttonBackground(@iconInfoBackground, @iconInfoBackgroundHighlight);
+}
+
+
+//x-caret
+
+.x-caret{
+	.inline-block();
+	width: 0;
+	height: 0;
+	border: 4px solid transparent;
+	line-height:0;
+	_border-color:tomato;
+	_filter:chroma(color=tomato);
+}
+
+.x-caret-down{
+	border-top: 4px solid @black;
+	border-bottom:0;
+}
+
+.x-caret-up{
+	border-top:0;
+	border-bottom:4px solid @black;
+	*border-width:5px;
+}
+
+.x-caret-left{
+	border-left: 4px solid @black;
+	border-right:0;
+	*border-width:5px;
+}
+
+.x-caret-right{
+	border-right: 4px solid @black;
+	border-left:0;
+	*border-width:5px;
+}
+
+.x-caret-left-top{
+	border-top:none;
+	border-right:none;
+	border-left: 6px solid @black;
+	border-width:6px;
+}
+
+.x-caret-right-top{
+	border-top:none;
+	border-right: 6px solid @black;
+	border-left:none;
+	border-width:6px;
+}
+
+.button{
+	.x-caret{
+		vertical-align:middle;
+		margin-left:3px;
+	}
+}
+
+.icon-caret{
+	width: 8px;
+	height: 8px;
+	display: inline-block;
+}
+
+
+
+

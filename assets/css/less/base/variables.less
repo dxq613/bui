@@ -1,0 +1,233 @@
+// Variables.less
+// Variables to customize the look and feel of Bootstrap
+// -----------------------------------------------------
+
+
+
+// GLOBAL VALUES
+// --------------------------------------------------
+
+
+// Grays
+// -------------------------
+@black:                 #000;
+@grayDarker:            #222;
+@grayDark:              #333;
+@gray:                  #555;
+@grayLight:             #999;
+@grayLighter:           #eee;
+@white:                 #fff;
+
+
+// Accent colors
+// -------------------------
+@blue:                  #049cdb;
+@blueDark:              #0064cd;
+@blueLight:             #e0e6fc;
+@green:                 #46a546;
+@red:                   #9d261d;
+@yellow:                #ffc40d;
+@orange:                #f89406;
+@pink:                  #c3325f;
+@purple:                #7a43b6;
+
+
+// Scaffolding
+// -------------------------
+@bodyBackground:        @white;     //
+@textColor:             @grayDark;
+@borderColor:           #c3c3d6;
+@backColor:             #E8E9EF;
+@radius:                3px;
+
+@selectedBackground:    #ccd7ff;
+@selectedBorderColr:    #99afff;
+
+@hoverBackground:       #dee5ff;
+@hoverBorderColor:      @selectedBackground;
+
+
+// Links
+// -------------------------
+@linkColor:             #3366cc;
+@linkColorHover:        #ff6600;
+
+
+// Typography
+// -------------------------
+@baseFontSize:          12px;
+@baseFontFamily:        "SimSun","Helvetica Neue", Helvetica, Arial, sans-serif;
+@baseLineHeight:        18px;
+@altFontFamily:         "SimSun","Tahoma",Georgia, "Times New Roman", Times, serif;
+@numberFontFamily:      "Tahoma","SimSun";
+
+@headingsFontFamily:    inherit; // empty to use BS default, @baseFontFamily
+@headingsFontWeight:    bold;    // instead of browser default, bold
+@headingsColor:         inherit; // empty to use BS default, @textColor
+
+
+// Tables
+// -------------------------
+@tableBackground:                   transparent; // overall background-color
+@tableBackgroundAccent:             #f2f2f2; // for striping
+@tableBackgroundHover:              #f0f0f0; // for hover
+@tableBorder:                       #ddd; // table and cell border
+
+@tableBorderedHeaderBackground:             #f8f8f8;
+@tableBorderedHeaderBackgroundHighlight:    @grayLighter;
+
+@tableHeaderBackground:             @white;
+@tableHeaderBackgroundHighlight:    #f4f4f4;
+
+//icons 大部分icons的颜色使用按钮的颜色
+@iconInfoBackground:                #0096e8;
+@iconInfoBackgroundHighlight:       #0071e7;
+
+@iconBackground:                    #fff;//没特殊颜色的icon
+@iconColor:                         #9ca0b1;
+@iconBorderColor:                   #c3c3d6;
+@iconBackgroundHighlight:           #e6e6e6;
+
+@iconDisableBackGroundHighlight:    #ececec;
+@iconDisableColor:                  #d5d5d5;
+@iconDisableBorderColor:            #dfdfdf;
+
+@iconHoverBackGroundHighlight:      #DEDEDE;
+@iconHoverColor:                    #73787d;
+@iconHoverBorderColor:              #a6a6c1;
+
+// Buttons
+// -------------------------
+@btnBackground:                     #fff;//#f8f8f8;
+@btnBackgroundHighlight:            #e4e4e4;
+@btnBorder:                         darken(@white, 20%);
+
+@btnPrimaryBackground:              @linkColor;
+@btnPrimaryBackgroundHighlight:     spin(@btnPrimaryBackground, 15%);
+
+@btnInfoBackground:                 #5bc0de;
+@btnInfoBackgroundHighlight:        #2f96b4;
+
+@btnSuccessBackground:              #62c462;
+@btnSuccessBackgroundHighlight:     #51a351;
+
+@btnWarningBackground:              lighten(@orange, 15%);
+@btnWarningBackgroundHighlight:     @orange;
+
+@btnDangerBackground:               #ee5f5b;
+@btnDangerBackgroundHighlight:      #bd362f;
+
+@btnInverseBackground:              @gray;
+@btnInverseBackgroundHighlight:     @grayDarker;
+
+@btnTabBackground:                  #6c9dfc;
+@btnTabBackgroundHighlight:         spin(@btnTabBackground, 15%);
+       
+@btnTabSelectedBorder:              #5984de; 
+@btnTabHoverBackground:             #dadada;
+
+// Forms
+// -------------------------
+@inputBackground:               @white;
+@inputBorder:                   @borderColor;
+@inputDisabledBackground:       @grayLighter;
+@controlRowHeight:              18px;
+@controlAppendHeight:           4px;
+@controlFocusBorder:						#98b2e5;
+@controlFocusOuter:							#3366cc;
+@controlNormal:                 140px;
+@controlSmall:                  80px;
+@controlLarge:                  300px;
+
+
+// COMPONENT VARIABLES
+// --------------------------------------------------
+
+// Z-index master list
+// -------------------------
+// Used for a bird's eye view of components dependent on the z-axis
+// Try to avoid customizing these :)
+@zindexGridHeader:				100;
+@zindexGridMenu:					200;
+@zindexDropdown:          1000;
+@zindexPopover:           1010;
+@zindexTooltip:           1020;
+@zindexFixedNavbar:       1030;
+@zindexMask:              1040;
+@zindexMaskMsg:           1050;
+@zindexModalBackdrop:     1060;
+@zindexModal:             1070;
+
+
+
+// Sprite icons path
+// -------------------------
+@iconSpritePath:          "http://img04.taobaocdn.com/tps/i4/T1SMojXedaXXXCL3TD-469-300.png";
+@iconWhiteSpritePath:     "http://img01.taobaocdn.com/tps/i1/T1qXIiXgXgXXXCL3TD-469-300.png";
+@loadPath:                "http://img03.taobaocdn.com/tps/i3/T12gLCXeheXXaHNz_X-16-16.gif";
+
+// Input placeholder text color
+// -------------------------
+@placeholderText:         @grayLight;
+
+
+// Hr border color
+// -------------------------
+@hrBorder:                @grayLighter;
+
+//detail page
+// ------------
+@sectionIconBorder:       #ADBCE2;
+@sectionArrowColor:       #5970A6;
+@sectionArrowBack:        #f4f8f4;
+@sectionArrowBackHighlight:#cddaf8;
+
+
+// Form states and alerts
+// -------------------------
+@warningText:             #c09853;
+@warningBackground:       #fcf8e3;
+@warningBorder:           darken(spin(@warningBackground, -10), 3%);
+
+@errorText:               #fe0000; //#b94a48;
+@errorBackground:         #f2dede;
+@errorBorder:             #e5a098;//darken(spin(@errorBackground, -10), 3%);
+@errorOuter:              #cc4333;
+
+@successText:             #468847;
+@successBackground:       #dff0d8;
+@successBorder:           darken(spin(@successBackground, -10), 5%);
+
+@infoText:                #3a87ad;
+@infoBackground:          #d9edf7;
+@infoBorder:              darken(spin(@infoBackground, -10), 7%);
+
+
+// GRID
+// --------------------------------------------------
+
+// Default 950px grid 
+// -------------------------
+@gridColumns:             24;
+@gridColumnWidth:         30px;//default 60
+@gridGutterWidth:         10px;//default 20
+@gridRowWidth:            (@gridColumns * @gridColumnWidth) + (@gridGutterWidth * (@gridColumns - 1));
+
+
+// Fluid grid
+// -------------------------
+@fluidGridColumnWidth:    3.1578947368%;//6.382978723%;
+@fluidGridGutterWidth:    1.0526315789%;//2.127659574%;
+
+//tip
+@tipNoticeBorder:         #ffcc7f;
+@tipNoticeBackground:     #ffffe5;
+@tipSuccessBorder:        #aae77f;
+@tipSuccessBackground:    #f0ffe5;
+@tipWaringBorder:         #ffb2b2;
+@tipWaringBackground:     #fff3f3;
+@tipInfoBorder:           #acd5ff;
+@tipInfoBackground:       #e6f2ff;
+@tipNormalBorder:         #e5e5e5;
+@tipNormalBackground:     #fafafa;
+

@@ -1,0 +1,46 @@
+
+
+.bui-select-list{
+  border:1px solid @borderColor;
+  background-color:@white;
+  overflow: auto;
+  .bui-list-item{
+    padding: 2px 4px 2px 8px;
+    .user-select(none);
+    cursor: pointer;
+    border: 1px solid @white;
+    .border-radius(@radius);
+    margin: 1px;
+    padding-left: 8px;
+  }
+
+  .bui-list-item-hover{
+    background: @optionHoverItemBack;
+    border:1px solid @optionHoverItemBorder;
+  }
+
+  .bui-list-item-selected{
+    background: @selectedItemBack;
+    border: 1px solid @selectedItemBorder;
+  }
+}
+
+.bui-select{
+  .bui-inline-block();
+  .bui-select-input{
+    border-right:none;
+    outline: none;
+    width: 118px;
+  }
+  .x-icon{
+    vertical-align:middle;
+    cursor: pointer;
+    height: 20px;
+    width: 20px;
+    .border-radius(0);
+    margin-top:-3px;
+  }
+  .x-caret{
+    vertical-align:middle;
+  }
+}
