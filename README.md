@@ -1,7 +1,9 @@
 bui
 ===
 
-基于jQuery的富客户端控件库,[控件库地址](http://www.builive.com/)
+基于jQuery的富客户端控件库
+- [文档库地址](http://www.builive.com/)
+- [应用代码](https://github.com/dxq613/bui-default)
 
 ## 文件结构
 
