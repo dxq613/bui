@@ -10,7 +10,7 @@
   <body>
   
     <div class="row-fluid">
-      <div id="menu" class="span4">
+      <div id="menu" class="span4 span-first">
 
       </div>
       <div class="span20">

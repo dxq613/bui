@@ -11,7 +11,7 @@ function today(){
     var now = new Date();
     return new Date(now.getFullYear(),now.getMonth(),now.getDate());
   }
-
+/**/
 BUI.use('bui/calendar/panel',function (Panel) {
   var DateUtil = BUI.Date;
     
@@ -173,9 +173,10 @@ BUI.use('bui/calendar/header',function(Header){
       var year = header.get('year'),
         month = header.get('month');
 
-      jasmine.simulate(headerEl.find('.'+CLS_PREV)[0],'click');
+      //jasmine.simulate(headerEl.find('.'+CLS_PREV)[0],'click');
       //.fire('click');
-      waits(100);
+      headerEl.find('.'+CLS_PREV).trigger('click');
+      waits(200);
       runs(function(){
         expect(header.get('month')).toBe((month-1)%12);
       });
@@ -185,8 +186,9 @@ BUI.use('bui/calendar/header',function(Header){
        var year = header.get('year'),
         month = header.get('month');
 
-      jasmine.simulate(headerEl.find('.'+CLS_NEXT)[0],'click');
-      waits(100);
+      //jasmine.simulate(headerEl.find('.'+CLS_NEXT)[0],'click');
+      headerEl.find('.'+CLS_NEXT).trigger('click');
+      waits(200);
       runs(function(){
         expect(header.get('month')).toBe((month+1)%12);
       });

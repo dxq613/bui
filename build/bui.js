@@ -2397,7 +2397,8 @@ define('bui/observable',function () {
       }
     },
     empty : function(){
-      this._functions.splice(0);
+      var length = this._functions.length; //ie6,7\u4e0b\uff0c\u5fc5\u987b\u6307\u5b9a\u9700\u8981\u5220\u9664\u7684\u6570\u91cf
+      this._functions.splice(0,length);
     },
     /**
      * \u89e6\u53d1\u56de\u8c03

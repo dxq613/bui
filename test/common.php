@@ -6,7 +6,7 @@
     
 
     <div id="c4">这是一个封装的控件</div>
-    <div id="c5" name="t1",title="测试封装控件" data-value="test">
+    <div id="c5" name="t1" title="测试封装控件" data-value="test">
       <a href="#">这是复杂的封装控件</a>
     </div>
     <ol id="c6">

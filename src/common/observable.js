@@ -43,7 +43,8 @@ define('bui/observable',function () {
       }
     },
     empty : function(){
-      this._functions.splice(0);
+      var length = this._functions.length; //ie6,7下，必须指定需要删除的数量
+      this._functions.splice(0,length);
     },
     /**
      * 触发回调

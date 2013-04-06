@@ -1,5 +1,5 @@
 BUI.use('bui/common',function(){
-
+		
 		describe("测试 extend 继承", function () {
 
 			function base(){
@@ -305,7 +305,6 @@ BUI.use('bui/common',function(){
 
 		});
 	
-		//UIBase由于是从KISSY 复制过来的，所以代码不需要进行详细的测试
 		describe("测试UIBase 基类",function(){
 
 			function A(){
@@ -390,9 +389,9 @@ BUI.use('bui/common',function(){
 				expect(callback).toHaveBeenCalled();
 			});
 		});
-		
+		/**/
 		describe('测试 decorate',function(){
-
+			
 			it('测试封装控件生成',function(){
 				var cls ='test-cls',
 					control = new BUI.Component.Controller({
@@ -404,7 +403,7 @@ BUI.use('bui/common',function(){
 				expect(control.get('el').hasClass(cls)).toBe(true);
 				expect(control.get('el').html()).toBe($('#c4').html());
 			});
-
+			/**/
 			it('测试封装控件读取属性',function(){
 				var el = $('#c5'),
 					control = new BUI.Component.Controller({
@@ -415,7 +414,7 @@ BUI.use('bui/common',function(){
 				expect(control.get('value')).toBe(el.attr('data-value'));
 				expect(control.get('el').html()).toBe(el.html());
 			});
-
+			
 			it('测试封装控件，封装子控件',function(){
 
 				var AClass = BUI.Component.Controller.extend({},{
@@ -456,6 +455,7 @@ BUI.use('bui/common',function(){
 					expect(item.get('a')).toBe(item.get('el').text());
 				});
 			});
+/**/
 		});
 
 	  describe("测试控件查找 ",function(){
@@ -541,4 +541,5 @@ BUI.use('bui/common',function(){
 			});
 			
 		});
+/**/
 });
