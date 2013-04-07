@@ -7,12 +7,18 @@
   background-color: @white;
   position: relative;
 }
-.bui-calendar-header .x-caret-left{
-  border-left: 4px solid @white;
-}
-.bui-calendar-header .x-caret-right{
-  border-right: 4px solid @white;
-}
+.x-datepicker-arrow{
+  .icon{
+    margin-top:2px;
+    *overflow: hidden;
+  }
+
+  .icon-caret-right{
+    margin-left:2px;
+    
+  }
+} 
+
 //header
 
 .x-datepicker-header {
@@ -168,7 +174,12 @@ input.x-datepicker-time{
   button.last{
     margin-right:0;
   }
+  .bui-bar-item-button{
+    *margin-top:4px;
+  }
 }
+
+
 
 
 /**monthpicker**/
@@ -185,7 +196,11 @@ input.x-datepicker-time{
     left:-1px;
   }
 }
-
+.x-monthpicker-yearnav .icon{
+  margin-top: 2px;
+  *margin-left:2px;
+  *overflow: hidden;
+}
 
 .x-monthpicker-months, .x-monthpicker-years {
 

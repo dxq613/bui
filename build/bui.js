@@ -21986,8 +21986,8 @@ define('bui/calendar/monthpicker',function (require){
       tpl : {
         view:true,
         value:'<div class="'+CLS_YEAR_NAV+'">'+
-              '<span class="'+CLS_YEAR_NAV+'-prev x-icon x-icon-normal x-icon-small"><span class="x-caret x-caret-right"></span></span>'+
-              '<span class="'+CLS_YEAR_NAV+'-next x-icon x-icon-normal x-icon-small"><span class="x-caret x-caret-left"></span></span>'+
+              '<span class="'+CLS_YEAR_NAV+'-prev x-icon x-icon-normal x-icon-small"><span class="icon icon-caret icon-caret-left"></span></span>'+
+              '<span class="'+CLS_YEAR_NAV+'-next x-icon x-icon-normal x-icon-small"><span class="icon icon-caret icon-caret-right"></span></span>'+
               '</div>'+
               '<ul></ul>'
       }
@@ -22271,14 +22271,14 @@ define('bui/calendar/header',function (require) {
       },
       tpl:{
         view:true,
-        value:'<div class="'+CLS_ARROW+' ' + CLS_PREV + '"><span class="x-caret x-caret-right"></span></div>'+
+        value:'<div class="'+CLS_ARROW+' ' + CLS_PREV + '"><span class="icon icon-white icon-caret  icon-caret-left"></span></div>'+
           '<div class="x-datepicker-month">'+
             '<div class="month-text-container">'+
               '<span><span class="year-text">{year}</span>\u5e74 <span class="month-text">{monthText}</span>\u6708</span>'+
               '<span class="' + PREFIX + 'caret ' + PREFIX + 'caret-down"></span>'+
             '</div>'+
           '</div>' +
-          '<div class="'+CLS_ARROW+' ' + CLS_NEXT + '"><span class="x-caret x-caret-left"></span></div>'
+          '<div class="'+CLS_ARROW+' ' + CLS_NEXT + '"><span class="icon icon-white icon-caret  icon-caret-right"></span></div>'
       },
       elCls:{
         view:true,

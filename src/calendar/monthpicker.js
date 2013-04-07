@@ -172,8 +172,8 @@ define('bui/calendar/monthpicker',function (require){
       tpl : {
         view:true,
         value:'<div class="'+CLS_YEAR_NAV+'">'+
-              '<span class="'+CLS_YEAR_NAV+'-prev x-icon x-icon-normal x-icon-small"><span class="x-caret x-caret-right"></span></span>'+
-              '<span class="'+CLS_YEAR_NAV+'-next x-icon x-icon-normal x-icon-small"><span class="x-caret x-caret-left"></span></span>'+
+              '<span class="'+CLS_YEAR_NAV+'-prev x-icon x-icon-normal x-icon-small"><span class="icon icon-caret icon-caret-left"></span></span>'+
+              '<span class="'+CLS_YEAR_NAV+'-next x-icon x-icon-normal x-icon-small"><span class="icon icon-caret icon-caret-right"></span></span>'+
               '</div>'+
               '<ul></ul>'
       }

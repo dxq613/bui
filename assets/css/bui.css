@@ -1163,11 +1163,12 @@ textarea.bui-form-field-error,
   background-color: #ffffff;
   position: relative;
 }
-.bui-calendar-header .x-caret-left {
-  border-left: 4px solid #ffffff;
+.x-datepicker-arrow .icon {
+  margin-top: 2px;
+  *overflow: hidden;
 }
-.bui-calendar-header .x-caret-right {
-  border-right: 4px solid #ffffff;
+.x-datepicker-arrow .icon-caret-right {
+  margin-left: 2px;
 }
 .x-datepicker-header {
   position: relative;
@@ -1335,6 +1336,10 @@ input.x-datepicker-time {
 .x-monthpicker-footer button.last {
   margin-right: 0;
 }
+.bui-calendar-footer .bui-bar-item-button,
+.x-monthpicker-footer .bui-bar-item-button {
+  *margin-top: 4px;
+}
 /**monthpicker**/
 .bui-monthpicker,
 .x-monthpicker {
@@ -1347,6 +1352,11 @@ input.x-datepicker-time {
 .bui-calendar .bui-monthpicker {
   top: -1px;
   left: -1px;
+}
+.x-monthpicker-yearnav .icon {
+  margin-top: 2px;
+  *margin-left: 2px;
+  *overflow: hidden;
 }
 .x-monthpicker-months,
 .x-monthpicker-years {
