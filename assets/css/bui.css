@@ -411,6 +411,7 @@
   border-radius: 3px;
   margin: 1px;
   padding-left: 8px;
+  *zoom: 1;
 }
 .bui-select-list .bui-list-item-hover {
   background: #dee5ff;
@@ -426,8 +427,12 @@
   *zoom: 1;
 }
 .bui-select .bui-select-input {
+  _border: 1px solid #c3c3d6;
   border-right: none;
+  vertical-align: middle;
   outline: none;
+  _height: 22px;
+  _padding: 1px 4px;
   width: 118px;
 }
 .bui-select .x-icon {
@@ -438,7 +443,6 @@
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
-  margin-top: -3px;
 }
 .bui-select .x-caret {
   vertical-align: middle;
