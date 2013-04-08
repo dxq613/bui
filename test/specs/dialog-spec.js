@@ -1,8 +1,7 @@
 
 BUI.use('bui/overlay/dialog',function (Dialog) {
   
-  var 
-    CLS_TITLE = 'header-title';
+  var CLS_TITLE = 'header-title';
 
   var config = {
       width:500,
@@ -20,6 +19,11 @@ BUI.use('bui/overlay/dialog',function (Dialog) {
   var dialogEl = dialog.get('el');
 
   $('#btnShow').on('click',function(){
+    dialog.show();
+  });
+
+  $('#btnShow1').on('click',function(){
+    dialog.set('title','');
     dialog.show();
   });
   describe('测试Dialog生成',function(){

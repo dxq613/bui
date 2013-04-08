@@ -5,7 +5,7 @@
       <p>这是第一个弹出框</p>
     </div>
     <button id="btnShow" class="button button-primary">显示</button>
-    <button id="btnHide" class="button button-primary">隐藏</button>
+    <button id="btnShow1" class="button button-primary">清除标题</button>
     
     <?php $url = 'bui/overlay/dialog'?>
     <?php include("./templates/script.php"); ?>
