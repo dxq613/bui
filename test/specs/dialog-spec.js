@@ -1,7 +1,7 @@
 
-BUI.use('bui/overlay',function (Overlay) {
+BUI.use('bui/overlay/dialog',function (Dialog) {
   
-  var Dialog = Overlay.Dialog,
+  var 
     CLS_TITLE = 'header-title';
 
   var config = {

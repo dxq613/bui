@@ -7,9 +7,10 @@
     <button id="btnShow" class="button button-primary">显示</button>
     <button id="btnHide" class="button button-primary">隐藏</button>
     
-    <?php $url = 'bui/overlay'?>
+    <?php $url = 'bui/overlay/dialog'?>
     <?php include("./templates/script.php"); ?>
-
+    <script type="text/javascript" src="../src/overlay/overlay.js"></script>
+    <script type="text/javascript" src="../src/overlay/dialog.js"></script>
     <script type="text/javascript" src="specs/dialog-spec.js"></script>
 
 <?php include("./templates/footer.php"); ?>

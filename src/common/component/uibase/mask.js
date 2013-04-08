@@ -30,11 +30,11 @@ define('bui/component/uibase/mask',function (require) {
     }
 
     function docWidth() {
-        return  ie6 ? ('expression(BUI.docWidth())') : '100%';
+        return  ie6 ? BUI.docWidth() + 'px' : '100%';
     }
 
     function docHeight() {
-        return ie6 ? ('expression(BUI.docHeight())') : '100%';
+        return ie6 ? BUI.docHeight() + 'px' : '100%';
     }
 
     function initMask(maskCls) {
@@ -51,7 +51,7 @@ define('bui/component/uibase/mask',function (require) {
                 'style="position:absolute;' +
                 'left:' + '0' + ';' +
                 'top:' + '0' + ';' +
-                'background:red;' +
+                'background:white;' +
                 'width: expression(this.parentNode.offsetWidth);' +
                 'height: expression(this.parentNode.offsetHeight);' +
                 'filter:alpha(opacity=0);' +

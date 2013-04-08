@@ -517,10 +517,12 @@
   overflow: hidden;
   cursor: pointer;
   text-decoration: none;
+  z-index: 1;
 }
 .bui-dialog .bui-ext-close-x {
   display: block;
   font-size: 17px;
+  *font-size: 16px;
   height: 14px;
   width: 14px;
   line-height: 14px;

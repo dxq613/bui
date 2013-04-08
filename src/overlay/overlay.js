@@ -3,8 +3,9 @@
  * @ignore
  */
 
-define('bui/overlay/overlay',function () {
-  var Component =  BUI.Component,
+define('bui/overlay/overlay',function (require) {
+  var BUI = require('bui/common'),
+    Component =  BUI.Component,
     UIBase = Component.UIBase;
 
   /**
