@@ -76,7 +76,7 @@ BUI.use('bui/form/tips',function (Tips) {
 
     var config = {
         trigger : '#J_Name1',
-        iconCls:'bui-icon icon-ok',
+        iconCls:'icon icon-ok',
         text:'请输入学生姓名'
       },
       tip = new Tips.Item(config);

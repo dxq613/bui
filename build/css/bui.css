@@ -1157,6 +1157,7 @@ textarea.bui-form-field-error,
 }
 .bui-form-tip .tip-text {
   margin-left: 5px;
+  *white-space: nowrap;
 }
 .bui-form-tip .icon {
   opacity: 0.5;
