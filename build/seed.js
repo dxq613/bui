@@ -6231,6 +6231,7 @@ define('bui/component/uibase/position',function () {
                 var _self = this,
                     el = _self.get('el');
                 _self.setInternal('left',el.position().left);
+                this.set('cachePosition',null);
             }
             
         },
@@ -6240,6 +6241,7 @@ define('bui/component/uibase/position',function () {
                 var _self = this,
                     el = _self.get('el');
                 _self.setInternal('top',el.position().top);
+                this.set('cachePosition',null);
             }
         },
         //设置 left时，重置 x

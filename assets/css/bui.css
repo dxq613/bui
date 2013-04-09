@@ -169,6 +169,7 @@
 .bui-context-menu .bui-menu-item-link {
   cursor: default;
   display: block;
+  *zoom: 1;
   width: 134px;
   height: 24px;
   margin: 1px;
@@ -203,7 +204,9 @@
 .bui-context-menu .bui-menu-item-text {
   color: #333333;
   font-size: 11px;
+  _font-size: 12px;
   line-height: 20px;
+  *zoom: 1;
 }
 .bui-context-menu .bui-menu-item-disabled {
   outline: none;

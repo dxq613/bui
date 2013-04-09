@@ -135,7 +135,6 @@ define('bui/tab/navtabitem',function(requrie){
         el = _self.get('el'),
         events = _self.get('events');
 
-      
       el.on('click',function(ev){
         var sender = $(ev.target);
        if(sender.hasClass(CLS_ITEM_CLOSE)){

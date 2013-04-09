@@ -8,12 +8,14 @@ BUI.use('bui/tab',function (Tab){
   var config = {
     title : '测试标签',
     render : '#t1',
-    href : 'http://www.baidu.com',
+    actived : true,
+    href : 'http://www.taobao.com',
     tabContentContainer : '#container'
   };
   var item = new Tab.NavTabItem(config);
 
   item.render();
+  
   item.on('click',function(){
     BUI.log('click');
   });
@@ -45,12 +47,8 @@ BUI.use('bui/tab',function (Tab){
       expect(iframeEl.attr('src')).toBe(config.href);
     })
   });
-
-  describe("测试标签项事件",function(){
-
-
-  });
-});
+  
+});/**/
 
 BUI.use('bui/tab/navtab',function(NavTab){
 
@@ -131,7 +129,7 @@ BUI.use('bui/tab/navtab',function(NavTab){
     });
 	});
 });
-/**/
+
 BUI.use('bui/tab',function(Tab){
 
   var tab = new Tab.Tab({
@@ -225,4 +223,4 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel){
       expect($(panel).css('display')).toBe('none');
     });
   });
-});
+});/**/

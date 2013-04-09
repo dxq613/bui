@@ -5,7 +5,7 @@
       <div class="row">
         <div class="span8">
           <div id="t1"></div>
-          <div id="container" style="height:100px"></div>
+          <div id="container" style="height:100px;width:100px"></div>
           <button id="btnAdd" class="button">添加</button>
         </div>
         <div class="span16">

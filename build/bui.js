@@ -6231,6 +6231,7 @@ define('bui/component/uibase/position',function () {
                 var _self = this,
                     el = _self.get('el');
                 _self.setInternal('left',el.position().left);
+                this.set('cachePosition',null);
             }
             
         },
@@ -6240,6 +6241,7 @@ define('bui/component/uibase/position',function () {
                 var _self = this,
                     el = _self.get('el');
                 _self.setInternal('top',el.position().top);
+                this.set('cachePosition',null);
             }
         },
         //\u8bbe\u7f6e left\u65f6\uff0c\u91cd\u7f6e x
@@ -19537,7 +19539,6 @@ define('bui/tab/navtabitem',function(requrie){
         el = _self.get('el'),
         events = _self.get('events');
 
-      
       el.on('click',function(ev){
         var sender = $(ev.target);
        if(sender.hasClass(CLS_ITEM_CLOSE)){
@@ -19950,7 +19951,7 @@ define('bui/tab/navtab',function(require){
               children : [
               {
                 xclass : 'context-menu-item',
-                iconCls:'icon-refresh',
+                iconCls:'icon icon-refresh',
                 text : '\u5237\u65b0',
                 listeners:{
                   'click':function(){
@@ -19964,7 +19965,7 @@ define('bui/tab/navtab',function(require){
               {
                 id : 'm12',
                 xclass : 'context-menu-item',
-                iconCls:'icon-remove',
+                iconCls:'icon icon-remove',
                 text: '\u5173\u95ed',
                 listeners:{
                   'click':function(){
@@ -19977,7 +19978,7 @@ define('bui/tab/navtab',function(require){
               },
               {
                 xclass : 'context-menu-item',
-                iconCls:'icon-remove-sign',
+                iconCls:'icon icon-remove-sign',
                 text : '\u5173\u95ed\u5176\u4ed6',
                 listeners:{
                   'click':function(){
@@ -19990,7 +19991,7 @@ define('bui/tab/navtab',function(require){
               },
               {
                 xclass : 'context-menu-item',
-                iconCls:'icon-remove-sign',
+                iconCls:'icon icon-remove-sign',
                 text : '\u5173\u95ed\u6240\u6709',
                 listeners:{
                   'click':function(){
@@ -20081,7 +20082,6 @@ define('bui/tab/navtab',function(require){
           _self._scrollTo(container,0);  
         }else if(disBegin < 0){//\u5982\u679c\u5de6\u8fb9\u88ab\u906e\u6321\uff0c\u5411\u53f3\u79fb\u52a8
 
-        
           _self._scrollTo(container,containerPosition.left - (disBegin));
 
         }else if(disWidth > 0){//\u5982\u679c\u5f53\u524d\u8282\u70b9\u88ab\u53f3\u7aef\u906e\u6321\uff0c\u5219\u5411\u5de6\u6eda\u52a8\u5230\u663e\u793a\u4f4d\u7f6e

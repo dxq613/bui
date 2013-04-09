@@ -154,7 +154,6 @@ define('bui/tab/navtabitem',function(requrie){
         el = _self.get('el'),
         events = _self.get('events');
 
-      
       el.on('click',function(ev){
         var sender = $(ev.target);
        if(sender.hasClass(CLS_ITEM_CLOSE)){
@@ -567,7 +566,7 @@ define('bui/tab/navtab',function(require){
               children : [
               {
                 xclass : 'context-menu-item',
-                iconCls:'icon-refresh',
+                iconCls:'icon icon-refresh',
                 text : '刷新',
                 listeners:{
                   'click':function(){
@@ -581,7 +580,7 @@ define('bui/tab/navtab',function(require){
               {
                 id : 'm12',
                 xclass : 'context-menu-item',
-                iconCls:'icon-remove',
+                iconCls:'icon icon-remove',
                 text: '关闭',
                 listeners:{
                   'click':function(){
@@ -594,7 +593,7 @@ define('bui/tab/navtab',function(require){
               },
               {
                 xclass : 'context-menu-item',
-                iconCls:'icon-remove-sign',
+                iconCls:'icon icon-remove-sign',
                 text : '关闭其他',
                 listeners:{
                   'click':function(){
@@ -607,7 +606,7 @@ define('bui/tab/navtab',function(require){
               },
               {
                 xclass : 'context-menu-item',
-                iconCls:'icon-remove-sign',
+                iconCls:'icon icon-remove-sign',
                 text : '关闭所有',
                 listeners:{
                   'click':function(){
@@ -698,7 +697,6 @@ define('bui/tab/navtab',function(require){
           _self._scrollTo(container,0);  
         }else if(disBegin < 0){//如果左边被遮挡，向右移动
 
-        
           _self._scrollTo(container,containerPosition.left - (disBegin));
 
         }else if(disWidth > 0){//如果当前节点被右端遮挡，则向左滚动到显示位置
