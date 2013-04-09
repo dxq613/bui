@@ -643,6 +643,16 @@
 .bui-pagingbar .bui-bar-item-separator {
   margin: 0 5px;
 }
+.pagination .bui-bar-item {
+  float: left;
+  margin: 0;
+}
+.pagination .disabled {
+  _background-color: #ffffff;
+}
+.pagination .disabled a:hover {
+  text-decoration: none;
+}
 .bar-btn-add,
 .bar-btn-del,
 .bar-btn-edit,
@@ -1462,6 +1472,9 @@ input.x-datepicker-time {
   padding: 3px 0 3px 3px;
   border: 1px solid #c3c3d6;
   background-color: white;
+}
+.bui-record-editor .button {
+  *margin-top: 5px;
 }
 .bui-record-editor .bui-bar {
   width: 150px;

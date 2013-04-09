@@ -643,6 +643,16 @@
 .bui-pagingbar .bui-bar-item-separator {
   margin: 0 5px;
 }
+.pagination .bui-bar-item {
+  float: left;
+  margin: 0;
+}
+.pagination .disabled {
+  _background-color: #ffffff;
+}
+.pagination .disabled a:hover {
+  text-decoration: none;
+}
 .bar-btn-add,
 .bar-btn-del,
 .bar-btn-edit,

@@ -1,4 +1,5 @@
 
+
 .bui-pagingbar{
  
 
@@ -103,6 +104,19 @@
   }
 }
 
+.pagination{
+  .bui-bar-item{
+    float:left;
+    margin: 0;
+  }
+
+  .disabled{
+    _background-color:@white;
+    a:hover{
+      text-decoration: none;
+    }
+  }
+}
 
 .bar-btn-add,.bar-btn-del,.bar-btn-edit,.bar-btn-close,.bar-btn-import,.bar-btn-export,.bar-btn-save,.bar-btn-create,.bui-bar-item-separator{
   background:url("@{tablePath}") no-repeat -999px -999px transparent;
