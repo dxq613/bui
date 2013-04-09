@@ -1,4 +1,4 @@
-/**/
+
 BUI.use('bui/form',function (Form) {
   
   describe('测试日期范围分组',function () {
@@ -16,7 +16,7 @@ BUI.use('bui/form',function (Form) {
       expect(group.get('children').length).toBe(2);
     })
     it('测试设置初始日期',function () {
-      var record = {start: new Date('2001-01-01 00:00:00'),end: new Date('2002-01-01 00:00:00')};
+      var record = {start: new Date('2001/01/01 00:00:00'),end: new Date('2002/01/01 00:00:00')};
       group.setRecord(record);
 
       expect(group.getField('start').get('value')).toBe(record.start);
@@ -26,14 +26,14 @@ BUI.use('bui/form',function (Form) {
     });
 
     it('测试修改日期，验证失败',function () {
-      var record = {start: new Date('2001-01-01'),end:new Date('2000-01-01')};
+      var record = {start: new Date('2001/01/01'),end:new Date('2000/01/01')};
       group.setRecord(record);
 
       expect(group.isValid()).toBe(false);
     });
 
     it('测试修改日期，验证成功',function () {
-      var record = {start: new Date('2001-01-01'),end:'2002-01-01'};
+      var record = {start: new Date('2001/01/01'),end:'2002/01/01'};
       group.setRecord(record);
 
       expect(group.isValid()).toBe(true);
@@ -250,7 +250,7 @@ BUI.use('bui/form',function (Form) {
       expect(group.isValid()).toBe(false);
     });
   });
-
+/**/
   
 });
 
@@ -319,5 +319,6 @@ BUI.use(["bui/form",'bui/form/group/select'],function(Form,Select){
     new Select({
       srcNode : '#g10'
     }).render();
-  })();  /**/
+  })();  
 });
+/**/

@@ -143,7 +143,7 @@ BUI.use('bui/form',function (Form) {
         callback = jasmine.createSpy();
       field2.set('value','122');
       group.on('validchange',callback);
-      field2.set('value',new Date('2013-12-01'));
+      field2.set('value',new Date('2013/12/01'));
       runs(function(){
         expect(callback).toHaveBeenCalled();
         expect(group.isValid()).toBe(true);
