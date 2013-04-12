@@ -116,7 +116,9 @@ define('bui/editor/mixin',function (require) {
       if(changeSourceEvent){
         _self.on(changeSourceEvent,function(){
           _self.setValue(_self.getSourceValue());
-          _self.focus();
+          if(_self.get('visible')){
+            _self.focus();
+          }
         });
       }
     },

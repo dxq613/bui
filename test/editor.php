@@ -88,7 +88,6 @@
     <script type="text/javascript" src="../src/editor/dialog.js"></script>
     <script type="text/javascript" src="../src/editor/base.js"></script>
     <script type="text/javascript" src="specs/editor-spec.js"></script> 
-    <script type="text/javascript" src="specs/record-editor-spec.js"></script>
-    <!-- -->
-    <script type="text/javascript" src="specs/editor-dialog-spec.js"></script><!---->
+   <script type="text/javascript" src="specs/record-editor-spec.js"></script>
+    <script type="text/javascript" src="specs/editor-dialog-spec.js"></script> <!---->
 <?php include("./templates/footer.php"); ?>

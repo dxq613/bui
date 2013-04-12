@@ -156,4 +156,5 @@ BUI.use('bui/editor',function (Editor) {
       
     });
   });
+  
 });

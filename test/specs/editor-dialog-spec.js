@@ -6,6 +6,8 @@ BUI.use('bui/editor',function (Editor) {
   var editor = new DialogEditor({
     trigger : '.dialog',
     contentId:'content',
+    width : 500,
+    title : '编辑数据',
     form : {
       srcNode : '#J_Form'
     }
