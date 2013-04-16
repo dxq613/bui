@@ -1,0 +1,13 @@
+.panel{
+  border:1px solid @borderColor;
+  .border-radius(@radius);
+
+  .panel-header{
+    padding: @baseLineHeight/2;
+    line-height: @baseLineHeight;
+    #gradient > .vertical(@panelHeaderBackground,@panelHeaderBackgroundHighlight);
+  }
+  .panel-body{
+    padding: @baseLineHeight/2;
+  }
+}

@@ -1987,6 +1987,28 @@ table .span24 {
   width: 934px;
   margin-left: 0;
 }
+.panel {
+  border: 1px solid #c3c3d6;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.panel .panel-header {
+  padding: 9px;
+  line-height: 18px;
+  background-color: #f4f4f4;
+  background-image: -moz-linear-gradient(top, #f8f8f8, #eeeeee);
+  background-image: -ms-linear-gradient(top, #f8f8f8, #eeeeee);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f8f8f8), to(#eeeeee));
+  background-image: -webkit-linear-gradient(top, #f8f8f8, #eeeeee);
+  background-image: -o-linear-gradient(top, #f8f8f8, #eeeeee);
+  background-image: linear-gradient(top, #f8f8f8, #eeeeee);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#f8f8f8', endColorstr='#eeeeee', GradientType=0);
+}
+.panel .panel-body {
+  padding: 9px;
+}
 .form-page,
 .search-page,
 .detail-page {
