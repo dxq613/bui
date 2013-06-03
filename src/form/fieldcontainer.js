@@ -331,6 +331,9 @@ define('bui/form/fieldcontainer',function (require) {
 
           }
         },
+        disabled : {
+          sync : false
+        },
         isDecorateChild : {
           value : true
         },

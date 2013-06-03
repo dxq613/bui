@@ -44,7 +44,7 @@
                   <input type="radio" name="uptime" value="now" checked="checked">立刻
                 </label>
                 <label  class="radio">
-                  <input id="upn" type="radio" name="uptime" value="set">设定  
+                  <input id="upn" type="radio" name="uptime" disabled value="set">设定  
                 </label>
                 <label class="radio">
                   <input type="radio" name="uptime" value="inputc">放入仓库
@@ -154,9 +154,10 @@
     <script type="text/javascript" src="../src/form/form.js"></script>
     <script type="text/javascript" src="../src/form/hform.js"></script>
     <script type="text/javascript" src="../src/form/base.js"></script>
+    <!--
     <script type="text/javascript" src="specs/form-base-spec.js"></script>
     <script type="text/javascript" src="specs/form-horizontal-spec.js"></script>
-    <!---->
+    -->
     
     <script type="text/javascript" src="specs/form-decorate-spec.js"></script>
     

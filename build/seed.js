@@ -8077,6 +8077,7 @@ define('bui/component/uibase/list',function (require) {
      * @override
      */
     getItems : function () {
+      
       return this.get('items');
     },
      /**

@@ -114,12 +114,15 @@ define('bui/grid/plugins/dialogediting',function (require) {
       var _self = this,
         contentId = _self.get('contentId'),
         formNode = $('#' + contentId).find('form'),
-        editor = new Editor.DialogEditor({
-          contentId : contentId,
-          form : {
-            srcNode : formNode
-          }
+        editor = _self.get('editor'),
+        cfg = BUI.merge(editor,{
+            contentId : contentId,
+            form : {
+              srcNode : formNode
+            }
         });
+
+      editor = new Editor.DialogEditor(cfg);
       _self._bindEditor(editor);
       _self.set('editor',editor);
       _self.set('form',editor.get('form'));

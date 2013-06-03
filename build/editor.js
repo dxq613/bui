@@ -283,14 +283,17 @@ define('bui/editor/mixin',function (require) {
     accept : function(){
       var _self = this,
         value;
-        _self.valid();
-       if(!_self.isValid()){
+      _self.valid();
+      if(!_self.isValid()){
         return false;
       }
       value = _self.getValue();
 
       if(_self.get('autoUpdate')){
         _self.updateSource(value);
+      }
+      if(_self.fire('beforeaccept',{value :value}) == false){
+        return;
       }
       _self.fire('accept',{value :value,editValue : _self.get('editValue')});/**/
       _self.hide();

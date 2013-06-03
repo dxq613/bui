@@ -10,6 +10,10 @@ BUI.use('bui/editor',function (Editor) {
     title : '编辑数据',
     form : {
       srcNode : '#J_Form'
+    },
+    success : function(){
+      BUI.log('success');
+      this.accept();
     }
   });
 
