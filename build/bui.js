@@ -22335,7 +22335,8 @@ define('bui/calendar/panel',function (require) {
     SHOW_WEEKS = 6,//\u5f53\u524d\u5bb9\u5668\u663e\u793a6\u5468
     dateTypes = {
       deactive : 'prevday',
-      active : 'active'
+      active : 'active',
+      disabled : 'disabled'
     },
     weekDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
@@ -22396,7 +22397,8 @@ define('bui/calendar/panel',function (require) {
         dayOfWeek = weekDays[day],
         dateNumber = date.getDate(),
         //\u4e0d\u662f\u672c\u6708\u5219\u5904\u4e8e\u4e0d\u6d3b\u52a8\u72b6\u6001
-        dateType = _self._isCurrentMonth(date) ? dateTypes.active : dateTypes.deactive;
+        //\u4e0d\u5728\u6307\u5b9a\u7684\u6700\u5927\u6700\u5c0f\u8303\u56f4\u5185\uff0c\u7981\u6b62\u9009\u4e2d
+        dateType = _self._isInRange(date) ? (_self._isCurrentMonth(date) ? dateTypes.active : dateTypes.deactive) : dateTypes.disabled;
 
       return BUI.substitute(dayTpl,{
         dayOfWeek : dayOfWeek,
@@ -22429,6 +22431,20 @@ define('bui/calendar/panel',function (require) {
       var tody = new Date();
       return tody.getFullYear() === date.getFullYear() && tody.getMonth() === date.getMonth() && tody.getDate() === date.getDate();
     },
+    //\u662f\u5426\u5728\u5141\u8bb8\u7684\u8303\u56f4\u5185
+    _isInRange : function(date){
+      var _self = this,
+        maxDate = _self.get('maxDate'),
+        minDate = _self.get('minDate');
+
+      if(minDate && date < minDate){
+        return false;
+      }
+      if(maxDate && date > maxDate){
+        return false;
+      }
+      return true;
+    },
     //\u6e05\u9664\u9009\u4e2d\u7684\u65e5\u671f
     _clearSelectedDate : function(){
       var _self = this;
@@ -22438,7 +22454,7 @@ define('bui/calendar/panel',function (require) {
     _findDateElement : function(date){
       var _self = this,
         dateStr = DateUtil.format(date,DATE_MASK),
-        activeList = _self.get('el').find('.' + CLS_ACTIVE),
+        activeList = _self.get('el').find('.' + CLS_DATE),
         result = null;
       if(dateStr){
         activeList.each(function(index,item){
@@ -22517,7 +22533,9 @@ define('bui/calendar/panel',function (require) {
         var date = sender.attr('title');
         if(date){
           date = DateUtil.parse(date);
-          _self.set('selected',date);
+          if(_self.get('view')._isInRange(date)){
+            _self.set('selected',date);
+          }
           //_self.fire('click',{date:date});
         }
       }
@@ -22548,6 +22566,18 @@ define('bui/calendar/panel',function (require) {
         _self.get('view')._setSelectedDate(date);
         _self.fire('selectedchange',{date:date});
       } 
+    },
+    //\u8bbe\u7f6e\u6700\u65e5\u671f
+    _uiSetMaxDate : function(v){
+      if(v){
+        this.get('view').updatePanel();
+      }
+    },
+    //\u8bbe\u7f6e\u6700\u5c0f\u65e5\u671f
+    _uiSetMinDate : function(v){
+      if(v){
+        this.get('view').updatePanel();
+      }
     }
   },{
     ATTRS:
@@ -22608,6 +22638,36 @@ define('bui/calendar/panel',function (require) {
            * @param {Date} e.date
            */
           'selectedchange' : false
+        }
+      },
+      /**
+       * \u6700\u5c0f\u65e5\u671f
+       * @type {Date | String}
+       */
+      maxDate : {
+        view : true,
+        setter : function(val){
+          if(val){
+            if(BUI.isString(val)){
+              return DateUtil.parse(val);
+            }
+            return val;
+          }
+        }
+      },
+      /**
+       * \u6700\u5c0f\u65e5\u671f
+       * @type {Date | String}
+       */
+      minDate : {
+        view : true,
+        setter : function(val){
+          if(val){
+            if(BUI.isString(val)){
+              return DateUtil.parse(val);
+            }
+            return val;
+          }
         }
       },
       /**
@@ -22915,6 +22975,16 @@ define('bui/calendar/calendar',function(require){
     },
     _uiSetSecond : function(v){
       setTimeUnit(this,CLS_PICKER_SECOND,v);
+    },
+    //\u8bbe\u7f6e\u6700\u5927\u503c
+    _uiSetMaxDate : function(v){
+      var _self = this;
+      _self.get('panel').set('maxDate',v);
+    },
+    //\u8bbe\u7f6e\u6700\u5c0f\u503c
+    _uiSetMinDate : function(v){
+      var _self = this;
+      _self.get('panel').set('minDate',v);
     }
 
   },{
@@ -22939,6 +23009,20 @@ define('bui/calendar/calendar',function(require){
        * @type {Object}
        */
       panel:{
+
+      },
+      /**
+       * \u6700\u5927\u65e5\u671f
+       * @type {Date}
+       */
+      maxDate : {
+
+      },
+      /**
+       * \u6700\u5c0f\u65e5\u671f
+       * @type {Date}
+       */
+      minDate : {
 
       },
       /**
@@ -23134,6 +23218,16 @@ define('bui/calendar/datepicker',function(require){
         return 'yyyy-mm-dd HH:MM:ss';
       }
       return 'yyyy-mm-dd';
+    },
+    //\u8bbe\u7f6e\u6700\u5927\u503c
+    _uiSetMaxDate : function(v){
+      var _self = this;
+      _self.get('calendar').set('maxDate',v);
+    },
+    //\u8bbe\u7f6e\u6700\u5c0f\u503c
+    _uiSetMinDate : function(v){
+      var _self = this;
+      _self.get('calendar').set('minDate',v);
     }
 
   },{
@@ -23143,8 +23237,26 @@ define('bui/calendar/datepicker',function(require){
      * @ignore
      */
     {
+      /**
+       * \u662f\u5426\u663e\u793a\u65e5\u671f
+       * @type {Boolean}
+       */
       showTime : {
         value:false
+      },
+      /**
+       * \u6700\u5927\u65e5\u671f
+       * @type {Date}
+       */
+      maxDate : {
+
+      },
+      /**
+       * \u6700\u5c0f\u65e5\u671f
+       * @type {Date}
+       */
+      minDate : {
+
       },
       changeEvent:{
         value:'accept'

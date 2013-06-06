@@ -47,8 +47,8 @@
 </div>
     
     </div>
-    
- </div>   
+    <div id="c6"></div>
+ </div>    
     
     <?php $url = 'bui/calendar'?>
     <?php include("./templates/script.php"); ?>

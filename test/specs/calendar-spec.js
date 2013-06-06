@@ -127,6 +127,7 @@ BUI.use('bui/calendar/panel',function (Panel) {
     });
 
   });
+
 });
 
 
@@ -223,6 +224,58 @@ BUI.use('bui/calendar/calendar',function(Calendar){
       var equals = DateUtil.isDateEquals(panel.get('selected'),today());
       expect(equals).toBeTruthy();
     });
+  });
+});
+
+BUI.use('bui/calendar/calendar',function(Calendar){
+
+  var calendar = new Calendar({
+    render:'#c6',
+    minDate : '2010-01-01',
+    maxDate : '2013-06-06'
+  }),
+  DateUtil = BUI.Date;
+  calendar.render();
+ 
+  var el = calendar.get('el'),
+    header = calendar.get('header'),
+    panel = calendar.get('panel'),
+    pview = panel.get('view');
+
+  describe('测试日期范围',function(){
+
+    it('测试日期范围内的日期',function(){
+      var itemEl = pview._findDateElement(new Date('2013/06/06'));
+      expect(itemEl.hasClass('x-datepicker-disabled')).toBe(false);
+    });
+
+    it('测试日期范围外的日期',function(){
+      var itemEl = pview._findDateElement(new Date('2013/06/07'));
+      expect(itemEl.hasClass('x-datepicker-disabled')).toBe(true);
+    });
+
+    it('测试日期最小值外的日期',function(){
+      panel.set('selected',new Date('2010/01/01'));
+      var itemEl = pview._findDateElement(new Date('2009/12/31'));
+      expect(itemEl.hasClass('x-datepicker-disabled')).toBe(true);
+
+      var itemEl = pview._findDateElement(new Date('2010/01/02'));
+      expect(itemEl.hasClass('x-datepicker-disabled')).toBe(false);
+    });
+
+    it('更改最小值',function(){
+      calendar.set('minDate','2010-10-06');
+      var itemEl = pview._findDateElement(new Date('2010/01/02'));
+      expect(itemEl.hasClass('x-datepicker-disabled')).toBe(true);
+    });
+
+    it('更改最大值',function(){
+       calendar.set('maxDate','2013-06-10');
+      panel.set('selected',new Date('2013/06/13'));
+      var itemEl = pview._findDateElement(new Date('2013/06/07'));
+      expect(itemEl.hasClass('x-datepicker-disabled')).toBe(false);
+    });
+
   });
 });
 

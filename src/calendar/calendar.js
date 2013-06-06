@@ -268,6 +268,16 @@ define('bui/calendar/calendar',function(require){
     },
     _uiSetSecond : function(v){
       setTimeUnit(this,CLS_PICKER_SECOND,v);
+    },
+    //设置最大值
+    _uiSetMaxDate : function(v){
+      var _self = this;
+      _self.get('panel').set('maxDate',v);
+    },
+    //设置最小值
+    _uiSetMinDate : function(v){
+      var _self = this;
+      _self.get('panel').set('minDate',v);
     }
 
   },{
@@ -292,6 +302,20 @@ define('bui/calendar/calendar',function(require){
        * @type {Object}
        */
       panel:{
+
+      },
+      /**
+       * 最大日期
+       * @type {Date}
+       */
+      maxDate : {
+
+      },
+      /**
+       * 最小日期
+       * @type {Date}
+       */
+      minDate : {
 
       },
       /**

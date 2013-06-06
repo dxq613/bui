@@ -74,6 +74,16 @@ define('bui/calendar/datepicker',function(require){
         return 'yyyy-mm-dd HH:MM:ss';
       }
       return 'yyyy-mm-dd';
+    },
+    //设置最大值
+    _uiSetMaxDate : function(v){
+      var _self = this;
+      _self.get('calendar').set('maxDate',v);
+    },
+    //设置最小值
+    _uiSetMinDate : function(v){
+      var _self = this;
+      _self.get('calendar').set('minDate',v);
     }
 
   },{
@@ -83,8 +93,26 @@ define('bui/calendar/datepicker',function(require){
      * @ignore
      */
     {
+      /**
+       * 是否显示日期
+       * @type {Boolean}
+       */
       showTime : {
         value:false
+      },
+      /**
+       * 最大日期
+       * @type {Date}
+       */
+      maxDate : {
+
+      },
+      /**
+       * 最小日期
+       * @type {Date}
+       */
+      minDate : {
+
       },
       changeEvent:{
         value:'accept'

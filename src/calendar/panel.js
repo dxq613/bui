@@ -17,7 +17,8 @@ define('bui/calendar/panel',function (require) {
     SHOW_WEEKS = 6,//当前容器显示6周
     dateTypes = {
       deactive : 'prevday',
-      active : 'active'
+      active : 'active',
+      disabled : 'disabled'
     },
     weekDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
@@ -78,7 +79,8 @@ define('bui/calendar/panel',function (require) {
         dayOfWeek = weekDays[day],
         dateNumber = date.getDate(),
         //不是本月则处于不活动状态
-        dateType = _self._isCurrentMonth(date) ? dateTypes.active : dateTypes.deactive;
+        //不在指定的最大最小范围内，禁止选中
+        dateType = _self._isInRange(date) ? (_self._isCurrentMonth(date) ? dateTypes.active : dateTypes.deactive) : dateTypes.disabled;
 
       return BUI.substitute(dayTpl,{
         dayOfWeek : dayOfWeek,
@@ -111,6 +113,20 @@ define('bui/calendar/panel',function (require) {
       var tody = new Date();
       return tody.getFullYear() === date.getFullYear() && tody.getMonth() === date.getMonth() && tody.getDate() === date.getDate();
     },
+    //是否在允许的范围内
+    _isInRange : function(date){
+      var _self = this,
+        maxDate = _self.get('maxDate'),
+        minDate = _self.get('minDate');
+
+      if(minDate && date < minDate){
+        return false;
+      }
+      if(maxDate && date > maxDate){
+        return false;
+      }
+      return true;
+    },
     //清除选中的日期
     _clearSelectedDate : function(){
       var _self = this;
@@ -120,7 +136,7 @@ define('bui/calendar/panel',function (require) {
     _findDateElement : function(date){
       var _self = this,
         dateStr = DateUtil.format(date,DATE_MASK),
-        activeList = _self.get('el').find('.' + CLS_ACTIVE),
+        activeList = _self.get('el').find('.' + CLS_DATE),
         result = null;
       if(dateStr){
         activeList.each(function(index,item){
@@ -199,7 +215,9 @@ define('bui/calendar/panel',function (require) {
         var date = sender.attr('title');
         if(date){
           date = DateUtil.parse(date);
-          _self.set('selected',date);
+          if(_self.get('view')._isInRange(date)){
+            _self.set('selected',date);
+          }
           //_self.fire('click',{date:date});
         }
       }
@@ -230,6 +248,18 @@ define('bui/calendar/panel',function (require) {
         _self.get('view')._setSelectedDate(date);
         _self.fire('selectedchange',{date:date});
       } 
+    },
+    //设置最日期
+    _uiSetMaxDate : function(v){
+      if(v){
+        this.get('view').updatePanel();
+      }
+    },
+    //设置最小日期
+    _uiSetMinDate : function(v){
+      if(v){
+        this.get('view').updatePanel();
+      }
     }
   },{
     ATTRS:
@@ -290,6 +320,36 @@ define('bui/calendar/panel',function (require) {
            * @param {Date} e.date
            */
           'selectedchange' : false
+        }
+      },
+      /**
+       * 最小日期
+       * @type {Date | String}
+       */
+      maxDate : {
+        view : true,
+        setter : function(val){
+          if(val){
+            if(BUI.isString(val)){
+              return DateUtil.parse(val);
+            }
+            return val;
+          }
+        }
+      },
+      /**
+       * 最小日期
+       * @type {Date | String}
+       */
+      minDate : {
+        view : true,
+        setter : function(val){
+          if(val){
+            if(BUI.isString(val)){
+              return DateUtil.parse(val);
+            }
+            return val;
+          }
         }
       },
       /**

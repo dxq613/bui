@@ -1290,12 +1290,12 @@ table.x-datepicker-inner th span {
   border: 1px solid #ffffff;
 }
 .x-datepicker-prevday a,
-.x-datepicker-nextday a {
+.x-datepicker-nextday a,
+.x-datepicker-disabled a {
   text-decoration: none!important;
-  color: #AAA;
+  color: #aaaaaa;
 }
-.x-datepicker-date a:hover,
-.x-datepicker-disabled a:hover {
+.x-datepicker-date a:hover {
   text-decoration: none!important;
   color: #333333;
   background-color: #dee5ff;
@@ -1315,6 +1315,11 @@ table.x-datepicker-inner th span {
 .x-datepicker-active {
   cursor: pointer;
   color: #333333;
+}
+.x-datepicker-disabled a:hover {
+  color: #aaaaaa;
+  border-color: #ffffff;
+  background: none;
 }
 .x-datepicker-selected a {
   background: repeat-x left top;
