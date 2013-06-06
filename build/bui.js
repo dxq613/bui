@@ -14957,11 +14957,23 @@ define('bui/form/datefield',function (require) {
     isCurrentValue : function (value) {
       return DateUtil.isEquals(value,this.get('value'));
     },
+    //\u8bbe\u7f6e\u6700\u5927\u503c
     _uiSetMax : function(v){
       this.addRule('max',v);
+      var _self = this,
+        datePicker = _self.get('datePicker');
+      if(datePicker && datePicker.set){
+        datePicker.set('maxDate',v);
+      }
     },
-    _uiSetMin : function(){
+    //\u8bbe\u7f6e\u6700\u5c0f\u503c
+    _uiSetMin : function(v){
       this.addRule('min',v);
+      var _self = this,
+        datePicker = _self.get('datePicker');
+      if(datePicker && datePicker.set){
+        datePicker.set('minDate',v);
+      }
     }
   },{
     ATTRS : {

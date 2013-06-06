@@ -89,11 +89,23 @@ define('bui/form/datefield',function (require) {
     isCurrentValue : function (value) {
       return DateUtil.isEquals(value,this.get('value'));
     },
+    //设置最大值
     _uiSetMax : function(v){
       this.addRule('max',v);
+      var _self = this,
+        datePicker = _self.get('datePicker');
+      if(datePicker && datePicker.set){
+        datePicker.set('maxDate',v);
+      }
     },
-    _uiSetMin : function(){
+    //设置最小值
+    _uiSetMin : function(v){
       this.addRule('min',v);
+      var _self = this,
+        datePicker = _self.get('datePicker');
+      if(datePicker && datePicker.set){
+        datePicker.set('minDate',v);
+      }
     }
   },{
     ATTRS : {

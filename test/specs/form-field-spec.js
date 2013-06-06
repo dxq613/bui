@@ -328,8 +328,8 @@ BUI.use('bui/form/datefield',function  (DateField) {
       datePicker : {
         showTime : true
       },
-      //min : new Date('2012-12-01'),
-      //max : new Date('2013-01-01'),
+      min : new Date('2012/12/01'),
+      max : new Date('2013/01/01'),
       value : date,
       controlContainer : '.controls',
       errorTpl : '<span class="valid-text"><span class="estate error"><span class="x-icon x-icon-mini x-icon-error">!</span><em>{error}</em></span></span>',
