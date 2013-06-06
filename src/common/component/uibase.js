@@ -24,6 +24,7 @@ define('bui/component/uibase',function(require){
     Decorate : require('bui/component/uibase/decorate'),
     Tpl : require('bui/component/uibase/tpl'),
     ChildCfg : require('bui/component/uibase/childcfg'),
+    Bindable : require('bui/component/uibase/bindable'),
     Depends : require('bui/component/uibase/depends')
   });
 

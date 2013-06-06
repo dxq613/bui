@@ -4025,6 +4025,7 @@ define('bui/component/uibase',function(require){
     Decorate : require('bui/component/uibase/decorate'),
     Tpl : require('bui/component/uibase/tpl'),
     ChildCfg : require('bui/component/uibase/childcfg'),
+    Bindable : require('bui/component/uibase/bindable'),
     Depends : require('bui/component/uibase/depends')
   });
 
@@ -8680,6 +8681,163 @@ define('bui/component/uibase/depends',function (require) {
   
   return Depends;
 });/**
+ * @fileOverview bindable extension class.
+ * @author dxq613@gmail.com
+ * @ignore
+ */
+define('bui/component/uibase/bindable',function(){
+	
+	/**
+		* bindable extension class.
+		* \u4f7f\u63a7\u4ef6\u7ed1\u5b9astore\uff0c\u5904\u7406store\u7684\u4e8b\u4ef6 {@link BUI.Data.Store}
+		* @class BUI.Component.UIBase.Bindable
+		*/
+	function bindable(){
+		
+	}
+
+	bindable.ATTRS = 
+	{
+		/**
+		* \u7ed1\u5b9a {@link BUI.Data.Store}\u7684\u4e8b\u4ef6
+		* @cfg {BUI.Data.Store} store
+		*/
+		/**
+		* \u7ed1\u5b9a {@link BUI.Data.Store}\u7684\u4e8b\u4ef6
+		* @type {BUI.Data.Store}
+		*/
+		store : {
+			
+		},
+		/**
+		* \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u662f\u5426\u663e\u793a\u7b49\u5f85\u52a0\u8f7d\u7684\u5c4f\u853d\u5c42
+		* @cfg {Boolean|Object} loadMask
+		*/
+		/**
+		* \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u662f\u5426\u663e\u793a\u7b49\u5f85\u52a0\u8f7d\u7684\u5c4f\u853d\u5c42
+		* @type {Boolean|Object} 
+		*/
+		loadMask : {
+			value : false
+		}
+	};
+
+
+	BUI.augment(bindable,
+	/**
+	* @lends BUI.Data.Bindable.prototype
+	* @ignore
+	*/	
+	{
+
+		__bindUI : function(){
+			var _self = this,
+				store = _self.get('store'),
+				loadMask = _self.get('loadMask');
+			if(!store){
+				return;
+			}
+			store.on('beforeload',function(){
+				if(loadMask && loadMask.show){
+					loadMask.show();
+				}
+			});
+			store.on('load',function(e){
+				_self.onLoad(e);
+				if(loadMask && loadMask.hide){
+					loadMask.hide();
+				}
+			});
+			store.on('exception',function(e){
+				_self.onException(e);
+			});
+			store.on('add',function(e){
+				_self.onAdd(e);
+			});
+			store.on('remove',function(e){
+				_self.onRemove(e);
+			});
+			store.on('update',function(e){
+				_self.onUpdate(e);
+			});
+			store.on('localsort',function(e){
+				_self.onLocalSort(e);
+			});
+		},
+		__syncUI : function(){
+			var _self = this,
+				store = _self.get('store');
+			if(!store){
+				return;
+			}
+			if(store.get('autoLoad') && store.hasData()){
+				_self.onLoad();
+			}
+		},
+		/**
+		* @protected
+    * @template
+		* after store load data
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-load}
+		*/
+		onLoad : function(e){
+			
+		},
+		/**
+		* @protected
+    * @template
+		* occurred exception when store is loading data
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-exception}
+		*/
+		onException : function(e){
+			
+		},
+		/**
+		* @protected
+    * @template
+		* after added data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-add}
+		*/
+		onAdd : function(e){
+		
+		},
+		/**
+		* @protected
+    * @template
+		* after remvoed data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-remove}
+		*/
+		onRemove : function(e){
+		
+		},
+		/**
+		* @protected
+    * @template
+		* after updated data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-update}
+		*/
+		onUpdate : function(e){
+		
+		},
+		/**
+		* @protected
+    * @template
+		* after local sorted data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-localsort}
+		*/
+		onLocalSort : function(e){
+			
+		}
+	});
+
+	return bindable;
+});/**
  * @fileOverview  \u63a7\u4ef6\u7684\u89c6\u56fe\u5c42
  * @author yiminghe@gmail.com
  * copied by dxq613@gmail.com
@@ -10506,8 +10664,7 @@ define('bui/data',function(require) {
     AbstractStore : require('bui/data/abstractstore'),
     Store : require('bui/data/store'),
     Node : require('bui/data/node'),
-    TreeStore : require('bui/data/treestore'),
-    Bindable : require('bui/data/bindable')
+    TreeStore : require('bui/data/treestore')
   });
 
   return Data;
@@ -12221,166 +12378,6 @@ define('bui/data/store',function(require) {
 
   return store;
 });/**
- * @fileOverview bindable extension class.
- * @author dxq613@gmail.com
- * @ignore
- */
-define('bui/data/bindable',function(){
-	/**
-		* bindable extension class.
-		* \u4f7f\u63a7\u4ef6\u7ed1\u5b9astore\uff0c\u5904\u7406store\u7684\u4e8b\u4ef6 {@link BUI.Data.Store}
-		* @class BUI.Data.Bindable
-		*/
-	function bindable(){
-		
-	}
-
-	bindable.ATTRS = 
-	/**
-	 * @lends BUI.Data.Bindable#
-	 * @ignore
-	 */
-	{
-		/**
-		* \u7ed1\u5b9a {@link BUI.Data.Store}\u7684\u4e8b\u4ef6
-		* @cfg {BUI.Data.Store} store
-		*/
-		/**
-		* \u7ed1\u5b9a {@link BUI.Data.Store}\u7684\u4e8b\u4ef6
-		* @type {BUI.Data.Store}
-		*/
-		store : {
-			
-		},
-		/**
-		* \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u662f\u5426\u663e\u793a\u7b49\u5f85\u52a0\u8f7d\u7684\u5c4f\u853d\u5c42
-		* @cfg {Boolean|Object} loadMask
-		*/
-		/**
-		* \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u662f\u5426\u663e\u793a\u7b49\u5f85\u52a0\u8f7d\u7684\u5c4f\u853d\u5c42
-		* @type {Boolean|Object} 
-		*/
-		loadMask : {
-			value : false
-		}
-	};
-
-
-	BUI.augment(bindable,
-	/**
-	* @lends BUI.Data.Bindable.prototype
-	* @ignore
-	*/	
-	{
-
-		__bindUI : function(){
-			var _self = this,
-				store = _self.get('store'),
-				loadMask = _self.get('loadMask');
-			if(!store){
-				return;
-			}
-			store.on('beforeload',function(){
-				if(loadMask && loadMask.show){
-					loadMask.show();
-				}
-			});
-			store.on('load',function(e){
-				_self.onLoad(e);
-				if(loadMask && loadMask.hide){
-					loadMask.hide();
-				}
-			});
-			store.on('exception',function(e){
-				_self.onException(e);
-			});
-			store.on('add',function(e){
-				_self.onAdd(e);
-			});
-			store.on('remove',function(e){
-				_self.onRemove(e);
-			});
-			store.on('update',function(e){
-				_self.onUpdate(e);
-			});
-			store.on('localsort',function(e){
-				_self.onLocalSort(e);
-			});
-		},
-		__syncUI : function(){
-			var _self = this,
-				store = _self.get('store');
-			if(!store){
-				return;
-			}
-			if(store.get('autoLoad') && store.hasData()){
-				_self.onLoad();
-			}
-		},
-		/**
-		* @protected
-    * @template
-		* after store load data
-		* @param {Object} e The event object
-		* @see {@link BUI.Data.Store#event-load}
-		*/
-		onLoad : function(e){
-			
-		},
-		/**
-		* @protected
-    * @template
-		* occurred exception when store is loading data
-		* @param {Object} e The event object
-		* @see {@link BUI.Data.Store#event-exception}
-		*/
-		onException : function(e){
-			
-		},
-		/**
-		* @protected
-    * @template
-		* after added data to store
-		* @param {Object} e The event object
-		* @see {@link BUI.Data.Store#event-add}
-		*/
-		onAdd : function(e){
-		
-		},
-		/**
-		* @protected
-    * @template
-		* after remvoed data to store
-		* @param {Object} e The event object
-		* @see {@link BUI.Data.Store#event-remove}
-		*/
-		onRemove : function(e){
-		
-		},
-		/**
-		* @protected
-    * @template
-		* after updated data to store
-		* @param {Object} e The event object
-		* @see {@link BUI.Data.Store#event-update}
-		*/
-		onUpdate : function(e){
-		
-		},
-		/**
-		* @protected
-    * @template
-		* after local sorted data to store
-		* @param {Object} e The event object
-		* @see {@link BUI.Data.Store#event-localsort}
-		*/
-		onLocalSort : function(e){
-			
-		}
-	});
-
-	return bindable;
-});/**
  * @fileOverview Overlay \u6a21\u5757\u7684\u5165\u53e3
  * @ignore
  */
@@ -13245,7 +13242,6 @@ define('bui/list/simplelist',function (require) {
    * @ignore
    */
   var UIBase = BUI.Component.UIBase,
-    Data = require('bui/data'),
     CLS_ITEM = BUI.prefix + 'list-item';
   
   /**
@@ -13282,9 +13278,9 @@ define('bui/list/simplelist',function (require) {
    * @class BUI.List.SimpleList
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.DomList
-   * @mixins BUI.Data.Bindable
+   * @mixins BUI.Component.UIBase.Bindable
    */
-  var  simpleList = BUI.Component.Controller.extend([UIBase.DomList,Data.Bindable],
+  var  simpleList = BUI.Component.Controller.extend([UIBase.DomList,UIBase.Bindable],
   /**
    * @lends BUI.List.SimpleList.prototype
    * @ignore
@@ -16393,7 +16389,7 @@ define('bui/form/group/check',function (require) {
 
 define('bui/form/group/select',function (require) {
   var Group = require('bui/form/group/base'),
-    Data = require('bui/data');
+    Bindable = BUI.Component.UIBase.Bindable;
   
   function getItems(nodes){
     var items = [];
@@ -16412,7 +16408,7 @@ define('bui/form/group/select',function (require) {
    * @extends BUI.Form.Group
    * @mixins BUI.Data.Bindable
    */
-  var Select = Group.extend([Data.Bindable],{
+  var Select = Group.extend([Bindable],{
     initializer : function(){
       var _self = this,
         url = _self.get('url'),
@@ -20901,10 +20897,9 @@ define('bui/toolbar/bar',function(){
  */
 define('bui/toolbar/pagingbar',function(require) {
 
-    var Data = require('bui/data'),
-        Bar = require('bui/toolbar/bar'),
+    var Bar = require('bui/toolbar/bar'),
         Component = BUI.Component,
-        Bindable = Data.Bindable;
+        Bindable = Component.UIBase.Bindable;
 
     var PREFIX = BUI.prefix,
 		ID_FIRST = 'first',
@@ -20920,7 +20915,7 @@ define('bui/toolbar/pagingbar',function(require) {
      * \u5206\u9875\u680f
      * xclass:'pagingbar'
      * @extends BUI.Toolbar.Bar
-     * @mixins BUI.Data.Bindable
+     * @mixins BUI.Component.UIBase.Bindable
      * @class BUI.Toolbar.PagingBar
      */
     var PagingBar = Bar.extend([Bindable],

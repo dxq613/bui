@@ -2740,7 +2740,7 @@ define('bui/form/group/check',function (require) {
 
 define('bui/form/group/select',function (require) {
   var Group = require('bui/form/group/base'),
-    Data = require('bui/data');
+    Bindable = BUI.Component.UIBase.Bindable;
   
   function getItems(nodes){
     var items = [];
@@ -2759,7 +2759,7 @@ define('bui/form/group/select',function (require) {
    * @extends BUI.Form.Group
    * @mixins BUI.Data.Bindable
    */
-  var Select = Group.extend([Data.Bindable],{
+  var Select = Group.extend([Bindable],{
     initializer : function(){
       var _self = this,
         url = _self.get('url'),

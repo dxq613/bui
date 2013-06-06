@@ -13,8 +13,7 @@ define('bui/data',function(require) {
     AbstractStore : require('bui/data/abstractstore'),
     Store : require('bui/data/store'),
     Node : require('bui/data/node'),
-    TreeStore : require('bui/data/treestore'),
-    Bindable : require('bui/data/bindable')
+    TreeStore : require('bui/data/treestore')
   });
 
   return Data;

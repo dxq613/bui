@@ -370,10 +370,9 @@ define('bui/toolbar/bar',function(){
  */
 define('bui/toolbar/pagingbar',function(require) {
 
-    var Data = require('bui/data'),
-        Bar = require('bui/toolbar/bar'),
+    var Bar = require('bui/toolbar/bar'),
         Component = BUI.Component,
-        Bindable = Data.Bindable;
+        Bindable = Component.UIBase.Bindable;
 
     var PREFIX = BUI.prefix,
 		ID_FIRST = 'first',
@@ -389,7 +388,7 @@ define('bui/toolbar/pagingbar',function(require) {
      * 分页栏
      * xclass:'pagingbar'
      * @extends BUI.Toolbar.Bar
-     * @mixins BUI.Data.Bindable
+     * @mixins BUI.Component.UIBase.Bindable
      * @class BUI.Toolbar.PagingBar
      */
     var PagingBar = Bar.extend([Bindable],

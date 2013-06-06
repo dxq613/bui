@@ -3,21 +3,18 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/data/bindable',function(){
+define('bui/component/uibase/bindable',function(){
+	
 	/**
 		* bindable extension class.
 		* 使控件绑定store，处理store的事件 {@link BUI.Data.Store}
-		* @class BUI.Data.Bindable
+		* @class BUI.Component.UIBase.Bindable
 		*/
 	function bindable(){
 		
 	}
 
 	bindable.ATTRS = 
-	/**
-	 * @lends BUI.Data.Bindable#
-	 * @ignore
-	 */
 	{
 		/**
 		* 绑定 {@link BUI.Data.Store}的事件

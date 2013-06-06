@@ -33,7 +33,6 @@ define('bui/list/simplelist',function (require) {
    * @ignore
    */
   var UIBase = BUI.Component.UIBase,
-    Data = require('bui/data'),
     CLS_ITEM = BUI.prefix + 'list-item';
   
   /**
@@ -70,9 +69,9 @@ define('bui/list/simplelist',function (require) {
    * @class BUI.List.SimpleList
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.DomList
-   * @mixins BUI.Data.Bindable
+   * @mixins BUI.Component.UIBase.Bindable
    */
-  var  simpleList = BUI.Component.Controller.extend([UIBase.DomList,Data.Bindable],
+  var  simpleList = BUI.Component.Controller.extend([UIBase.DomList,UIBase.Bindable],
   /**
    * @lends BUI.List.SimpleList.prototype
    * @ignore

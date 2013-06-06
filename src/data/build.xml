@@ -27,7 +27,6 @@
 			<path path="node.js"/>
 			<path path="treestore.js"/>
 			<path path="store.js"/>
-			<path path="bindable.js"/>
 		</concat>
     </target>
 
