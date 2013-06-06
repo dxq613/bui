@@ -7680,13 +7680,26 @@ define('bui/component/uibase/list',function (require) {
       return this._createItem(item,index);;
     },
     /**
+     * 获取所有的记录
+     * @return {Array} 记录集合
+     */
+    getItems : function(){
+      var _self = this,
+        elements = _self.getAllElements(),
+        rst = [];
+      BUI.each(elements,function(elem){
+        rst.push(_self.getItemByElement(elem));
+      });
+      return rst;
+    },
+    /**
      * 更新列表项
      * @protected
      * @param  {Object} item 选项值
      */
     updateItem : function(item){
       var _self = this, 
-        items = _self.get('items'),
+        items = _self.getItems(),
         index = BUI.Array.indexOf(item,items),
         element = null,
         tpl;

@@ -1507,7 +1507,7 @@ define('bui/grid/grid',function (require) {
      */
     updateItem : function(record){
       var _self = this, 
-        items = _self.get('items'),
+        items = _self.getItems(),
         index = BUI.Array.indexOf(record,items),
         columns = _self._getColumns(),
         element = null,

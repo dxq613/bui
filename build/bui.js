@@ -7680,13 +7680,26 @@ define('bui/component/uibase/list',function (require) {
       return this._createItem(item,index);;
     },
     /**
+     * \u83b7\u53d6\u6240\u6709\u7684\u8bb0\u5f55
+     * @return {Array} \u8bb0\u5f55\u96c6\u5408
+     */
+    getItems : function(){
+      var _self = this,
+        elements = _self.getAllElements(),
+        rst = [];
+      BUI.each(elements,function(elem){
+        rst.push(_self.getItemByElement(elem));
+      });
+      return rst;
+    },
+    /**
      * \u66f4\u65b0\u5217\u8868\u9879
      * @protected
      * @param  {Object} item \u9009\u9879\u503c
      */
     updateItem : function(item){
       var _self = this, 
-        items = _self.get('items'),
+        items = _self.getItems(),
         index = BUI.Array.indexOf(item,items),
         element = null,
         tpl;
@@ -24667,7 +24680,7 @@ define('bui/grid/grid',function (require) {
      */
     updateItem : function(record){
       var _self = this, 
-        items = _self.get('items'),
+        items = _self.getItems(),
         index = BUI.Array.indexOf(record,items),
         columns = _self._getColumns(),
         element = null,
