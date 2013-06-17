@@ -3012,6 +3012,7 @@ define('bui/component/uibase/base',function(require){
 
 define('bui/component/uibase/align',function (require) {
     var UA = require('bui/ua'),
+        CLS_ALIGN_PREFIX ='x-align-',
         win = window;
 
     // var ieMode = document.documentMode || UA.ie;
@@ -3307,12 +3308,31 @@ define('bui/component/uibase/align',function (require) {
         return { left:x, top:y };
     }
 
+    //清除对齐的css样式
+    function clearAlignCls(el){
+        var cls = el.attr('class'),
+            regex = new RegExp('\s?'+CLS_ALIGN_PREFIX+'[a-z]{2}-[a-z]{2}','ig'),
+            arr = regex.exec(cls);
+        if(arr){
+            el.removeClass(arr.join(' '));
+        }
+    }
+
     Align.prototype =
     {
-        _uiSetAlign:function (v) {
+        _uiSetAlign:function (v,ev) {
+            var alignCls = '',
+                el,   
+                selfAlign; //points 的第二个参数，是自己对齐于其他节点的的方式
             if (v && v.points) {
                 this.align(v.node, v.points, v.offset, v.overflow);
                 this.set('cachePosition',null);
+                el = this.get('el');
+                clearAlignCls(el);
+                selfAlign = v.points.join('-');
+                alignCls = CLS_ALIGN_PREFIX + selfAlign;
+                el.addClass(alignCls);
+                /**/
             }
         },
 
@@ -3455,15 +3475,26 @@ define('bui/component/uibase/autoshow',function () {
 
   autoShow.ATTRS = {
     /**
-     * 触发显示菜单的DOM选择器
+     * 触发显示控件的DOM选择器
      * @cfg {HTMLElement|String|jQuery} trigger
      */
     /**
-     * 触发显示菜单的DOM选择器
+     * 触发显示控件的DOM选择器
      * @type {HTMLElement|String|jQuery}
      */
     trigger : {
 
+    },
+    /**
+     * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
+     * @cfg {Boolean} delegateTigger
+     */
+    /**
+     * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
+     * @type {Boolean}
+     */
+    delegateTigger : {
+      value : false
     },
     /**
      * 选择器是否始终跟随触发器对齐
@@ -3546,36 +3577,52 @@ define('bui/component/uibase/autoshow',function () {
         triggerEvent = _self.get('triggerEvent'),
         triggerHideEvent = _self.get('triggerHideEvent'),
         triggerCallback = _self.get('triggerCallback'),
-        
-        triggerEl = $(_self.get('trigger'));
+        trigger = _self.get('trigger'),
+        isDelegate = _self.get('delegateTigger'),
+        triggerEl = $(trigger);
+
+      //触发显示
+      function tiggerShow (ev) {
+        var prevTrigger = _self.get('curTrigger'),
+          curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
+          align = _self.get('align');
+        if(!prevTrigger || prevTrigger[0] != curTrigger[0]){
+
+          _self.set('curTrigger',curTrigger);
+          _self.fire('triggerchange',{prevTrigger : prevTrigger,curTrigger : curTrigger});
+        }
+        if(_self.get('autoAlign')){
+          align.node = this;
+          
+        }
+        _self.set('align',align);
+        _self.show();
+        triggerCallback && triggerCallback(ev);
+      }
+
+      //触发隐藏
+      function tiggerHide (ev){
+        var toElement = ev.toElement;
+        if(!toElement || !_self.containsElement(toElement)){ //mouseleave时，如果移动到当前控件上，取消消失
+          _self.hide();
+        }
+      }
 
       if(triggerEvent){
-        triggerEl.on(triggerEvent,function (ev) {
-          var prevTrigger = _self.get('curTrigger'),
-            curTrigger = $(this),
-            align = _self.get('align');
-          if(!prevTrigger || prevTrigger[0] != curTrigger[0]){
-
-            _self.set('curTrigger',curTrigger);
-            _self.fire('triggerchange',{prevTrigger : prevTrigger,curTrigger : curTrigger});
-          }
-          if(_self.get('autoAlign')){
-            align.node = this;
-            
-          }
-          _self.set('align',align);
-          _self.show();
-          triggerCallback && triggerCallback(ev);
-        });
+        if(isDelegate && BUI.isString(trigger)){
+          $(document).delegate(trigger,triggerEvent,tiggerShow);
+        }else{
+          triggerEl.on(triggerEvent,tiggerShow);
+        }
+        
       }
 
       if(triggerHideEvent){
-        triggerEl.on(triggerHideEvent,function (ev) {
-          var toElement = ev.toElement;
-          if(!toElement || !_self.containsElement(toElement)){ //mouseleave时，如果移动到当前控件上，取消消失
-            _self.hide();
-          }
-        });
+        if(isDelegate && BUI.isString(trigger)){
+          $(document).delegate(trigger,triggerHideEvent,tiggerHide);
+        }else{
+          triggerEl.on(triggerHideEvent,tiggerHide);
+        }
       } 
     },
     __renderUI : function () {
@@ -3694,22 +3741,30 @@ define('bui/component/uibase/autohide',function () {
     },
     _bindHideEvent : function() {
       var _self = this,
+        trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
         $(document).on('mousedown',wrapBehavior(this,'handleDocumentClick'));
       }else{
         _self.get('el').on('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        if(trigger){
+          $(trigger).on('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+        }
       }
 
     },
     //清除绑定的隐藏事件
     _clearHideEvent : function() {
       var _self = this,
+        trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
         $(document).off('mousedown',getWrapBehavior(this,'handleDocumentClick'));
       }else{
         _self.get('el').off('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        if(trigger){
+          $(trigger).off('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+        }
       }
     }
   };
@@ -4695,7 +4750,10 @@ define('bui/component/uibase/position',function () {
                 var _self = this,
                     el = _self.get('el');
                 _self.setInternal('left',el.position().left);
-                this.set('cachePosition',null);
+                if(v != -999){
+                    this.set('cachePosition',null);
+                }
+                
             }
             
         },
@@ -4705,7 +4763,9 @@ define('bui/component/uibase/position',function () {
                 var _self = this,
                     el = _self.get('el');
                 _self.setInternal('top',el.position().top);
-                this.set('cachePosition',null);
+                if(v != -999){
+                    this.set('cachePosition',null);
+                }
             }
         },
         //设置 left时，重置 x

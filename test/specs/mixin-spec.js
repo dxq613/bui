@@ -21,8 +21,9 @@ BUI.use('bui/common',function(){
       }
     }
   });
+  /*  */
   describe("测试Position",function(){
-    /*  */
+    
     var config = {
         x : 100,
         y : 100,
@@ -92,6 +93,7 @@ BUI.use('bui/common',function(){
   
   });
 
+
   describe('测试拖拽',function(){
      var node = $('#t1'),
         offset = node.offset(),
@@ -113,7 +115,7 @@ BUI.use('bui/common',function(){
       expect(el.position().left).toBe(-999);
     });
 
-     it('测试显示',function(){
+    it('测试显示',function(){
       c.set('visible',true);
       expect(el.position().left).not.toBe(-999);
     });
@@ -121,7 +123,7 @@ BUI.use('bui/common',function(){
   });
 
 });
-
+/**/
 BUI.use('bui/overlay',function(Overlay){
   var overlay = new Overlay.Overlay({
     align : {
@@ -146,4 +148,3 @@ BUI.use('bui/overlay',function(Overlay){
     overlay.hide();
   });
 });
-/**/

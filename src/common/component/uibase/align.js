@@ -8,6 +8,7 @@
 
 define('bui/component/uibase/align',function (require) {
     var UA = require('bui/ua'),
+        CLS_ALIGN_PREFIX ='x-align-',
         win = window;
 
     // var ieMode = document.documentMode || UA.ie;
@@ -303,12 +304,31 @@ define('bui/component/uibase/align',function (require) {
         return { left:x, top:y };
     }
 
+    //清除对齐的css样式
+    function clearAlignCls(el){
+        var cls = el.attr('class'),
+            regex = new RegExp('\s?'+CLS_ALIGN_PREFIX+'[a-z]{2}-[a-z]{2}','ig'),
+            arr = regex.exec(cls);
+        if(arr){
+            el.removeClass(arr.join(' '));
+        }
+    }
+
     Align.prototype =
     {
-        _uiSetAlign:function (v) {
+        _uiSetAlign:function (v,ev) {
+            var alignCls = '',
+                el,   
+                selfAlign; //points 的第二个参数，是自己对齐于其他节点的的方式
             if (v && v.points) {
                 this.align(v.node, v.points, v.offset, v.overflow);
                 this.set('cachePosition',null);
+                el = this.get('el');
+                clearAlignCls(el);
+                selfAlign = v.points.join('-');
+                alignCls = CLS_ALIGN_PREFIX + selfAlign;
+                el.addClass(alignCls);
+                /**/
             }
         },
 

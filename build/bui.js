@@ -4549,6 +4549,7 @@ define('bui/component/uibase/base',function(require){
 
 define('bui/component/uibase/align',function (require) {
     var UA = require('bui/ua'),
+        CLS_ALIGN_PREFIX ='x-align-',
         win = window;
 
     // var ieMode = document.documentMode || UA.ie;
@@ -4844,12 +4845,31 @@ define('bui/component/uibase/align',function (require) {
         return { left:x, top:y };
     }
 
+    //\u6e05\u9664\u5bf9\u9f50\u7684css\u6837\u5f0f
+    function clearAlignCls(el){
+        var cls = el.attr('class'),
+            regex = new RegExp('\s?'+CLS_ALIGN_PREFIX+'[a-z]{2}-[a-z]{2}','ig'),
+            arr = regex.exec(cls);
+        if(arr){
+            el.removeClass(arr.join(' '));
+        }
+    }
+
     Align.prototype =
     {
-        _uiSetAlign:function (v) {
+        _uiSetAlign:function (v,ev) {
+            var alignCls = '',
+                el,   
+                selfAlign; //points \u7684\u7b2c\u4e8c\u4e2a\u53c2\u6570\uff0c\u662f\u81ea\u5df1\u5bf9\u9f50\u4e8e\u5176\u4ed6\u8282\u70b9\u7684\u7684\u65b9\u5f0f
             if (v && v.points) {
                 this.align(v.node, v.points, v.offset, v.overflow);
                 this.set('cachePosition',null);
+                el = this.get('el');
+                clearAlignCls(el);
+                selfAlign = v.points.join('-');
+                alignCls = CLS_ALIGN_PREFIX + selfAlign;
+                el.addClass(alignCls);
+                /**/
             }
         },
 
@@ -4992,15 +5012,26 @@ define('bui/component/uibase/autoshow',function () {
 
   autoShow.ATTRS = {
     /**
-     * \u89e6\u53d1\u663e\u793a\u83dc\u5355\u7684DOM\u9009\u62e9\u5668
+     * \u89e6\u53d1\u663e\u793a\u63a7\u4ef6\u7684DOM\u9009\u62e9\u5668
      * @cfg {HTMLElement|String|jQuery} trigger
      */
     /**
-     * \u89e6\u53d1\u663e\u793a\u83dc\u5355\u7684DOM\u9009\u62e9\u5668
+     * \u89e6\u53d1\u663e\u793a\u63a7\u4ef6\u7684DOM\u9009\u62e9\u5668
      * @type {HTMLElement|String|jQuery}
      */
     trigger : {
 
+    },
+    /**
+     * \u662f\u5426\u4f7f\u7528\u4ee3\u7406\u7684\u65b9\u5f0f\u89e6\u53d1\u663e\u793a\u63a7\u4ef6,\u5982\u679ctigger\u4e0d\u662f\u5b57\u7b26\u4e32\uff0c\u6b64\u5c5e\u6027\u65e0\u6548
+     * @cfg {Boolean} delegateTigger
+     */
+    /**
+     * \u662f\u5426\u4f7f\u7528\u4ee3\u7406\u7684\u65b9\u5f0f\u89e6\u53d1\u663e\u793a\u63a7\u4ef6,\u5982\u679ctigger\u4e0d\u662f\u5b57\u7b26\u4e32\uff0c\u6b64\u5c5e\u6027\u65e0\u6548
+     * @type {Boolean}
+     */
+    delegateTigger : {
+      value : false
     },
     /**
      * \u9009\u62e9\u5668\u662f\u5426\u59cb\u7ec8\u8ddf\u968f\u89e6\u53d1\u5668\u5bf9\u9f50
@@ -5083,36 +5114,52 @@ define('bui/component/uibase/autoshow',function () {
         triggerEvent = _self.get('triggerEvent'),
         triggerHideEvent = _self.get('triggerHideEvent'),
         triggerCallback = _self.get('triggerCallback'),
-        
-        triggerEl = $(_self.get('trigger'));
+        trigger = _self.get('trigger'),
+        isDelegate = _self.get('delegateTigger'),
+        triggerEl = $(trigger);
+
+      //\u89e6\u53d1\u663e\u793a
+      function tiggerShow (ev) {
+        var prevTrigger = _self.get('curTrigger'),
+          curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
+          align = _self.get('align');
+        if(!prevTrigger || prevTrigger[0] != curTrigger[0]){
+
+          _self.set('curTrigger',curTrigger);
+          _self.fire('triggerchange',{prevTrigger : prevTrigger,curTrigger : curTrigger});
+        }
+        if(_self.get('autoAlign')){
+          align.node = this;
+          
+        }
+        _self.set('align',align);
+        _self.show();
+        triggerCallback && triggerCallback(ev);
+      }
+
+      //\u89e6\u53d1\u9690\u85cf
+      function tiggerHide (ev){
+        var toElement = ev.toElement;
+        if(!toElement || !_self.containsElement(toElement)){ //mouseleave\u65f6\uff0c\u5982\u679c\u79fb\u52a8\u5230\u5f53\u524d\u63a7\u4ef6\u4e0a\uff0c\u53d6\u6d88\u6d88\u5931
+          _self.hide();
+        }
+      }
 
       if(triggerEvent){
-        triggerEl.on(triggerEvent,function (ev) {
-          var prevTrigger = _self.get('curTrigger'),
-            curTrigger = $(this),
-            align = _self.get('align');
-          if(!prevTrigger || prevTrigger[0] != curTrigger[0]){
-
-            _self.set('curTrigger',curTrigger);
-            _self.fire('triggerchange',{prevTrigger : prevTrigger,curTrigger : curTrigger});
-          }
-          if(_self.get('autoAlign')){
-            align.node = this;
-            
-          }
-          _self.set('align',align);
-          _self.show();
-          triggerCallback && triggerCallback(ev);
-        });
+        if(isDelegate && BUI.isString(trigger)){
+          $(document).delegate(trigger,triggerEvent,tiggerShow);
+        }else{
+          triggerEl.on(triggerEvent,tiggerShow);
+        }
+        
       }
 
       if(triggerHideEvent){
-        triggerEl.on(triggerHideEvent,function (ev) {
-          var toElement = ev.toElement;
-          if(!toElement || !_self.containsElement(toElement)){ //mouseleave\u65f6\uff0c\u5982\u679c\u79fb\u52a8\u5230\u5f53\u524d\u63a7\u4ef6\u4e0a\uff0c\u53d6\u6d88\u6d88\u5931
-            _self.hide();
-          }
-        });
+        if(isDelegate && BUI.isString(trigger)){
+          $(document).delegate(trigger,triggerHideEvent,tiggerHide);
+        }else{
+          triggerEl.on(triggerHideEvent,tiggerHide);
+        }
       } 
     },
     __renderUI : function () {
@@ -5231,22 +5278,30 @@ define('bui/component/uibase/autohide',function () {
     },
     _bindHideEvent : function() {
       var _self = this,
+        trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
         $(document).on('mousedown',wrapBehavior(this,'handleDocumentClick'));
       }else{
         _self.get('el').on('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        if(trigger){
+          $(trigger).on('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+        }
       }
 
     },
     //\u6e05\u9664\u7ed1\u5b9a\u7684\u9690\u85cf\u4e8b\u4ef6
     _clearHideEvent : function() {
       var _self = this,
+        trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
         $(document).off('mousedown',getWrapBehavior(this,'handleDocumentClick'));
       }else{
         _self.get('el').off('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        if(trigger){
+          $(trigger).off('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+        }
       }
     }
   };
@@ -6232,7 +6287,10 @@ define('bui/component/uibase/position',function () {
                 var _self = this,
                     el = _self.get('el');
                 _self.setInternal('left',el.position().left);
-                this.set('cachePosition',null);
+                if(v != -999){
+                    this.set('cachePosition',null);
+                }
+                
             }
             
         },
@@ -6242,7 +6300,9 @@ define('bui/component/uibase/position',function () {
                 var _self = this,
                     el = _self.get('el');
                 _self.setInternal('top',el.position().top);
-                this.set('cachePosition',null);
+                if(v != -999){
+                    this.set('cachePosition',null);
+                }
             }
         },
         //\u8bbe\u7f6e left\u65f6\uff0c\u91cd\u7f6e x
@@ -12409,6 +12469,7 @@ define('bui/overlay',function (require) {
 define('bui/overlay/overlay',function (require) {
   var BUI = require('bui/common'),
     Component =  BUI.Component,
+    CLS_ARROW = 'x-align-arrow',
     UIBase = Component.UIBase;
 
   /**
@@ -12439,7 +12500,15 @@ define('bui/overlay/overlay',function (require) {
    * @mixins BUI.Component.UIBase.AutoHide
    */
   var overlay = Component.Controller.extend([UIBase.Position,UIBase.Align,UIBase.Close,UIBase.AutoShow,UIBase.AutoHide],{
-    
+    renderUI : function(){
+      var _self = this,
+        el = _self.get('el'),
+        arrowContainer = _self.get('arrowContainer'),
+        container = arrowContainer ? el.one(arrowContainer) : el;
+      if(_self.get('showArrow')){
+        $(_self.get('arrowTpl')).appendTo(container);
+      }
+    },
     show : function(){
       var _self = this,
         effectCfg = _self.get('effect'),
@@ -12548,6 +12617,32 @@ define('bui/overlay/overlay',function (require) {
        */
       closable:{
           value:false
+      },
+      /**
+       * \u662f\u5426\u663e\u793a\u6307\u5411\u7bad\u5934\uff0c\u8ddfalign\u5c5e\u6027\u7684points\u76f8\u5173
+       * @type {Boolean}
+       */
+      showArrow : {
+        value : false
+      },
+      /**
+       * \u7bad\u5934\u653e\u7f6e\u5728\u7684\u4f4d\u7f6e\uff0c\u662f\u4e00\u4e2a\u9009\u62e9\u5668\uff0c\u4f8b\u5982 .arrow-wraper
+       *     new Tip({ //\u53ef\u4ee5\u8bbe\u7f6e\u6574\u4e2a\u63a7\u4ef6\u7684\u6a21\u677f
+       *       arrowContainer : '.arrow-wraper',
+       *       tpl : '<div class="arrow-wraper"></div>'
+       *     });
+       *     
+       * @type {String}
+       */
+      arrowContainer : {
+        view : true
+      },
+      /**
+       * \u6307\u5411\u7bad\u5934\u7684\u6a21\u677f
+       * @type {Object}
+       */
+      arrowTpl : {
+        value : '<s class="' + CLS_ARROW + '"></s>'
       },
       visible :{
         value:false

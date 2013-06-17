@@ -103,22 +103,30 @@ define('bui/component/uibase/autohide',function () {
     },
     _bindHideEvent : function() {
       var _self = this,
+        trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
         $(document).on('mousedown',wrapBehavior(this,'handleDocumentClick'));
       }else{
         _self.get('el').on('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        if(trigger){
+          $(trigger).on('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+        }
       }
 
     },
     //清除绑定的隐藏事件
     _clearHideEvent : function() {
       var _self = this,
+        trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
         $(document).off('mousedown',getWrapBehavior(this,'handleDocumentClick'));
       }else{
         _self.get('el').off('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        if(trigger){
+          $(trigger).off('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+        }
       }
     }
   };

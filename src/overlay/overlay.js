@@ -6,6 +6,7 @@
 define('bui/overlay/overlay',function (require) {
   var BUI = require('bui/common'),
     Component =  BUI.Component,
+    CLS_ARROW = 'x-align-arrow',
     UIBase = Component.UIBase;
 
   /**
@@ -36,7 +37,15 @@ define('bui/overlay/overlay',function (require) {
    * @mixins BUI.Component.UIBase.AutoHide
    */
   var overlay = Component.Controller.extend([UIBase.Position,UIBase.Align,UIBase.Close,UIBase.AutoShow,UIBase.AutoHide],{
-    
+    renderUI : function(){
+      var _self = this,
+        el = _self.get('el'),
+        arrowContainer = _self.get('arrowContainer'),
+        container = arrowContainer ? el.one(arrowContainer) : el;
+      if(_self.get('showArrow')){
+        $(_self.get('arrowTpl')).appendTo(container);
+      }
+    },
     show : function(){
       var _self = this,
         effectCfg = _self.get('effect'),
@@ -145,6 +154,32 @@ define('bui/overlay/overlay',function (require) {
        */
       closable:{
           value:false
+      },
+      /**
+       * 是否显示指向箭头，跟align属性的points相关
+       * @type {Boolean}
+       */
+      showArrow : {
+        value : false
+      },
+      /**
+       * 箭头放置在的位置，是一个选择器，例如 .arrow-wraper
+       *     new Tip({ //可以设置整个控件的模板
+       *       arrowContainer : '.arrow-wraper',
+       *       tpl : '<div class="arrow-wraper"></div>'
+       *     });
+       *     
+       * @type {String}
+       */
+      arrowContainer : {
+        view : true
+      },
+      /**
+       * 指向箭头的模板
+       * @type {Object}
+       */
+      arrowTpl : {
+        value : '<s class="' + CLS_ARROW + '"></s>'
       },
       visible :{
         value:false
