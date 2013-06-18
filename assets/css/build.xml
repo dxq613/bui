@@ -23,6 +23,9 @@
 		<exec executable="cmd" failonerror="true">
 			<arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/bui/controls.less > ${build.dir}/bui.css"/>
 		</exec>
+		<exec executable="cmd" failonerror="true">
+			<arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/extend/extend.less > ${build.dir}/extend.css"/>
+		</exec>
 	</target>
 	
 	<!-- 用 YUICompressor 压缩 CSS -->

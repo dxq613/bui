@@ -1504,7 +1504,8 @@ input.x-datepicker-time {
   padding: 1px 4px;
   border: 1px solid #c3c3d6;
 }
-.x-align-arrow {
+.x-align-arrow,
+.x-align-arrow-inner {
   border: 6px solid transparent;
   _border-color: tomato;
   _filter: chroma(color=#ff6347);
@@ -1513,8 +1514,15 @@ input.x-datepicker-time {
 .x-align-top .x-align-arrow,
 .x-align-top-left .x-align-arrow,
 .x-align-top-right .x-align-arrow {
+  border-top: 8px solid #c3c3d6;
+  bottom: -15px;
+}
+.x-align-top .x-align-arrow-inner,
+.x-align-top-left .x-align-arrow-inner,
+.x-align-top-right .x-align-arrow-inner {
   border-top: 8px solid #ffffff;
-  bottom: -13px;
+  top: -9px;
+  left: -6px;
 }
 .x-align-top .x-align-arrow,
 .x-align-bottom .x-align-arrow {
@@ -1529,89 +1537,176 @@ input.x-datepicker-time {
   right: 10px;
 }
 .x-align-right .x-align-arrow {
-  border-right: 8px solid #ffffff;
+  border-right: 8px solid #c3c3d6;
   top: 50%;
-  left: -13px;
+  left: -15px;
+}
+.x-align-right .x-align-arrow-inner {
+  border-right: 8px solid #ffffff;
+  top: -6px;
+  left: -4px;
 }
 .x-align-left .x-align-arrow {
-  border-left: 8px solid #ffffff;
+  border-left: 8px solid #c3c3d6;
   top: 50%;
-  right: -13px;
+  right: -15px;
+}
+.x-align-left .x-align-arrow-inner {
+  border-left: 8px solid #ffffff;
+  top: -6px;
+  left: -9px;
 }
 .x-align-bottom .x-align-arrow,
 .x-align-bottom-left .x-align-arrow,
 .x-align-bottom-right .x-align-arrow {
-  border-bottom: 8px solid #ffffff;
-  top: -13px;
+  border-bottom: 8px solid #c3c3d6;
+  top: -15px;
 }
-.tips[class^="x-align-top"],
+.x-align-bottom .x-align-arrow-inner,
+.x-align-bottom-left .x-align-arrow-inner,
+.x-align-bottom-right .x-align-arrow-inner {
+  border-bottom: 8px solid #ffffff;
+  top: -5px;
+  left: -6px;
+}
+.tips[class^="x-align-top"] .x-align-arrow,
 .tips[class*=" x-align-top"] .x-align-arrow {
+  border-top-color: #e5e5e5;
+}
+.tips[class^="x-align-top"] .x-align-arrow-inner,
+.tips[class*=" x-align-top"] .x-align-arrow-inner {
   border-top-color: #fafafa;
 }
 .tips.x-align-right .x-align-arrow {
+  border-right-color: #e5e5e5;
+}
+.tips.x-align-right .x-align-arrow-inner {
   border-right-color: #fafafa;
 }
 .tips.x-align-left .x-align-arrow {
+  border-left-color: #e5e5e5;
+}
+.tips.x-align-left .x-align-arrow-inner {
   border-left-color: #fafafa;
 }
-.tips[class^="x-align-bottom"],
+.tips[class^="x-align-bottom"] .x-align-arrow,
 .tips[class*=" x-align-bottom"] .x-align-arrow {
+  border-bottom-color: #e5e5e5;
+}
+.tips[class^="x-align-bottom"] .x-align-arrow-inner,
+.tips[class*=" x-align-bottom"] .x-align-arrow-inner {
   border-bottom-color: #fafafa;
 }
-.tips-success[class^="x-align-top"],
+.tips-success[class^="x-align-top"] .x-align-arrow,
 .tips-success[class*=" x-align-top"] .x-align-arrow {
+  border-top-color: #aae77f;
+}
+.tips-success[class^="x-align-top"] .x-align-arrow-inner,
+.tips-success[class*=" x-align-top"] .x-align-arrow-inner {
   border-top-color: #f0ffe5;
 }
 .tips-success.x-align-right .x-align-arrow {
+  border-right-color: #aae77f;
+}
+.tips-success.x-align-right .x-align-arrow-inner {
   border-right-color: #f0ffe5;
 }
 .tips-success.x-align-left .x-align-arrow {
+  border-left-color: #aae77f;
+}
+.tips-success.x-align-left .x-align-arrow-inner {
   border-left-color: #f0ffe5;
 }
-.tips-success[class^="x-align-bottom"],
+.tips-success[class^="x-align-bottom"] .x-align-arrow,
 .tips-success[class*=" x-align-bottom"] .x-align-arrow {
+  border-bottom-color: #aae77f;
+}
+.tips-success[class^="x-align-bottom"] .x-align-arrow-inner,
+.tips-success[class*=" x-align-bottom"] .x-align-arrow-inner {
   border-bottom-color: #f0ffe5;
 }
-.tips-warning[class^="x-align-top"],
+.tips-warning[class^="x-align-top"] .x-align-arrow,
 .tips-warning[class*=" x-align-top"] .x-align-arrow {
+  border-top-color: #ffb2b2;
+}
+.tips-warning[class^="x-align-top"] .x-align-arrow-inner,
+.tips-warning[class*=" x-align-top"] .x-align-arrow-inner {
   border-top-color: #fff3f3;
 }
 .tips-warning.x-align-right .x-align-arrow {
+  border-right-color: #ffb2b2;
+}
+.tips-warning.x-align-right .x-align-arrow-inner {
   border-right-color: #fff3f3;
 }
 .tips-warning.x-align-left .x-align-arrow {
+  border-left-color: #ffb2b2;
+}
+.tips-warning.x-align-left .x-align-arrow-inner {
   border-left-color: #fff3f3;
 }
-.tips-warning[class^="x-align-bottom"],
+.tips-warning[class^="x-align-bottom"] .x-align-arrow,
 .tips-warning[class*=" x-align-bottom"] .x-align-arrow {
+  border-bottom-color: #ffb2b2;
+}
+.tips-warning[class^="x-align-bottom"] .x-align-arrow-inner,
+.tips-warning[class*=" x-align-bottom"] .x-align-arrow-inner {
   border-bottom-color: #fff3f3;
 }
-.tips-info[class^="x-align-top"],
+.tips-info[class^="x-align-top"] .x-align-arrow,
 .tips-info[class*=" x-align-top"] .x-align-arrow {
+  border-top-color: #acd5ff;
+}
+.tips-info[class^="x-align-top"] .x-align-arrow-inner,
+.tips-info[class*=" x-align-top"] .x-align-arrow-inner {
   border-top-color: #e6f2ff;
 }
 .tips-info.x-align-right .x-align-arrow {
+  border-right-color: #acd5ff;
+}
+.tips-info.x-align-right .x-align-arrow-inner {
   border-right-color: #e6f2ff;
 }
 .tips-info.x-align-left .x-align-arrow {
+  border-left-color: #acd5ff;
+}
+.tips-info.x-align-left .x-align-arrow-inner {
   border-left-color: #e6f2ff;
 }
-.tips-info[class^="x-align-bottom"],
+.tips-info[class^="x-align-bottom"] .x-align-arrow,
 .tips-info[class*=" x-align-bottom"] .x-align-arrow {
+  border-bottom-color: #acd5ff;
+}
+.tips-info[class^="x-align-bottom"] .x-align-arrow-inner,
+.tips-info[class*=" x-align-bottom"] .x-align-arrow-inner {
   border-bottom-color: #e6f2ff;
 }
-.tips-notice[class^="x-align-top"],
+.tips-notice[class^="x-align-top"] .x-align-arrow,
 .tips-notice[class*=" x-align-top"] .x-align-arrow {
+  border-top-color: #ffcc7f;
+}
+.tips-notice[class^="x-align-top"] .x-align-arrow-inner,
+.tips-notice[class*=" x-align-top"] .x-align-arrow-inner {
   border-top-color: #ffffe5;
 }
 .tips-notice.x-align-right .x-align-arrow {
+  border-right-color: #ffcc7f;
+}
+.tips-notice.x-align-right .x-align-arrow-inner {
   border-right-color: #ffffe5;
 }
 .tips-notice.x-align-left .x-align-arrow {
+  border-left-color: #ffcc7f;
+}
+.tips-notice.x-align-left .x-align-arrow-inner {
   border-left-color: #ffffe5;
 }
-.tips-notice[class^="x-align-bottom"],
+.tips-notice[class^="x-align-bottom"] .x-align-arrow,
 .tips-notice[class*=" x-align-bottom"] .x-align-arrow {
+  border-bottom-color: #ffcc7f;
+}
+.tips-notice[class^="x-align-bottom"] .x-align-arrow-inner,
+.tips-notice[class*=" x-align-bottom"] .x-align-arrow-inner {
   border-bottom-color: #ffffe5;
 }
 .pull-right {

@@ -179,7 +179,7 @@ define('bui/overlay/overlay',function (require) {
        * @type {Object}
        */
       arrowTpl : {
-        value : '<s class="' + CLS_ARROW + '"></s>'
+        value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'
       },
       visible :{
         value:false
