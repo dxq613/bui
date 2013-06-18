@@ -28,37 +28,63 @@
         </ul>
       </header>
       <section>
-        <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+        <h1>
+<a name="bui" class="anchor" href="#bui"><span class="octicon octicon-link"></span></a>bui</h1>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>基于jQuery的富客户端控件库</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+<ul>
+<li><a href="http://www.builive.com/">文档库地址</a></li>
+<li><a href="https://github.com/dxq613/bui-default">应用代码</a></li>
+<li><a href="https://github.com/dxq613/bui-docs">API代码</a></li>
+<li><a href="CONTRIBUTING.md">提交代码流程</a></li>
+</ul><h2>
+<a name="" class="anchor" href="#"><span class="octicon octicon-link"></span></a>文件结构</h2>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
-
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+<ul>
+<li>assets : css文件，基于bootstrap的css样式，可以自己在此基础上编译出新的版本</li>
+<li>build : js 和 css文件打包好的目录</li>
+<li>src: js 的源文件</li>
+<li>test: 单元测试，所有控件的单元测试都在内部，以php的方式提供</li>
+<li>tools : 文件打包，以及生成文件的工具</li>
+<li>docs ： 源文件中未提供，但是可以自己执行 tools/jsduck/run.bat文件，请不要提交此文件夹</li>
+</ul><h2>
+<a name="-1" class="anchor" href="#-1"><span class="octicon octicon-link"></span></a>打包</h2>
 
 <h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+<a name="-2" class="anchor" href="#-2"><span class="octicon octicon-link"></span></a>源文件的编译包括：</h3>
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
+<ul>
+<li>合并js，压缩js</li>
+<li>编译less生成 css,压缩css</li>
+<li>复制文件，将所有js合并成一个bui.js</li>
+<li>执行build.bat文件</li>
+</ul><h3>
+<a name="-3" class="anchor" href="#-3"><span class="octicon octicon-link"></span></a>生成文档：</h3>
+
+<ul>
+<li>使用jsduck 进行编译文档，tools/jsduck/run.bat</li>
+<li>配置文件在tools/jsduck/config.json</li>
+</ul><h2>
+<a name="-4" class="anchor" href="#-4"><span class="octicon octicon-link"></span></a>文档地址</h2>
+
+<ul>
+<li><a href="http://www.builive.com/">dpl 地址</a></li>
+<li><a href="http://www.builive.com/demo/index.php">控件库demo</a></li>
+<li><a href="http://www.builive.com/docs/index.html">控件库API</a></li>
+<li><a href="http://www.builive.com/application/back.php">集成的应用</a></li>
+</ul><h2>
+<a name="-5" class="anchor" href="#-5"><span class="octicon octicon-link"></span></a>提交问题</h2>
+
+<p><a href="https://github.com/dxq613/bui/issues">提问</a></p>
+
+<h2>
+<a name="-6" class="anchor" href="#-6"><span class="octicon octicon-link"></span></a>联系我们</h2>
+
+<ul>
+<li>旺旺群号： 778141976</li>
+<li>QQ群：138692365</li>
+</ul>
       </section>
       <footer>
         <p>This project is maintained by <a href="https://github.com/dxq613">dxq613</a></p>
