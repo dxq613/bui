@@ -8883,7 +8883,8 @@ define('bui/component/controller',function(require){
              * @type {String}
              */
             visibleMode:{
-                view:1
+                view:1,
+                value : 'display'
             },
             /**
              * 控件是否可见

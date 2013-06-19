@@ -1,6 +1,6 @@
 BUI.use('bui/tooltip',function (Tooltip) {
   var Tip = Tooltip.Tip;
-
+/**/
   describe('测试tip',function(){
 
     describe('测试生成',function(){
@@ -132,6 +132,8 @@ BUI.use('bui/tooltip',function (Tooltip) {
 
   });
 
+  
+
   describe('测试tips',function(){
     var Tips = Tooltip.Tips;
     new Tips({
@@ -157,4 +159,19 @@ BUI.use('bui/tooltip',function (Tooltip) {
 
     });
   });
+
+  describe('测试srcNode',function () {
+    var tip = new Tip({
+      trigger: '#t2',
+      srcNode : '#tip',
+      offset: 8,
+      alignType : 'left'
+    });
+    tip.render();
+    //tip.hide();
+    it('控件生成',function () {
+      // body...
+    });
+  });
+
 });

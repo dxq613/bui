@@ -181,6 +181,9 @@ define('bui/overlay/overlay',function (require) {
       arrowTpl : {
         value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'
       },
+      visibleMode : {
+        value : 'visibility'
+      },
       visible :{
         value:false
       },

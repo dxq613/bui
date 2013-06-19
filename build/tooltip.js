@@ -36,10 +36,10 @@ define('bui/tooltip/tip',function (require) {
   //获取距离
   function getOffset(type,offset){
     if(type === 'left'){
-      return [-1 * offset,0];
+      return [-1 * offset,-4];
     }
     if(type === 'right'){
-      return [offset,0];
+      return [offset,-4];
     }
     if(type.indexOf('top')){
       return [0,offset];

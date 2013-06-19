@@ -10420,7 +10420,8 @@ define('bui/component/controller',function(require){
              * @type {String}
              */
             visibleMode:{
-                view:1
+                view:1,
+                value : 'display'
             },
             /**
              * \u63a7\u4ef6\u662f\u5426\u53ef\u89c1
@@ -12643,6 +12644,9 @@ define('bui/overlay/overlay',function (require) {
        */
       arrowTpl : {
         value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'
+      },
+      visibleMode : {
+        value : 'visibility'
       },
       visible :{
         value:false
