@@ -297,6 +297,10 @@ define('bui/tooltip/tips',function(require) {
       var _self = this,
         title = triggerEl.attr('data-title'),
         alignType = triggerEl.attr('data-align') || _self.get('defaultAlignType');
+
+      if(isObjectString(title)){
+        title = BUI.JSON.looseParse(title);
+      }
       tip.set('title',title);
       if(alignType){
         tip.set('alignType',alignType);

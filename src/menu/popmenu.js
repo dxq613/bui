@@ -34,6 +34,9 @@ define('bui/menu/popmenu',function (require) {
            offset: [0, 0]      // 有效值为 [n, m]
         }
       },
+      visibleMode : {
+        value : 'visibility'
+      },
       /**
        * 点击菜单外面，菜单隐藏
        * 点击菜单项，如果菜单不是多选，菜单隐藏

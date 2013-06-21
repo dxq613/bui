@@ -136,7 +136,7 @@ BUI.use('bui/tooltip',function (Tooltip) {
 
   describe('测试tips',function(){
     var Tips = Tooltip.Tips;
-    new Tips({
+    var tips = new Tips({
       tip : {
         trigger: 'code',
         alignType : 'top',
@@ -146,17 +146,57 @@ BUI.use('bui/tooltip',function (Tooltip) {
         <div class="tips-content">{title}</div>'
       }
     }).render();
-
+    var tip = tips.get('tip'),
+      codeList = $('code');
     describe('测试生成',function(){
+      it('测试tips,生成',function () {
+        expect(tip).not.toBe(undefined);
+        expect(tip.get('el').length).toBe(1);
+      });
 
     });
 
-    describe('测试显示位置',function(){
-
+    describe('测试显示',function(){
+      var el1 = codeList.first(),
+          title = el1.attr('title');
+      it('测试显示',function () {
+        el1.trigger('mouseover');
+        waits(100);
+        runs(function () {
+          expect(tip.get('visible')).toBe(true);
+         
+        });
+      });
+      it('测试显示的内容',function () {
+        expect(tip.get('title')).toBe(title);
+        expect(el1.attr('data-title')).toBe(title);
+        expect($.trim(tip.get('el').text())).toBe(title);
+      });
+      it('测试显示的位置',function () {
+         expect(tip.get('alignType')).toBe(el1.attr('data-align'));
+      });
+      it('隐藏',function () {
+        el1.trigger('mouseout');
+        expect(tip.get('visible')).toBe(false);
+      });
     });
 
     describe('测试显示内容',function(){
-
+      var el5 = $(codeList[5]),
+        title = el5.attr('title');
+      it('切换提示，显示',function () {
+        el5.trigger('mouseover');
+        waits(100);
+        runs(function () {
+          expect(tip.get('title')).not.toBe(title);
+          expect($.isPlainObject(tip.get('title'))).toBe(true);
+          expect(tip.get('alignType')).toBe(el5.attr('data-align'));
+        });
+        
+      });
+      it('显示复杂信息',function () {
+        expect(tip.get('title').title).toBe($.trim(tip.get('el').text()));
+      });
     });
   });
 

@@ -2752,6 +2752,7 @@ define('bui/form/group/check',function (require) {
 
 define('bui/form/group/select',function (require) {
   var Group = require('bui/form/group/base'),
+    Data = require('bui/data'),
     Bindable = BUI.Component.UIBase.Bindable;
   
   function getItems(nodes){

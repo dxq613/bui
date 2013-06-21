@@ -24,7 +24,7 @@
           <code title="js 的源文件" data-align="bottom">src</code>: js 的源文件
           <code data-title="测试" data-align="right"> test</code>: 单元测试，所有控件的单元测试都在内部，以php的方式提供
           <code title="工具">tools</code> : 文件打包，以及生成文件的工具
-          <code title="源文件中文档" data-align="top-left">docs</code> ： 源文件中未提供，但是可以自己执行 <code data-align="bottom-right" title="tools/jsduck/run.bat">tools/jsduck/run.bat</code>文件，请不要提交此文件夹
+          <code title="{title:'源文件显示'}" data-align="top-left">docs</code> ： 源文件中未提供，但是可以自己执行 <code data-align="bottom-right" title="tools/jsduck/run.bat">tools/jsduck/run.bat</code>文件，请不要提交此文件夹
         </p>
 
       </div>

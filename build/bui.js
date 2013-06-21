@@ -16500,6 +16500,7 @@ define('bui/form/group/check',function (require) {
 
 define('bui/form/group/select',function (require) {
   var Group = require('bui/form/group/base'),
+    Data = require('bui/data'),
     Bindable = BUI.Component.UIBase.Bindable;
   
   function getItems(nodes){
@@ -19233,6 +19234,9 @@ define('bui/menu/popmenu',function (require) {
            points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
            offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
         }
+      },
+      visibleMode : {
+        value : 'visibility'
       },
       /**
        * \u70b9\u51fb\u83dc\u5355\u5916\u9762\uff0c\u83dc\u5355\u9690\u85cf
