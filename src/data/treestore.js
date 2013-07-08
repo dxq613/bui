@@ -15,6 +15,14 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
    * <p>
    * <img src="../assets/img/class-data.jpg"/>
    * </p>
+   * <code>
+   *   //加载静态数据
+   *   var store = new TreeStore({
+   *     root : {
+   *       text : 
+   *     }
+   *   });
+   * </code>
    * @extends BUI.Data.AbstractStore
    */
   function TreeStore(config){

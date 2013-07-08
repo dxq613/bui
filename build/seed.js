@@ -5137,7 +5137,7 @@ define('bui/component/uibase/autoshow',function () {
           _self.fire('triggerchange',{prevTrigger : prevTrigger,curTrigger : curTrigger});
         }
         if(_self.get('autoAlign')){
-          align.node = this;
+          align.node = curTrigger;
           
         }
         _self.set('align',align);

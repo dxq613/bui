@@ -25,9 +25,9 @@
   <script type="text/javascript">
   BUI.use('bui/menu',function(Menu){
     var frameEl = $('#J_Frame');
-    var files = ['seajs','array','bar','calendar','common','dialog','editor','form','form-field','form-group','form-panel','form-remote','form-rules','grid','grid-plugin',
+    var files = ['seajs','array','bar','calendar','common','dialog','depend','editor','form','form-field','form-group','form-panel','form-remote','form-rules','grid','grid-plugin',
       'grid-editor','header','keynav','list','loader','mask','menu','message','mixins','progressbar','picker','select','simple-grid',
-      'store','tab','treestore'],
+      'store','tab','treestore','tips'],
       curIndex = 0,
       items;
 

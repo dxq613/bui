@@ -1,8 +1,8 @@
 BUI.use('bui/tooltip',function (Tooltip) {
   var Tip = Tooltip.Tip;
-/**/
-  describe('测试tip',function(){
 
+  describe('测试tip',function(){
+    /*
     describe('测试生成',function(){
       var title = '测试',
         tip  = new Tip({
@@ -22,7 +22,7 @@ BUI.use('bui/tooltip',function (Tooltip) {
         expect(el.find('.x-align-arrow').length).not.toBe(0);
       });
     });
-
+*/
     describe('测试对齐样式',function(){
       var title = '测试',
         tip  = new Tip({
@@ -107,7 +107,7 @@ BUI.use('bui/tooltip',function (Tooltip) {
     describe('测试委托',function(){
 
     });
-
+/*
     describe('测试操作',function(){
       var title = '测试',
         tip  = new Tip({
@@ -129,11 +129,11 @@ BUI.use('bui/tooltip',function (Tooltip) {
         expect(el.text()).toBe(title.text + ':' + title.value);
       });
     });
-
+*/
   });
 
   
-
+/*
   describe('测试tips',function(){
     var Tips = Tooltip.Tips;
     var tips = new Tips({
@@ -213,5 +213,5 @@ BUI.use('bui/tooltip',function (Tooltip) {
       // body...
     });
   });
-
+*/
 });

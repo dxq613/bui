@@ -5137,7 +5137,7 @@ define('bui/component/uibase/autoshow',function () {
           _self.fire('triggerchange',{prevTrigger : prevTrigger,curTrigger : curTrigger});
         }
         if(_self.get('autoAlign')){
-          align.node = this;
+          align.node = curTrigger;
           
         }
         _self.set('align',align);
@@ -11702,6 +11702,14 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
    * <p>
    * <img src="../assets/img/class-data.jpg"/>
    * </p>
+   * <code>
+   *   //\u52a0\u8f7d\u9759\u6001\u6570\u636e
+   *   var store = new TreeStore({
+   *     root : {
+   *       text : 
+   *     }
+   *   });
+   * </code>
    * @extends BUI.Data.AbstractStore
    */
   function TreeStore(config){

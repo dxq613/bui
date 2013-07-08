@@ -317,3 +317,11 @@ if(!BUI.use){
     });
   };
 }
+KISSY.config({
+  packages:[{
+    name:"bui",
+    tag:"201307042102",
+    path:"http://a.tbcdn.cn/s/",
+    charset:'utf-8'
+  }]
+});

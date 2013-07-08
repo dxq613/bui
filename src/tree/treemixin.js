@@ -116,23 +116,6 @@ define('bui/tree/treemixin',['bui/common'],function (require) {
       });
     },
     /**
-     * 添加节点
-     * @param {BUI.Data.Node | Object} node 要添加的节点
-     * @param {BUI.Data.Node | Object} [parent] 父节点,为空时，加在树的顶层
-     * @param {Number} [index] 添加的位置，默认添加在最后 
-     */
-    addNode : function(node,parent,index){
-      var _self = this;
-      if(parent){
-        if(parent.leaf){ //如果父节点是叶子节点
-          parent.leaf = false;
-          parent.children = [node];
-        }else{
-          
-        }
-      }
-    },
-    /**
      * 折叠所有
      */
     collapseAll: function(){
@@ -207,13 +190,6 @@ define('bui/tree/treemixin',['bui/common'],function (require) {
       return this._isExpanded(node);
     },
     /**
-     * 删除节点
-     * @param {Object|BUI.Data.Node} node 节点
-     */
-    removeNode : function(node){
-
-    },
-    /**
      * 切换显示隐藏
      * @param  {Object|BUI.Data.Node} node 节点
      */
@@ -225,13 +201,6 @@ define('bui/tree/treemixin',['bui/common'],function (require) {
       }
       element = _self.findElement(node);
       _self._toggleExpand(node,element);
-    },
-    /**
-     * 更新节点
-     * @param  {Object|BUI.Data.Node} node 更新节点
-     */
-    updateNode : function(node){
-
     },
     _isExpanded : function(node,element){
       return this.hasStatus(node,EXPAND,element);
@@ -387,6 +356,9 @@ define('bui/tree/treemixin',['bui/common'],function (require) {
         _self._expandNode(node,element);
       }
     },  
+    _updateIcons : function(node){
+
+    },
     //设置显示根节点
     _uiSetShowRoot : function(v){
       var _self = this,
