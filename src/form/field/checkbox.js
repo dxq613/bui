@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/checkboxfield',function (required) {
+define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
 

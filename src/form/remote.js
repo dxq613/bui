@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/remote',function(require) {
+define('bui/form/remote',['bui/common'],function(require) {
   var BUI = require('bui/common');
 
   /**

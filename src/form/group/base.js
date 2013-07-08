@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/form/group/base',function (require) {
+define('bui/form/group/base',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
 

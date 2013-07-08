@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/horizontal',function (require) {
+define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
   var BUI = require('bui/common'),
     Form = require('bui/form/form');
 

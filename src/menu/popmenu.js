@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/menu/popmenu',function (require) {
+define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
 
   var BUI = require('bui/common'),
     UIBase = BUI.Component.UIBase,

@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/calendar/calendar',function(require){
+define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
   
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,

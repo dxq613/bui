@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/group/select',function (require) {
+define('bui/form/group/select',['bui/form/group/base','bui/data'],function (require) {
   var Group = require('bui/form/group/base'),
     Data = require('bui/data'),
     Bindable = BUI.Component.UIBase.Bindable;
@@ -23,7 +23,7 @@ define('bui/form/group/select',function (require) {
    * @class BUI.Form.Group.Select
    * 级联选择框分组
    * @extends BUI.Form.Group
-   * @mixins BUI.Data.Bindable
+   * @mixins BUI.Component.UIBase.Bindable
    */
   var Select = Group.extend([Bindable],{
     initializer : function(){

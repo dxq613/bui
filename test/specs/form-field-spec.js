@@ -167,8 +167,9 @@ BUI.use('bui/form/textfield',function  (TextField) {
       waits(100);
       runs(function(){
         expect(callback).toHaveBeenCalled();
+        textField.off('error',callback);
       });
-      textField.off('error',callback);
+      
     });
 
     it('测试函数触发change事件',function(){

@@ -3,8 +3,9 @@
  * @ignore
  */
 
-define('bui/array',function () {
+define('bui/array',['bui/util'],function (r) {
   
+  var BUI = r('bui/util');
   /**
    * @class BUI.Array
    * 数组帮助类

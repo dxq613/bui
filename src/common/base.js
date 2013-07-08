@@ -4,7 +4,7 @@
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/base',function(require){
+define('bui/base',['bui/observable'],function(require){
 
   var INVALID = {},
     Observable = require('bui/observable');

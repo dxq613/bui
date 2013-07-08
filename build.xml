@@ -65,7 +65,7 @@
         <apply executable="node" verbose="true" dest="${des.dir}">
             <fileset dir="${des.dir}" includes="**/*.js"/>
             <arg path="${tools.dir}/uglify/bin/uglifyjs"/>
-            <arg line="--reserved-names require"/>
+
             <arg line="-o"/>
             <targetfile/>
             <srcfile/>

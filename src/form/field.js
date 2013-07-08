@@ -2,22 +2,26 @@
  * @fileOverview 表单域的入口文件
  * @ignore
  */
-
-define('bui/form/field',function (require) {
+;(function(){
+var BASE = 'bui/form/';
+define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
+  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield'],function (require) {
   var BUI = require('bui/common'),
-    Field = require('bui/form/basefield');
+    Field = require(BASE + 'basefield');
 
   BUI.mix(Field,{
-    Text : require('bui/form/textfield'),
-    Date : require('bui/form/datefield'),
-    Select : require('bui/form/selectfield'),
-    Hidden : require('bui/form/hiddenfield'),
-    Number : require('bui/form/numberfield'),
-    Check : require('bui/form/checkfield'),
-    Radio : require('bui/form/radiofield'),
-    Checkbox : require('bui/form/checkboxfield'),
-    Plain : require('bui/form/plainfield')
+    Text : require(BASE + 'textfield'),
+    Date : require(BASE + 'datefield'),
+    Select : require(BASE + 'selectfield'),
+    Hidden : require(BASE + 'hiddenfield'),
+    Number : require(BASE + 'numberfield'),
+    Check : require(BASE + 'checkfield'),
+    Radio : require(BASE + 'radiofield'),
+    Checkbox : require(BASE + 'checkboxfield'),
+    Plain : require(BASE + 'plainfield')
   });
 
   return Field;
 });
+
+})();

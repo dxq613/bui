@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/component/uibase/decorate',function (require) {
+define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/manage'],function (require) {
   
   var ArrayUtil = require('bui/array'),
     JSON = require('bui/json'),

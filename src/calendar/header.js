@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/calendar/header',function (require) {
+define('bui/calendar/header',['bui/common'],function (require) {
   
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,

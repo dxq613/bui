@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/grid/plugins/rowediting',function (require) {
+define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (require) {
    var Editing = require('bui/grid/plugins/editing');
 
   /**

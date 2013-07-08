@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/group/range',function (require) {
+define('bui/form/group/range',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
   function testRange (self,curVal,prevVal) {

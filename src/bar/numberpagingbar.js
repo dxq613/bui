@@ -3,7 +3,7 @@
  * @author 
  * @ignore
  */
-define('bui/toolbar/numberpagingbar',function(require) {
+define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require) {
 
     var Component = BUI.Component,
         PBar = require('bui/toolbar/pagingbar');

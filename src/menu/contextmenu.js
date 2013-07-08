@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/memu/contextmenu',function (require) {
+define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmenu'],function (require) {
 
   var BUI = require('bui/common'),
     MenuItem = require('bui/menu/menuitem'),

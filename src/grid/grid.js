@@ -4,7 +4,7 @@
  * @author dxq613@gmail.com
  */
 
-define('bui/grid/grid',function (require) {
+define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/grid/header','bui/grid/column'],function (require) {
 
   var BUI = require('bui/common'),
     Mask = require('bui/mask'),
@@ -973,12 +973,12 @@ define('bui/grid/grid',function (require) {
            * 显示完数据触发
            * @event
            */
-          'aftershow' : true,
+          'aftershow' : false,
            /**
            * 表格的数据清理完成后
            * @event
            */
-          'clear' : true,
+          'clear' : false,
           /**
            * 点击单元格时触发,如果return false,则会阻止 'rowclick' ,'rowselected','rowunselected'事件
            * @event
@@ -990,7 +990,15 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.domTarget 点击的DOM
            * @param {jQuery.Event} e.domEvent 点击的jQuery事件
            */
-          'cellclick' : true,
+          'cellclick' : false,
+          /**
+           * 点击表头
+           * @event 
+           * @param {jQuery.Event} e 事件对象
+           * @param {BUI.Grid.Column} e.column 列对象
+           * @param {HTMLElement} e.domTarget 点击的DOM
+           */
+          'columnclick' : false,
           /**
            * 点击行时触发，如果return false,则会阻止'rowselected','rowunselected'事件
            * @event
@@ -999,7 +1007,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 点击行对应的DOM
            * @param {HTMLElement} e.domTarget 点击的DOM
            */
-          'rowclick' : true,
+          'rowclick' : false,
           /**
            * 当一行数据显示在表格中后触发
            * @event
@@ -1008,7 +1016,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 行对应的DOM
            * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
            */
-          'rowcreated' : true,
+          'rowcreated' : false,
           /**
            * 移除一行的DOM后触发
            * @event
@@ -1017,7 +1025,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 行对应的DOM
            * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
            */
-          'rowremoved' : true,
+          'rowremoved' : false,
           /**
            * 选中一行时触发
            * @event
@@ -1026,7 +1034,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 行对应的DOM
            * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
            */
-          'rowselected' : true,
+          'rowselected' : false,
           /**
            * 清除选中一行时触发，只有多选情况下触发
            * @event
@@ -1035,7 +1043,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 行对应的DOM
            * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
            */
-          'rowunselected' : true,
+          'rowunselected' : false,
           /**
            * 表格内部发生滚动时触发
            * @event
@@ -1045,7 +1053,7 @@ define('bui/grid/grid',function (require) {
            * @param {Number} e.bodyWidth 表格内部的宽度
            * @param {Number} e.bodyHeight 表格内部的高度
            */
-          'scroll' : true
+          'scroll' : false
         }
       },
       /**

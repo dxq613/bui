@@ -2,22 +2,25 @@
  * @fileOverview form 命名空间入口
  * @ignore
  */
-define('bui/form',function (require) {
-  var BUI = require('bui/common'),
+;(function(){
+var BASE = 'bui/form/';
+define('bui/form',['bui/common',BASE + 'fieldcontainer',BASE + 'form',BASE + 'row',BASE + 'fieldgroup',BASE + 'horizontal',BASE + 'rules',BASE + 'field',BASE + 'fieldgroup'],function (r) {
+  var BUI = r('bui/common'),
     Form = BUI.namespace('Form'),
-    Tips = require('bui/form/tips');
+    Tips = r(BASE + 'tips');
 
   BUI.mix(Form,{
     Tips : Tips,
     TipItem : Tips.Item,
-    FieldContainer : require('bui/form/fieldcontainer'),
-    Form : require('bui/form/form'),
-    Row : require('bui/form/row'),
-    Group : require('bui/form/fieldgroup'),
-    HForm : require('bui/form/horizontal'),
-    Rules : require('bui/form/rules'),
-    Field : require('bui/form/field'),
-    FieldGroup : require('bui/form/fieldgroup')
+    FieldContainer : r(BASE + 'fieldcontainer'),
+    Form : r(BASE + 'form'),
+    Row : r(BASE + 'row'),
+    Group : r(BASE + 'fieldgroup'),
+    HForm : r(BASE + 'horizontal'),
+    Rules : r(BASE + 'rules'),
+    Field : r(BASE + 'field'),
+    FieldGroup : r(BASE + 'fieldgroup')
   });
   return Form;
 });
+})();

@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com, yiminghe@gmail.com
  * @ignore
  */
-define('bui/toolbar/pagingbar',function(require) {
+define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
 
     var Bar = require('bui/toolbar/bar'),
         Component = BUI.Component,

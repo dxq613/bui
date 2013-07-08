@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/mask',function (require) {
+define('bui/mask',['bui/common','bui/mask/mask','bui/mask/loadmask'],function (require) {
   var BUI = require('bui/common'),
     Mask = require('bui/mask/mask');
   Mask.LoadMask = require('bui/mask/loadmask');

@@ -27,15 +27,17 @@
     <script type="text/javascript" src="../src/grid/plugins/cascade.js"></script>
 	  <script type="text/javascript" src="../src/grid/plugins/gridmenu.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/summary.js"></script>
-    <script type="text/javascript" src="../src/grid/plugins/base.js"></script>
+    
     <script type="text/javascript" src="../src/grid/plugins/editing.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/rowediting.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/dialog.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/cellediting.js"></script>
+    <script type="text/javascript" src="../src/grid/plugins/base.js"></script>
+    
     <script type="text/javascript" src="specs/plugin-check-spec.js"></script>
-    <script type="text/javascript" src="specs/plugin-radio-spec.js"></script>
+   <script type="text/javascript" src="specs/plugin-radio-spec.js"></script>
     <script type="text/javascript" src="specs/plugin-cascade-spec.js"></script>
-	  <script type="text/javascript" src="specs/plugin-menu-spec.js"></script>  <!-- -->
-    <script type="text/javascript" src="specs/plugin-summary-spec.js"></script> 
+	  <script type="text/javascript" src="specs/plugin-menu-spec.js"></script>  
+    <script type="text/javascript" src="specs/plugin-summary-spec.js"></script>  <!-- -->
 
 <?php include("./templates/footer.php"); ?>       

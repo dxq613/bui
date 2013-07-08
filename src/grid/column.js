@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/grid/column',function (require) {
+define('bui/grid/column',['bui/common'],function (require) {
 
     var	BUI = require('bui/common'),
         PREFIX = BUI.prefix,

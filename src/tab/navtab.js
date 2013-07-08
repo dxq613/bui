@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com
  * @ignore              
  */
-define('bui/tab/navtab',function(require){
+define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
 
   var BUI = require('bui/common'),
     Menu = require('bui/menu'),

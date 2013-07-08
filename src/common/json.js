@@ -2,7 +2,7 @@
  * @fileOverview 由于jQuery只有 parseJSON ，没有stringify所以使用过程不方便
  * @ignore
  */
-define('bui/json',function (require) {
+define('bui/json',['bui/ua'],function (require) {
 
   var win = window,
     UA = require('bui/ua'),

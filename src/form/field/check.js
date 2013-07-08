@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/checkfield',function (require) {
+define('bui/form/checkfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
   /**

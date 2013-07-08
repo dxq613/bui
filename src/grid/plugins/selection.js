@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/grid/plugins/selection',function(require){
+define('bui/grid/plugins/selection',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,

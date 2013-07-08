@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/grid/plugins/cellediting',function (require) {
+define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (require) {
   var Editing = require('bui/grid/plugins/editing'),
     CLS_BODY = BUI.prefix + 'grid-body';
 

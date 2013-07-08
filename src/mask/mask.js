@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/mask/mask',function (require) {
+define('bui/mask/mask',['bui/common'],function (require) {
 
     var BUI = require('bui/common'),
       Mask = BUI.namespace('Mask'),

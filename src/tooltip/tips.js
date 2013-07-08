@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/tooltip/tips',function(require) {
+define('bui/tooltip/tips',['bui/common','bui/tooltip/tip'],function(require) {
 
   //是否json对象构成的字符串
   function isObjectString(str){

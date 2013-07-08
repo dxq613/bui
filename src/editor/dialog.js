@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/editor/dialog',function (require) {
+define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require) {
   var Dialog = require('bui/overlay').Dialog,
     Mixin = require('bui/editor/mixin');
 

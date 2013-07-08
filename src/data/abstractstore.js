@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/data/abstractstore',function (require) {
+define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (require) {
   var BUI = require('bui/common'),
     Proxy = require('bui/data/proxy');
 
@@ -266,8 +266,11 @@ define('bui/data/abstractstore',function (require) {
     onLoad : function(data,params){
       var _self = this;
 
-      _self.processLoad(data,params);
-      _self.afterProcessLoad(data,params);
+      var processResult = _self.processLoad(data,params);
+      //如果处理成功，返回错误时，不进行后面的处理
+      if(processResult){
+        _self.afterProcessLoad(data,params);
+      }
     },
     /**
      * @private
@@ -281,8 +284,9 @@ define('bui/data/abstractstore',function (require) {
 
       if(data[hasErrorField] || data.exception){
         _self.onException(data);
-        return;
+        return false;
       }
+      return true;
     },
     /**
      * @protected

@@ -12,7 +12,7 @@
  */
 
 
-define('bui/component/controller',function(require){
+define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view'],function(require){
 
     var UIBase = require('bui/component/uibase'),
         Manager = require('bui/component/manage'),

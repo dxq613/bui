@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/calendar',function (require) {
+define('bui/calendar',['bui/common','bui/calendar/calendar','bui/calendar/monthpicker','bui/calendar/datepicker'],function (require) {
   var BUI = require('bui/common'),
     Calendar = BUI.namespace('Calendar');
   BUI.mix(Calendar,{

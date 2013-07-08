@@ -2,7 +2,7 @@
  * @fileOverview Grid 菜单
  * @ignore
  */
-define('bui/grid/plugins/menu',function (require) {
+define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
   var BUI = require('bui/common'),
     Menu = require('bui/menu'),

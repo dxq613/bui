@@ -2,30 +2,34 @@
  * @fileOverview uibase的入口文件
  * @ignore
  */
+;(function(){
+var BASE = 'bui/component/uibase/';
+define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BASE + 'autohide',
+    BASE + 'close',BASE + 'collapseable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
+    BASE + 'listitem',BASE + 'mask',BASE + 'position',BASE + 'selection',BASE + 'stdmod',
+    BASE + 'decorate',BASE + 'tpl',BASE + 'childcfg',BASE + 'bindable',BASE + 'depends'],function(r){
 
-define('bui/component/uibase',function(require){
-
-  var UIBase = require('bui/component/uibase/base');
+  var UIBase = r(BASE + 'base');
     
   BUI.mix(UIBase,{
-    Align : require('bui/component/uibase/align'),
-    AutoShow : require('bui/component/uibase/autoshow'),
-    AutoHide : require('bui/component/uibase/autohide'),
-    Close : require('bui/component/uibase/close'),
-    Collapseable : require('bui/component/uibase/collapseable'),
-    Drag : require('bui/component/uibase/drag'),
-    KeyNav : require('bui/component/uibase/keynav'),
-    List : require('bui/component/uibase/list'),
-    ListItem : require('bui/component/uibase/listitem'),
-    Mask : require('bui/component/uibase/mask'),
-    Position : require('bui/component/uibase/position'),
-    Selection : require('bui/component/uibase/selection'),
-    StdMod : require('bui/component/uibase/stdmod'),
-    Decorate : require('bui/component/uibase/decorate'),
-    Tpl : require('bui/component/uibase/tpl'),
-    ChildCfg : require('bui/component/uibase/childcfg'),
-    Bindable : require('bui/component/uibase/bindable'),
-    Depends : require('bui/component/uibase/depends')
+    Align : r(BASE + 'align'),
+    AutoShow : r(BASE + 'autoshow'),
+    AutoHide : r(BASE + 'autohide'),
+    Close : r(BASE + 'close'),
+    Collapseable : r(BASE + 'collapseable'),
+    Drag : r(BASE + 'drag'),
+    KeyNav : r(BASE + 'keynav'),
+    List : r(BASE + 'list'),
+    ListItem : r(BASE + 'listitem'),
+    Mask : r(BASE + 'mask'),
+    Position : r(BASE + 'position'),
+    Selection : r(BASE + 'selection'),
+    StdMod : r(BASE + 'stdmod'),
+    Decorate : r(BASE + 'decorate'),
+    Tpl : r(BASE + 'tpl'),
+    ChildCfg : r(BASE + 'childcfg'),
+    Bindable : r(BASE + 'bindable'),
+    Depends : r(BASE + 'depends')
   });
 
   BUI.mix(UIBase,{
@@ -41,4 +45,5 @@ define('bui/component/uibase',function(require){
     TplView : UIBase.Tpl.View
   });
   return UIBase;
-});
+});   
+})();

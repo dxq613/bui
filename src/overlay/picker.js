@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/overlay/picker',function (require) {
+define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
   
   var Overlay = require('bui/overlay/overlay');
   /**

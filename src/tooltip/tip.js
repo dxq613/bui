@@ -3,9 +3,9 @@
  * @ignore
  */
 
-define('bui/tooltip/tip',function (require) {
+define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
   var BUI = require('bui/common'),
-    Overlay = require('overlay'),
+    Overlay = require('bui/overlay'),
     CLS_ALIGN_PREFIX = 'x-align-',
     MAP_TYPES = {
       left : ['cl','cr'], //居左

@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/rule',function (require) {
+define('bui/form/rule',['bui/common'],function (require) {
 
   var BUI = require('bui/common');
   /**

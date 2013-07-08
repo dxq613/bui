@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/list/listpicker',function (require) {
+define('bui/list/listpicker',['bui/overlay'],function (require) {
 
   var Picker = require('bui/overlay').Picker,
     /**

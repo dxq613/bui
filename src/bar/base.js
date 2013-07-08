@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/toolbar',function (require) {
+define('bui/toolbar',['bui/common','bui/toolbar/baritem','bui/toolbar/bar','bui/toolbar/pagingbar','bui/toolbar/numberpagingbar'],function (require) {
   var BUI = require('bui/common'),
     Toolbar = BUI.namespace('Toolbar');
 

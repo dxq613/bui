@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/component/uibase/depends',function (require) {
+define('bui/component/uibase/depends',['bui/component/manage'],function (require) {
   
   var regexp = /^#(.*):(.*)$/,
     Manager = require('bui/component/manage');

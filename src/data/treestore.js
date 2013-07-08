@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/data/treestore',function (require) {
+define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstore'],function (require) {
 
   var BUI = require('bui/common'),
     Node = require('bui/data/node'),

@@ -1536,7 +1536,7 @@ BUI.setDebug = function (debug) {
     });
   }
 }
-define('bui/common',function(require){
+define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/observable','bui/base','bui/component'],function(require){
 
   var BUI = require('bui/util');
 
@@ -2141,8 +2141,9 @@ define('bui/util',function(){
  * @ignore
  */
 
-define('bui/array',function () {
+define('bui/array',['bui/util'],function (r) {
   
+  var BUI = r('bui/util');
   /**
    * @class BUI.Array
    * \u6570\u7ec4\u5e2e\u52a9\u7c7b
@@ -2357,8 +2358,9 @@ define('bui/array',function () {
  * @ignore
  */
 
-define('bui/observable',function () {
-
+define('bui/observable',['bui/util'],function (r) {
+  
+  var BUI = r('bui/util');
   /**
    * @private
    * @class BUI.Observable.Callbacks
@@ -2690,7 +2692,7 @@ define('bui/ua',function(){
  * @fileOverview \u7531\u4e8ejQuery\u53ea\u6709 parseJSON \uff0c\u6ca1\u6709stringify\u6240\u4ee5\u4f7f\u7528\u8fc7\u7a0b\u4e0d\u65b9\u4fbf
  * @ignore
  */
-define('bui/json',function (require) {
+define('bui/json',['bui/ua'],function (require) {
 
   var win = window,
     UA = require('bui/ua'),
@@ -3512,7 +3514,7 @@ define('bui/date',function () {
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/base',function(require){
+define('bui/base',['bui/observable'],function(require){
 
   var INVALID = {},
     Observable = require('bui/observable');
@@ -3821,7 +3823,7 @@ define('bui/base',function(require){
  * @ignore
  */
 
-define('bui/component',function (require) {
+define('bui/component',['bui/component/manage','bui/component/uibase','bui/component/view','bui/component/controller'],function (require) {
   /**
    * @class BUI.Component
    * <p>
@@ -4003,30 +4005,34 @@ define('bui/component/manage',function(require){
  * @fileOverview uibase\u7684\u5165\u53e3\u6587\u4ef6
  * @ignore
  */
+;(function(){
+var BASE = 'bui/component/uibase/';
+define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BASE + 'autohide',
+    BASE + 'close',BASE + 'collapseable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
+    BASE + 'listitem',BASE + 'mask',BASE + 'position',BASE + 'selection',BASE + 'stdmod',
+    BASE + 'decorate',BASE + 'tpl',BASE + 'childcfg',BASE + 'bindable',BASE + 'depends'],function(r){
 
-define('bui/component/uibase',function(require){
-
-  var UIBase = require('bui/component/uibase/base');
+  var UIBase = r(BASE + 'base');
     
   BUI.mix(UIBase,{
-    Align : require('bui/component/uibase/align'),
-    AutoShow : require('bui/component/uibase/autoshow'),
-    AutoHide : require('bui/component/uibase/autohide'),
-    Close : require('bui/component/uibase/close'),
-    Collapseable : require('bui/component/uibase/collapseable'),
-    Drag : require('bui/component/uibase/drag'),
-    KeyNav : require('bui/component/uibase/keynav'),
-    List : require('bui/component/uibase/list'),
-    ListItem : require('bui/component/uibase/listitem'),
-    Mask : require('bui/component/uibase/mask'),
-    Position : require('bui/component/uibase/position'),
-    Selection : require('bui/component/uibase/selection'),
-    StdMod : require('bui/component/uibase/stdmod'),
-    Decorate : require('bui/component/uibase/decorate'),
-    Tpl : require('bui/component/uibase/tpl'),
-    ChildCfg : require('bui/component/uibase/childcfg'),
-    Bindable : require('bui/component/uibase/bindable'),
-    Depends : require('bui/component/uibase/depends')
+    Align : r(BASE + 'align'),
+    AutoShow : r(BASE + 'autoshow'),
+    AutoHide : r(BASE + 'autohide'),
+    Close : r(BASE + 'close'),
+    Collapseable : r(BASE + 'collapseable'),
+    Drag : r(BASE + 'drag'),
+    KeyNav : r(BASE + 'keynav'),
+    List : r(BASE + 'list'),
+    ListItem : r(BASE + 'listitem'),
+    Mask : r(BASE + 'mask'),
+    Position : r(BASE + 'position'),
+    Selection : r(BASE + 'selection'),
+    StdMod : r(BASE + 'stdmod'),
+    Decorate : r(BASE + 'decorate'),
+    Tpl : r(BASE + 'tpl'),
+    ChildCfg : r(BASE + 'childcfg'),
+    Bindable : r(BASE + 'bindable'),
+    Depends : r(BASE + 'depends')
   });
 
   BUI.mix(UIBase,{
@@ -4042,13 +4048,15 @@ define('bui/component/uibase',function(require){
     TplView : UIBase.Tpl.View
   });
   return UIBase;
-});/**
+});   
+})();
+/**
  * @fileOverview  UI\u63a7\u4ef6\u7684\u6d41\u7a0b\u63a7\u5236
  * @author yiminghe@gmail.com
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/component/uibase/base',function(require){
+define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   var Manager = require('bui/component/manage'),
    
@@ -4547,7 +4555,7 @@ define('bui/component/uibase/base',function(require){
  */
 
 
-define('bui/component/uibase/align',function (require) {
+define('bui/component/uibase/align',['bui/ua'],function (require) {
     var UA = require('bui/ua'),
         CLS_ALIGN_PREFIX ='x-align-',
         win = window;
@@ -5658,7 +5666,7 @@ define('bui/component/uibase/drag',function(){
  * @ignore
  */
 
-define('bui/component/uibase/keynav',function (require) {
+define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
   var KeyCode = require('bui/keycode'),
       wrapBehavior = BUI.wrapBehavior,
@@ -6632,7 +6640,7 @@ define('bui/component/uibase/stdmod',function () {
  * @ignore
  */
 
-define('bui/component/uibase/decorate',function (require) {
+define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/manage'],function (require) {
   
   var ArrayUtil = require('bui/array'),
     JSON = require('bui/json'),
@@ -7478,7 +7486,7 @@ define('bui/component/uibase/selection',function () {
  * @ignore
  */
 
-define('bui/component/uibase/list',function (require) {
+define('bui/component/uibase/list',['bui/component/uibase/selection'],function (require) {
   
   var Selection = require('bui/component/uibase/selection');
 
@@ -7539,6 +7547,7 @@ define('bui/component/uibase/list',function (require) {
          * @event
          * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
          * @param {BUI.Component.UIBase.ListItem} e.item \u70b9\u51fb\u7684\u9009\u9879
+         * @param {HTMLElement} e.element \u9009\u9879\u4ee3\u8868\u7684DOM\u5bf9\u8c61
          * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684DOM\u5bf9\u8c61
          * @param {HTMLElement} e.domEvent \u70b9\u51fb\u7684\u539f\u751f\u4e8b\u4ef6\u5bf9\u8c61
          */
@@ -7619,6 +7628,17 @@ define('bui/component/uibase/list',function (require) {
       var _self = this;
       BUI.each(items,function (item) {
           _self.addItem(item);
+      });
+    },
+    /**
+     * \u63d2\u5165\u591a\u6761\u8bb0\u5f55
+     * @param  {Array} items \u591a\u6761\u8bb0\u5f55
+     * @param  {Number} start \u8d77\u59cb\u4f4d\u7f6e
+     */
+    addItemsAt : function(items,start){
+      var _self = this;
+      BUI.each(items,function (item,index) {
+        _self.addItemAt(item,start + index);
       });
     },
     /**
@@ -7841,7 +7861,7 @@ define('bui/component/uibase/list',function (require) {
     /**
      * \u8bbe\u7f6e\u5217\u8868\u9879\u9009\u4e2d
      * @protected
-     * @param {*} item   \u8bb0\u5f55
+     * @param {*} name \u72b6\u6001\u540d\u79f0
      * @param {HTMLElement} element DOM\u7ed3\u6784
      * @param {Boolean} value \u8bbe\u7f6e\u6216\u53d6\u6d88\u6b64\u72b6\u6001
      */
@@ -7852,6 +7872,17 @@ define('bui/component/uibase/list',function (require) {
       if(element){
         $(element)[method](cls);
       }
+    },
+    /**
+     * \u662f\u5426\u6709\u67d0\u4e2a\u72b6\u6001
+     * @param {*} name \u72b6\u6001\u540d\u79f0
+     * @param {HTMLElement} element DOM\u7ed3\u6784
+     * @return {Boolean} \u662f\u5426\u5177\u6709\u72b6\u6001
+     */
+    hasStatus : function(name,element){
+      var _self = this,
+        cls = _self.getItemStatusCls(name);
+      return $(element).hasClass(cls);
     },
     /**
      * \u8bbe\u7f6e\u5217\u8868\u9879\u9009\u4e2d
@@ -7886,7 +7917,16 @@ define('bui/component/uibase/list',function (require) {
         dataField = _self.get('dataField');
       return $(element).data(dataField);
     },
-
+    /**
+     * \u6839\u636e\u72b6\u6001\u83b7\u53d6DOM
+     * @return {Array} DOM\u6570\u7ec4
+     */
+    getElementsByStatus : function(status){
+      var _self = this,
+        cls = _self.getItemStatusCls(status),
+        el = _self.get('el');
+      return el.find('.' + cls);
+    },
     /**
      * \u901a\u8fc7\u6837\u5f0f\u67e5\u627eDOM\u5143\u7d20
      * @param {String} css\u6837\u5f0f
@@ -8050,7 +8090,7 @@ define('bui/component/uibase/list',function (require) {
       itemContainer.delegate('.'+itemCls,'click',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
-        var rst = _self.fire('itemclick',{item:item,domTarget:ev.target,domEvent:ev});
+        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent:ev});
         if(rst !== false && selectedEvent == 'click'){
           setItemSelectedStatus(item,itemEl); 
         }
@@ -8164,11 +8204,29 @@ define('bui/component/uibase/list',function (require) {
       return this.get('view').getItemByElement(element);
     },
     /**
+     * \u6839\u636e\u72b6\u6001\u83b7\u53d6\u9009\u9879
+     * @param  {String} status \u72b6\u6001\u540d
+     * @return {Array}  \u9009\u9879\u7ec4\u96c6\u5408
+     */
+    getItemsByStatus : function(status){
+      var _self = this,
+        elements = _self.get('view').getElementsByStatus(status),
+        rst = [];
+      BUI.each(elements,function(element){
+        rst.push(_self.getItemByElement(element));
+      });
+      return rst;
+    },
+    /**
      * \u67e5\u627e\u6307\u5b9a\u7684\u9879\u7684DOM\u7ed3\u6784
      * @param  {Object} item 
      * @return {HTMLElement} element
      */
     findElement : function(item){
+      var _self = this;
+      if(BUI.isString(item)){
+        item = _self.getItem(item);
+      }
       return this.get('view').findElement(item);
     },
     findItemByField : function(field,value){
@@ -8237,6 +8295,30 @@ define('bui/component/uibase/list',function (require) {
       this.fire('beforeitemsclear');
       this.get('view').clearControl();
       this.fire('itemsclear');
+    },
+    /**
+     * \u9009\u9879\u662f\u5426\u5b58\u5728\u67d0\u79cd\u72b6\u6001
+     * @param {*} item \u9009\u9879
+     * @param {String} status \u72b6\u6001\u540d\u79f0\uff0c\u5982selected,hover,open\u7b49\u7b49
+     * @param {HTMLElement} [element] \u9009\u9879\u5bf9\u5e94\u7684Dom\uff0c\u653e\u7f6e\u53cd\u590d\u67e5\u627e
+     * @return {Boolean} \u662f\u5426\u5177\u6709\u67d0\u79cd\u72b6\u6001
+     */
+    hasStatus : function(item,status,element){
+      var _self = this,
+        element = element || _self.findElement(item);
+      return _self.get('view').hasStatus(status,element);
+    },
+    /**
+     * \u8bbe\u7f6e\u9009\u9879\u72b6\u6001
+     * @param {*} item \u9009\u9879
+     * @param {String} status \u72b6\u6001\u540d\u79f0
+     * @param {Boolean} value \u72b6\u6001\u503c\uff0ctrue,false
+     * @param {HTMLElement} [element] \u9009\u9879\u5bf9\u5e94\u7684Dom\uff0c\u653e\u7f6e\u53cd\u590d\u67e5\u627e
+     */
+    setItemStatus : function(item,status,value,element){
+      var _self = this,
+        element = _self.findElement(item);
+      _self.get('view').setItemStatusCls(status,element,value);
     }
   });
 
@@ -8342,7 +8424,6 @@ define('bui/component/uibase/list',function (require) {
     __bindUI : function(){
       var _self = this,
         selectedEvent = _self.get('selectedEvent');
-
      
       _self.on(selectedEvent,function(e){
         var item = e.target;
@@ -8573,7 +8654,7 @@ define('bui/component/uibase/childcfg',function (require) {
  * @ignore
  */
 
-define('bui/component/uibase/depends',function (require) {
+define('bui/component/uibase/depends',['bui/component/manage'],function (require) {
   
   var regexp = /^#(.*):(.*)$/,
     Manager = require('bui/component/manage');
@@ -8810,6 +8891,9 @@ define('bui/component/uibase/bindable',function(){
 			});
 			store.on('exception',function(e){
 				_self.onException(e);
+				if(loadMask && loadMask.hide){
+					loadMask.hide();
+				}
 			});
 			store.on('add',function(e){
 				_self.onAdd(e);
@@ -8903,7 +8987,7 @@ define('bui/component/uibase/bindable',function(){
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/component/view',function(require){
+define('bui/component/view',['bui/component/manage','bui/component/uibase'],function(require){
 
   var win = window,
     Manager = require('bui/component/manage'),
@@ -9317,7 +9401,7 @@ define('bui/component/view',function(require){
  */
 
 
-define('bui/component/controller',function(require){
+define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view'],function(require){
 
     var UIBase = require('bui/component/uibase'),
         Manager = require('bui/component/manage'),
@@ -10714,22 +10798,26 @@ define('bui/cookie',function () {
  * @fileOverview Data \u547d\u540d\u7a7a\u95f4\u7684\u5165\u53e3\u6587\u4ef6
  * @ignore
  */
-
-define('bui/data',function(require) {
+(function(){
+var BASE = 'bui/data/';
+define('bui/data',['bui/common',BASE + 'sortable',BASE + 'proxy',BASE + 'abstractstore',BASE + 'store',
+  BASE + 'node',BASE + 'treestore'],function(r) {
   
-  var BUI = require('bui/common'),
+  var BUI = r('bui/common'),
     Data = BUI.namespace('Data');
   BUI.mix(Data,{
-    Sortable : require('bui/data/sortable'),
-    Proxy : require('bui/data/proxy'),
-    AbstractStore : require('bui/data/abstractstore'),
-    Store : require('bui/data/store'),
-    Node : require('bui/data/node'),
-    TreeStore : require('bui/data/treestore')
+    Sortable : r(BASE + 'sortable'),
+    Proxy : r(BASE + 'proxy'),
+    AbstractStore : r(BASE + 'abstractstore'),
+    Store : r(BASE + 'store'),
+    Node : r(BASE + 'node'),
+    TreeStore : r(BASE + 'treestore')
   });
 
   return Data;
-});/**
+});
+})();
+/**
  * @fileOverview \u53ef\u6392\u5e8f\u6269\u5c55\u7c7b
  * @ignore
  */
@@ -10907,7 +10995,7 @@ define('bui/data/sortable',function() {
 
   return sortable;
 });
-define('bui/data/proxy',function(require) {
+define('bui/data/proxy',['bui/data/sortable'],function(require) {
 
   var Sortable = require('bui/data/sortable');
 
@@ -11174,7 +11262,7 @@ define('bui/data/proxy',function(require) {
  * @ignore
  */
 
-define('bui/data/abstractstore',function (require) {
+define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (require) {
   var BUI = require('bui/common'),
     Proxy = require('bui/data/proxy');
 
@@ -11437,8 +11525,11 @@ define('bui/data/abstractstore',function (require) {
     onLoad : function(data,params){
       var _self = this;
 
-      _self.processLoad(data,params);
-      _self.afterProcessLoad(data,params);
+      var processResult = _self.processLoad(data,params);
+      //\u5982\u679c\u5904\u7406\u6210\u529f\uff0c\u8fd4\u56de\u9519\u8bef\u65f6\uff0c\u4e0d\u8fdb\u884c\u540e\u9762\u7684\u5904\u7406
+      if(processResult){
+        _self.afterProcessLoad(data,params);
+      }
     },
     /**
      * @private
@@ -11452,8 +11543,9 @@ define('bui/data/abstractstore',function (require) {
 
       if(data[hasErrorField] || data.exception){
         _self.onException(data);
-        return;
+        return false;
       }
+      return true;
     },
     /**
      * @protected
@@ -11508,7 +11600,7 @@ define('bui/data/abstractstore',function (require) {
  * @ignore
  */
 
-define('bui/data/node',function (require) {
+define('bui/data/node',['bui/common'],function (require) {
   var BUI = require('bui/common');
 
   function mapNode(cfg,map){
@@ -11598,7 +11690,7 @@ define('bui/data/node',function (require) {
  * @ignore
  */
 
-define('bui/data/treestore',function (require) {
+define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstore'],function (require) {
 
   var BUI = require('bui/common'),
     Node = require('bui/data/node'),
@@ -11827,7 +11919,7 @@ define('bui/data/treestore',function (require) {
  * @ignore
  */
 
-define('bui/data/store',function(require) {
+define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sortable'],function(require) {
   
   var Proxy = require('bui/data/proxy'),
     AbstractStore = require('bui/data/abstractstore'),
@@ -12443,7 +12535,7 @@ define('bui/data/store',function(require) {
  * @ignore
  */
 
-define('bui/overlay',function (require) {
+define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message','bui/overlay/picker'],function (require) {
   var BUI = require('bui/common'),
     Overlay = BUI.namespace('Overlay');
 
@@ -12467,7 +12559,7 @@ define('bui/overlay',function (require) {
  * @ignore
  */
 
-define('bui/overlay/overlay',function (require) {
+define('bui/overlay/overlay',['bui/common'],function (require) {
   var BUI = require('bui/common'),
     Component =  BUI.Component,
     CLS_ARROW = 'x-align-arrow',
@@ -12667,7 +12759,7 @@ define('bui/overlay/overlay',function (require) {
  * @ignore
  */
 
-define('bui/overlay/picker',function (require) {
+define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
   
   var Overlay = require('bui/overlay/overlay');
   /**
@@ -12859,7 +12951,7 @@ define('bui/overlay/picker',function (require) {
  * @ignore
  */
 
-define('bui/overlay/dialog',function (require) {
+define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
   var Overlay = require('bui/overlay/overlay'),
     UIBase = BUI.Component.UIBase,
   	CLS_TITLE = 'header-title',
@@ -13084,7 +13176,7 @@ define('bui/overlay/dialog',function (require) {
  * @ignore
  */
 
-define('bui/overlay/message',function (require) {
+define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
   var Dialog = require('bui/overlay/dialog'),
 	  PREFIX = BUI.prefix,
     iconText ={
@@ -13310,17 +13402,18 @@ define('bui/overlay/message',function (require) {
  * @fileOverview \u5217\u8868\u6a21\u5757\u5165\u53e3\u6587\u4ef6
  * @ignore
  */
-
-define('bui/list',function (require) {
-  var BUI = require('bui/common'),
+;(function(){
+var BASE = 'bui/list/';
+define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simplelist',BASE + 'listbox',BASE + 'listpicker'],function (r) {
+  var BUI = r('bui/common'),
     List = BUI.namespace('List');
 
   BUI.mix(List,{
-    List : require('bui/list/list'),
-    ListItem : require('bui/list/listitem'),
-    SimpleList : require('bui/list/simplelist'),
-    Listbox : require('bui/list/listbox'),
-    Picker : require('bui/list/listpicker')
+    List : r(BASE + 'list'),
+    ListItem : r(BASE + 'listitem'),
+    SimpleList : r(BASE + 'simplelist'),
+    Listbox : r(BASE + 'listbox'),
+    Picker : r(BASE + 'listpicker')
   });
 
   BUI.mix(List,{
@@ -13329,7 +13422,9 @@ define('bui/list',function (require) {
   });
 
   return List;
-});/**
+});  
+})();
+/**
  * @fileOverview \u7b80\u5355\u5217\u8868\uff0c\u76f4\u63a5\u4f7f\u7528DOM\u4f5c\u4e3a\u5217\u8868\u9879
  * @ignore
  */
@@ -13515,7 +13610,7 @@ define('bui/list/simplelist',function (require) {
  * @ignore
  */
 
-define('bui/list/listbox',function (require) {
+define('bui/list/listbox',['bui/list/simplelist'],function (require) {
   var SimpleList = require('bui/list/simplelist');
   /**
    * \u5217\u8868\u9009\u62e9\u6846
@@ -13671,7 +13766,7 @@ define('bui/list/list',function (require) {
  * @ignore
  */
 
-define('bui/list/listpicker',function (require) {
+define('bui/list/listpicker',['bui/overlay'],function (require) {
 
   var Picker = require('bui/overlay').Picker,
     /**
@@ -13750,31 +13845,35 @@ define('bui/list/listpicker',function (require) {
  * @fileOverview form \u547d\u540d\u7a7a\u95f4\u5165\u53e3
  * @ignore
  */
-define('bui/form',function (require) {
-  var BUI = require('bui/common'),
+;(function(){
+var BASE = 'bui/form/';
+define('bui/form',['bui/common',BASE + 'fieldcontainer',BASE + 'form',BASE + 'row',BASE + 'fieldgroup',BASE + 'horizontal',BASE + 'rules',BASE + 'field',BASE + 'fieldgroup'],function (r) {
+  var BUI = r('bui/common'),
     Form = BUI.namespace('Form'),
-    Tips = require('bui/form/tips');
+    Tips = r(BASE + 'tips');
 
   BUI.mix(Form,{
     Tips : Tips,
     TipItem : Tips.Item,
-    FieldContainer : require('bui/form/fieldcontainer'),
-    Form : require('bui/form/form'),
-    Row : require('bui/form/row'),
-    Group : require('bui/form/fieldgroup'),
-    HForm : require('bui/form/horizontal'),
-    Rules : require('bui/form/rules'),
-    Field : require('bui/form/field'),
-    FieldGroup : require('bui/form/fieldgroup')
+    FieldContainer : r(BASE + 'fieldcontainer'),
+    Form : r(BASE + 'form'),
+    Row : r(BASE + 'row'),
+    Group : r(BASE + 'fieldgroup'),
+    HForm : r(BASE + 'horizontal'),
+    Rules : r(BASE + 'rules'),
+    Field : r(BASE + 'field'),
+    FieldGroup : r(BASE + 'fieldgroup')
   });
   return Form;
-});/**
+});
+})();
+/**
  * @fileOverview \u8f93\u5165\u63d0\u793a\u4fe1\u606f
  * @author dxq613@gmail.com
  * @ignore
  */
 
-define('bui/form/tips',function (require) {
+define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
 
   var BUI = require('bui/common'),
     prefix = BUI.prefix,
@@ -14026,7 +14125,7 @@ define('bui/form/tips',function (require) {
  * @ignore
  */
 
-define('bui/form/basefield',function (require){
+define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/form/remote'],function (require){
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
@@ -14590,7 +14689,7 @@ define('bui/form/basefield',function (require){
  * @ignore
  */
 
-define('bui/form/textfield',function (require) {
+define('bui/form/textfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
   /**
@@ -14611,7 +14710,7 @@ define('bui/form/textfield',function (require) {
  * @ignore
  */
 
-define('bui/form/numberfield',function (require) {
+define('bui/form/numberfield',['bui/form/basefield'],function (require) {
 
   /**
    * \u8868\u5355\u6570\u5b57\u57df
@@ -14715,7 +14814,7 @@ define('bui/form/numberfield',function (require) {
 * @author dxq613@gmail.com
 */
 
-define('bui/form/hiddenfield',function (require) {
+define('bui/form/hiddenfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
    * \u8868\u5355\u9690\u85cf\u57df
@@ -14749,7 +14848,7 @@ define('bui/form/hiddenfield',function (require) {
 * @author dxq613@gmail.com
 */
 
-define('bui/form/readonlyfield',function (require) {
+define('bui/form/readonlyfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
    * \u8868\u5355\u9690\u85cf\u57df
@@ -14779,7 +14878,7 @@ define('bui/form/readonlyfield',function (require) {
  * @ignore
  */
 
-define('bui/form/selectfield',function (require) {
+define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (require) {
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield');
@@ -14971,7 +15070,7 @@ define('bui/form/selectfield',function (require) {
  * @ignore
  */
 
-define('bui/form/datefield',function (require) {
+define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],function (require) {
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield'),
@@ -15148,7 +15247,7 @@ define('bui/form/datefield',function (require) {
  * @ignore
  */
 
-define('bui/form/checkfield',function (require) {
+define('bui/form/checkfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
   /**
@@ -15247,7 +15346,7 @@ define('bui/form/checkfield',function (require) {
  * @ignore
  */
 
-define('bui/form/checkboxfield',function (required) {
+define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
 
@@ -15289,7 +15388,7 @@ define('bui/form/checkboxfield',function (required) {
  * @ignore
  */
 
-define('bui/form/radiofield',function (required) {
+define('bui/form/radiofield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
 
@@ -15346,7 +15445,7 @@ define('bui/form/radiofield',function (required) {
  * @ignore
  */
 
-define('bui/form/plainfield',function (require) {
+define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
 
@@ -15432,30 +15531,35 @@ define('bui/form/plainfield',function (require) {
  * @fileOverview \u8868\u5355\u57df\u7684\u5165\u53e3\u6587\u4ef6
  * @ignore
  */
-
-define('bui/form/field',function (require) {
+;(function(){
+var BASE = 'bui/form/';
+define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
+  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield'],function (require) {
   var BUI = require('bui/common'),
-    Field = require('bui/form/basefield');
+    Field = require(BASE + 'basefield');
 
   BUI.mix(Field,{
-    Text : require('bui/form/textfield'),
-    Date : require('bui/form/datefield'),
-    Select : require('bui/form/selectfield'),
-    Hidden : require('bui/form/hiddenfield'),
-    Number : require('bui/form/numberfield'),
-    Check : require('bui/form/checkfield'),
-    Radio : require('bui/form/radiofield'),
-    Checkbox : require('bui/form/checkboxfield'),
-    Plain : require('bui/form/plainfield')
+    Text : require(BASE + 'textfield'),
+    Date : require(BASE + 'datefield'),
+    Select : require(BASE + 'selectfield'),
+    Hidden : require(BASE + 'hiddenfield'),
+    Number : require(BASE + 'numberfield'),
+    Check : require(BASE + 'checkfield'),
+    Radio : require(BASE + 'radiofield'),
+    Checkbox : require(BASE + 'checkboxfield'),
+    Plain : require(BASE + 'plainfield')
   });
 
   return Field;
-});/**
+});
+
+})();
+/**
  * @fileOverview \u8868\u5355\u9a8c\u8bc1
  * @ignore
  */
 
-define('bui/form/valid',function (require) {
+define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
   var BUI = require('bui/common'),
     Rules = require('bui/form/rules');
@@ -15784,7 +15888,7 @@ define('bui/form/valid',function (require) {
  * @ignore
  */
 
-define('bui/form/groupvalid',function (require) {
+define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   
   var CLS_ERROR = 'x-form-error',
     Valid = require('bui/form/valid');
@@ -15956,7 +16060,7 @@ define('bui/form/groupvalid',function (require) {
  * @fileOverview \u8868\u5355\u5b57\u6bb5\u7684\u5bb9\u5668\u6269\u5c55
  * @ignore
  */
-define('bui/form/fieldcontainer',function (require) {
+define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupvalid'],function (require) {
   var BUI = require('bui/common'),
     Field = require('bui/form/field'),
     GroupValid = require('bui/form/groupvalid'),
@@ -16308,7 +16412,7 @@ define('bui/form/fieldcontainer',function (require) {
  * @ignore
  */
 
-define('bui/form/group/base',function (require) {
+define('bui/form/group/base',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
 
@@ -16342,7 +16446,7 @@ define('bui/form/group/base',function (require) {
  * @ignore
  */
 
-define('bui/form/group/range',function (require) {
+define('bui/form/group/range',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
   function testRange (self,curVal,prevVal) {
@@ -16418,7 +16522,7 @@ define('bui/form/group/range',function (require) {
  * @ignore
  */
 
-define('bui/form/group/check',function (require) {
+define('bui/form/group/check',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
   function getFieldName (self) {
@@ -16498,7 +16602,7 @@ define('bui/form/group/check',function (require) {
  * @ignore
  */
 
-define('bui/form/group/select',function (require) {
+define('bui/form/group/select',['bui/form/group/base','bui/data'],function (require) {
   var Group = require('bui/form/group/base'),
     Data = require('bui/data'),
     Bindable = BUI.Component.UIBase.Bindable;
@@ -16518,7 +16622,7 @@ define('bui/form/group/select',function (require) {
    * @class BUI.Form.Group.Select
    * \u7ea7\u8054\u9009\u62e9\u6846\u5206\u7ec4
    * @extends BUI.Form.Group
-   * @mixins BUI.Data.Bindable
+   * @mixins BUI.Component.UIBase.Bindable
    */
   var Select = Group.extend([Bindable],{
     initializer : function(){
@@ -16651,7 +16755,7 @@ define('bui/form/group/select',function (require) {
  * @ignore
  */
 
-define('bui/form/fieldgroup',function (require) {
+define('bui/form/fieldgroup',['bui/common','bui/form/group/base','bui/form/group/range','bui/form/group/check','bui/form/group/select'],function (require) {
   var BUI = require('bui/common'),
     Group = require('bui/form/group/base');
 
@@ -16666,7 +16770,7 @@ define('bui/form/fieldgroup',function (require) {
  * @ignore
  */
 
-define('bui/form/form',function (require) {
+define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],function (require) {
   
   var BUI = require('bui/common'),
     Bar = require('bui/toolbar').Bar,
@@ -16890,7 +16994,7 @@ define('bui/form/form',function (require) {
  * @ignore
  */
 
-define('bui/form/horizontal',function (require) {
+define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
   var BUI = require('bui/common'),
     Form = require('bui/form/form');
 
@@ -16943,7 +17047,7 @@ define('bui/form/horizontal',function (require) {
  * @ignore
  */
 
-define('bui/form/row',function (require) {
+define('bui/form/row',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
 
@@ -16986,7 +17090,7 @@ define('bui/form/row',function (require) {
  * @ignore
  */
 
-define('bui/form/rule',function (require) {
+define('bui/form/rule',['bui/common'],function (require) {
 
   var BUI = require('bui/common');
   /**
@@ -17107,7 +17211,7 @@ define('bui/form/rule',function (require) {
  * @ignore
  */
 
-define('bui/form/rules',function (require) {
+define('bui/form/rules',['bui/form/rule'],function (require) {
 
   var Rule = require('bui/form/rule');
 
@@ -17675,7 +17779,7 @@ define('bui/form/rules',function (require) {
  * @ignore
  */
 
-define('bui/form/remote',function(require) {
+define('bui/form/remote',['bui/common'],function(require) {
   var BUI = require('bui/common');
 
   /**
@@ -17932,7 +18036,7 @@ define('bui/form/remote',function(require) {
  * @ignore
  */
 
-define('bui/select',function (require) {
+define('bui/select',['bui/common','bui/select/select','bui/select/combox','bui/select/suggest'],function (require) {
   var BUI = require('bui/common'),
     Select = BUI.namespace('Select');
 
@@ -17948,7 +18052,7 @@ define('bui/select',function (require) {
  * @ignore
  */
 
-define('bui/select/select',function (require) {
+define('bui/select/select',['bui/common','bui/list'],function (require) {
 
   var BUI = require('bui/common'),
     List = require('bui/list'),
@@ -18229,7 +18333,7 @@ define('bui/select/select',function (require) {
  * @ignore
  */
 
-define('bui/select/combox',function (require) {
+define('bui/select/combox',['bui/common','bui/select/select'],function (require) {
 
   var BUI = require('bui/common'),
     Select = require('bui/select/select'),
@@ -18306,7 +18410,7 @@ define('bui/select/combox',function (require) {
  * @ignore
  */
 
-define('bui/select/suggest',function (require) {
+define('bui/select/suggest',['bui/common','bui/select/combox'],function (require) {
 
   var BUI = require('bui/common'),
     Combox = require('bui/select/combox'),
@@ -18562,7 +18666,7 @@ define('bui/select/suggest',function (require) {
  * @ignore
  */
 
-define('bui/mask',function (require) {
+define('bui/mask',['bui/common','bui/mask/mask','bui/mask/loadmask'],function (require) {
   var BUI = require('bui/common'),
     Mask = require('bui/mask/mask');
   Mask.LoadMask = require('bui/mask/loadmask');
@@ -18573,7 +18677,7 @@ define('bui/mask',function (require) {
  * @ignore
  */
 
-define('bui/mask/mask',function (require) {
+define('bui/mask/mask',['bui/common'],function (require) {
 
     var BUI = require('bui/common'),
       Mask = BUI.namespace('Mask'),
@@ -18651,7 +18755,7 @@ define('bui/mask/mask',function (require) {
  * @ignore
  */
 
-define('bui/mask/loadmask',function (require) {
+define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
   
   var Mask = require('bui/mask/mask');
 
@@ -18761,7 +18865,7 @@ define('bui/mask/loadmask',function (require) {
  * @ignore
  */
 
-define('bui/menu',function (require) {
+define('bui/menu',['bui/common','bui/menu/menu','bui/menu/menuitem','bui/memu/contextmenu','bui/menu/popmenu','bui/menu/sidemenu'],function (require) {
   
   var BUI = require('bui/common'),
     Menu = BUI.namespace('Menu');
@@ -18779,7 +18883,7 @@ define('bui/menu',function (require) {
  * @fileOverview \u83dc\u5355\u9879
  * @ignore
  */
-define('bui/menu/menuitem',function(require){
+define('bui/menu/menuitem',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
       Component =  BUI.Component,
@@ -19029,7 +19133,7 @@ define('bui/menu/menuitem',function(require){
  * @ignore
  */
 
-define('bui/menu/menu',function(require){
+define('bui/menu/menu',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
     Component =  BUI.Component,
@@ -19205,7 +19309,7 @@ define('bui/menu/menu',function(require){
  * @ignore
  */
 
-define('bui/menu/popmenu',function (require) {
+define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
 
   var BUI = require('bui/common'),
     UIBase = BUI.Component.UIBase,
@@ -19263,7 +19367,7 @@ define('bui/menu/popmenu',function (require) {
  * @ignore
  */
 
-define('bui/memu/contextmenu',function (require) {
+define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmenu'],function (require) {
 
   var BUI = require('bui/common'),
     MenuItem = require('bui/menu/menuitem'),
@@ -19365,7 +19469,7 @@ define('bui/memu/contextmenu',function (require) {
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/menu/sidemenu',function(require){
+define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
   var BUI = require('bui/common'),
     Menu = require('bui/menu/menu'),
@@ -19516,7 +19620,7 @@ define('bui/menu/sidemenu',function(require){
  * @ignore
  */
 
-define('bui/tab',function (require) {
+define('bui/tab',['bui/common','bui/tab/tab','bui/tab/tabitem','bui/tab/navtabitem','bui/tab/navtab','bui/tab/tabpanel','bui/tab/tabpanelitem'],function (require) {
   var BUI = require('bui/common'),
     Tab = BUI.namespace('Tab');
 
@@ -19535,7 +19639,7 @@ define('bui/tab',function (require) {
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/tab/navtabitem',function(requrie){
+define('bui/tab/navtabitem',['bui/common'],function(requrie){
 
   var BUI = requrie('bui/common'),
     Component =  BUI.Component,
@@ -19866,7 +19970,7 @@ define('bui/tab/navtabitem',function(requrie){
  * @author dxq613@gmail.com
  * @ignore              
  */
-define('bui/tab/navtab',function(require){
+define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
 
   var BUI = require('bui/common'),
     Menu = require('bui/menu'),
@@ -20394,7 +20498,7 @@ define('bui/tab/navtab',function(require){
  * @ignore
  */
 
-define('bui/tab/tabitem',function (require) {
+define('bui/tab/tabitem',['bui/common'],function (require) {
   
 
   var BUI = require('bui/common'),
@@ -20450,7 +20554,7 @@ define('bui/tab/tabitem',function (require) {
  * @ignore
  */
 
-define('bui/tab/tab',function (require) {
+define('bui/tab/tab',['bui/common'],function (require) {
   
 
   var BUI = require('bui/common'),
@@ -20493,7 +20597,7 @@ define('bui/tab/tab',function (require) {
  * @ignore
  */
 
-define('bui/tab/tabpanelitem',function (require) {
+define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require) {
   
 
   var BUI = require('bui/common'),
@@ -20583,7 +20687,7 @@ define('bui/tab/tabpanelitem',function (require) {
  * @ignore
  */
 
-define('bui/tab/tabpanel',function (require) {
+define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
   
   var BUI = require('bui/common'),
     Tab = require('bui/tab/tab');
@@ -20645,7 +20749,7 @@ define('bui/tab/tabpanel',function (require) {
  * @ignore
  */
 
-define('bui/toolbar',function (require) {
+define('bui/toolbar',['bui/common','bui/toolbar/baritem','bui/toolbar/bar','bui/toolbar/pagingbar','bui/toolbar/numberpagingbar'],function (require) {
   var BUI = require('bui/common'),
     Toolbar = BUI.namespace('Toolbar');
 
@@ -20661,7 +20765,7 @@ define('bui/toolbar',function (require) {
  * @author dxq613@gmail.com, yiminghe@gmail.com
  * @ignore
  */
-define('bui/toolbar/baritem',function($){
+define('bui/toolbar/baritem',function(){
 
   /**
    * @name BUI.Toolbar
@@ -21010,7 +21114,7 @@ define('bui/toolbar/bar',function(){
  * @author dxq613@gmail.com, yiminghe@gmail.com
  * @ignore
  */
-define('bui/toolbar/pagingbar',function(require) {
+define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
 
     var Bar = require('bui/toolbar/bar'),
         Component = BUI.Component,
@@ -21466,7 +21570,7 @@ define('bui/toolbar/pagingbar',function(require) {
  * @author 
  * @ignore
  */
-define('bui/toolbar/numberpagingbar',function(require) {
+define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require) {
 
     var Component = BUI.Component,
         PBar = require('bui/toolbar/pagingbar');
@@ -21689,7 +21793,7 @@ define('bui/toolbar/numberpagingbar',function(require) {
  * @ignore
  */
 
-define('bui/progressbar',function (require) {
+define('bui/progressbar',['bui/common','bui/progressbar/base','bui/progressbar/load'],function (require) {
   var BUI = require('bui/common'),
     ProgressBar = BUI.namespace('ProgressBar');
   BUI.mix(ProgressBar,{
@@ -21704,7 +21808,7 @@ define('bui/progressbar',function (require) {
  * @ignore
  */
 
-define('bui/progressbar/base',function(require){
+define('bui/progressbar/base',['bui/common'],function(require){
 
 	var BUI = require('bui/common');
 
@@ -21763,7 +21867,7 @@ define('bui/progressbar/base',function(require){
  * @ignore
  */
 
-define('bui/progressbar/load',function(require){
+define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 
 	var Base = require('bui/progressbar/base'),
 	 	notStarted = 0,
@@ -21930,7 +22034,7 @@ define('bui/progressbar/load',function(require){
  * @ignore
  */
 
-define('bui/calendar',function (require) {
+define('bui/calendar',['bui/common','bui/calendar/calendar','bui/calendar/monthpicker','bui/calendar/datepicker'],function (require) {
   var BUI = require('bui/common'),
     Calendar = BUI.namespace('Calendar');
   BUI.mix(Calendar,{
@@ -21946,7 +22050,7 @@ define('bui/calendar',function (require) {
  * @ignore
  */
 
-define('bui/calendar/monthpicker',function (require){
+define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/toolbar'],function (require){
   var BUI = require('bui/common'),
     Component = BUI.Component,
     Overlay = require('bui/overlay').Overlay,
@@ -22287,7 +22391,7 @@ define('bui/calendar/monthpicker',function (require){
  * @ignore
  */
 
-define('bui/calendar/header',function (require) {
+define('bui/calendar/header',['bui/common'],function (require) {
   
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -22436,7 +22540,7 @@ define('bui/calendar/header',function (require) {
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/calendar/panel',function (require) {
+define('bui/calendar/panel',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
@@ -22826,7 +22930,7 @@ define('bui/calendar/panel',function (require) {
  * @ignore
  */
 
-define('bui/calendar/calendar',function(require){
+define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
   
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -23262,7 +23366,7 @@ define('bui/calendar/calendar',function(require){
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/calendar/datepicker',function(require){
+define('bui/calendar/datepicker',['bui/common','bui/overlay','bui/calendar/calendar'],function(require){
   
   var BUI = require('bui/common'),
     Picker = require('bui/overlay').Picker,
@@ -23398,7 +23502,7 @@ define('bui/calendar/datepicker',function(require){
  * @ignore
  */
 
-define('bui/grid',function (require) {
+define('bui/grid',['bui/common','bui/grid/simplegrid','bui/grid/grid','bui/grid/column','bui/grid/header','bui/grid/format','bui/grid/plugins'],function (require) {
 
   var BUI = require('bui/common'),
     Grid = BUI.namespace('Grid');
@@ -23419,7 +23523,7 @@ define('bui/grid',function (require) {
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/grid/simplegrid',function(require) {
+define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   
   var BUI = require('bui/common'),
     List = require('bui/list'),
@@ -23705,18 +23809,7 @@ define('bui/grid/simplegrid',function(require) {
       events :{ 
 
           value : {
-
-              /**
-               * \u70b9\u51fb\u884c\u65f6
-               * @name  BUI.Grid.SimpleGrid#rowclick
-               * @event
-               * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
-               * @param {Object} e.record \u70b9\u51fb\u7684\u884c\u5bf9\u5e94\u7684\u7eaa\u5f55
-               * @param {HTMLElement} e.row \u884c\u7684DOM
-               * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684dom\u5bf9\u8c61
-               * @param {HTMLElement} e.domEvent \u70b9\u51fb\u7684\u539f\u751f\u4e8b\u4ef6
-               */
-              'rowclick' : false
+            
           }
       },
       xview : {
@@ -23735,7 +23828,7 @@ define('bui/grid/simplegrid',function(require) {
  * @ignore
  */
 
-define('bui/grid/column',function (require) {
+define('bui/grid/column',['bui/common'],function (require) {
 
     var	BUI = require('bui/common'),
         PREFIX = BUI.prefix,
@@ -24201,7 +24294,7 @@ define('bui/grid/column',function (require) {
  * @ignore
  */
 
-define('bui/grid/header',function(require) {
+define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -24701,7 +24794,7 @@ define('bui/grid/header',function(require) {
  * @author dxq613@gmail.com
  */
 
-define('bui/grid/grid',function (require) {
+define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/grid/header','bui/grid/column'],function (require) {
 
   var BUI = require('bui/common'),
     Mask = require('bui/mask'),
@@ -25670,12 +25763,12 @@ define('bui/grid/grid',function (require) {
            * \u663e\u793a\u5b8c\u6570\u636e\u89e6\u53d1
            * @event
            */
-          'aftershow' : true,
+          'aftershow' : false,
            /**
            * \u8868\u683c\u7684\u6570\u636e\u6e05\u7406\u5b8c\u6210\u540e
            * @event
            */
-          'clear' : true,
+          'clear' : false,
           /**
            * \u70b9\u51fb\u5355\u5143\u683c\u65f6\u89e6\u53d1,\u5982\u679creturn false,\u5219\u4f1a\u963b\u6b62 'rowclick' ,'rowselected','rowunselected'\u4e8b\u4ef6
            * @event
@@ -25687,7 +25780,15 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684DOM
            * @param {jQuery.Event} e.domEvent \u70b9\u51fb\u7684jQuery\u4e8b\u4ef6
            */
-          'cellclick' : true,
+          'cellclick' : false,
+          /**
+           * \u70b9\u51fb\u8868\u5934
+           * @event 
+           * @param {jQuery.Event} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {BUI.Grid.Column} e.column \u5217\u5bf9\u8c61
+           * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684DOM
+           */
+          'columnclick' : false,
           /**
            * \u70b9\u51fb\u884c\u65f6\u89e6\u53d1\uff0c\u5982\u679creturn false,\u5219\u4f1a\u963b\u6b62'rowselected','rowunselected'\u4e8b\u4ef6
            * @event
@@ -25696,7 +25797,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row \u70b9\u51fb\u884c\u5bf9\u5e94\u7684DOM
            * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684DOM
            */
-          'rowclick' : true,
+          'rowclick' : false,
           /**
            * \u5f53\u4e00\u884c\u6570\u636e\u663e\u793a\u5728\u8868\u683c\u4e2d\u540e\u89e6\u53d1
            * @event
@@ -25705,7 +25806,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row \u884c\u5bf9\u5e94\u7684DOM
            * @param {HTMLElement} e.domTarget \u6b64\u4e8b\u4ef6\u4e2d\u7b49\u4e8e\u884c\u5bf9\u5e94\u7684DOM
            */
-          'rowcreated' : true,
+          'rowcreated' : false,
           /**
            * \u79fb\u9664\u4e00\u884c\u7684DOM\u540e\u89e6\u53d1
            * @event
@@ -25714,7 +25815,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row \u884c\u5bf9\u5e94\u7684DOM
            * @param {HTMLElement} e.domTarget \u6b64\u4e8b\u4ef6\u4e2d\u7b49\u4e8e\u884c\u5bf9\u5e94\u7684DOM
            */
-          'rowremoved' : true,
+          'rowremoved' : false,
           /**
            * \u9009\u4e2d\u4e00\u884c\u65f6\u89e6\u53d1
            * @event
@@ -25723,7 +25824,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row \u884c\u5bf9\u5e94\u7684DOM
            * @param {HTMLElement} e.domTarget \u6b64\u4e8b\u4ef6\u4e2d\u7b49\u4e8e\u884c\u5bf9\u5e94\u7684DOM
            */
-          'rowselected' : true,
+          'rowselected' : false,
           /**
            * \u6e05\u9664\u9009\u4e2d\u4e00\u884c\u65f6\u89e6\u53d1\uff0c\u53ea\u6709\u591a\u9009\u60c5\u51b5\u4e0b\u89e6\u53d1
            * @event
@@ -25732,7 +25833,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row \u884c\u5bf9\u5e94\u7684DOM
            * @param {HTMLElement} e.domTarget \u6b64\u4e8b\u4ef6\u4e2d\u7b49\u4e8e\u884c\u5bf9\u5e94\u7684DOM
            */
-          'rowunselected' : true,
+          'rowunselected' : false,
           /**
            * \u8868\u683c\u5185\u90e8\u53d1\u751f\u6eda\u52a8\u65f6\u89e6\u53d1
            * @event
@@ -25742,7 +25843,7 @@ define('bui/grid/grid',function (require) {
            * @param {Number} e.bodyWidth \u8868\u683c\u5185\u90e8\u7684\u5bbd\u5ea6
            * @param {Number} e.bodyHeight \u8868\u683c\u5185\u90e8\u7684\u9ad8\u5ea6
            */
-          'scroll' : true
+          'scroll' : false
         }
       },
       /**
@@ -26011,30 +26112,33 @@ define('bui/grid/format',function (require) {
  * @author dxq613@gmail.com, yiminghe@gmail.com
  * @ignore
  */
-
-define('bui/grid/plugins',function (require) {
-	var BUI = require('bui/common'),
-		Selection = require('bui/grid/plugins/selection'),
+;(function(){
+var BASE = 'bui/grid/plugins/';
+define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
+	var BUI = r('bui/common'),
+		Selection = r(BASE + 'selection'),
 
 		Plugins = {};
 
 		BUI.mix(Plugins,{
 			CheckSelection : Selection.CheckSelection,
 			RadioSelection : Selection.RadioSelection,
-			Cascade : require('bui/grid/plugins/cascade'),
-			CellEditing : require('bui/grid/plugins/cellediting'),
-			RowEditing : require('bui/grid/plugins/rowediting'),
-			DialogEditing : require('bui/grid/plugins/dialogediting'),
-			GridMenu : require('bui/grid/plugins/menu'),
-			Summary : require('bui/grid/plugins/summary')
+			Cascade : r(BASE + 'cascade'),
+			CellEditing : r(BASE + 'cellediting'),
+			RowEditing : r(BASE + 'rowediting'),
+			DialogEditing : r(BASE + 'dialogediting'),
+			GridMenu : r(BASE + 'menu'),
+			Summary : r(BASE + 'summary')
 		});
 		
 	return Plugins;
-});/**
+});
+})();
+/**
  * @fileOverview Grid \u83dc\u5355
  * @ignore
  */
-define('bui/grid/plugins/menu',function (require) {
+define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
   var BUI = require('bui/common'),
     Menu = require('bui/menu'),
@@ -26281,7 +26385,7 @@ define('bui/grid/plugins/menu',function (require) {
  * @ignore
  */
 
-define('bui/grid/plugins/cascade',function(require){
+define('bui/grid/plugins/cascade',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -26632,7 +26736,7 @@ define('bui/grid/plugins/cascade',function(require){
  * @ignore
  */
 
-define('bui/grid/plugins/selection',function(require){
+define('bui/grid/plugins/selection',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -26828,7 +26932,7 @@ define('bui/grid/plugins/selection',function(require){
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/grid/plugins/summary',function (require) {
+define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -27635,7 +27739,7 @@ define('bui/grid/plugins/editing',function (require) {
  * @ignore
  */
 
-define('bui/grid/plugins/cellediting',function (require) {
+define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (require) {
   var Editing = require('bui/grid/plugins/editing'),
     CLS_BODY = BUI.prefix + 'grid-body';
 
@@ -27765,7 +27869,7 @@ define('bui/grid/plugins/cellediting',function (require) {
  * @ignore
  */
 
-define('bui/grid/plugins/rowediting',function (require) {
+define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (require) {
    var Editing = require('bui/grid/plugins/editing');
 
   /**
@@ -27967,7 +28071,7 @@ define('bui/grid/plugins/rowediting',function (require) {
  * @ignore
  */
 
-define('bui/grid/plugins/dialogediting',function (require) {
+define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   var BUI = require('bui/common'),
     TYPE_ADD = 'add',
     TYPE_EDIT = 'edit';

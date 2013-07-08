@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/menu/menu',function(require){
+define('bui/menu/menu',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
     Component =  BUI.Component,

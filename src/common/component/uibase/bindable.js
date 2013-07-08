@@ -68,6 +68,9 @@ define('bui/component/uibase/bindable',function(){
 			});
 			store.on('exception',function(e){
 				_self.onException(e);
+				if(loadMask && loadMask.hide){
+					loadMask.hide();
+				}
 			});
 			store.on('add',function(e){
 				_self.onAdd(e);

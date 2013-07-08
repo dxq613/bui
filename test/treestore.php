@@ -6,7 +6,6 @@
 
     <script type="text/javascript" src="../src/data/sortable.js"></script>
     <script type="text/javascript" src="../src/data/proxy.js"></script>
-    <script type="text/javascript" src="../src/data/bindable.js"></script>
     <script type="text/javascript" src="../src/data/node.js"></script>
     <script type="text/javascript" src="../src/data/abstractstore.js"></script>
     <script type="text/javascript" src="../src/data/treestore.js"></script>

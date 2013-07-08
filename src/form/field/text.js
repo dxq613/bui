@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/form/textfield',function (require) {
+define('bui/form/textfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
   /**

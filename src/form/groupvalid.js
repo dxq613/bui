@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/groupvalid',function (require) {
+define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   
   var CLS_ERROR = 'x-form-error',
     Valid = require('bui/form/valid');

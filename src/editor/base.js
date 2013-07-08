@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/editor',function (require) {
+define('bui/editor',['bui/common','bui/form','bui/editor/editor','bui/editor/record','bui/editor/dialog'],function (require) {
   var BUI = require('bui/common'),
     Form = require('bui/form'),
     Editor = BUI.namespace('Editor');

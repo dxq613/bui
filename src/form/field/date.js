@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/form/datefield',function (require) {
+define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],function (require) {
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield'),

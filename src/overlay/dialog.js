@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/overlay/dialog',function (require) {
+define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
   var Overlay = require('bui/overlay/overlay'),
     UIBase = BUI.Component.UIBase,
   	CLS_TITLE = 'header-title',

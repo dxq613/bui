@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/grid/plugins/dialogediting',function (require) {
+define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   var BUI = require('bui/common'),
     TYPE_ADD = 'add',
     TYPE_EDIT = 'edit';

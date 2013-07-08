@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/calendar/monthpicker',function (require){
+define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/toolbar'],function (require){
   var BUI = require('bui/common'),
     Component = BUI.Component,
     Overlay = require('bui/overlay').Overlay,

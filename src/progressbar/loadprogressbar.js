@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/progressbar/load',function(require){
+define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 
 	var Base = require('bui/progressbar/base'),
 	 	notStarted = 0,

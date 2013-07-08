@@ -154,10 +154,10 @@
     <script type="text/javascript" src="../src/form/form.js"></script>
     <script type="text/javascript" src="../src/form/hform.js"></script>
     <script type="text/javascript" src="../src/form/base.js"></script>
-    <!--
+    
     <script type="text/javascript" src="specs/form-base-spec.js"></script>
     <script type="text/javascript" src="specs/form-horizontal-spec.js"></script>
-    -->
+    <!---->
     
     <script type="text/javascript" src="specs/form-decorate-spec.js"></script>
     

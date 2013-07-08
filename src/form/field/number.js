@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/form/numberfield',function (require) {
+define('bui/form/numberfield',['bui/form/basefield'],function (require) {
 
   /**
    * 表单数字域

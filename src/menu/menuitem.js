@@ -2,7 +2,7 @@
  * @fileOverview 菜单项
  * @ignore
  */
-define('bui/menu/menuitem',function(require){
+define('bui/menu/menuitem',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
       Component =  BUI.Component,

@@ -1,5 +1,5 @@
 
-define('bui/common',function(require){
+define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/observable','bui/base','bui/component'],function(require){
 
   var BUI = require('bui/util');
 

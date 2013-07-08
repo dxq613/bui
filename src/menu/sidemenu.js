@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/menu/sidemenu',function(require){
+define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
   var BUI = require('bui/common'),
     Menu = require('bui/menu/menu'),

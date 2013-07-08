@@ -2,19 +2,22 @@
  * @fileOverview Data 命名空间的入口文件
  * @ignore
  */
-
-define('bui/data',function(require) {
+(function(){
+var BASE = 'bui/data/';
+define('bui/data',['bui/common',BASE + 'sortable',BASE + 'proxy',BASE + 'abstractstore',BASE + 'store',
+  BASE + 'node',BASE + 'treestore'],function(r) {
   
-  var BUI = require('bui/common'),
+  var BUI = r('bui/common'),
     Data = BUI.namespace('Data');
   BUI.mix(Data,{
-    Sortable : require('bui/data/sortable'),
-    Proxy : require('bui/data/proxy'),
-    AbstractStore : require('bui/data/abstractstore'),
-    Store : require('bui/data/store'),
-    Node : require('bui/data/node'),
-    TreeStore : require('bui/data/treestore')
+    Sortable : r(BASE + 'sortable'),
+    Proxy : r(BASE + 'proxy'),
+    AbstractStore : r(BASE + 'abstractstore'),
+    Store : r(BASE + 'store'),
+    Node : r(BASE + 'node'),
+    TreeStore : r(BASE + 'treestore')
   });
 
   return Data;
 });
+})();

@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/row',function (require) {
+define('bui/form/row',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
 

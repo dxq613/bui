@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/component',function (require) {
+define('bui/component',['bui/component/manage','bui/component/uibase','bui/component/view','bui/component/controller'],function (require) {
   /**
    * @class BUI.Component
    * <p>

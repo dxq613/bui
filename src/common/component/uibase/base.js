@@ -4,7 +4,7 @@
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/component/uibase/base',function(require){
+define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   var Manager = require('bui/component/manage'),
    

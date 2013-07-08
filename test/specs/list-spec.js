@@ -320,6 +320,82 @@ BUI.use('bui/list',function (List) {
     });
   });
 });
+
+BUI.use('bui/list',function (List) {
+
+  var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}]
+    list = new List.SimpleList({
+      elCls:'bui-select-list',
+      items : items,
+      render : '#list3',
+      idField:'value'
+    });
+  list.render();
+  var 
+    arr = [{text:'附加1',value:'f1'},{text:'附加2',value:'f2'}];
+
+  describe('测试列表操作',function(){
+
+    it('测试添加选项',function(){
+      var count = list.getItemCount();
+      list.addItem({text : '选项5',value : '5'});
+      expect(list.getItemCount()).toBe(count + 1);
+    });
+    it('测试删除选项',function(){
+      var item = list.getItem('5');
+      expect(item).not.toBe(null);
+      list.removeItem(item);
+
+      item = list.getItem('5');
+      expect(item).toBe(null);
+
+    });
+
+    it('测试更新选项',function(){
+      var item = list.getItem('c');
+      item.text = "修改";
+      list.updateItem(item);
+      expect($(list.findElement(item)).text()).toBe(item.text);
+    });
+
+    it('批量添加',function(){
+      var count = list.getItemCount();
+      list.addItems(arr);
+      expect(list.getItemCount()).toBe(count + arr.length);
+
+    });
+    it('批量删除',function(){
+       var count = list.getItemCount();
+      list.removeItems(arr);
+      expect(list.getItemCount()).toBe(count - arr.length);
+    });
+
+  });
+
+  describe('测试列表自定义状态',function(){
+
+    it('设置状态',function(){
+      var item = list.getFirstItem();
+      list.setItemStatus(item,'active',true);
+      var element = list.findElement(item);
+      expect($(element).hasClass('bui-list-item-active')).toBe(true);
+    });
+
+    it('获取设置了状态的选项',function(){
+      var arr = list.getItemsByStatus('active');
+      expect(arr.length).not.toBe(0);
+    });
+
+    it('取消状态',function(){
+       var item = list.getFirstItem();
+      list.setItemStatus(item,'active',false);
+      var element = list.findElement(item);
+      expect($(element).hasClass('bui-list-item-active')).toBe(false);
+    });
+
+  });
+});
+
 /**/
 BUI.use(['bui/list','bui/data'],function (List,Data) {
   var Store = Data.Store;
@@ -362,8 +438,12 @@ BUI.use(['bui/list','bui/data'],function (List,Data) {
       list.setSelectedByField('a');
       expect(list.getSelectedText()).toBe(text);
     });
+
     
   });
+
+  
+
 });
 /**/
 

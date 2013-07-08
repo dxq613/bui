@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/overlay',function (require) {
+define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message','bui/overlay/picker'],function (require) {
   var BUI = require('bui/common'),
     Overlay = BUI.namespace('Overlay');
 

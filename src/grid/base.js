@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/grid',function (require) {
+define('bui/grid',['bui/common','bui/grid/simplegrid','bui/grid/grid','bui/grid/column','bui/grid/header','bui/grid/format','bui/grid/plugins'],function (require) {
 
   var BUI = require('bui/common'),
     Grid = BUI.namespace('Grid');

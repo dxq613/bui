@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/overlay/message',function (require) {
+define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
   var Dialog = require('bui/overlay/dialog'),
 	  PREFIX = BUI.prefix,
     iconText ={

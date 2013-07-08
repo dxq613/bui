@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/list/listbox',function (require) {
+define('bui/list/listbox',['bui/list/simplelist'],function (require) {
   var SimpleList = require('bui/list/simplelist');
   /**
    * 列表选择框

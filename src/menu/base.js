@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/menu',function (require) {
+define('bui/menu',['bui/common','bui/menu/menu','bui/menu/menuitem','bui/memu/contextmenu','bui/menu/popmenu','bui/menu/sidemenu'],function (require) {
   
   var BUI = require('bui/common'),
     Menu = BUI.namespace('Menu');

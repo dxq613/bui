@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/data/node',function (require) {
+define('bui/data/node',['bui/common'],function (require) {
   var BUI = require('bui/common');
 
   function mapNode(cfg,map){

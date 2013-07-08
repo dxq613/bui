@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/form/tips',function (require) {
+define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
 
   var BUI = require('bui/common'),
     prefix = BUI.prefix,

@@ -1536,7 +1536,7 @@ BUI.setDebug = function (debug) {
     });
   }
 }
-define('bui/common',function(require){
+define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/observable','bui/base','bui/component'],function(require){
 
   var BUI = require('bui/util');
 
@@ -2141,8 +2141,9 @@ define('bui/util',function(){
  * @ignore
  */
 
-define('bui/array',function () {
+define('bui/array',['bui/util'],function (r) {
   
+  var BUI = r('bui/util');
   /**
    * @class BUI.Array
    * 数组帮助类
@@ -2357,8 +2358,9 @@ define('bui/array',function () {
  * @ignore
  */
 
-define('bui/observable',function () {
-
+define('bui/observable',['bui/util'],function (r) {
+  
+  var BUI = r('bui/util');
   /**
    * @private
    * @class BUI.Observable.Callbacks
@@ -2690,7 +2692,7 @@ define('bui/ua',function(){
  * @fileOverview 由于jQuery只有 parseJSON ，没有stringify所以使用过程不方便
  * @ignore
  */
-define('bui/json',function (require) {
+define('bui/json',['bui/ua'],function (require) {
 
   var win = window,
     UA = require('bui/ua'),
@@ -3512,7 +3514,7 @@ define('bui/date',function () {
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/base',function(require){
+define('bui/base',['bui/observable'],function(require){
 
   var INVALID = {},
     Observable = require('bui/observable');
@@ -3821,7 +3823,7 @@ define('bui/base',function(require){
  * @ignore
  */
 
-define('bui/component',function (require) {
+define('bui/component',['bui/component/manage','bui/component/uibase','bui/component/view','bui/component/controller'],function (require) {
   /**
    * @class BUI.Component
    * <p>
@@ -4003,30 +4005,34 @@ define('bui/component/manage',function(require){
  * @fileOverview uibase的入口文件
  * @ignore
  */
+;(function(){
+var BASE = 'bui/component/uibase/';
+define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BASE + 'autohide',
+    BASE + 'close',BASE + 'collapseable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
+    BASE + 'listitem',BASE + 'mask',BASE + 'position',BASE + 'selection',BASE + 'stdmod',
+    BASE + 'decorate',BASE + 'tpl',BASE + 'childcfg',BASE + 'bindable',BASE + 'depends'],function(r){
 
-define('bui/component/uibase',function(require){
-
-  var UIBase = require('bui/component/uibase/base');
+  var UIBase = r(BASE + 'base');
     
   BUI.mix(UIBase,{
-    Align : require('bui/component/uibase/align'),
-    AutoShow : require('bui/component/uibase/autoshow'),
-    AutoHide : require('bui/component/uibase/autohide'),
-    Close : require('bui/component/uibase/close'),
-    Collapseable : require('bui/component/uibase/collapseable'),
-    Drag : require('bui/component/uibase/drag'),
-    KeyNav : require('bui/component/uibase/keynav'),
-    List : require('bui/component/uibase/list'),
-    ListItem : require('bui/component/uibase/listitem'),
-    Mask : require('bui/component/uibase/mask'),
-    Position : require('bui/component/uibase/position'),
-    Selection : require('bui/component/uibase/selection'),
-    StdMod : require('bui/component/uibase/stdmod'),
-    Decorate : require('bui/component/uibase/decorate'),
-    Tpl : require('bui/component/uibase/tpl'),
-    ChildCfg : require('bui/component/uibase/childcfg'),
-    Bindable : require('bui/component/uibase/bindable'),
-    Depends : require('bui/component/uibase/depends')
+    Align : r(BASE + 'align'),
+    AutoShow : r(BASE + 'autoshow'),
+    AutoHide : r(BASE + 'autohide'),
+    Close : r(BASE + 'close'),
+    Collapseable : r(BASE + 'collapseable'),
+    Drag : r(BASE + 'drag'),
+    KeyNav : r(BASE + 'keynav'),
+    List : r(BASE + 'list'),
+    ListItem : r(BASE + 'listitem'),
+    Mask : r(BASE + 'mask'),
+    Position : r(BASE + 'position'),
+    Selection : r(BASE + 'selection'),
+    StdMod : r(BASE + 'stdmod'),
+    Decorate : r(BASE + 'decorate'),
+    Tpl : r(BASE + 'tpl'),
+    ChildCfg : r(BASE + 'childcfg'),
+    Bindable : r(BASE + 'bindable'),
+    Depends : r(BASE + 'depends')
   });
 
   BUI.mix(UIBase,{
@@ -4042,13 +4048,15 @@ define('bui/component/uibase',function(require){
     TplView : UIBase.Tpl.View
   });
   return UIBase;
-});/**
+});   
+})();
+/**
  * @fileOverview  UI控件的流程控制
  * @author yiminghe@gmail.com
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/component/uibase/base',function(require){
+define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   var Manager = require('bui/component/manage'),
    
@@ -4547,7 +4555,7 @@ define('bui/component/uibase/base',function(require){
  */
 
 
-define('bui/component/uibase/align',function (require) {
+define('bui/component/uibase/align',['bui/ua'],function (require) {
     var UA = require('bui/ua'),
         CLS_ALIGN_PREFIX ='x-align-',
         win = window;
@@ -5658,7 +5666,7 @@ define('bui/component/uibase/drag',function(){
  * @ignore
  */
 
-define('bui/component/uibase/keynav',function (require) {
+define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
   var KeyCode = require('bui/keycode'),
       wrapBehavior = BUI.wrapBehavior,
@@ -6632,7 +6640,7 @@ define('bui/component/uibase/stdmod',function () {
  * @ignore
  */
 
-define('bui/component/uibase/decorate',function (require) {
+define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/manage'],function (require) {
   
   var ArrayUtil = require('bui/array'),
     JSON = require('bui/json'),
@@ -7478,7 +7486,7 @@ define('bui/component/uibase/selection',function () {
  * @ignore
  */
 
-define('bui/component/uibase/list',function (require) {
+define('bui/component/uibase/list',['bui/component/uibase/selection'],function (require) {
   
   var Selection = require('bui/component/uibase/selection');
 
@@ -7539,6 +7547,7 @@ define('bui/component/uibase/list',function (require) {
          * @event
          * @param {Object} e 事件对象
          * @param {BUI.Component.UIBase.ListItem} e.item 点击的选项
+         * @param {HTMLElement} e.element 选项代表的DOM对象
          * @param {HTMLElement} e.domTarget 点击的DOM对象
          * @param {HTMLElement} e.domEvent 点击的原生事件对象
          */
@@ -7619,6 +7628,17 @@ define('bui/component/uibase/list',function (require) {
       var _self = this;
       BUI.each(items,function (item) {
           _self.addItem(item);
+      });
+    },
+    /**
+     * 插入多条记录
+     * @param  {Array} items 多条记录
+     * @param  {Number} start 起始位置
+     */
+    addItemsAt : function(items,start){
+      var _self = this;
+      BUI.each(items,function (item,index) {
+        _self.addItemAt(item,start + index);
       });
     },
     /**
@@ -7841,7 +7861,7 @@ define('bui/component/uibase/list',function (require) {
     /**
      * 设置列表项选中
      * @protected
-     * @param {*} item   记录
+     * @param {*} name 状态名称
      * @param {HTMLElement} element DOM结构
      * @param {Boolean} value 设置或取消此状态
      */
@@ -7852,6 +7872,17 @@ define('bui/component/uibase/list',function (require) {
       if(element){
         $(element)[method](cls);
       }
+    },
+    /**
+     * 是否有某个状态
+     * @param {*} name 状态名称
+     * @param {HTMLElement} element DOM结构
+     * @return {Boolean} 是否具有状态
+     */
+    hasStatus : function(name,element){
+      var _self = this,
+        cls = _self.getItemStatusCls(name);
+      return $(element).hasClass(cls);
     },
     /**
      * 设置列表项选中
@@ -7886,7 +7917,16 @@ define('bui/component/uibase/list',function (require) {
         dataField = _self.get('dataField');
       return $(element).data(dataField);
     },
-
+    /**
+     * 根据状态获取DOM
+     * @return {Array} DOM数组
+     */
+    getElementsByStatus : function(status){
+      var _self = this,
+        cls = _self.getItemStatusCls(status),
+        el = _self.get('el');
+      return el.find('.' + cls);
+    },
     /**
      * 通过样式查找DOM元素
      * @param {String} css样式
@@ -8050,7 +8090,7 @@ define('bui/component/uibase/list',function (require) {
       itemContainer.delegate('.'+itemCls,'click',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
-        var rst = _self.fire('itemclick',{item:item,domTarget:ev.target,domEvent:ev});
+        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent:ev});
         if(rst !== false && selectedEvent == 'click'){
           setItemSelectedStatus(item,itemEl); 
         }
@@ -8164,11 +8204,29 @@ define('bui/component/uibase/list',function (require) {
       return this.get('view').getItemByElement(element);
     },
     /**
+     * 根据状态获取选项
+     * @param  {String} status 状态名
+     * @return {Array}  选项组集合
+     */
+    getItemsByStatus : function(status){
+      var _self = this,
+        elements = _self.get('view').getElementsByStatus(status),
+        rst = [];
+      BUI.each(elements,function(element){
+        rst.push(_self.getItemByElement(element));
+      });
+      return rst;
+    },
+    /**
      * 查找指定的项的DOM结构
      * @param  {Object} item 
      * @return {HTMLElement} element
      */
     findElement : function(item){
+      var _self = this;
+      if(BUI.isString(item)){
+        item = _self.getItem(item);
+      }
       return this.get('view').findElement(item);
     },
     findItemByField : function(field,value){
@@ -8237,6 +8295,30 @@ define('bui/component/uibase/list',function (require) {
       this.fire('beforeitemsclear');
       this.get('view').clearControl();
       this.fire('itemsclear');
+    },
+    /**
+     * 选项是否存在某种状态
+     * @param {*} item 选项
+     * @param {String} status 状态名称，如selected,hover,open等等
+     * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
+     * @return {Boolean} 是否具有某种状态
+     */
+    hasStatus : function(item,status,element){
+      var _self = this,
+        element = element || _self.findElement(item);
+      return _self.get('view').hasStatus(status,element);
+    },
+    /**
+     * 设置选项状态
+     * @param {*} item 选项
+     * @param {String} status 状态名称
+     * @param {Boolean} value 状态值，true,false
+     * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
+     */
+    setItemStatus : function(item,status,value,element){
+      var _self = this,
+        element = _self.findElement(item);
+      _self.get('view').setItemStatusCls(status,element,value);
     }
   });
 
@@ -8342,7 +8424,6 @@ define('bui/component/uibase/list',function (require) {
     __bindUI : function(){
       var _self = this,
         selectedEvent = _self.get('selectedEvent');
-
      
       _self.on(selectedEvent,function(e){
         var item = e.target;
@@ -8573,7 +8654,7 @@ define('bui/component/uibase/childcfg',function (require) {
  * @ignore
  */
 
-define('bui/component/uibase/depends',function (require) {
+define('bui/component/uibase/depends',['bui/component/manage'],function (require) {
   
   var regexp = /^#(.*):(.*)$/,
     Manager = require('bui/component/manage');
@@ -8810,6 +8891,9 @@ define('bui/component/uibase/bindable',function(){
 			});
 			store.on('exception',function(e){
 				_self.onException(e);
+				if(loadMask && loadMask.hide){
+					loadMask.hide();
+				}
 			});
 			store.on('add',function(e){
 				_self.onAdd(e);
@@ -8903,7 +8987,7 @@ define('bui/component/uibase/bindable',function(){
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/component/view',function(require){
+define('bui/component/view',['bui/component/manage','bui/component/uibase'],function(require){
 
   var win = window,
     Manager = require('bui/component/manage'),
@@ -9317,7 +9401,7 @@ define('bui/component/view',function(require){
  */
 
 
-define('bui/component/controller',function(require){
+define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view'],function(require){
 
     var UIBase = require('bui/component/uibase'),
         Manager = require('bui/component/manage'),

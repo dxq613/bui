@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/tab',function (require) {
+define('bui/tab',['bui/common','bui/tab/tab','bui/tab/tabitem','bui/tab/navtabitem','bui/tab/navtab','bui/tab/tabpanel','bui/tab/tabpanelitem'],function (require) {
   var BUI = require('bui/common'),
     Tab = BUI.namespace('Tab');
 

@@ -6,7 +6,7 @@
  */
 
 
-define('bui/component/uibase/align',function (require) {
+define('bui/component/uibase/align',['bui/ua'],function (require) {
     var UA = require('bui/ua'),
         CLS_ALIGN_PREFIX ='x-align-',
         win = window;

@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com, yiminghe@gmail.com
  * @ignore
  */
-define('bui/toolbar/baritem',function($){
+define('bui/toolbar/baritem',function(){
 
   /**
    * @name BUI.Toolbar

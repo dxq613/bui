@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/calendar/panel',function (require) {
+define('bui/calendar/panel',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,

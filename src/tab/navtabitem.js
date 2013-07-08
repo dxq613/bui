@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/tab/navtabitem',function(requrie){
+define('bui/tab/navtabitem',['bui/common'],function(requrie){
 
   var BUI = requrie('bui/common'),
     Component =  BUI.Component,

@@ -3,23 +3,25 @@
  * @author dxq613@gmail.com, yiminghe@gmail.com
  * @ignore
  */
-
-define('bui/grid/plugins',function (require) {
-	var BUI = require('bui/common'),
-		Selection = require('bui/grid/plugins/selection'),
+;(function(){
+var BASE = 'bui/grid/plugins/';
+define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
+	var BUI = r('bui/common'),
+		Selection = r(BASE + 'selection'),
 
 		Plugins = {};
 
 		BUI.mix(Plugins,{
 			CheckSelection : Selection.CheckSelection,
 			RadioSelection : Selection.RadioSelection,
-			Cascade : require('bui/grid/plugins/cascade'),
-			CellEditing : require('bui/grid/plugins/cellediting'),
-			RowEditing : require('bui/grid/plugins/rowediting'),
-			DialogEditing : require('bui/grid/plugins/dialogediting'),
-			GridMenu : require('bui/grid/plugins/menu'),
-			Summary : require('bui/grid/plugins/summary')
+			Cascade : r(BASE + 'cascade'),
+			CellEditing : r(BASE + 'cellediting'),
+			RowEditing : r(BASE + 'rowediting'),
+			DialogEditing : r(BASE + 'dialogediting'),
+			GridMenu : r(BASE + 'menu'),
+			Summary : r(BASE + 'summary')
 		});
 		
 	return Plugins;
 });
+})();

@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/mask/loadmask',function (require) {
+define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
   
   var Mask = require('bui/mask/mask');
 

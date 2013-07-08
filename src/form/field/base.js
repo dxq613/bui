@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/basefield',function (require){
+define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/form/remote'],function (require){
 
   var BUI = require('bui/common'),
     Component = BUI.Component,

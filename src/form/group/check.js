@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/group/check',function (require) {
+define('bui/form/group/check',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
   function getFieldName (self) {

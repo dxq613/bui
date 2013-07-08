@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/data/store',function(require) {
+define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sortable'],function(require) {
   
   var Proxy = require('bui/data/proxy'),
     AbstractStore = require('bui/data/abstractstore'),

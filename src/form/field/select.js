@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/selectfield',function (require) {
+define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (require) {
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield');

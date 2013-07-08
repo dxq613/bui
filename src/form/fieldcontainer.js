@@ -2,7 +2,7 @@
  * @fileOverview 表单字段的容器扩展
  * @ignore
  */
-define('bui/form/fieldcontainer',function (require) {
+define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupvalid'],function (require) {
   var BUI = require('bui/common'),
     Field = require('bui/form/field'),
     GroupValid = require('bui/form/groupvalid'),

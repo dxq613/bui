@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/overlay/overlay',function (require) {
+define('bui/overlay/overlay',['bui/common'],function (require) {
   var BUI = require('bui/common'),
     Component =  BUI.Component,
     CLS_ARROW = 'x-align-arrow',

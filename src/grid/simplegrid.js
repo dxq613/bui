@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/grid/simplegrid',function(require) {
+define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   
   var BUI = require('bui/common'),
     List = require('bui/list'),
@@ -289,18 +289,7 @@ define('bui/grid/simplegrid',function(require) {
       events :{ 
 
           value : {
-
-              /**
-               * 点击行时
-               * @name  BUI.Grid.SimpleGrid#rowclick
-               * @event
-               * @param {jQuery.Event} e  事件对象
-               * @param {Object} e.record 点击的行对应的纪录
-               * @param {HTMLElement} e.row 行的DOM
-               * @param {HTMLElement} e.domTarget 点击的dom对象
-               * @param {HTMLElement} e.domEvent 点击的原生事件
-               */
-              'rowclick' : false
+            
           }
       },
       xview : {

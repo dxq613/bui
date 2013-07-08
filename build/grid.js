@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/grid',function (require) {
+define('bui/grid',['bui/common','bui/grid/simplegrid','bui/grid/grid','bui/grid/column','bui/grid/header','bui/grid/format','bui/grid/plugins'],function (require) {
 
   var BUI = require('bui/common'),
     Grid = BUI.namespace('Grid');
@@ -24,7 +24,7 @@ define('bui/grid',function (require) {
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/grid/simplegrid',function(require) {
+define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   
   var BUI = require('bui/common'),
     List = require('bui/list'),
@@ -310,18 +310,7 @@ define('bui/grid/simplegrid',function(require) {
       events :{ 
 
           value : {
-
-              /**
-               * 点击行时
-               * @name  BUI.Grid.SimpleGrid#rowclick
-               * @event
-               * @param {jQuery.Event} e  事件对象
-               * @param {Object} e.record 点击的行对应的纪录
-               * @param {HTMLElement} e.row 行的DOM
-               * @param {HTMLElement} e.domTarget 点击的dom对象
-               * @param {HTMLElement} e.domEvent 点击的原生事件
-               */
-              'rowclick' : false
+            
           }
       },
       xview : {
@@ -340,7 +329,7 @@ define('bui/grid/simplegrid',function(require) {
  * @ignore
  */
 
-define('bui/grid/column',function (require) {
+define('bui/grid/column',['bui/common'],function (require) {
 
     var	BUI = require('bui/common'),
         PREFIX = BUI.prefix,
@@ -806,7 +795,7 @@ define('bui/grid/column',function (require) {
  * @ignore
  */
 
-define('bui/grid/header',function(require) {
+define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -1306,7 +1295,7 @@ define('bui/grid/header',function(require) {
  * @author dxq613@gmail.com
  */
 
-define('bui/grid/grid',function (require) {
+define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/grid/header','bui/grid/column'],function (require) {
 
   var BUI = require('bui/common'),
     Mask = require('bui/mask'),
@@ -2275,12 +2264,12 @@ define('bui/grid/grid',function (require) {
            * 显示完数据触发
            * @event
            */
-          'aftershow' : true,
+          'aftershow' : false,
            /**
            * 表格的数据清理完成后
            * @event
            */
-          'clear' : true,
+          'clear' : false,
           /**
            * 点击单元格时触发,如果return false,则会阻止 'rowclick' ,'rowselected','rowunselected'事件
            * @event
@@ -2292,7 +2281,15 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.domTarget 点击的DOM
            * @param {jQuery.Event} e.domEvent 点击的jQuery事件
            */
-          'cellclick' : true,
+          'cellclick' : false,
+          /**
+           * 点击表头
+           * @event 
+           * @param {jQuery.Event} e 事件对象
+           * @param {BUI.Grid.Column} e.column 列对象
+           * @param {HTMLElement} e.domTarget 点击的DOM
+           */
+          'columnclick' : false,
           /**
            * 点击行时触发，如果return false,则会阻止'rowselected','rowunselected'事件
            * @event
@@ -2301,7 +2298,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 点击行对应的DOM
            * @param {HTMLElement} e.domTarget 点击的DOM
            */
-          'rowclick' : true,
+          'rowclick' : false,
           /**
            * 当一行数据显示在表格中后触发
            * @event
@@ -2310,7 +2307,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 行对应的DOM
            * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
            */
-          'rowcreated' : true,
+          'rowcreated' : false,
           /**
            * 移除一行的DOM后触发
            * @event
@@ -2319,7 +2316,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 行对应的DOM
            * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
            */
-          'rowremoved' : true,
+          'rowremoved' : false,
           /**
            * 选中一行时触发
            * @event
@@ -2328,7 +2325,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 行对应的DOM
            * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
            */
-          'rowselected' : true,
+          'rowselected' : false,
           /**
            * 清除选中一行时触发，只有多选情况下触发
            * @event
@@ -2337,7 +2334,7 @@ define('bui/grid/grid',function (require) {
            * @param {HTMLElement} e.row 行对应的DOM
            * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
            */
-          'rowunselected' : true,
+          'rowunselected' : false,
           /**
            * 表格内部发生滚动时触发
            * @event
@@ -2347,7 +2344,7 @@ define('bui/grid/grid',function (require) {
            * @param {Number} e.bodyWidth 表格内部的宽度
            * @param {Number} e.bodyHeight 表格内部的高度
            */
-          'scroll' : true
+          'scroll' : false
         }
       },
       /**
@@ -2616,30 +2613,33 @@ define('bui/grid/format',function (require) {
  * @author dxq613@gmail.com, yiminghe@gmail.com
  * @ignore
  */
-
-define('bui/grid/plugins',function (require) {
-	var BUI = require('bui/common'),
-		Selection = require('bui/grid/plugins/selection'),
+;(function(){
+var BASE = 'bui/grid/plugins/';
+define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
+	var BUI = r('bui/common'),
+		Selection = r(BASE + 'selection'),
 
 		Plugins = {};
 
 		BUI.mix(Plugins,{
 			CheckSelection : Selection.CheckSelection,
 			RadioSelection : Selection.RadioSelection,
-			Cascade : require('bui/grid/plugins/cascade'),
-			CellEditing : require('bui/grid/plugins/cellediting'),
-			RowEditing : require('bui/grid/plugins/rowediting'),
-			DialogEditing : require('bui/grid/plugins/dialogediting'),
-			GridMenu : require('bui/grid/plugins/menu'),
-			Summary : require('bui/grid/plugins/summary')
+			Cascade : r(BASE + 'cascade'),
+			CellEditing : r(BASE + 'cellediting'),
+			RowEditing : r(BASE + 'rowediting'),
+			DialogEditing : r(BASE + 'dialogediting'),
+			GridMenu : r(BASE + 'menu'),
+			Summary : r(BASE + 'summary')
 		});
 		
 	return Plugins;
-});/**
+});
+})();
+/**
  * @fileOverview Grid 菜单
  * @ignore
  */
-define('bui/grid/plugins/menu',function (require) {
+define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
   var BUI = require('bui/common'),
     Menu = require('bui/menu'),
@@ -2886,7 +2886,7 @@ define('bui/grid/plugins/menu',function (require) {
  * @ignore
  */
 
-define('bui/grid/plugins/cascade',function(require){
+define('bui/grid/plugins/cascade',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -3237,7 +3237,7 @@ define('bui/grid/plugins/cascade',function(require){
  * @ignore
  */
 
-define('bui/grid/plugins/selection',function(require){
+define('bui/grid/plugins/selection',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -3433,7 +3433,7 @@ define('bui/grid/plugins/selection',function(require){
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/grid/plugins/summary',function (require) {
+define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -4240,7 +4240,7 @@ define('bui/grid/plugins/editing',function (require) {
  * @ignore
  */
 
-define('bui/grid/plugins/cellediting',function (require) {
+define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (require) {
   var Editing = require('bui/grid/plugins/editing'),
     CLS_BODY = BUI.prefix + 'grid-body';
 
@@ -4370,7 +4370,7 @@ define('bui/grid/plugins/cellediting',function (require) {
  * @ignore
  */
 
-define('bui/grid/plugins/rowediting',function (require) {
+define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (require) {
    var Editing = require('bui/grid/plugins/editing');
 
   /**
@@ -4572,7 +4572,7 @@ define('bui/grid/plugins/rowediting',function (require) {
  * @ignore
  */
 
-define('bui/grid/plugins/dialogediting',function (require) {
+define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   var BUI = require('bui/common'),
     TYPE_ADD = 'add',
     TYPE_EDIT = 'edit';

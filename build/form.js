@@ -2,31 +2,35 @@
  * @fileOverview form 命名空间入口
  * @ignore
  */
-define('bui/form',function (require) {
-  var BUI = require('bui/common'),
+;(function(){
+var BASE = 'bui/form/';
+define('bui/form',['bui/common',BASE + 'fieldcontainer',BASE + 'form',BASE + 'row',BASE + 'fieldgroup',BASE + 'horizontal',BASE + 'rules',BASE + 'field',BASE + 'fieldgroup'],function (r) {
+  var BUI = r('bui/common'),
     Form = BUI.namespace('Form'),
-    Tips = require('bui/form/tips');
+    Tips = r(BASE + 'tips');
 
   BUI.mix(Form,{
     Tips : Tips,
     TipItem : Tips.Item,
-    FieldContainer : require('bui/form/fieldcontainer'),
-    Form : require('bui/form/form'),
-    Row : require('bui/form/row'),
-    Group : require('bui/form/fieldgroup'),
-    HForm : require('bui/form/horizontal'),
-    Rules : require('bui/form/rules'),
-    Field : require('bui/form/field'),
-    FieldGroup : require('bui/form/fieldgroup')
+    FieldContainer : r(BASE + 'fieldcontainer'),
+    Form : r(BASE + 'form'),
+    Row : r(BASE + 'row'),
+    Group : r(BASE + 'fieldgroup'),
+    HForm : r(BASE + 'horizontal'),
+    Rules : r(BASE + 'rules'),
+    Field : r(BASE + 'field'),
+    FieldGroup : r(BASE + 'fieldgroup')
   });
   return Form;
-});/**
+});
+})();
+/**
  * @fileOverview 输入提示信息
  * @author dxq613@gmail.com
  * @ignore
  */
 
-define('bui/form/tips',function (require) {
+define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
 
   var BUI = require('bui/common'),
     prefix = BUI.prefix,
@@ -278,7 +282,7 @@ define('bui/form/tips',function (require) {
  * @ignore
  */
 
-define('bui/form/basefield',function (require){
+define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/form/remote'],function (require){
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
@@ -842,7 +846,7 @@ define('bui/form/basefield',function (require){
  * @ignore
  */
 
-define('bui/form/textfield',function (require) {
+define('bui/form/textfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
   /**
@@ -863,7 +867,7 @@ define('bui/form/textfield',function (require) {
  * @ignore
  */
 
-define('bui/form/numberfield',function (require) {
+define('bui/form/numberfield',['bui/form/basefield'],function (require) {
 
   /**
    * 表单数字域
@@ -967,7 +971,7 @@ define('bui/form/numberfield',function (require) {
 * @author dxq613@gmail.com
 */
 
-define('bui/form/hiddenfield',function (require) {
+define('bui/form/hiddenfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
    * 表单隐藏域
@@ -1001,7 +1005,7 @@ define('bui/form/hiddenfield',function (require) {
 * @author dxq613@gmail.com
 */
 
-define('bui/form/readonlyfield',function (require) {
+define('bui/form/readonlyfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
    * 表单隐藏域
@@ -1031,7 +1035,7 @@ define('bui/form/readonlyfield',function (require) {
  * @ignore
  */
 
-define('bui/form/selectfield',function (require) {
+define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (require) {
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield');
@@ -1223,7 +1227,7 @@ define('bui/form/selectfield',function (require) {
  * @ignore
  */
 
-define('bui/form/datefield',function (require) {
+define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],function (require) {
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield'),
@@ -1400,7 +1404,7 @@ define('bui/form/datefield',function (require) {
  * @ignore
  */
 
-define('bui/form/checkfield',function (require) {
+define('bui/form/checkfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
   /**
@@ -1499,7 +1503,7 @@ define('bui/form/checkfield',function (require) {
  * @ignore
  */
 
-define('bui/form/checkboxfield',function (required) {
+define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
 
@@ -1541,7 +1545,7 @@ define('bui/form/checkboxfield',function (required) {
  * @ignore
  */
 
-define('bui/form/radiofield',function (required) {
+define('bui/form/radiofield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
 
@@ -1598,7 +1602,7 @@ define('bui/form/radiofield',function (required) {
  * @ignore
  */
 
-define('bui/form/plainfield',function (require) {
+define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
 
@@ -1684,30 +1688,35 @@ define('bui/form/plainfield',function (require) {
  * @fileOverview 表单域的入口文件
  * @ignore
  */
-
-define('bui/form/field',function (require) {
+;(function(){
+var BASE = 'bui/form/';
+define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
+  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield'],function (require) {
   var BUI = require('bui/common'),
-    Field = require('bui/form/basefield');
+    Field = require(BASE + 'basefield');
 
   BUI.mix(Field,{
-    Text : require('bui/form/textfield'),
-    Date : require('bui/form/datefield'),
-    Select : require('bui/form/selectfield'),
-    Hidden : require('bui/form/hiddenfield'),
-    Number : require('bui/form/numberfield'),
-    Check : require('bui/form/checkfield'),
-    Radio : require('bui/form/radiofield'),
-    Checkbox : require('bui/form/checkboxfield'),
-    Plain : require('bui/form/plainfield')
+    Text : require(BASE + 'textfield'),
+    Date : require(BASE + 'datefield'),
+    Select : require(BASE + 'selectfield'),
+    Hidden : require(BASE + 'hiddenfield'),
+    Number : require(BASE + 'numberfield'),
+    Check : require(BASE + 'checkfield'),
+    Radio : require(BASE + 'radiofield'),
+    Checkbox : require(BASE + 'checkboxfield'),
+    Plain : require(BASE + 'plainfield')
   });
 
   return Field;
-});/**
+});
+
+})();
+/**
  * @fileOverview 表单验证
  * @ignore
  */
 
-define('bui/form/valid',function (require) {
+define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
   var BUI = require('bui/common'),
     Rules = require('bui/form/rules');
@@ -2036,7 +2045,7 @@ define('bui/form/valid',function (require) {
  * @ignore
  */
 
-define('bui/form/groupvalid',function (require) {
+define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   
   var CLS_ERROR = 'x-form-error',
     Valid = require('bui/form/valid');
@@ -2208,7 +2217,7 @@ define('bui/form/groupvalid',function (require) {
  * @fileOverview 表单字段的容器扩展
  * @ignore
  */
-define('bui/form/fieldcontainer',function (require) {
+define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupvalid'],function (require) {
   var BUI = require('bui/common'),
     Field = require('bui/form/field'),
     GroupValid = require('bui/form/groupvalid'),
@@ -2560,7 +2569,7 @@ define('bui/form/fieldcontainer',function (require) {
  * @ignore
  */
 
-define('bui/form/group/base',function (require) {
+define('bui/form/group/base',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
 
@@ -2594,7 +2603,7 @@ define('bui/form/group/base',function (require) {
  * @ignore
  */
 
-define('bui/form/group/range',function (require) {
+define('bui/form/group/range',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
   function testRange (self,curVal,prevVal) {
@@ -2670,7 +2679,7 @@ define('bui/form/group/range',function (require) {
  * @ignore
  */
 
-define('bui/form/group/check',function (require) {
+define('bui/form/group/check',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
   function getFieldName (self) {
@@ -2750,7 +2759,7 @@ define('bui/form/group/check',function (require) {
  * @ignore
  */
 
-define('bui/form/group/select',function (require) {
+define('bui/form/group/select',['bui/form/group/base','bui/data'],function (require) {
   var Group = require('bui/form/group/base'),
     Data = require('bui/data'),
     Bindable = BUI.Component.UIBase.Bindable;
@@ -2770,7 +2779,7 @@ define('bui/form/group/select',function (require) {
    * @class BUI.Form.Group.Select
    * 级联选择框分组
    * @extends BUI.Form.Group
-   * @mixins BUI.Data.Bindable
+   * @mixins BUI.Component.UIBase.Bindable
    */
   var Select = Group.extend([Bindable],{
     initializer : function(){
@@ -2903,7 +2912,7 @@ define('bui/form/group/select',function (require) {
  * @ignore
  */
 
-define('bui/form/fieldgroup',function (require) {
+define('bui/form/fieldgroup',['bui/common','bui/form/group/base','bui/form/group/range','bui/form/group/check','bui/form/group/select'],function (require) {
   var BUI = require('bui/common'),
     Group = require('bui/form/group/base');
 
@@ -2918,7 +2927,7 @@ define('bui/form/fieldgroup',function (require) {
  * @ignore
  */
 
-define('bui/form/form',function (require) {
+define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],function (require) {
   
   var BUI = require('bui/common'),
     Bar = require('bui/toolbar').Bar,
@@ -3142,7 +3151,7 @@ define('bui/form/form',function (require) {
  * @ignore
  */
 
-define('bui/form/horizontal',function (require) {
+define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
   var BUI = require('bui/common'),
     Form = require('bui/form/form');
 
@@ -3195,7 +3204,7 @@ define('bui/form/horizontal',function (require) {
  * @ignore
  */
 
-define('bui/form/row',function (require) {
+define('bui/form/row',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
 
@@ -3238,7 +3247,7 @@ define('bui/form/row',function (require) {
  * @ignore
  */
 
-define('bui/form/rule',function (require) {
+define('bui/form/rule',['bui/common'],function (require) {
 
   var BUI = require('bui/common');
   /**
@@ -3359,7 +3368,7 @@ define('bui/form/rule',function (require) {
  * @ignore
  */
 
-define('bui/form/rules',function (require) {
+define('bui/form/rules',['bui/form/rule'],function (require) {
 
   var Rule = require('bui/form/rule');
 
@@ -3927,7 +3936,7 @@ define('bui/form/rules',function (require) {
  * @ignore
  */
 
-define('bui/form/remote',function(require) {
+define('bui/form/remote',['bui/common'],function(require) {
   var BUI = require('bui/common');
 
   /**

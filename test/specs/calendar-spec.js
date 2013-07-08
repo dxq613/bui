@@ -232,6 +232,7 @@ BUI.use('bui/calendar/calendar',function(Calendar){
   var calendar = new Calendar({
     render:'#c6',
     minDate : '2010-01-01',
+    selectedDate : new Date('2013/06/05'),
     maxDate : '2013-06-06'
   }),
   DateUtil = BUI.Date;

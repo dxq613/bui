@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/editor/record',function (require) {
+define('bui/editor/record',['bui/common','bui/editor/editor'],function (require) {
   var BUI = require('bui/common'),
     Editor = require('bui/editor/editor');
 

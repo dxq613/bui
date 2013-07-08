@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/component/uibase/list',function (require) {
+define('bui/component/uibase/list',['bui/component/uibase/selection'],function (require) {
   
   var Selection = require('bui/component/uibase/selection');
 
@@ -64,6 +64,7 @@ define('bui/component/uibase/list',function (require) {
          * @event
          * @param {Object} e 事件对象
          * @param {BUI.Component.UIBase.ListItem} e.item 点击的选项
+         * @param {HTMLElement} e.element 选项代表的DOM对象
          * @param {HTMLElement} e.domTarget 点击的DOM对象
          * @param {HTMLElement} e.domEvent 点击的原生事件对象
          */
@@ -144,6 +145,17 @@ define('bui/component/uibase/list',function (require) {
       var _self = this;
       BUI.each(items,function (item) {
           _self.addItem(item);
+      });
+    },
+    /**
+     * 插入多条记录
+     * @param  {Array} items 多条记录
+     * @param  {Number} start 起始位置
+     */
+    addItemsAt : function(items,start){
+      var _self = this;
+      BUI.each(items,function (item,index) {
+        _self.addItemAt(item,start + index);
       });
     },
     /**
@@ -366,7 +378,7 @@ define('bui/component/uibase/list',function (require) {
     /**
      * 设置列表项选中
      * @protected
-     * @param {*} item   记录
+     * @param {*} name 状态名称
      * @param {HTMLElement} element DOM结构
      * @param {Boolean} value 设置或取消此状态
      */
@@ -377,6 +389,17 @@ define('bui/component/uibase/list',function (require) {
       if(element){
         $(element)[method](cls);
       }
+    },
+    /**
+     * 是否有某个状态
+     * @param {*} name 状态名称
+     * @param {HTMLElement} element DOM结构
+     * @return {Boolean} 是否具有状态
+     */
+    hasStatus : function(name,element){
+      var _self = this,
+        cls = _self.getItemStatusCls(name);
+      return $(element).hasClass(cls);
     },
     /**
      * 设置列表项选中
@@ -411,7 +434,16 @@ define('bui/component/uibase/list',function (require) {
         dataField = _self.get('dataField');
       return $(element).data(dataField);
     },
-
+    /**
+     * 根据状态获取DOM
+     * @return {Array} DOM数组
+     */
+    getElementsByStatus : function(status){
+      var _self = this,
+        cls = _self.getItemStatusCls(status),
+        el = _self.get('el');
+      return el.find('.' + cls);
+    },
     /**
      * 通过样式查找DOM元素
      * @param {String} css样式
@@ -575,7 +607,7 @@ define('bui/component/uibase/list',function (require) {
       itemContainer.delegate('.'+itemCls,'click',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
-        var rst = _self.fire('itemclick',{item:item,domTarget:ev.target,domEvent:ev});
+        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent:ev});
         if(rst !== false && selectedEvent == 'click'){
           setItemSelectedStatus(item,itemEl); 
         }
@@ -689,11 +721,29 @@ define('bui/component/uibase/list',function (require) {
       return this.get('view').getItemByElement(element);
     },
     /**
+     * 根据状态获取选项
+     * @param  {String} status 状态名
+     * @return {Array}  选项组集合
+     */
+    getItemsByStatus : function(status){
+      var _self = this,
+        elements = _self.get('view').getElementsByStatus(status),
+        rst = [];
+      BUI.each(elements,function(element){
+        rst.push(_self.getItemByElement(element));
+      });
+      return rst;
+    },
+    /**
      * 查找指定的项的DOM结构
      * @param  {Object} item 
      * @return {HTMLElement} element
      */
     findElement : function(item){
+      var _self = this;
+      if(BUI.isString(item)){
+        item = _self.getItem(item);
+      }
       return this.get('view').findElement(item);
     },
     findItemByField : function(field,value){
@@ -762,6 +812,30 @@ define('bui/component/uibase/list',function (require) {
       this.fire('beforeitemsclear');
       this.get('view').clearControl();
       this.fire('itemsclear');
+    },
+    /**
+     * 选项是否存在某种状态
+     * @param {*} item 选项
+     * @param {String} status 状态名称，如selected,hover,open等等
+     * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
+     * @return {Boolean} 是否具有某种状态
+     */
+    hasStatus : function(item,status,element){
+      var _self = this,
+        element = element || _self.findElement(item);
+      return _self.get('view').hasStatus(status,element);
+    },
+    /**
+     * 设置选项状态
+     * @param {*} item 选项
+     * @param {String} status 状态名称
+     * @param {Boolean} value 状态值，true,false
+     * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
+     */
+    setItemStatus : function(item,status,value,element){
+      var _self = this,
+        element = _self.findElement(item);
+      _self.get('view').setItemStatusCls(status,element,value);
     }
   });
 
@@ -867,7 +941,6 @@ define('bui/component/uibase/list',function (require) {
     __bindUI : function(){
       var _self = this,
         selectedEvent = _self.get('selectedEvent');
-
      
       _self.on(selectedEvent,function(e){
         var item = e.target;

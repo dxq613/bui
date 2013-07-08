@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/form',function (require) {
+define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],function (require) {
   
   var BUI = require('bui/common'),
     Bar = require('bui/toolbar').Bar,

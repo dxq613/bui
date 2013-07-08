@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/calendar/datepicker',function(require){
+define('bui/calendar/datepicker',['bui/common','bui/overlay','bui/calendar/calendar'],function(require){
   
   var BUI = require('bui/common'),
     Picker = require('bui/overlay').Picker,

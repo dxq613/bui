@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/select/select',function (require) {
+define('bui/select/select',['bui/common','bui/list'],function (require) {
 
   var BUI = require('bui/common'),
     List = require('bui/list'),

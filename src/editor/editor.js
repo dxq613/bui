@@ -4,7 +4,7 @@
  * @author dxq613@gmail.com
  */
 
-define('bui/editor/editor',function (require) {
+define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],function (require) {
   var BUI = require('bui/common'),
     Overlay = require('bui/overlay').Overlay
     CLS_TIPS = 'x-editor-tips',

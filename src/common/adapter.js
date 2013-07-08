@@ -126,6 +126,19 @@ var jQuery = jQuery || (function () {
     find : function(selector){
       return new wrapNode(DOM.query(selector,this[0]));
     },
+    /**
+     * 判断是否符合指定的选择器
+     */
+    is : function(selector){
+      var splits = selector.split(','),
+        rst = false;
+      for (var i = 0; i < splits.length; i++) {
+        if(!rst && splits[i]){
+          rst = rst || DOM.test(this[0],splits[i]);
+        }
+      };
+      return rst;
+    },
     //复写delegate，更改参数顺序
     delegate : function(selector,eventType,fn){
      return wrapNode.superclass.delegate.call(this,eventType,selector,fn);
@@ -136,6 +149,19 @@ var jQuery = jQuery || (function () {
       return wrapNode.superclass.each.call(this,function(value,index){
         return fn.call(this[0],index,value[0]);
       });
+    },
+    //第一个子元素
+    first : function(){
+      return new wrapNode(this[0]);
+    },
+    //查找父节点，jQuery 的parent 和parents 有差异
+    parents : function(selector){
+      return this.parent(selector);
+    },
+    //最后一个子元素
+    last : function(){
+      var length = this.length;
+      return new wrapNode(this[length-1]);
     },
     /**
      * kissy 未提供此方法
@@ -188,7 +214,7 @@ var jQuery = jQuery || (function () {
   });
 
   //由于返回的对象的类型是S.Node，所以要更改类型
-  var nodeMethods = ['children','parent','first','last','next','prev','siblings','closest'];
+  var nodeMethods = ['children','parent','next','prev','siblings','closest'];
   S.each(nodeMethods,function(fnName){
     wrapNode.prototype[fnName] = function(selector){
       return new wrapNode(DOM[fnName](this[0],selector));
@@ -249,6 +275,7 @@ var jQuery = jQuery || (function () {
       });
       return rst;
     },
+
     /**
      * 空操作
      */
@@ -259,4 +286,34 @@ var jQuery = jQuery || (function () {
   return wrapNode;
 })();
 
-var $ = $ || jQuery;
+var $ = $ || jQuery,
+  BUI = BUI || {};;
+
+window.define = window.define || function(name,depends,fun){
+  if(KISSY.isFunction(depends)){
+    fun = depends;
+    depends = [];
+  }
+
+  function require(name){
+    return KISSY.require.call(KISSY,name);
+  }
+
+  function callback(S){
+    return fun.call(S,require);
+  }
+  KISSY.add(name,callback,{requires : depends});
+};
+
+if(!BUI.use){
+  BUI.use = function(modules,callback){
+    if(KISSY.isArray(modules)){
+      modules = modules.join();
+    };
+    KISSY.use(modules,function(S){
+      var args = KISSY.makeArray(arguments); 
+      args.shift();
+      callback.apply(S,args);
+    });
+  };
+}

@@ -3,7 +3,7 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/grid/plugins/summary',function (require) {
+define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,

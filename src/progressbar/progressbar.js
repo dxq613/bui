@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/progressbar/base',function(require){
+define('bui/progressbar/base',['bui/common'],function(require){
 
 	var BUI = require('bui/common');
 

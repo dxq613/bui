@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/component/uibase/keynav',function (require) {
+define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
   var KeyCode = require('bui/keycode'),
       wrapBehavior = BUI.wrapBehavior,

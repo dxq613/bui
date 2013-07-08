@@ -4,7 +4,7 @@
 * @author dxq613@gmail.com
 */
 
-define('bui/form/readonlyfield',function (require) {
+define('bui/form/readonlyfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
    * 表单隐藏域

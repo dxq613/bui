@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/tab/tabitem',function (require) {
+define('bui/tab/tabitem',['bui/common'],function (require) {
   
 
   var BUI = require('bui/common'),

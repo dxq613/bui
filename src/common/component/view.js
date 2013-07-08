@@ -4,7 +4,7 @@
  * copied by dxq613@gmail.com
  * @ignore
  */
-define('bui/component/view',function(require){
+define('bui/component/view',['bui/component/manage','bui/component/uibase'],function(require){
 
   var win = window,
     Manager = require('bui/component/manage'),

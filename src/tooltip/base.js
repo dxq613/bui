@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/tooltip',function (require) {
+define('bui/tooltip',['bui/common','bui/tooltip/tip','bui/tooltip/tips'],function (require) {
   var BUI = require('bui/common'),
     Tooltip = BUI.namespace('Tooltip'),
     Tip = require('bui/tooltip/tip'),

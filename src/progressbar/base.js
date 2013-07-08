@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/progressbar',function (require) {
+define('bui/progressbar',['bui/common','bui/progressbar/base','bui/progressbar/load'],function (require) {
   var BUI = require('bui/common'),
     ProgressBar = BUI.namespace('ProgressBar');
   BUI.mix(ProgressBar,{

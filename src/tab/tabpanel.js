@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/tab/tabpanel',function (require) {
+define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
   
   var BUI = require('bui/common'),
     Tab = require('bui/tab/tab');

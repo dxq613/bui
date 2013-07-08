@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/select/suggest',function (require) {
+define('bui/select/suggest',['bui/common','bui/select/combox'],function (require) {
 
   var BUI = require('bui/common'),
     Combox = require('bui/select/combox'),

@@ -1,5 +1,5 @@
 
-define('bui/data/proxy',function(require) {
+define('bui/data/proxy',['bui/data/sortable'],function(require) {
 
   var Sortable = require('bui/data/sortable');
 
