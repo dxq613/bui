@@ -1628,6 +1628,20 @@ define('bui/util',function(){
         return toString.call(value) === '[object Date]';
     },
     /**
+     * \u662f\u5426\u662fjavascript\u5bf9\u8c61
+     * @param {Object} value The value to test
+     * @return {Boolean}
+     * @method
+     */
+    isObject: (toString.call(null) === '[object Object]') ?
+    function(value) {
+        // check ownerDocument here as well to exclude DOM nodes
+        return value !== null && value !== undefined && toString.call(value) === '[object Object]' && value.ownerDocument === undefined;
+    } :
+    function(value) {
+        return toString.call(value) === '[object Object]';
+    },
+    /**
      * \u5c06\u6307\u5b9a\u7684\u65b9\u6cd5\u6216\u5c5e\u6027\u653e\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\uff0c
      * \u51fd\u6570\u652f\u6301\u591a\u4e8e2\u4e2a\u53d8\u91cf\uff0c\u540e\u9762\u7684\u53d8\u91cf\u540cs1\u4e00\u6837\u5c06\u5176\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\u3002
      * @param  {Function} r  \u6784\u9020\u51fd\u6570
@@ -1900,7 +1914,7 @@ define('bui/util',function(){
      */
     substitute: function (str, o, regexp) {
         if (!BUI.isString(str)
-            || (!$.isPlainObject(o)) && !BUI.isArray(o)) {
+            || (!BUI.isObject(o)) && !BUI.isArray(o)) {
             return str;
         }
 
@@ -8878,7 +8892,8 @@ define('bui/component/uibase/bindable',function(){
 			if(!store){
 				return;
 			}
-			store.on('beforeload',function(){
+			store.on('beforeload',function(e){
+				_self.onBeforeLoad(e);
 				if(loadMask && loadMask.show){
 					loadMask.show();
 				}
@@ -8914,9 +8929,19 @@ define('bui/component/uibase/bindable',function(){
 			if(!store){
 				return;
 			}
-			if(store.get('autoLoad') && store.hasData()){
+			if(store.hasData()){
 				_self.onLoad();
 			}
+		},
+		/**
+		* @protected
+    * @template
+		* before store load data
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-beforeload}
+		*/
+		onBeforeLoad : function(e){
+
 		},
 		/**
 		* @protected
@@ -11706,7 +11731,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
    *   //\u52a0\u8f7d\u9759\u6001\u6570\u636e
    *   var store = new TreeStore({
    *     root : {
-   *       text : 
+   *       text : '\u6839\u8282\u70b9',
+   *       children : []
    *     }
    *   });
    * </code>
@@ -11738,6 +11764,41 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      */
     dataProperty : {
       value : 'nodes'
+    },
+    events : {
+      value : [
+        /**  
+        * \u5f53\u6dfb\u52a0\u6570\u636e\u65f6\u89e6\u53d1\u8be5\u4e8b\u4ef6
+        * @event  
+        * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+        * @param {Object} e.node \u6dfb\u52a0\u7684\u8282\u70b9
+        * @param {Number} index \u6dfb\u52a0\u7684\u4f4d\u7f6e
+        */
+        'add',
+        /**  
+        * \u5f53\u66f4\u65b0\u6570\u636e\u6307\u5b9a\u5b57\u6bb5\u65f6\u89e6\u53d1\u8be5\u4e8b\u4ef6 
+        * @event  
+        * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+        * @param {Object} e.node \u66f4\u65b0\u7684\u8282\u70b9
+        */
+        'update',
+        /**  
+        * \u5f53\u5220\u9664\u6570\u636e\u65f6\u89e6\u53d1\u8be5\u4e8b\u4ef6
+        * @event  
+        * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+        * @param {Object} e.node \u5220\u9664\u7684\u8282\u70b9
+        * @param {Number} index \u5220\u9664\u8282\u70b9\u7684\u7d22\u5f15
+        */
+        'remove',
+        /**  
+        * \u8282\u70b9\u52a0\u8f7d\u5b8c\u6bd5\u89e6\u53d1\u8be5\u4e8b\u4ef6
+        * @event  
+        * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+        * @param {Object} e.node \u52a0\u8f7d\u7684\u8282\u70b9
+        * @param {Object} e.params \u52a0\u8f7d\u8282\u70b9\u65f6\u7684\u53c2\u6570
+        */
+        'load'
+      ]
     }
   }
 
@@ -11791,13 +11852,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @param {Number} index \u6dfb\u52a0\u8282\u70b9\u7684\u4f4d\u7f6e
      */
     add : function(node,parent,index){
+      parent = parent || this.get('root');  //\u5982\u679c\u672a\u6307\u5b9a\u7236\u5143\u7d20\uff0c\u6dfb\u52a0\u5230\u8ddf\u8282\u70b9
       var _self = this,
         map = _self.get('map'),
         nodes = parent.children,
         nodeChildren = node.children || [];
+      if(nodeChildren.length == 0 && node.leaf == null){
+        node.leaf = true;
+      }
       if(!node.isNode){
         node = new Node(node,map);
       }
+
       node.parent = parent;
       node.level = parent.level + 1;
       node.path = parent.path.concat(node.id);
@@ -11814,12 +11880,26 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @param {BUI.Data.Node} node \u8282\u70b9\u6216\u8005\u6570\u636e\u5bf9\u8c61
      */
     remove : function(node){
-      var parent = node.parent;
+      var parent = node.parent || _self.get('root'),
+        index = BUI.Array.indexOf(node,parent.children) ;
+
       BUI.Array.remove(parent.children,node);
-      this.fire('remove',{node : node});
+      if(parent.children.length === 0){
+        parent.leaf = true;
+      }
+      this.fire('remove',{node : node , index : index});
+      node.parent = null;
+    },
+    /**
+     * \u66f4\u65b0\u8282\u70b9
+     * @return {BUI.Data.Node} \u66f4\u65b0\u8282\u70b9
+     */
+    update : function(node){
+      this.fire('update',{node : node});
     },
     /**
      * \u8bbe\u7f6e\u5b50\u8282\u70b9
+     * @protected
      * @param {BUI.Data.Node} node  \u8282\u70b9
      * @param {Array} children \u5b50\u8282\u70b9
      */
@@ -11864,6 +11944,30 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       return rst;
     },
     /**
+     * \u67e5\u627e\u8282\u70b9,\u6839\u636e\u5339\u914d\u51fd\u6570\u67e5\u627e
+     * @param  {Function} func \u5339\u914d\u51fd\u6570
+     * @param  {BUI.Data.Node} parent \u7236\u5143\u7d20\uff0c\u5982\u679c\u4e0d\u5b58\u5728\uff0c\u5219\u4ece\u6839\u8282\u70b9\u67e5\u627e
+     * @return {Array} \u8282\u70b9\u6570\u7ec4
+     */
+    findNodesBy : function(func,parent){
+      var _self = this,
+        root,
+        rst = [];
+
+      if(!parent){
+        parent = _self.get('root');
+      }
+
+      BUI.each(parent.children,function(item){
+        if(func(item)){
+          rst.push(item);
+        }
+        rst = rst.concat(_self.findNodesBy(func,item));
+      });
+
+      return rst;
+    },
+    /**
      * \u662f\u5426\u5305\u542b\u6307\u5b9a\u8282\u70b9\uff0c\u5982\u679c\u672a\u6307\u5b9a\u7236\u8282\u70b9\uff0c\u4ece\u6839\u8282\u70b9\u5f00\u59cb\u641c\u7d22
      * @param  {BUI.Data.Node} node \u8282\u70b9
      * @param  {BUI.Data.Node} parent \u7236\u8282\u70b9
@@ -11882,7 +11986,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       var _self = this,
         id = params.id,
         dataProperty = _self.get('dataProperty'),
-        node = _self.findNode(id) || _self.get('root');//\u5982\u679c\u627e\u4e0d\u5230\u7236\u5143\u7d20\uff0c\u5219\u653e\u7f6e\u5728
+        node = _self.findNode(id) || _self.get('root');//\u5982\u679c\u627e\u4e0d\u5230\u7236\u5143\u7d20\uff0c\u5219\u653e\u7f6e\u5728\u8ddf\u8282\u70b9
       if(BUI.isArray(data)){
         _self.setChildren(node,data);
       }else{
@@ -11915,7 +12019,12 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(_self.isLoaded(node)){
         return ;
       }
-      _self.load({id:node.id});
+      if(!_self.get('url')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
+        return;
+      }else{
+        _self.load({id:node.id});
+      }
+      
     }
   });
 
@@ -26076,13 +26185,14 @@ define('bui/grid/format',function (require) {
          * @param {Object} enumObj \u952e\u503c\u5bf9\u7684\u679a\u4e3e\u5bf9\u8c61 {"1":"\u5927","2":"\u5c0f"}
          * @return {Function} \u8fd4\u56de\u6307\u5b9a\u679a\u4e3e\u7684\u683c\u5f0f\u5316\u51fd\u6570
          * @example
-         * //Grid \u7684\u5217\u5b9a\u4e49
+         * <code>
+         *  //Grid \u7684\u5217\u5b9a\u4e49
          *  {title:"\u72b6\u6001",dataIndex:"status",renderer:BUI.Grid.Format.multipleItemsRenderer({"1":"\u5165\u5e93","2":"\u51fa\u5e93","3":"\u9000\u8d27"})}
          *  //\u6570\u636e\u6e90\u662f[1,2] \u65f6\uff0c\u5219\u8fd4\u56de "\u5165\u5e93,\u51fa\u5e93"
-         *
+         * </code>
          */
         multipleItemsRenderer:function (enumObj) {
-            var enumFun = Grid.Format.enumRenderer(enumObj);
+            var enumFun = Format.enumRenderer(enumObj);
             return function (values) {
                 var result = [];
                 if (!values) {

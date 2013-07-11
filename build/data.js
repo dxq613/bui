@@ -910,7 +910,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
    *   //加载静态数据
    *   var store = new TreeStore({
    *     root : {
-   *       text : 
+   *       text : '根节点',
+   *       children : []
    *     }
    *   });
    * </code>
@@ -942,6 +943,41 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      */
     dataProperty : {
       value : 'nodes'
+    },
+    events : {
+      value : [
+        /**  
+        * 当添加数据时触发该事件
+        * @event  
+        * @param {jQuery.Event} e  事件对象
+        * @param {Object} e.node 添加的节点
+        * @param {Number} index 添加的位置
+        */
+        'add',
+        /**  
+        * 当更新数据指定字段时触发该事件 
+        * @event  
+        * @param {jQuery.Event} e  事件对象
+        * @param {Object} e.node 更新的节点
+        */
+        'update',
+        /**  
+        * 当删除数据时触发该事件
+        * @event  
+        * @param {jQuery.Event} e  事件对象
+        * @param {Object} e.node 删除的节点
+        * @param {Number} index 删除节点的索引
+        */
+        'remove',
+        /**  
+        * 节点加载完毕触发该事件
+        * @event  
+        * @param {jQuery.Event} e  事件对象
+        * @param {Object} e.node 加载的节点
+        * @param {Object} e.params 加载节点时的参数
+        */
+        'load'
+      ]
     }
   }
 
@@ -995,13 +1031,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @param {Number} index 添加节点的位置
      */
     add : function(node,parent,index){
+      parent = parent || this.get('root');  //如果未指定父元素，添加到跟节点
       var _self = this,
         map = _self.get('map'),
         nodes = parent.children,
         nodeChildren = node.children || [];
+      if(nodeChildren.length == 0 && node.leaf == null){
+        node.leaf = true;
+      }
       if(!node.isNode){
         node = new Node(node,map);
       }
+
       node.parent = parent;
       node.level = parent.level + 1;
       node.path = parent.path.concat(node.id);
@@ -1018,12 +1059,26 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @param {BUI.Data.Node} node 节点或者数据对象
      */
     remove : function(node){
-      var parent = node.parent;
+      var parent = node.parent || _self.get('root'),
+        index = BUI.Array.indexOf(node,parent.children) ;
+
       BUI.Array.remove(parent.children,node);
-      this.fire('remove',{node : node});
+      if(parent.children.length === 0){
+        parent.leaf = true;
+      }
+      this.fire('remove',{node : node , index : index});
+      node.parent = null;
+    },
+    /**
+     * 更新节点
+     * @return {BUI.Data.Node} 更新节点
+     */
+    update : function(node){
+      this.fire('update',{node : node});
     },
     /**
      * 设置子节点
+     * @protected
      * @param {BUI.Data.Node} node  节点
      * @param {Array} children 子节点
      */
@@ -1068,6 +1123,30 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       return rst;
     },
     /**
+     * 查找节点,根据匹配函数查找
+     * @param  {Function} func 匹配函数
+     * @param  {BUI.Data.Node} parent 父元素，如果不存在，则从根节点查找
+     * @return {Array} 节点数组
+     */
+    findNodesBy : function(func,parent){
+      var _self = this,
+        root,
+        rst = [];
+
+      if(!parent){
+        parent = _self.get('root');
+      }
+
+      BUI.each(parent.children,function(item){
+        if(func(item)){
+          rst.push(item);
+        }
+        rst = rst.concat(_self.findNodesBy(func,item));
+      });
+
+      return rst;
+    },
+    /**
      * 是否包含指定节点，如果未指定父节点，从根节点开始搜索
      * @param  {BUI.Data.Node} node 节点
      * @param  {BUI.Data.Node} parent 父节点
@@ -1086,7 +1165,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       var _self = this,
         id = params.id,
         dataProperty = _self.get('dataProperty'),
-        node = _self.findNode(id) || _self.get('root');//如果找不到父元素，则放置在
+        node = _self.findNode(id) || _self.get('root');//如果找不到父元素，则放置在跟节点
       if(BUI.isArray(data)){
         _self.setChildren(node,data);
       }else{
@@ -1119,7 +1198,12 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(_self.isLoaded(node)){
         return ;
       }
-      _self.load({id:node.id});
+      if(!_self.get('url')){ //如果不从远程加载数据，不是根节点的话，取消加载
+        return;
+      }else{
+        _self.load({id:node.id});
+      }
+      
     }
   });
 

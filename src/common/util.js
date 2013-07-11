@@ -75,6 +75,20 @@ define('bui/util',function(){
         return toString.call(value) === '[object Date]';
     },
     /**
+     * 是否是javascript对象
+     * @param {Object} value The value to test
+     * @return {Boolean}
+     * @method
+     */
+    isObject: (toString.call(null) === '[object Object]') ?
+    function(value) {
+        // check ownerDocument here as well to exclude DOM nodes
+        return value !== null && value !== undefined && toString.call(value) === '[object Object]' && value.ownerDocument === undefined;
+    } :
+    function(value) {
+        return toString.call(value) === '[object Object]';
+    },
+    /**
      * 将指定的方法或属性放到构造函数的原型链上，
      * 函数支持多于2个变量，后面的变量同s1一样将其成员复制到构造函数的原型链上。
      * @param  {Function} r  构造函数
@@ -347,7 +361,7 @@ define('bui/util',function(){
      */
     substitute: function (str, o, regexp) {
         if (!BUI.isString(str)
-            || (!$.isPlainObject(o)) && !BUI.isArray(o)) {
+            || (!BUI.isObject(o)) && !BUI.isArray(o)) {
             return str;
         }
 

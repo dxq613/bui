@@ -2569,13 +2569,14 @@ define('bui/grid/format',function (require) {
          * @param {Object} enumObj 键值对的枚举对象 {"1":"大","2":"小"}
          * @return {Function} 返回指定枚举的格式化函数
          * @example
-         * //Grid 的列定义
+         * <code>
+         *  //Grid 的列定义
          *  {title:"状态",dataIndex:"status",renderer:BUI.Grid.Format.multipleItemsRenderer({"1":"入库","2":"出库","3":"退货"})}
          *  //数据源是[1,2] 时，则返回 "入库,出库"
-         *
+         * </code>
          */
         multipleItemsRenderer:function (enumObj) {
-            var enumFun = Grid.Format.enumRenderer(enumObj);
+            var enumFun = Format.enumRenderer(enumObj);
             return function (values) {
                 var result = [];
                 if (!values) {

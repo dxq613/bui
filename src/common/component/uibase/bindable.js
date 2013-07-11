@@ -55,7 +55,8 @@ define('bui/component/uibase/bindable',function(){
 			if(!store){
 				return;
 			}
-			store.on('beforeload',function(){
+			store.on('beforeload',function(e){
+				_self.onBeforeLoad(e);
 				if(loadMask && loadMask.show){
 					loadMask.show();
 				}
@@ -91,9 +92,19 @@ define('bui/component/uibase/bindable',function(){
 			if(!store){
 				return;
 			}
-			if(store.get('autoLoad') && store.hasData()){
+			if(store.hasData()){
 				_self.onLoad();
 			}
+		},
+		/**
+		* @protected
+    * @template
+		* before store load data
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-beforeload}
+		*/
+		onBeforeLoad : function(e){
+
 		},
 		/**
 		* @protected

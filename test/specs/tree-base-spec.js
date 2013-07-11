@@ -6,7 +6,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
           {text : '22',id : '22'}
       ]},
       {text : '3',id : '3'},
-      {text : '4',id : '4'},
+      {text : '4',id : '4'}
     ];
   var tree = new TreeList({
     render : '#t1',
@@ -133,54 +133,250 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       expect(tree.isExpanded(node.parent)).toBe(true);
     });
 
-    it('添加节点',function(){
-
-    });
-
-    it('删除节点',function(){
-
-    });
-
-    it('更改节点',function(){
-
-    });
-
   });
 });
 
 BUI.use('bui/tree/treelist',function (TreeList) {
+  var nodes = [
+      {text : '1',id : '1',leaf : false},
+      {text : '2',id : '2',children : [
+          {text : '21',id : '21',children : [{text : '211',id : '211'},{text : '212',id : '212'}]},
+          {text : '22',id : '22'}
+      ]},
+      {text : '3',id : '3'},
+      {text : '4',id : '4'},
+    ];
+  var tree = new TreeList({
+    render : '#t2',
+    showLine : true,
+    nodes : nodes
+  });
+  tree.render();
+  var el = tree.get('el');
+
   describe('测试有连接线的树',function(){
     describe('测试初始化',function(){
-
+      it('测试线的样式',function(){
+        expect(el.hasClass('x-tree-show-line')).toBe(true);
+      });
+      it('测试线的生成',function(){
+        var node = tree.getItem('3'),
+          element = tree.findElement(node);
+        expect($(element).find('.x-tree-elbow-empty').length).toBe(0);
+        expect($(element).find('.x-tree-elbow').length).toBe(1);
+      });
+      it('测试最后节点线的生成',function(){
+        var node = tree.getItem('4'),
+          element = tree.findElement(node);
+        expect($(element).find('.x-tree-elbow-empty').length).toBe(0);
+        expect($(element).find('.x-tree-elbow-end').length).toBe(1);
+      });
     });
+
+    function addNode(node,subNode,index){
+      var slibings;
+      if(node == null){
+        slibings = tree.get('nodes');
+      }else{
+        slibings = node.children = node.children || [];
+      }
+      
+      if(index == null){
+        slibings.push(subNode);
+      }else{
+        BUI.Array.addAt(slibings,subNode,index);
+      }
+      //
+      if(node){
+        node.leaf = false;
+      }
+      
+      subNode.parent = node;
+      subNode.leaf = true;
+      subNode.level = node ? node.level + 1 : 1;
+      tree._addNode(subNode,index);
+    }
+
+    function removeNode(node){
+      var parent = node.parent;
+      BUI.Array.remove(parent.children,node);
+      if(parent.children.length === 0){
+        parent.leaf = true;
+      }
+      tree._removeNode(node);
+      node.parent = null;
+      
+    }
+
     describe('测试操作',function(){
+
       it('展开节点',function(){
+        tree.expandNode('2');
+        var node = tree.getItem('21'),
+          element = tree.findElement(node);
+        expect($(element).find('.x-tree-elbow-line').length).toBe(1);
 
+        var node = tree.getItem('22'),
+          element = tree.findElement(node);
+        expect($(element).find('.x-tree-elbow-line').length).toBe(1);
       });
 
-      it('折叠节点',function(){
-
+      it('继续展开',function(){
+        tree.expandNode('21');
+        var node = tree.getItem('211'),
+          element = tree.findElement(node);
+        expect($(element).find('.x-tree-elbow-line').length).toBe(2);
       });
 
-      it('添加节点到最后',function(){
-
-      });
-      it('添加节点到第一个',function(){
-
-      });
       it('在叶子节点上添加节点',function(){
+        var node = tree.getItem('3'),
+          subNode = {id:'31',text : '31'},
+          element = tree.findElement(node);
+        expect($(element).find('.x-tree-elbow-dir').length).toBe(0);
+        addNode(node,subNode,0);
+        waits(100);
+        runs(function(){
+          expect($(element).find('.x-tree-elbow-dir').length).toBe(1);
+        });
+      });
+
+      it('展开的节点上，添加节点到最后',function(){
+        var node = tree.getItem('21'),
+          sblingNode = tree.getItem('212'), //添加之前最后一个节点
+          sblingElement = tree.findElement(sblingNode),
+          subNode = {id : '213',text: '213'};
+
+        expect($(sblingElement).find('.x-tree-elbow-end').length).toBe(1);
+        addNode(node,subNode);
+
+        waits(100);
+        runs(function(){
+          var subElement = tree.findElement(subNode);
+          expect($(sblingElement).find('.x-tree-elbow-end').length).toBe(0);
+          expect($(subElement).find('.x-tree-elbow-end').length).toBe(1);
+        });
+      });
+
+      it('添加节点到第一个',function(){
+        var node = tree.getItem('21'),
+          subNode = {id : '210',text: '210'};
+
+        addNode(node,subNode,0);
+        waits(100);
+        runs(function(){
+          var subElement = tree.findElement(subNode);
+          /*,
+            nextElement = $(subElement).next('.tree-list-item');*/
+          expect($(subElement).find('.x-tree-elbow-end').length).toBe(0);
+        });
 
       });
-      it('删除非最后一个节点',function(){
 
+      it('测试添加最后',function(){
+        var node = tree.getItem('4'),
+          element = tree.findElement(node);
+        addNode(node,{id : '41',text:'41'});
+        addNode(node,{id : '42',text:'42'});
+        tree.expandNode(node);
+        expect($(element).find('.x-tree-elbow-dir').length).toBe(1);
+        expect($(element).find('.x-tree-elbow-expander').length).toBe(1);
+        expect($(element).find('.x-tree-elbow-expander-end').length).toBe(1);
+        addNode(null,{id : '5',text:'5',leaf : true},4);
+      });
+     
+      it('删除非最后一个节点',function(){
+        var node = tree.getItem('210');
+        removeNode(node);
+        expect(tree.getItem('210')).toBe(null);
       });
       it('删除最后一个节点',function(){
+        var node = tree.getItem('213');
+        removeNode(node);
+        expect(tree.getItem('213')).toBe(null);
+        var node = tree.getItem('212'),
+          element = tree.findElement(node);
+        expect($(element).find('.x-tree-elbow-end').length).toBe(1);
+      });
+      it('删除仅有一个子节点',function(){ 
+        var node = tree.getItem('3'),
+          element = tree.findElement(node);
+
+        removeNode(node.children[0]);
+        expect(node.leaf).toBe(true);
+        expect($(element).find('.x-tree-elbow-dir').length).toBe(0);
+      });
+      /**/
+    });
+  });
+});
+
+/*
+BUI.use('bui/tree/treelist',function (TreeList) {
+  
+  describe('勾选的tree',function(){
+    describe('初始化勾选',function(){
+      it('默认勾选的文件夹',function(){
 
       });
-      it('删除仅有一个子节点',function(){
+      it('默认部分勾选文件夹',function(){
+
+      });
+      it('默认勾选叶子节点',function(){
+
+      });
+    });
+    describe('勾选操作',function(){
+      it('勾选子节点',function(){
+
+      });
+      it('取消勾选子节点',function(){
+
+      });
+      it('勾选树节点',function(){
+
+      });
+      it('取消勾选树节点',function(){
+
+      });
+      it('树节点勾中状态下，取消叶子节点勾中',function(){
+
+      });
+      it('树节点，未勾中，勾选叶子节点',function(){
+
+      });
+      it('勾选所有叶子节点',function(){
+
+      });
+      it('折叠后，展开，测试节点勾选状态',function(){
+
+      });
+    });
+    describe('勾选状态下的，增删改',function(){
+      it('勾选的树节点下，添加未勾选的字节点',function(){
+
+      });
+      it('勾选的树节点下，添加勾选的字节点',function(){
+
+      });
+      it('未勾选的树节点下，添加勾选的字节点',function(){
+
+      });
+      it('未勾选的树节点下，添加勾选的字节点',function(){
+
+      });
+
+      it('勾选的树节点下，删除勾选的字节点',function(){
+
+      });
+      it('未勾选的树节点下，删除勾选的字节点',function(){
+
+      });
+      it('未勾选的树节点下，删除未勾选的字节点',function(){
 
       });
 
     });
   });
+  
 });
+*/
