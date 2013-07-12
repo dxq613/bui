@@ -1,7 +1,9 @@
+/*
+*/
 BUI.use('bui/tree/treelist',function (TreeList) {
   var nodes = [
       {text : '1',id : '1',leaf : false},
-      {text : '2',id : '2',children : [
+      {text : '2',id : '2',expanded : true,children : [
           {text : '21',id : '21',children : [{text : '211',id : '211'},{text : '212',id : '212'}]},
           {text : '22',id : '22'}
       ]},
@@ -21,11 +23,6 @@ BUI.use('bui/tree/treelist',function (TreeList) {
     it('测试生成',function(){
       expect(el.length).not.toBe(0);
     });
-
-    it('测试节点生成',function(){
-      expect(el.find('li').length).toBe(nodes.length);
-    });
-
     it('测试初始化所有数据',function(){
       var n1 = tree.getFirstItem();
       expect(n1.leaf).toBe(false);
@@ -48,15 +45,12 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       });
     });
 
-  });
-
-  describe('测试树属性',function(){
-    it('测试显示根节点',function(){
-
+    it('测试初始展开的节点',function(){
+      var node = tree.getItem('2');
+      expect(tree.isExpanded(node)).toBe(true);
+      expect(tree.getItem('21')).not.toBe(null);
     });
-    it('测试不显示根节点',function(){
 
-    });
   });
 
   describe('测试tree操作',function(){
@@ -65,6 +59,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       tree.set('nodes',[]);
       expect(el.find('li').length).toBe(0);
       tree.set('nodes',nodes);
+      tree.collapseAll();
       expect(el.find('li').length).toBe(nodes.length);
     });
 
@@ -133,6 +128,15 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       expect(tree.isExpanded(node.parent)).toBe(true);
     });
 
+    it('收缩后展开,查看子节点的展开状态',function(){
+      var node = tree.getItem('2');
+      tree.collapseNode(node);
+      tree.expandNode(node);
+      expect(tree.isExpanded(node.children[0])).toBe(true);
+      expect(tree.getItem('211')).not.toBe(null);
+
+    });
+
   });
 });
 
@@ -144,7 +148,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
           {text : '22',id : '22'}
       ]},
       {text : '3',id : '3'},
-      {text : '4',id : '4'},
+      {text : '4',id : '4'}
     ];
   var tree = new TreeList({
     render : '#t2',
@@ -265,8 +269,6 @@ BUI.use('bui/tree/treelist',function (TreeList) {
         waits(100);
         runs(function(){
           var subElement = tree.findElement(subNode);
-          /*,
-            nextElement = $(subElement).next('.tree-list-item');*/
           expect($(subElement).find('.x-tree-elbow-end').length).toBe(0);
         });
 
@@ -305,78 +307,9 @@ BUI.use('bui/tree/treelist',function (TreeList) {
         expect(node.leaf).toBe(true);
         expect($(element).find('.x-tree-elbow-dir').length).toBe(0);
       });
-      /**/
     });
   });
 });
 
-/*
-BUI.use('bui/tree/treelist',function (TreeList) {
-  
-  describe('勾选的tree',function(){
-    describe('初始化勾选',function(){
-      it('默认勾选的文件夹',function(){
 
-      });
-      it('默认部分勾选文件夹',function(){
-
-      });
-      it('默认勾选叶子节点',function(){
-
-      });
-    });
-    describe('勾选操作',function(){
-      it('勾选子节点',function(){
-
-      });
-      it('取消勾选子节点',function(){
-
-      });
-      it('勾选树节点',function(){
-
-      });
-      it('取消勾选树节点',function(){
-
-      });
-      it('树节点勾中状态下，取消叶子节点勾中',function(){
-
-      });
-      it('树节点，未勾中，勾选叶子节点',function(){
-
-      });
-      it('勾选所有叶子节点',function(){
-
-      });
-      it('折叠后，展开，测试节点勾选状态',function(){
-
-      });
-    });
-    describe('勾选状态下的，增删改',function(){
-      it('勾选的树节点下，添加未勾选的字节点',function(){
-
-      });
-      it('勾选的树节点下，添加勾选的字节点',function(){
-
-      });
-      it('未勾选的树节点下，添加勾选的字节点',function(){
-
-      });
-      it('未勾选的树节点下，添加勾选的字节点',function(){
-
-      });
-
-      it('勾选的树节点下，删除勾选的字节点',function(){
-
-      });
-      it('未勾选的树节点下，删除勾选的字节点',function(){
-
-      });
-      it('未勾选的树节点下，删除未勾选的字节点',function(){
-
-      });
-
-    });
-  });
-  
-});
-*/
+/**/

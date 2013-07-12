@@ -7909,7 +7909,6 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
       element = element || _self.findElement(item);
       _self.setItemStatusCls('selected',element,selected);
-
     },
     /**
      * \u83b7\u53d6\u6240\u6709\u5217\u8868\u9879\u7684DOM\u7ed3\u6784
@@ -8008,6 +8007,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
         view : true
     },
     /**
+     * \u9009\u9879\u7684\u503c
+     * @type {Object}
+     */
+    itemStatusFields : {
+      value : {}
+    },
+    /**
      * \u9879\u7684\u6837\u5f0f\uff0c\u7528\u6765\u83b7\u53d6\u5b50\u9879
      * @type {Object}
      */
@@ -8104,6 +8110,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       itemContainer.delegate('.'+itemCls,'click',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
+        if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
+          return;
+        }
         var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent:ev});
         if(rst !== false && selectedEvent == 'click'){
           setItemSelectedStatus(item,itemEl); 
@@ -8113,6 +8122,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
         itemContainer.delegate('.'+itemCls,selectedEvent,function(ev){
           var itemEl = $(ev.currentTarget),
             item = _self.getItemByElement(itemEl);
+          if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
+            return;
+          }
           setItemSelectedStatus(item,itemEl); 
         });
       }
@@ -8130,11 +8142,52 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
           _self.setItemSelected(item,false,itemEl);
         }           
       }
+      _self.on('itemrendered itemupdated',function(ev){
+        var item = ev.item,
+          element = ev.domTarget;
+        _self._syncItemStatus(item,element);
+      });
     },
     //\u83b7\u53d6\u503c\uff0c\u901a\u8fc7\u5b57\u6bb5
     getValueByField : function(item,field){
       return item && item[field];
-    },    
+    }, 
+    //\u540c\u6b65\u9009\u9879\u72b6\u6001
+    _syncItemStatus : function(item,element){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields');
+      BUI.each(itemStatusFields,function(v,k){
+        _self.get('view').setItemStatusCls(k,element,item[v]);
+      });
+    },
+    /**
+     * @protected
+     * \u83b7\u53d6\u8bb0\u5f55\u4e2d\u7684\u72b6\u6001\u503c\uff0c\u672a\u5b9a\u4e49\u5219\u4e3aundefined
+     * @param  {Object} item  \u8bb0\u5f55
+     * @param  {String} status \u72b6\u6001\u540d
+     * @return {Boolean|undefined}  
+     */
+    getStatusValue : function(item,status){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields'),
+        field = itemStatusFields[status];
+      return item[field];
+    },
+    /**
+     * \u8bbe\u7f6e\u8bb0\u5f55\u72b6\u6001\u503c
+     * @protected
+     * @param  {Object} item  \u8bb0\u5f55
+     * @param  {String} status \u72b6\u6001\u540d
+     * @param {Boolean} value \u72b6\u6001\u503c
+     */
+    setStatusValue : function(item,status,value){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields'),
+        field = itemStatusFields[status];
+      if(field){
+        item[field] = value;
+      }
+    },
     getItemText : function(item){
       var _self = this,
           textGetter = _self.get('textGetter');
@@ -8263,8 +8316,8 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     setItemSelectedStatus : function(item,selected,element){
       var _self = this;
       element = element || _self.findElement(item);
-      _self.get('view').setItemSelected(item,selected,element);
-
+      //_self.get('view').setItemSelected(item,selected,element);
+      _self.setItemStatus(item,'selected',selected,element);
       _self.afterSelected(item,selected,element);
     },
     /**
@@ -8285,6 +8338,27 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       element = element || _self.findElement(item);
 
       return _self.get('view').isElementSelected(element);
+    },
+    /**
+     * \u662f\u5426\u9009\u9879\u88ab\u7981\u7528
+     * @param {Object} item \u9009\u9879
+     * @return {Boolean} \u9009\u9879\u662f\u5426\u7981\u7528
+     */
+    isItemDisabled : function(item,element){
+      return this.hasStatus(item,'disabled',element);
+    },
+    /**
+     * \u8bbe\u7f6e\u9009\u9879\u7981\u7528
+     * @param {Object} item \u9009\u9879
+     */
+    setItemDisabled : function(item,disabled){
+      
+      var _self = this;
+      if(disabled){
+        //\u6e05\u9664\u9009\u62e9
+        _self.setItemSelected(item,false);
+      }
+      _self.setItemStatus(item,'disabled',disabled);
     },
     /**
      * \u83b7\u53d6\u9009\u4e2d\u7684\u9879\u7684\u503c
@@ -8331,8 +8405,12 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      */
     setItemStatus : function(item,status,value,element){
       var _self = this,
-        element = _self.findElement(item);
-      _self.get('view').setItemStatusCls(status,element,value);
+        element = element || _self.findElement(item);
+      if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //\u7981\u7528\u540e\uff0c\u963b\u6b62\u6dfb\u52a0\u4efb\u4f55\u72b6\u6001\u53d8\u5316
+        _self.setStatusValue(item,status,value);
+        _self.get('view').setItemStatusCls(status,element,value);
+      }
+      
     }
   });
 
@@ -13608,6 +13686,9 @@ define('bui/list/simplelist',function (require) {
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'mouseover',function(ev){
+        if(_self.isItemDisabled(ev.item,ev.currentTarget)){ //\u5982\u679c\u7981\u7528
+          return;
+        }
         var sender = $(ev.currentTarget);
         _self.get('view').setElementHover(sender,true);
       }).delegate('.'+itemCls,'mouseout',function(ev){

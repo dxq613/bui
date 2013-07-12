@@ -33,6 +33,16 @@
         <div id="lb1"></div>
       </div>
     </div>
+    <div class="row">
+      <div class="span8">
+        <h2>测试禁用</h2>
+        <div id="l4"></div>
+      </div>
+      <div class="span8">
+        <h2>测试自定义状态</h2>
+        <div id="l5"></div>
+      </div>
+    </div>
   </div>
     <?php $url = 'bui/list'?>
     <?php include("./templates/script.php"); ?>
@@ -42,5 +52,6 @@
     <script type="text/javascript" src="../src/list/listbox.js"></script>
     <script type="text/javascript" src="../src/list/listpicker.js"></script>
     <script type="text/javascript" src="../src/list/base.js"></script>
-    <script type="text/javascript" src="specs/list-spec.js"></script>
+    <script type="text/javascript" src="specs/list-spec.js"></script><!---->
+    <script type="text/javascript" src="specs/list-status-spec.js"></script>
  <?php include("./templates/footer.php"); ?>   

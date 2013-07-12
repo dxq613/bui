@@ -65,6 +65,9 @@ define('bui/list/simplelist',function (require) {
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'mouseover',function(ev){
+        if(_self.isItemDisabled(ev.item,ev.currentTarget)){ //如果禁用
+          return;
+        }
         var sender = $(ev.currentTarget);
         _self.get('view').setElementHover(sender,true);
       }).delegate('.'+itemCls,'mouseout',function(ev){

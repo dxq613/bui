@@ -4,7 +4,7 @@
   
   .bui-tree-list{
     border: 1px solid #ddd;
-    padding:10px;
+
   }
 
   .bui-tree-item{
@@ -15,6 +15,10 @@
   }
   .bui-tree-item-selected{
     background-color: #dfe8f6;
+  }
+
+  .bui-tree-item-disabled{
+    color: #ccc;
   }
   
   .x-tree-icon{
@@ -85,16 +89,66 @@
     background-position:  0 0;
   }
 
+  .x-tree-show-line .bui-tree-item-loading .x-tree-elbow-expander{
+    background-image: url('http://localhost/extjs/resources/themes/images/default/tree/loading.gif');
+    background-position:  0 0;
+  }
+
+  .x-tree-icon-checkbox{
+    background: url('http://localhost/bui/assets/img/checkbox.gif') no-repeat 0 0 transparent;
+  }
+
+  .bui-tree-item-checked{
+    font-style: italic;
+  }
+  .bui-tree-item-checked .x-tree-icon-checkbox{
+    background-position: 0 -20px;
+
+  }
+
+
+  .bui-tree-item-partial-checked .x-tree-icon-checkbox{
+    background-position: 0 -40px;
+  }
+
+  .bui-tree-item-disabled .x-tree-icon-checkbox{
+    background-position: -48px 0;
+  }
+
+  .bui-tree-item-disabled.bui-tree-item-checked .x-tree-icon-checkbox{
+    background-position: -48px -20px;
+  }
+
+
+  
 </style>
   <div class="container">
     <div class="row">
-      <div class="span8" id="t1"></div>
-      <div class="span8" id="t2"></div>
+      <div class="span8" id="t1">
+        <h2>一般树</h2>
+      </div>
+      <div class="span8" id="t2">
+        <h2>带有连接线的树</h2>
+      </div>
     </div>
 
     <div class="row">
-      <div class="span8" id="t3"></div>
-      <div class="span8" id="t4"></div>
+      <div class="span8" id="t3">
+        <h2>可勾选的树</h2>
+      </div>
+      <div class="span8" id="t4">
+        <h2>store 增删改树节点</h2>
+      </div>
+      <div class="span8" id="t31">
+        <h2>勾选树的增删改</h2>
+      </div>
+      
+    </div>
+
+    <div class="row">
+      <div class="span8" id="t5">
+        <h2>异步加载树</h2>
+      </div>
     </div>
   </div>
     
@@ -103,7 +157,8 @@
 
     <script type="text/javascript" src="../src/tree/treemixin.js"></script>
     <script type="text/javascript" src="../src/tree/treelist.js"></script>
-    <!--<script type="text/javascript" src="specs/tree-base-spec.js"></script>-->
-    <script type="text/javascript" src="specs/tree-store-spec.js"></script>
+   <!-- <script type="text/javascript" src="specs/tree-base-spec.js"></script>-->
+    <script type="text/javascript" src="specs/tree-check-spec.js"></script>
+   <!-- <script type="text/javascript" src="specs/tree-store-spec.js"></script>-->
 
 <?php include("./templates/footer.php"); ?>

@@ -1,3 +1,4 @@
+
 BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   var nodes = [
         {text : '1',id : '1',leaf : false},
@@ -128,31 +129,68 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
         expect($(element).find('.x-tree-elbow-dir').length).toBe(0);
       });
 
-      /*it('更改节点',function(){
+      it('更改节点',function(){
 
       });
-    */
   });
 });
 
-BUI.use('bui/tree/treelist',function (TreeList) {
-
+BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
+  var store = new Data.TreeStore({
+      root : {
+        id : '0',
+        text : '0'
+      },
+      url : 'data/nodes.php'
+    });
+    
+  var tree = new TreeList({
+    render : '#t5',
+    showLine : true,
+    store : store
+  });
+  tree.render();
+  var el = tree.get('el');
   describe('异步获取数据',function(){
 
     it('初始化',function(){
-
+      store.load({id : '0'});
+      waits(200);
+      runs(function(){
+        expect(el.find('li')).not.toBe(0);
+      });
     });
 
     it('展开未加载的节点',function(){
-
+      var node = store.findNode('1'),
+        element = tree.findElement(node);
+      tree.expandNode(node);
+      expect($(element).hasClass('bui-tree-item-loading')).toBe(true);
+      expect(tree.getItem('11')).toBe(null);
+      waits(1500);
+      runs(function(){
+        expect($(element).hasClass('bui-tree-item-loading')).toBe(false);
+        expect(tree.getItem('11')).not.toBe(null);
+      });
     });
 
     it('展开已加载过的节点',function(){
-
+      var node = store.findNode('1'),
+        element = tree.findElement(node);
+      tree.collapseNode(node);
+      expect(tree.getItem('11')).toBe(null);
+      tree.expandNode(store.findNode('11'));
+      expect(tree.getItem('11')).not.toBe(null);
     });
 
-    it('展开所有节点',function(){
-
+    it('展开多个节点',function(){
+      tree.expandNode('13');
+      tree.expandNode('15');
+      waits(1500);
+      runs(function(){
+        expect(tree.getItem('131')).not.toBe(null);
+        expect(tree.getItem('151')).not.toBe(null);
+      });
     });
 
   });

@@ -6372,7 +6372,6 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
       element = element || _self.findElement(item);
       _self.setItemStatusCls('selected',element,selected);
-
     },
     /**
      * 获取所有列表项的DOM结构
@@ -6471,6 +6470,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
         view : true
     },
     /**
+     * 选项的值
+     * @type {Object}
+     */
+    itemStatusFields : {
+      value : {}
+    },
+    /**
      * 项的样式，用来获取子项
      * @type {Object}
      */
@@ -6567,6 +6573,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       itemContainer.delegate('.'+itemCls,'click',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
+        if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
+          return;
+        }
         var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent:ev});
         if(rst !== false && selectedEvent == 'click'){
           setItemSelectedStatus(item,itemEl); 
@@ -6576,6 +6585,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
         itemContainer.delegate('.'+itemCls,selectedEvent,function(ev){
           var itemEl = $(ev.currentTarget),
             item = _self.getItemByElement(itemEl);
+          if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
+            return;
+          }
           setItemSelectedStatus(item,itemEl); 
         });
       }
@@ -6593,11 +6605,52 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
           _self.setItemSelected(item,false,itemEl);
         }           
       }
+      _self.on('itemrendered itemupdated',function(ev){
+        var item = ev.item,
+          element = ev.domTarget;
+        _self._syncItemStatus(item,element);
+      });
     },
     //获取值，通过字段
     getValueByField : function(item,field){
       return item && item[field];
-    },    
+    }, 
+    //同步选项状态
+    _syncItemStatus : function(item,element){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields');
+      BUI.each(itemStatusFields,function(v,k){
+        _self.get('view').setItemStatusCls(k,element,item[v]);
+      });
+    },
+    /**
+     * @protected
+     * 获取记录中的状态值，未定义则为undefined
+     * @param  {Object} item  记录
+     * @param  {String} status 状态名
+     * @return {Boolean|undefined}  
+     */
+    getStatusValue : function(item,status){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields'),
+        field = itemStatusFields[status];
+      return item[field];
+    },
+    /**
+     * 设置记录状态值
+     * @protected
+     * @param  {Object} item  记录
+     * @param  {String} status 状态名
+     * @param {Boolean} value 状态值
+     */
+    setStatusValue : function(item,status,value){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields'),
+        field = itemStatusFields[status];
+      if(field){
+        item[field] = value;
+      }
+    },
     getItemText : function(item){
       var _self = this,
           textGetter = _self.get('textGetter');
@@ -6726,8 +6779,8 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     setItemSelectedStatus : function(item,selected,element){
       var _self = this;
       element = element || _self.findElement(item);
-      _self.get('view').setItemSelected(item,selected,element);
-
+      //_self.get('view').setItemSelected(item,selected,element);
+      _self.setItemStatus(item,'selected',selected,element);
       _self.afterSelected(item,selected,element);
     },
     /**
@@ -6748,6 +6801,27 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       element = element || _self.findElement(item);
 
       return _self.get('view').isElementSelected(element);
+    },
+    /**
+     * 是否选项被禁用
+     * @param {Object} item 选项
+     * @return {Boolean} 选项是否禁用
+     */
+    isItemDisabled : function(item,element){
+      return this.hasStatus(item,'disabled',element);
+    },
+    /**
+     * 设置选项禁用
+     * @param {Object} item 选项
+     */
+    setItemDisabled : function(item,disabled){
+      
+      var _self = this;
+      if(disabled){
+        //清除选择
+        _self.setItemSelected(item,false);
+      }
+      _self.setItemStatus(item,'disabled',disabled);
     },
     /**
      * 获取选中的项的值
@@ -6794,8 +6868,12 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      */
     setItemStatus : function(item,status,value,element){
       var _self = this,
-        element = _self.findElement(item);
-      _self.get('view').setItemStatusCls(status,element,value);
+        element = element || _self.findElement(item);
+      if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //禁用后，阻止添加任何状态变化
+        _self.setStatusValue(item,status,value);
+        _self.get('view').setItemStatusCls(status,element,value);
+      }
+      
     }
   });
 

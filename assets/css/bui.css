@@ -424,6 +424,18 @@
   background: #ccd7ff;
   border: 1px solid #99afff;
 }
+.bui-select-list .bui-list-item-disabled {
+  background: none;
+  color: #cccccc;
+  cursor: default;
+}
+.bui-select-list .bui-list-item-disabled a {
+  color: #cccccc;
+  cursor: default;
+}
+.bui-select-list .bui-list-item-disabled a:hover {
+  text-decoration: none;
+}
 .bui-select {
   display: inline-block;
   *display: inline;
