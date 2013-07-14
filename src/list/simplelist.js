@@ -134,14 +134,35 @@ define('bui/list/simplelist',function (require) {
         value : []
       },
       /**
-       * 列表项应用的css
-       * @type {String}
+       * 选项的样式，用来获取子项
+       * <pre><code>
+       * var list = new List.SimpleList({
+       *   render : '#t1',
+       *   itemCls : 'my-item', //自定义样式名称
+       *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
+       * });
+       * list.render();
+       * </code></pre>
+       * @cfg {Object} [itemCl='list-item']
        */
       itemCls : {
         view:true,
         value : CLS_ITEM
       },
-      
+      /**
+       * 选项的默认id字段
+       * <pre><code>
+       * var list = new List.SimpleList({
+       *   render : '#t1',
+       *   idField : 'id', //自定义选项 id 字段
+       *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
+       * });
+       * list.render();
+       *
+       * list.getItem('1'); //使用idField指定的字段进行查找
+       * </code></pre>
+       * @cfg {String} [idField = 'value']
+       */
       idField : {
         value : 'value'
       },
@@ -155,14 +176,19 @@ define('bui/list/simplelist',function (require) {
         value:'ul'
       },
       /**
-       * 列表项的模版
-       * @cfg {String} itemTpl
+       * 列表项的默认模板。
+       *<pre><code>
+       * var list = new List.SimpleList({
+       *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;', //列表项的模板
+       *   idField : 'value',
+       *   render : '#t1',
+       *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+       * });
+       * list.render();
+       * </code></pre>
+       * @cfg {String} [itemTpl ='&lt;li role="option" class="bui-list-item" data-value="{value}"&gt;{text}&lt;/li&gt;']
        */
-      /**
-       * 列表项的模版
-       * @default '&lt;li role="option" class="bui-list-item" data-value="{value}"&gt;{text}&lt;/li&gt;'
-       * @type {String}
-       */
+      
       itemTpl :{
         view : true,
         value : '<li role="option" class="' + CLS_ITEM + '">{text}</li>'

@@ -11,6 +11,17 @@ define('bui/component/uibase/drag',function(){
     
     /**
      * 拖拽控件的扩展
+     * <pre><code>
+     *  var Control = Overlay.extend([UIBase.Drag],{
+     *      
+     *  });
+     *
+     *  var c = new Contol({ //拖动控件时，在#t2内
+     *      content : '<div id="header"></div><div></div>',
+     *      dragNode : '#header',
+     *      constraint : '#t2'
+     *  });
+     * </code></pre>
      * @class BUI.Component.UIBase.Drag
      */
     var drag = function(){
@@ -22,11 +33,23 @@ define('bui/component/uibase/drag',function(){
 
         /**
          * 点击拖动的节点
+         * <pre><code>
+         *  var Control = Overlay.extend([UIBase.Drag],{
+         *      
+         *  });
+         *
+         *  var c = new Contol({ //拖动控件时，在#t2内
+         *      content : '<div id="header"></div><div></div>',
+         *      dragNode : '#header',
+         *      constraint : '#t2'
+         *  });
+         * </code></pre>
          * @cfg {jQuery} dragNode
          */
         /**
          * 点击拖动的节点
          * @type {jQuery}
+         * @ignore
          */
         dragNode : {
 
@@ -46,7 +69,23 @@ define('bui/component/uibase/drag',function(){
         },
         /**
          * 拖动的限制范围
+         * <pre><code>
+         *  var Control = Overlay.extend([UIBase.Drag],{
+         *      
+         *  });
+         *
+         *  var c = new Contol({ //拖动控件时，在#t2内
+         *      content : '<div id="header"></div><div></div>',
+         *      dragNode : '#header',
+         *      constraint : '#t2'
+         *  });
+         * </code></pre>
+         * @cfg {jQuery} constraint
+         */
+        /**
+         * 拖动的限制范围
          * @type {jQuery}
+         * @ignore
          */
         constraint : {
 

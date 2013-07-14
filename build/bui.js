@@ -2437,13 +2437,21 @@ define('bui/observable',['bui/util'],function (r) {
   });
 
   function getCallbacks(){
-    /*if($.Callbacks){
-      return $.Callbacks('stopOnFalse');
-    }*/
     return new Callbacks();
   }
   /**
    * \u652f\u6301\u4e8b\u4ef6\u7684\u5bf9\u8c61\uff0c\u53c2\u8003\u89c2\u5bdf\u8005\u6a21\u5f0f
+   *  - \u6b64\u7c7b\u63d0\u4f9b\u4e8b\u4ef6\u7ed1\u5b9a
+   *  - \u63d0\u4f9b\u4e8b\u4ef6\u5192\u6ce1\u673a\u5236
+   *
+   * <pre><code>
+   *   var control = new Control();
+   *   control.on('click',function(ev){
+   *   
+   *   });
+   *
+   *   control.off();  //\u79fb\u9664\u6240\u6709\u4e8b\u4ef6
+   * </code></pre>
    * @class BUI.Observable
    * @abstract
    * @param {Object} config \u914d\u7f6e\u9879\u952e\u503c\u5bf9
@@ -2460,12 +2468,28 @@ define('bui/observable',['bui/util'],function (r) {
 
     /**
      * @cfg {Object} listeners 
-     * \u521d\u59cb\u5316\u4e8b\u4ef6
+     *  \u521d\u59cb\u5316\u4e8b\u4ef6,\u5feb\u901f\u6ce8\u518c\u4e8b\u4ef6
+     *  <pre><code>
+     *    var list = new BUI.List.SimpleList({
+     *      listeners : {
+     *        itemclick : function(ev){},
+     *        itemrendered : function(ev){}
+     *      },
+     *      items : []
+     *    });
+     *    list.render();
+     *  </code></pre>
      */
     
     /**
      * @cfg {Function} handler
      * \u70b9\u51fb\u4e8b\u4ef6\u7684\u5904\u7406\u51fd\u6570\uff0c\u5feb\u901f\u914d\u7f6e\u70b9\u51fb\u4e8b\u4ef6\u800c\u4e0d\u9700\u8981\u5199listeners\u5c5e\u6027
+     * <pre><code>
+     *    var list = new BUI.List.SimpleList({
+     *      handler : function(ev){} //click \u4e8b\u4ef6
+     *    });
+     *    list.render();
+     *  </code></pre>
      */
     
     /**
@@ -2516,6 +2540,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u6dfb\u52a0\u5192\u6ce1\u7684\u5bf9\u8c61
+     * @protected
      * @param {Object} target  \u5192\u6ce1\u7684\u4e8b\u4ef6\u6e90
      */
     addTarget : function(target) {
@@ -2523,6 +2548,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u6dfb\u52a0\u652f\u6301\u7684\u4e8b\u4ef6
+     * @protected
      * @param {String|String[]} events \u4e8b\u4ef6
      */
     addEvents : function(events){
@@ -2546,6 +2572,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u79fb\u9664\u6240\u6709\u7ed1\u5b9a\u7684\u4e8b\u4ef6
+     * @protected
      */
     clearListeners : function(){
       var _self = this,
@@ -2558,6 +2585,14 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u89e6\u53d1\u4e8b\u4ef6
+     * <pre><code>
+     *   //\u7ed1\u5b9a\u4e8b\u4ef6
+     *   list.on('itemclick',function(ev){
+     *     alert('21');
+     *   });
+     *   //\u89e6\u53d1\u4e8b\u4ef6
+     *   list.fire('itemclick');
+     * </code></pre>
      * @param  {String} eventType \u4e8b\u4ef6\u7c7b\u578b
      * @param  {Object} eventData \u4e8b\u4ef6\u89e6\u53d1\u65f6\u4f20\u9012\u7684\u6570\u636e
      * @return {Boolean|undefined}  \u5982\u679c\u5176\u4e2d\u4e00\u4e2a\u4e8b\u4ef6\u5904\u7406\u5668\u8fd4\u56de false , \u5219\u8fd4\u56de false, \u5426\u5219\u8fd4\u56de\u6700\u540e\u4e00\u4e2a\u4e8b\u4ef6\u5904\u7406\u5668\u7684\u8fd4\u56de\u503c
@@ -2587,6 +2622,16 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u6dfb\u52a0\u7ed1\u5b9a\u4e8b\u4ef6
+     * <pre><code>
+     *   //\u7ed1\u5b9a\u5355\u4e2a\u4e8b\u4ef6
+     *   list.on('itemclick',function(ev){
+     *     alert('21');
+     *   });
+     *   //\u7ed1\u5b9a\u591a\u4e2a\u4e8b\u4ef6
+     *   list.on('itemrendered itemupdated',function(){
+     *     //\u5217\u8868\u9879\u521b\u5efa\u3001\u66f4\u65b0\u65f6\u89e6\u53d1\u64cd\u4f5c
+     *   });
+     * </code></pre>
      * @param  {String}   eventType \u4e8b\u4ef6\u7c7b\u578b
      * @param  {Function} fn        \u56de\u8c03\u51fd\u6570
      */
@@ -2612,6 +2657,17 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u79fb\u9664\u7ed1\u5b9a\u7684\u4e8b\u4ef6
+     * <pre><code>
+     *  //\u79fb\u9664\u6240\u6709\u4e8b\u4ef6
+     *  list.off();
+     *  
+     *  //\u79fb\u9664\u7279\u5b9a\u4e8b\u4ef6
+     *  function callback(ev){}
+     *  list.on('click',callback);
+     *
+     *  list.off('click',callback);//\u9700\u8981\u4fdd\u5b58\u56de\u8c03\u51fd\u6570\u7684\u5f15\u7528
+     * 
+     * </code></pre>
      * @param  {String}   eventType \u4e8b\u4ef6\u7c7b\u578b
      * @param  {Function} fn        \u56de\u8c03\u51fd\u6570
      */
@@ -2629,24 +2685,25 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u914d\u7f6e\u4e8b\u4ef6\u662f\u5426\u5141\u8bb8\u5192\u6ce1
+     * @protected
      * @param  {String} eventType \u652f\u6301\u5192\u6ce1\u7684\u4e8b\u4ef6
      * @param  {Object} cfg \u914d\u7f6e\u9879
      * @param {Boolean} cfg.bubbles \u662f\u5426\u652f\u6301\u5192\u6ce1
      */
     publish : function(eventType, cfg){
-        var _self = this,
-            bubblesEvents = _self._bubblesEvents;
+      var _self = this,
+          bubblesEvents = _self._bubblesEvents;
 
-        if(cfg.bubbles){
-            if(BUI.Array.indexOf(eventType,bubblesEvents) === -1){
-                bubblesEvents.push(eventType);
-            }
-        }else{
-            var index = BUI.Array.indexOf(eventType,bubblesEvents);
-            if(index !== -1){
-                bubblesEvents.splice(index,1);
-            }
-        }
+      if(cfg.bubbles){
+          if(BUI.Array.indexOf(eventType,bubblesEvents) === -1){
+              bubblesEvents.push(eventType);
+          }
+      }else{
+          var index = BUI.Array.indexOf(eventType,bubblesEvents);
+          if(index !== -1){
+              bubblesEvents.splice(index,1);
+          }
+      }
     }
   });
 
@@ -3592,7 +3649,73 @@ define('bui/base',['bui/observable'],function(require){
   }
 
   /**
-   * \u57fa\u7840\u7c7b\uff0c\u63d0\u4f9b\u8bbe\u7f6e\u83b7\u53d6\u5c5e\u6027\uff0c\u63d0\u4f9b\u4e8b\u4ef6\u652f\u6301
+   * \u57fa\u7840\u7c7b\uff0c\u6b64\u7c7b\u63d0\u4f9b\u4ee5\u4e0b\u529f\u80fd
+   *  - \u63d0\u4f9b\u8bbe\u7f6e\u83b7\u53d6\u5c5e\u6027
+   *  - \u63d0\u4f9b\u4e8b\u4ef6\u652f\u6301
+   *  - \u5c5e\u6027\u53d8\u5316\u65f6\u4f1a\u89e6\u53d1\u5bf9\u5e94\u7684\u4e8b\u4ef6
+   *  - \u5c06\u914d\u7f6e\u9879\u81ea\u52a8\u8f6c\u6362\u6210\u5c5e\u6027
+   *
+   * ** \u521b\u5efa\u7c7b\uff0c\u7ee7\u627fBUI.Base\u7c7b **
+   * <pre><code>
+   *   var Control = function(cfg){
+   *     Control.superclass.constructor.call(this,cfg); //\u8c03\u7528BUI.Base\u7684\u6784\u9020\u65b9\u6cd5\uff0c\u5c06\u914d\u7f6e\u9879\u53d8\u6210\u5c5e\u6027
+   *   };
+   *
+   *   BUI.extend(Control,BUI.Base);
+   * </code></pre>
+   *
+   * ** \u58f0\u660e\u9ed8\u8ba4\u5c5e\u6027 ** 
+   * <pre><code>
+   *   Control.ATTRS = {
+   *     id : {
+   *       value : 'id' //value \u662f\u6b64\u5c5e\u6027\u7684\u9ed8\u8ba4\u503c
+   *     },
+   *     renderTo : {
+   *      
+   *     },
+   *     el : {
+   *       valueFn : function(){                 //\u7b2c\u4e00\u6b21\u8c03\u7528\u7684\u65f6\u5019\u5c06renderTo\u7684DOM\u8f6c\u6362\u6210el\u5c5e\u6027
+   *         return $(this.get('renderTo'));
+   *       }
+   *     },
+   *     text : {
+   *       getter : function(){ //getter \u7528\u4e8e\u83b7\u53d6\u503c\uff0c\u800c\u4e0d\u662f\u8bbe\u7f6e\u7684\u503c
+   *         return this.get('el').val();
+   *       },
+   *       setter : function(v){ //\u4e0d\u4ec5\u4ec5\u662f\u8bbe\u7f6e\u503c\uff0c\u53ef\u4ee5\u8fdb\u884c\u76f8\u5e94\u7684\u64cd\u4f5c
+   *         this.get('el').val(v);
+   *       }
+   *     }
+   *   };
+   * </code></pre>
+   *
+   * ** \u58f0\u660e\u7c7b\u7684\u65b9\u6cd5 ** 
+   * <pre><code>
+   *   BUI.augment(Control,{
+   *     getText : function(){
+   *       return this.get('text');   //\u53ef\u4ee5\u7528get\u65b9\u6cd5\u83b7\u53d6\u5c5e\u6027\u503c
+   *     },
+   *     setText : function(txt){
+   *       this.set('text',txt);      //\u4f7f\u7528set \u8bbe\u7f6e\u5c5e\u6027\u503c
+   *     }
+   *   });
+   * </code></pre>
+   *
+   * ** \u521b\u5efa\u5bf9\u8c61 ** 
+   * <pre><code>
+   *   var c = new Control({
+   *     id : 'oldId',
+   *     text : '\u6d4b\u8bd5\u6587\u672c',
+   *     renderTo : '#t1'
+   *   });
+   *
+   *   var el = c.get(el); //$(#t1);
+   *   el.val(); //text\u7684\u503c \uff1a '\u6d4b\u8bd5\u6587\u672c'
+   *   c.set('text','\u4fee\u6539\u7684\u503c');
+   *   el.val();  //'\u4fee\u6539\u7684\u503c'
+   *
+   *   c.set('id','newId') //\u4f1a\u89e6\u53d12\u4e2a\u4e8b\u4ef6\uff1a beforeIdChange,afterIdChange 2\u4e2a\u4e8b\u4ef6 ev.newVal \u548cev.prevVal\u6807\u793a\u65b0\u65e7\u503c
+   * </code></pre>
    * @class BUI.Base
    * @abstract
    * @extends BUI.Observable
@@ -3626,6 +3749,7 @@ define('bui/base',['bui/observable'],function(require){
   {
     /**
      * \u6dfb\u52a0\u5c5e\u6027\u5b9a\u4e49
+     * @protected
      * @param {String} name       \u5c5e\u6027\u540d
      * @param {Object} attrConfig \u5c5e\u6027\u5b9a\u4e49
      * @param {Boolean} overrides \u662f\u5426\u8986\u76d6\u5b57\u6bb5
@@ -3644,6 +3768,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * \u6dfb\u52a0\u5c5e\u6027\u5b9a\u4e49
+     * @protected
      * @param {Object} attrConfigs  An object with attribute name/configuration pairs.
      * @param {Object} initialValues user defined initial values
      * @param {Boolean} overrides \u662f\u5426\u8986\u76d6\u5b57\u6bb5
@@ -3668,6 +3793,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * \u662f\u5426\u5305\u542b\u6b64\u5c5e\u6027
+     * @protected
      * @param  {String}  name \u503c
      * @return {Boolean} \u662f\u5426\u5305\u542b
      */
@@ -3676,6 +3802,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * \u83b7\u53d6\u9ed8\u8ba4\u7684\u5c5e\u6027\u503c
+     * @protected
      * @return {Object} \u5c5e\u6027\u503c\u7684\u952e\u503c\u5bf9
      */
     getAttrs : function(){
@@ -3683,13 +3810,41 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * \u83b7\u53d6\u5c5e\u6027\u540d/\u5c5e\u6027\u503c\u952e\u503c\u5bf9
+     * @protected
      * @return {Object} \u5c5e\u6027\u5bf9\u8c61
      */
     getAttrVals: function(){
       return ensureNonEmpty(this, '__attrVals', true);
     },
     /**
-     * \u83b7\u53d6\u5c5e\u6027\u503c
+     * \u83b7\u53d6\u5c5e\u6027\u503c\uff0c\u6240\u6709\u7684\u914d\u7f6e\u9879\u548c\u5c5e\u6027\u90fd\u53ef\u4ee5\u901a\u8fc7get\u65b9\u6cd5\u83b7\u53d6
+     * <pre><code>
+     *  var control = new Control({
+     *   text : 'control text'
+     *  });
+     *  control.get('text'); //control text
+     *
+     *  control.set('customValue','value'); //\u4e34\u65f6\u53d8\u91cf
+     *  control.get('customValue'); //value
+     * </code></pre>
+     * ** \u5c5e\u6027\u503c/\u914d\u7f6e\u9879 **
+     * <pre><code> 
+     *   Control.ATTRS = { //\u58f0\u660e\u5c5e\u6027\u503c
+     *     text : {
+     *       valueFn : function(){},
+     *       value : 'value',
+     *       getter : function(v){} 
+     *     }
+     *   };
+     *   var c = new Control({
+     *     text : 'text value'
+     *   });
+     *   //get \u51fd\u6570\u53d6\u7684\u987a\u5e8f\u4e3a\uff1a\u662f\u5426\u6709\u4fee\u6539\u503c\uff08\u914d\u7f6e\u9879\u3001set)\u3001\u9ed8\u8ba4\u503c\uff08\u7b2c\u4e00\u6b21\u8c03\u7528\u6267\u884cvalueFn)\uff0c\u5982\u679c\u6709getter\uff0c\u5219\u5c06\u503c\u4f20\u5165getter\u8fd4\u56de
+     *
+     *   c.get('text') //text value
+     *   c.set('text','new text');//\u4fee\u6539\u503c
+     *   c.get('text');//new text
+     * </code></pre>
      * @param  {String} name \u5c5e\u6027\u540d
      * @return {Object} \u5c5e\u6027\u503c
      */
@@ -3719,12 +3874,14 @@ define('bui/base',['bui/observable'],function(require){
     },
   	/**
   	* @\u6e05\u7406\u6240\u6709\u5c5e\u6027\u503c
+    * @protected 
   	*/
   	clearAttrVals : function(){
   		this.__attrVals = {};
   	},
     /**
      * \u79fb\u9664\u5c5e\u6027\u5b9a\u4e49
+     * @protected
      */
     removeAttr: function (name) {
         var _self = this;
@@ -3737,7 +3894,18 @@ define('bui/base',['bui/observable'],function(require){
         return self;
     },
     /**
-     * \u8bbe\u7f6e\u5c5e\u6027\u503c\uff0c\u4f1a\u89e6\u53d1before+name+change,\u548c after+name+change\u4e8b\u4ef6
+     * \u8bbe\u7f6e\u5c5e\u6027\u503c\uff0c\u4f1a\u89e6\u53d1before+Name+Change,\u548c after+Name+Change\u4e8b\u4ef6
+     * <pre><code>
+     *  control.on('beforeTextChange',function(ev){
+     *    var newVal = ev.newVal,
+     *      attrName = ev.attrName,
+     *      preVal = ev.prevVal;
+     *
+     *    //TO DO
+     *  });
+     *  control.set('text','new text');  //\u6b64\u65f6\u89e6\u53d1 beforeTextChange,afterTextChange
+     *  control.set('text','modify text',{silent : true}); //\u6b64\u65f6\u4e0d\u89e6\u53d1\u4e8b\u4ef6
+     * </code></pre>
      * @param {String|Object} name  \u5c5e\u6027\u540d
      * @param {Object} value \u503c
      * @param {Object} opts \u914d\u7f6e\u9879
@@ -3761,9 +3929,11 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * \u8bbe\u7f6e\u5c5e\u6027\uff0c\u4e0d\u89e6\u53d1\u4e8b\u4ef6
+     * <pre><code>
+     *  control.setInternal('text','text');//\u6b64\u65f6\u4e0d\u89e6\u53d1\u4e8b\u4ef6
+     * </code></pre>
      * @param  {String} name  \u5c5e\u6027\u540d
      * @param  {Object} value \u5c5e\u6027\u503c
-     * @param  {Object} opts  \u9009\u9879
      * @return {Boolean|undefined}   \u5982\u679c\u503c\u65e0\u6548\u5219\u8fd4\u56defalse,\u5426\u5219\u8fd4\u56deundefined
      */
     setInternal : function(name, value, opts){
@@ -4290,22 +4460,35 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   UIBase.ATTRS = 
   {
-    /**
-     * \u662f\u5426\u81ea\u52a8\u6e32\u67d3,\u5982\u679c\u4e0d\u81ea\u52a8\u6e32\u67d3\uff0c\u9700\u8981\u7528\u6237\u8c03\u7528 render()\u65b9\u6cd5
-     * @cfg {Boolean} autoRender
-     */
+    
     
     /**
      * \u7528\u6237\u4f20\u5165\u7684\u914d\u7f6e\u9879
      * @type {Object}
      * @readOnly
+     * @protected
      */
     userConfig : {
 
     },
     /**
      * \u662f\u5426\u81ea\u52a8\u6e32\u67d3,\u5982\u679c\u4e0d\u81ea\u52a8\u6e32\u67d3\uff0c\u9700\u8981\u7528\u6237\u8c03\u7528 render()\u65b9\u6cd5
+     * <pre><code>
+     *  //\u9ed8\u8ba4\u72b6\u6001\u4e0b\u521b\u5efa\u5bf9\u8c61\uff0c\u5e76\u6ca1\u6709\u8fdb\u884crender
+     *  var control = new Control();
+     *  control.render(); //\u9700\u8981\u8c03\u7528render\u65b9\u6cd5
+     *
+     *  //\u8bbe\u7f6eautoRender\u540e\uff0c\u4e0d\u9700\u8981\u8c03\u7528render\u65b9\u6cd5
+     *  var control = new Control({
+     *   autoRender : true
+     *  });
+     * </code></pre>
+     * @cfg {Boolean} autoRender
+     */
+    /**
+     * \u662f\u5426\u81ea\u52a8\u6e32\u67d3,\u5982\u679c\u4e0d\u81ea\u52a8\u6e32\u67d3\uff0c\u9700\u8981\u7528\u6237\u8c03\u7528 render()\u65b9\u6cd5
      * @type {Boolean}
+     * @ignore
      */
     autoRender : {
       value : false
@@ -4316,30 +4499,34 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      *      {
      *        'click':function(e){}
      *      }
+     *  @ignore
      */
     listeners: {
-            value: {}
+        value: {}
     },
     /**
      * \u63d2\u4ef6\u96c6\u5408
+     * <pre><code>
+     *  var grid = new Grid({
+     *    columns : [{},{}],
+     *    plugins : [Grid.Plugins.RadioSelection]
+     *  });
+     * </code></pre>
      * @cfg {Array} plugins
      */
     /**
      * \u63d2\u4ef6\u96c6\u5408
      * @type {Array}
+     * @readOnly
      */
     plugins : {
       value : []
     },
     /**
      * \u662f\u5426\u5df2\u7ecf\u6e32\u67d3\u5b8c\u6210
-     * @cfg {Boolean} rendered
-     * @default  false
-     */
-    /**
-     * \u662f\u5426\u5df2\u7ecf\u6e32\u67d3\u5b8c\u6210
      * @type {Boolean}
      * @default  false
+     * @readOnly
      */
     rendered : {
         value : false
@@ -4348,6 +4535,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     * \u83b7\u53d6\u63a7\u4ef6\u7684 xclass
     * @readOnly
     * @type {String}
+    * @protected
     */
     xclass: {
         valueFn: function () {
@@ -4362,6 +4550,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   {
     /**
      * \u521b\u5efaDOM\u7ed3\u6784
+     * @protected
      */
     create : function(){
       var self = this;
@@ -4780,6 +4969,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
      * @class BUI.Component.UIBase.Align
      * Align extension class.
      * Align component with specified element.
+     * <img src="http://images.cnitblog.com/blog/111279/201304/09180221-201343d4265c46e7987e6b1c46d5461a.jpg"/>
      */
     function Align() {
     }
@@ -4792,28 +4982,30 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
     Align.ATTRS =
     {
         /**
-         * Align configuration.
+         * \u5bf9\u9f50\u914d\u7f6e\uff0c\u8be6\u7ec6\u8bf4\u660e\u8bf7\u53c2\u770b\uff1a <a href="http://www.cnblogs.com/zaohe/archive/2013/04/09/3010651.html">JS\u63a7\u4ef6 \u5bf9\u9f50</a>
          * @cfg {Object} align
-         * <code>
-         *     {
-         *        node: null,         // \u53c2\u8003\u5143\u7d20, falsy \u6216 window \u4e3a\u53ef\u89c6\u533a\u57df, 'trigger' \u4e3a\u89e6\u53d1\u5143\u7d20, \u5176\u4ed6\u4e3a\u6307\u5b9a\u5143\u7d20
-         *        points: ['cc','cc'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
-         *        offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
-         *     }
-         * </code>
+         * <pre><code>
+         *  var overlay = new Overlay( {  
+         *       align :{
+         *         node: null,         // \u53c2\u8003\u5143\u7d20, falsy \u6216 window \u4e3a\u53ef\u89c6\u533a\u57df, 'trigger' \u4e3a\u89e6\u53d1\u5143\u7d20, \u5176\u4ed6\u4e3a\u6307\u5b9a\u5143\u7d20
+         *         points: ['cc','cc'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+         *         offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
+         *       }
+         *     }); 
+         * </code></pre>
          */
 
         /**
-         * Align configuration.
+         * \u8bbe\u7f6e\u5bf9\u9f50\u5c5e\u6027
          * @type {Object}
          * @field
-         * @example
          * <code>
-         *     {
+         *   var align =  {
          *        node: null,         // \u53c2\u8003\u5143\u7d20, falsy \u6216 window \u4e3a\u53ef\u89c6\u533a\u57df, 'trigger' \u4e3a\u89e6\u53d1\u5143\u7d20, \u5176\u4ed6\u4e3a\u6307\u5b9a\u5143\u7d20
          *        points: ['cc','cc'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
          *        offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
-         *     }
+         *     };
+         *   overlay.set('align',align);
          * </code>
          */
         align:{
@@ -5001,9 +5193,12 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
         },
 
         /**
-         * Make current element center within node.
+         * \u5bf9\u9f50\u5230\u5143\u7d20\u7684\u4e2d\u95f4\uff0c\u67e5\u770b\u5c5e\u6027 {@link BUI.Component.UIBase.Align#property-align} .
+         * <pre><code>
+         *  control.center('#t1'); //\u63a7\u4ef6\u5904\u4e8e\u5bb9\u5668#t1\u7684\u4e2d\u95f4\u4f4d\u7f6e
+         * </code></pre>
          * @param {undefined|String|HTMLElement|jQuery} node
-         * Same as node config of {@link BUI.Component.UIBase.Align#property-align} .
+         * 
          */
         center:function (node) {
             var self = this;
@@ -5033,8 +5228,17 @@ define('bui/component/uibase/autoshow',function () {
   }
 
   autoShow.ATTRS = {
+
     /**
      * \u89e6\u53d1\u663e\u793a\u63a7\u4ef6\u7684DOM\u9009\u62e9\u5668
+     * <pre><code>
+     *  var overlay = new Overlay({ //\u70b9\u51fb#t1\u65f6\u663e\u793a\uff0c\u70b9\u51fb#t1,overlay\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
+     *    trigger : '#t1',
+     *    autoHide : true,
+     *    content : '\u60ac\u6d6e\u5185\u5bb9'
+     *  });
+     *  overlay.render();
+     * </code></pre>
      * @cfg {HTMLElement|String|jQuery} trigger
      */
     /**
@@ -5046,11 +5250,21 @@ define('bui/component/uibase/autoshow',function () {
     },
     /**
      * \u662f\u5426\u4f7f\u7528\u4ee3\u7406\u7684\u65b9\u5f0f\u89e6\u53d1\u663e\u793a\u63a7\u4ef6,\u5982\u679ctigger\u4e0d\u662f\u5b57\u7b26\u4e32\uff0c\u6b64\u5c5e\u6027\u65e0\u6548
-     * @cfg {Boolean} delegateTigger
+     * <pre><code>
+     *  var overlay = new Overlay({ //\u70b9\u51fb.t1(\u65e0\u8bba\u521b\u5efa\u63a7\u4ef6\u65f6.t1\u662f\u5426\u5b58\u5728)\u65f6\u663e\u793a\uff0c\u70b9\u51fb.t1,overlay\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
+     *    trigger : '.t1',
+     *    autoHide : true,
+     *    delegateTigger : true, //\u4f7f\u7528\u59d4\u6258\u7684\u65b9\u5f0f\u89e6\u53d1\u663e\u793a\u63a7\u4ef6
+     *    content : '\u60ac\u6d6e\u5185\u5bb9'
+     *  });
+     *  overlay.render();
+     * </code></pre>
+     * @cfg {Boolean} [delegateTigger = false]
      */
     /**
      * \u662f\u5426\u4f7f\u7528\u4ee3\u7406\u7684\u65b9\u5f0f\u89e6\u53d1\u663e\u793a\u63a7\u4ef6,\u5982\u679ctigger\u4e0d\u662f\u5b57\u7b26\u4e32\uff0c\u6b64\u5c5e\u6027\u65e0\u6548
      * @type {Boolean}
+     * @ignore
      */
     delegateTigger : {
       value : false
@@ -5058,10 +5272,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * \u9009\u62e9\u5668\u662f\u5426\u59cb\u7ec8\u8ddf\u968f\u89e6\u53d1\u5668\u5bf9\u9f50
      * @cfg {Boolean} autoAlign
+     * @ignore
      */
     /**
      * \u9009\u62e9\u5668\u662f\u5426\u59cb\u7ec8\u8ddf\u968f\u89e6\u53d1\u5668\u5bf9\u9f50
      * @type {Boolean}
+     * @protected
      */
     autoAlign :{
       value : true
@@ -5069,6 +5285,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * \u63a7\u4ef6\u663e\u793a\u65f6\u7531\u6b64trigger\u89e6\u53d1\uff0c\u5f53\u914d\u7f6e\u9879 trigger \u9009\u62e9\u5668\u4ee3\u8868\u591a\u4e2aDOM \u5bf9\u8c61\u65f6\uff0c
      * \u63a7\u4ef6\u53ef\u7531\u591a\u4e2aDOM\u5bf9\u8c61\u89e6\u53d1\u663e\u793a\u3002
+     * <pre><code>
+     *  overlay.on('show',function(){
+     *    var curTrigger = overlay.get('curTrigger');
+     *    //TO DO
+     *  });
+     * </code></pre>
      * @type {jQuery}
      * @readOnly
      */
@@ -5078,10 +5300,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * \u89e6\u53d1\u663e\u793a\u65f6\u7684\u56de\u8c03\u51fd\u6570
      * @cfg {Function} triggerCallback
+     * @ignore
      */
     /**
      * \u89e6\u53d1\u663e\u793a\u65f6\u7684\u56de\u8c03\u51fd\u6570
      * @type {Function}
+     * @ignore
      */
     triggerCallback : {
       value : function (ev) {
@@ -5090,6 +5314,17 @@ define('bui/component/uibase/autoshow',function () {
     },
     /**
      * \u663e\u793a\u83dc\u5355\u7684\u4e8b\u4ef6
+     *  <pre><code>
+     *    var overlay = new Overlay({ //\u79fb\u52a8\u5230#t1\u65f6\u663e\u793a\uff0c\u79fb\u52a8\u51fa#t1,overlay\u4e4b\u5916\u63a7\u4ef6\u9690\u85cf
+     *      trigger : '#t1',
+     *      autoHide : true,
+     *      triggerEvent :'mouseover',
+     *      autoHideType : 'leave',
+     *      content : '\u60ac\u6d6e\u5185\u5bb9'
+     *    });
+     *    overlay.render();
+     * 
+     *  </code></pre>
      * @cfg {String} [triggerEvent='click']
      * @default 'click'
      */
@@ -5097,6 +5332,7 @@ define('bui/component/uibase/autoshow',function () {
      * \u663e\u793a\u83dc\u5355\u7684\u4e8b\u4ef6
      * @type {String}
      * @default 'click'
+     * @ignore
      */
     triggerEvent : {
       value:'click'
@@ -5104,10 +5340,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * \u56e0\u4e3a\u89e6\u53d1\u5143\u7d20\u53d1\u751f\u6539\u53d8\u800c\u5bfc\u81f4\u63a7\u4ef6\u9690\u85cf
      * @cfg {String} triggerHideEvent
+     * @ignore
      */
     /**
      * \u56e0\u4e3a\u89e6\u53d1\u5143\u7d20\u53d1\u751f\u6539\u53d8\u800c\u5bfc\u81f4\u63a7\u4ef6\u9690\u85cf
      * @type {String}
+     * @ignore
      */
     triggerHideEvent : {
 
@@ -5116,6 +5354,12 @@ define('bui/component/uibase/autoshow',function () {
       value : {
         /**
          * \u5f53\u89e6\u53d1\u5668\uff08\u89e6\u53d1\u9009\u62e9\u5668\u51fa\u73b0\uff09\u53d1\u751f\u6539\u53d8\u65f6\uff0c\u7ecf\u5e38\u7528\u4e8e\u4e00\u4e2a\u9009\u62e9\u5668\u5bf9\u5e94\u591a\u4e2a\u89e6\u53d1\u5668\u7684\u60c5\u51b5
+         * <pre><code>
+         *  overlay.on('triggerchange',function(ev){
+         *    var curTrigger = ev.curTrigger;
+         *    overlay.set('content',curTrigger.html());
+         *  });
+         * </code></pre>
          * @event
          * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
          * @param {jQuery} e.prevTrigger \u4e4b\u524d\u89e6\u53d1\u5668\uff0c\u53ef\u80fd\u4e3anull
@@ -5221,24 +5465,73 @@ define('bui/component/uibase/autohide',function () {
   }
 
   autoHide.ATTRS = {
+
+    /**
+     * \u63a7\u4ef6\u81ea\u52a8\u9690\u85cf\u7684\u4e8b\u4ef6\uff0c\u8fd9\u91cc\u652f\u63012\u79cd\uff1a
+     *  - 'click'
+     *  - 'leave'
+     *  <pre><code>
+     *    var overlay = new Overlay({ //\u70b9\u51fb#t1\u65f6\u663e\u793a\uff0c\u70b9\u51fb#t1\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
+     *      trigger : '#t1',
+     *      autoHide : true,
+     *      content : '\u60ac\u6d6e\u5185\u5bb9'
+     *    });
+     *    overlay.render();
+     *
+     *    var overlay = new Overlay({ //\u79fb\u52a8\u5230#t1\u65f6\u663e\u793a\uff0c\u79fb\u52a8\u51fa#t1,overlay\u4e4b\u5916\u63a7\u4ef6\u9690\u85cf
+     *      trigger : '#t1',
+     *      autoHide : true,
+     *      triggerEvent :'mouseover',
+     *      autoHideType : 'leave',
+     *      content : '\u60ac\u6d6e\u5185\u5bb9'
+     *    });
+     *    overlay.render();
+     * 
+     *  </code></pre>
+     * @cfg {String} [autoHideType = 'click']
+     */
     /**
      * \u63a7\u4ef6\u81ea\u52a8\u9690\u85cf\u7684\u4e8b\u4ef6\uff0c\u8fd9\u91cc\u652f\u63012\u79cd\uff1a
      * 'click',\u548c'leave',\u9ed8\u8ba4\u4e3a'click'
-     * @type {Object}
+     * @type {String}
      */
     autoHideType : {
       value : 'click'
     },
     /**
      * \u662f\u5426\u81ea\u52a8\u9690\u85cf
+     * <pre><code>
+     *  
+     *  var overlay = new Overlay({ //\u70b9\u51fb#t1\u65f6\u663e\u793a\uff0c\u70b9\u51fb#t1,overlay\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
+     *    trigger : '#t1',
+     *    autoHide : true,
+     *    content : '\u60ac\u6d6e\u5185\u5bb9'
+     *  });
+     *  overlay.render();
+     * </code></pre>
+     * @cfg {Object} autoHide
+     */
+    /**
+     * \u662f\u5426\u81ea\u52a8\u9690\u85cf
      * @type {Object}
+     * @ignore
      */
     autoHide:{
       value : false
     },
     /**
      * \u70b9\u51fb\u6216\u8005\u79fb\u52a8\u5230\u6b64\u8282\u70b9\u65f6\u4e0d\u89e6\u53d1\u81ea\u52a8\u9690\u85cf
-     * @type {Object}
+     * <pre><code>
+     *  
+     *  var overlay = new Overlay({ //\u70b9\u51fb#t1\u65f6\u663e\u793a\uff0c\u70b9\u51fb#t1,#t2,overlay\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
+     *    trigger : '#t1',
+     *    autoHide : true,
+     *    hideExceptNode : '#t2',
+     *    content : '\u60ac\u6d6e\u5185\u5bb9'
+     *  });
+     *  overlay.render();
+     * </code></pre>
+     * @cfg {Object} hideExceptNode
      */
     hideExceptNode :{
 
@@ -5249,6 +5542,14 @@ define('bui/component/uibase/autohide',function () {
          * @event autohide
          * \u70b9\u51fb\u63a7\u4ef6\u5916\u90e8\u65f6\u89e6\u53d1\uff0c\u53ea\u6709\u5728\u63a7\u4ef6\u8bbe\u7f6e\u81ea\u52a8\u9690\u85cf(autoHide = true)\u6709\u6548
          * \u53ef\u4ee5\u963b\u6b62\u63a7\u4ef6\u9690\u85cf\uff0c\u901a\u8fc7\u5728\u4e8b\u4ef6\u76d1\u542c\u51fd\u6570\u4e2d return false
+         * <pre><code>
+         *  overlay.on('autohide',function(){
+         *    var curTrigger = overlay.curTrigger; //\u5f53\u524d\u89e6\u53d1\u7684\u9879
+         *    if(condtion){
+         *      return false; //\u963b\u6b62\u9690\u85cf
+         *    }
+         *  });
+         * </code></pre>
          */
         autohide : false
       }
@@ -5407,11 +5708,20 @@ define('bui/component/uibase/close',function () {
   {
       /**
       * \u5173\u95ed\u6309\u94ae\u7684\u9ed8\u8ba4\u6a21\u7248
+      * <pre><code>
+      *   var overlay = new Overlay({
+      *     closeTpl : '<a href="#" title="close">x</a>',
+      *     closable : true,
+      *     trigger : '#t1'
+      *   });
+      *   overlay.render();
+      * </code></pre>
       * @cfg {String} closeTpl
       */
       /**
       * \u5173\u95ed\u6309\u94ae\u7684\u9ed8\u8ba4\u6a21\u7248
       * @type {String}
+      * @protected
       */
       closeTpl:{
         view : true
@@ -5437,7 +5747,7 @@ define('bui/component/uibase/close',function () {
           view:1
       },
       /**
-       * \u5173\u95ed\u65f6\u9690\u85cf\u8fd8\u662f\u79fb\u9664DOM\u7ed3\u6784
+       * \u5173\u95ed\u65f6\u9690\u85cf\u8fd8\u662f\u79fb\u9664DOM\u7ed3\u6784<br/>
        * default "hide". \u53ef\u4ee5\u8bbe\u7f6e "destroy" \uff0c\u5f53\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u65f6\u79fb\u9664\uff08destroy)\u63a7\u4ef6
        * @cfg {String} [closeAction = 'hide']
        */
@@ -5445,9 +5755,10 @@ define('bui/component/uibase/close',function () {
        * \u5173\u95ed\u65f6\u9690\u85cf\u8fd8\u662f\u79fb\u9664DOM\u7ed3\u6784
        * default "hide".\u53ef\u4ee5\u8bbe\u7f6e "destroy" \uff0c\u5f53\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u65f6\u79fb\u9664\uff08destroy)\u63a7\u4ef6
        * @type {String}
+       * @protected
        */
       closeAction:{
-          value:HIDE
+        value:HIDE
       }
   };
 
@@ -5490,6 +5801,17 @@ define('bui/component/uibase/drag',function(){
     
     /**
      * \u62d6\u62fd\u63a7\u4ef6\u7684\u6269\u5c55
+     * <pre><code>
+     *  var Control = Overlay.extend([UIBase.Drag],{
+     *      
+     *  });
+     *
+     *  var c = new Contol({ //\u62d6\u52a8\u63a7\u4ef6\u65f6\uff0c\u5728#t2\u5185
+     *      content : '<div id="header"></div><div></div>',
+     *      dragNode : '#header',
+     *      constraint : '#t2'
+     *  });
+     * </code></pre>
      * @class BUI.Component.UIBase.Drag
      */
     var drag = function(){
@@ -5501,11 +5823,23 @@ define('bui/component/uibase/drag',function(){
 
         /**
          * \u70b9\u51fb\u62d6\u52a8\u7684\u8282\u70b9
+         * <pre><code>
+         *  var Control = Overlay.extend([UIBase.Drag],{
+         *      
+         *  });
+         *
+         *  var c = new Contol({ //\u62d6\u52a8\u63a7\u4ef6\u65f6\uff0c\u5728#t2\u5185
+         *      content : '<div id="header"></div><div></div>',
+         *      dragNode : '#header',
+         *      constraint : '#t2'
+         *  });
+         * </code></pre>
          * @cfg {jQuery} dragNode
          */
         /**
          * \u70b9\u51fb\u62d6\u52a8\u7684\u8282\u70b9
          * @type {jQuery}
+         * @ignore
          */
         dragNode : {
 
@@ -5525,7 +5859,23 @@ define('bui/component/uibase/drag',function(){
         },
         /**
          * \u62d6\u52a8\u7684\u9650\u5236\u8303\u56f4
+         * <pre><code>
+         *  var Control = Overlay.extend([UIBase.Drag],{
+         *      
+         *  });
+         *
+         *  var c = new Contol({ //\u62d6\u52a8\u63a7\u4ef6\u65f6\uff0c\u5728#t2\u5185
+         *      content : '<div id="header"></div><div></div>',
+         *      dragNode : '#header',
+         *      constraint : '#t2'
+         *  });
+         * </code></pre>
+         * @cfg {jQuery} constraint
+         */
+        /**
+         * \u62d6\u52a8\u7684\u9650\u5236\u8303\u56f4
          * @type {jQuery}
+         * @ignore
          */
         constraint : {
 
@@ -5697,21 +6047,21 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
     /**
      * \u662f\u5426\u5141\u8bb8\u952e\u76d8\u5bfc\u822a
-     * @type {Boolean}
+     * @cfg {Boolean} [allowKeyNav = true]
      */
     allowKeyNav : {
       value : true
     },
     /**
      * \u5bfc\u822a\u4f7f\u7528\u7684\u4e8b\u4ef6
-     * @type {String}
+     * @cfg {String} [navEvent = 'keydown']
      */
     navEvent : {
       value : 'keydown'
     },
     /**
      * \u5f53\u83b7\u53d6\u4e8b\u4ef6\u7684DOM\u662f input,textarea,select\u7b49\u65f6\uff0c\u4e0d\u5904\u7406\u952e\u76d8\u5bfc\u822a
-     * @type {Object}
+     * @cfg {Object} [ignoreInputFields='true']
      */
     ignoreInputFields : {
       value : true
@@ -6029,22 +6379,40 @@ define('bui/component/uibase/mask',function (require) {
     {
         /**
          * \u63a7\u4ef6\u663e\u793a\u65f6\uff0c\u662f\u5426\u663e\u793a\u5c4f\u853d\u5c42
+         * <pre><code>
+         *   var overlay = new Overlay({ //\u663e\u793aoverlay\u65f6\uff0c\u5c4f\u853dbody
+         *     mask : true,
+         *     maskNode : 'body',
+         *     trigger : '#t1'
+         *   });
+         *   overlay.render();
+         * </code></pre>
          * @cfg {Boolean} [mask = false]
          */
         /**
          * \u63a7\u4ef6\u663e\u793a\u65f6\uff0c\u662f\u5426\u663e\u793a\u5c4f\u853d\u5c42
          * @type {Boolean}
+         * @protected
          */
         mask:{
             value:false
         },
         /**
          * \u5c4f\u853d\u7684\u5185\u5bb9
+         * <pre><code>
+         *   var overlay = new Overlay({ //\u663e\u793aoverlay\u65f6\uff0c\u5c4f\u853dbody
+         *     mask : true,
+         *     maskNode : 'body',
+         *     trigger : '#t1'
+         *   });
+         *   overlay.render();
+         * </code></pre>
          * @cfg {jQuery} maskNode
          */
         /**
          * \u5c4f\u853d\u7684\u5185\u5bb9
          * @type {jQuery}
+         * @protected
          */
         maskNode:{
             view:1
@@ -6193,6 +6561,9 @@ define('bui/component/uibase/position',function () {
          */
         /**
          * \u6c34\u5e73\u5750\u6807
+         * <pre><code>
+         *     overlay.set('x',100);
+         * </code></pre>
          * @type {Number}
          */
         x:{
@@ -6204,6 +6575,9 @@ define('bui/component/uibase/position',function () {
          */
         /**
          * \u5782\u76f4\u5750\u6807
+         * <pre><code>
+         *     overlay.set('y',100);
+         * </code></pre>
          * @type {Number}
          */
         y:{
@@ -6212,6 +6586,7 @@ define('bui/component/uibase/position',function () {
         /**
          * \u76f8\u5bf9\u4e8e\u7236\u5143\u7d20\u7684\u6c34\u5e73\u4f4d\u7f6e
          * @type {Number}
+         * @protected
          */
         left : {
             view:1
@@ -6219,16 +6594,27 @@ define('bui/component/uibase/position',function () {
         /**
          * \u76f8\u5bf9\u4e8e\u7236\u5143\u7d20\u7684\u5782\u76f4\u4f4d\u7f6e
          * @type {Number}
+         * @protected
          */
         top : {
             view:1
         },
         /**
          * \u6c34\u5e73\u548c\u5782\u76f4\u5750\u6807
+         * <pre><code>
+         * var overlay = new Overlay({
+         *   xy : [100,100],
+         *   trigger : '#t1',
+         *   srcNode : '#c1'
+         * });
+         * </code></pre>
          * @cfg {Number[]} xy
          */
         /**
          * \u6c34\u5e73\u548c\u5782\u76f4\u5750\u6807
+         * <pre><code>
+         *     overlay.set('xy',[100,100]);
+         * </code></pre>
          * @type {Number[]}
          */
         xy:{
@@ -6255,10 +6641,18 @@ define('bui/component/uibase/position',function () {
         },
         /**
          * z-index value.
+         * <pre><code>
+         *   var overlay = new Overlay({
+         *       zIndex : '1000'
+         *   });
+         * </code></pre>
          * @cfg {Number} zIndex
          */
         /**
          * z-index value.
+         * <pre><code>
+         *   overlay.set('zIndex','1200');
+         * </code></pre>
          * @type {Number}
          */
         zIndex:{
@@ -6268,7 +6662,7 @@ define('bui/component/uibase/position',function () {
          * Positionable element is by default visible false.
          * For compatibility in overlay and PopupMenu.
          * @default false
-         * @protected
+         * @ignore
          */
         visible:{
             view:true,
@@ -6288,11 +6682,11 @@ define('bui/component/uibase/position',function () {
          * @param {Number|Number[]} x
          * @param {Number} [y]
          * @example
-         * <code>
+         * <pre><code>
          * move(x, y);
          * move(x);
          * move([x,y])
-         * </code>
+         * </code></pre>
          */
         move:function (x, y) {
             var self = this;
@@ -6472,7 +6866,7 @@ define('bui/component/uibase/stdmod',function () {
         }
     };
 
-    /*StdModView.HTML_PARSER = {
+    StdModView.PARSER = {
         header:function (el) {
             return el.one("." + CLS_PREFIX + "header");
         },
@@ -6482,7 +6876,7 @@ define('bui/component/uibase/stdmod',function () {
         footer:function (el) {
             return el.one("." + CLS_PREFIX + "footer");
         }
-    };*/
+    };/**/
 
     function createUI(self, part) {
         var el = self.get('contentEl'),
@@ -6586,6 +6980,7 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * \u5e94\u7528\u5230\u63a7\u4ef6\u5185\u5bb9\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @type {Object}
+         * @protected
          */
         bodyStyle:{
             view:1
@@ -6597,6 +6992,7 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * \u5e94\u7528\u5230\u63a7\u4ef6\u5e95\u90e8\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @type {Object}
+         * @protected
          */
         footerStyle:{
             view:1
@@ -6608,12 +7004,21 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * \u5e94\u7528\u5230\u63a7\u4ef6\u5934\u90e8\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @type {Object}
+         * @protected
          */
         headerStyle:{
             view:1
         },
         /**
          * \u63a7\u4ef6\u5934\u90e8\u7684html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} headerContent
          */
         /**
@@ -6625,6 +7030,14 @@ define('bui/component/uibase/stdmod',function () {
         },
         /**
          * \u63a7\u4ef6\u5185\u5bb9\u7684html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} bodyContent
          */
         /**
@@ -6636,6 +7049,14 @@ define('bui/component/uibase/stdmod',function () {
         },
         /**
          * \u63a7\u4ef6\u5e95\u90e8\u7684html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} footerContent
          */
         /**
@@ -6786,7 +7207,16 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
     /**
      * \u914d\u7f6e\u63a7\u4ef6\u7684\u6839\u8282\u70b9\u7684DOM
-     * @type {jQuery}
+     * <pre><code>
+     * new Form.Form({
+     *   srcNode : '#J_Form'
+     * }).render();
+     * </code></pre>
+     * @cfg {jQuery} srcNode
+     */
+    /**
+     * \u914d\u7f6e\u63a7\u4ef6\u7684\u6839\u8282\u70b9\u7684DOM
+     * @type {jQuery} 
      */
     srcNode : {
       view : true
@@ -6794,29 +7224,30 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     /**
      * \u662f\u5426\u6839\u636eDOM\u751f\u6210\u5b50\u63a7\u4ef6
      * @type {Boolean}
+     * @protected
      */
     isDecorateChild : {
       value : false
     },
     /**
      * \u6b64\u914d\u7f6e\u9879\u914d\u7f6e\u4f7f\u7528\u90a3\u4e9bsrcNode\u4e0a\u7684\u8282\u70b9\u4f5c\u4e3a\u914d\u7f6e\u9879
-     * \u5f53\u65f6\u7528 decorate \u65f6\uff0c\u53d6 srcNode\u4e0a\u7684\u8282\u70b9\u7684\u5c5e\u6027\u4f5c\u4e3a\u63a7\u4ef6\u7684\u914d\u7f6e\u4fe1\u606f
-     * \u9ed8\u8ba4id,name,value,title \u90fd\u4f1a\u4f5c\u4e3a\u5c5e\u6027\u4f20\u5165
-     * \u4f7f\u7528 'data-cfg' \u4f5c\u4e3a\u6574\u4f53\u7684\u914d\u7f6e\u5c5e\u6027
-     *         <input type="text" name="txtName" id="id",data-cfg="{allowBlank:false}" />
-     *         //\u4f1a\u751f\u6210\u4ee5\u4e0b\u914d\u7f6e\u9879\uff1a
-     *         {
-     *           name : 'txtName',
-     *           id : 'id',
-     *           allowBlank:false
-     *         }
-     *         new Form({
-     *           src:'#form',
-     *           validator : function(record){
-     *              
-     *           }
-     *         }).render();
+     *  - \u5f53\u65f6\u7528 decorate \u65f6\uff0c\u53d6 srcNode\u4e0a\u7684\u8282\u70b9\u7684\u5c5e\u6027\u4f5c\u4e3a\u63a7\u4ef6\u7684\u914d\u7f6e\u4fe1\u606f
+     *  - \u9ed8\u8ba4id,name,value,title \u90fd\u4f1a\u4f5c\u4e3a\u5c5e\u6027\u4f20\u5165
+     *  - \u4f7f\u7528 'data-cfg' \u4f5c\u4e3a\u6574\u4f53\u7684\u914d\u7f6e\u5c5e\u6027
+     *  <pre><code>
+     *     <input id="c1" type="text" name="txtName" id="id",data-cfg="{allowBlank:false}" />
+     *     //\u4f1a\u751f\u6210\u4ee5\u4e0b\u914d\u7f6e\u9879\uff1a
+     *     {
+     *         name : 'txtName',
+     *         id : 'id',
+     *         allowBlank:false
+     *     }
+     *     new Form.Field({
+     *        src:'#c1'
+     *     }).render();
+     *  </code></pre>
      * @type {Object}
+     * @protected
      */
     decorateCfgFields : {
       value : {
@@ -6832,6 +7263,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
     /**
      * \u83b7\u53d6\u63a7\u4ef6\u7684\u914d\u7f6e\u4fe1\u606f
+     * @protected
      */
     getDecorateConfig : function(el){
       if(!el.length){
@@ -7020,10 +7452,26 @@ define('bui/component/uibase/tpl',function () {
   tpl.ATTRS = {
     /**
     * \u63a7\u4ef6\u7684\u6a21\u7248\uff0c\u7528\u4e8e\u521d\u59cb\u5316
+    * <pre><code>
+    * var list = new List.List({
+    *   tpl : '&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;',
+    *   childContainer : 'ul'
+    * });
+    * //\u7528\u4e8e\u7edf\u4e00\u5b50\u63a7\u4ef6\u6a21\u677f
+    * var list = new List.List({
+    *   defaultChildCfg : {
+    *     tpl : '&lt;span&gt;{text}&lt;/span&gt;'
+    *   }
+    * });
+    * list.render();
+    * </code></pre>
     * @cfg {String} tpl
     */
     /**
      * \u63a7\u4ef6\u7684\u6a21\u677f
+     * <pre><code>
+     *   list.set('tpl','&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;&lt;div class="bottom"&gt;&lt;/div&gt;')
+     * </code></pre>
      * @type {String}
      */
     tpl : {
@@ -7034,14 +7482,20 @@ define('bui/component/uibase/tpl',function () {
      * <p>\u63a7\u4ef6\u7684\u6e32\u67d3\u51fd\u6570\uff0c\u5e94\u5bf9\u4e00\u4e9b\u7b80\u5355\u6a21\u677f\u89e3\u51b3\u4e0d\u4e86\u7684\u95ee\u9898\uff0c\u4f8b\u5982\u6709if,else\u903b\u8f91\uff0c\u6709\u5faa\u73af\u903b\u8f91,
      * \u51fd\u6570\u539f\u578b\u662ffunction(data){},\u5176\u4e2ddata\u662f\u63a7\u4ef6\u7684\u5c5e\u6027\u503c</p>
      * <p>\u63a7\u4ef6\u6a21\u677f\u7684\u52a0\u5f3a\u6a21\u5f0f\uff0c\u6b64\u5c5e\u6027\u4f1a\u8986\u76d6@see {BUI.Component.UIBase.Tpl#property-tpl}\u5c5e\u6027</p>
+     * //\u7528\u4e8e\u7edf\u4e00\u5b50\u63a7\u4ef6\u6a21\u677f
+     * var list = new List.List({
+     *   defaultChildCfg : {
+     *     tplRender : funciton(item){
+     *       if(item.type == '1'){
+     *         return 'type1 html';
+     *       }else{
+     *         return 'type2 html';
+     *       }
+     *     }
+     *   }
+     * });
+     * list.render();
      * @cfg {Function} tplRender
-     */
-    /**
-     * <p>\u63a7\u4ef6\u7684\u6e32\u67d3\u51fd\u6570\uff0c\u5e94\u5bf9\u4e00\u4e9b\u7b80\u5355\u6a21\u677f\u89e3\u51b3\u4e0d\u4e86\u7684\u95ee\u9898\uff0c\u4f8b\u5982\u6709if,else\u903b\u8f91\uff0c\u6709\u5faa\u73af\u903b\u8f91,
-     * \u51fd\u6570\u539f\u578b\u662ffunction(data){},\u5176\u4e2ddata\u662f\u63a7\u4ef6\u7684\u5c5e\u6027\u503c</p>
-     * <p>\u63a7\u4ef6\u6a21\u677f\u7684\u52a0\u5f3a\u6a21\u5f0f\uff0c\uff0c\u6b64\u5c5e\u6027\u4f1a\u8986\u76d6@see {BUI.Component.UIBase.Tpl#property-tpl}\u5c5e\u6027</p>
-     * @type {Function}
-     * @readOnly
      */
     tplRender : {
       view : true,
@@ -7049,8 +7503,14 @@ define('bui/component/uibase/tpl',function () {
     },
     /**
      * \u8fd9\u662f\u4e00\u4e2a\u9009\u62e9\u5668\uff0c\u4f7f\u7528\u4e86\u6a21\u677f\u540e\uff0c\u5b50\u63a7\u4ef6\u53ef\u80fd\u4f1a\u6dfb\u52a0\u5230\u6a21\u677f\u5bf9\u5e94\u7684\u4f4d\u7f6e,
-     * \u9ed8\u8ba4\u4e3anull,\u6b64\u65f6\u5b50\u63a7\u4ef6\u4f1a\u5c06\u63a7\u4ef6\u6700\u5916\u5c42 el \u4f5c\u4e3a\u5bb9\u5668
-     * @type {String}
+     *  - \u9ed8\u8ba4\u4e3anull,\u6b64\u65f6\u5b50\u63a7\u4ef6\u4f1a\u5c06\u63a7\u4ef6\u6700\u5916\u5c42 el \u4f5c\u4e3a\u5bb9\u5668
+     * <pre><code>
+     * var list = new List.List({
+     *   tpl : '&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;',
+     *   childContainer : 'ul'
+     * });
+     * </code></pre>
+     * @cfg {String} childContainer
      */
     childContainer : {
       view : true
@@ -7067,6 +7527,7 @@ define('bui/component/uibase/tpl',function () {
     },
     /**
      * \u6839\u636e\u63a7\u4ef6\u7684\u5c5e\u6027\u548c\u6a21\u677f\u751f\u6210\u63a7\u4ef6\u5185\u5bb9
+     * @protected
      */
     setTplContent : function () {
       var _self = this,
@@ -7197,7 +7658,8 @@ define('bui/component/uibase/selection',function () {
      *     <li>\u5b50\u63a7\u4ef6</li>
      *     <li>DOM\u5143\u7d20</li>
      * </ol>
-     * \u5f53\u9009\u62e9\u662f\u5b50\u63a7\u4ef6\u65f6\uff0celement \u548c item \u90fd\u662f\u6307 \u5b50\u63a7\u4ef6\uff1b\u5f53\u9009\u62e9\u7684\u662fDOM\u5143\u7d20\u65f6\uff0celement \u6307DOM\u5143\u7d20\uff0citem \u6307DOM\u5143\u7d20\u5bf9\u5e94\u7684\u8bb0\u5f55
+     * ** \u5f53\u9009\u62e9\u662f\u5b50\u63a7\u4ef6\u65f6\uff0celement \u548c item \u90fd\u662f\u6307 \u5b50\u63a7\u4ef6\uff1b**
+     * ** \u5f53\u9009\u62e9\u7684\u662fDOM\u5143\u7d20\u65f6\uff0celement \u6307DOM\u5143\u7d20\uff0citem \u6307DOM\u5143\u7d20\u5bf9\u5e94\u7684\u8bb0\u5f55 **
      * @abstract
      */
     var selection = function(){
@@ -7212,7 +7674,16 @@ define('bui/component/uibase/selection',function () {
     {
         /**
          * \u9009\u4e2d\u7684\u4e8b\u4ef6
-         * @type {String}
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'value',
+         *   selectedEvent : 'mouseenter',
+         *   render : '#t1',
+         *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+         * });
+         * </code></pre>
+         * @cfg {String} [selectedEvent = 'click']
          */
         selectedEvent:{
             value : 'click'
@@ -7250,17 +7721,35 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u6570\u636e\u7684id\u5b57\u6bb5\u540d\u79f0\uff0c\u901a\u8fc7\u6b64\u5b57\u6bb5\u67e5\u627e\u5bf9\u5e94\u7684\u6570\u636e
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'value',
+         *   render : '#t1',
+         *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+         * });
+         * </code></pre>
          * @cfg {String} [idField = 'id']
          */
         /**
          * \u6570\u636e\u7684id\u5b57\u6bb5\u540d\u79f0\uff0c\u901a\u8fc7\u6b64\u5b57\u6bb5\u67e5\u627e\u5bf9\u5e94\u7684\u6570\u636e
          * @type {String}
+         * @ignore
          */
         idField : {
             value : 'id'
         },
         /**
          * \u662f\u5426\u591a\u9009
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'value',
+         *   render : '#t1',
+         *   multipleSelect : true,
+         *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+         * });
+         * </code></pre>
          * @cfg {Boolean} [multipleSelect=false]
          */
         /**
@@ -7282,6 +7771,10 @@ define('bui/component/uibase/selection',function () {
     {
         /**
          * \u6e05\u7406\u9009\u4e2d\u7684\u9879
+         * <pre><code>
+         *  list.clearSelection();
+         * </code></pre>
+         *
          */
         clearSelection : function(){
             var _self = this,
@@ -7300,6 +7793,9 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u83b7\u53d6\u9009\u4e2d\u7684\u7b2c\u4e00\u9879
+         * <pre><code>
+         * var item = list.getSelected(); //\u591a\u9009\u6a21\u5f0f\u4e0b\u7b2c\u4e00\u6761
+         * </code></pre>
          * @return {Object} \u9009\u4e2d\u7684\u7b2c\u4e00\u9879\u6216\u8005\u4e3aundefined
          */
         getSelected : function(){
@@ -7307,7 +7803,7 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u6839\u636e idField \u83b7\u53d6\u5230\u7684\u503c
-         * @private
+         * @protected
          * @return {Object} \u9009\u4e2d\u7684\u503c
          */
         getSelectedValue : function(){
@@ -7319,7 +7815,7 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\u96c6\u5408
-         * @private
+         * @protected
          * @return {Array} \u9009\u4e2d\u503c\u5f97\u96c6\u5408
          */
         getSelectionValues:function(){
@@ -7332,7 +7828,7 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u83b7\u53d6\u9009\u4e2d\u7684\u6587\u672c
-         * @private
+         * @protected
          * @return {Array} \u9009\u4e2d\u7684\u6587\u672c\u96c6\u5408
          */
         getSelectionText:function(){
@@ -7343,7 +7839,14 @@ define('bui/component/uibase/selection',function () {
             });
         },
         /**
-         * \u79fb\u9664\u9009\u4e2d\uff0c
+         * \u79fb\u9664\u9009\u4e2d
+         * <pre><code>
+         *    var item = list.getItem('id'); //\u901a\u8fc7id \u83b7\u53d6\u9009\u9879
+         *    list.setSelected(item); //\u9009\u4e2d
+         *
+         *    list.clearSelected();//\u5355\u9009\u6a21\u5f0f\u4e0b\u6e05\u9664\u6240\u9009\uff0c\u591a\u9009\u6a21\u5f0f\u4e0b\u6e05\u9664\u9009\u4e2d\u7684\u7b2c\u4e00\u9879
+         *    list.clearSelected(item); //\u6e05\u9664\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001
+         * </code></pre>
          * @param {Object} [item] \u6e05\u9664\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001\uff0c\u5982\u679c\u672a\u6307\u5b9a\u5219\u6e05\u9664\u9009\u4e2d\u7684\u7b2c\u4e00\u4e2a\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001
          */
         clearSelected : function(item){
@@ -7355,7 +7858,7 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u83b7\u53d6\u9009\u9879\u663e\u793a\u7684\u6587\u672c
-         * @private
+         * @protected
          */
         getSelectedText : function(){
             var _self = this,
@@ -7364,6 +7867,10 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u8bbe\u7f6e\u9009\u4e2d\u7684\u9879
+         * <pre><code>
+         *  var items = list.getItemsByStatus('active'); //\u83b7\u53d6\u67d0\u79cd\u72b6\u6001\u7684\u9009\u9879
+         *  list.setSelection(items);
+         * </code></pre>
          * @param {Array} items \u9879\u7684\u96c6\u5408
          */
         setSelection: function(items){
@@ -7377,6 +7884,10 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u8bbe\u7f6e\u9009\u4e2d\u7684\u9879
+         * <pre><code>
+         *   var item = list.getItem('id');
+         *   list.setSelected(item);
+         * </code></pre>
          * @param {Object} item \u8bb0\u5f55\u6216\u8005\u5b50\u63a7\u4ef6
          * @param {BUI.Component.Controller|Object} element \u5b50\u63a7\u4ef6\u6216\u8005DOM\u7ed3\u6784
          */
@@ -7406,9 +7917,9 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u8bbe\u7f6e\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001
-         * @template
          * @param {*} item \u9009\u9879
          * @param {Boolean} selected \u9009\u4e2d\u6216\u8005\u53d6\u6d88\u9009\u4e2d
+         * @protected
          */
         setItemSelected : function(item,selected){
             var _self = this,
@@ -7428,12 +7939,16 @@ define('bui/component/uibase/selection',function () {
          * @template
          * @param {*} item \u9009\u9879
          * @param {Boolean} selected \u9009\u4e2d\u6216\u8005\u53d6\u6d88\u9009\u4e2d
+         * @protected
          */
         setItemSelectedStatus : function(item,selected){
 
         },
         /**
          * \u8bbe\u7f6e\u6240\u6709\u9009\u9879\u9009\u4e2d
+         * <pre><code>
+         *  list.setAllSelection(); //\u9009\u4e2d\u5168\u90e8\uff0c\u591a\u9009\u72b6\u6001\u4e0b\u6709\u6548
+         * </code></pre>
          * @template
          */
         setAllSelection : function(){
@@ -7444,9 +7959,20 @@ define('bui/component/uibase/selection',function () {
          * @param {String} field \u5b57\u6bb5\u540d,\u9ed8\u8ba4\u4e3a\u914d\u7f6e\u9879'idField',\u6240\u4ee5\u6b64\u5b57\u6bb5\u53ef\u4ee5\u4e0d\u586b\u5199\uff0c\u4ec5\u586b\u5199\u503c
          * @param {Object} value \u503c
          * @example
-         * list.setSelectedByField('123');
-         * //\u6216\u8005
-         * list.setSelectedByField('id','123');
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{id}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'id', //id \u5b57\u6bb5\u4f5c\u4e3akey
+         *   render : '#t1',
+         *   items : [{id : '1',text : '1'},{id : '2',text : '2'}]
+         * });
+         *
+         *   list.setSelectedByField('123'); //\u9ed8\u8ba4\u6309\u7167id\u5b57\u6bb5\u67e5\u627e
+         *   //\u6216\u8005
+         *   list.setSelectedByField('id','123');
+         *
+         *   list.setSelectedByField('value','123');
+         * </code></pre>
          */
         setSelectedByField:function(field,value){
             if(!value){
@@ -7459,7 +7985,21 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * \u8bbe\u7f6e\u591a\u4e2a\u9009\u4e2d\uff0c\u6839\u636e\u5b57\u6bb5\u548c\u503c
-         * @param {String} field  \u9ed8\u8ba4\u4e3aidField
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'value', //value \u5b57\u6bb5\u4f5c\u4e3akey
+         *   render : '#t1',
+         *   multipleSelect : true,
+         *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+         * });
+         *   var values = ['1','2','3'];
+         *   list.setSelectionByField(values);//
+         *
+         *   //\u7b49\u4e8e
+         *   list.setSelectionByField('value',values);
+         * </code></pre>
+         * @param {String} field \u9ed8\u8ba4\u4e3aidField
          * @param {Array} values \u503c\u5f97\u96c6\u5408
          */
         setSelectionByField:function(field,values){
@@ -7516,29 +8056,62 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
     /**
      * \u9009\u62e9\u7684\u6570\u636e\u96c6\u5408
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+     *   idField : 'value',
+     *   render : '#t1',
+     *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+     * });
+     * list.render();
+     * </code></pre>
      * @cfg {Array} items
      */
     /**
      * \u9009\u62e9\u7684\u6570\u636e\u96c6\u5408
+     * <pre><code>
+     *  list.set('items',items); //\u5217\u8868\u4f1a\u76f4\u63a5\u66ff\u6362\u5185\u5bb9
+     *  //\u7b49\u540c\u4e8e 
+     *  list.clearItems();
+     *  list.addItems(items);
+     * </code></pre>
      * @type {Array}
      */
     items:{
       view : true
     },
     /**
-     * \u5217\u8868\u9879\u7684\u9ed8\u8ba4\u6a21\u677f\u3002
-     * @cfg {String} itemTpl
+     * \u9009\u9879\u7684\u9ed8\u8ba4key\u503c
+     * @cfg {String} [idField = 'id']
      */
+    idField : {
+      value : 'id'
+    },
     /**
      * \u5217\u8868\u9879\u7684\u9ed8\u8ba4\u6a21\u677f,\u4ec5\u5728\u521d\u59cb\u5316\u65f6\u4f20\u5165\u3002
      * @type {String}
-     * @readOnly
+     * @ignore
      */
     itemTpl : {
       view : true
     },
     /**
      * \u5217\u8868\u9879\u7684\u6e32\u67d3\u51fd\u6570\uff0c\u5e94\u5bf9\u5217\u8868\u9879\u4e4b\u95f4\u6709\u5f88\u591a\u5dee\u5f02\u65f6
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   itemTplRender : function(item){
+     *     if(item.type == '1'){
+     *       return '&lt;li&gt;&lt;img src="xxx.jpg"/&gt;'+item.text+'&lt;/li&gt;'
+     *     }else{
+     *       return '&lt;li&gt;item.text&lt;/li&gt;'
+     *     }
+     *   },
+     *   idField : 'value',
+     *   render : '#t1',
+     *   items : [{value : '1',text : '1',type : '0'},{value : '2',text : '2',type : '1'}]
+     * });
+     * list.render();
+     * </code></pre>
      * @type {Function}
      */
     itemTplRender : {
@@ -7546,6 +8119,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u5b50\u63a7\u4ef6\u5404\u4e2a\u72b6\u6001\u9ed8\u8ba4\u91c7\u7528\u7684\u6837\u5f0f
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   render : '#t1',
+     *   itemStatusCls : {
+     *     selected : 'active', //\u9ed8\u8ba4\u6837\u5f0f\u4e3alist-item-selected,\u73b0\u5728\u53d8\u6210'active'
+     *     hover : 'hover' //\u9ed8\u8ba4\u6837\u5f0f\u4e3alist-item-hover,\u73b0\u5728\u53d8\u6210'hover'
+     *   },
+     *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
+     * });
+     * list.render();
+     * </code></pre>
      * see {@link BUI.Component.Controller#property-statusCls}
      * @type {Object}
      */
@@ -7574,6 +8158,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
     /**
      * \u83b7\u53d6\u9009\u9879\u7684\u6570\u91cf
+     * <pre><code>
+     *   var count = list.getItemCount();
+     * </code></pre>
      * @return {Number} \u9009\u9879\u6570\u91cf
      */
     getItemCount : function () {
@@ -7584,12 +8171,18 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @param {*} item \u5b57\u6bb5\u540d
      * @param {String} field \u5b57\u6bb5\u540d
      * @return {*} \u5b57\u6bb5\u7684\u503c
+     * @protected
      */
     getValueByField : function(item,field){
 
     },
     /**
      * \u83b7\u53d6\u6240\u6709\u9009\u9879\u503c\uff0c\u5982\u679c\u9009\u9879\u662f\u5b50\u63a7\u4ef6\uff0c\u5219\u662f\u6240\u6709\u5b50\u63a7\u4ef6
+     * <pre><code>
+     *   var items = list.getItems();
+     *   //\u7b49\u540c
+     *   list.get(items);
+     * </code></pre>
      * @return {Array} \u9009\u9879\u503c\u96c6\u5408
      */
     getItems : function () {
@@ -7597,6 +8190,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u83b7\u53d6\u7b2c\u4e00\u9879
+     * <pre><code>
+     *   var item = list.getFirstItem();
+     *   //\u7b49\u540c
+     *   list.getItemAt(0);
+     * </code></pre>
      * @return {Object|BUI.Component.Controller} \u9009\u9879\u503c\uff08\u5b50\u63a7\u4ef6\uff09
      */
     getFirstItem : function () {
@@ -7604,6 +8202,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u83b7\u53d6\u6700\u540e\u4e00\u9879
+     * <pre><code>
+     *   var item = list.getLastItem();
+     *   //\u7b49\u540c
+     *   list.getItemAt(list.getItemCount()-1);
+     * </code></pre>
      * @return {Object|BUI.Component.Controller} \u9009\u9879\u503c\uff08\u5b50\u63a7\u4ef6\uff09
      */
     getLastItem : function () {
@@ -7611,6 +8214,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u901a\u8fc7\u7d22\u5f15\u83b7\u53d6\u9009\u9879\u503c\uff08\u5b50\u63a7\u4ef6\uff09
+     * <pre><code>
+     *   var item = list.getItemAt(0); //\u83b7\u53d6\u7b2c1\u4e2a
+     *   var item = list.getItemAt(2); //\u83b7\u53d6\u7b2c3\u4e2a
+     * </code></pre>
      * @param  {Number} index \u7d22\u5f15\u503c
      * @return {Object|BUI.Component.Controller}  \u9009\u9879\uff08\u5b50\u63a7\u4ef6\uff09
      */
@@ -7619,6 +8226,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u901a\u8fc7Id\u83b7\u53d6\u9009\u9879\uff0c\u5982\u679c\u662f\u6539\u53d8\u4e86idField\u5219\u901a\u8fc7\u6539\u53d8\u7684idField\u6765\u67e5\u627e\u9009\u9879
+     * <pre><code>
+     *   //\u5982\u679cidField = 'id'
+     *   var item = list.getItem('2'); 
+     *   //\u7b49\u540c\u4e8e
+     *   list.findItemByField('id','2');
+     *
+     *   //\u5982\u679cidField = 'value'
+     *   var item = list.getItem('2'); 
+     *   //\u7b49\u540c\u4e8e
+     *   list.findItemByField('value','2');
+     * </code></pre>
      * @param {String} id \u7f16\u53f7
      * @return {Object|BUI.Component.Controller} \u9009\u9879\uff08\u5b50\u63a7\u4ef6\uff09
      */
@@ -7628,6 +8246,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u8fd4\u56de\u6307\u5b9a\u9879\u7684\u7d22\u5f15
+     * <pre><code>
+     * var index = list.indexOf(item); //\u8fd4\u56de\u7d22\u5f15\uff0c\u4e0d\u5b58\u5728\u5219\u8fd4\u56de-1
+     * </code></pre>
      * @param  {Object|BUI.Component.Controller} \u9009\u9879
      * @return {Number}   \u9879\u7684\u7d22\u5f15\u503c
      */
@@ -7636,6 +8257,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u6dfb\u52a0\u591a\u6761\u9009\u9879
+     * <pre><code>
+     * var items = [{id : '1',text : '1'},{id : '2',text : '2'}];
+     * list.addItems(items);
+     * </code></pre>
      * @param {Array} items \u8bb0\u5f55\u96c6\u5408\uff08\u5b50\u63a7\u4ef6\u914d\u7f6e\u9879\uff09
      */
     addItems : function (items) {
@@ -7646,6 +8271,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u63d2\u5165\u591a\u6761\u8bb0\u5f55
+     * <pre><code>
+     * var items = [{id : '1',text : '1'},{id : '2',text : '2'}];
+     * list.addItemsAt(items,0); // \u5728\u6700\u524d\u9762\u63d2\u5165
+     * list.addItemsAt(items,2); //\u7b2c\u4e09\u4e2a\u4f4d\u7f6e\u63d2\u5165
+     * </code></pre>
      * @param  {Array} items \u591a\u6761\u8bb0\u5f55
      * @param  {Number} start \u8d77\u59cb\u4f4d\u7f6e
      */
@@ -7656,7 +8286,12 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       });
     },
     /**
-     * \u66f4\u65b0\u5217\u8868\u9879
+     * \u66f4\u65b0\u5217\u8868\u9879\uff0c\u4fee\u6539\u9009\u9879\u503c\u540e\uff0cDOM\u8ddf\u968f\u53d8\u5316
+     * <pre><code>
+     *   var item = list.getItem('2');
+     *   list.text = '\u65b0\u5185\u5bb9'; //\u6b64\u65f6\u5bf9\u5e94\u7684DOM\u4e0d\u4f1a\u53d8\u5316
+     *   list.updateItem(item); //DOM\u8fdb\u884c\u76f8\u5e94\u7684\u53d8\u5316
+     * </code></pre>
      * @param  {Object} item \u9009\u9879\u503c
      */
     updateItem : function(item){
@@ -7664,6 +8299,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u6dfb\u52a0\u9009\u9879,\u6dfb\u52a0\u5728\u63a7\u4ef6\u6700\u540e
+     * 
+     * <pre><code>
+     * list.addItem({id : '3',text : '3',type : '0'});
+     * </code></pre>
+     * 
      * @param {Object|BUI.Component.Controller} item \u9009\u9879\uff0c\u5b50\u63a7\u4ef6\u914d\u7f6e\u9879\u3001\u5b50\u63a7\u4ef6
      * @return {Object|BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005\u9009\u9879\u8bb0\u5f55
      */
@@ -7672,6 +8312,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u5728\u6307\u5b9a\u4f4d\u7f6e\u6dfb\u52a0\u9009\u9879
+     * <pre><code>
+     * list.addItemAt({id : '3',text : '3',type : '0'},0); //\u7b2c\u4e00\u4e2a\u4f4d\u7f6e
+     * </code></pre>
      * @param {Object|BUI.Component.Controller} item \u9009\u9879\uff0c\u5b50\u63a7\u4ef6\u914d\u7f6e\u9879\u3001\u5b50\u63a7\u4ef6
      * @param {Number} index \u7d22\u5f15
      * @return {Object|BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005\u9009\u9879\u8bb0\u5f55
@@ -7700,6 +8343,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u6e05\u9664\u6240\u6709\u9009\u9879,\u4e0d\u7b49\u540c\u4e8e\u5220\u9664\u5168\u90e8\uff0c\u6b64\u65f6\u4e0d\u4f1a\u89e6\u53d1\u5220\u9664\u4e8b\u4ef6
+     * <pre><code>
+     * list.clearItems(); 
+     * //\u7b49\u540c\u4e8e
+     * list.set('items',items);
+     * </code></pre>
      */
     clearItems : function(){
       var _self = this,
@@ -7709,6 +8357,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u5220\u9664\u9009\u9879
+     * <pre><code>
+     * var item = list.getItem('1');
+     * list.removeItem(item);
+     * </code></pre>
      * @param {Object|BUI.Component.Controller} item \u9009\u9879\uff08\u5b50\u63a7\u4ef6\uff09
      */
     removeItem : function (item) {
@@ -7716,6 +8368,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u79fb\u9664\u9009\u9879\u96c6\u5408
+     * <pre><code>
+     * var items = list.getSelection();
+     * list.removeItems(items);
+     * </code></pre>
      * @param  {Array} items \u9009\u9879\u96c6\u5408
      */
     removeItems : function(items){
@@ -7727,6 +8383,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u901a\u8fc7\u7d22\u5f15\u5220\u9664\u9009\u9879
+     * <pre><code>
+     * list.removeItemAt(0); //\u5220\u9664\u7b2c\u4e00\u4e2a
+     * </code></pre>
      * @param  {Number} index \u7d22\u5f15
      */
     removeItemAt : function (index) {
@@ -7789,8 +8448,8 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u66f4\u65b0\u5217\u8868\u9879
-     * @protected
      * @param  {Object} item \u9009\u9879\u503c
+     * @ignore
      */
     updateItem : function(item){
       var _self = this, 
@@ -7810,6 +8469,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * \u79fb\u9664\u9009\u9879
      * @param  {jQuery} element
+     * @ignore
      */
     removeItem:function(item,element){
       element = element || this.findElement(item);
@@ -7818,6 +8478,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * \u83b7\u53d6\u5217\u8868\u9879\u7684\u5bb9\u5668
      * @return {jQuery} \u5217\u8868\u9879\u5bb9\u5668
+     * @protected
      */
     getItemContainer : function  () {
       return this.get('itemContainer') || this.get('el');
@@ -7994,6 +8655,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * \u5728DOM\u8282\u70b9\u4e0a\u5b58\u50a8\u6570\u636e\u7684\u5b57\u6bb5
      * @type {String}
+     * @protected
      */
     dataField : {
         view:true,
@@ -8002,20 +8664,48 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * \u9009\u9879\u6240\u5728\u5bb9\u5668\uff0c\u5982\u679c\u672a\u8bbe\u5b9a\uff0c\u4f7f\u7528 el
      * @type {jQuery}
+     * @protected
      */
     itemContainer : {
         view : true
     },
     /**
-     * \u9009\u9879\u7684\u503c
-     * @type {Object}
+     * \u9009\u9879\u72b6\u6001\u5bf9\u5e94\u7684\u9009\u9879\u503c
+     * 
+     *   - \u6b64\u5b57\u6bb5\u7528\u4e8e\u5c06\u9009\u9879\u8bb0\u5f55\u7684\u503c\u8ddf\u663e\u793a\u7684DOM\u72b6\u6001\u76f8\u5bf9\u5e94
+     *   - \u4f8b\u5982\uff1a\u4e0b\u9762\u8bb0\u5f55\u4e2d <code> checked : true </code>\uff0c\u53ef\u4ee5\u4f7f\u5f97\u6b64\u8bb0\u5f55\u5bf9\u5e94\u7684DOM\u4e0a\u5e94\u7528\u5bf9\u5e94\u7684\u72b6\u6001(\u9ed8\u8ba4\u4e3a 'list-item-checked')
+     *     <pre><code>{id : '1',text : 1,checked : true}</code></pre>
+     *   - \u5f53\u66f4\u6539DOM\u7684\u72b6\u6001\u65f6\uff0c\u8bb0\u5f55\u4e2d\u5bf9\u5e94\u7684\u5b57\u6bb5\u5c5e\u6027\u4e5f\u4f1a\u8ddf\u7740\u53d8\u5316
+     * <pre><code>
+     *   var list = new List.SimpleList({
+     *   render : '#t1',
+     *   idField : 'id', //\u81ea\u5b9a\u4e49\u6837\u5f0f\u540d\u79f0
+     *   itemStatusFields : {
+     *     checked : 'checked',
+     *     disabled : 'disabled'
+     *   },
+     *   items : [{id : '1',text : '1',checked : true},{id : '2',text : '2',disabled : true}]
+     * });
+     * list.render(); //\u5217\u8868\u6e32\u67d3\u540e\uff0c\u4f1a\u81ea\u52a8\u5e26\u6709checked,\u548cdisabled\u5bf9\u5e94\u7684\u6837\u5f0f
+     *
+     * var item = list.getItem('1');
+     * list.hasStatus(item,'checked'); //true
+     *
+     * list.setItemStatus(item,'checked',false);
+     * list.hasStatus(item,'checked');  //false
+     * item.checked;                    //false
+     * 
+     * </code></pre>
+     * ** \u6ce8\u610f **
+     * \u6b64\u5b57\u6bb5\u8ddf {@link #itemStatusCls} \u4e00\u8d77\u4f7f\u7528\u6548\u679c\u66f4\u597d\uff0c\u53ef\u4ee5\u81ea\u5b9a\u4e49\u5bf9\u5e94\u72b6\u6001\u7684\u6837\u5f0f
+     * @cfg {Object} itemStatusFields
      */
     itemStatusFields : {
       value : {}
     },
     /**
      * \u9879\u7684\u6837\u5f0f\uff0c\u7528\u6765\u83b7\u53d6\u5b50\u9879
-     * @type {Object}
+     * @cfg {Object} itemCls
      */
     itemCls : {
       view : true
@@ -8023,19 +8713,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * \u83b7\u53d6\u9879\u7684\u6587\u672c\uff0c\u9ed8\u8ba4\u83b7\u53d6\u663e\u793a\u7684\u6587\u672c
      * @type {Object}
+     * @protected
      */
     textGetter : {
 
-    },
-    /**
-     * \u9009\u4e2d\u9879\u7684\u6837\u5f0f
-     * @type {String}
-     */
-    selectedCls : {
-      valueFn : function(){
-        var itemCls = this.get('itemCls') || 'ks'
-        return  itemCls + '-selected';
-      }
     },
     events : {
       value : {
@@ -8174,6 +8855,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       return item[field];
     },
     /**
+     * \u66f4\u6539\u72b6\u6001\u503c\u5bf9\u5e94\u7684\u5b57\u6bb5
+     * @protected
+     * @param  {String} status \u72b6\u6001\u540d
+     * @return {String} \u72b6\u6001\u5bf9\u5e94\u7684\u5b57\u6bb5
+     */
+    getStatusField : function(status){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields');
+      return itemStatusFields[status];
+    },
+    /**
      * \u8bbe\u7f6e\u8bb0\u5f55\u72b6\u6001\u503c
      * @protected
      * @param  {Object} item  \u8bb0\u5f55
@@ -8188,6 +8880,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
         item[field] = value;
       }
     },
+    /**
+     * @ignore
+     * \u83b7\u53d6\u9009\u9879\u6587\u672c
+     */
     getItemText : function(item){
       var _self = this,
           textGetter = _self.get('textGetter');
@@ -8204,6 +8900,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * \u5220\u9664\u9879
      * @param  {Object} item \u9009\u9879\u8bb0\u5f55
+     * @ignore
      */
     removeItem : function (item) {
       var _self = this,
@@ -8221,6 +8918,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * \u5728\u6307\u5b9a\u4f4d\u7f6e\u6dfb\u52a0\u9009\u9879,\u9009\u9879\u503c\u4e3a\u4e00\u4e2a\u5bf9\u8c61
      * @param {Object} item \u9009\u9879
      * @param {Number} index \u7d22\u5f15
+     * @ignore
      */
     addItemAt : function(item,index) {
       var _self = this,
@@ -8237,6 +8935,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * \u76f4\u63a5\u5728View\u4e0a\u663e\u793a
      * @param {Object} item \u9009\u9879
      * @param {Number} index \u7d22\u5f15
+     * 
      */
     addItemToView : function(item,index){
       var _self = this,
@@ -8246,6 +8945,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * \u66f4\u65b0\u5217\u8868\u9879
      * @param  {Object} item \u9009\u9879\u503c
+     * @ignore
      */
     updateItem : function(item){
       var _self = this,
@@ -8256,6 +8956,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * \u83b7\u53d6\u6240\u6709\u9009\u9879
      * @return {Array} \u9009\u9879\u96c6\u5408
      * @override
+     * @ignore
      */
     getItems : function () {
       
@@ -8272,6 +8973,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u6839\u636e\u72b6\u6001\u83b7\u53d6\u9009\u9879
+     * <pre><code>
+     *   //\u8bbe\u7f6e\u72b6\u6001
+     *   list.setItemStatus(item,'active');
+     *   
+     *   //\u83b7\u53d6'active'\u72b6\u6001\u7684\u9009\u9879
+     *   list.getItemsByStatus('active');
+     * </code></pre>
      * @param  {String} status \u72b6\u6001\u540d
      * @return {Array}  \u9009\u9879\u7ec4\u96c6\u5408
      */
@@ -8286,6 +8994,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u67e5\u627e\u6307\u5b9a\u7684\u9879\u7684DOM\u7ed3\u6784
+     * <pre><code>
+     *   var item = list.getItem('2'); //\u83b7\u53d6\u9009\u9879
+     *   var element = list.findElement(item);
+     *   $(element).addClass('xxx');
+     * </code></pre>
      * @param  {Object} item 
      * @return {HTMLElement} element
      */
@@ -8322,7 +9035,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u8bbe\u7f6e\u6240\u6709\u9009\u9879\u9009\u4e2d
-     * @override
+     * @ignore
      */
     setAllSelection : function(){
       var _self = this,
@@ -8330,8 +9043,16 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.setSelection(items);
     },
     /**
+     * \u9009\u9879\u662f\u5426\u88ab\u9009\u4e2d
+     * <pre><code>
+     *   var item = list.getItem('2');
+     *   if(list.isItemSelected(item)){
+     *     //TO DO
+     *   }
+     * </code></pre>
      * @override
-     * @ignore
+     * @param  {Object}  item \u9009\u9879
+     * @return {Boolean}  \u662f\u5426\u9009\u4e2d
      */
     isItemSelected : function(item,element){
       var _self = this;
@@ -8341,6 +9062,12 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u662f\u5426\u9009\u9879\u88ab\u7981\u7528
+     * <pre><code>
+     * var item = list.getItem('2');
+     * if(list.isItemDisabled(item)){ //\u5982\u679c\u9009\u9879\u7981\u7528
+     *   //TO DO
+     * }
+     * </code></pre>
      * @param {Object} item \u9009\u9879
      * @return {Boolean} \u9009\u9879\u662f\u5426\u7981\u7528
      */
@@ -8349,6 +9076,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u8bbe\u7f6e\u9009\u9879\u7981\u7528
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemDisabled(item,true);//\u8bbe\u7f6e\u9009\u9879\u7981\u7528\uff0c\u4f1a\u5728DOM\u4e0a\u6dfb\u52a0 itemCls + 'disabled'\u7684\u6837\u5f0f
+     * list.setItemDisabled(item,false); //\u53d6\u6d88\u7981\u7528\uff0c\u53ef\u4ee5\u7528{@link #itemStatusCls} \u6765\u66ff\u6362\u6837\u5f0f
+     * </code></pre>
      * @param {Object} item \u9009\u9879
      */
     setItemDisabled : function(item,disabled){
@@ -8364,6 +9096,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * \u83b7\u53d6\u9009\u4e2d\u7684\u9879\u7684\u503c
      * @override
      * @return {Array} 
+     * @ignore
      */
     getSelection : function(){
       var _self = this,
@@ -8386,6 +9119,14 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * \u9009\u9879\u662f\u5426\u5b58\u5728\u67d0\u79cd\u72b6\u6001
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemStatus(item,'active',true);
+     * list.hasStatus(item,'active'); //true
+     *
+     * list.setItemStatus(item,'active',false);
+     * list.hasStatus(item,'false'); //true
+     * </code></pre>
      * @param {*} item \u9009\u9879
      * @param {String} status \u72b6\u6001\u540d\u79f0\uff0c\u5982selected,hover,open\u7b49\u7b49
      * @param {HTMLElement} [element] \u9009\u9879\u5bf9\u5e94\u7684Dom\uff0c\u653e\u7f6e\u53cd\u590d\u67e5\u627e
@@ -8397,7 +9138,15 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       return _self.get('view').hasStatus(status,element);
     },
     /**
-     * \u8bbe\u7f6e\u9009\u9879\u72b6\u6001
+     * \u8bbe\u7f6e\u9009\u9879\u72b6\u6001,\u53ef\u4ee5\u8bbe\u7f6e\u4efb\u4f55\u81ea\u5b9a\u4e49\u72b6\u6001
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemStatus(item,'active',true);
+     * list.hasStatus(item,'active'); //true
+     *
+     * list.setItemStatus(item,'active',false);
+     * list.hasStatus(item,'false'); //true
+     * </code></pre>
      * @param {*} item \u9009\u9879
      * @param {String} status \u72b6\u6001\u540d\u79f0
      * @param {Boolean} value \u72b6\u6001\u503c\uff0ctrue,false
@@ -8640,8 +9389,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.afterSelected(item,selected,element);
     },
     /**
+     * \u9009\u9879\u662f\u5426\u88ab\u9009\u4e2d
      * @override
-     * @ignore
+     * @param  {*}  item \u9009\u9879
+     * @return {Boolean}  \u662f\u5426\u9009\u4e2d
      */
     isItemSelected : function(item){
         return item ? item.get('selected') : false;
@@ -8704,10 +9455,17 @@ define('bui/component/uibase/childcfg',function (require) {
   childCfg.ATTRS = {
     /**
      * \u9ed8\u8ba4\u7684\u5b50\u63a7\u4ef6\u914d\u7f6e\u9879,\u5728\u521d\u59cb\u5316\u63a7\u4ef6\u65f6\u914d\u7f6e
-     * <ul>
-     * \u5982\u679c\u63a7\u4ef6\u5df2\u7ecf\u6e32\u67d3\u8fc7\uff0c\u6b64\u914d\u7f6e\u9879\u65e0\u6548\uff0c
-     * \u63a7\u4ef6\u751f\u6210\u540e\uff0c\u4fee\u6539\u6b64\u914d\u7f6e\u9879\u65e0\u6548\u3002
-     * </ul>
+     * 
+     *  - \u5982\u679c\u63a7\u4ef6\u5df2\u7ecf\u6e32\u67d3\u8fc7\uff0c\u6b64\u914d\u7f6e\u9879\u65e0\u6548\uff0c
+     *  - \u63a7\u4ef6\u751f\u6210\u540e\uff0c\u4fee\u6539\u6b64\u914d\u7f6e\u9879\u65e0\u6548\u3002
+     * <pre><code>
+     *   var control = new Control({
+     *     defaultChildCfg : {
+     *       tpl : '&lt;li&gt;{text}&lt;/li&gt;',
+     *       xclass : 'a-b'
+     *     }
+     *   });
+     * </code></pre>
      * @cfg {Object} defaultChildCfg
      */
     /**
@@ -8814,6 +9572,15 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
   /**
    * @class BUI.Component.UIBase.Depends
    * \u4f9d\u8d56\u4e8b\u4ef6\u6e90\u7684\u6269\u5c55
+   * <pre><code>
+   *       var control = new Control({
+   *         depends : {
+   *           '#btn:click':['toggle'],//\u5f53\u70b9\u51fbid\u4e3a'btn'\u7684\u6309\u94ae\u65f6\uff0c\u6267\u884c control \u7684toggle\u65b9\u6cd5
+   *           '#checkbox1:checked':['show'],//\u5f53\u52fe\u9009checkbox\u65f6\uff0c\u663e\u793a\u63a7\u4ef6
+   *           '#menu:click',function(){}
+   *         }
+   *       });
+   * </code></pre>
    */
   function Depends (){
 
@@ -8828,6 +9595,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * <li>\u4e8b\u4ef6\u540d\uff1a\u4e8b\u4ef6\u540d\u662f\u4e00\u4e2a\u4f7f\u7528":"\u4e3a\u524d\u7f00\u7684\u5b57\u7b26\u4e32\uff0c\u4f8b\u5982 "#id:change",\u5373\u76d1\u542cchange\u4e8b\u4ef6</li>
      * <li>\u89e6\u53d1\u7684\u65b9\u6cd5\uff1a\u53ef\u4ee5\u662f\u4e00\u4e2a\u6570\u7ec4\uff0c\u5982["disable","clear"],\u6570\u7ec4\u91cc\u9762\u662f\u63a7\u4ef6\u7684\u65b9\u6cd5\u540d\uff0c\u4e5f\u53ef\u4ee5\u662f\u4e00\u4e2a\u56de\u8c03\u51fd\u6570</li>
      * </ol>
+     * <pre><code>
      *       var control = new Control({
      *         depends : {
      *           '#btn:click':['toggle'],//\u5f53\u70b9\u51fbid\u4e3a'btn'\u7684\u6309\u94ae\u65f6\uff0c\u6267\u884c control \u7684toggle\u65b9\u6cd5
@@ -8835,7 +9603,8 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      *           '#menu:click',function(){}
      *         }
      *       });
-     * \u6ce8\u610f\uff1a \u8fd9\u4e9b\u4f9d\u8d56\u9879\u662f\u5728\u63a7\u4ef6\u6e32\u67d3\uff08render\uff09\u540e\u8fdb\u884c\u7684\u3002         
+     * </code></pre>
+     * ** \u6ce8\u610f\uff1a** \u8fd9\u4e9b\u4f9d\u8d56\u9879\u662f\u5728\u63a7\u4ef6\u6e32\u67d3\uff08render\uff09\u540e\u8fdb\u884c\u7684\u3002         
      * @type {Object}
      */
     depends : {
@@ -8869,6 +9638,13 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * \u6dfb\u52a0\u4f9d\u8d56\uff0c\u5982\u679c\u5df2\u7ecf\u6709\u540c\u540d\u7684\u4e8b\u4ef6\uff0c\u5219\u79fb\u9664\uff0c\u518d\u6dfb\u52a0
+     * <pre><code>
+     *  form.addDependence('#btn:click',['toggle']); //\u5f53\u6309\u94ae#btn\u70b9\u51fb\u65f6\uff0c\u8868\u5355\u4ea4\u66ff\u663e\u793a\u9690\u85cf
+     *
+     *  form.addDependence('#btn:click',function(){//\u5f53\u6309\u94ae#btn\u70b9\u51fb\u65f6\uff0c\u8868\u5355\u4ea4\u66ff\u663e\u793a\u9690\u85cf
+     *   //TO DO
+     *  }); 
+     * </code></pre>
      * @param {String} name \u4f9d\u8d56\u9879\u7684\u540d\u79f0
      * @param {Array|Function} action \u4f9d\u8d56\u9879\u7684\u4e8b\u4ef6
      */
@@ -8884,6 +9660,9 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * \u79fb\u9664\u4f9d\u8d56
+     * <pre><code>
+     *  form.removeDependence('#btn:click'); //\u5f53\u6309\u94ae#btn\u70b9\u51fb\u65f6\uff0c\u8868\u5355\u4e0d\u5728\u76d1\u542c
+     * </code></pre>
      * @param  {String} name \u4f9d\u8d56\u540d\u79f0
      */
     removeDependence : function(name){
@@ -8897,6 +9676,9 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * \u6e05\u9664\u6240\u6709\u7684\u4f9d\u8d56
+     * <pre><code>
+     *  form.clearDependences();
+     * </code></pre>
      */
     clearDependences : function(){
       var _self = this,
@@ -8922,6 +9704,21 @@ define('bui/component/uibase/bindable',function(){
 	
 	/**
 		* bindable extension class.
+		* <pre><code>
+		*   BUI.use(['bui/list','bui/data','bui/mask'],function(List,Data,Mask){
+		*     var store = new Data.Store({
+		*       url : 'data/xx.json'
+		*     });
+		*   	var list = new List.SimpleList({
+		*  	    render : '#l1',
+		*  	    store : store,
+		*  	    loadMask : new Mask.LoadMask({el : '#t1'})
+		*     });
+		*
+		*     list.render();
+		*     store.load();
+		*   });
+		* </code></pre>
 		* \u4f7f\u63a7\u4ef6\u7ed1\u5b9astore\uff0c\u5904\u7406store\u7684\u4e8b\u4ef6 {@link BUI.Data.Store}
 		* @class BUI.Component.UIBase.Bindable
 		*/
@@ -8933,10 +9730,26 @@ define('bui/component/uibase/bindable',function(){
 	{
 		/**
 		* \u7ed1\u5b9a {@link BUI.Data.Store}\u7684\u4e8b\u4ef6
+		* <pre><code>
+		*  var store = new Data.Store({
+		*   url : 'data/xx.json',
+		*   autoLoad : true
+		*  });
+		*
+		*  var list = new List.SimpleList({
+		*  	 render : '#l1',
+		*  	 store : store
+		*  });
+		*
+		*  list.render();
+		* </code></pre>
 		* @cfg {BUI.Data.Store} store
 		*/
 		/**
 		* \u7ed1\u5b9a {@link BUI.Data.Store}\u7684\u4e8b\u4ef6
+		* <pre><code>
+		*  var store = list.get('store');
+		* </code></pre>
 		* @type {BUI.Data.Store}
 		*/
 		store : {
@@ -8944,11 +9757,27 @@ define('bui/component/uibase/bindable',function(){
 		},
 		/**
 		* \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u662f\u5426\u663e\u793a\u7b49\u5f85\u52a0\u8f7d\u7684\u5c4f\u853d\u5c42
+		* <pre><code>
+		*   BUI.use(['bui/list','bui/data','bui/mask'],function(List,Data,Mask){
+		*     var store = new Data.Store({
+		*       url : 'data/xx.json'
+		*     });
+		*   	var list = new List.SimpleList({
+		*  	    render : '#l1',
+		*  	    store : store,
+		*  	    loadMask : new Mask.LoadMask({el : '#t1'})
+		*     });
+		*
+		*     list.render();
+		*     store.load();
+		*   });
+		* </code></pre>
 		* @cfg {Boolean|Object} loadMask
 		*/
 		/**
 		* \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u662f\u5426\u663e\u793a\u7b49\u5f85\u52a0\u8f7d\u7684\u5c4f\u853d\u5c42
 		* @type {Boolean|Object} 
+		* @ignore
 		*/
 		loadMask : {
 			value : false
@@ -9399,6 +10228,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         /**
          * \u63a7\u4ef6\u6839\u8282\u70b9\u5c5e\u6027
          * see {@link BUI.Component.Controller#property-elAttrs}
+         * @ignore
          */
         elAttrs: {
         },
@@ -9418,6 +10248,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         /**
          * \u63a7\u4ef6\u5728\u6307\u5b9a\u5143\u7d20\u5185\u90e8\u6e32\u67d3
          * see {@link BUI.Component.Controller#property-render}
+         * @ignore
          */
         render: {},
         /**
@@ -9642,6 +10473,39 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
     /**
      * \u53ef\u4ee5\u5b9e\u4f8b\u5316\u7684\u63a7\u4ef6\uff0c\u4f5c\u4e3a\u6700\u9876\u5c42\u7684\u63a7\u4ef6\u7c7b\uff0c\u4e00\u5207\u7528\u6237\u63a7\u4ef6\u90fd\u7ee7\u627f\u6b64\u63a7\u4ef6
      * xclass: 'controller'.
+     * ** \u521b\u5efa\u5b50\u63a7\u4ef6 ** 
+     * <pre><code>
+     * var Control = Controller.extend([mixin1,mixin2],{ //\u539f\u578b\u94fe\u4e0a\u7684\u51fd\u6570
+     *   renderUI : function(){ //\u521b\u5efaDOM
+     *   
+     *   }, 
+     *   bindUI : function(){  //\u7ed1\u5b9a\u4e8b\u4ef6
+     *   
+     *   },
+     *   destructor : funciton(){ //\u6790\u6784\u51fd\u6570
+     *   
+     *   }
+     * },{
+     *   ATTRS : { //\u9ed8\u8ba4\u7684\u5c5e\u6027
+     *       text : {
+     *       
+     *       }
+     *   }
+     * },{
+     *     xclass : 'a' //\u7528\u4e8e\u628a\u5bf9\u8c61\u89e3\u6790\u6210\u7c7b
+     * });
+     * </code></pre>
+     *
+     * ** \u521b\u5efa\u5bf9\u8c61 **
+     * <pre><code>
+     * var c1 = new Control({
+     *     render : '#t1', //\u5728t1\u4e0a\u521b\u5efa
+     *     text : 'text1',
+     *     children : [{xclass : 'a',text : 'a1'},{xclass : 'b',text : 'b1'}]
+     * });
+     *
+     * c1.render();
+     * </code></pre>
      * @extends BUI.Component.UIBase
      * @mixins BUI.Component.UIBase.Tpl
      * @mixins BUI.Component.UIBase.Decorate
@@ -9682,6 +10546,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * \u8fd4\u56de\u65b0\u7684\u552f\u4e00\u7684Id,\u7ed3\u679c\u662f 'xclass' + number
+         * @protected
          * @return {String} \u552f\u4e00id
          */
         getNextUniqueId : function(){
@@ -9740,6 +10605,16 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u63a7\u4ef6\u662f\u5426\u5305\u542b\u6307\u5b9a\u7684DOM\u5143\u7d20,\u5305\u62ec\u6839\u8282\u70b9
+         * <pre><code>
+         *   var control = new Control();
+         *   $(document).on('click',function(ev){
+         *     var target = ev.target;
+         *
+         *     if(!control.containsElement(elem)){ //\u672a\u70b9\u51fb\u5728\u63a7\u4ef6\u5185\u90e8
+         *       control.hide();
+         *     }
+         *   });
+         * </code></pre>
          * @param  {HTMLElement} elem DOM \u5143\u7d20
          * @return {Boolean}  \u662f\u5426\u5305\u542b
          */
@@ -9800,6 +10675,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u4ea4\u66ff\u663e\u793a\u6216\u8005\u9690\u85cf
+         * <pre><code>
+         *  control.show(); //\u663e\u793a
+         *  control.toggle(); //\u9690\u85cf
+         *  control.toggle(); //\u663e\u793a
+         * </code></pre>
          */
         toggle : function(){
             this.set('visible',!this.get('visible'));
@@ -9894,7 +10774,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             return this;
         },
         /**
-         * \u4f7f\u63a7\u4ef6\u4e0d\u53ef\u7528
+         * \u4f7f\u63a7\u4ef6\u4e0d\u53ef\u7528\uff0c\u63a7\u4ef6\u4e0d\u53ef\u7528\u65f6\uff0c\u70b9\u51fb\u7b49\u4e8b\u4ef6\u4e0d\u4f1a\u89e6\u53d1
+         * <pre><code>
+         *  control.disable(); //\u7981\u7528
+         *  control.enable(); //\u89e3\u9664\u7981\u7528
+         * </code></pre>
          */
         disable : function(){
             this.set('disabled',true);
@@ -9902,6 +10786,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u5b50\u7ec4\u4ef6\u5c06\u8981\u6e32\u67d3\u5230\u7684\u8282\u70b9\uff0c\u5728 render \u7c7b\u4e0a\u8986\u76d6\u5bf9\u5e94\u65b9\u6cd5
+         * @protected
          * @ignore
          */
         getContentElement: function () {
@@ -9910,6 +10795,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * \u7126\u70b9\u6240\u5728\u5143\u7d20\u5373\u952e\u76d8\u4e8b\u4ef6\u5904\u7406\u5143\u7d20\uff0c\u5728 render \u7c7b\u4e0a\u8986\u76d6\u5bf9\u5e94\u65b9\u6cd5
+         * @protected
          * @ignore
          */
         getKeyEventTarget: function () {
@@ -9918,8 +10804,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * \u6dfb\u52a0\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6\uff0c\u7d22\u5f15\u503c\u4e3a 0-based
-         * @param {BUI.Component.Controller|Object} c
-         * \u5b50\u63a7\u4ef6\u7684\u5b9e\u4f8b\u6216\u8005\u914d\u7f6e\u9879
+         * <pre><code>
+         *  control.add(new Control());//\u6dfb\u52a0controller\u5bf9\u8c61
+         *  control.add({xclass : 'a'});//\u6dfb\u52a0xclass \u4e3aa \u7684\u4e00\u4e2a\u5bf9\u8c61
+         *  control.add({xclass : 'b'},2);//\u63d2\u5165\u5230\u7b2c\u4e09\u4e2a\u4f4d\u7f6e
+         * </code></pre>
+         * @param {BUI.Component.Controller|Object} c \u5b50\u63a7\u4ef6\u7684\u5b9e\u4f8b\u6216\u8005\u914d\u7f6e\u9879
          * @param {String} [c.xclass] \u5982\u679cc\u4e3a\u914d\u7f6e\u9879\uff0c\u8bbe\u7f6ec\u7684xclass
          * @param {Number} [index]  0-based  \u5982\u679c\u672a\u6307\u5b9a\u7d22\u5f15\u503c\uff0c\u5219\u63d2\u5728\u63a7\u4ef6\u7684\u6700\u540e
          */
@@ -9960,6 +10850,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u5c06\u81ea\u5df1\u4ece\u7236\u63a7\u4ef6\u4e2d\u79fb\u9664
+         * <pre><code>
+         *  control.remove(); //\u5c06\u63a7\u4ef6\u4ece\u7236\u63a7\u4ef6\u4e2d\u79fb\u9664\uff0c\u5e76\u672a\u5220\u9664
+         *  parent.addChild(control); //\u8fd8\u53ef\u4ee5\u6dfb\u52a0\u56de\u7236\u63a7\u4ef6
+         *  
+         *  control.remove(true); //\u4ece\u63a7\u4ef6\u4e2d\u79fb\u9664\u5e76\u8c03\u7528\u63a7\u4ef6\u7684\u6790\u6784\u51fd\u6570
+         * </code></pre>
          * @param  {Boolean} destroy \u662f\u5426\u5220\u9664DON\u8282\u70b9
          * @return {BUI.Component.Controller} \u5220\u9664\u7684\u5b50\u5bf9\u8c61.
          */
@@ -9976,9 +10872,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         /**
          * \u79fb\u9664\u5b50\u63a7\u4ef6\uff0c\u5e76\u8fd4\u56de\u79fb\u9664\u7684\u63a7\u4ef6
          *
-         * \u5982\u679c destroy=true,\u8c03\u7528\u79fb\u9664\u63a7\u4ef6\u7684 {@link BUI.Component.UIBase#destroy} \u65b9\u6cd5,
-         * \u540c\u65f6\u5220\u9664\u5bf9\u5e94\u7684DOM
-         *
+         * ** \u5982\u679c destroy=true,\u8c03\u7528\u79fb\u9664\u63a7\u4ef6\u7684 {@link BUI.Component.UIBase#destroy} \u65b9\u6cd5,
+         * \u540c\u65f6\u5220\u9664\u5bf9\u5e94\u7684DOM **
+         * <pre><code>
+         *  var child = control.getChild(id);
+         *  control.removeChild(child); //\u4ec5\u4ec5\u79fb\u9664
+         *  
+         *  control.removeChild(child,true); //\u79fb\u9664\uff0c\u5e76\u8c03\u7528\u6790\u6784\u51fd\u6570
+         * </code></pre>
          * @param {BUI.Component.Controller} c \u8981\u79fb\u9664\u7684\u5b50\u63a7\u4ef6.
          * @param {Boolean} [destroy=false] \u5982\u679c\u662ftrue,
          * \u8c03\u7528\u63a7\u4ef6\u7684\u65b9\u6cd5 {@link BUI.Component.UIBase#destroy} .
@@ -10023,6 +10924,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * \u5220\u9664\u5f53\u524d\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6
+         * <pre><code>
+         *   control.removeChildren();//\u5220\u9664\u6240\u6709\u5b50\u63a7\u4ef6
+         *   control.removeChildren(true);//\u5220\u9664\u6240\u6709\u5b50\u63a7\u4ef6\uff0c\u5e76\u8c03\u7528\u5b50\u63a7\u4ef6\u7684\u6790\u6784\u51fd\u6570
+         * </code></pre>
          * @see Component.Controller#removeChild
          * @param {Boolean} [destroy] \u5982\u679c\u8bbe\u7f6e true,
          * \u8c03\u7528\u5b50\u63a7\u4ef6\u7684 {@link BUI.Component.UIBase#destroy}\u65b9\u6cd5.
@@ -10038,6 +10943,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * \u6839\u636e\u7d22\u5f15\u83b7\u53d6\u5b50\u63a7\u4ef6
+         * <pre><code>
+         *  control.getChildAt(0);//\u83b7\u53d6\u7b2c\u4e00\u4e2a\u5b50\u63a7\u4ef6
+         *  control.getChildAt(2); //\u83b7\u53d6\u7b2c\u4e09\u4e2a\u5b50\u63a7\u4ef6
+         * </code></pre>
          * @param {Number} index 0-based \u7d22\u5f15\u503c.
          * @return {BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005null 
          */
@@ -10047,6 +10956,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u6839\u636eId\u83b7\u53d6\u5b50\u63a7\u4ef6
+         * <pre><code>
+         *  control.getChild('id'); //\u4ece\u63a7\u4ef6\u7684\u76f4\u63a5\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
+         *  control.getChild('id',true);//\u9012\u5f52\u67e5\u627e\u6240\u6709\u5b50\u63a7\u4ef6\uff0c\u5305\u542b\u5b50\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6
+         * </code></pre>
          * @param  {String} id \u63a7\u4ef6\u7f16\u53f7
          * @param  {Boolean} deep \u662f\u5426\u7ee7\u7eed\u67e5\u627e\u5728\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
          * @return {BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005null 
@@ -10058,6 +10971,15 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u901a\u8fc7\u5339\u914d\u51fd\u6570\u67e5\u627e\u5b50\u63a7\u4ef6\uff0c\u8fd4\u56de\u7b2c\u4e00\u4e2a\u5339\u914d\u7684\u5bf9\u8c61
+         * <pre><code>
+         *  control.getChildBy(function(child){//\u4ece\u63a7\u4ef6\u7684\u76f4\u63a5\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
+         *    return child.get('id') = '1243';
+         *  }); 
+         *  
+         *  control.getChild(function(child){//\u9012\u5f52\u67e5\u627e\u6240\u6709\u5b50\u63a7\u4ef6\uff0c\u5305\u542b\u5b50\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6
+         *    return child.get('id') = '1243';
+         *  },true);
+         * </code></pre>
          * @param  {Function} math \u67e5\u627e\u7684\u5339\u914d\u51fd\u6570
          * @param  {Boolean} deep \u662f\u5426\u7ee7\u7eed\u67e5\u627e\u5728\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
          * @return {BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005null 
@@ -10067,6 +10989,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u83b7\u53d6\u63a7\u4ef6\u7684\u9644\u52a0\u9ad8\u5ea6 = control.get('el').outerHeight() - control.get('el').height()
+         * @protected
          * @return {Number} \u9644\u52a0\u5bbd\u5ea6
          */
         getAppendHeigtht : function(){
@@ -10075,6 +10998,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u83b7\u53d6\u63a7\u4ef6\u7684\u9644\u52a0\u5bbd\u5ea6 = control.get('el').outerWidth() - control.get('el').width()
+         * @protected
          * @return {Number} \u9644\u52a0\u5bbd\u5ea6
          */
         getAppendWidth : function(){
@@ -10083,6 +11007,15 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u67e5\u627e\u7b26\u5408\u6761\u4ef6\u7684\u5b50\u63a7\u4ef6
+         * <pre><code>
+         *  control.getChildrenBy(function(child){//\u4ece\u63a7\u4ef6\u7684\u76f4\u63a5\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
+         *    return child.get('type') = '1';
+         *  }); 
+         *  
+         *  control.getChildrenBy(function(child){//\u9012\u5f52\u67e5\u627e\u6240\u6709\u5b50\u63a7\u4ef6\uff0c\u5305\u542b\u5b50\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6
+         *    return child.get('type') = '1';
+         *  },true);
+         * </code></pre>
          * @param  {Function} math \u67e5\u627e\u7684\u5339\u914d\u51fd\u6570
          * @param  {Boolean} deep \u662f\u5426\u7ee7\u7eed\u67e5\u627e\u5728\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e\uff0c\u5982\u679c\u7b26\u5408\u4e0a\u9762\u7684\u5339\u914d\u51fd\u6570\uff0c\u5219\u4e0d\u518d\u5f80\u4e0b\u67e5\u627e
          * @return {BUI.Component.Controller[]} \u5b50\u63a7\u4ef6\u6570\u7ec4 
@@ -10106,6 +11039,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * \u904d\u5386\u5b50\u5143\u7d20
+         * <pre><code>
+         *  control.eachChild(function(child,index){ //\u904d\u5386\u5b50\u63a7\u4ef6
+         *  
+         *  });
+         * </code></pre>
          * @param  {Function} func \u8fed\u4ee3\u51fd\u6570\uff0c\u51fd\u6570\u539f\u578bfunction(child,index)
          */
         eachChild : function(func){
@@ -10334,6 +11272,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         {
             /**
              * \u63a7\u4ef6\u7684Html \u5185\u5bb9
+             * <pre><code>
+             *  new Control({
+             *     content : '\u5185\u5bb9',
+             *     render : '#c1'
+             *  });
+             * </code></pre>
              * @cfg {String|jQuery} content
              */
             /**
@@ -10345,7 +11289,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
 			/**
 			 * \u63a7\u4ef6\u6839\u8282\u70b9\u4f7f\u7528\u7684\u6807\u7b7e
-			 * @type {String}
+             * <pre><code>
+             *  new Control({
+             *     elTagName : 'ul',
+             *      content : '<li>\u5185\u5bb9</li>',  //\u63a7\u4ef6\u7684DOM &lt;ul&gt;&lt;li&gt;\u5185\u5bb9&lt;/li&gt;&lt;/ul&gt;
+             *     render : '#c1'
+             *  });  
+             * </code></pre>
+			 * @cfg {String} elTagName
 			 */
 			elTagName: {
 				// \u751f\u6210\u6807\u7b7e\u540d\u5b57
@@ -10362,6 +11313,21 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             /**
              * \u5982\u679c\u63a7\u4ef6\u672a\u8bbe\u7f6e xclass\uff0c\u540c\u65f6\u7236\u5143\u7d20\u8bbe\u7f6e\u4e86 defaultChildClass\uff0c\u90a3\u4e48
              * xclass = defaultChildClass + '-' + xtype
+             * <pre><code>
+             *  A.ATTRS = {
+             *    defaultChildClass : {
+             *        value : 'b'
+             *    }
+             *  }
+             *  //\u7c7bB \u7684xclass = 'b'\u7c7b B1\u7684xclass = 'b-1',\u7c7b B2\u7684xclass = 'b-2',\u90a3\u4e48
+             *  var a = new A({
+             *    children : [
+             *        {content : 'b'}, //B\u7c7b
+             *        {content : 'b1',xtype:'1'}, //B1\u7c7b
+             *        {content : 'b2',xtype:'2'}, //B2\u7c7b
+             *    ]
+             *  });
+             * </code></pre>
              * @type {String}
              */
             xtype : {
@@ -10380,10 +11346,20 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * \u63a7\u4ef6\u5bbd\u5ea6
+             * <pre><code>
+             * new Control({
+             *   width : 200 // 200,'200px','20%'
+             * });
+             * </code></pre>
              * @cfg {Number|String} width
              */
             /**
              * \u63a7\u4ef6\u5bbd\u5ea6
+             * <pre><code>
+             *  control.set('width',200);
+             *  control.set('width','200px');
+             *  control.set('width','20%');
+             * </code></pre>
              * @type {Number|String}
              */
             width:{
@@ -10391,10 +11367,20 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * \u63a7\u4ef6\u5bbd\u5ea6
+             * <pre><code>
+             * new Control({
+             *   height : 200 // 200,'200px','20%'
+             * });
+             * </code></pre>
              * @cfg {Number|String} height
              */
             /**
              * \u63a7\u4ef6\u5bbd\u5ea6
+             * <pre><code>
+             *  control.set('height',200);
+             *  control.set('height','200px');
+             *  control.set('height','20%');
+             * </code></pre>
              * @type {Number|String}
              */
             height:{
@@ -10402,6 +11388,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u6837\u5f0f
+             * <pre><code>
+             *  new Control({
+             *   elCls : 'test',
+             *   content : '\u5185\u5bb9',
+             *   render : '#t1'   //&lt;div id='t1'&gt;&lt;div class="test"&gt;\u5185\u5bb9&lt;/div&gt;&lt;/div&gt;
+             *  });
+             * </code></pre>
              * @cfg {String} elCls
              */
             /**
@@ -10413,41 +11406,56 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * @cfg {Object} elStyle
-						 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684css\u5c5e\u6027
-             *		var cfg = {elStyle : {width:'100px', height:'200px'}};
+			 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684css\u5c5e\u6027
+             *  <pre><code>
+             *    var cfg = {elStyle : {width:'100px', height:'200px'}};
+             *  </code></pre>
              */
             /**
              * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684css\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f
              * @type {Object}
-						 * \u793a\u4f8b:
-             *		{
-             *			width:'100px',
-             *			height:'200px'
-             *		}
+			 *  <pre><code>
+             *	 control.set('elStyle',	{
+             *		width:'100px',
+             *		height:'200px'
+             *   });
+             *  </code></pre>
              */
             elStyle:{
                 view:1
             },
             /**
              * @cfg {Object} elAttrs
-						 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f:
-             *		{title : 'tips'}   
+             * @ignore
+			 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f:
+             * <pre><code>
+             *  new Control({
+             *    elAttrs :{title : 'tips'}   
+             *  });
+             * </code></pre>
              */
             /**
              * @type {Object}
-						 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f:
-             *		{ title : 'tips'}
+			 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f:
+             * { title : 'tips'}
+             * @ignore
              */
             elAttrs:{
                 view:1
             },
             /**
              * \u5c06\u63a7\u4ef6\u63d2\u5165\u5230\u6307\u5b9a\u5143\u7d20\u524d
+             * <pre><code>
+             *  new Control({
+             *      elBefore : '#t1'
+             *  });
+             * </code></pre>
              * @cfg {jQuery} elBefore
              */
             /**
              * \u5c06\u63a7\u4ef6\u63d2\u5165\u5230\u6307\u5b9a\u5143\u7d20\u524d
              * @type {jQuery}
+             * @ignore
              */
             elBefore:{
                 // better named to renderBefore, too late !
@@ -10572,11 +11580,19 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * \u6307\u5b9a\u63a7\u4ef6\u7684\u5bb9\u5668
+             * <pre><code>
+             *  new Control({
+             *    render : '#t1',
+             *    elCls : 'test',
+             *    content : '<span>123</span>'  //&lt;div id="t1"&gt;&lt;div class="test bui-xclass"&gt;&lt;span&gt;123&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+             *  });
+             * </code></pre>
              * @cfg {jQuery} render
              */
             /**
              * \u6307\u5b9a\u63a7\u4ef6\u7684\u5bb9\u5668
              * @type {jQuery}
+             * @ignore
              */
             render:{
                 view:1
@@ -10597,13 +11613,24 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
                 }
             },
-            
             /**
-             * \u63a7\u4ef6\u7684\u53ef\u89c6\u65b9\u5f0f,\u4f7f\u7528 css 'display' \u6216\u8005 'visibility'
-             * @cfg {String} visibleMode
+             * \u63a7\u4ef6\u7684\u53ef\u89c6\u65b9\u5f0f,\u503c\u4e3a\uff1a
+             *  - 'display' 
+             *  - 'visibility'
+             *  <pre><code>
+             *   new Control({
+             *     visibleMode: 'visibility'
+             *   });
+             *  </code></pre>
+             * @cfg {String} [visibleMode = 'display']
              */
             /**
-             * \u63a7\u4ef6\u7684\u53ef\u89c6\u65b9\u5f0f,\u4f7f\u7528 css 'display' \u6216\u8005 'visibility'
+             * \u63a7\u4ef6\u7684\u53ef\u89c6\u65b9\u5f0f,\u4f7f\u7528 css 
+             *  - 'display' \u6216\u8005 
+             *  - 'visibility'
+             * <pre><code>
+             *  control.set('visibleMode','display')
+             * </code></pre>
              * @type {String}
              */
             visibleMode:{
@@ -10612,10 +11639,19 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * \u63a7\u4ef6\u662f\u5426\u53ef\u89c1
+             * <pre><code>
+             *  new Control({
+             *    visible : false   //\u9690\u85cf
+             *  });
+             * </code></pre>
              * @cfg {Boolean} [visible = true]
              */
             /**
              * \u63a7\u4ef6\u662f\u5426\u53ef\u89c1
+             * <pre><code>
+             *  control.set('visible',true); //control.show();
+             *  control.set('visible',false); //control.hide();
+             * </code></pre>
              * @type {Boolean}
              * @default true
              */
@@ -10675,6 +11711,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             /**
              * \u63a7\u4ef6\u662f\u5426\u83b7\u53d6\u7126\u70b9
              * @type {Boolean}
+             * @readOnly
              */
             focused: {
                 view: 1
@@ -10684,6 +11721,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * \u63a7\u4ef6\u662f\u5426\u5904\u4e8e\u6fc0\u6d3b\u72b6\u6001\uff0c\u6309\u94ae\u6309\u4e0b\u8fd8\u672a\u62ac\u8d77
              * @type {Boolean}
              * @default false
+             * @protected
              */
             active: {
                 view: 1
@@ -10691,10 +11729,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             /**
              * \u63a7\u4ef6\u662f\u5426\u9ad8\u4eae
              * @cfg {Boolean} highlighted
+             * @ignore
              */
             /**
              * \u63a7\u4ef6\u662f\u5426\u9ad8\u4eae
              * @type {Boolean}
+             * @protected
              */
             highlighted: {
                 view: 1
@@ -10727,6 +11767,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             /**
              * \u7236\u63a7\u4ef6
              * @cfg {BUI.Component.Controller} parent
+             * @ignore
              */
             /**
              * \u7236\u63a7\u4ef6
@@ -10745,6 +11786,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             /**
              * \u7981\u7528\u63a7\u4ef6
+             * <pre><code>
+             *  control.set('disabled',true); //==  control.disable();
+             *  control.set('disabled',false); //==  control.enable();
+             * </code></pre>
              * @type {Boolean}
              * @default false
              */
@@ -11793,10 +12838,11 @@ define('bui/data/node',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstore'],function (require) {
+define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstore','bui/data/proxy'],function (require) {
 
   var BUI = require('bui/common'),
     Node = require('bui/data/node'),
+    Proxy = require('bui/data/proxy'),
     AbstractStore = require('bui/data/abstractstore');
 
   /**
@@ -11805,15 +12851,31 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
    * <p>
    * <img src="../assets/img/class-data.jpg"/>
    * </p>
-   * <code>
+   * <pre><code>
    *   //\u52a0\u8f7d\u9759\u6001\u6570\u636e
    *   var store = new TreeStore({
    *     root : {
    *       text : '\u6839\u8282\u70b9',
-   *       children : []
-   *     }
+   *       id : 'root'
+   *     },
+   *     data : [{id : '1',text : 1},{id : '2',text : 2}] //\u4f1a\u52a0\u8f7d\u6210root\u7684children
    *   });
-   * </code>
+   *   //\u5f02\u6b65\u52a0\u8f7d\u6570\u636e\uff0c\u81ea\u52a8\u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u4f1a\u8c03\u7528store.load({id : 'root'}); //root\u4e3a\u6839\u8282\u70b9\u7684id
+   *   var store = new TreeStore({
+   *     root : {
+   *       text : '\u6839\u8282\u70b9',
+   *       id : 'root'
+   *     },
+   *     url : 'data/nodes.php',
+   *     autoLoad : true  //\u8bbe\u7f6e\u81ea\u52a8\u52a0\u8f7d\uff0c\u521d\u59cb\u5316\u540e\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
+   *   });
+   *
+   *   //\u52a0\u8f7d\u6307\u5b9a\u8282\u70b9
+   *   var node = store.findNode('1');
+   *   store.loadNode(node);
+   *   //\u6216\u8005
+   *   store.load({id : '1'});//\u53ef\u4ee5\u914d\u7f6e\u81ea\u5b9a\u4e49\u53c2\u6570\uff0c\u8fd4\u56de\u503c\u9644\u52a0\u5230\u6307\u5b9aid\u7684\u8282\u70b9\u4e0a
+   * </code></pre>
    * @extends BUI.Data.AbstractStore
    */
   function TreeStore(config){
@@ -11823,7 +12885,22 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
   TreeStore.ATTRS = {
     /**
      * \u6839\u8282\u70b9
+     * <pre><code>
+     *  var store = new TreeStore({
+     *    root : {text : '\u6839\u8282\u70b9',id : 'rootId',children : [{id : '1',text : '1'}]}
+     *  });
+     * </code></pre>
+     * @cfg {Object} root
+     */
+    /**
+     * \u6839\u8282\u70b9,\u521d\u59cb\u5316\u540e\u4e0d\u8981\u66f4\u6539\u5bf9\u8c61\uff0c\u53ef\u4ee5\u66f4\u6539\u5c5e\u6027\u503c
+     * <pre><code>
+     *  var root = store.get('root');
+     *  root.text = '\u4fee\u6539\u7684\u6587\u672c'\uff1b
+     *  store.update(root);
+     * </code></pre>
      * @type {Object}
+     * @readOnly
      */
     root : {
 
@@ -11831,14 +12908,41 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     /**
      * \u6570\u636e\u6620\u5c04\uff0c\u7528\u4e8e\u8bbe\u7f6e\u7684\u6570\u636e\u8ddf@see {BUI.Data.Node} \u4e0d\u4e00\u81f4\u65f6\uff0c\u8fdb\u884c\u5339\u914d\u3002
      * \u5982\u679c\u6b64\u5c5e\u6027\u4e3anull,\u90a3\u4e48\u5047\u8bbe\u8bbe\u7f6e\u7684\u5bf9\u8c61\u662fNode\u5bf9\u8c61
-     * @type {Object}
+     * <pre><code>
+     *   //\u4f8b\u5982\u539f\u59cb\u6570\u636e\u4e3a {name : '123',value : '\u6587\u672c123',isLeaf: false,nodes : []}
+     *   var store = new TreeStore({
+     *     map : {
+     *       id : 'name',
+     *       text : 'value',
+     *       leaf : 'isLeaf',
+     *       children : 'nodes'
+     *     }
+     *   });
+     *   //\u6620\u5c04\u540e\uff0c\u8bb0\u5f55\u4f1a\u53d8\u6210  {id : '123',text : '\u6587\u672c123',leaf: false,children : []};
+     *   //\u6b64\u65f6\u539f\u59cb\u8bb0\u5f55\u4f1a\u4f5c\u4e3a\u5bf9\u8c61\u7684 record\u5c5e\u6027
+     *   var node = store.findNode('123'),
+     *     record = node.record;
+     * </code></pre> 
+     * **Notes:**
+     * \u4f7f\u7528\u6570\u636e\u6620\u5c04\u7684\u8bb0\u5f55\u4ec5\u505a\u4e8e\u5c55\u793a\u6570\u636e\uff0c\u4e0d\u4f5c\u4e3a\u53ef\u66f4\u6539\u7684\u6570\u636e\uff0cadd,update\u4e0d\u4f1a\u66f4\u6539\u6570\u636e\u7684\u539f\u59cb\u6570\u636e
+     * @cfg {Object} map
      */
     map : {
 
     },
     /**
-     * \u8fd4\u56de\u6570\u636e\u6807\u793a\u6570\u636e\u7684\u5b57\u6bb5
-     * @type {Object}
+     * \u8fd4\u56de\u6570\u636e\u6807\u793a\u6570\u636e\u7684\u5b57\u6bb5</br>
+     * \u5f02\u6b65\u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u6570\u636e\u53ef\u4ee5\u4f7f\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
+     * - \u5982\u679c\u8fd4\u56de\u7684\u662f\u5bf9\u8c61,\u53ef\u4ee5\u9644\u52a0\u5176\u4ed6\u4fe1\u606f,\u90a3\u4e48\u53d6\u5bf9\u8c61\u5bf9\u5e94\u7684\u5b57\u6bb5 {nodes : [],hasError:false}
+     * - \u5982\u4f55\u83b7\u53d6\u9644\u52a0\u4fe1\u606f\u53c2\u770b @see {BUI.Data.AbstractStore-event-beforeProcessLoad}
+     * <pre><code>
+     *  //\u8fd4\u56de\u6570\u636e\u4e3a\u6570\u7ec4 [{},{}]\uff0c\u4f1a\u76f4\u63a5\u9644\u52a0\u5230\u52a0\u8f7d\u7684\u8282\u70b9\u540e\u9762
+     *  
+     *  var node = store.loadNode('123');
+     *  store.loadNode(node);
+     *  
+     * </code></pre>
+     * @cfg {Object} [dataProperty = 'nodes']
      */
     dataProperty : {
       value : 'nodes'
@@ -11848,6 +12952,11 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         /**  
         * \u5f53\u6dfb\u52a0\u6570\u636e\u65f6\u89e6\u53d1\u8be5\u4e8b\u4ef6
         * @event  
+        * <pre><code>
+        *  store.on('add',function(ev){
+        *    list.addItem(e.node,index);
+        *  });
+        * </code></pre>
         * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
         * @param {Object} e.node \u6dfb\u52a0\u7684\u8282\u70b9
         * @param {Number} index \u6dfb\u52a0\u7684\u4f4d\u7f6e
@@ -11870,6 +12979,17 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         'remove',
         /**  
         * \u8282\u70b9\u52a0\u8f7d\u5b8c\u6bd5\u89e6\u53d1\u8be5\u4e8b\u4ef6
+        * <pre></code>
+        *   //\u5f02\u6b65\u52a0\u8f7d\u8282\u70b9,\u6b64\u65f6\u8282\u70b9\u5df2\u7ecf\u9644\u52a0\u5230\u52a0\u8f7d\u8282\u70b9\u7684\u540e\u9762
+        *   store.on('load',function(ev){
+        *     var params = ev.params,
+        *       id = params.id,
+        *       node = store.findNode(id),
+        *       children = node.children;  //\u8282\u70b9\u7684id
+        *     //TO DO
+        *   });
+        * </code></pre>
+        * 
         * @event  
         * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
         * @param {Object} e.node \u52a0\u8f7d\u7684\u8282\u70b9
@@ -11897,7 +13017,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         autoLoad = _self.get('autoLoad'),
         root = _self.get('root');
 
-      if(autoLoad){
+      if(autoLoad && !root.children){
         params = root.id ? {id : root.id}: {};
         _self.load(params);
       }
@@ -11924,12 +13044,31 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       _self.set('root',root);
     },
     /**
-     * \u6dfb\u52a0\u8282\u70b9
+     * \u6dfb\u52a0\u8282\u70b9\uff0c\u89e6\u53d1{@link BUI.Data.TreeStore#event-add} \u4e8b\u4ef6
+     * <pre><code>
+     *  //\u6dfb\u52a0\u5230\u6839\u8282\u70b9\u4e0b
+     *  store.add({id : '1',text : '1'});
+     *  //\u6dfb\u52a0\u5230\u6307\u5b9a\u8282\u70b9
+     *  var node = store.findNode('1'),
+     *    subNode = store.add({id : '11',text : '11'},node);
+     *  //\u63d2\u5165\u5230\u8282\u70b9\u7684\u6307\u5b9a\u4f4d\u7f6e
+     *  var node = store.findNode('1'),
+     *    subNode = store.add({id : '12',text : '12'},node,0);
+     * </code></pre>
      * @param {BUI.Data.Node|Object} node \u8282\u70b9\u6216\u8005\u6570\u636e\u5bf9\u8c61
-     * @param {BUI.Data.Node} parent \u7236\u8282\u70b9
-     * @param {Number} index \u6dfb\u52a0\u8282\u70b9\u7684\u4f4d\u7f6e
+     * @param {BUI.Data.Node} [parent] \u7236\u8282\u70b9,\u5982\u679c\u672a\u6307\u5b9a\u5219\u4e3a\u6839\u8282\u70b9
+     * @param {Number} [index] \u6dfb\u52a0\u8282\u70b9\u7684\u4f4d\u7f6e
+     * @return {BUI.Data.Node} \u6dfb\u52a0\u5b8c\u6210\u7684\u8282\u70b9
      */
     add : function(node,parent,index){
+      var _self = this;
+
+      node = _self._add(node,parent,index);
+      _self.fire('add',{node : node,index : index});
+      return node;
+    },
+    //
+    _add : function(node,parent,index){
       parent = parent || this.get('root');  //\u5982\u679c\u672a\u6307\u5b9a\u7236\u5143\u7d20\uff0c\u6dfb\u52a0\u5230\u8ddf\u8282\u70b9
       var _self = this,
         map = _self.get('map'),
@@ -11941,7 +13080,6 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(!node.isNode){
         node = new Node(node,map);
       }
-
       node.parent = parent;
       node.level = parent.level + 1;
       node.path = parent.path.concat(node.id);
@@ -11950,12 +13088,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       BUI.Array.addAt(nodes,node,index);
 
       _self.setChildren(node,nodeChildren);
-      _self.fire('add',{node : node,index : index});
       return node;
     },
     /**
-     * \u79fb\u9664\u8282\u70b9
+     * \u79fb\u9664\u8282\u70b9\uff0c\u89e6\u53d1{@link BUI.Data.TreeStore#event-remove} \u4e8b\u4ef6
+     * 
+     * <pre><code>
+     *  var node = store.findNode('1'); //\u6839\u636e\u8282\u70b9id \u83b7\u53d6\u8282\u70b9
+     *  store.remove(node);
+     * </code></pre>
+     * 
      * @param {BUI.Data.Node} node \u8282\u70b9\u6216\u8005\u6570\u636e\u5bf9\u8c61
+     * @return {BUI.Data.Node} \u5220\u9664\u7684\u8282\u70b9
      */
     remove : function(node){
       var parent = node.parent || _self.get('root'),
@@ -11967,13 +13111,58 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       }
       this.fire('remove',{node : node , index : index});
       node.parent = null;
+      return node;
     },
     /**
      * \u66f4\u65b0\u8282\u70b9
+     * <pre><code>
+     *  var node = store.findNode('1'); //\u6839\u636e\u8282\u70b9id \u83b7\u53d6\u8282\u70b9
+     *  node.text = 'modify text'; //\u4fee\u6539\u6587\u672c
+     *  store.update(node);        //\u6b64\u65f6\u4f1a\u89e6\u53d1update\u4e8b\u4ef6\uff0c\u7ed1\u5b9a\u4e86store\u7684\u63a7\u4ef6\u4f1a\u66f4\u65b0\u5bf9\u5e94\u7684DOM
+     * </code></pre>
      * @return {BUI.Data.Node} \u66f4\u65b0\u8282\u70b9
      */
     update : function(node){
       this.fire('update',{node : node});
+    },
+    /**
+     * \u8fd4\u56de\u7f13\u5b58\u7684\u6570\u636e\uff0c\u6839\u8282\u70b9\u7684\u76f4\u63a5\u5b50\u8282\u70b9\u96c6\u5408
+     * <pre><code>
+     *   //\u83b7\u53d6\u6839\u8282\u70b9\u7684\u6240\u6709\u5b50\u8282\u70b9
+     *   var data = store.getResult();
+     *   //\u83b7\u53d6\u6839\u8282\u70b9
+     *   var root = store.get('root');
+     * </code></pre>
+     * @return {Array} \u6839\u8282\u70b9\u4e0b\u9762\u7684\u6570\u636e
+     */
+    getResult : function(){
+      return this.get('root').children;
+    },
+    /**
+     * \u8bbe\u7f6e\u7f13\u5b58\u7684\u6570\u636e\uff0c\u8bbe\u7f6e\u4e3a\u6839\u8282\u70b9\u7684\u6570\u636e
+    *   <pre><code>
+    *     var data = [
+    *       {id : '1',text : '\u6587\u672c1'},
+    *       {id : '2',text : '\u6587\u672c2',children:[
+    *         {id : '21',text : '\u6587\u672c21'}
+    *       ]},
+    *       {id : '3',text : '\u6587\u672c3'}
+    *     ];
+    *     store.setResult(data); //\u4f1a\u5bf9\u6570\u636e\u8fdb\u884c\u683c\u5f0f\u5316\uff0c\u6dfb\u52a0leaf\u7b49\u5b57\u6bb5\uff1a
+    *                            //[{id : '1',text : '\u6587\u672c1',leaf : true},{id : '2',text : '\u6587\u672c2',leaf : false,children:[...]}....]
+    *   </code></pre>
+     * @param {Array} data \u7f13\u5b58\u7684\u6570\u636e
+     */
+    setResult : function(data){
+      var _self = this,
+        proxy = _self.get('proxy'),
+        root = _self.get('root');
+      if(proxy instanceof Proxy.Memery){
+        _self.set('data',data);
+        _self.load({id : root.id});
+      }else{
+        _self.setChildren(root,data);
+      }
     },
     /**
      * \u8bbe\u7f6e\u5b50\u8282\u70b9
@@ -11988,13 +13177,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return;
       }
       BUI.each(children,function(item){
-        _self.add(item,node);
+        _self._add(item,node);
       });
     },
     /**
      * \u67e5\u627e\u8282\u70b9
+     * <pre><code>
+     *  var node = store.findNode('1');//\u4ece\u6839\u8282\u70b9\u5f00\u59cb\u67e5\u627e\u8282\u70b9
+     *  
+     *  var subNode = store.findNode('123',node); //\u4ece\u6307\u5b9a\u8282\u70b9\u5f00\u59cb\u67e5\u627e
+     * </code></pre>
      * @param  {String} id \u8282\u70b9Id
-     * @param  {BUI.Data.Node} parent \u7236\u8282\u70b9
+     * @param  {BUI.Data.Node} [parent] \u7236\u8282\u70b9
      * @return {BUI.Data.Node} \u8282\u70b9
      */
     findNode : function(id,parent){
@@ -12023,8 +13217,16 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     },
     /**
      * \u67e5\u627e\u8282\u70b9,\u6839\u636e\u5339\u914d\u51fd\u6570\u67e5\u627e
+     * <pre><code>
+     *  var nodes = store.findNodesBy(function(node){
+     *   if(node.status == '0'){
+     *     return true;
+     *   }
+     *   return false;
+     *  });
+     * </code></pre>
      * @param  {Function} func \u5339\u914d\u51fd\u6570
-     * @param  {BUI.Data.Node} parent \u7236\u5143\u7d20\uff0c\u5982\u679c\u4e0d\u5b58\u5728\uff0c\u5219\u4ece\u6839\u8282\u70b9\u67e5\u627e
+     * @param  {BUI.Data.Node} [parent] \u7236\u5143\u7d20\uff0c\u5982\u679c\u4e0d\u5b58\u5728\uff0c\u5219\u4ece\u6839\u8282\u70b9\u67e5\u627e
      * @return {Array} \u8282\u70b9\u6570\u7ec4
      */
     findNodesBy : function(func,parent){
@@ -12047,6 +13249,11 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     },
     /**
      * \u662f\u5426\u5305\u542b\u6307\u5b9a\u8282\u70b9\uff0c\u5982\u679c\u672a\u6307\u5b9a\u7236\u8282\u70b9\uff0c\u4ece\u6839\u8282\u70b9\u5f00\u59cb\u641c\u7d22
+     * <pre><code>
+     *  store.contains(node); //\u662f\u5426\u5b58\u5728\u8282\u70b9
+     *
+     *  store.contains(subNode,node); //\u8282\u70b9\u662f\u5426\u5b58\u5728\u6307\u5b9a\u5b50\u8282\u70b9
+     * </code></pre>
      * @param  {BUI.Data.Node} node \u8282\u70b9
      * @param  {BUI.Data.Node} parent \u7236\u8282\u70b9
      * @return {Boolean} \u662f\u5426\u5305\u542b\u6307\u5b9a\u8282\u70b9
@@ -12058,7 +13265,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     },
     /**
      * \u52a0\u8f7d\u5b8c\u6570\u636e
-     * @template
+     * @protected
+     * @override
      */
     afterProcessLoad : function(data,params){
       var _self = this,
@@ -12077,7 +13285,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean} 
      */
     hasData : function(){
-      return this.get('root').children && this.get('root').children.length !== 0;
+      return true;
+      //return this.get('root').children && this.get('root').children.length !== 0;
     },
     /**
      * \u662f\u5426\u5df2\u7ecf\u52a0\u8f7d\u8fc7\uff0c\u53f6\u5b50\u8282\u70b9\u6216\u8005\u5b58\u5728\u5b57\u8282\u70b9\u7684\u8282\u70b9
@@ -12085,6 +13294,9 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean}  \u662f\u5426\u52a0\u8f7d\u8fc7
      */
     isLoaded : function(node){
+      if(!this.get('url')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e,\u9ed8\u8ba4\u5df2\u7ecf\u52a0\u8f7d
+        return true;
+      }
       return node.leaf || node.children.length;
     },
     /**
@@ -13755,14 +14967,35 @@ define('bui/list/simplelist',function (require) {
         value : []
       },
       /**
-       * \u5217\u8868\u9879\u5e94\u7528\u7684css
-       * @type {String}
+       * \u9009\u9879\u7684\u6837\u5f0f\uff0c\u7528\u6765\u83b7\u53d6\u5b50\u9879
+       * <pre><code>
+       * var list = new List.SimpleList({
+       *   render : '#t1',
+       *   itemCls : 'my-item', //\u81ea\u5b9a\u4e49\u6837\u5f0f\u540d\u79f0
+       *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
+       * });
+       * list.render();
+       * </code></pre>
+       * @cfg {Object} [itemCl='list-item']
        */
       itemCls : {
         view:true,
         value : CLS_ITEM
       },
-      
+      /**
+       * \u9009\u9879\u7684\u9ed8\u8ba4id\u5b57\u6bb5
+       * <pre><code>
+       * var list = new List.SimpleList({
+       *   render : '#t1',
+       *   idField : 'id', //\u81ea\u5b9a\u4e49\u9009\u9879 id \u5b57\u6bb5
+       *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
+       * });
+       * list.render();
+       *
+       * list.getItem('1'); //\u4f7f\u7528idField\u6307\u5b9a\u7684\u5b57\u6bb5\u8fdb\u884c\u67e5\u627e
+       * </code></pre>
+       * @cfg {String} [idField = 'value']
+       */
       idField : {
         value : 'value'
       },
@@ -13776,14 +15009,19 @@ define('bui/list/simplelist',function (require) {
         value:'ul'
       },
       /**
-       * \u5217\u8868\u9879\u7684\u6a21\u7248
-       * @cfg {String} itemTpl
+       * \u5217\u8868\u9879\u7684\u9ed8\u8ba4\u6a21\u677f\u3002
+       *<pre><code>
+       * var list = new List.SimpleList({
+       *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;', //\u5217\u8868\u9879\u7684\u6a21\u677f
+       *   idField : 'value',
+       *   render : '#t1',
+       *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+       * });
+       * list.render();
+       * </code></pre>
+       * @cfg {String} [itemTpl ='&lt;li role="option" class="bui-list-item" data-value="{value}"&gt;{text}&lt;/li&gt;']
        */
-      /**
-       * \u5217\u8868\u9879\u7684\u6a21\u7248
-       * @default '&lt;li role="option" class="bui-list-item" data-value="{value}"&gt;{text}&lt;/li&gt;'
-       * @type {String}
-       */
+      
       itemTpl :{
         view : true,
         value : '<li role="option" class="' + CLS_ITEM + '">{text}</li>'

@@ -87,10 +87,26 @@ define('bui/component/uibase/tpl',function () {
   tpl.ATTRS = {
     /**
     * 控件的模版，用于初始化
+    * <pre><code>
+    * var list = new List.List({
+    *   tpl : '&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;',
+    *   childContainer : 'ul'
+    * });
+    * //用于统一子控件模板
+    * var list = new List.List({
+    *   defaultChildCfg : {
+    *     tpl : '&lt;span&gt;{text}&lt;/span&gt;'
+    *   }
+    * });
+    * list.render();
+    * </code></pre>
     * @cfg {String} tpl
     */
     /**
      * 控件的模板
+     * <pre><code>
+     *   list.set('tpl','&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;&lt;div class="bottom"&gt;&lt;/div&gt;')
+     * </code></pre>
      * @type {String}
      */
     tpl : {
@@ -101,14 +117,20 @@ define('bui/component/uibase/tpl',function () {
      * <p>控件的渲染函数，应对一些简单模板解决不了的问题，例如有if,else逻辑，有循环逻辑,
      * 函数原型是function(data){},其中data是控件的属性值</p>
      * <p>控件模板的加强模式，此属性会覆盖@see {BUI.Component.UIBase.Tpl#property-tpl}属性</p>
+     * //用于统一子控件模板
+     * var list = new List.List({
+     *   defaultChildCfg : {
+     *     tplRender : funciton(item){
+     *       if(item.type == '1'){
+     *         return 'type1 html';
+     *       }else{
+     *         return 'type2 html';
+     *       }
+     *     }
+     *   }
+     * });
+     * list.render();
      * @cfg {Function} tplRender
-     */
-    /**
-     * <p>控件的渲染函数，应对一些简单模板解决不了的问题，例如有if,else逻辑，有循环逻辑,
-     * 函数原型是function(data){},其中data是控件的属性值</p>
-     * <p>控件模板的加强模式，，此属性会覆盖@see {BUI.Component.UIBase.Tpl#property-tpl}属性</p>
-     * @type {Function}
-     * @readOnly
      */
     tplRender : {
       view : true,
@@ -116,8 +138,14 @@ define('bui/component/uibase/tpl',function () {
     },
     /**
      * 这是一个选择器，使用了模板后，子控件可能会添加到模板对应的位置,
-     * 默认为null,此时子控件会将控件最外层 el 作为容器
-     * @type {String}
+     *  - 默认为null,此时子控件会将控件最外层 el 作为容器
+     * <pre><code>
+     * var list = new List.List({
+     *   tpl : '&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;',
+     *   childContainer : 'ul'
+     * });
+     * </code></pre>
+     * @cfg {String} childContainer
      */
     childContainer : {
       view : true
@@ -134,6 +162,7 @@ define('bui/component/uibase/tpl',function () {
     },
     /**
      * 根据控件的属性和模板生成控件内容
+     * @protected
      */
     setTplContent : function () {
       var _self = this,

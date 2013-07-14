@@ -1,4 +1,4 @@
-
+/**/
 BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   var nodes = [
         {text : '1',id : '1',leaf : false},
@@ -19,13 +19,20 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   var tree = new TreeList({
     render : '#t4',
     showLine : true,
-    store : store
+    store : store,
+    showRoot : true
   });
   tree.render();
-  var el = tree.get('el');
+  var el = tree.get('el'),
+    showRoot = tree.get('showRoot');
   describe('测试初始化',function(){
     it('显示数据',function(){
-      expect(el.find('li').length).toBe(nodes.length);
+      if(showRoot){
+        expect(el.find('li').length).toBe(1);
+      }else{
+        expect(el.find('li').length).toBe(nodes.length);
+      }
+      
     });
     it('显示所有',function(){
       tree.expandAll();
@@ -147,7 +154,8 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   var tree = new TreeList({
     render : '#t5',
     showLine : true,
-    store : store
+    store : store,
+    showRoot : true
   });
   tree.render();
   var el = tree.get('el');
@@ -155,12 +163,12 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
 
     it('初始化',function(){
       store.load({id : '0'});
-      waits(200);
+      waits(1500);
       runs(function(){
         expect(el.find('li')).not.toBe(0);
       });
     });
-
+    
     it('展开未加载的节点',function(){
       var node = store.findNode('1'),
         element = tree.findElement(node);
@@ -192,7 +200,6 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
         expect(tree.getItem('151')).not.toBe(null);
       });
     });
-
   });
- 
+
 });

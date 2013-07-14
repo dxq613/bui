@@ -164,22 +164,40 @@ define('bui/component/uibase/mask',function (require) {
     {
         /**
          * 控件显示时，是否显示屏蔽层
+         * <pre><code>
+         *   var overlay = new Overlay({ //显示overlay时，屏蔽body
+         *     mask : true,
+         *     maskNode : 'body',
+         *     trigger : '#t1'
+         *   });
+         *   overlay.render();
+         * </code></pre>
          * @cfg {Boolean} [mask = false]
          */
         /**
          * 控件显示时，是否显示屏蔽层
          * @type {Boolean}
+         * @protected
          */
         mask:{
             value:false
         },
         /**
          * 屏蔽的内容
+         * <pre><code>
+         *   var overlay = new Overlay({ //显示overlay时，屏蔽body
+         *     mask : true,
+         *     maskNode : 'body',
+         *     trigger : '#t1'
+         *   });
+         *   overlay.render();
+         * </code></pre>
          * @cfg {jQuery} maskNode
          */
         /**
          * 屏蔽的内容
          * @type {jQuery}
+         * @protected
          */
         maskNode:{
             view:1

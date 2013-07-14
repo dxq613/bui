@@ -16,10 +16,17 @@ define('bui/component/uibase/childcfg',function (require) {
   childCfg.ATTRS = {
     /**
      * 默认的子控件配置项,在初始化控件时配置
-     * <ul>
-     * 如果控件已经渲染过，此配置项无效，
-     * 控件生成后，修改此配置项无效。
-     * </ul>
+     * 
+     *  - 如果控件已经渲染过，此配置项无效，
+     *  - 控件生成后，修改此配置项无效。
+     * <pre><code>
+     *   var control = new Control({
+     *     defaultChildCfg : {
+     *       tpl : '&lt;li&gt;{text}&lt;/li&gt;',
+     *       xclass : 'a-b'
+     *     }
+     *   });
+     * </code></pre>
      * @cfg {Object} defaultChildCfg
      */
     /**

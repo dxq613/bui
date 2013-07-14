@@ -135,7 +135,16 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
     /**
      * 配置控件的根节点的DOM
-     * @type {jQuery}
+     * <pre><code>
+     * new Form.Form({
+     *   srcNode : '#J_Form'
+     * }).render();
+     * </code></pre>
+     * @cfg {jQuery} srcNode
+     */
+    /**
+     * 配置控件的根节点的DOM
+     * @type {jQuery} 
      */
     srcNode : {
       view : true
@@ -143,29 +152,30 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     /**
      * 是否根据DOM生成子控件
      * @type {Boolean}
+     * @protected
      */
     isDecorateChild : {
       value : false
     },
     /**
      * 此配置项配置使用那些srcNode上的节点作为配置项
-     * 当时用 decorate 时，取 srcNode上的节点的属性作为控件的配置信息
-     * 默认id,name,value,title 都会作为属性传入
-     * 使用 'data-cfg' 作为整体的配置属性
-     *         <input type="text" name="txtName" id="id",data-cfg="{allowBlank:false}" />
-     *         //会生成以下配置项：
-     *         {
-     *           name : 'txtName',
-     *           id : 'id',
-     *           allowBlank:false
-     *         }
-     *         new Form({
-     *           src:'#form',
-     *           validator : function(record){
-     *              
-     *           }
-     *         }).render();
+     *  - 当时用 decorate 时，取 srcNode上的节点的属性作为控件的配置信息
+     *  - 默认id,name,value,title 都会作为属性传入
+     *  - 使用 'data-cfg' 作为整体的配置属性
+     *  <pre><code>
+     *     <input id="c1" type="text" name="txtName" id="id",data-cfg="{allowBlank:false}" />
+     *     //会生成以下配置项：
+     *     {
+     *         name : 'txtName',
+     *         id : 'id',
+     *         allowBlank:false
+     *     }
+     *     new Form.Field({
+     *        src:'#c1'
+     *     }).render();
+     *  </code></pre>
      * @type {Object}
+     * @protected
      */
     decorateCfgFields : {
       value : {
@@ -181,6 +191,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
     /**
      * 获取控件的配置信息
+     * @protected
      */
     getDecorateConfig : function(el){
       if(!el.length){

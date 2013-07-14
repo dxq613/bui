@@ -37,7 +37,7 @@ define('bui/component/uibase/stdmod',function () {
         }
     };
 
-    /*StdModView.HTML_PARSER = {
+    StdModView.PARSER = {
         header:function (el) {
             return el.one("." + CLS_PREFIX + "header");
         },
@@ -47,7 +47,7 @@ define('bui/component/uibase/stdmod',function () {
         footer:function (el) {
             return el.one("." + CLS_PREFIX + "footer");
         }
-    };*/
+    };/**/
 
     function createUI(self, part) {
         var el = self.get('contentEl'),
@@ -151,6 +151,7 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * 应用到控件内容的css属性，键值对形式
          * @type {Object}
+         * @protected
          */
         bodyStyle:{
             view:1
@@ -162,6 +163,7 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * 应用到控件底部的css属性，键值对形式
          * @type {Object}
+         * @protected
          */
         footerStyle:{
             view:1
@@ -173,12 +175,21 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * 应用到控件头部的css属性，键值对形式
          * @type {Object}
+         * @protected
          */
         headerStyle:{
             view:1
         },
         /**
          * 控件头部的html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} headerContent
          */
         /**
@@ -190,6 +201,14 @@ define('bui/component/uibase/stdmod',function () {
         },
         /**
          * 控件内容的html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} bodyContent
          */
         /**
@@ -201,6 +220,14 @@ define('bui/component/uibase/stdmod',function () {
         },
         /**
          * 控件底部的html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} footerContent
          */
         /**

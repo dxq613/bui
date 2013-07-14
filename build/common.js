@@ -900,13 +900,21 @@ define('bui/observable',['bui/util'],function (r) {
   });
 
   function getCallbacks(){
-    /*if($.Callbacks){
-      return $.Callbacks('stopOnFalse');
-    }*/
     return new Callbacks();
   }
   /**
    * 支持事件的对象，参考观察者模式
+   *  - 此类提供事件绑定
+   *  - 提供事件冒泡机制
+   *
+   * <pre><code>
+   *   var control = new Control();
+   *   control.on('click',function(ev){
+   *   
+   *   });
+   *
+   *   control.off();  //移除所有事件
+   * </code></pre>
    * @class BUI.Observable
    * @abstract
    * @param {Object} config 配置项键值对
@@ -923,12 +931,28 @@ define('bui/observable',['bui/util'],function (r) {
 
     /**
      * @cfg {Object} listeners 
-     * 初始化事件
+     *  初始化事件,快速注册事件
+     *  <pre><code>
+     *    var list = new BUI.List.SimpleList({
+     *      listeners : {
+     *        itemclick : function(ev){},
+     *        itemrendered : function(ev){}
+     *      },
+     *      items : []
+     *    });
+     *    list.render();
+     *  </code></pre>
      */
     
     /**
      * @cfg {Function} handler
      * 点击事件的处理函数，快速配置点击事件而不需要写listeners属性
+     * <pre><code>
+     *    var list = new BUI.List.SimpleList({
+     *      handler : function(ev){} //click 事件
+     *    });
+     *    list.render();
+     *  </code></pre>
      */
     
     /**
@@ -979,6 +1003,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 添加冒泡的对象
+     * @protected
      * @param {Object} target  冒泡的事件源
      */
     addTarget : function(target) {
@@ -986,6 +1011,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 添加支持的事件
+     * @protected
      * @param {String|String[]} events 事件
      */
     addEvents : function(events){
@@ -1009,6 +1035,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 移除所有绑定的事件
+     * @protected
      */
     clearListeners : function(){
       var _self = this,
@@ -1021,6 +1048,14 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 触发事件
+     * <pre><code>
+     *   //绑定事件
+     *   list.on('itemclick',function(ev){
+     *     alert('21');
+     *   });
+     *   //触发事件
+     *   list.fire('itemclick');
+     * </code></pre>
      * @param  {String} eventType 事件类型
      * @param  {Object} eventData 事件触发时传递的数据
      * @return {Boolean|undefined}  如果其中一个事件处理器返回 false , 则返回 false, 否则返回最后一个事件处理器的返回值
@@ -1050,6 +1085,16 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 添加绑定事件
+     * <pre><code>
+     *   //绑定单个事件
+     *   list.on('itemclick',function(ev){
+     *     alert('21');
+     *   });
+     *   //绑定多个事件
+     *   list.on('itemrendered itemupdated',function(){
+     *     //列表项创建、更新时触发操作
+     *   });
+     * </code></pre>
      * @param  {String}   eventType 事件类型
      * @param  {Function} fn        回调函数
      */
@@ -1075,6 +1120,17 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 移除绑定的事件
+     * <pre><code>
+     *  //移除所有事件
+     *  list.off();
+     *  
+     *  //移除特定事件
+     *  function callback(ev){}
+     *  list.on('click',callback);
+     *
+     *  list.off('click',callback);//需要保存回调函数的引用
+     * 
+     * </code></pre>
      * @param  {String}   eventType 事件类型
      * @param  {Function} fn        回调函数
      */
@@ -1092,24 +1148,25 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 配置事件是否允许冒泡
+     * @protected
      * @param  {String} eventType 支持冒泡的事件
      * @param  {Object} cfg 配置项
      * @param {Boolean} cfg.bubbles 是否支持冒泡
      */
     publish : function(eventType, cfg){
-        var _self = this,
-            bubblesEvents = _self._bubblesEvents;
+      var _self = this,
+          bubblesEvents = _self._bubblesEvents;
 
-        if(cfg.bubbles){
-            if(BUI.Array.indexOf(eventType,bubblesEvents) === -1){
-                bubblesEvents.push(eventType);
-            }
-        }else{
-            var index = BUI.Array.indexOf(eventType,bubblesEvents);
-            if(index !== -1){
-                bubblesEvents.splice(index,1);
-            }
-        }
+      if(cfg.bubbles){
+          if(BUI.Array.indexOf(eventType,bubblesEvents) === -1){
+              bubblesEvents.push(eventType);
+          }
+      }else{
+          var index = BUI.Array.indexOf(eventType,bubblesEvents);
+          if(index !== -1){
+              bubblesEvents.splice(index,1);
+          }
+      }
     }
   });
 
@@ -2055,7 +2112,73 @@ define('bui/base',['bui/observable'],function(require){
   }
 
   /**
-   * 基础类，提供设置获取属性，提供事件支持
+   * 基础类，此类提供以下功能
+   *  - 提供设置获取属性
+   *  - 提供事件支持
+   *  - 属性变化时会触发对应的事件
+   *  - 将配置项自动转换成属性
+   *
+   * ** 创建类，继承BUI.Base类 **
+   * <pre><code>
+   *   var Control = function(cfg){
+   *     Control.superclass.constructor.call(this,cfg); //调用BUI.Base的构造方法，将配置项变成属性
+   *   };
+   *
+   *   BUI.extend(Control,BUI.Base);
+   * </code></pre>
+   *
+   * ** 声明默认属性 ** 
+   * <pre><code>
+   *   Control.ATTRS = {
+   *     id : {
+   *       value : 'id' //value 是此属性的默认值
+   *     },
+   *     renderTo : {
+   *      
+   *     },
+   *     el : {
+   *       valueFn : function(){                 //第一次调用的时候将renderTo的DOM转换成el属性
+   *         return $(this.get('renderTo'));
+   *       }
+   *     },
+   *     text : {
+   *       getter : function(){ //getter 用于获取值，而不是设置的值
+   *         return this.get('el').val();
+   *       },
+   *       setter : function(v){ //不仅仅是设置值，可以进行相应的操作
+   *         this.get('el').val(v);
+   *       }
+   *     }
+   *   };
+   * </code></pre>
+   *
+   * ** 声明类的方法 ** 
+   * <pre><code>
+   *   BUI.augment(Control,{
+   *     getText : function(){
+   *       return this.get('text');   //可以用get方法获取属性值
+   *     },
+   *     setText : function(txt){
+   *       this.set('text',txt);      //使用set 设置属性值
+   *     }
+   *   });
+   * </code></pre>
+   *
+   * ** 创建对象 ** 
+   * <pre><code>
+   *   var c = new Control({
+   *     id : 'oldId',
+   *     text : '测试文本',
+   *     renderTo : '#t1'
+   *   });
+   *
+   *   var el = c.get(el); //$(#t1);
+   *   el.val(); //text的值 ： '测试文本'
+   *   c.set('text','修改的值');
+   *   el.val();  //'修改的值'
+   *
+   *   c.set('id','newId') //会触发2个事件： beforeIdChange,afterIdChange 2个事件 ev.newVal 和ev.prevVal标示新旧值
+   * </code></pre>
    * @class BUI.Base
    * @abstract
    * @extends BUI.Observable
@@ -2089,6 +2212,7 @@ define('bui/base',['bui/observable'],function(require){
   {
     /**
      * 添加属性定义
+     * @protected
      * @param {String} name       属性名
      * @param {Object} attrConfig 属性定义
      * @param {Boolean} overrides 是否覆盖字段
@@ -2107,6 +2231,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 添加属性定义
+     * @protected
      * @param {Object} attrConfigs  An object with attribute name/configuration pairs.
      * @param {Object} initialValues user defined initial values
      * @param {Boolean} overrides 是否覆盖字段
@@ -2131,6 +2256,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 是否包含此属性
+     * @protected
      * @param  {String}  name 值
      * @return {Boolean} 是否包含
      */
@@ -2139,6 +2265,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 获取默认的属性值
+     * @protected
      * @return {Object} 属性值的键值对
      */
     getAttrs : function(){
@@ -2146,13 +2273,41 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 获取属性名/属性值键值对
+     * @protected
      * @return {Object} 属性对象
      */
     getAttrVals: function(){
       return ensureNonEmpty(this, '__attrVals', true);
     },
     /**
-     * 获取属性值
+     * 获取属性值，所有的配置项和属性都可以通过get方法获取
+     * <pre><code>
+     *  var control = new Control({
+     *   text : 'control text'
+     *  });
+     *  control.get('text'); //control text
+     *
+     *  control.set('customValue','value'); //临时变量
+     *  control.get('customValue'); //value
+     * </code></pre>
+     * ** 属性值/配置项 **
+     * <pre><code> 
+     *   Control.ATTRS = { //声明属性值
+     *     text : {
+     *       valueFn : function(){},
+     *       value : 'value',
+     *       getter : function(v){} 
+     *     }
+     *   };
+     *   var c = new Control({
+     *     text : 'text value'
+     *   });
+     *   //get 函数取的顺序为：是否有修改值（配置项、set)、默认值（第一次调用执行valueFn)，如果有getter，则将值传入getter返回
+     *
+     *   c.get('text') //text value
+     *   c.set('text','new text');//修改值
+     *   c.get('text');//new text
+     * </code></pre>
      * @param  {String} name 属性名
      * @return {Object} 属性值
      */
@@ -2182,12 +2337,14 @@ define('bui/base',['bui/observable'],function(require){
     },
   	/**
   	* @清理所有属性值
+    * @protected 
   	*/
   	clearAttrVals : function(){
   		this.__attrVals = {};
   	},
     /**
      * 移除属性定义
+     * @protected
      */
     removeAttr: function (name) {
         var _self = this;
@@ -2200,7 +2357,18 @@ define('bui/base',['bui/observable'],function(require){
         return self;
     },
     /**
-     * 设置属性值，会触发before+name+change,和 after+name+change事件
+     * 设置属性值，会触发before+Name+Change,和 after+Name+Change事件
+     * <pre><code>
+     *  control.on('beforeTextChange',function(ev){
+     *    var newVal = ev.newVal,
+     *      attrName = ev.attrName,
+     *      preVal = ev.prevVal;
+     *
+     *    //TO DO
+     *  });
+     *  control.set('text','new text');  //此时触发 beforeTextChange,afterTextChange
+     *  control.set('text','modify text',{silent : true}); //此时不触发事件
+     * </code></pre>
      * @param {String|Object} name  属性名
      * @param {Object} value 值
      * @param {Object} opts 配置项
@@ -2224,9 +2392,11 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 设置属性，不触发事件
+     * <pre><code>
+     *  control.setInternal('text','text');//此时不触发事件
+     * </code></pre>
      * @param  {String} name  属性名
      * @param  {Object} value 属性值
-     * @param  {Object} opts  选项
      * @return {Boolean|undefined}   如果值无效则返回false,否则返回undefined
      */
     setInternal : function(name, value, opts){
@@ -2753,22 +2923,35 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   UIBase.ATTRS = 
   {
-    /**
-     * 是否自动渲染,如果不自动渲染，需要用户调用 render()方法
-     * @cfg {Boolean} autoRender
-     */
+    
     
     /**
      * 用户传入的配置项
      * @type {Object}
      * @readOnly
+     * @protected
      */
     userConfig : {
 
     },
     /**
      * 是否自动渲染,如果不自动渲染，需要用户调用 render()方法
+     * <pre><code>
+     *  //默认状态下创建对象，并没有进行render
+     *  var control = new Control();
+     *  control.render(); //需要调用render方法
+     *
+     *  //设置autoRender后，不需要调用render方法
+     *  var control = new Control({
+     *   autoRender : true
+     *  });
+     * </code></pre>
+     * @cfg {Boolean} autoRender
+     */
+    /**
+     * 是否自动渲染,如果不自动渲染，需要用户调用 render()方法
      * @type {Boolean}
+     * @ignore
      */
     autoRender : {
       value : false
@@ -2779,30 +2962,34 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      *      {
      *        'click':function(e){}
      *      }
+     *  @ignore
      */
     listeners: {
-            value: {}
+        value: {}
     },
     /**
      * 插件集合
+     * <pre><code>
+     *  var grid = new Grid({
+     *    columns : [{},{}],
+     *    plugins : [Grid.Plugins.RadioSelection]
+     *  });
+     * </code></pre>
      * @cfg {Array} plugins
      */
     /**
      * 插件集合
      * @type {Array}
+     * @readOnly
      */
     plugins : {
       value : []
     },
     /**
      * 是否已经渲染完成
-     * @cfg {Boolean} rendered
-     * @default  false
-     */
-    /**
-     * 是否已经渲染完成
      * @type {Boolean}
      * @default  false
+     * @readOnly
      */
     rendered : {
         value : false
@@ -2811,6 +2998,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     * 获取控件的 xclass
     * @readOnly
     * @type {String}
+    * @protected
     */
     xclass: {
         valueFn: function () {
@@ -2825,6 +3013,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   {
     /**
      * 创建DOM结构
+     * @protected
      */
     create : function(){
       var self = this;
@@ -3243,6 +3432,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
      * @class BUI.Component.UIBase.Align
      * Align extension class.
      * Align component with specified element.
+     * <img src="http://images.cnitblog.com/blog/111279/201304/09180221-201343d4265c46e7987e6b1c46d5461a.jpg"/>
      */
     function Align() {
     }
@@ -3255,28 +3445,30 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
     Align.ATTRS =
     {
         /**
-         * Align configuration.
+         * 对齐配置，详细说明请参看： <a href="http://www.cnblogs.com/zaohe/archive/2013/04/09/3010651.html">JS控件 对齐</a>
          * @cfg {Object} align
-         * <code>
-         *     {
-         *        node: null,         // 参考元素, falsy 或 window 为可视区域, 'trigger' 为触发元素, 其他为指定元素
-         *        points: ['cc','cc'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
-         *        offset: [0, 0]      // 有效值为 [n, m]
-         *     }
-         * </code>
+         * <pre><code>
+         *  var overlay = new Overlay( {  
+         *       align :{
+         *         node: null,         // 参考元素, falsy 或 window 为可视区域, 'trigger' 为触发元素, 其他为指定元素
+         *         points: ['cc','cc'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
+         *         offset: [0, 0]      // 有效值为 [n, m]
+         *       }
+         *     }); 
+         * </code></pre>
          */
 
         /**
-         * Align configuration.
+         * 设置对齐属性
          * @type {Object}
          * @field
-         * @example
          * <code>
-         *     {
+         *   var align =  {
          *        node: null,         // 参考元素, falsy 或 window 为可视区域, 'trigger' 为触发元素, 其他为指定元素
          *        points: ['cc','cc'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
          *        offset: [0, 0]      // 有效值为 [n, m]
-         *     }
+         *     };
+         *   overlay.set('align',align);
          * </code>
          */
         align:{
@@ -3464,9 +3656,12 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
         },
 
         /**
-         * Make current element center within node.
+         * 对齐到元素的中间，查看属性 {@link BUI.Component.UIBase.Align#property-align} .
+         * <pre><code>
+         *  control.center('#t1'); //控件处于容器#t1的中间位置
+         * </code></pre>
          * @param {undefined|String|HTMLElement|jQuery} node
-         * Same as node config of {@link BUI.Component.UIBase.Align#property-align} .
+         * 
          */
         center:function (node) {
             var self = this;
@@ -3496,8 +3691,17 @@ define('bui/component/uibase/autoshow',function () {
   }
 
   autoShow.ATTRS = {
+
     /**
      * 触发显示控件的DOM选择器
+     * <pre><code>
+     *  var overlay = new Overlay({ //点击#t1时显示，点击#t1,overlay之外的元素隐藏
+     *    trigger : '#t1',
+     *    autoHide : true,
+     *    content : '悬浮内容'
+     *  });
+     *  overlay.render();
+     * </code></pre>
      * @cfg {HTMLElement|String|jQuery} trigger
      */
     /**
@@ -3509,11 +3713,21 @@ define('bui/component/uibase/autoshow',function () {
     },
     /**
      * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
-     * @cfg {Boolean} delegateTigger
+     * <pre><code>
+     *  var overlay = new Overlay({ //点击.t1(无论创建控件时.t1是否存在)时显示，点击.t1,overlay之外的元素隐藏
+     *    trigger : '.t1',
+     *    autoHide : true,
+     *    delegateTigger : true, //使用委托的方式触发显示控件
+     *    content : '悬浮内容'
+     *  });
+     *  overlay.render();
+     * </code></pre>
+     * @cfg {Boolean} [delegateTigger = false]
      */
     /**
      * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
      * @type {Boolean}
+     * @ignore
      */
     delegateTigger : {
       value : false
@@ -3521,10 +3735,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * 选择器是否始终跟随触发器对齐
      * @cfg {Boolean} autoAlign
+     * @ignore
      */
     /**
      * 选择器是否始终跟随触发器对齐
      * @type {Boolean}
+     * @protected
      */
     autoAlign :{
       value : true
@@ -3532,6 +3748,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * 控件显示时由此trigger触发，当配置项 trigger 选择器代表多个DOM 对象时，
      * 控件可由多个DOM对象触发显示。
+     * <pre><code>
+     *  overlay.on('show',function(){
+     *    var curTrigger = overlay.get('curTrigger');
+     *    //TO DO
+     *  });
+     * </code></pre>
      * @type {jQuery}
      * @readOnly
      */
@@ -3541,10 +3763,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * 触发显示时的回调函数
      * @cfg {Function} triggerCallback
+     * @ignore
      */
     /**
      * 触发显示时的回调函数
      * @type {Function}
+     * @ignore
      */
     triggerCallback : {
       value : function (ev) {
@@ -3553,6 +3777,17 @@ define('bui/component/uibase/autoshow',function () {
     },
     /**
      * 显示菜单的事件
+     *  <pre><code>
+     *    var overlay = new Overlay({ //移动到#t1时显示，移动出#t1,overlay之外控件隐藏
+     *      trigger : '#t1',
+     *      autoHide : true,
+     *      triggerEvent :'mouseover',
+     *      autoHideType : 'leave',
+     *      content : '悬浮内容'
+     *    });
+     *    overlay.render();
+     * 
+     *  </code></pre>
      * @cfg {String} [triggerEvent='click']
      * @default 'click'
      */
@@ -3560,6 +3795,7 @@ define('bui/component/uibase/autoshow',function () {
      * 显示菜单的事件
      * @type {String}
      * @default 'click'
+     * @ignore
      */
     triggerEvent : {
       value:'click'
@@ -3567,10 +3803,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * 因为触发元素发生改变而导致控件隐藏
      * @cfg {String} triggerHideEvent
+     * @ignore
      */
     /**
      * 因为触发元素发生改变而导致控件隐藏
      * @type {String}
+     * @ignore
      */
     triggerHideEvent : {
 
@@ -3579,6 +3817,12 @@ define('bui/component/uibase/autoshow',function () {
       value : {
         /**
          * 当触发器（触发选择器出现）发生改变时，经常用于一个选择器对应多个触发器的情况
+         * <pre><code>
+         *  overlay.on('triggerchange',function(ev){
+         *    var curTrigger = ev.curTrigger;
+         *    overlay.set('content',curTrigger.html());
+         *  });
+         * </code></pre>
          * @event
          * @param {Object} e 事件对象
          * @param {jQuery} e.prevTrigger 之前触发器，可能为null
@@ -3684,24 +3928,73 @@ define('bui/component/uibase/autohide',function () {
   }
 
   autoHide.ATTRS = {
+
+    /**
+     * 控件自动隐藏的事件，这里支持2种：
+     *  - 'click'
+     *  - 'leave'
+     *  <pre><code>
+     *    var overlay = new Overlay({ //点击#t1时显示，点击#t1之外的元素隐藏
+     *      trigger : '#t1',
+     *      autoHide : true,
+     *      content : '悬浮内容'
+     *    });
+     *    overlay.render();
+     *
+     *    var overlay = new Overlay({ //移动到#t1时显示，移动出#t1,overlay之外控件隐藏
+     *      trigger : '#t1',
+     *      autoHide : true,
+     *      triggerEvent :'mouseover',
+     *      autoHideType : 'leave',
+     *      content : '悬浮内容'
+     *    });
+     *    overlay.render();
+     * 
+     *  </code></pre>
+     * @cfg {String} [autoHideType = 'click']
+     */
     /**
      * 控件自动隐藏的事件，这里支持2种：
      * 'click',和'leave',默认为'click'
-     * @type {Object}
+     * @type {String}
      */
     autoHideType : {
       value : 'click'
     },
     /**
      * 是否自动隐藏
+     * <pre><code>
+     *  
+     *  var overlay = new Overlay({ //点击#t1时显示，点击#t1,overlay之外的元素隐藏
+     *    trigger : '#t1',
+     *    autoHide : true,
+     *    content : '悬浮内容'
+     *  });
+     *  overlay.render();
+     * </code></pre>
+     * @cfg {Object} autoHide
+     */
+    /**
+     * 是否自动隐藏
      * @type {Object}
+     * @ignore
      */
     autoHide:{
       value : false
     },
     /**
      * 点击或者移动到此节点时不触发自动隐藏
-     * @type {Object}
+     * <pre><code>
+     *  
+     *  var overlay = new Overlay({ //点击#t1时显示，点击#t1,#t2,overlay之外的元素隐藏
+     *    trigger : '#t1',
+     *    autoHide : true,
+     *    hideExceptNode : '#t2',
+     *    content : '悬浮内容'
+     *  });
+     *  overlay.render();
+     * </code></pre>
+     * @cfg {Object} hideExceptNode
      */
     hideExceptNode :{
 
@@ -3712,6 +4005,14 @@ define('bui/component/uibase/autohide',function () {
          * @event autohide
          * 点击控件外部时触发，只有在控件设置自动隐藏(autoHide = true)有效
          * 可以阻止控件隐藏，通过在事件监听函数中 return false
+         * <pre><code>
+         *  overlay.on('autohide',function(){
+         *    var curTrigger = overlay.curTrigger; //当前触发的项
+         *    if(condtion){
+         *      return false; //阻止隐藏
+         *    }
+         *  });
+         * </code></pre>
          */
         autohide : false
       }
@@ -3870,11 +4171,20 @@ define('bui/component/uibase/close',function () {
   {
       /**
       * 关闭按钮的默认模版
+      * <pre><code>
+      *   var overlay = new Overlay({
+      *     closeTpl : '<a href="#" title="close">x</a>',
+      *     closable : true,
+      *     trigger : '#t1'
+      *   });
+      *   overlay.render();
+      * </code></pre>
       * @cfg {String} closeTpl
       */
       /**
       * 关闭按钮的默认模版
       * @type {String}
+      * @protected
       */
       closeTpl:{
         view : true
@@ -3900,7 +4210,7 @@ define('bui/component/uibase/close',function () {
           view:1
       },
       /**
-       * 关闭时隐藏还是移除DOM结构
+       * 关闭时隐藏还是移除DOM结构<br/>
        * default "hide". 可以设置 "destroy" ，当点击关闭按钮时移除（destroy)控件
        * @cfg {String} [closeAction = 'hide']
        */
@@ -3908,9 +4218,10 @@ define('bui/component/uibase/close',function () {
        * 关闭时隐藏还是移除DOM结构
        * default "hide".可以设置 "destroy" ，当点击关闭按钮时移除（destroy)控件
        * @type {String}
+       * @protected
        */
       closeAction:{
-          value:HIDE
+        value:HIDE
       }
   };
 
@@ -3953,6 +4264,17 @@ define('bui/component/uibase/drag',function(){
     
     /**
      * 拖拽控件的扩展
+     * <pre><code>
+     *  var Control = Overlay.extend([UIBase.Drag],{
+     *      
+     *  });
+     *
+     *  var c = new Contol({ //拖动控件时，在#t2内
+     *      content : '<div id="header"></div><div></div>',
+     *      dragNode : '#header',
+     *      constraint : '#t2'
+     *  });
+     * </code></pre>
      * @class BUI.Component.UIBase.Drag
      */
     var drag = function(){
@@ -3964,11 +4286,23 @@ define('bui/component/uibase/drag',function(){
 
         /**
          * 点击拖动的节点
+         * <pre><code>
+         *  var Control = Overlay.extend([UIBase.Drag],{
+         *      
+         *  });
+         *
+         *  var c = new Contol({ //拖动控件时，在#t2内
+         *      content : '<div id="header"></div><div></div>',
+         *      dragNode : '#header',
+         *      constraint : '#t2'
+         *  });
+         * </code></pre>
          * @cfg {jQuery} dragNode
          */
         /**
          * 点击拖动的节点
          * @type {jQuery}
+         * @ignore
          */
         dragNode : {
 
@@ -3988,7 +4322,23 @@ define('bui/component/uibase/drag',function(){
         },
         /**
          * 拖动的限制范围
+         * <pre><code>
+         *  var Control = Overlay.extend([UIBase.Drag],{
+         *      
+         *  });
+         *
+         *  var c = new Contol({ //拖动控件时，在#t2内
+         *      content : '<div id="header"></div><div></div>',
+         *      dragNode : '#header',
+         *      constraint : '#t2'
+         *  });
+         * </code></pre>
+         * @cfg {jQuery} constraint
+         */
+        /**
+         * 拖动的限制范围
          * @type {jQuery}
+         * @ignore
          */
         constraint : {
 
@@ -4160,21 +4510,21 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
     /**
      * 是否允许键盘导航
-     * @type {Boolean}
+     * @cfg {Boolean} [allowKeyNav = true]
      */
     allowKeyNav : {
       value : true
     },
     /**
      * 导航使用的事件
-     * @type {String}
+     * @cfg {String} [navEvent = 'keydown']
      */
     navEvent : {
       value : 'keydown'
     },
     /**
      * 当获取事件的DOM是 input,textarea,select等时，不处理键盘导航
-     * @type {Object}
+     * @cfg {Object} [ignoreInputFields='true']
      */
     ignoreInputFields : {
       value : true
@@ -4492,22 +4842,40 @@ define('bui/component/uibase/mask',function (require) {
     {
         /**
          * 控件显示时，是否显示屏蔽层
+         * <pre><code>
+         *   var overlay = new Overlay({ //显示overlay时，屏蔽body
+         *     mask : true,
+         *     maskNode : 'body',
+         *     trigger : '#t1'
+         *   });
+         *   overlay.render();
+         * </code></pre>
          * @cfg {Boolean} [mask = false]
          */
         /**
          * 控件显示时，是否显示屏蔽层
          * @type {Boolean}
+         * @protected
          */
         mask:{
             value:false
         },
         /**
          * 屏蔽的内容
+         * <pre><code>
+         *   var overlay = new Overlay({ //显示overlay时，屏蔽body
+         *     mask : true,
+         *     maskNode : 'body',
+         *     trigger : '#t1'
+         *   });
+         *   overlay.render();
+         * </code></pre>
          * @cfg {jQuery} maskNode
          */
         /**
          * 屏蔽的内容
          * @type {jQuery}
+         * @protected
          */
         maskNode:{
             view:1
@@ -4656,6 +5024,9 @@ define('bui/component/uibase/position',function () {
          */
         /**
          * 水平坐标
+         * <pre><code>
+         *     overlay.set('x',100);
+         * </code></pre>
          * @type {Number}
          */
         x:{
@@ -4667,6 +5038,9 @@ define('bui/component/uibase/position',function () {
          */
         /**
          * 垂直坐标
+         * <pre><code>
+         *     overlay.set('y',100);
+         * </code></pre>
          * @type {Number}
          */
         y:{
@@ -4675,6 +5049,7 @@ define('bui/component/uibase/position',function () {
         /**
          * 相对于父元素的水平位置
          * @type {Number}
+         * @protected
          */
         left : {
             view:1
@@ -4682,16 +5057,27 @@ define('bui/component/uibase/position',function () {
         /**
          * 相对于父元素的垂直位置
          * @type {Number}
+         * @protected
          */
         top : {
             view:1
         },
         /**
          * 水平和垂直坐标
+         * <pre><code>
+         * var overlay = new Overlay({
+         *   xy : [100,100],
+         *   trigger : '#t1',
+         *   srcNode : '#c1'
+         * });
+         * </code></pre>
          * @cfg {Number[]} xy
          */
         /**
          * 水平和垂直坐标
+         * <pre><code>
+         *     overlay.set('xy',[100,100]);
+         * </code></pre>
          * @type {Number[]}
          */
         xy:{
@@ -4718,10 +5104,18 @@ define('bui/component/uibase/position',function () {
         },
         /**
          * z-index value.
+         * <pre><code>
+         *   var overlay = new Overlay({
+         *       zIndex : '1000'
+         *   });
+         * </code></pre>
          * @cfg {Number} zIndex
          */
         /**
          * z-index value.
+         * <pre><code>
+         *   overlay.set('zIndex','1200');
+         * </code></pre>
          * @type {Number}
          */
         zIndex:{
@@ -4731,7 +5125,7 @@ define('bui/component/uibase/position',function () {
          * Positionable element is by default visible false.
          * For compatibility in overlay and PopupMenu.
          * @default false
-         * @protected
+         * @ignore
          */
         visible:{
             view:true,
@@ -4751,11 +5145,11 @@ define('bui/component/uibase/position',function () {
          * @param {Number|Number[]} x
          * @param {Number} [y]
          * @example
-         * <code>
+         * <pre><code>
          * move(x, y);
          * move(x);
          * move([x,y])
-         * </code>
+         * </code></pre>
          */
         move:function (x, y) {
             var self = this;
@@ -4935,7 +5329,7 @@ define('bui/component/uibase/stdmod',function () {
         }
     };
 
-    /*StdModView.HTML_PARSER = {
+    StdModView.PARSER = {
         header:function (el) {
             return el.one("." + CLS_PREFIX + "header");
         },
@@ -4945,7 +5339,7 @@ define('bui/component/uibase/stdmod',function () {
         footer:function (el) {
             return el.one("." + CLS_PREFIX + "footer");
         }
-    };*/
+    };/**/
 
     function createUI(self, part) {
         var el = self.get('contentEl'),
@@ -5049,6 +5443,7 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * 应用到控件内容的css属性，键值对形式
          * @type {Object}
+         * @protected
          */
         bodyStyle:{
             view:1
@@ -5060,6 +5455,7 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * 应用到控件底部的css属性，键值对形式
          * @type {Object}
+         * @protected
          */
         footerStyle:{
             view:1
@@ -5071,12 +5467,21 @@ define('bui/component/uibase/stdmod',function () {
         /**
          * 应用到控件头部的css属性，键值对形式
          * @type {Object}
+         * @protected
          */
         headerStyle:{
             view:1
         },
         /**
          * 控件头部的html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} headerContent
          */
         /**
@@ -5088,6 +5493,14 @@ define('bui/component/uibase/stdmod',function () {
         },
         /**
          * 控件内容的html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} bodyContent
          */
         /**
@@ -5099,6 +5512,14 @@ define('bui/component/uibase/stdmod',function () {
         },
         /**
          * 控件底部的html
+         * <pre><code>
+         * var dialog = new Dialog({
+         *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
+         *     bodyContent : '#c1',
+         *     footerContent : '&lt;div class="footer"&gt;&lt;/div&gt;'
+         * });
+         * dialog.show();
+         * </code></pre>
          * @cfg {jQuery|String} footerContent
          */
         /**
@@ -5249,7 +5670,16 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
     /**
      * 配置控件的根节点的DOM
-     * @type {jQuery}
+     * <pre><code>
+     * new Form.Form({
+     *   srcNode : '#J_Form'
+     * }).render();
+     * </code></pre>
+     * @cfg {jQuery} srcNode
+     */
+    /**
+     * 配置控件的根节点的DOM
+     * @type {jQuery} 
      */
     srcNode : {
       view : true
@@ -5257,29 +5687,30 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     /**
      * 是否根据DOM生成子控件
      * @type {Boolean}
+     * @protected
      */
     isDecorateChild : {
       value : false
     },
     /**
      * 此配置项配置使用那些srcNode上的节点作为配置项
-     * 当时用 decorate 时，取 srcNode上的节点的属性作为控件的配置信息
-     * 默认id,name,value,title 都会作为属性传入
-     * 使用 'data-cfg' 作为整体的配置属性
-     *         <input type="text" name="txtName" id="id",data-cfg="{allowBlank:false}" />
-     *         //会生成以下配置项：
-     *         {
-     *           name : 'txtName',
-     *           id : 'id',
-     *           allowBlank:false
-     *         }
-     *         new Form({
-     *           src:'#form',
-     *           validator : function(record){
-     *              
-     *           }
-     *         }).render();
+     *  - 当时用 decorate 时，取 srcNode上的节点的属性作为控件的配置信息
+     *  - 默认id,name,value,title 都会作为属性传入
+     *  - 使用 'data-cfg' 作为整体的配置属性
+     *  <pre><code>
+     *     <input id="c1" type="text" name="txtName" id="id",data-cfg="{allowBlank:false}" />
+     *     //会生成以下配置项：
+     *     {
+     *         name : 'txtName',
+     *         id : 'id',
+     *         allowBlank:false
+     *     }
+     *     new Form.Field({
+     *        src:'#c1'
+     *     }).render();
+     *  </code></pre>
      * @type {Object}
+     * @protected
      */
     decorateCfgFields : {
       value : {
@@ -5295,6 +5726,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
     /**
      * 获取控件的配置信息
+     * @protected
      */
     getDecorateConfig : function(el){
       if(!el.length){
@@ -5483,10 +5915,26 @@ define('bui/component/uibase/tpl',function () {
   tpl.ATTRS = {
     /**
     * 控件的模版，用于初始化
+    * <pre><code>
+    * var list = new List.List({
+    *   tpl : '&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;',
+    *   childContainer : 'ul'
+    * });
+    * //用于统一子控件模板
+    * var list = new List.List({
+    *   defaultChildCfg : {
+    *     tpl : '&lt;span&gt;{text}&lt;/span&gt;'
+    *   }
+    * });
+    * list.render();
+    * </code></pre>
     * @cfg {String} tpl
     */
     /**
      * 控件的模板
+     * <pre><code>
+     *   list.set('tpl','&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;&lt;div class="bottom"&gt;&lt;/div&gt;')
+     * </code></pre>
      * @type {String}
      */
     tpl : {
@@ -5497,14 +5945,20 @@ define('bui/component/uibase/tpl',function () {
      * <p>控件的渲染函数，应对一些简单模板解决不了的问题，例如有if,else逻辑，有循环逻辑,
      * 函数原型是function(data){},其中data是控件的属性值</p>
      * <p>控件模板的加强模式，此属性会覆盖@see {BUI.Component.UIBase.Tpl#property-tpl}属性</p>
+     * //用于统一子控件模板
+     * var list = new List.List({
+     *   defaultChildCfg : {
+     *     tplRender : funciton(item){
+     *       if(item.type == '1'){
+     *         return 'type1 html';
+     *       }else{
+     *         return 'type2 html';
+     *       }
+     *     }
+     *   }
+     * });
+     * list.render();
      * @cfg {Function} tplRender
-     */
-    /**
-     * <p>控件的渲染函数，应对一些简单模板解决不了的问题，例如有if,else逻辑，有循环逻辑,
-     * 函数原型是function(data){},其中data是控件的属性值</p>
-     * <p>控件模板的加强模式，，此属性会覆盖@see {BUI.Component.UIBase.Tpl#property-tpl}属性</p>
-     * @type {Function}
-     * @readOnly
      */
     tplRender : {
       view : true,
@@ -5512,8 +5966,14 @@ define('bui/component/uibase/tpl',function () {
     },
     /**
      * 这是一个选择器，使用了模板后，子控件可能会添加到模板对应的位置,
-     * 默认为null,此时子控件会将控件最外层 el 作为容器
-     * @type {String}
+     *  - 默认为null,此时子控件会将控件最外层 el 作为容器
+     * <pre><code>
+     * var list = new List.List({
+     *   tpl : '&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;',
+     *   childContainer : 'ul'
+     * });
+     * </code></pre>
+     * @cfg {String} childContainer
      */
     childContainer : {
       view : true
@@ -5530,6 +5990,7 @@ define('bui/component/uibase/tpl',function () {
     },
     /**
      * 根据控件的属性和模板生成控件内容
+     * @protected
      */
     setTplContent : function () {
       var _self = this,
@@ -5660,7 +6121,8 @@ define('bui/component/uibase/selection',function () {
      *     <li>子控件</li>
      *     <li>DOM元素</li>
      * </ol>
-     * 当选择是子控件时，element 和 item 都是指 子控件；当选择的是DOM元素时，element 指DOM元素，item 指DOM元素对应的记录
+     * ** 当选择是子控件时，element 和 item 都是指 子控件；**
+     * ** 当选择的是DOM元素时，element 指DOM元素，item 指DOM元素对应的记录 **
      * @abstract
      */
     var selection = function(){
@@ -5675,7 +6137,16 @@ define('bui/component/uibase/selection',function () {
     {
         /**
          * 选中的事件
-         * @type {String}
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'value',
+         *   selectedEvent : 'mouseenter',
+         *   render : '#t1',
+         *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+         * });
+         * </code></pre>
+         * @cfg {String} [selectedEvent = 'click']
          */
         selectedEvent:{
             value : 'click'
@@ -5713,17 +6184,35 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 数据的id字段名称，通过此字段查找对应的数据
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'value',
+         *   render : '#t1',
+         *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+         * });
+         * </code></pre>
          * @cfg {String} [idField = 'id']
          */
         /**
          * 数据的id字段名称，通过此字段查找对应的数据
          * @type {String}
+         * @ignore
          */
         idField : {
             value : 'id'
         },
         /**
          * 是否多选
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'value',
+         *   render : '#t1',
+         *   multipleSelect : true,
+         *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+         * });
+         * </code></pre>
          * @cfg {Boolean} [multipleSelect=false]
          */
         /**
@@ -5745,6 +6234,10 @@ define('bui/component/uibase/selection',function () {
     {
         /**
          * 清理选中的项
+         * <pre><code>
+         *  list.clearSelection();
+         * </code></pre>
+         *
          */
         clearSelection : function(){
             var _self = this,
@@ -5763,6 +6256,9 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 获取选中的第一项
+         * <pre><code>
+         * var item = list.getSelected(); //多选模式下第一条
+         * </code></pre>
          * @return {Object} 选中的第一项或者为undefined
          */
         getSelected : function(){
@@ -5770,7 +6266,7 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 根据 idField 获取到的值
-         * @private
+         * @protected
          * @return {Object} 选中的值
          */
         getSelectedValue : function(){
@@ -5782,7 +6278,7 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 获取选中的值集合
-         * @private
+         * @protected
          * @return {Array} 选中值得集合
          */
         getSelectionValues:function(){
@@ -5795,7 +6291,7 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 获取选中的文本
-         * @private
+         * @protected
          * @return {Array} 选中的文本集合
          */
         getSelectionText:function(){
@@ -5806,7 +6302,14 @@ define('bui/component/uibase/selection',function () {
             });
         },
         /**
-         * 移除选中，
+         * 移除选中
+         * <pre><code>
+         *    var item = list.getItem('id'); //通过id 获取选项
+         *    list.setSelected(item); //选中
+         *
+         *    list.clearSelected();//单选模式下清除所选，多选模式下清除选中的第一项
+         *    list.clearSelected(item); //清除选项的选中状态
+         * </code></pre>
          * @param {Object} [item] 清除选项的选中状态，如果未指定则清除选中的第一个选项的选中状态
          */
         clearSelected : function(item){
@@ -5818,7 +6321,7 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 获取选项显示的文本
-         * @private
+         * @protected
          */
         getSelectedText : function(){
             var _self = this,
@@ -5827,6 +6330,10 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 设置选中的项
+         * <pre><code>
+         *  var items = list.getItemsByStatus('active'); //获取某种状态的选项
+         *  list.setSelection(items);
+         * </code></pre>
          * @param {Array} items 项的集合
          */
         setSelection: function(items){
@@ -5840,6 +6347,10 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 设置选中的项
+         * <pre><code>
+         *   var item = list.getItem('id');
+         *   list.setSelected(item);
+         * </code></pre>
          * @param {Object} item 记录或者子控件
          * @param {BUI.Component.Controller|Object} element 子控件或者DOM结构
          */
@@ -5869,9 +6380,9 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 设置选项的选中状态
-         * @template
          * @param {*} item 选项
          * @param {Boolean} selected 选中或者取消选中
+         * @protected
          */
         setItemSelected : function(item,selected){
             var _self = this,
@@ -5891,12 +6402,16 @@ define('bui/component/uibase/selection',function () {
          * @template
          * @param {*} item 选项
          * @param {Boolean} selected 选中或者取消选中
+         * @protected
          */
         setItemSelectedStatus : function(item,selected){
 
         },
         /**
          * 设置所有选项选中
+         * <pre><code>
+         *  list.setAllSelection(); //选中全部，多选状态下有效
+         * </code></pre>
          * @template
          */
         setAllSelection : function(){
@@ -5907,9 +6422,20 @@ define('bui/component/uibase/selection',function () {
          * @param {String} field 字段名,默认为配置项'idField',所以此字段可以不填写，仅填写值
          * @param {Object} value 值
          * @example
-         * list.setSelectedByField('123');
-         * //或者
-         * list.setSelectedByField('id','123');
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{id}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'id', //id 字段作为key
+         *   render : '#t1',
+         *   items : [{id : '1',text : '1'},{id : '2',text : '2'}]
+         * });
+         *
+         *   list.setSelectedByField('123'); //默认按照id字段查找
+         *   //或者
+         *   list.setSelectedByField('id','123');
+         *
+         *   list.setSelectedByField('value','123');
+         * </code></pre>
          */
         setSelectedByField:function(field,value){
             if(!value){
@@ -5922,7 +6448,21 @@ define('bui/component/uibase/selection',function () {
         },
         /**
          * 设置多个选中，根据字段和值
-         * @param {String} field  默认为idField
+         * <pre><code>
+         * var list = new List.SimpleList({
+         *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+         *   idField : 'value', //value 字段作为key
+         *   render : '#t1',
+         *   multipleSelect : true,
+         *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+         * });
+         *   var values = ['1','2','3'];
+         *   list.setSelectionByField(values);//
+         *
+         *   //等于
+         *   list.setSelectionByField('value',values);
+         * </code></pre>
+         * @param {String} field 默认为idField
          * @param {Array} values 值得集合
          */
         setSelectionByField:function(field,values){
@@ -5979,29 +6519,62 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
     /**
      * 选择的数据集合
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+     *   idField : 'value',
+     *   render : '#t1',
+     *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+     * });
+     * list.render();
+     * </code></pre>
      * @cfg {Array} items
      */
     /**
      * 选择的数据集合
+     * <pre><code>
+     *  list.set('items',items); //列表会直接替换内容
+     *  //等同于 
+     *  list.clearItems();
+     *  list.addItems(items);
+     * </code></pre>
      * @type {Array}
      */
     items:{
       view : true
     },
     /**
-     * 列表项的默认模板。
-     * @cfg {String} itemTpl
+     * 选项的默认key值
+     * @cfg {String} [idField = 'id']
      */
+    idField : {
+      value : 'id'
+    },
     /**
      * 列表项的默认模板,仅在初始化时传入。
      * @type {String}
-     * @readOnly
+     * @ignore
      */
     itemTpl : {
       view : true
     },
     /**
      * 列表项的渲染函数，应对列表项之间有很多差异时
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   itemTplRender : function(item){
+     *     if(item.type == '1'){
+     *       return '&lt;li&gt;&lt;img src="xxx.jpg"/&gt;'+item.text+'&lt;/li&gt;'
+     *     }else{
+     *       return '&lt;li&gt;item.text&lt;/li&gt;'
+     *     }
+     *   },
+     *   idField : 'value',
+     *   render : '#t1',
+     *   items : [{value : '1',text : '1',type : '0'},{value : '2',text : '2',type : '1'}]
+     * });
+     * list.render();
+     * </code></pre>
      * @type {Function}
      */
     itemTplRender : {
@@ -6009,6 +6582,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 子控件各个状态默认采用的样式
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   render : '#t1',
+     *   itemStatusCls : {
+     *     selected : 'active', //默认样式为list-item-selected,现在变成'active'
+     *     hover : 'hover' //默认样式为list-item-hover,现在变成'hover'
+     *   },
+     *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
+     * });
+     * list.render();
+     * </code></pre>
      * see {@link BUI.Component.Controller#property-statusCls}
      * @type {Object}
      */
@@ -6037,6 +6621,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
     /**
      * 获取选项的数量
+     * <pre><code>
+     *   var count = list.getItemCount();
+     * </code></pre>
      * @return {Number} 选项数量
      */
     getItemCount : function () {
@@ -6047,12 +6634,18 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @param {*} item 字段名
      * @param {String} field 字段名
      * @return {*} 字段的值
+     * @protected
      */
     getValueByField : function(item,field){
 
     },
     /**
      * 获取所有选项值，如果选项是子控件，则是所有子控件
+     * <pre><code>
+     *   var items = list.getItems();
+     *   //等同
+     *   list.get(items);
+     * </code></pre>
      * @return {Array} 选项值集合
      */
     getItems : function () {
@@ -6060,6 +6653,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 获取第一项
+     * <pre><code>
+     *   var item = list.getFirstItem();
+     *   //等同
+     *   list.getItemAt(0);
+     * </code></pre>
      * @return {Object|BUI.Component.Controller} 选项值（子控件）
      */
     getFirstItem : function () {
@@ -6067,6 +6665,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 获取最后一项
+     * <pre><code>
+     *   var item = list.getLastItem();
+     *   //等同
+     *   list.getItemAt(list.getItemCount()-1);
+     * </code></pre>
      * @return {Object|BUI.Component.Controller} 选项值（子控件）
      */
     getLastItem : function () {
@@ -6074,6 +6677,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 通过索引获取选项值（子控件）
+     * <pre><code>
+     *   var item = list.getItemAt(0); //获取第1个
+     *   var item = list.getItemAt(2); //获取第3个
+     * </code></pre>
      * @param  {Number} index 索引值
      * @return {Object|BUI.Component.Controller}  选项（子控件）
      */
@@ -6082,6 +6689,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 通过Id获取选项，如果是改变了idField则通过改变的idField来查找选项
+     * <pre><code>
+     *   //如果idField = 'id'
+     *   var item = list.getItem('2'); 
+     *   //等同于
+     *   list.findItemByField('id','2');
+     *
+     *   //如果idField = 'value'
+     *   var item = list.getItem('2'); 
+     *   //等同于
+     *   list.findItemByField('value','2');
+     * </code></pre>
      * @param {String} id 编号
      * @return {Object|BUI.Component.Controller} 选项（子控件）
      */
@@ -6091,6 +6709,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 返回指定项的索引
+     * <pre><code>
+     * var index = list.indexOf(item); //返回索引，不存在则返回-1
+     * </code></pre>
      * @param  {Object|BUI.Component.Controller} 选项
      * @return {Number}   项的索引值
      */
@@ -6099,6 +6720,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 添加多条选项
+     * <pre><code>
+     * var items = [{id : '1',text : '1'},{id : '2',text : '2'}];
+     * list.addItems(items);
+     * </code></pre>
      * @param {Array} items 记录集合（子控件配置项）
      */
     addItems : function (items) {
@@ -6109,6 +6734,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 插入多条记录
+     * <pre><code>
+     * var items = [{id : '1',text : '1'},{id : '2',text : '2'}];
+     * list.addItemsAt(items,0); // 在最前面插入
+     * list.addItemsAt(items,2); //第三个位置插入
+     * </code></pre>
      * @param  {Array} items 多条记录
      * @param  {Number} start 起始位置
      */
@@ -6119,7 +6749,12 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       });
     },
     /**
-     * 更新列表项
+     * 更新列表项，修改选项值后，DOM跟随变化
+     * <pre><code>
+     *   var item = list.getItem('2');
+     *   list.text = '新内容'; //此时对应的DOM不会变化
+     *   list.updateItem(item); //DOM进行相应的变化
+     * </code></pre>
      * @param  {Object} item 选项值
      */
     updateItem : function(item){
@@ -6127,6 +6762,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 添加选项,添加在控件最后
+     * 
+     * <pre><code>
+     * list.addItem({id : '3',text : '3',type : '0'});
+     * </code></pre>
+     * 
      * @param {Object|BUI.Component.Controller} item 选项，子控件配置项、子控件
      * @return {Object|BUI.Component.Controller} 子控件或者选项记录
      */
@@ -6135,6 +6775,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 在指定位置添加选项
+     * <pre><code>
+     * list.addItemAt({id : '3',text : '3',type : '0'},0); //第一个位置
+     * </code></pre>
      * @param {Object|BUI.Component.Controller} item 选项，子控件配置项、子控件
      * @param {Number} index 索引
      * @return {Object|BUI.Component.Controller} 子控件或者选项记录
@@ -6163,6 +6806,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 清除所有选项,不等同于删除全部，此时不会触发删除事件
+     * <pre><code>
+     * list.clearItems(); 
+     * //等同于
+     * list.set('items',items);
+     * </code></pre>
      */
     clearItems : function(){
       var _self = this,
@@ -6172,6 +6820,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 删除选项
+     * <pre><code>
+     * var item = list.getItem('1');
+     * list.removeItem(item);
+     * </code></pre>
      * @param {Object|BUI.Component.Controller} item 选项（子控件）
      */
     removeItem : function (item) {
@@ -6179,6 +6831,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 移除选项集合
+     * <pre><code>
+     * var items = list.getSelection();
+     * list.removeItems(items);
+     * </code></pre>
      * @param  {Array} items 选项集合
      */
     removeItems : function(items){
@@ -6190,6 +6846,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 通过索引删除选项
+     * <pre><code>
+     * list.removeItemAt(0); //删除第一个
+     * </code></pre>
      * @param  {Number} index 索引
      */
     removeItemAt : function (index) {
@@ -6252,8 +6911,8 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 更新列表项
-     * @protected
      * @param  {Object} item 选项值
+     * @ignore
      */
     updateItem : function(item){
       var _self = this, 
@@ -6273,6 +6932,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 移除选项
      * @param  {jQuery} element
+     * @ignore
      */
     removeItem:function(item,element){
       element = element || this.findElement(item);
@@ -6281,6 +6941,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 获取列表项的容器
      * @return {jQuery} 列表项容器
+     * @protected
      */
     getItemContainer : function  () {
       return this.get('itemContainer') || this.get('el');
@@ -6457,6 +7118,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 在DOM节点上存储数据的字段
      * @type {String}
+     * @protected
      */
     dataField : {
         view:true,
@@ -6465,20 +7127,48 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 选项所在容器，如果未设定，使用 el
      * @type {jQuery}
+     * @protected
      */
     itemContainer : {
         view : true
     },
     /**
-     * 选项的值
-     * @type {Object}
+     * 选项状态对应的选项值
+     * 
+     *   - 此字段用于将选项记录的值跟显示的DOM状态相对应
+     *   - 例如：下面记录中 <code> checked : true </code>，可以使得此记录对应的DOM上应用对应的状态(默认为 'list-item-checked')
+     *     <pre><code>{id : '1',text : 1,checked : true}</code></pre>
+     *   - 当更改DOM的状态时，记录中对应的字段属性也会跟着变化
+     * <pre><code>
+     *   var list = new List.SimpleList({
+     *   render : '#t1',
+     *   idField : 'id', //自定义样式名称
+     *   itemStatusFields : {
+     *     checked : 'checked',
+     *     disabled : 'disabled'
+     *   },
+     *   items : [{id : '1',text : '1',checked : true},{id : '2',text : '2',disabled : true}]
+     * });
+     * list.render(); //列表渲染后，会自动带有checked,和disabled对应的样式
+     *
+     * var item = list.getItem('1');
+     * list.hasStatus(item,'checked'); //true
+     *
+     * list.setItemStatus(item,'checked',false);
+     * list.hasStatus(item,'checked');  //false
+     * item.checked;                    //false
+     * 
+     * </code></pre>
+     * ** 注意 **
+     * 此字段跟 {@link #itemStatusCls} 一起使用效果更好，可以自定义对应状态的样式
+     * @cfg {Object} itemStatusFields
      */
     itemStatusFields : {
       value : {}
     },
     /**
      * 项的样式，用来获取子项
-     * @type {Object}
+     * @cfg {Object} itemCls
      */
     itemCls : {
       view : true
@@ -6486,19 +7176,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 获取项的文本，默认获取显示的文本
      * @type {Object}
+     * @protected
      */
     textGetter : {
 
-    },
-    /**
-     * 选中项的样式
-     * @type {String}
-     */
-    selectedCls : {
-      valueFn : function(){
-        var itemCls = this.get('itemCls') || 'ks'
-        return  itemCls + '-selected';
-      }
     },
     events : {
       value : {
@@ -6637,6 +7318,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       return item[field];
     },
     /**
+     * 更改状态值对应的字段
+     * @protected
+     * @param  {String} status 状态名
+     * @return {String} 状态对应的字段
+     */
+    getStatusField : function(status){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields');
+      return itemStatusFields[status];
+    },
+    /**
      * 设置记录状态值
      * @protected
      * @param  {Object} item  记录
@@ -6651,6 +7343,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
         item[field] = value;
       }
     },
+    /**
+     * @ignore
+     * 获取选项文本
+     */
     getItemText : function(item){
       var _self = this,
           textGetter = _self.get('textGetter');
@@ -6667,6 +7363,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 删除项
      * @param  {Object} item 选项记录
+     * @ignore
      */
     removeItem : function (item) {
       var _self = this,
@@ -6684,6 +7381,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * 在指定位置添加选项,选项值为一个对象
      * @param {Object} item 选项
      * @param {Number} index 索引
+     * @ignore
      */
     addItemAt : function(item,index) {
       var _self = this,
@@ -6700,6 +7398,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * 直接在View上显示
      * @param {Object} item 选项
      * @param {Number} index 索引
+     * 
      */
     addItemToView : function(item,index){
       var _self = this,
@@ -6709,6 +7408,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 更新列表项
      * @param  {Object} item 选项值
+     * @ignore
      */
     updateItem : function(item){
       var _self = this,
@@ -6719,6 +7419,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * 获取所有选项
      * @return {Array} 选项集合
      * @override
+     * @ignore
      */
     getItems : function () {
       
@@ -6735,6 +7436,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 根据状态获取选项
+     * <pre><code>
+     *   //设置状态
+     *   list.setItemStatus(item,'active');
+     *   
+     *   //获取'active'状态的选项
+     *   list.getItemsByStatus('active');
+     * </code></pre>
      * @param  {String} status 状态名
      * @return {Array}  选项组集合
      */
@@ -6749,6 +7457,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 查找指定的项的DOM结构
+     * <pre><code>
+     *   var item = list.getItem('2'); //获取选项
+     *   var element = list.findElement(item);
+     *   $(element).addClass('xxx');
+     * </code></pre>
      * @param  {Object} item 
      * @return {HTMLElement} element
      */
@@ -6785,7 +7498,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 设置所有选项选中
-     * @override
+     * @ignore
      */
     setAllSelection : function(){
       var _self = this,
@@ -6793,8 +7506,16 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.setSelection(items);
     },
     /**
+     * 选项是否被选中
+     * <pre><code>
+     *   var item = list.getItem('2');
+     *   if(list.isItemSelected(item)){
+     *     //TO DO
+     *   }
+     * </code></pre>
      * @override
-     * @ignore
+     * @param  {Object}  item 选项
+     * @return {Boolean}  是否选中
      */
     isItemSelected : function(item,element){
       var _self = this;
@@ -6804,6 +7525,12 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 是否选项被禁用
+     * <pre><code>
+     * var item = list.getItem('2');
+     * if(list.isItemDisabled(item)){ //如果选项禁用
+     *   //TO DO
+     * }
+     * </code></pre>
      * @param {Object} item 选项
      * @return {Boolean} 选项是否禁用
      */
@@ -6812,6 +7539,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 设置选项禁用
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemDisabled(item,true);//设置选项禁用，会在DOM上添加 itemCls + 'disabled'的样式
+     * list.setItemDisabled(item,false); //取消禁用，可以用{@link #itemStatusCls} 来替换样式
+     * </code></pre>
      * @param {Object} item 选项
      */
     setItemDisabled : function(item,disabled){
@@ -6827,6 +7559,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * 获取选中的项的值
      * @override
      * @return {Array} 
+     * @ignore
      */
     getSelection : function(){
       var _self = this,
@@ -6849,6 +7582,14 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 选项是否存在某种状态
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemStatus(item,'active',true);
+     * list.hasStatus(item,'active'); //true
+     *
+     * list.setItemStatus(item,'active',false);
+     * list.hasStatus(item,'false'); //true
+     * </code></pre>
      * @param {*} item 选项
      * @param {String} status 状态名称，如selected,hover,open等等
      * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
@@ -6860,7 +7601,15 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       return _self.get('view').hasStatus(status,element);
     },
     /**
-     * 设置选项状态
+     * 设置选项状态,可以设置任何自定义状态
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemStatus(item,'active',true);
+     * list.hasStatus(item,'active'); //true
+     *
+     * list.setItemStatus(item,'active',false);
+     * list.hasStatus(item,'false'); //true
+     * </code></pre>
      * @param {*} item 选项
      * @param {String} status 状态名称
      * @param {Boolean} value 状态值，true,false
@@ -7103,8 +7852,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.afterSelected(item,selected,element);
     },
     /**
+     * 选项是否被选中
      * @override
-     * @ignore
+     * @param  {*}  item 选项
+     * @return {Boolean}  是否选中
      */
     isItemSelected : function(item){
         return item ? item.get('selected') : false;
@@ -7167,10 +7918,17 @@ define('bui/component/uibase/childcfg',function (require) {
   childCfg.ATTRS = {
     /**
      * 默认的子控件配置项,在初始化控件时配置
-     * <ul>
-     * 如果控件已经渲染过，此配置项无效，
-     * 控件生成后，修改此配置项无效。
-     * </ul>
+     * 
+     *  - 如果控件已经渲染过，此配置项无效，
+     *  - 控件生成后，修改此配置项无效。
+     * <pre><code>
+     *   var control = new Control({
+     *     defaultChildCfg : {
+     *       tpl : '&lt;li&gt;{text}&lt;/li&gt;',
+     *       xclass : 'a-b'
+     *     }
+     *   });
+     * </code></pre>
      * @cfg {Object} defaultChildCfg
      */
     /**
@@ -7277,6 +8035,15 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
   /**
    * @class BUI.Component.UIBase.Depends
    * 依赖事件源的扩展
+   * <pre><code>
+   *       var control = new Control({
+   *         depends : {
+   *           '#btn:click':['toggle'],//当点击id为'btn'的按钮时，执行 control 的toggle方法
+   *           '#checkbox1:checked':['show'],//当勾选checkbox时，显示控件
+   *           '#menu:click',function(){}
+   *         }
+   *       });
+   * </code></pre>
    */
   function Depends (){
 
@@ -7291,6 +8058,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * <li>事件名：事件名是一个使用":"为前缀的字符串，例如 "#id:change",即监听change事件</li>
      * <li>触发的方法：可以是一个数组，如["disable","clear"],数组里面是控件的方法名，也可以是一个回调函数</li>
      * </ol>
+     * <pre><code>
      *       var control = new Control({
      *         depends : {
      *           '#btn:click':['toggle'],//当点击id为'btn'的按钮时，执行 control 的toggle方法
@@ -7298,7 +8066,8 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      *           '#menu:click',function(){}
      *         }
      *       });
-     * 注意： 这些依赖项是在控件渲染（render）后进行的。         
+     * </code></pre>
+     * ** 注意：** 这些依赖项是在控件渲染（render）后进行的。         
      * @type {Object}
      */
     depends : {
@@ -7332,6 +8101,13 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * 添加依赖，如果已经有同名的事件，则移除，再添加
+     * <pre><code>
+     *  form.addDependence('#btn:click',['toggle']); //当按钮#btn点击时，表单交替显示隐藏
+     *
+     *  form.addDependence('#btn:click',function(){//当按钮#btn点击时，表单交替显示隐藏
+     *   //TO DO
+     *  }); 
+     * </code></pre>
      * @param {String} name 依赖项的名称
      * @param {Array|Function} action 依赖项的事件
      */
@@ -7347,6 +8123,9 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * 移除依赖
+     * <pre><code>
+     *  form.removeDependence('#btn:click'); //当按钮#btn点击时，表单不在监听
+     * </code></pre>
      * @param  {String} name 依赖名称
      */
     removeDependence : function(name){
@@ -7360,6 +8139,9 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * 清除所有的依赖
+     * <pre><code>
+     *  form.clearDependences();
+     * </code></pre>
      */
     clearDependences : function(){
       var _self = this,
@@ -7385,6 +8167,21 @@ define('bui/component/uibase/bindable',function(){
 	
 	/**
 		* bindable extension class.
+		* <pre><code>
+		*   BUI.use(['bui/list','bui/data','bui/mask'],function(List,Data,Mask){
+		*     var store = new Data.Store({
+		*       url : 'data/xx.json'
+		*     });
+		*   	var list = new List.SimpleList({
+		*  	    render : '#l1',
+		*  	    store : store,
+		*  	    loadMask : new Mask.LoadMask({el : '#t1'})
+		*     });
+		*
+		*     list.render();
+		*     store.load();
+		*   });
+		* </code></pre>
 		* 使控件绑定store，处理store的事件 {@link BUI.Data.Store}
 		* @class BUI.Component.UIBase.Bindable
 		*/
@@ -7396,10 +8193,26 @@ define('bui/component/uibase/bindable',function(){
 	{
 		/**
 		* 绑定 {@link BUI.Data.Store}的事件
+		* <pre><code>
+		*  var store = new Data.Store({
+		*   url : 'data/xx.json',
+		*   autoLoad : true
+		*  });
+		*
+		*  var list = new List.SimpleList({
+		*  	 render : '#l1',
+		*  	 store : store
+		*  });
+		*
+		*  list.render();
+		* </code></pre>
 		* @cfg {BUI.Data.Store} store
 		*/
 		/**
 		* 绑定 {@link BUI.Data.Store}的事件
+		* <pre><code>
+		*  var store = list.get('store');
+		* </code></pre>
 		* @type {BUI.Data.Store}
 		*/
 		store : {
@@ -7407,11 +8220,27 @@ define('bui/component/uibase/bindable',function(){
 		},
 		/**
 		* 加载数据时，是否显示等待加载的屏蔽层
+		* <pre><code>
+		*   BUI.use(['bui/list','bui/data','bui/mask'],function(List,Data,Mask){
+		*     var store = new Data.Store({
+		*       url : 'data/xx.json'
+		*     });
+		*   	var list = new List.SimpleList({
+		*  	    render : '#l1',
+		*  	    store : store,
+		*  	    loadMask : new Mask.LoadMask({el : '#t1'})
+		*     });
+		*
+		*     list.render();
+		*     store.load();
+		*   });
+		* </code></pre>
 		* @cfg {Boolean|Object} loadMask
 		*/
 		/**
 		* 加载数据时，是否显示等待加载的屏蔽层
 		* @type {Boolean|Object} 
+		* @ignore
 		*/
 		loadMask : {
 			value : false
@@ -7862,6 +8691,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         /**
          * 控件根节点属性
          * see {@link BUI.Component.Controller#property-elAttrs}
+         * @ignore
          */
         elAttrs: {
         },
@@ -7881,6 +8711,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         /**
          * 控件在指定元素内部渲染
          * see {@link BUI.Component.Controller#property-render}
+         * @ignore
          */
         render: {},
         /**
@@ -8105,6 +8936,39 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
     /**
      * 可以实例化的控件，作为最顶层的控件类，一切用户控件都继承此控件
      * xclass: 'controller'.
+     * ** 创建子控件 ** 
+     * <pre><code>
+     * var Control = Controller.extend([mixin1,mixin2],{ //原型链上的函数
+     *   renderUI : function(){ //创建DOM
+     *   
+     *   }, 
+     *   bindUI : function(){  //绑定事件
+     *   
+     *   },
+     *   destructor : funciton(){ //析构函数
+     *   
+     *   }
+     * },{
+     *   ATTRS : { //默认的属性
+     *       text : {
+     *       
+     *       }
+     *   }
+     * },{
+     *     xclass : 'a' //用于把对象解析成类
+     * });
+     * </code></pre>
+     *
+     * ** 创建对象 **
+     * <pre><code>
+     * var c1 = new Control({
+     *     render : '#t1', //在t1上创建
+     *     text : 'text1',
+     *     children : [{xclass : 'a',text : 'a1'},{xclass : 'b',text : 'b1'}]
+     * });
+     *
+     * c1.render();
+     * </code></pre>
      * @extends BUI.Component.UIBase
      * @mixins BUI.Component.UIBase.Tpl
      * @mixins BUI.Component.UIBase.Decorate
@@ -8145,6 +9009,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * 返回新的唯一的Id,结果是 'xclass' + number
+         * @protected
          * @return {String} 唯一id
          */
         getNextUniqueId : function(){
@@ -8203,6 +9068,16 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 控件是否包含指定的DOM元素,包括根节点
+         * <pre><code>
+         *   var control = new Control();
+         *   $(document).on('click',function(ev){
+         *     var target = ev.target;
+         *
+         *     if(!control.containsElement(elem)){ //未点击在控件内部
+         *       control.hide();
+         *     }
+         *   });
+         * </code></pre>
          * @param  {HTMLElement} elem DOM 元素
          * @return {Boolean}  是否包含
          */
@@ -8263,6 +9138,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 交替显示或者隐藏
+         * <pre><code>
+         *  control.show(); //显示
+         *  control.toggle(); //隐藏
+         *  control.toggle(); //显示
+         * </code></pre>
          */
         toggle : function(){
             this.set('visible',!this.get('visible'));
@@ -8357,7 +9237,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             return this;
         },
         /**
-         * 使控件不可用
+         * 使控件不可用，控件不可用时，点击等事件不会触发
+         * <pre><code>
+         *  control.disable(); //禁用
+         *  control.enable(); //解除禁用
+         * </code></pre>
          */
         disable : function(){
             this.set('disabled',true);
@@ -8365,6 +9249,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 子组件将要渲染到的节点，在 render 类上覆盖对应方法
+         * @protected
          * @ignore
          */
         getContentElement: function () {
@@ -8373,6 +9258,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * 焦点所在元素即键盘事件处理元素，在 render 类上覆盖对应方法
+         * @protected
          * @ignore
          */
         getKeyEventTarget: function () {
@@ -8381,8 +9267,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * 添加控件的子控件，索引值为 0-based
-         * @param {BUI.Component.Controller|Object} c
-         * 子控件的实例或者配置项
+         * <pre><code>
+         *  control.add(new Control());//添加controller对象
+         *  control.add({xclass : 'a'});//添加xclass 为a 的一个对象
+         *  control.add({xclass : 'b'},2);//插入到第三个位置
+         * </code></pre>
+         * @param {BUI.Component.Controller|Object} c 子控件的实例或者配置项
          * @param {String} [c.xclass] 如果c为配置项，设置c的xclass
          * @param {Number} [index]  0-based  如果未指定索引值，则插在控件的最后
          */
@@ -8423,6 +9313,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 将自己从父控件中移除
+         * <pre><code>
+         *  control.remove(); //将控件从父控件中移除，并未删除
+         *  parent.addChild(control); //还可以添加回父控件
+         *  
+         *  control.remove(true); //从控件中移除并调用控件的析构函数
+         * </code></pre>
          * @param  {Boolean} destroy 是否删除DON节点
          * @return {BUI.Component.Controller} 删除的子对象.
          */
@@ -8439,9 +9335,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         /**
          * 移除子控件，并返回移除的控件
          *
-         * 如果 destroy=true,调用移除控件的 {@link BUI.Component.UIBase#destroy} 方法,
-         * 同时删除对应的DOM
-         *
+         * ** 如果 destroy=true,调用移除控件的 {@link BUI.Component.UIBase#destroy} 方法,
+         * 同时删除对应的DOM **
+         * <pre><code>
+         *  var child = control.getChild(id);
+         *  control.removeChild(child); //仅仅移除
+         *  
+         *  control.removeChild(child,true); //移除，并调用析构函数
+         * </code></pre>
          * @param {BUI.Component.Controller} c 要移除的子控件.
          * @param {Boolean} [destroy=false] 如果是true,
          * 调用控件的方法 {@link BUI.Component.UIBase#destroy} .
@@ -8486,6 +9387,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * 删除当前控件的子控件
+         * <pre><code>
+         *   control.removeChildren();//删除所有子控件
+         *   control.removeChildren(true);//删除所有子控件，并调用子控件的析构函数
+         * </code></pre>
          * @see Component.Controller#removeChild
          * @param {Boolean} [destroy] 如果设置 true,
          * 调用子控件的 {@link BUI.Component.UIBase#destroy}方法.
@@ -8501,6 +9406,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         /**
          * 根据索引获取子控件
+         * <pre><code>
+         *  control.getChildAt(0);//获取第一个子控件
+         *  control.getChildAt(2); //获取第三个子控件
+         * </code></pre>
          * @param {Number} index 0-based 索引值.
          * @return {BUI.Component.Controller} 子控件或者null 
          */
@@ -8510,6 +9419,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 根据Id获取子控件
+         * <pre><code>
+         *  control.getChild('id'); //从控件的直接子控件中查找
+         *  control.getChild('id',true);//递归查找所有子控件，包含子控件的子控件
+         * </code></pre>
          * @param  {String} id 控件编号
          * @param  {Boolean} deep 是否继续查找在子控件中查找
          * @return {BUI.Component.Controller} 子控件或者null 
@@ -8521,6 +9434,15 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 通过匹配函数查找子控件，返回第一个匹配的对象
+         * <pre><code>
+         *  control.getChildBy(function(child){//从控件的直接子控件中查找
+         *    return child.get('id') = '1243';
+         *  }); 
+         *  
+         *  control.getChild(function(child){//递归查找所有子控件，包含子控件的子控件
+         *    return child.get('id') = '1243';
+         *  },true);
+         * </code></pre>
          * @param  {Function} math 查找的匹配函数
          * @param  {Boolean} deep 是否继续查找在子控件中查找
          * @return {BUI.Component.Controller} 子控件或者null 
@@ -8530,6 +9452,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 获取控件的附加高度 = control.get('el').outerHeight() - control.get('el').height()
+         * @protected
          * @return {Number} 附加宽度
          */
         getAppendHeigtht : function(){
@@ -8538,6 +9461,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 获取控件的附加宽度 = control.get('el').outerWidth() - control.get('el').width()
+         * @protected
          * @return {Number} 附加宽度
          */
         getAppendWidth : function(){
@@ -8546,6 +9470,15 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 查找符合条件的子控件
+         * <pre><code>
+         *  control.getChildrenBy(function(child){//从控件的直接子控件中查找
+         *    return child.get('type') = '1';
+         *  }); 
+         *  
+         *  control.getChildrenBy(function(child){//递归查找所有子控件，包含子控件的子控件
+         *    return child.get('type') = '1';
+         *  },true);
+         * </code></pre>
          * @param  {Function} math 查找的匹配函数
          * @param  {Boolean} deep 是否继续查找在子控件中查找，如果符合上面的匹配函数，则不再往下查找
          * @return {BUI.Component.Controller[]} 子控件数组 
@@ -8569,6 +9502,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
         /**
          * 遍历子元素
+         * <pre><code>
+         *  control.eachChild(function(child,index){ //遍历子控件
+         *  
+         *  });
+         * </code></pre>
          * @param  {Function} func 迭代函数，函数原型function(child,index)
          */
         eachChild : function(func){
@@ -8797,6 +9735,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         {
             /**
              * 控件的Html 内容
+             * <pre><code>
+             *  new Control({
+             *     content : '内容',
+             *     render : '#c1'
+             *  });
+             * </code></pre>
              * @cfg {String|jQuery} content
              */
             /**
@@ -8808,7 +9752,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
 			/**
 			 * 控件根节点使用的标签
-			 * @type {String}
+             * <pre><code>
+             *  new Control({
+             *     elTagName : 'ul',
+             *      content : '<li>内容</li>',  //控件的DOM &lt;ul&gt;&lt;li&gt;内容&lt;/li&gt;&lt;/ul&gt;
+             *     render : '#c1'
+             *  });  
+             * </code></pre>
+			 * @cfg {String} elTagName
 			 */
 			elTagName: {
 				// 生成标签名字
@@ -8825,6 +9776,21 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             /**
              * 如果控件未设置 xclass，同时父元素设置了 defaultChildClass，那么
              * xclass = defaultChildClass + '-' + xtype
+             * <pre><code>
+             *  A.ATTRS = {
+             *    defaultChildClass : {
+             *        value : 'b'
+             *    }
+             *  }
+             *  //类B 的xclass = 'b'类 B1的xclass = 'b-1',类 B2的xclass = 'b-2',那么
+             *  var a = new A({
+             *    children : [
+             *        {content : 'b'}, //B类
+             *        {content : 'b1',xtype:'1'}, //B1类
+             *        {content : 'b2',xtype:'2'}, //B2类
+             *    ]
+             *  });
+             * </code></pre>
              * @type {String}
              */
             xtype : {
@@ -8843,10 +9809,20 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * 控件宽度
+             * <pre><code>
+             * new Control({
+             *   width : 200 // 200,'200px','20%'
+             * });
+             * </code></pre>
              * @cfg {Number|String} width
              */
             /**
              * 控件宽度
+             * <pre><code>
+             *  control.set('width',200);
+             *  control.set('width','200px');
+             *  control.set('width','20%');
+             * </code></pre>
              * @type {Number|String}
              */
             width:{
@@ -8854,10 +9830,20 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * 控件宽度
+             * <pre><code>
+             * new Control({
+             *   height : 200 // 200,'200px','20%'
+             * });
+             * </code></pre>
              * @cfg {Number|String} height
              */
             /**
              * 控件宽度
+             * <pre><code>
+             *  control.set('height',200);
+             *  control.set('height','200px');
+             *  control.set('height','20%');
+             * </code></pre>
              * @type {Number|String}
              */
             height:{
@@ -8865,6 +9851,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * 控件根节点应用的样式
+             * <pre><code>
+             *  new Control({
+             *   elCls : 'test',
+             *   content : '内容',
+             *   render : '#t1'   //&lt;div id='t1'&gt;&lt;div class="test"&gt;内容&lt;/div&gt;&lt;/div&gt;
+             *  });
+             * </code></pre>
              * @cfg {String} elCls
              */
             /**
@@ -8876,41 +9869,56 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * @cfg {Object} elStyle
-						 * 控件根节点应用的css属性
-             *		var cfg = {elStyle : {width:'100px', height:'200px'}};
+			 * 控件根节点应用的css属性
+             *  <pre><code>
+             *    var cfg = {elStyle : {width:'100px', height:'200px'}};
+             *  </code></pre>
              */
             /**
              * 控件根节点应用的css属性，以键值对形式
              * @type {Object}
-						 * 示例:
-             *		{
-             *			width:'100px',
-             *			height:'200px'
-             *		}
+			 *  <pre><code>
+             *	 control.set('elStyle',	{
+             *		width:'100px',
+             *		height:'200px'
+             *   });
+             *  </code></pre>
              */
             elStyle:{
                 view:1
             },
             /**
              * @cfg {Object} elAttrs
-						 * 控件根节点应用的属性，以键值对形式:
-             *		{title : 'tips'}   
+             * @ignore
+			 * 控件根节点应用的属性，以键值对形式:
+             * <pre><code>
+             *  new Control({
+             *    elAttrs :{title : 'tips'}   
+             *  });
+             * </code></pre>
              */
             /**
              * @type {Object}
-						 * 控件根节点应用的属性，以键值对形式:
-             *		{ title : 'tips'}
+			 * 控件根节点应用的属性，以键值对形式:
+             * { title : 'tips'}
+             * @ignore
              */
             elAttrs:{
                 view:1
             },
             /**
              * 将控件插入到指定元素前
+             * <pre><code>
+             *  new Control({
+             *      elBefore : '#t1'
+             *  });
+             * </code></pre>
              * @cfg {jQuery} elBefore
              */
             /**
              * 将控件插入到指定元素前
              * @type {jQuery}
+             * @ignore
              */
             elBefore:{
                 // better named to renderBefore, too late !
@@ -9035,11 +10043,19 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * 指定控件的容器
+             * <pre><code>
+             *  new Control({
+             *    render : '#t1',
+             *    elCls : 'test',
+             *    content : '<span>123</span>'  //&lt;div id="t1"&gt;&lt;div class="test bui-xclass"&gt;&lt;span&gt;123&lt;/span&gt;&lt;/div&gt;&lt;/div&gt;
+             *  });
+             * </code></pre>
              * @cfg {jQuery} render
              */
             /**
              * 指定控件的容器
              * @type {jQuery}
+             * @ignore
              */
             render:{
                 view:1
@@ -9060,13 +10076,24 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
                 }
             },
-            
             /**
-             * 控件的可视方式,使用 css 'display' 或者 'visibility'
-             * @cfg {String} visibleMode
+             * 控件的可视方式,值为：
+             *  - 'display' 
+             *  - 'visibility'
+             *  <pre><code>
+             *   new Control({
+             *     visibleMode: 'visibility'
+             *   });
+             *  </code></pre>
+             * @cfg {String} [visibleMode = 'display']
              */
             /**
-             * 控件的可视方式,使用 css 'display' 或者 'visibility'
+             * 控件的可视方式,使用 css 
+             *  - 'display' 或者 
+             *  - 'visibility'
+             * <pre><code>
+             *  control.set('visibleMode','display')
+             * </code></pre>
              * @type {String}
              */
             visibleMode:{
@@ -9075,10 +10102,19 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * 控件是否可见
+             * <pre><code>
+             *  new Control({
+             *    visible : false   //隐藏
+             *  });
+             * </code></pre>
              * @cfg {Boolean} [visible = true]
              */
             /**
              * 控件是否可见
+             * <pre><code>
+             *  control.set('visible',true); //control.show();
+             *  control.set('visible',false); //control.hide();
+             * </code></pre>
              * @type {Boolean}
              * @default true
              */
@@ -9138,6 +10174,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             /**
              * 控件是否获取焦点
              * @type {Boolean}
+             * @readOnly
              */
             focused: {
                 view: 1
@@ -9147,6 +10184,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * 控件是否处于激活状态，按钮按下还未抬起
              * @type {Boolean}
              * @default false
+             * @protected
              */
             active: {
                 view: 1
@@ -9154,10 +10192,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             /**
              * 控件是否高亮
              * @cfg {Boolean} highlighted
+             * @ignore
              */
             /**
              * 控件是否高亮
              * @type {Boolean}
+             * @protected
              */
             highlighted: {
                 view: 1
@@ -9190,6 +10230,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             /**
              * 父控件
              * @cfg {BUI.Component.Controller} parent
+             * @ignore
              */
             /**
              * 父控件
@@ -9208,6 +10249,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             /**
              * 禁用控件
+             * <pre><code>
+             *  control.set('disabled',true); //==  control.disable();
+             *  control.set('disabled',false); //==  control.enable();
+             * </code></pre>
              * @type {Boolean}
              * @default false
              */

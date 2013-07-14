@@ -19,29 +19,62 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
     /**
      * 选择的数据集合
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
+     *   idField : 'value',
+     *   render : '#t1',
+     *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+     * });
+     * list.render();
+     * </code></pre>
      * @cfg {Array} items
      */
     /**
      * 选择的数据集合
+     * <pre><code>
+     *  list.set('items',items); //列表会直接替换内容
+     *  //等同于 
+     *  list.clearItems();
+     *  list.addItems(items);
+     * </code></pre>
      * @type {Array}
      */
     items:{
       view : true
     },
     /**
-     * 列表项的默认模板。
-     * @cfg {String} itemTpl
+     * 选项的默认key值
+     * @cfg {String} [idField = 'id']
      */
+    idField : {
+      value : 'id'
+    },
     /**
      * 列表项的默认模板,仅在初始化时传入。
      * @type {String}
-     * @readOnly
+     * @ignore
      */
     itemTpl : {
       view : true
     },
     /**
      * 列表项的渲染函数，应对列表项之间有很多差异时
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   itemTplRender : function(item){
+     *     if(item.type == '1'){
+     *       return '&lt;li&gt;&lt;img src="xxx.jpg"/&gt;'+item.text+'&lt;/li&gt;'
+     *     }else{
+     *       return '&lt;li&gt;item.text&lt;/li&gt;'
+     *     }
+     *   },
+     *   idField : 'value',
+     *   render : '#t1',
+     *   items : [{value : '1',text : '1',type : '0'},{value : '2',text : '2',type : '1'}]
+     * });
+     * list.render();
+     * </code></pre>
      * @type {Function}
      */
     itemTplRender : {
@@ -49,6 +82,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 子控件各个状态默认采用的样式
+     * <pre><code>
+     * var list = new List.SimpleList({
+     *   render : '#t1',
+     *   itemStatusCls : {
+     *     selected : 'active', //默认样式为list-item-selected,现在变成'active'
+     *     hover : 'hover' //默认样式为list-item-hover,现在变成'hover'
+     *   },
+     *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
+     * });
+     * list.render();
+     * </code></pre>
      * see {@link BUI.Component.Controller#property-statusCls}
      * @type {Object}
      */
@@ -77,6 +121,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
     /**
      * 获取选项的数量
+     * <pre><code>
+     *   var count = list.getItemCount();
+     * </code></pre>
      * @return {Number} 选项数量
      */
     getItemCount : function () {
@@ -87,12 +134,18 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @param {*} item 字段名
      * @param {String} field 字段名
      * @return {*} 字段的值
+     * @protected
      */
     getValueByField : function(item,field){
 
     },
     /**
      * 获取所有选项值，如果选项是子控件，则是所有子控件
+     * <pre><code>
+     *   var items = list.getItems();
+     *   //等同
+     *   list.get(items);
+     * </code></pre>
      * @return {Array} 选项值集合
      */
     getItems : function () {
@@ -100,6 +153,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 获取第一项
+     * <pre><code>
+     *   var item = list.getFirstItem();
+     *   //等同
+     *   list.getItemAt(0);
+     * </code></pre>
      * @return {Object|BUI.Component.Controller} 选项值（子控件）
      */
     getFirstItem : function () {
@@ -107,6 +165,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 获取最后一项
+     * <pre><code>
+     *   var item = list.getLastItem();
+     *   //等同
+     *   list.getItemAt(list.getItemCount()-1);
+     * </code></pre>
      * @return {Object|BUI.Component.Controller} 选项值（子控件）
      */
     getLastItem : function () {
@@ -114,6 +177,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 通过索引获取选项值（子控件）
+     * <pre><code>
+     *   var item = list.getItemAt(0); //获取第1个
+     *   var item = list.getItemAt(2); //获取第3个
+     * </code></pre>
      * @param  {Number} index 索引值
      * @return {Object|BUI.Component.Controller}  选项（子控件）
      */
@@ -122,6 +189,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 通过Id获取选项，如果是改变了idField则通过改变的idField来查找选项
+     * <pre><code>
+     *   //如果idField = 'id'
+     *   var item = list.getItem('2'); 
+     *   //等同于
+     *   list.findItemByField('id','2');
+     *
+     *   //如果idField = 'value'
+     *   var item = list.getItem('2'); 
+     *   //等同于
+     *   list.findItemByField('value','2');
+     * </code></pre>
      * @param {String} id 编号
      * @return {Object|BUI.Component.Controller} 选项（子控件）
      */
@@ -131,6 +209,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 返回指定项的索引
+     * <pre><code>
+     * var index = list.indexOf(item); //返回索引，不存在则返回-1
+     * </code></pre>
      * @param  {Object|BUI.Component.Controller} 选项
      * @return {Number}   项的索引值
      */
@@ -139,6 +220,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 添加多条选项
+     * <pre><code>
+     * var items = [{id : '1',text : '1'},{id : '2',text : '2'}];
+     * list.addItems(items);
+     * </code></pre>
      * @param {Array} items 记录集合（子控件配置项）
      */
     addItems : function (items) {
@@ -149,6 +234,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 插入多条记录
+     * <pre><code>
+     * var items = [{id : '1',text : '1'},{id : '2',text : '2'}];
+     * list.addItemsAt(items,0); // 在最前面插入
+     * list.addItemsAt(items,2); //第三个位置插入
+     * </code></pre>
      * @param  {Array} items 多条记录
      * @param  {Number} start 起始位置
      */
@@ -159,7 +249,12 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       });
     },
     /**
-     * 更新列表项
+     * 更新列表项，修改选项值后，DOM跟随变化
+     * <pre><code>
+     *   var item = list.getItem('2');
+     *   list.text = '新内容'; //此时对应的DOM不会变化
+     *   list.updateItem(item); //DOM进行相应的变化
+     * </code></pre>
      * @param  {Object} item 选项值
      */
     updateItem : function(item){
@@ -167,6 +262,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 添加选项,添加在控件最后
+     * 
+     * <pre><code>
+     * list.addItem({id : '3',text : '3',type : '0'});
+     * </code></pre>
+     * 
      * @param {Object|BUI.Component.Controller} item 选项，子控件配置项、子控件
      * @return {Object|BUI.Component.Controller} 子控件或者选项记录
      */
@@ -175,6 +275,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 在指定位置添加选项
+     * <pre><code>
+     * list.addItemAt({id : '3',text : '3',type : '0'},0); //第一个位置
+     * </code></pre>
      * @param {Object|BUI.Component.Controller} item 选项，子控件配置项、子控件
      * @param {Number} index 索引
      * @return {Object|BUI.Component.Controller} 子控件或者选项记录
@@ -203,6 +306,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 清除所有选项,不等同于删除全部，此时不会触发删除事件
+     * <pre><code>
+     * list.clearItems(); 
+     * //等同于
+     * list.set('items',items);
+     * </code></pre>
      */
     clearItems : function(){
       var _self = this,
@@ -212,6 +320,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 删除选项
+     * <pre><code>
+     * var item = list.getItem('1');
+     * list.removeItem(item);
+     * </code></pre>
      * @param {Object|BUI.Component.Controller} item 选项（子控件）
      */
     removeItem : function (item) {
@@ -219,6 +331,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 移除选项集合
+     * <pre><code>
+     * var items = list.getSelection();
+     * list.removeItems(items);
+     * </code></pre>
      * @param  {Array} items 选项集合
      */
     removeItems : function(items){
@@ -230,6 +346,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 通过索引删除选项
+     * <pre><code>
+     * list.removeItemAt(0); //删除第一个
+     * </code></pre>
      * @param  {Number} index 索引
      */
     removeItemAt : function (index) {
@@ -292,8 +411,8 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 更新列表项
-     * @protected
      * @param  {Object} item 选项值
+     * @ignore
      */
     updateItem : function(item){
       var _self = this, 
@@ -313,6 +432,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 移除选项
      * @param  {jQuery} element
+     * @ignore
      */
     removeItem:function(item,element){
       element = element || this.findElement(item);
@@ -321,6 +441,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 获取列表项的容器
      * @return {jQuery} 列表项容器
+     * @protected
      */
     getItemContainer : function  () {
       return this.get('itemContainer') || this.get('el');
@@ -497,6 +618,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 在DOM节点上存储数据的字段
      * @type {String}
+     * @protected
      */
     dataField : {
         view:true,
@@ -505,20 +627,48 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 选项所在容器，如果未设定，使用 el
      * @type {jQuery}
+     * @protected
      */
     itemContainer : {
         view : true
     },
     /**
-     * 选项的值
-     * @type {Object}
+     * 选项状态对应的选项值
+     * 
+     *   - 此字段用于将选项记录的值跟显示的DOM状态相对应
+     *   - 例如：下面记录中 <code> checked : true </code>，可以使得此记录对应的DOM上应用对应的状态(默认为 'list-item-checked')
+     *     <pre><code>{id : '1',text : 1,checked : true}</code></pre>
+     *   - 当更改DOM的状态时，记录中对应的字段属性也会跟着变化
+     * <pre><code>
+     *   var list = new List.SimpleList({
+     *   render : '#t1',
+     *   idField : 'id', //自定义样式名称
+     *   itemStatusFields : {
+     *     checked : 'checked',
+     *     disabled : 'disabled'
+     *   },
+     *   items : [{id : '1',text : '1',checked : true},{id : '2',text : '2',disabled : true}]
+     * });
+     * list.render(); //列表渲染后，会自动带有checked,和disabled对应的样式
+     *
+     * var item = list.getItem('1');
+     * list.hasStatus(item,'checked'); //true
+     *
+     * list.setItemStatus(item,'checked',false);
+     * list.hasStatus(item,'checked');  //false
+     * item.checked;                    //false
+     * 
+     * </code></pre>
+     * ** 注意 **
+     * 此字段跟 {@link #itemStatusCls} 一起使用效果更好，可以自定义对应状态的样式
+     * @cfg {Object} itemStatusFields
      */
     itemStatusFields : {
       value : {}
     },
     /**
      * 项的样式，用来获取子项
-     * @type {Object}
+     * @cfg {Object} itemCls
      */
     itemCls : {
       view : true
@@ -526,19 +676,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 获取项的文本，默认获取显示的文本
      * @type {Object}
+     * @protected
      */
     textGetter : {
 
-    },
-    /**
-     * 选中项的样式
-     * @type {String}
-     */
-    selectedCls : {
-      valueFn : function(){
-        var itemCls = this.get('itemCls') || 'ks'
-        return  itemCls + '-selected';
-      }
     },
     events : {
       value : {
@@ -677,6 +818,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       return item[field];
     },
     /**
+     * 更改状态值对应的字段
+     * @protected
+     * @param  {String} status 状态名
+     * @return {String} 状态对应的字段
+     */
+    getStatusField : function(status){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields');
+      return itemStatusFields[status];
+    },
+    /**
      * 设置记录状态值
      * @protected
      * @param  {Object} item  记录
@@ -691,6 +843,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
         item[field] = value;
       }
     },
+    /**
+     * @ignore
+     * 获取选项文本
+     */
     getItemText : function(item){
       var _self = this,
           textGetter = _self.get('textGetter');
@@ -707,6 +863,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 删除项
      * @param  {Object} item 选项记录
+     * @ignore
      */
     removeItem : function (item) {
       var _self = this,
@@ -724,6 +881,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * 在指定位置添加选项,选项值为一个对象
      * @param {Object} item 选项
      * @param {Number} index 索引
+     * @ignore
      */
     addItemAt : function(item,index) {
       var _self = this,
@@ -740,6 +898,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * 直接在View上显示
      * @param {Object} item 选项
      * @param {Number} index 索引
+     * 
      */
     addItemToView : function(item,index){
       var _self = this,
@@ -749,6 +908,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * 更新列表项
      * @param  {Object} item 选项值
+     * @ignore
      */
     updateItem : function(item){
       var _self = this,
@@ -759,6 +919,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * 获取所有选项
      * @return {Array} 选项集合
      * @override
+     * @ignore
      */
     getItems : function () {
       
@@ -775,6 +936,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 根据状态获取选项
+     * <pre><code>
+     *   //设置状态
+     *   list.setItemStatus(item,'active');
+     *   
+     *   //获取'active'状态的选项
+     *   list.getItemsByStatus('active');
+     * </code></pre>
      * @param  {String} status 状态名
      * @return {Array}  选项组集合
      */
@@ -789,6 +957,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 查找指定的项的DOM结构
+     * <pre><code>
+     *   var item = list.getItem('2'); //获取选项
+     *   var element = list.findElement(item);
+     *   $(element).addClass('xxx');
+     * </code></pre>
      * @param  {Object} item 
      * @return {HTMLElement} element
      */
@@ -825,7 +998,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 设置所有选项选中
-     * @override
+     * @ignore
      */
     setAllSelection : function(){
       var _self = this,
@@ -833,8 +1006,16 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.setSelection(items);
     },
     /**
+     * 选项是否被选中
+     * <pre><code>
+     *   var item = list.getItem('2');
+     *   if(list.isItemSelected(item)){
+     *     //TO DO
+     *   }
+     * </code></pre>
      * @override
-     * @ignore
+     * @param  {Object}  item 选项
+     * @return {Boolean}  是否选中
      */
     isItemSelected : function(item,element){
       var _self = this;
@@ -844,6 +1025,12 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 是否选项被禁用
+     * <pre><code>
+     * var item = list.getItem('2');
+     * if(list.isItemDisabled(item)){ //如果选项禁用
+     *   //TO DO
+     * }
+     * </code></pre>
      * @param {Object} item 选项
      * @return {Boolean} 选项是否禁用
      */
@@ -852,6 +1039,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 设置选项禁用
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemDisabled(item,true);//设置选项禁用，会在DOM上添加 itemCls + 'disabled'的样式
+     * list.setItemDisabled(item,false); //取消禁用，可以用{@link #itemStatusCls} 来替换样式
+     * </code></pre>
      * @param {Object} item 选项
      */
     setItemDisabled : function(item,disabled){
@@ -867,6 +1059,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * 获取选中的项的值
      * @override
      * @return {Array} 
+     * @ignore
      */
     getSelection : function(){
       var _self = this,
@@ -889,6 +1082,14 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 选项是否存在某种状态
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemStatus(item,'active',true);
+     * list.hasStatus(item,'active'); //true
+     *
+     * list.setItemStatus(item,'active',false);
+     * list.hasStatus(item,'false'); //true
+     * </code></pre>
      * @param {*} item 选项
      * @param {String} status 状态名称，如selected,hover,open等等
      * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
@@ -900,7 +1101,15 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       return _self.get('view').hasStatus(status,element);
     },
     /**
-     * 设置选项状态
+     * 设置选项状态,可以设置任何自定义状态
+     * <pre><code>
+     * var item = list.getItem('2');
+     * list.setItemStatus(item,'active',true);
+     * list.hasStatus(item,'active'); //true
+     *
+     * list.setItemStatus(item,'active',false);
+     * list.hasStatus(item,'false'); //true
+     * </code></pre>
      * @param {*} item 选项
      * @param {String} status 状态名称
      * @param {Boolean} value 状态值，true,false
@@ -1143,8 +1352,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.afterSelected(item,selected,element);
     },
     /**
+     * 选项是否被选中
      * @override
-     * @ignore
+     * @param  {*}  item 选项
+     * @return {Boolean}  是否选中
      */
     isItemSelected : function(item){
         return item ? item.get('selected') : false;

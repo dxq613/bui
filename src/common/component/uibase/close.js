@@ -70,11 +70,20 @@ define('bui/component/uibase/close',function () {
   {
       /**
       * 关闭按钮的默认模版
+      * <pre><code>
+      *   var overlay = new Overlay({
+      *     closeTpl : '<a href="#" title="close">x</a>',
+      *     closable : true,
+      *     trigger : '#t1'
+      *   });
+      *   overlay.render();
+      * </code></pre>
       * @cfg {String} closeTpl
       */
       /**
       * 关闭按钮的默认模版
       * @type {String}
+      * @protected
       */
       closeTpl:{
         view : true
@@ -100,7 +109,7 @@ define('bui/component/uibase/close',function () {
           view:1
       },
       /**
-       * 关闭时隐藏还是移除DOM结构
+       * 关闭时隐藏还是移除DOM结构<br/>
        * default "hide". 可以设置 "destroy" ，当点击关闭按钮时移除（destroy)控件
        * @cfg {String} [closeAction = 'hide']
        */
@@ -108,9 +117,10 @@ define('bui/component/uibase/close',function () {
        * 关闭时隐藏还是移除DOM结构
        * default "hide".可以设置 "destroy" ，当点击关闭按钮时移除（destroy)控件
        * @type {String}
+       * @protected
        */
       closeAction:{
-          value:HIDE
+        value:HIDE
       }
   };
 

@@ -111,6 +111,9 @@ define('bui/component/uibase/position',function () {
          */
         /**
          * 水平坐标
+         * <pre><code>
+         *     overlay.set('x',100);
+         * </code></pre>
          * @type {Number}
          */
         x:{
@@ -122,6 +125,9 @@ define('bui/component/uibase/position',function () {
          */
         /**
          * 垂直坐标
+         * <pre><code>
+         *     overlay.set('y',100);
+         * </code></pre>
          * @type {Number}
          */
         y:{
@@ -130,6 +136,7 @@ define('bui/component/uibase/position',function () {
         /**
          * 相对于父元素的水平位置
          * @type {Number}
+         * @protected
          */
         left : {
             view:1
@@ -137,16 +144,27 @@ define('bui/component/uibase/position',function () {
         /**
          * 相对于父元素的垂直位置
          * @type {Number}
+         * @protected
          */
         top : {
             view:1
         },
         /**
          * 水平和垂直坐标
+         * <pre><code>
+         * var overlay = new Overlay({
+         *   xy : [100,100],
+         *   trigger : '#t1',
+         *   srcNode : '#c1'
+         * });
+         * </code></pre>
          * @cfg {Number[]} xy
          */
         /**
          * 水平和垂直坐标
+         * <pre><code>
+         *     overlay.set('xy',[100,100]);
+         * </code></pre>
          * @type {Number[]}
          */
         xy:{
@@ -173,10 +191,18 @@ define('bui/component/uibase/position',function () {
         },
         /**
          * z-index value.
+         * <pre><code>
+         *   var overlay = new Overlay({
+         *       zIndex : '1000'
+         *   });
+         * </code></pre>
          * @cfg {Number} zIndex
          */
         /**
          * z-index value.
+         * <pre><code>
+         *   overlay.set('zIndex','1200');
+         * </code></pre>
          * @type {Number}
          */
         zIndex:{
@@ -186,7 +212,7 @@ define('bui/component/uibase/position',function () {
          * Positionable element is by default visible false.
          * For compatibility in overlay and PopupMenu.
          * @default false
-         * @protected
+         * @ignore
          */
         visible:{
             view:true,
@@ -206,11 +232,11 @@ define('bui/component/uibase/position',function () {
          * @param {Number|Number[]} x
          * @param {Number} [y]
          * @example
-         * <code>
+         * <pre><code>
          * move(x, y);
          * move(x);
          * move([x,y])
-         * </code>
+         * </code></pre>
          */
         move:function (x, y) {
             var self = this;

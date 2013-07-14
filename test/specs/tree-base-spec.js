@@ -1,8 +1,8 @@
 /*
 */
 BUI.use('bui/tree/treelist',function (TreeList) {
-  var nodes = [
-      {text : '1',id : '1',leaf : false},
+  var data = [
+      {text : '1',id : '1',leaf : false,children: []},
       {text : '2',id : '2',expanded : true,children : [
           {text : '21',id : '21',children : [{text : '211',id : '211'},{text : '212',id : '212'}]},
           {text : '22',id : '22'}
@@ -12,11 +12,18 @@ BUI.use('bui/tree/treelist',function (TreeList) {
     ];
   var tree = new TreeList({
     render : '#t1',
-    nodes : nodes
+    root : {
+      id : '0',
+      text : '0',
+      expanded : true,
+      children : data
+    },
+    showRoot : true
   });
   tree.render();
 
   var el = tree.get('el');
+  var nodes = tree.get('root').children;
 
   describe('测试tree生成',function(){
 
@@ -24,9 +31,9 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       expect(el.length).not.toBe(0);
     });
     it('测试初始化所有数据',function(){
-      var n1 = tree.getFirstItem();
+      var n1 = tree.getItem('1');
       expect(n1.leaf).toBe(false);
-      var n2 = tree.getItemAt(1);
+      var n2 = tree.getItem('2');
       expect(n2.leaf).toBe(false);
       expect(n2.children[0].level).toBe(2);
       expect(n2.children[0].children[0].level).toBe(3);
@@ -34,8 +41,10 @@ BUI.use('bui/tree/treelist',function (TreeList) {
     });
 
     it('测试树节点,测试叶节点生成',function(){
+      
       BUI.each(nodes,function(node){
-        var element = $(tree.findElement(node));
+        var element = tree.findElement(node);
+        element = $(element);
         expect(element.length).not.toBe(0);
         if(node.leaf){
           expect(element.find('.x-tree-elbow-leaf').length).toBe(1);
@@ -54,17 +63,29 @@ BUI.use('bui/tree/treelist',function (TreeList) {
   });
 
   describe('测试tree操作',function(){
-
+    var showRoot = tree.get('showRoot');
     it('重置数据',function(){
       tree.set('nodes',[]);
-      expect(el.find('li').length).toBe(0);
+      if(showRoot){
+        expect(el.find('li').length).toBe(1);
+      }else{
+        expect(el.find('li').length).toBe(0);
+      }
+      
       tree.set('nodes',nodes);
       tree.collapseAll();
-      expect(el.find('li').length).toBe(nodes.length);
+      if(showRoot){
+        expect(el.find('li').length).toBe(1);
+      }else{
+        expect(el.find('li').length).toBe(nodes.length);
+      }
     });
 
     it('测试展开',function(){
-      var node = tree.getItem('2'),
+      if(showRoot){
+        tree.expandNode('0');
+      }
+      var node = tree.findNode('2'),
         count = tree.getItemCount(),
         children = node.children,
         nodeEl = tree.findElement(node);
@@ -82,11 +103,15 @@ BUI.use('bui/tree/treelist',function (TreeList) {
     });
 
     it('测试缩进',function(){
+      var append = 0;
+      if(showRoot){
+        append = 1;
+      }
       var node = tree.getItem('21');
       tree.expandNode(node);
       var sub = node.children[0],
         element = tree.findElement(sub);
-      expect($(element).find('.x-tree-elbow-empty').length).toBe(sub.level);
+      expect($(element).find('.x-tree-elbow-empty').length).toBe(sub.level + append);
     });
 
     it('测试折叠',function(){
@@ -138,6 +163,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
     });
 
   });
+
 });
 
 BUI.use('bui/tree/treelist',function (TreeList) {
@@ -178,37 +204,11 @@ BUI.use('bui/tree/treelist',function (TreeList) {
     });
 
     function addNode(node,subNode,index){
-      var slibings;
-      if(node == null){
-        slibings = tree.get('nodes');
-      }else{
-        slibings = node.children = node.children || [];
-      }
-      
-      if(index == null){
-        slibings.push(subNode);
-      }else{
-        BUI.Array.addAt(slibings,subNode,index);
-      }
-      //
-      if(node){
-        node.leaf = false;
-      }
-      
-      subNode.parent = node;
-      subNode.leaf = true;
-      subNode.level = node ? node.level + 1 : 1;
-      tree._addNode(subNode,index);
+      return tree.get('store').add(subNode,node,index)
     }
 
     function removeNode(node){
-      var parent = node.parent;
-      BUI.Array.remove(parent.children,node);
-      if(parent.children.length === 0){
-        parent.leaf = true;
-      }
-      tree._removeNode(node);
-      node.parent = null;
+      tree.get('store').remove(node);
       
     }
 
@@ -237,7 +237,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
           subNode = {id:'31',text : '31'},
           element = tree.findElement(node);
         expect($(element).find('.x-tree-elbow-dir').length).toBe(0);
-        addNode(node,subNode,0);
+        subNode = addNode(node,subNode,0);
         waits(100);
         runs(function(){
           expect($(element).find('.x-tree-elbow-dir').length).toBe(1);
@@ -251,7 +251,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
           subNode = {id : '213',text: '213'};
 
         expect($(sblingElement).find('.x-tree-elbow-end').length).toBe(1);
-        addNode(node,subNode);
+        subNode = addNode(node,subNode);
 
         waits(100);
         runs(function(){
@@ -265,7 +265,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
         var node = tree.getItem('21'),
           subNode = {id : '210',text: '210'};
 
-        addNode(node,subNode,0);
+        subNode = addNode(node,subNode,0);
         waits(100);
         runs(function(){
           var subElement = tree.findElement(subNode);

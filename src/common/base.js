@@ -68,7 +68,73 @@ define('bui/base',['bui/observable'],function(require){
   }
 
   /**
-   * 基础类，提供设置获取属性，提供事件支持
+   * 基础类，此类提供以下功能
+   *  - 提供设置获取属性
+   *  - 提供事件支持
+   *  - 属性变化时会触发对应的事件
+   *  - 将配置项自动转换成属性
+   *
+   * ** 创建类，继承BUI.Base类 **
+   * <pre><code>
+   *   var Control = function(cfg){
+   *     Control.superclass.constructor.call(this,cfg); //调用BUI.Base的构造方法，将配置项变成属性
+   *   };
+   *
+   *   BUI.extend(Control,BUI.Base);
+   * </code></pre>
+   *
+   * ** 声明默认属性 ** 
+   * <pre><code>
+   *   Control.ATTRS = {
+   *     id : {
+   *       value : 'id' //value 是此属性的默认值
+   *     },
+   *     renderTo : {
+   *      
+   *     },
+   *     el : {
+   *       valueFn : function(){                 //第一次调用的时候将renderTo的DOM转换成el属性
+   *         return $(this.get('renderTo'));
+   *       }
+   *     },
+   *     text : {
+   *       getter : function(){ //getter 用于获取值，而不是设置的值
+   *         return this.get('el').val();
+   *       },
+   *       setter : function(v){ //不仅仅是设置值，可以进行相应的操作
+   *         this.get('el').val(v);
+   *       }
+   *     }
+   *   };
+   * </code></pre>
+   *
+   * ** 声明类的方法 ** 
+   * <pre><code>
+   *   BUI.augment(Control,{
+   *     getText : function(){
+   *       return this.get('text');   //可以用get方法获取属性值
+   *     },
+   *     setText : function(txt){
+   *       this.set('text',txt);      //使用set 设置属性值
+   *     }
+   *   });
+   * </code></pre>
+   *
+   * ** 创建对象 ** 
+   * <pre><code>
+   *   var c = new Control({
+   *     id : 'oldId',
+   *     text : '测试文本',
+   *     renderTo : '#t1'
+   *   });
+   *
+   *   var el = c.get(el); //$(#t1);
+   *   el.val(); //text的值 ： '测试文本'
+   *   c.set('text','修改的值');
+   *   el.val();  //'修改的值'
+   *
+   *   c.set('id','newId') //会触发2个事件： beforeIdChange,afterIdChange 2个事件 ev.newVal 和ev.prevVal标示新旧值
+   * </code></pre>
    * @class BUI.Base
    * @abstract
    * @extends BUI.Observable
@@ -102,6 +168,7 @@ define('bui/base',['bui/observable'],function(require){
   {
     /**
      * 添加属性定义
+     * @protected
      * @param {String} name       属性名
      * @param {Object} attrConfig 属性定义
      * @param {Boolean} overrides 是否覆盖字段
@@ -120,6 +187,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 添加属性定义
+     * @protected
      * @param {Object} attrConfigs  An object with attribute name/configuration pairs.
      * @param {Object} initialValues user defined initial values
      * @param {Boolean} overrides 是否覆盖字段
@@ -144,6 +212,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 是否包含此属性
+     * @protected
      * @param  {String}  name 值
      * @return {Boolean} 是否包含
      */
@@ -152,6 +221,7 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 获取默认的属性值
+     * @protected
      * @return {Object} 属性值的键值对
      */
     getAttrs : function(){
@@ -159,13 +229,41 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 获取属性名/属性值键值对
+     * @protected
      * @return {Object} 属性对象
      */
     getAttrVals: function(){
       return ensureNonEmpty(this, '__attrVals', true);
     },
     /**
-     * 获取属性值
+     * 获取属性值，所有的配置项和属性都可以通过get方法获取
+     * <pre><code>
+     *  var control = new Control({
+     *   text : 'control text'
+     *  });
+     *  control.get('text'); //control text
+     *
+     *  control.set('customValue','value'); //临时变量
+     *  control.get('customValue'); //value
+     * </code></pre>
+     * ** 属性值/配置项 **
+     * <pre><code> 
+     *   Control.ATTRS = { //声明属性值
+     *     text : {
+     *       valueFn : function(){},
+     *       value : 'value',
+     *       getter : function(v){} 
+     *     }
+     *   };
+     *   var c = new Control({
+     *     text : 'text value'
+     *   });
+     *   //get 函数取的顺序为：是否有修改值（配置项、set)、默认值（第一次调用执行valueFn)，如果有getter，则将值传入getter返回
+     *
+     *   c.get('text') //text value
+     *   c.set('text','new text');//修改值
+     *   c.get('text');//new text
+     * </code></pre>
      * @param  {String} name 属性名
      * @return {Object} 属性值
      */
@@ -195,12 +293,14 @@ define('bui/base',['bui/observable'],function(require){
     },
   	/**
   	* @清理所有属性值
+    * @protected 
   	*/
   	clearAttrVals : function(){
   		this.__attrVals = {};
   	},
     /**
      * 移除属性定义
+     * @protected
      */
     removeAttr: function (name) {
         var _self = this;
@@ -213,7 +313,18 @@ define('bui/base',['bui/observable'],function(require){
         return self;
     },
     /**
-     * 设置属性值，会触发before+name+change,和 after+name+change事件
+     * 设置属性值，会触发before+Name+Change,和 after+Name+Change事件
+     * <pre><code>
+     *  control.on('beforeTextChange',function(ev){
+     *    var newVal = ev.newVal,
+     *      attrName = ev.attrName,
+     *      preVal = ev.prevVal;
+     *
+     *    //TO DO
+     *  });
+     *  control.set('text','new text');  //此时触发 beforeTextChange,afterTextChange
+     *  control.set('text','modify text',{silent : true}); //此时不触发事件
+     * </code></pre>
      * @param {String|Object} name  属性名
      * @param {Object} value 值
      * @param {Object} opts 配置项
@@ -237,9 +348,11 @@ define('bui/base',['bui/observable'],function(require){
     },
     /**
      * 设置属性，不触发事件
+     * <pre><code>
+     *  control.setInternal('text','text');//此时不触发事件
+     * </code></pre>
      * @param  {String} name  属性名
      * @param  {Object} value 属性值
-     * @param  {Object} opts  选项
      * @return {Boolean|undefined}   如果值无效则返回false,否则返回undefined
      */
     setInternal : function(name, value, opts){

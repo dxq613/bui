@@ -313,6 +313,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         /**
          * 控件根节点属性
          * see {@link BUI.Component.Controller#property-elAttrs}
+         * @ignore
          */
         elAttrs: {
         },
@@ -332,6 +333,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         /**
          * 控件在指定元素内部渲染
          * see {@link BUI.Component.Controller#property-render}
+         * @ignore
          */
         render: {},
         /**

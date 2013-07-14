@@ -7,6 +7,21 @@ define('bui/component/uibase/bindable',function(){
 	
 	/**
 		* bindable extension class.
+		* <pre><code>
+		*   BUI.use(['bui/list','bui/data','bui/mask'],function(List,Data,Mask){
+		*     var store = new Data.Store({
+		*       url : 'data/xx.json'
+		*     });
+		*   	var list = new List.SimpleList({
+		*  	    render : '#l1',
+		*  	    store : store,
+		*  	    loadMask : new Mask.LoadMask({el : '#t1'})
+		*     });
+		*
+		*     list.render();
+		*     store.load();
+		*   });
+		* </code></pre>
 		* 使控件绑定store，处理store的事件 {@link BUI.Data.Store}
 		* @class BUI.Component.UIBase.Bindable
 		*/
@@ -18,10 +33,26 @@ define('bui/component/uibase/bindable',function(){
 	{
 		/**
 		* 绑定 {@link BUI.Data.Store}的事件
+		* <pre><code>
+		*  var store = new Data.Store({
+		*   url : 'data/xx.json',
+		*   autoLoad : true
+		*  });
+		*
+		*  var list = new List.SimpleList({
+		*  	 render : '#l1',
+		*  	 store : store
+		*  });
+		*
+		*  list.render();
+		* </code></pre>
 		* @cfg {BUI.Data.Store} store
 		*/
 		/**
 		* 绑定 {@link BUI.Data.Store}的事件
+		* <pre><code>
+		*  var store = list.get('store');
+		* </code></pre>
 		* @type {BUI.Data.Store}
 		*/
 		store : {
@@ -29,11 +60,27 @@ define('bui/component/uibase/bindable',function(){
 		},
 		/**
 		* 加载数据时，是否显示等待加载的屏蔽层
+		* <pre><code>
+		*   BUI.use(['bui/list','bui/data','bui/mask'],function(List,Data,Mask){
+		*     var store = new Data.Store({
+		*       url : 'data/xx.json'
+		*     });
+		*   	var list = new List.SimpleList({
+		*  	    render : '#l1',
+		*  	    store : store,
+		*  	    loadMask : new Mask.LoadMask({el : '#t1'})
+		*     });
+		*
+		*     list.render();
+		*     store.load();
+		*   });
+		* </code></pre>
 		* @cfg {Boolean|Object} loadMask
 		*/
 		/**
 		* 加载数据时，是否显示等待加载的屏蔽层
 		* @type {Boolean|Object} 
+		* @ignore
 		*/
 		loadMask : {
 			value : false

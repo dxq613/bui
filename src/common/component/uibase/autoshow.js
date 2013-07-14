@@ -14,8 +14,17 @@ define('bui/component/uibase/autoshow',function () {
   }
 
   autoShow.ATTRS = {
+
     /**
      * 触发显示控件的DOM选择器
+     * <pre><code>
+     *  var overlay = new Overlay({ //点击#t1时显示，点击#t1,overlay之外的元素隐藏
+     *    trigger : '#t1',
+     *    autoHide : true,
+     *    content : '悬浮内容'
+     *  });
+     *  overlay.render();
+     * </code></pre>
      * @cfg {HTMLElement|String|jQuery} trigger
      */
     /**
@@ -27,11 +36,21 @@ define('bui/component/uibase/autoshow',function () {
     },
     /**
      * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
-     * @cfg {Boolean} delegateTigger
+     * <pre><code>
+     *  var overlay = new Overlay({ //点击.t1(无论创建控件时.t1是否存在)时显示，点击.t1,overlay之外的元素隐藏
+     *    trigger : '.t1',
+     *    autoHide : true,
+     *    delegateTigger : true, //使用委托的方式触发显示控件
+     *    content : '悬浮内容'
+     *  });
+     *  overlay.render();
+     * </code></pre>
+     * @cfg {Boolean} [delegateTigger = false]
      */
     /**
      * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
      * @type {Boolean}
+     * @ignore
      */
     delegateTigger : {
       value : false
@@ -39,10 +58,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * 选择器是否始终跟随触发器对齐
      * @cfg {Boolean} autoAlign
+     * @ignore
      */
     /**
      * 选择器是否始终跟随触发器对齐
      * @type {Boolean}
+     * @protected
      */
     autoAlign :{
       value : true
@@ -50,6 +71,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * 控件显示时由此trigger触发，当配置项 trigger 选择器代表多个DOM 对象时，
      * 控件可由多个DOM对象触发显示。
+     * <pre><code>
+     *  overlay.on('show',function(){
+     *    var curTrigger = overlay.get('curTrigger');
+     *    //TO DO
+     *  });
+     * </code></pre>
      * @type {jQuery}
      * @readOnly
      */
@@ -59,10 +86,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * 触发显示时的回调函数
      * @cfg {Function} triggerCallback
+     * @ignore
      */
     /**
      * 触发显示时的回调函数
      * @type {Function}
+     * @ignore
      */
     triggerCallback : {
       value : function (ev) {
@@ -71,6 +100,17 @@ define('bui/component/uibase/autoshow',function () {
     },
     /**
      * 显示菜单的事件
+     *  <pre><code>
+     *    var overlay = new Overlay({ //移动到#t1时显示，移动出#t1,overlay之外控件隐藏
+     *      trigger : '#t1',
+     *      autoHide : true,
+     *      triggerEvent :'mouseover',
+     *      autoHideType : 'leave',
+     *      content : '悬浮内容'
+     *    });
+     *    overlay.render();
+     * 
+     *  </code></pre>
      * @cfg {String} [triggerEvent='click']
      * @default 'click'
      */
@@ -78,6 +118,7 @@ define('bui/component/uibase/autoshow',function () {
      * 显示菜单的事件
      * @type {String}
      * @default 'click'
+     * @ignore
      */
     triggerEvent : {
       value:'click'
@@ -85,10 +126,12 @@ define('bui/component/uibase/autoshow',function () {
     /**
      * 因为触发元素发生改变而导致控件隐藏
      * @cfg {String} triggerHideEvent
+     * @ignore
      */
     /**
      * 因为触发元素发生改变而导致控件隐藏
      * @type {String}
+     * @ignore
      */
     triggerHideEvent : {
 
@@ -97,6 +140,12 @@ define('bui/component/uibase/autoshow',function () {
       value : {
         /**
          * 当触发器（触发选择器出现）发生改变时，经常用于一个选择器对应多个触发器的情况
+         * <pre><code>
+         *  overlay.on('triggerchange',function(ev){
+         *    var curTrigger = ev.curTrigger;
+         *    overlay.set('content',curTrigger.html());
+         *  });
+         * </code></pre>
          * @event
          * @param {Object} e 事件对象
          * @param {jQuery} e.prevTrigger 之前触发器，可能为null

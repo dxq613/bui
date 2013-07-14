@@ -20,21 +20,21 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
     /**
      * 是否允许键盘导航
-     * @type {Boolean}
+     * @cfg {Boolean} [allowKeyNav = true]
      */
     allowKeyNav : {
       value : true
     },
     /**
      * 导航使用的事件
-     * @type {String}
+     * @cfg {String} [navEvent = 'keydown']
      */
     navEvent : {
       value : 'keydown'
     },
     /**
      * 当获取事件的DOM是 input,textarea,select等时，不处理键盘导航
-     * @type {Object}
+     * @cfg {Object} [ignoreInputFields='true']
      */
     ignoreInputFields : {
       value : true

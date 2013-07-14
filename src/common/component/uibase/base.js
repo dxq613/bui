@@ -224,22 +224,35 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   UIBase.ATTRS = 
   {
-    /**
-     * 是否自动渲染,如果不自动渲染，需要用户调用 render()方法
-     * @cfg {Boolean} autoRender
-     */
+    
     
     /**
      * 用户传入的配置项
      * @type {Object}
      * @readOnly
+     * @protected
      */
     userConfig : {
 
     },
     /**
      * 是否自动渲染,如果不自动渲染，需要用户调用 render()方法
+     * <pre><code>
+     *  //默认状态下创建对象，并没有进行render
+     *  var control = new Control();
+     *  control.render(); //需要调用render方法
+     *
+     *  //设置autoRender后，不需要调用render方法
+     *  var control = new Control({
+     *   autoRender : true
+     *  });
+     * </code></pre>
+     * @cfg {Boolean} autoRender
+     */
+    /**
+     * 是否自动渲染,如果不自动渲染，需要用户调用 render()方法
      * @type {Boolean}
+     * @ignore
      */
     autoRender : {
       value : false
@@ -250,30 +263,34 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      *      {
      *        'click':function(e){}
      *      }
+     *  @ignore
      */
     listeners: {
-            value: {}
+        value: {}
     },
     /**
      * 插件集合
+     * <pre><code>
+     *  var grid = new Grid({
+     *    columns : [{},{}],
+     *    plugins : [Grid.Plugins.RadioSelection]
+     *  });
+     * </code></pre>
      * @cfg {Array} plugins
      */
     /**
      * 插件集合
      * @type {Array}
+     * @readOnly
      */
     plugins : {
       value : []
     },
     /**
      * 是否已经渲染完成
-     * @cfg {Boolean} rendered
-     * @default  false
-     */
-    /**
-     * 是否已经渲染完成
      * @type {Boolean}
      * @default  false
+     * @readOnly
      */
     rendered : {
         value : false
@@ -282,6 +299,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     * 获取控件的 xclass
     * @readOnly
     * @type {String}
+    * @protected
     */
     xclass: {
         valueFn: function () {
@@ -296,6 +314,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   {
     /**
      * 创建DOM结构
+     * @protected
      */
     create : function(){
       var self = this;

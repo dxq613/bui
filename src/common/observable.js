@@ -68,13 +68,21 @@ define('bui/observable',['bui/util'],function (r) {
   });
 
   function getCallbacks(){
-    /*if($.Callbacks){
-      return $.Callbacks('stopOnFalse');
-    }*/
     return new Callbacks();
   }
   /**
    * 支持事件的对象，参考观察者模式
+   *  - 此类提供事件绑定
+   *  - 提供事件冒泡机制
+   *
+   * <pre><code>
+   *   var control = new Control();
+   *   control.on('click',function(ev){
+   *   
+   *   });
+   *
+   *   control.off();  //移除所有事件
+   * </code></pre>
    * @class BUI.Observable
    * @abstract
    * @param {Object} config 配置项键值对
@@ -91,12 +99,28 @@ define('bui/observable',['bui/util'],function (r) {
 
     /**
      * @cfg {Object} listeners 
-     * 初始化事件
+     *  初始化事件,快速注册事件
+     *  <pre><code>
+     *    var list = new BUI.List.SimpleList({
+     *      listeners : {
+     *        itemclick : function(ev){},
+     *        itemrendered : function(ev){}
+     *      },
+     *      items : []
+     *    });
+     *    list.render();
+     *  </code></pre>
      */
     
     /**
      * @cfg {Function} handler
      * 点击事件的处理函数，快速配置点击事件而不需要写listeners属性
+     * <pre><code>
+     *    var list = new BUI.List.SimpleList({
+     *      handler : function(ev){} //click 事件
+     *    });
+     *    list.render();
+     *  </code></pre>
      */
     
     /**
@@ -147,6 +171,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 添加冒泡的对象
+     * @protected
      * @param {Object} target  冒泡的事件源
      */
     addTarget : function(target) {
@@ -154,6 +179,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 添加支持的事件
+     * @protected
      * @param {String|String[]} events 事件
      */
     addEvents : function(events){
@@ -177,6 +203,7 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 移除所有绑定的事件
+     * @protected
      */
     clearListeners : function(){
       var _self = this,
@@ -189,6 +216,14 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 触发事件
+     * <pre><code>
+     *   //绑定事件
+     *   list.on('itemclick',function(ev){
+     *     alert('21');
+     *   });
+     *   //触发事件
+     *   list.fire('itemclick');
+     * </code></pre>
      * @param  {String} eventType 事件类型
      * @param  {Object} eventData 事件触发时传递的数据
      * @return {Boolean|undefined}  如果其中一个事件处理器返回 false , 则返回 false, 否则返回最后一个事件处理器的返回值
@@ -218,6 +253,16 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 添加绑定事件
+     * <pre><code>
+     *   //绑定单个事件
+     *   list.on('itemclick',function(ev){
+     *     alert('21');
+     *   });
+     *   //绑定多个事件
+     *   list.on('itemrendered itemupdated',function(){
+     *     //列表项创建、更新时触发操作
+     *   });
+     * </code></pre>
      * @param  {String}   eventType 事件类型
      * @param  {Function} fn        回调函数
      */
@@ -243,6 +288,17 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 移除绑定的事件
+     * <pre><code>
+     *  //移除所有事件
+     *  list.off();
+     *  
+     *  //移除特定事件
+     *  function callback(ev){}
+     *  list.on('click',callback);
+     *
+     *  list.off('click',callback);//需要保存回调函数的引用
+     * 
+     * </code></pre>
      * @param  {String}   eventType 事件类型
      * @param  {Function} fn        回调函数
      */
@@ -260,24 +316,25 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 配置事件是否允许冒泡
+     * @protected
      * @param  {String} eventType 支持冒泡的事件
      * @param  {Object} cfg 配置项
      * @param {Boolean} cfg.bubbles 是否支持冒泡
      */
     publish : function(eventType, cfg){
-        var _self = this,
-            bubblesEvents = _self._bubblesEvents;
+      var _self = this,
+          bubblesEvents = _self._bubblesEvents;
 
-        if(cfg.bubbles){
-            if(BUI.Array.indexOf(eventType,bubblesEvents) === -1){
-                bubblesEvents.push(eventType);
-            }
-        }else{
-            var index = BUI.Array.indexOf(eventType,bubblesEvents);
-            if(index !== -1){
-                bubblesEvents.splice(index,1);
-            }
-        }
+      if(cfg.bubbles){
+          if(BUI.Array.indexOf(eventType,bubblesEvents) === -1){
+              bubblesEvents.push(eventType);
+          }
+      }else{
+          var index = BUI.Array.indexOf(eventType,bubblesEvents);
+          if(index !== -1){
+              bubblesEvents.splice(index,1);
+          }
+      }
     }
   });
 

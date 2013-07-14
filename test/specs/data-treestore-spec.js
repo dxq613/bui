@@ -112,15 +112,16 @@ BUI.use('bui/data',function (Data) {
   describe('加载数据',function(){
      var store = new TStore({
       root : {
-        id : 'test',
-        text : '根节点'
+        id : '0',
+        text : '根节点',
+        children : []
       },
-      data : BUI.cloneObject(data)
+      url : 'data/nodes.php'
     });
     var root = store.get('root');
 
     it('加载数据',function(){
-      var node = store.findNode('3');
+      var node = store.findNode('0');
       expect(node.children.length).toBe(0);
       store.loadNode(node);
       waits(500);

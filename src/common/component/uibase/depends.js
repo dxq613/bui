@@ -71,6 +71,15 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
   /**
    * @class BUI.Component.UIBase.Depends
    * 依赖事件源的扩展
+   * <pre><code>
+   *       var control = new Control({
+   *         depends : {
+   *           '#btn:click':['toggle'],//当点击id为'btn'的按钮时，执行 control 的toggle方法
+   *           '#checkbox1:checked':['show'],//当勾选checkbox时，显示控件
+   *           '#menu:click',function(){}
+   *         }
+   *       });
+   * </code></pre>
    */
   function Depends (){
 
@@ -85,6 +94,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * <li>事件名：事件名是一个使用":"为前缀的字符串，例如 "#id:change",即监听change事件</li>
      * <li>触发的方法：可以是一个数组，如["disable","clear"],数组里面是控件的方法名，也可以是一个回调函数</li>
      * </ol>
+     * <pre><code>
      *       var control = new Control({
      *         depends : {
      *           '#btn:click':['toggle'],//当点击id为'btn'的按钮时，执行 control 的toggle方法
@@ -92,7 +102,8 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      *           '#menu:click',function(){}
      *         }
      *       });
-     * 注意： 这些依赖项是在控件渲染（render）后进行的。         
+     * </code></pre>
+     * ** 注意：** 这些依赖项是在控件渲染（render）后进行的。         
      * @type {Object}
      */
     depends : {
@@ -126,6 +137,13 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * 添加依赖，如果已经有同名的事件，则移除，再添加
+     * <pre><code>
+     *  form.addDependence('#btn:click',['toggle']); //当按钮#btn点击时，表单交替显示隐藏
+     *
+     *  form.addDependence('#btn:click',function(){//当按钮#btn点击时，表单交替显示隐藏
+     *   //TO DO
+     *  }); 
+     * </code></pre>
      * @param {String} name 依赖项的名称
      * @param {Array|Function} action 依赖项的事件
      */
@@ -141,6 +159,9 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * 移除依赖
+     * <pre><code>
+     *  form.removeDependence('#btn:click'); //当按钮#btn点击时，表单不在监听
+     * </code></pre>
      * @param  {String} name 依赖名称
      */
     removeDependence : function(name){
@@ -154,6 +175,9 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * 清除所有的依赖
+     * <pre><code>
+     *  form.clearDependences();
+     * </code></pre>
      */
     clearDependences : function(){
       var _self = this,
