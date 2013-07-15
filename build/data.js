@@ -1091,6 +1091,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       }
       if(!root.isNode){
         root = new Node(root,map);
+        //root.children= [];
       }
       root.path = [root.id];
       root.level = 0;
@@ -1353,7 +1354,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(!this.get('url')){ //如果不从远程加载数据,默认已经加载
         return true;
       }
-      return node.leaf || node.children.length;
+      return node.leaf || (node.children && node.children.length);
     },
     /**
      * 加载节点的子节点

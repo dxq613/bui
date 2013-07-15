@@ -503,7 +503,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           if(_self.isChecked(parent) != checked){
             _self._resetParentChecked(parent);
           }else{
-            _self._resetPatialChecked(parent);
+            _self._resetPatialChecked(parent,null,null,null,true);
           }
         }
         _self.fire('checkchange',{node : node,element: element,checked : checked});
@@ -557,6 +557,11 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           node[checkedField] = node[checkedField] || false;
         }else{
           delete node[checkedField];
+          if(deep){
+            BUI.each(node.children,function(subNode){
+              _self._initChecked(subNode,deep);
+            });
+          }
         }
         return;
       }
@@ -585,7 +590,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       
     },
     //设置部分选中效果
-    _resetPatialChecked : function(node,checked,hasChecked,element){
+    _resetPatialChecked : function(node,checked,hasChecked,element,upper){
       if(!node || node.leaf){
         return true;
       }
@@ -599,6 +604,9 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       hasChecked = hasChecked == null ? _self._hasChildChecked(node) : hasChecked;
 
       _self.setItemStatus(node,PARTIAL_CHECKED,hasChecked,element);
+      if(upper && node.parent){
+        _self._resetPatialChecked(node.parent,false,hasChecked ? hasChecked : null,null,upper)
+      }
       
     },
     //子节点变化，重置父节点勾选
@@ -610,7 +618,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         allChecked = _self._isAllChildrenChecked(parentNode);
       _self.setStatusValue(parentNode,'checked',allChecked);
       _self.setNodeChecked(parentNode,allChecked,false);
-      _self._resetPatialChecked(parentNode,allChecked);
+      _self._resetPatialChecked(parentNode,allChecked,null,null);
     },
     //绑定事件
     __bindUI : function(){
@@ -664,16 +672,9 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       if(!node || node.leaf){
         return false;
       }
-      var _self = this,
-        children = node.children,
-        rst = false;
-      BUI.each(children,function(subNode){
-        rst = rst || _self.isChecked(subNode);
-        if(rst){ //存在选中的，返回
-          return false;
-        }
-      });
-      return rst;
+      var _self = this;
+
+      return _self.getCheckedNodes(node).length != 0;
     },
     //是否是根节点
     _isRoot : function(node){

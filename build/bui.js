@@ -13035,6 +13035,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       }
       if(!root.isNode){
         root = new Node(root,map);
+        //root.children= [];
       }
       root.path = [root.id];
       root.level = 0;
@@ -13297,7 +13298,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(!this.get('url')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e,\u9ed8\u8ba4\u5df2\u7ecf\u52a0\u8f7d
         return true;
       }
-      return node.leaf || node.children.length;
+      return node.leaf || (node.children && node.children.length);
     },
     /**
      * \u52a0\u8f7d\u8282\u70b9\u7684\u5b50\u8282\u70b9
@@ -14619,8 +14620,12 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
            * fix ie6,7 bug
            * @ignore
            */
-            _self.get('header').width(body.outerWidth() - 20);
-            _self.get('footer').width(body.outerWidth());
+            var outerWidth = body.outerWidth();
+            if(BUI.UA.ie == 6){
+              outerWidth = outerWidth > 350 ? 350 : outerWidth;
+            }
+            _self.get('header').width(outerWidth - 20);
+            _self.get('footer').width(outerWidth);
           }
         }
       });
@@ -14876,6 +14881,34 @@ define('bui/list/simplelist',function (require) {
    * <img src="../assets/img/class-list.jpg"/>
    * </p>
    * xclass:'simple-list'
+   * ## \u663e\u793a\u9759\u6001\u6570\u7ec4\u7684\u6570\u636e
+   * 
+   * ** \u6700\u7b80\u5355\u7684\u5217\u8868 **
+   * <pre><code>
+   * 
+   * BUI.use('bui/list',function(List){
+   *   var list = new List.SimpleList({
+   *     render : '#t1',
+   *     items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+   *   });
+   *   list.render();
+   * });
+   * 
+   * </code></pre>
+   *
+   * ** \u81ea\u5b9a\u4e49\u6a21\u677f\u7684\u5217\u8868 **
+   *<pre><code>
+   * 
+   * BUI.use('bui/list',function(List){
+   *   var list = new List.SimpleList({
+   *     render : '#t1',
+   *     items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+   *   });
+   *   list.render();
+   * });
+   * 
+   * </code></pre>
+   * 
    * @class BUI.List.SimpleList
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.DomList

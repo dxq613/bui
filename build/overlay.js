@@ -680,8 +680,12 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
            * fix ie6,7 bug
            * @ignore
            */
-            _self.get('header').width(body.outerWidth() - 20);
-            _self.get('footer').width(body.outerWidth());
+            var outerWidth = body.outerWidth();
+            if(BUI.UA.ie == 6){
+              outerWidth = outerWidth > 350 ? 350 : outerWidth;
+            }
+            _self.get('header').width(outerWidth - 20);
+            _self.get('footer').width(outerWidth);
           }
         }
       });

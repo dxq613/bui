@@ -43,6 +43,34 @@ define('bui/list/simplelist',function (require) {
    * <img src="../assets/img/class-list.jpg"/>
    * </p>
    * xclass:'simple-list'
+   * ## 显示静态数组的数据
+   * 
+   * ** 最简单的列表 **
+   * <pre><code>
+   * 
+   * BUI.use('bui/list',function(List){
+   *   var list = new List.SimpleList({
+   *     render : '#t1',
+   *     items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+   *   });
+   *   list.render();
+   * });
+   * 
+   * </code></pre>
+   *
+   * ** 自定义模板的列表 **
+   *<pre><code>
+   * 
+   * BUI.use('bui/list',function(List){
+   *   var list = new List.SimpleList({
+   *     render : '#t1',
+   *     items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+   *   });
+   *   list.render();
+   * });
+   * 
+   * </code></pre>
+   * 
    * @class BUI.List.SimpleList
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.DomList
