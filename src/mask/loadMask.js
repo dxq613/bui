@@ -9,6 +9,22 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
 
    /**
      * 屏蔽指定元素，并显示加载信息
+     * <pre></code>
+     * BUI.use('bui/mask',function(Mask){
+     *    var loadMask = new Mask.LoadMask({
+     *        el : '#domId',
+     *        msg : 'loading ....'
+     *    });
+     *
+     *    $('#btn').on('click',function(){
+     *        loadMask.show();
+     *    });
+     *
+     *    $('#btn1').on('click',function(){
+     *        loadMask.hide();
+     *    });
+     * });
+     * </code></pre>
      * @class BUI.Mask.LoadMask
      * @extends BUI.Base
      */
@@ -22,23 +38,38 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
     LoadMask.ATTRS = {
         /**
          * 屏蔽的元素
-         * @type {jQuery}
+         * <pre></code>
+         *    var loadMask = new Mask.LoadMask({
+         *        el : '#domId'
+         *    });
+         * </code></pre>
+         * @cfg {jQuery} el
          */
         el : {
 
         },
         /**
          * 加载时显示的加载信息
-         * @field
-         * @default Loading...
+         * <pre></code>
+         *    var loadMask = new Mask.LoadMask({
+         *        el : '#domId',
+         *        msg : '正在加载，请稍后。。。'
+         *    });
+         * </code></pre>
+         * @cfg {String} msg [msg = 'Loading...']
          */
         msg:{
             value : 'Loading...'
         },
         /**
          * 加载时显示的加载信息的样式
-         * @field
-         * @default x-mask-loading
+         * <pre></code>
+         *    var loadMask = new Mask.LoadMask({
+         *        el : '#domId',
+         *        msgCls : 'custom-cls'
+         *    });
+         * </code></pre>
+         * @cfg {String} [msgCls = 'x-mask-loading']
          */
         msgCls:{
             value : 'x-mask-loading'
@@ -48,6 +79,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
          * @type {Boolean}
          * @field
          * @default false
+         * @ignore
          */
         disabled:{
            value : false

@@ -15,6 +15,22 @@ define('bui/tooltip/tips',['bui/common','bui/tooltip/tip'],function(require) {
     /**
      * @class BUI.Tooltip.Tips
      * 批量显示提示信息
+     *  <pre><code>
+     * BUI.use('bui/tooltip',function(){
+     *   var tips = new Tooltip.Tips({
+     *     tip : {
+     *       trigger : '#t1 a', //出现此样式的元素显示tip
+     *       alignType : 'top', //默认方向
+     *       elCls : 'tips tips-no-icon tip1',
+     *       titleTpl : '&lt;span class="x-icon x-icon-small x-icon-success"&gt;&lt;i class="icon icon-white icon-question"&gt;&lt;/i&gt;&lt;/span&gt;\
+   *           &lt;div class="tips-content"&gt;{title}&lt;/div&gt;',
+     *       offset : 10 //距离左边的距离
+     *     }
+     *   });
+     *   tips.render();
+     * })
+     * 
+     * </code></pre>
      */
     Tips = function(config){
       Tips.superclass.constructor.call(this,config);
@@ -24,18 +40,46 @@ define('bui/tooltip/tips',['bui/common','bui/tooltip/tip'],function(require) {
 
     /**
      * 使用的提示控件或者配置信息 @see {BUI.Tooltip.Tip}
-     * @cfg {BUI.Tooltip.Tip|Object}
+     * <pre><code>
+     *    //不使用模板的，左侧显示
+     * var tips = new Tooltip.Tips({
+     *   tip : {
+     *     trigger : '#t1 a', //出现此样式的元素显示tip
+     *     alignType : 'top', //默认方向
+     *     elCls : 'tips tips-no-icon tip1',
+     *     offset : 10 //距离左边的距离
+     *   }
+     * });
+     * tips.render();
+     * </code></pre>
+     * @cfg {BUI.Tooltip.Tip|Object} tip
      */
     /**
      * 使用的提示控件 @see {BUI.Tooltip.Tip}
+     * <pre><code>
+     *    var tip = tips.get('tip');
+     * </code></pre>
      * @type {BUI.Tooltip.Tip}
+     * @readOnly
      */
     tip : {
 
     },
     /**
-     * 默认的对齐方式
-     * @type {Object}
+     * 默认的对齐方式,如果不指定tip的对齐方式，那么使用此属性
+     * <pre><code>
+     * //不使用模板的，左侧显示
+     * var tips = new Tooltip.Tips({
+     *   tip : {
+     *     trigger : '#t1 a', //出现此样式的元素显示tip
+     *     defaultAlignType : 'top', //默认方向
+     *     elCls : 'tips tips-no-icon tip1',
+     *     offset : 10 //距离左边的距离
+     *   }
+     * });
+     * tips.render();
+     * </code></pre>
+     * @cfg {Object} defaultAlignType
      */
     defaultAlignType : {
 

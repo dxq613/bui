@@ -11,9 +11,8 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     UI_SET = '_uiSet',
         ATTRS = 'ATTRS',
         ucfirst = BUI.ucfirst,
-        noop = $.noop;
-
-    Base = require('bui/base');
+        noop = $.noop,
+        Base = require('bui/base');
    /**
      * 模拟多继承
      * init attr using constructors ATTRS meta info

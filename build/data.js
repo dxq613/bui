@@ -706,8 +706,9 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     /**
      * 加载数据
      * @param  {Object} params 参数键值对
+     * @param {Function} fn 回调函数，默认为空
      */
-    load : function(params){
+    load : function(params,callback){
       var _self = this,
         proxy = _self.get('proxy'),
         lastParams = _self.get('lastParams');
@@ -720,6 +721,9 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       params = BUI.cloneObject(lastParams);
       proxy.read(lastParams,function(data){
         _self.onLoad(data,params);
+        if(callback){
+          callback(data,params);
+        }
       },_self);
     },
     /**
@@ -1134,13 +1138,15 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(nodeChildren.length == 0 && node.leaf == null){
         node.leaf = true;
       }
+      if(parent){
+        parent.leaf = false;
+      }
       if(!node.isNode){
         node = new Node(node,map);
       }
       node.parent = parent;
       node.level = parent.level + 1;
       node.path = parent.path.concat(node.id);
-      parent.leaf = false;
       index = index == null ? parent.children.length : index;
       BUI.Array.addAt(nodes,node,index);
 
@@ -1246,11 +1252,12 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * </code></pre>
      * @param  {String} id 节点Id
      * @param  {BUI.Data.Node} [parent] 父节点
+     * @param {Boolean} [deep = true] 是否递归查找
      * @return {BUI.Data.Node} 节点
      */
-    findNode : function(id,parent){
+    findNode : function(id,parent,deep){
       var _self = this;
-
+      deep = deep == null ? true : deep;
       if(!parent){
         var root = _self.get('root');
         if(root.id === id){
@@ -1263,7 +1270,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       BUI.each(children,function(item){
         if(item.id === id){
           rst = item;
-        }else{
+        }else if(deep){
           rst = _self.findNode(id,item);
         }
         if(rst){
@@ -1305,6 +1312,41 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       return rst;
     },
     /**
+     * 根据path查找节点
+     * @return {BUI.Data.Node} 节点
+     * @ignore
+     */
+    findNodeByPath : function(path){
+      if(!path){
+        return null;
+      }
+      var _self = this,
+        root = _self.get('root'),
+        pathArr = path.split(','),
+        node,
+        i,
+        tempId = pathArr[0];
+      if(!tempId){
+        return null;
+      }
+      if(root.id == tempId){
+        node = root;
+      }else{
+        node = _self.findNode(tempId,root,false);
+      }
+      if(!node){
+        return;
+      }
+      for(i = 1 ; i < pathArr.length ; i = i + 1){
+        var tempId = pathArr[i];
+        node = _self.findNode(tempId,node,false);
+        if(!node){
+          break;
+        }
+      }
+      return node;
+    },
+    /**
      * 是否包含指定节点，如果未指定父节点，从根节点开始搜索
      * <pre><code>
      *  store.contains(node); //是否存在节点
@@ -1330,6 +1372,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         id = params.id,
         dataProperty = _self.get('dataProperty'),
         node = _self.findNode(id) || _self.get('root');//如果找不到父元素，则放置在跟节点
+
       if(BUI.isArray(data)){
         _self.setChildren(node,data);
       }else{
@@ -1369,9 +1412,23 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(!_self.get('url')){ //如果不从远程加载数据，不是根节点的话，取消加载
         return;
       }else{
-        _self.load({id:node.id});
+        _self.load({id:node.id,path : ''});
       }
       
+    },
+    /**
+     * 加载节点，根据path
+     * @param  {String} path 加载路径
+     * @ignore
+     */
+    loadPath : function(path){
+      var _self = this,
+        arr = path.split(','),
+        id = arr[0];
+      if(_self.findNodeByPath(path)){ //加载过
+        return;
+      }
+      _self.load({id : id,path : path});
     }
   });
 

@@ -7,7 +7,7 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
             {text : '22',id : '22'}
         ]},
         {text : '3',id : '3'},
-        {text : '4',id : '4'},
+        {text : '4',id : '4'}
       ],
     store = new Data.TreeStore({
       root : {
@@ -168,7 +168,7 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
         expect(el.find('li')).not.toBe(0);
       });
     });
-    
+    /**/
     it('展开未加载的节点',function(){
       var node = store.findNode('1'),
         element = tree.findElement(node);
@@ -198,6 +198,15 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
       runs(function(){
         expect(tree.getItem('131')).not.toBe(null);
         expect(tree.getItem('151')).not.toBe(null);
+      });
+    });
+
+    it('展开指定的路径',function(){
+      var path = '3,31,313,3131';
+      tree.expandPath(path,true);
+      waits(4000);
+      runs(function(){
+        expect(tree.getItem('3131')).not.toBe(null);
       });
     });
   });

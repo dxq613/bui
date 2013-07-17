@@ -4247,9 +4247,8 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     UI_SET = '_uiSet',
         ATTRS = 'ATTRS',
         ucfirst = BUI.ucfirst,
-        noop = $.noop;
-
-    Base = require('bui/base');
+        noop = $.noop,
+        Base = require('bui/base');
    /**
      * \u6a21\u62df\u591a\u7ee7\u627f
      * init attr using constructors ATTRS meta info
@@ -9923,7 +9922,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
 
   var win = window,
     Manager = require('bui/component/manage'),
-    UIBase = require('bui/component/uibase');//BUI.Component.UIBase,
+    UIBase = require('bui/component/uibase'),//BUI.Component.UIBase,
     doc = document;
     
     /**
@@ -10510,6 +10509,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
      * @mixins BUI.Component.UIBase.Tpl
      * @mixins BUI.Component.UIBase.Decorate
      * @mixins BUI.Component.UIBase.Depends
+     * @mixins BUI.Component.UIBase.ChildCfg
      * @class BUI.Component.Controller
      */
     var Controller = UIBase.extend([UIBase.Decorate,UIBase.Tpl,UIBase.ChildCfg,UIBase.KeyNav,UIBase.Depends],
@@ -11426,7 +11426,6 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * @cfg {Object} elAttrs
-             * @ignore
 			 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f:
              * <pre><code>
              *  new Control({
@@ -12650,8 +12649,9 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     /**
      * \u52a0\u8f7d\u6570\u636e
      * @param  {Object} params \u53c2\u6570\u952e\u503c\u5bf9
+     * @param {Function} fn \u56de\u8c03\u51fd\u6570\uff0c\u9ed8\u8ba4\u4e3a\u7a7a
      */
-    load : function(params){
+    load : function(params,callback){
       var _self = this,
         proxy = _self.get('proxy'),
         lastParams = _self.get('lastParams');
@@ -12664,6 +12664,9 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       params = BUI.cloneObject(lastParams);
       proxy.read(lastParams,function(data){
         _self.onLoad(data,params);
+        if(callback){
+          callback(data,params);
+        }
       },_self);
     },
     /**
@@ -13078,13 +13081,15 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(nodeChildren.length == 0 && node.leaf == null){
         node.leaf = true;
       }
+      if(parent){
+        parent.leaf = false;
+      }
       if(!node.isNode){
         node = new Node(node,map);
       }
       node.parent = parent;
       node.level = parent.level + 1;
       node.path = parent.path.concat(node.id);
-      parent.leaf = false;
       index = index == null ? parent.children.length : index;
       BUI.Array.addAt(nodes,node,index);
 
@@ -13190,11 +13195,12 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * </code></pre>
      * @param  {String} id \u8282\u70b9Id
      * @param  {BUI.Data.Node} [parent] \u7236\u8282\u70b9
+     * @param {Boolean} [deep = true] \u662f\u5426\u9012\u5f52\u67e5\u627e
      * @return {BUI.Data.Node} \u8282\u70b9
      */
-    findNode : function(id,parent){
+    findNode : function(id,parent,deep){
       var _self = this;
-
+      deep = deep == null ? true : deep;
       if(!parent){
         var root = _self.get('root');
         if(root.id === id){
@@ -13207,7 +13213,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       BUI.each(children,function(item){
         if(item.id === id){
           rst = item;
-        }else{
+        }else if(deep){
           rst = _self.findNode(id,item);
         }
         if(rst){
@@ -13249,6 +13255,41 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       return rst;
     },
     /**
+     * \u6839\u636epath\u67e5\u627e\u8282\u70b9
+     * @return {BUI.Data.Node} \u8282\u70b9
+     * @ignore
+     */
+    findNodeByPath : function(path){
+      if(!path){
+        return null;
+      }
+      var _self = this,
+        root = _self.get('root'),
+        pathArr = path.split(','),
+        node,
+        i,
+        tempId = pathArr[0];
+      if(!tempId){
+        return null;
+      }
+      if(root.id == tempId){
+        node = root;
+      }else{
+        node = _self.findNode(tempId,root,false);
+      }
+      if(!node){
+        return;
+      }
+      for(i = 1 ; i < pathArr.length ; i = i + 1){
+        var tempId = pathArr[i];
+        node = _self.findNode(tempId,node,false);
+        if(!node){
+          break;
+        }
+      }
+      return node;
+    },
+    /**
      * \u662f\u5426\u5305\u542b\u6307\u5b9a\u8282\u70b9\uff0c\u5982\u679c\u672a\u6307\u5b9a\u7236\u8282\u70b9\uff0c\u4ece\u6839\u8282\u70b9\u5f00\u59cb\u641c\u7d22
      * <pre><code>
      *  store.contains(node); //\u662f\u5426\u5b58\u5728\u8282\u70b9
@@ -13274,6 +13315,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         id = params.id,
         dataProperty = _self.get('dataProperty'),
         node = _self.findNode(id) || _self.get('root');//\u5982\u679c\u627e\u4e0d\u5230\u7236\u5143\u7d20\uff0c\u5219\u653e\u7f6e\u5728\u8ddf\u8282\u70b9
+
       if(BUI.isArray(data)){
         _self.setChildren(node,data);
       }else{
@@ -13313,9 +13355,23 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(!_self.get('url')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
         return;
       }else{
-        _self.load({id:node.id});
+        _self.load({id:node.id,path : ''});
       }
       
+    },
+    /**
+     * \u52a0\u8f7d\u8282\u70b9\uff0c\u6839\u636epath
+     * @param  {String} path \u52a0\u8f7d\u8def\u5f84
+     * @ignore
+     */
+    loadPath : function(path){
+      var _self = this,
+        arr = path.split(','),
+        id = arr[0];
+      if(_self.findNodeByPath(path)){ //\u52a0\u8f7d\u8fc7
+        return;
+      }
+      _self.load({id : id,path : path});
     }
   });
 
@@ -13992,6 +14048,23 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    * <img src="../assets/img/class-overlay.jpg"/>
    * </p>
    * xclass : 'overlay'
+   * ** \u4e00\u822c\u6765\u8bf4\uff0coverlay\u7684\u5b50\u7c7b\uff0cDialog \u3001Message\u3001ToolTip\u5df2\u7ecf\u80fd\u591f\u6ee1\u8db3\u65e5\u5e38\u5e94\u7528\uff0c\u4f46\u662f\u4f7f\u7528overay\u66f4\u9002\u5408\u4e00\u4e9b\u66f4\u52a0\u7075\u6d3b\u7684\u5730\u65b9 **
+   * ## \u7b80\u5355overlay
+   * <pre><code>
+   *   BUI.use('bui/overlay',function(Overlay){
+   *     //\u70b9\u51fb#btn\uff0c\u663e\u793aoverlay
+   *     var overlay = new Overlay.Overlay({
+   *       trigger : '#btn',
+   *       content : '\u8fd9\u662f\u5185\u5bb9',
+   *       elCls : '\u5916\u5c42\u5e94\u7528\u7684\u6837\u5f0f',
+   *       autoHide : true //\u70b9\u51fboverlay\u5916\u9762\uff0coverlay \u4f1a\u81ea\u52a8\u9690\u85cf
+   *     });
+   *
+   *     overlay.render();
+   *   });
+   * <code><pre>
+   *
+   * 
    * @class BUI.Overlay.Overlay
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.Position
@@ -14122,6 +14195,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
       /**
        * \u662f\u5426\u663e\u793a\u6307\u5411\u7bad\u5934\uff0c\u8ddfalign\u5c5e\u6027\u7684points\u76f8\u5173
        * @type {Boolean}
+       * @protected
        */
       showArrow : {
         value : false
@@ -14134,6 +14208,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
        *     });
        *     
        * @type {String}
+       * @protected
        */
       arrowContainer : {
         view : true
@@ -14141,6 +14216,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
       /**
        * \u6307\u5411\u7bad\u5934\u7684\u6a21\u677f
        * @type {Object}
+       * @protected
        */
       arrowTpl : {
         value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'
@@ -20153,9 +20229,16 @@ define('bui/mask/mask',['bui/common'],function (require) {
       UA = BUI.UA,
       CLS_MASK = BUI.prefix + 'ext-mask',
       CLS_MASK_MSG = CLS_MASK + '-msg';
+
     BUI.mix(Mask,
     /**
     * \u5c4f\u853d\u5c42
+    * <pre><code>
+    * BUI.use('bui/mask',function(Mask){
+    *   Mask.maskElement('#domId'); //\u5c4f\u853ddom
+    *   Mask.unmaskElement('#domId'); //\u89e3\u9664DOM\u5c4f\u853d
+    * });
+    * </code></pre>
     * @class BUI.Mask
     * @singleton
     */
@@ -20165,7 +20248,10 @@ define('bui/mask/mask',['bui/common'],function (require) {
          * @param {String|HTMLElement} element \u88ab\u5c4f\u853d\u7684\u5143\u7d20
          * @param {String} [msg] \u5c4f\u853d\u5143\u7d20\u65f6\u663e\u793a\u7684\u6587\u672c
          * @param {String} [msgCls] \u663e\u793a\u6587\u672c\u5e94\u7528\u7684\u6837\u5f0f
-         *    BUI.Mask.maskElement('#domId');
+         * <pre><code>
+         *   BUI.Mask.maskElement('#domId');
+         *   
+         * </code></pre>
          */
         maskElement:function (element, msg, msgCls) {
             var maskedEl = $(element),
@@ -20201,7 +20287,9 @@ define('bui/mask/mask',['bui/common'],function (require) {
         /**
          * @description \u89e3\u9664\u5143\u7d20\u7684\u5c4f\u853d
          * @param {String|HTMLElement} \u5c4f\u853d\u7684\u5143\u7d20
-         *    BUI.Mask.unmaskElement('#domId');
+         * <pre><code>
+         * BUI.Mask.unmaskElement('#domId');
+         * </code></pre>
          */
         unmaskElement:function (element) {
             var maskedEl = $(element),
@@ -20230,6 +20318,22 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
 
    /**
      * \u5c4f\u853d\u6307\u5b9a\u5143\u7d20\uff0c\u5e76\u663e\u793a\u52a0\u8f7d\u4fe1\u606f
+     * <pre></code>
+     * BUI.use('bui/mask',function(Mask){
+     *    var loadMask = new Mask.LoadMask({
+     *        el : '#domId',
+     *        msg : 'loading ....'
+     *    });
+     *
+     *    $('#btn').on('click',function(){
+     *        loadMask.show();
+     *    });
+     *
+     *    $('#btn1').on('click',function(){
+     *        loadMask.hide();
+     *    });
+     * });
+     * </code></pre>
      * @class BUI.Mask.LoadMask
      * @extends BUI.Base
      */
@@ -20243,23 +20347,38 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
     LoadMask.ATTRS = {
         /**
          * \u5c4f\u853d\u7684\u5143\u7d20
-         * @type {jQuery}
+         * <pre></code>
+         *    var loadMask = new Mask.LoadMask({
+         *        el : '#domId'
+         *    });
+         * </code></pre>
+         * @cfg {jQuery} el
          */
         el : {
 
         },
         /**
          * \u52a0\u8f7d\u65f6\u663e\u793a\u7684\u52a0\u8f7d\u4fe1\u606f
-         * @field
-         * @default Loading...
+         * <pre></code>
+         *    var loadMask = new Mask.LoadMask({
+         *        el : '#domId',
+         *        msg : '\u6b63\u5728\u52a0\u8f7d\uff0c\u8bf7\u7a0d\u540e\u3002\u3002\u3002'
+         *    });
+         * </code></pre>
+         * @cfg {String} msg [msg = 'Loading...']
          */
         msg:{
             value : 'Loading...'
         },
         /**
          * \u52a0\u8f7d\u65f6\u663e\u793a\u7684\u52a0\u8f7d\u4fe1\u606f\u7684\u6837\u5f0f
-         * @field
-         * @default x-mask-loading
+         * <pre></code>
+         *    var loadMask = new Mask.LoadMask({
+         *        el : '#domId',
+         *        msgCls : 'custom-cls'
+         *    });
+         * </code></pre>
+         * @cfg {String} [msgCls = 'x-mask-loading']
          */
         msgCls:{
             value : 'x-mask-loading'
@@ -20269,6 +20388,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
          * @type {Boolean}
          * @field
          * @default false
+         * @ignore
          */
         disabled:{
            value : false
@@ -22282,6 +22402,13 @@ define('bui/toolbar/baritem',function(){
           view : true,
           value : 'li'
       },
+      /**
+       * \u662f\u5426\u53ef\u9009\u62e9
+       * <pre><code>
+       * 
+       * </code></pre>
+       * @cfg {Object} [selectable = false]
+       */
       selectable : {
         value : false
       },
@@ -22519,6 +22646,22 @@ define('bui/toolbar/bar',function(){
    * <p>
    * <img src="../assets/img/class-toolbar.jpg"/>
    * </p>
+   * ## \u6309\u94ae\u7ec4
+   * <pre><code>
+   *   BUI.use('bui/toolbar',function(Toolbar){
+   *     var buttonGroup = new Toolbar.Bar({
+   *       elCls : 'button-group',
+   *       defaultChildCfg : {
+   *         elCls : 'button button-small'
+   *       },
+   *       children : [{content : '\u589e\u52a0'},{content : '\u4fee\u6539'},{content : '\u5220\u9664'}],
+   *       
+   *       render : '#b1'
+   *     });
+   *
+   *     buttonGroup.render();
+   *   });
+   * </code></pre>
    * @class BUI.Toolbar.Bar
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList

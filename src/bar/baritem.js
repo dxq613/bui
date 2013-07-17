@@ -51,6 +51,13 @@ define('bui/toolbar/baritem',function(){
           view : true,
           value : 'li'
       },
+      /**
+       * 是否可选择
+       * <pre><code>
+       * 
+       * </code></pre>
+       * @cfg {Object} [selectable = false]
+       */
       selectable : {
         value : false
       },

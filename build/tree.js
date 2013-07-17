@@ -60,8 +60,36 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
    */
   Mixin.ATTRS = {
 
+
     /**
-     * 树的数据缓冲类对象
+     * 树的数据缓冲类对象,用于操作数据的加载、增删改
+     * <pre><code>
+     * //数据缓冲类
+     * var store = new Data.TreeStore({
+     *     root : {
+     *       id : '0',
+     *      text : '0'
+     *     },
+     *     url : 'data/nodes.php'
+     *   });
+     *   
+     * var tree = new Tree.TreeList({
+     *   render : '#t1',
+     *   showLine : true,
+     *   height:300,
+     *   store : store,
+     *   showRoot : true
+     * });
+     * tree.render();
+     * 
+     * </code></pre>
+     * @cfg {BUI.Data.TreeStore} store
+     */
+    /**
+     * 树的数据缓冲类对象,默认都会生成对应的缓冲对象
+     * <pre><code>
+     * var store = tree.get('store');
+     * </code></pre>
      * @type {BUI.Data.TreeStore}
      */
     store : {
@@ -369,7 +397,48 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
       element = _self.findElement(node);
       _self._expandNode(node,element,deep);
-    }, 
+    },
+    /**
+     * 沿着path(id的连接串) 展开
+     * <pre>
+     *  <code>
+     *    var path = "0,1,12,121"; //沿着根节点0，树节点 1,12直到121的路径展开
+     *    tree.expandPath(path); //如果中间有节点不存在，终止展开
+     *  </code>
+     * </pre>
+     * @param  {String} path 节点的path，从根节点，到当前节点的id组合
+     */
+    expandPath : function(path,async,startIndex){
+      if(!path){
+        return;
+      }
+      startIndex = startIndex || 0;
+      var _self = this,
+        store = _self.get('store'),
+        preNode,
+        node,
+        i,
+        id,
+        arr = path.split(',');
+
+      preNode = _self.findNode(arr[startIndex]);
+      for(i = startIndex + 1; i < arr.length ; i++){
+        id = arr[i];
+        node = _self.findNode(id,preNode);
+        if(preNode && node){ //父元素，子元素同时存在
+          _self.expandNode(preNode);
+          preNode = node;
+        }else if(preNode && async){
+          store.load({id : preNode.id},function(){ //加载完成后
+            node = _self.findNode(id,preNode);
+            if(node){
+              _self.expandPath(path,async,i);
+            }
+          });
+          break;
+        } 
+      }
+    },
     /**
      * 查找节点
      * <pre><code>
@@ -827,8 +896,9 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       if(!parent){
         return;
       }
+      _self.removeItem(node);
       if(_self.isExpanded(parent)){ //如果父节点展开
-        _self.removeItem(node);
+        
         scount = parent.children.length;
         if(scount == index && index !== 0){ //如果删除的是最后一个，更新前一个节点图标
           prevNode = parent.children[index - 1];

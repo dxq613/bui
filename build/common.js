@@ -2710,9 +2710,8 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     UI_SET = '_uiSet',
         ATTRS = 'ATTRS',
         ucfirst = BUI.ucfirst,
-        noop = $.noop;
-
-    Base = require('bui/base');
+        noop = $.noop,
+        Base = require('bui/base');
    /**
      * 模拟多继承
      * init attr using constructors ATTRS meta info
@@ -8386,7 +8385,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
 
   var win = window,
     Manager = require('bui/component/manage'),
-    UIBase = require('bui/component/uibase');//BUI.Component.UIBase,
+    UIBase = require('bui/component/uibase'),//BUI.Component.UIBase,
     doc = document;
     
     /**
@@ -8973,6 +8972,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
      * @mixins BUI.Component.UIBase.Tpl
      * @mixins BUI.Component.UIBase.Decorate
      * @mixins BUI.Component.UIBase.Depends
+     * @mixins BUI.Component.UIBase.ChildCfg
      * @class BUI.Component.Controller
      */
     var Controller = UIBase.extend([UIBase.Decorate,UIBase.Tpl,UIBase.ChildCfg,UIBase.KeyNav,UIBase.Depends],
@@ -9889,7 +9889,6 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * @cfg {Object} elAttrs
-             * @ignore
 			 * 控件根节点应用的属性，以键值对形式:
              * <pre><code>
              *  new Control({

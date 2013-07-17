@@ -243,8 +243,9 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     /**
      * 加载数据
      * @param  {Object} params 参数键值对
+     * @param {Function} fn 回调函数，默认为空
      */
-    load : function(params){
+    load : function(params,callback){
       var _self = this,
         proxy = _self.get('proxy'),
         lastParams = _self.get('lastParams');
@@ -257,6 +258,9 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       params = BUI.cloneObject(lastParams);
       proxy.read(lastParams,function(data){
         _self.onLoad(data,params);
+        if(callback){
+          callback(data,params);
+        }
       },_self);
     },
     /**

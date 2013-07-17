@@ -16,7 +16,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       children : data
     },
     dirCls : 'icon-pkg',
-    leafCls : 'icon-example',
+    leafCls : 'icon-example'
   });
   tree.render();
   var store = tree.get('store');
