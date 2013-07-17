@@ -263,6 +263,9 @@ define('bui/editor/mixin',function (require) {
      */
     handleNavEnter : function(ev){
       var sender = ev.target;
+      if(sender.tagName === 'TEXTAREA'){ //文本输入框，不确定隐藏
+        return;
+      }
       if(sender.tagName === 'BUTTON'){
         $(sender).trigger('click');
       }
