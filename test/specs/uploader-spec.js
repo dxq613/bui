@@ -1,7 +1,8 @@
 
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
-    render: '#J_Uploader'
+    render: '#J_Uploader'//,
+    // text: '上传'
   });
   uploader.render();
   var el = uploader.get('el');
