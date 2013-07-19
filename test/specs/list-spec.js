@@ -521,8 +521,6 @@ BUI.use('bui/list',function (List) {
       });
       list.setSelection(arr);
       expect(list.getSelection().length).toBe(3);
-      //testSelected(item1,true);
-      //testSelected(item2,true);
     });
 
     it('测试清除所有选中',function(){

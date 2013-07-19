@@ -104,6 +104,20 @@ BUI.use('bui/list',function (List) {
       });
 
     });
+
+    describe('测试阻止选中',function(){
+      it('阻止选中事件',function(){
+
+        var selectFn = function(ev){
+          return false;
+        };
+        list.on('beforeselectedchange',selectFn);
+        
+        var item = list.getItemAt(0);
+        list.setSelected(item);
+        expect(list.isItemSelected(item)).toBe(false);
+      });
+    });
   })
     
 });

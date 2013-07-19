@@ -1306,6 +1306,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     Header = require('bui/grid/header'),
     Column = require('bui/grid/column');
 
+  function getHeight(dom){
+    var oStyle = dom.currentStyle? dom.currentStyle : window.getComputedStyle(dom, null);
+    return oStyle.height;
+  }
+
   var PREFIX = BUI.prefix,
     CLS_GRID_HEADER_CONTAINER = PREFIX + 'grid-header-container',
     CLS_GRID_BODY = PREFIX + 'grid-body',
@@ -1473,7 +1478,9 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         siblings = bodyEl.siblings();
 
       BUI.each(siblings,function(item){
-        bodyHeight -= $(item).outerHeight();
+        if($(item).css('display') !== 'none'){
+          bodyHeight -= $(item).outerHeight();
+        }
       });
       bodyEl.height(bodyHeight);
     },

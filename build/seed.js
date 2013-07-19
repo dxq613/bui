@@ -7700,6 +7700,16 @@ define('bui/component/uibase/selection',function () {
                    * @param {Boolean} e.selected 是否选中
                    */
                 'selectedchange' : false,
+
+                /**
+                   * 选择改变前触发，可以通过return false，阻止selectedchange事件
+                   * @event
+                   * @param {Object} e 事件对象
+                   * @param {Object} e.item 当前选中的项
+                   * @param {Boolean} e.selected 是否选中
+                   */
+                'beforeselectedchange' : false,
+
                 /**
                    * 菜单选中
                    * @event
@@ -7930,8 +7940,9 @@ define('bui/component/uibase/selection',function () {
                     return;
                 }
             }
-
-            _self.setItemSelectedStatus(item,selected);
+            if(_self.fire('beforeselectedchange') !== false){
+                _self.setItemSelectedStatus(item,selected);
+            }
         },
         /**
          * 设置选项的选中状态
@@ -8020,6 +8031,7 @@ define('bui/component/uibase/selection',function () {
          */
         afterSelected : function(item,selected,element){
             var _self = this;
+
             if(selected){
                 _self.fire('itemselected',{item:item,domTarget:element});
                 _self.fire('selectedchange',{item:item,domTarget:element,selected:selected});

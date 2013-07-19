@@ -321,7 +321,7 @@ KISSY.config({
   packages:[{
     name:"bui",
     tag:"201307042102",
-    path:"http://a.tbcdn.cn/s/",
+    path:"http://g.tbcdn.cn/fi",
     charset:'utf-8'
   }]
 });

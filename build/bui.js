@@ -7700,6 +7700,16 @@ define('bui/component/uibase/selection',function () {
                    * @param {Boolean} e.selected \u662f\u5426\u9009\u4e2d
                    */
                 'selectedchange' : false,
+
+                /**
+                   * \u9009\u62e9\u6539\u53d8\u524d\u89e6\u53d1\uff0c\u53ef\u4ee5\u901a\u8fc7return false\uff0c\u963b\u6b62selectedchange\u4e8b\u4ef6
+                   * @event
+                   * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                   * @param {Object} e.item \u5f53\u524d\u9009\u4e2d\u7684\u9879
+                   * @param {Boolean} e.selected \u662f\u5426\u9009\u4e2d
+                   */
+                'beforeselectedchange' : false,
+
                 /**
                    * \u83dc\u5355\u9009\u4e2d
                    * @event
@@ -7930,8 +7940,9 @@ define('bui/component/uibase/selection',function () {
                     return;
                 }
             }
-
-            _self.setItemSelectedStatus(item,selected);
+            if(_self.fire('beforeselectedchange') !== false){
+                _self.setItemSelectedStatus(item,selected);
+            }
         },
         /**
          * \u8bbe\u7f6e\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001
@@ -8020,6 +8031,7 @@ define('bui/component/uibase/selection',function () {
          */
         afterSelected : function(item,selected,element){
             var _self = this;
+
             if(selected){
                 _self.fire('itemselected',{item:item,domTarget:element});
                 _self.fire('selectedchange',{item:item,domTarget:element,selected:selected});
@@ -26417,6 +26429,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     Header = require('bui/grid/header'),
     Column = require('bui/grid/column');
 
+  function getHeight(dom){
+    var oStyle = dom.currentStyle? dom.currentStyle : window.getComputedStyle(dom, null);
+    return oStyle.height;
+  }
+
   var PREFIX = BUI.prefix,
     CLS_GRID_HEADER_CONTAINER = PREFIX + 'grid-header-container',
     CLS_GRID_BODY = PREFIX + 'grid-body',
@@ -26584,7 +26601,9 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         siblings = bodyEl.siblings();
 
       BUI.each(siblings,function(item){
-        bodyHeight -= $(item).outerHeight();
+        if($(item).css('display') !== 'none'){
+          bodyHeight -= $(item).outerHeight();
+        }
       });
       bodyEl.height(bodyHeight);
     },
