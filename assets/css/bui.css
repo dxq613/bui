@@ -1518,6 +1518,10 @@ input.x-datepicker-time {
 }
 .bui-tree-list {
   border: 1px solid #c3c3d6;
+  overflow: auto;
+}
+.bui-tree-list ul {
+  overflow: hidden;
 }
 .bui-tree-item {
   height: 20px;

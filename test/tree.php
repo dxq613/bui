@@ -1,6 +1,9 @@
 <?php $title="测试Tree"; ?>
 <?php include("./templates/header.php"); ?>
   <style>
+    .bui-tree-height{
+      overflow: auto;
+    }
     .icon-pkg,.icon-example,.task,.task-folder{
       background: url('http://img04.taobaocdn.com/tps/i4/T12.xMFiNXXXanXMzg-20-680.gif') no-repeat -999px -999px;
     }
