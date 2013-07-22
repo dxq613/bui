@@ -91,23 +91,11 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       }
     },
     /**
-     * 向上导航
-     */
-    navUp : function () {
-      // body...
-    },
-    /**
      * 处理向上导航
      * @protected
      * @param  {jQuery.Event} ev 事件对象
      */
     handleNavUp : function (ev) {
-      // body...
-    },
-    /**
-     * 向下导航
-     */
-    navDown : function () {
       // body...
     },
     /**
@@ -119,23 +107,11 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       // body...
     },
     /**
-     * 向左导航
-     */
-    navLeft : function () {
-      // body...
-    },
-    /**
      * 处理向左导航
      * @protected
      * @param  {jQuery.Event} ev 事件对象
      */
     handleNavLeft : function (ev) {
-      // body...
-    },
-    /**
-     * 向右导航
-     */
-    navRight : function  () {
       // body...
     },
     /**
@@ -147,23 +123,11 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       // body...
     },
     /**
-     * 按下确认键
-     */
-    navEnter : function () {
-      // body...
-    },
-    /**
      * 处理确认键
      * @protected
      * @param  {jQuery.Event} ev 事件对象
      */
     handleNavEnter : function (ev) {
-      // body...
-    },
-    /**
-     * 按下 esc 键
-     */
-    navEsc : function () {
       // body...
     },
     /**

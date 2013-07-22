@@ -681,6 +681,27 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
     },
     /**
      * @protected
+     * @override
+     * 处理enter键
+     */
+    handleNavEnter : function(ev){
+      var _self = this,
+        success = _self.get('success'),
+        sender = ev.target;
+      if(sender.tagName === 'TEXTAREA'){ //文本输入框，不确定隐藏
+        return;
+      }
+      if(sender.tagName === 'BUTTON'){
+        $(sender).trigger('click');
+      }
+      if(success){
+        success.call(_self);
+      }else{
+        this.accept();
+      }
+    },
+    /**
+     * @protected
      * 更新文本
      * @param  {Object} value 编辑器的值
      */
@@ -749,6 +770,13 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
         value : {
           xclass : 'form-horizontal'
         }
+      },
+      /**
+       * 设置可以获取交单
+       * @type {Boolean}
+       */
+      focusable : {
+        value : true
       },
       success : {
         value : function () {

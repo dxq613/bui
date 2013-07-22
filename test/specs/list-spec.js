@@ -525,7 +525,7 @@ BUI.use('bui/list',function (List) {
 
     it('测试清除所有选中',function(){
       list.clearSelection();
-      expect(list.getSelected()).toBe(undefined);
+      expect(list.getSelected()).toBe(null);
     });
     
   });
@@ -563,12 +563,32 @@ BUI.use('bui/list',function (List) {
       });
 
     });
-
-    it('测试点击禁止选中项',function(){
-      
-    });
-
   });
 
+});
+
+BUI.use('bui/list',function(List){
+  describe('list srcNode',function(){
+    var node = $('<section><ul><li class="item item-active" data-id="1">1</li><li  class="item" data-id="2">2</li><li  class="item" data-id="3">3</li><li class="item" data-id="4">4</li></ul></section>').appendTo('.container'),
+      list = new List.SimpleList({
+        srcNode : node,
+        idField : 'id',
+        itemStatusFields : {
+          active : 'active'
+        },
+        itemCls : 'item'
+      });
+    list.render();
+
+    it('test items',function(){
+      expect(list.getCount()).toBe(node.find('.item').length);
+    });
+
+    it('test item status',function(){
+      var item = list.getItem('1');
+      expect(list.hasStatus(item,'active')).toBe(true);
+      expect(item.active).toBe(true);
+    });
+  });
 });
 

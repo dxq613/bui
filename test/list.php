@@ -1,6 +1,15 @@
 <?php  $title='列表测试' ?>
 <?php include("./templates/header.php"); ?>
-
+  <style>
+      .column-3{
+        height: 200px;
+        width:200px;
+      }
+      .column-3 .bui-list-item{
+        float: left;
+        width: 50px;
+      }
+  </style>
   <div class="container">
     <div class="row">
       <div class="span8">
@@ -46,6 +55,8 @@
   </div>
     <?php $url = 'bui/list'?>
     <?php include("./templates/script.php"); ?>
+    <script type="text/javascript" src="../src/list/domlist.js"></script>
+    <script type="text/javascript" src="../src/list/keynav.js"></script>
     <script type="text/javascript" src="../src/list/simplelist.js"></script>
     <script type="text/javascript" src="../src/list/listitem.js"></script>
     <script type="text/javascript" src="../src/list/list.js"></script>
@@ -53,5 +64,6 @@
     <script type="text/javascript" src="../src/list/listpicker.js"></script>
     <script type="text/javascript" src="../src/list/base.js"></script>
     <script type="text/javascript" src="specs/list-spec.js"></script><!---->
+    <script type="text/javascript" src="specs/list-nav-spec.js"></script>
     <script type="text/javascript" src="specs/list-status-spec.js"></script>
  <?php include("./templates/footer.php"); ?>   
