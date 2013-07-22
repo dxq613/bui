@@ -155,7 +155,7 @@ define('bui/uploader/button/base', function(require) {
        * @type String
        * @default "fileInput"
        */
-      name : {
+      name: {
         value : 'fileInput'
       },
       filter: {
