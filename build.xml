@@ -15,6 +15,10 @@
             <fileset dir="${des.dir}" includes="**/*-min.js,*.js"/>
 			
         </delete>
+		<copy todir="${des.dir}">
+			<fileset dir="${base.dir}/src/common/"  includes="adapter.js">
+        </fileset>
+	  </copy>
     </target>
 
 	 <target name="build-all">
@@ -90,5 +94,6 @@
           <fileset dir="${base.dir}/assets/css"  includes="*.css">
           </fileset>
       </copy>
+	  
   </target>
 </project>
