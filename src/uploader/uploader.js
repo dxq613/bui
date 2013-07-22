@@ -102,20 +102,29 @@ define('bui/uploader/uploader', function (require) {
       button.render();
       _self.set('button', button);
     },
+    _renderUploaderCore: function () {
+      var _self = this,
+        button = _self.get('button'),
+        uploaderType = _self.get('uploaderType');
+        button.on('select', function(ev){
+          uploaderType.upload();
+        });
+    },
     /**
      * 设置上传类型，只有是types里面的才能设置进去
      * @param  {[type]} v [description]
      * @return {[type]}   [description]
+     * note: 这里有一个死循环，固去掉
      */
-    _uiSetType: function(v) {
-      var _self = this,
-        types = _self.get('types');
-      BUI.each(types, function(type){
-        if(v === type) {
-          _self.set('type', v);
-        }
-      });
-    },
+    // _uiSetType: function(v) {
+    //   var _self = this,
+    //     types = _self.get('types');
+    //   BUI.each(types, function(type){
+    //     if(v === type) {
+    //       _self.set('type', v);
+    //     }
+    //   });
+    // },
     /**
      * 检测浏览器是否支持ajax类型上传方式
      * @return {Boolean}
@@ -134,6 +143,10 @@ define('bui/uploader/uploader', function (require) {
       var _self = this;
 
       _self._renderButton();
+      _self._renderUploaderCore();
+    },
+    bindUI: function(){
+      var _self = this;
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{

@@ -1,6 +1,7 @@
 <?php  $title='文件上传测试' ?>
 <?php include("./templates/header.php"); ?>
 
+<link rel="stylesheet" href="../src/uploader/css/style.css"/>
 
 
   <div class="container">
@@ -13,6 +14,7 @@
     <?php include("./templates/script.php"); ?>
     <script src="../src/uploader/base.js"></script>
     <script src="../src/uploader/uploader.js"></script>
+    <script src="../src/uploader/button/base.js"></script>
     <script src="../src/uploader/button/htmlButton.js"></script>
     <script src="../src/uploader/button/swfButton.js"></script>
 
