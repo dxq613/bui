@@ -2,7 +2,7 @@
  * @fileoverview flash上传按钮
  * @author: 紫英(橘子)<daxingplay@gmail.com>, 剑平（明河）<minghe36@126.com>
  **/
-KISSY.add('gallery/uploader/1.4/button/swfButton', function (S, Node, Base, SwfUploader) {
+define('gallery/uploader/1.4/button/swfButton', function (require) {
     var EMPTY = '', $ = Node.all,
         SWF_WRAPPER_ID_PREVFIX = 'swf-uploader-wrapper-';
 
@@ -302,4 +302,4 @@ KISSY.add('gallery/uploader/1.4/button/swfButton', function (S, Node, Base, SwfU
         swfUploader:{value:EMPTY}
     }});
     return SwfButton;
-}, {requires:['node', 'base', '../plugins/ajbridge/uploader']});
+});

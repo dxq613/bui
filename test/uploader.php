@@ -1,6 +1,7 @@
 <?php  $title='文件上传测试' ?>
 <?php include("./templates/header.php"); ?>
 
+<link rel="stylesheet" href="http://a.tbcdn.cn/s/kissy/gallery/uploader/1.4/themes/default/style-min.css?t=20130621173819"/>
 
 
   <div class="container">
