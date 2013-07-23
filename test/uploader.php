@@ -1,7 +1,7 @@
 <?php  $title='文件上传测试' ?>
 <?php include("./templates/header.php"); ?>
 
-<link rel="stylesheet" href="http://a.tbcdn.cn/s/kissy/gallery/uploader/1.4/themes/default/style-min.css?t=20130621173819"/>
+<link rel="stylesheet" href="../src/uploader/css/style.css"/>
 
 
   <div class="container">
@@ -14,6 +14,7 @@
     <?php include("./templates/script.php"); ?>
     <script src="../src/uploader/base.js"></script>
     <script src="../src/uploader/uploader.js"></script>
+    <script src="../src/uploader/button/base.js"></script>
     <script src="../src/uploader/button/htmlButton.js"></script>
     <script src="../src/uploader/button/swfButton.js"></script>
 
