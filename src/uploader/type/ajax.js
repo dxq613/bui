@@ -2,8 +2,10 @@
  * @fileoverview ajax方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  **/
-KISSY.add('gallery/uploader/1.4/type/ajax',function(S, Node, UploadType) {
+define('bui/uploader/type/ajax',function(require) {
     var EMPTY = '',$ = Node.all,LOG_PREFIX = '[uploader-AjaxType]:';
+
+    var UploadType = require('bui/uploader/type/base');
 
     /**
      * @name AjaxType
@@ -17,16 +19,16 @@ KISSY.add('gallery/uploader/1.4/type/ajax',function(S, Node, UploadType) {
         AjaxType.superclass.constructor.call(self, config);
     }
 
-    S.mix(AjaxType, /** @lends AjaxType.prototype*/{
+    BUI.mix(AjaxType, /** @lends AjaxType.prototype*/{
         /**
          * 事件列表
          */
-        event : S.merge(UploadType.event,{
+        event : BUI.merge(UploadType.event,{
             PROGRESS : 'progress'
         })
     });
     //继承于Base，属性getter和setter委托于Base处理
-    S.extend(AjaxType, UploadType, /** @lends AjaxType.prototype*/{
+    BUI.extend(AjaxType, UploadType, /** @lends AjaxType.prototype*/{
         /**
          * 上传文件
          * @param {File} fileData 文件数据
@@ -35,7 +37,7 @@ KISSY.add('gallery/uploader/1.4/type/ajax',function(S, Node, UploadType) {
         upload : function(fileData) {
             //不存在文件信息集合直接退出
             if (!fileData) {
-                S.log(LOG_PREFIX + 'upload()，fileData参数有误！');
+                BUI.log(LOG_PREFIX + 'upload()，fileData参数有误！');
                 return false;
             }
             var self = this;
@@ -50,8 +52,8 @@ KISSY.add('gallery/uploader/1.4/type/ajax',function(S, Node, UploadType) {
          */
         stop : function() {
             var self = this,xhr = self.get('xhr');
-            if (!S.isObject(xhr)) {
-                S.log(LOG_PREFIX + 'stop()，io值错误！');
+            if (!BUI.isObject(xhr)) {
+                BUI.log(LOG_PREFIX + 'stop()，io值错误！');
                 return false;
             }
             //中止ajax请求，会触发error事件
@@ -94,8 +96,8 @@ KISSY.add('gallery/uploader/1.4/type/ajax',function(S, Node, UploadType) {
             	self.set('formData', new FormData());
                 self._processData();
             }catch(e){
-            	S.log(LOG_PREFIX + 'something error when reset FormData.');
-            	S.log(e, 'dir');
+            	BUI.log(LOG_PREFIX + 'something error when reset FormData.');
+            	BUI.log(e, 'dir');
            }
         },
         /**
@@ -105,7 +107,7 @@ KISSY.add('gallery/uploader/1.4/type/ajax',function(S, Node, UploadType) {
             var self = this,data = self.get('data'),
                 formData = self.get('formData');
             //将参数添加到FormData的实例内
-            S.each(data, function(val, key) {
+            BUI.each(data, function(val, key) {
                 formData.append(key, val);
             });
             self.set('formData', formData);
@@ -115,8 +117,8 @@ KISSY.add('gallery/uploader/1.4/type/ajax',function(S, Node, UploadType) {
          * @param {Object} file 文件信息
          */
         _addFileData : function(file) {
-            if (!S.isObject(file)) {
-                S.log(LOG_PREFIX + '_addFileData()，file参数有误！');
+            if (!BUI.isObject(file)) {
+                BUI.log(LOG_PREFIX + '_addFileData()，file参数有误！');
                 return false;
             }
             var self = this,
@@ -148,4 +150,4 @@ KISSY.add('gallery/uploader/1.4/type/ajax',function(S, Node, UploadType) {
     }
     });
     return AjaxType;
-}, {requires:['node','./base']});
+});

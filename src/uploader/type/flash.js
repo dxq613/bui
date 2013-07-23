@@ -2,8 +2,11 @@
  * @fileoverview flash上传方案，基于龙藏写的ajbridge内的uploader
  * @author 剑平（明河）<minghe36@126.com>
  **/
-KISSY.add('gallery/uploader/1.4/type/flash', function (S, Node, UploadType) {
+define('bui/uploader/type/flash', function (require) {
     var EMPTY = '', LOG_PREFIX = '[uploader-FlashType]:';
+
+    var UploadType = require('bui/uploader/type/base');
+
     /**
      * @name FlashType
      * @class flash上传方案，基于龙藏写的ajbridge内的uploader
@@ -166,4 +169,4 @@ KISSY.add('gallery/uploader/1.4/type/flash', function (S, Node, UploadType) {
         uploadingId : {value : EMPTY}
     }});
     return FlashType;
-}, {requires:['node', './base']});
+});

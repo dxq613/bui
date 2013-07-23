@@ -2,7 +2,7 @@
  * @fileoverview 上传方式类的基类
  * @author: 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  **/
-KISSY.add('gallery/uploader/1.4/type/base',function(S, Node, Base) {
+define('bui/uploader/type/base',function(require) {
     var EMPTY = '',$ = Node.all;
 
     /**
@@ -21,7 +21,7 @@ KISSY.add('gallery/uploader/1.4/type/base',function(S, Node, Base) {
         UploadType.superclass.constructor.call(self, config);
     }
 
-    S.mix(UploadType, /** @lends UploadType*/{
+    BUI.mix(UploadType, /** @lends UploadType*/{
         /**
          * 事件列表
          */
@@ -58,7 +58,7 @@ KISSY.add('gallery/uploader/1.4/type/base',function(S, Node, Base) {
      * @event
      */
     //继承于Base，属性getter和setter委托于Base处理
-    S.extend(UploadType, Base, /** @lends UploadType.prototype*/{
+    BUI.extend(UploadType, BUI.Base, /** @lends UploadType.prototype*/{
         /**
          * 上传文件
          */
@@ -81,19 +81,19 @@ KISSY.add('gallery/uploader/1.4/type/base',function(S, Node, Base) {
             var result = {};
             if(filter != EMPTY) responseText = filter.call(self,responseText);
             //格式化成json数据
-            if(S.isString(responseText)){
+            if(BUI.isString(responseText)){
                 try{
-                    result = S.JSON.parse(responseText);
+                    result = BUI.JSON.parse(responseText);
                     result = self._fromUnicode(result);
                 }catch(e){
                     var msg = responseText + '，返回结果集responseText格式不合法！';
-                    S.log(msg);
+                    BUI.log(msg);
                     self.fire('error',{status:-1, result:{msg:msg}});
                 }
-            }else if(S.isObject(responseText)){
+            }else if(BUI.isObject(responseText)){
                 result = self._fromUnicode(responseText);
             }
-            S.log('服务器端输出：' + S.JSON.stringify(result));
+            BUI.log('服务器端输出：' + BUI.JSON.stringify(result));
             return result;
         },
         /**
@@ -101,14 +101,14 @@ KISSY.add('gallery/uploader/1.4/type/base',function(S, Node, Base) {
          * @private
          */
         _fromUnicode:function(data){
-            if(!S.isObject(data)) return data;
+            if(!BUI.isObject(data)) return data;
             _each(data);
             function _each(data){
-                S.each(data,function(v,k){
-                    if(S.isObject(data[k])){
+                BUI.each(data,function(v,k){
+                    if(BUI.isObject(data[k])){
                         _each(data[k]);
                     }else{
-                        data[k] = S.isString(v) && S.fromUnicode(v) || v;
+                        data[k] = BUI.isString(v) && BUI.fromUnicode(v) || v;
                     }
                 });
             }
@@ -139,4 +139,4 @@ KISSY.add('gallery/uploader/1.4/type/base',function(S, Node, Base) {
     }});
 
     return UploadType;
-}, {requires:['node','base']});
+});
