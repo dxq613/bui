@@ -1,6 +1,6 @@
 BUI.use(['bui/grid/grid','bui/grid/plugins'],function(Grid,Plugins){
 
-	var CLS_CHECKBOX = 'bui-grid-checkBox',
+	var CLS_CHECKBOX = 'x-grid-checkbox',
 		columns = [{
 				title : '表头1',
 				dataIndex :'a',
@@ -18,12 +18,16 @@ BUI.use(['bui/grid/grid','bui/grid/plugins'],function(Grid,Plugins){
 			title : '隐藏',
 			dataIndex : 'd'
 		}],
-		data = [{a:'123'},{a:'cdd',b:'edd'},{a:'1333',c:'eee',d:2}];
+		data = [{a:'123',selected:true},{a:'cdd',b:'edd',disabled:true},{a:'1333',c:'eee',d:2}];
 		
 	var grid = new Grid({
 		render:'#J_Grid',
 		columns : columns,
 		plugins : [Plugins.CheckSelection],
+		itemStatusFields : {
+			selected : 'selected',
+			disabled : 'disabled'
+		},
 		forceFit : true
 	});
 	grid.render();
@@ -48,54 +52,50 @@ BUI.use(['bui/grid/grid','bui/grid/plugins'],function(Grid,Plugins){
 			});
 
 		});
+		it('测试默认选中',function(){
+			var item = data[0];
+			expect(grid.hasStatus(item,'selected')).toBe(true);
+		});
 	});
 
 	describe("测试事件", function () {
 		var col = columns[0],
+			colEl = col.get('el'),
 			colCheckBox = col.get('el').find('.'+ CLS_CHECKBOX),
 			rows = bodyEl.find('.bui-grid-row');
 		it('测试选中表头',function(){
-			//colCheckBox.attr('checked','checked');
+			
 			expect(colCheckBox).not.toBe(null);
-			var checked = colCheckBox.attr('checked');
+			var checked = colEl.hasClass('checked');
 			/**/
 			//colCheckBox.attr('checked',!checked);
 			jasmine.simulate(colCheckBox[0],'click');
 			//colCheckBox.fire('click');
 			waits(300);
 			runs(function(){
-				expect(!!colCheckBox.attr('checked')).toBe(!checked);
+				expect(colEl.hasClass('checked')).toBe(!checked);
 				rows.each(function(index,row){
-					var checkBox = $(row).find('.'+ CLS_CHECKBOX);
-					expect(!!checkBox.attr('checked')).toBe(!checked);
+					if(!grid.hasStatus(null,'disabled',row)){
+						expect(grid.hasStatus(null,'selected',row)).toBe(!checked);
+					}
+					
 				});
 
 			});
 		});
 
 		it('测试取消选中表头',function(){
-			colCheckBox.attr('checked','checked');
+			colEl.addClass('checked');
 			jasmine.simulate(colCheckBox[0],'click');
 			waits(300);
 			runs(function(){
-				expect(!!colCheckBox.attr('checked')).toBe(false);
+				expect(!!colEl.hasClass('checked')).toBe(false);
 				rows.each(function(index,row){
-					var checkBox = $(row).find('.'+ CLS_CHECKBOX);
-					expect(!!checkBox.attr('checked')).toBe(false);
+					if(!grid.hasStatus(null,'disabled',row)){
+						expect($(row).hasClass('bui-grid-row-selected')).toBe(false);
+					}
 				});
-
 			});
-		});
-
-		it('测试勾选行,取消勾选',function(){
-			var index = 1,
-				record = data[index],
-				row = $(rows[index]),
-				checkBox = row.find('.'+ CLS_CHECKBOX);
-			grid.setSelection(record);
-			expect(!!checkBox.attr('checked')).toBe(true);
-			grid.clearSelection();
-			expect(!!checkBox.attr('checked')).toBe(false);
 		});
 	});
 	

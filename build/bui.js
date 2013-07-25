@@ -28612,7 +28612,12 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     //\u83b7\u53d6\u751f\u6210\u7684\u7ea7\u8054\u884c
     _getCascadeRow : function(gridRow){
-      return $(gridRow).next('.' + CLS_CASCADE_ROW);
+      var nextRow = $(gridRow).next();
+      if((nextRow).hasClass(CLS_CASCADE_ROW)){
+        return nextRow;
+      }
+      return null;
+      //return $(gridRow).next('.' + CLS_CASCADE_ROW);
     },
     //\u83b7\u53d6\u7ea7\u8054\u5185\u5bb9
     _getRowContent : function(record){
@@ -28641,7 +28646,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       cascadeEl = cascadeEl || $(row).find('.'+CLS_CASCADE);
       cascadeEl.addClass(CLS_CASCADE_EXPAND);
 
-      if(!cascadeRow.length){
+      if(!cascadeRow || !cascadeRow.length){
         cascadeRow = _self._createCascadeRow(record,row);
       }
       $(cascadeRow).removeClass(CLS_CASCADE_ROW_COLLAPSE);
@@ -28658,11 +28663,11 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       cascadeEl = cascadeEl || $(row).find('.'+CLS_CASCADE);
       cascadeEl.removeClass(CLS_CASCADE_EXPAND);
 
-      if(cascadeRow){
+      if(cascadeRow || !cascadeRow.length){
         $(cascadeRow).addClass(CLS_CASCADE_ROW_COLLAPSE);
+        _self.fire('collapse',{record : record,row : cascadeRow[0]});
       }
-
-      _self.fire('collapse',{record : record,row : cascadeRow[0]});
+      
     },
     //\u83b7\u53d6\u663e\u793a\u7684\u5217\u6570
     _getColumnCount : function(row){
@@ -28708,6 +28713,7 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
     CLS_CHECKBOX = PREFIX + 'grid-checkBox',
+    CLS_CHECK_ICON = 'x-grid-checkbox',
     CLS_RADIO = PREFIX + 'grid-radio';
     
   /**
@@ -28741,9 +28747,10 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
     },
     /**
     * @private
+    * <input  class="' + CLS_CHECKBOX + '" type="checkbox">
     */
     cellInner : {
-      value : '<div class="'+CLS_CHECKBOX+'-container"><input  class="' + CLS_CHECKBOX + '" type="checkbox"></div>'
+      value : '<div class="'+CLS_CHECKBOX+'-container"><span class="' + CLS_CHECK_ICON +'"></span></div>'
     }
   };
 
@@ -28774,38 +28781,28 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
     bindUI : function(grid){
       var _self = this,
         col = _self.get('column'),
-        checkBox = col.get('el').find('.' + CLS_CHECKBOX);
+        colEl = col.get('el'),
+        checkBox = colEl.find('.' + CLS_CHECK_ICON);
       checkBox.on('click',function(){
-        //e.preventDefault();
-        var checked = checkBox.attr('checked');
-        checkBox.attr('checked',checked);
-        if(checked){
+        var checked = colEl.hasClass('checked');     
+        if(!checked){
           grid.setAllSelection();
+          colEl.addClass('checked');
         }else{
           grid.clearSelection();
+          colEl.removeClass('checked');
         }
       });
-
-      grid.on('rowselected',function(e){
-        _self._setRowChecked(e.row,true);
+      grid.on('rowunselected',function(e){
+        
+        colEl.removeClass('checked');
       });
       
-      grid.on('rowcreated',function(){
-        checkBox.attr('checked',false);
-      });
-      grid.on('rowunselected',function(e){
-        _self._setRowChecked(e.row,false);
-        checkBox.attr('checked',false);
-      });
       //\u6e05\u9664\u7eaa\u5f55\u65f6\u53d6\u5168\u9009
       grid.on('clear',function(){
-        checkBox.attr('checked',false);
+        //checkBox.attr('checked',false);
+        colEl.removeClass('checked');
       });
-    },
-    _setRowChecked : function(row,checked){
-      var rowEl = $(row),
-        checkBox = rowEl.find('.' + CLS_CHECKBOX);
-      checkBox.attr('checked',checked);
     }
   });
   

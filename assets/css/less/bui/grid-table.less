@@ -333,9 +333,30 @@ td.bui-grid-cell-empty{
   text-align: center;
 }
 
-th .bui-grid-checkBox-container{
-  padding-top:5px;
+.bui-grid .x-grid-checkbox{
+  background: url("@{checkIconPath}") no-repeat 0px 3px transparent;
+  width: 13px;
+  height: 20px;
+  .inline-block();
 }
+
+.x-grid-checkbox:hover{
+  background-position: -16px 3px;
+}
+
+
+.bui-grid-row-selected .x-grid-checkbox,.checked .x-grid-checkbox{
+  background-position: 0 -18px;
+}
+
+.bui-grid-row-disabled .x-grid-checkbox{
+  background-position: -48px 3px;
+}
+
+.bui-grid-row-selected.bui-grid-row-disabled .x-grid-checkbox{
+  background-position: -48px -18px;
+}
+
 
 //cascade 
 .bui-grid-cascade{
