@@ -137,40 +137,7 @@ BUI.use('bui/list',function (List) {
 
 });
 
-BUI.use('bui/list',function (List) {
 
-  var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}],
-    picker = new List.Picker({
-    render : '#lp',
-    align:{
-      points : ['tl','tl']
-    },
-    children:[{
-        elCls:'bui-select-list',
-        items : items
-      }
-    ]
-  });
-  picker.show();
-  var el = picker.get('el');
-
-  describe('测试选择器生成',function(){
-
-    it('列表生成',function(){
-      expect(picker.get('list')).not.toBe(null);
-      expect(el.find('.bui-select-list').length).not.toBe(0);
-      expect(el.find('.bui-list-item').length).toBe(items.length);
-    });
-
-    it('重置数据',function(){
-      var items1 = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3},{text:"123",value:4}];
-      picker.get('list').set('items',items1);
-      expect(el.find('.bui-list-item').length).toBe(items1.length);
-    });
-
-  });
-
-});
 
 BUI.use('bui/list',function (List) {
 

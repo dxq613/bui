@@ -61,7 +61,6 @@
     <script type="text/javascript" src="../src/list/listitem.js"></script>
     <script type="text/javascript" src="../src/list/list.js"></script>
     <script type="text/javascript" src="../src/list/listbox.js"></script>
-    <script type="text/javascript" src="../src/list/listpicker.js"></script>
     <script type="text/javascript" src="../src/list/base.js"></script>
     <script type="text/javascript" src="specs/list-spec.js"></script><!---->
     <script type="text/javascript" src="specs/list-nav-spec.js"></script>

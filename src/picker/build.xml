@@ -13,19 +13,17 @@
 	<!-- 删除 build 目录下的 -min 样式和脚本 --> 
     <target name="prepare">
         <delete>
-            <fileset dir="${des.dir}" includes="overlay.js"/>
+            <fileset dir="${des.dir}" includes="picker.js"/>
         </delete>
     </target>
 
 	<!-- 合并js --> 
 	<target name="combine.js" depends="prepare">
-    <concat destfile="${des.dir}/overlay.js" encoding="${charset}" outputencoding="${charset}">
+    <concat destfile="${des.dir}/picker.js" encoding="${charset}" outputencoding="${charset}">
       <path path="base.js"/>
-			<path path="overlay.js"/>
-			<path path="dialog.js"/>
-			<path path="message.js"/>
-		</concat>
+	  <path path="picker.js"/>
+	  <path path="listpicker.js"/>
+	</concat>
   </target>
-
-	
+  
 </project>

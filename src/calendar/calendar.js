@@ -4,7 +4,7 @@
  * @ignore
  */
 
-define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
+define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
   
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -13,7 +13,7 @@ define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calen
     CLS_PICKER_MINUTE = 'x-datepicker-minute',
     CLS_PICKER_SECOND = 'x-datepicker-second',
     CLS_TIME_PICKER = 'x-timepicker',
-    List = require('bui/list'),
+    Picker = require('bui/picker').ListPicker,
     MonthPicker = require('bui/calendar/monthpicker'),
     Header = require('bui/calendar/header'),
     Panel = require('bui/calendar/panel'),
@@ -132,7 +132,7 @@ define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calen
     },
     _initTimePicker : function(){
       var _self = this,
-        picker = new List.Picker({
+        picker = new Picker({
           elCls : CLS_TIME_PICKER,
           children:[{
             itemTpl : '<li><a href="#">{text}</a></li>'

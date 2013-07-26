@@ -13215,15 +13215,14 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
  * @ignore
  */
 
-define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message','bui/overlay/picker'],function (require) {
+define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message'],function (require) {
   var BUI = require('bui/common'),
     Overlay = BUI.namespace('Overlay');
 
   BUI.mix(Overlay,{
     Overlay : require('bui/overlay/overlay'),
     Dialog : require('bui/overlay/dialog'),
-    Message : require('bui/overlay/message'),
-    Picker : require('bui/overlay/picker')
+    Message : require('bui/overlay/message')
   });
 
   BUI.mix(Overlay,{
@@ -13454,197 +13453,6 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
   overlay.View = overlayView;
   return overlay;
 
-});/**
- * @fileOverview \u9009\u62e9\u5668
- * @ignore
- */
-
-define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
-  
-  var Overlay = require('bui/overlay/overlay');
-  /**
-   * \u9009\u62e9\u5668\u63a7\u4ef6\uff0c\u5f39\u51fa\u4e00\u4e2a\u5c42\u6765\u9009\u62e9\u6570\u636e
-   * @class BUI.Overlay.Picker
-   * @extends BUI.Overlay.Overlay
-   */
-  var picker = Overlay.extend({
-    
-      bindUI : function(){
-        var _self = this,
-          innerControl = _self.get('innerControl'),
-          hideEvent = _self.get('hideEvent'),
-          trigger = $(_self.get('trigger'));
-
-        trigger.on(_self.get('triggerEvent'),function(e){
-          if(_self.get('autoSetValue')){
-            var valueField = _self.get('valueField') || _self.get('textField') || this,
-              val = $(valueField).val();
-            _self.setSelectedValue(val);
-          }
-        });
-
-        innerControl.on(_self.get('changeEvent'),function(e){
-          var curTrigger = _self.get('curTrigger'),
-            textField = _self.get('textField') || curTrigger,
-            valueField = _self.get('valueField'),
-            selValue = _self.getSelectedValue(),
-            isChange = false;
-
-          if(textField){
-            var selText = _self.getSelectedText(),
-              preText = $(textField).val();
-            if(selText != preText){
-              $(textField).val(selText);
-              isChange = true;
-            }
-          }
-          
-          if(valueField){
-            var preValue = $(valueField).val();  
-            if(valueField != preValue){
-              $(valueField).val(selValue);
-              isChange = true;
-            }
-          }
-          if(isChange){
-            _self.fire('selectedchange',{value : selValue,curTrigger : curTrigger});
-          }
-          
-        });
-        if(hideEvent){
-          innerControl.on(_self.get('hideEvent'),function(){
-            _self.hide();
-          });
-        }
-      },
-      /**
-       * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
-       * @param {String} val \u8bbe\u7f6e\u503c
-       */
-      setSelectedValue : function(val){
-        
-      },
-      /**
-       * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
-       * @return {String} \u9009\u4e2d\u7684\u503c
-       */
-      getSelectedValue : function(){
-        
-      },
-      /**
-       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
-       * @return {String} \u9009\u4e2d\u7684\u6587\u672c
-       */
-      getSelectedText : function(){
-
-      },
-      _uiSetValueField : function(v){
-        var _self = this;
-        if(v){
-          _self.setSelectedValue($(v).val());
-        }
-      },
-      _getTextField : function(){
-        var _self = this;
-        return _self.get('textField') || _self.get('curTrigger');
-      }
-  },{
-    ATTRS : {
-      
-      /**
-       * \u7528\u4e8e\u9009\u62e9\u7684\u63a7\u4ef6\uff0c\u9ed8\u8ba4\u4e3a\u7b2c\u4e00\u4e2a\u5b50\u5143\u7d20,\u6b64\u63a7\u4ef6\u5b9e\u73b0 @see {BUI.Component.UIBase.Selection} \u63a5\u53e3
-       * @protected
-       * @type {Object|BUI.Component.Controller}
-       */
-      innerControl : {
-        getter:function(){
-          return this.get('children')[0];
-        }
-      },
-      /**
-       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @cfg {String} [triggerEvent='click']
-       */
-      /**
-       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @type {String}
-       * @default 'click'
-       */
-      triggerEvent:{
-        value:'click'
-      },
-      /**
-       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
-       * @cfg {Boolean} [autoSetValue=true]
-       */
-      /**
-       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
-       * @type {Boolean}
-       */
-      autoSetValue : {
-        value : true
-      },
-      /**
-       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
-       * @cfg {String} [changeEvent='selectedchange']
-       */
-      /**
-       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
-       * @type {String}
-       */
-      changeEvent : {
-        value:'selectedchange'
-      },
-      /**
-       * \u81ea\u52a8\u9690\u85cf
-       * @type {Boolean}
-       * @override
-       */
-      autoHide:{
-        value : true
-      },
-      /**
-       * \u9690\u85cf\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @protected
-       * @type {String}
-       */
-      hideEvent:{
-        value:'itemclick'
-      },
-      /**
-       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
-       * @cfg {String|HTMLElement|jQuery} textField
-       */
-      /**
-       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
-       * @type {String|HTMLElement|jQuery}
-       */
-      textField : {
-
-      },
-      align : {
-        value : {
-           points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
-           offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
-        }
-      },
-      /**
-       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
-       * @cfg {String|HTMLElement|jQuery} valueField
-       */
-      /**
-       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
-       * @type {String|HTMLElement|jQuery}
-       */
-      valueField:{
-
-      }
-    }
-  },{
-    xclass:'picker'
-  });
-
-  return picker;
 });/**
  * @fileOverview \u5f39\u51fa\u6846
  * @author dxq613@gmail.com
@@ -14108,7 +13916,7 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
  */
 ;(function(){
 var BASE = 'bui/list/';
-define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simplelist',BASE + 'listbox',BASE + 'listpicker'],function (r) {
+define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simplelist',BASE + 'listbox'],function (r) {
   var BUI = r('bui/common'),
     List = BUI.namespace('List');
 
@@ -14116,8 +13924,7 @@ define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simpleli
     List : r(BASE + 'list'),
     ListItem : r(BASE + 'listitem'),
     SimpleList : r(BASE + 'simplelist'),
-    Listbox : r(BASE + 'listbox'),
-    Picker : r(BASE + 'listpicker')
+    Listbox : r(BASE + 'listbox')
   });
 
   BUI.mix(List,{
@@ -15654,17 +15461,226 @@ define('bui/list/list',function (require) {
 
   return list;
 });/**
+ * @fileOverview Picker\u7684\u5165\u53e3
+ * @author dxq613@gmail.com
+ * @ignore
+ */
+
+define('bui/picker',['bui/common','bui/picker/picker','bui/picker/listpicker'],function (require) {
+  var BUI = require('bui/common'),
+    Picker = BUI.namespace('Picker');
+
+  BUI.mix(Picker,{
+    Picker : require('bui/picker/picker'),
+    ListPicker : require('bui/picker/listpicker')
+  });
+
+  return Picker;
+});/**
+ * @fileOverview \u9009\u62e9\u5668
+ * @ignore
+ */
+
+define('bui/picker/picker',['bui/overlay'],function (require) {
+  
+  var Overlay = require('bui/overlay').Overlay;
+
+  /**
+   * \u9009\u62e9\u5668\u63a7\u4ef6\uff0c\u5f39\u51fa\u4e00\u4e2a\u5c42\u6765\u9009\u62e9\u6570\u636e
+   * @class BUI.Picker.Picker
+   * @extends BUI.Overlay.Overlay
+   */
+  var picker = Overlay.extend({
+    
+      bindUI : function(){
+        var _self = this,
+          innerControl = _self.get('innerControl'),
+          hideEvent = _self.get('hideEvent'),
+          trigger = $(_self.get('trigger'));
+
+        trigger.on(_self.get('triggerEvent'),function(e){
+          if(_self.get('autoSetValue')){
+            var valueField = _self.get('valueField') || _self.get('textField') || this,
+              val = $(valueField).val();
+            _self.setSelectedValue(val);
+          }
+        });
+
+        innerControl.on(_self.get('changeEvent'),function(e){
+          var curTrigger = _self.get('curTrigger'),
+            textField = _self.get('textField') || curTrigger,
+            valueField = _self.get('valueField'),
+            selValue = _self.getSelectedValue(),
+            isChange = false;
+
+          if(textField){
+            var selText = _self.getSelectedText(),
+              preText = $(textField).val();
+            if(selText != preText){
+              $(textField).val(selText);
+              isChange = true;
+            }
+          }
+          
+          if(valueField){
+            var preValue = $(valueField).val();  
+            if(valueField != preValue){
+              $(valueField).val(selValue);
+              isChange = true;
+            }
+          }
+          if(isChange){
+            _self.fire('selectedchange',{value : selValue,curTrigger : curTrigger});
+          }
+          
+        });
+        if(hideEvent){
+          innerControl.on(_self.get('hideEvent'),function(){
+            _self.hide();
+          });
+        }
+      },
+      /**
+       * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
+       * @param {String} val \u8bbe\u7f6e\u503c
+       */
+      setSelectedValue : function(val){
+        
+      },
+      /**
+       * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
+       * @return {String} \u9009\u4e2d\u7684\u503c
+       */
+      getSelectedValue : function(){
+        
+      },
+      /**
+       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
+       * @return {String} \u9009\u4e2d\u7684\u6587\u672c
+       */
+      getSelectedText : function(){
+
+      },
+      _uiSetValueField : function(v){
+        var _self = this;
+        if(v){
+          _self.setSelectedValue($(v).val());
+        }
+      },
+      _getTextField : function(){
+        var _self = this;
+        return _self.get('textField') || _self.get('curTrigger');
+      }
+  },{
+    ATTRS : {
+      
+      /**
+       * \u7528\u4e8e\u9009\u62e9\u7684\u63a7\u4ef6\uff0c\u9ed8\u8ba4\u4e3a\u7b2c\u4e00\u4e2a\u5b50\u5143\u7d20,\u6b64\u63a7\u4ef6\u5b9e\u73b0 @see {BUI.Component.UIBase.Selection} \u63a5\u53e3
+       * @protected
+       * @type {Object|BUI.Component.Controller}
+       */
+      innerControl : {
+        getter:function(){
+          return this.get('children')[0];
+        }
+      },
+      /**
+       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+       * @cfg {String} [triggerEvent='click']
+       */
+      /**
+       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+       * @type {String}
+       * @default 'click'
+       */
+      triggerEvent:{
+        value:'click'
+      },
+      /**
+       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
+       * @cfg {Boolean} [autoSetValue=true]
+       */
+      /**
+       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
+       * @type {Boolean}
+       */
+      autoSetValue : {
+        value : true
+      },
+      /**
+       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
+       * @cfg {String} [changeEvent='selectedchange']
+       */
+      /**
+       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
+       * @type {String}
+       */
+      changeEvent : {
+        value:'selectedchange'
+      },
+      /**
+       * \u81ea\u52a8\u9690\u85cf
+       * @type {Boolean}
+       * @override
+       */
+      autoHide:{
+        value : true
+      },
+      /**
+       * \u9690\u85cf\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+       * @protected
+       * @type {String}
+       */
+      hideEvent:{
+        value:'itemclick'
+      },
+      /**
+       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
+       * @cfg {String|HTMLElement|jQuery} textField
+       */
+      /**
+       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
+       * @type {String|HTMLElement|jQuery}
+       */
+      textField : {
+
+      },
+      align : {
+        value : {
+           points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+           offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
+        }
+      },
+      /**
+       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
+       * @cfg {String|HTMLElement|jQuery} valueField
+       */
+      /**
+       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
+       * @type {String|HTMLElement|jQuery}
+       */
+      valueField:{
+
+      }
+    }
+  },{
+    xclass:'picker'
+  });
+
+  return picker;
+});/**
  * @fileOverview \u5217\u8868\u9879\u7684\u9009\u62e9\u5668
  * @ignore
  */
 
-define('bui/list/listpicker',['bui/overlay'],function (require) {
+define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (require) {
 
-  var Picker = require('bui/overlay').Picker,
+  var List = require('bui/list'),
+    Picker = require('bui/picker/picker'),
     /**
      * \u5217\u8868\u9009\u62e9\u5668
-     * @class BUI.List.Picker
-     * @extends BUI.Overlay.Picker
+     * @class BUI.Picker.ListPicker
+     * @extends BUI.Picker.Picker
      */
     listPicker = Picker.extend({
       initializer : function(){
@@ -19944,10 +19960,10 @@ define('bui/select',['bui/common','bui/select/select','bui/select/combox','bui/s
  * @ignore
  */
 
-define('bui/select/select',['bui/common','bui/list'],function (require) {
+define('bui/select/select',['bui/common','bui/picker'],function (require) {
 
   var BUI = require('bui/common'),
-    List = require('bui/list'),
+    ListPicker = require('bui/picker').ListPicker,
     PREFIX = BUI.prefix;
 
   function getItemTpl(multiple){
@@ -19956,7 +19972,7 @@ define('bui/select/select',['bui/common','bui/list'],function (require) {
   }
 
   var Component = BUI.Component,
-    Picker = List.Picker,
+    Picker = ListPicker,
     CLS_INPUT = PREFIX + 'select-input',
     /**
      * \u9009\u62e9\u63a7\u4ef6
@@ -19970,6 +19986,8 @@ define('bui/select/select',['bui/common','bui/list'],function (require) {
         var _self = this,
           children = _self.get('children'),
           multipleSelect = _self.get('multipleSelect'),
+          picker = _self.get('picker');
+        if(!picker){
           picker = new Picker({
             children:[
               {
@@ -19981,11 +19999,14 @@ define('bui/select/select',['bui/common','bui/list'],function (require) {
             ],
             valueField : _self.get('valueField')
           });
+          
+          //children.push(picker);
+          _self.set('picker',picker);
+        }
         if(multipleSelect){
           picker.set('hideEvent','');
         }
-        //children.push(picker);
-        _self.set('picker',picker);
+        
       },
       //\u6e32\u67d3DOM\u4ee5\u53ca\u9009\u62e9\u5668
       renderUI : function(){
@@ -20124,7 +20145,7 @@ define('bui/select/select',['bui/common','bui/list'],function (require) {
         /**
          * \u9009\u62e9\u5668\uff0c\u6d6e\u52a8\u51fa\u73b0\uff0c\u4f9b\u7528\u6237\u9009\u62e9
          * @readOnly
-         * @type {BUI.Overlay.Picker}
+         * @type {BUI.Picker.ListPicker}
          */
         picker:{
 
@@ -24889,7 +24910,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
+define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
   
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
@@ -24898,7 +24919,7 @@ define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calen
     CLS_PICKER_MINUTE = 'x-datepicker-minute',
     CLS_PICKER_SECOND = 'x-datepicker-second',
     CLS_TIME_PICKER = 'x-timepicker',
-    List = require('bui/list'),
+    Picker = require('bui/picker').ListPicker,
     MonthPicker = require('bui/calendar/monthpicker'),
     Header = require('bui/calendar/header'),
     Panel = require('bui/calendar/panel'),
@@ -25017,7 +25038,7 @@ define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calen
     },
     _initTimePicker : function(){
       var _self = this,
-        picker = new List.Picker({
+        picker = new Picker({
           elCls : CLS_TIME_PICKER,
           children:[{
             itemTpl : '<li><a href="#">{text}</a></li>'
@@ -25325,10 +25346,10 @@ define('bui/calendar/calendar',['bui/list','bui/calendar/monthpicker','bui/calen
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/calendar/datepicker',['bui/common','bui/overlay','bui/calendar/calendar'],function(require){
+define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calendar'],function(require){
   
   var BUI = require('bui/common'),
-    Picker = require('bui/overlay').Picker,
+    Picker = require('bui/picker').Picker,
     Calendar = require('bui/calendar/calendar'),
     DateUtil = BUI.Date;
 
@@ -25339,7 +25360,7 @@ define('bui/calendar/datepicker',['bui/common','bui/overlay','bui/calendar/calen
    * </p>
    * xclass : 'calendar-datepicker'
    * @class BUI.Calendar.DatePicker
-   * @extends BUI.Overlay.Picker
+   * @extends BUI.Picker.Picker
    */
   var datepicker = Picker.extend({
 
@@ -26629,6 +26650,10 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
           width = _self.get('width'),
           totalWidth = 0,
           emptyColumn = null;
+        if(width == 'auto'){
+          //_self.get('el').find('table').width()
+          return;
+        }
         if (_self.get('forceFit')) {
           _self.forceFitColumns();
         }else if(_self._isAllowScrollLeft()){
@@ -26764,9 +26789,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     Header = require('bui/grid/header'),
     Column = require('bui/grid/column');
 
-  function getHeight(dom){
-    var oStyle = dom.currentStyle? dom.currentStyle : window.getComputedStyle(dom, null);
-    return oStyle.height;
+  function isPercent(str){
+    if(BUI.isString(str)){
+      return str.indexOf('%') !== -1;
+    }
+    return false;
   }
 
   var PREFIX = BUI.prefix,
@@ -26895,23 +26922,32 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     //set table width
     setTableWidth:function (columnsWidth) {
+      if(!columnsWidth && isPercent(this.get('width'))){
+        this.get('tableEl').width('100%');
+        return;
+      }
       var _self = this,
         width = _self._getInnerWidth(),
         height = _self.get('height'),
         tableEl = _self.get('tableEl'),
         forceFit = _self.get('forceFit'),
         headerRowEl = _self.get('headerRowEl');
-      columnsWidth = columnsWidth || _self._getColumnsWidth();
-      if (!width) {
-        return;
-      }
-      if (width >= columnsWidth) {
-        columnsWidth = width;
-        if (height) {
-          var scrollWidth = (UA.ie == 6 || UA.ie == 7) ? CLS_SCROLL_WITH + 2 : CLS_SCROLL_WITH;
-          columnsWidth = width - scrollWidth;
+      //\u4f7f\u7528\u767e\u5206\u6bd4\u7684\u5bbd\u5ea6\uff0c\u4e0d\u8fdb\u884c\u8ba1\u7b97
+      if(!isPercent(columnsWidth)){
+        
+        columnsWidth = columnsWidth || _self._getColumnsWidth();
+        if (!width) {
+          return;
+        }
+        if (width >= columnsWidth) {
+          columnsWidth = width;
+          if (height) {
+            var scrollWidth = (UA.ie == 6 || UA.ie == 7) ? CLS_SCROLL_WITH + 2 : CLS_SCROLL_WITH;
+            columnsWidth = width - scrollWidth;
+          }
         }
       }
+      
       tableEl.width(columnsWidth);
     },
     /**
@@ -27587,7 +27623,12 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     _uiSetWidth:function (w) {
       var _self = this;
       if (_self.get('rendered')) {
-        _self.get('header').set('width', _self._getInnerWidth(w));
+        if(!isPercent(w)){
+          _self.get('header').set('width', _self._getInnerWidth(w));
+        }else{
+          _self.get('header').set('width','100%');
+        }
+        
       }
       _self.get('view').setTableWidth();
     },
@@ -30244,7 +30285,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   });
 
   return Dialog;
-});BUI.use(['bui/common','bui/data','bui/list',
+});BUI.use(['bui/common','bui/data','bui/list','bui/picker',
   'bui/menu','bui/toolbar','bui/progressbar','bui/cookie',
   'bui/form','bui/mask','bui/select','bui/tab',
   'bui/calendar','bui/overlay','bui/grid'

@@ -27,7 +27,6 @@
 			<path path="listbox.js"/>
 			<path path="listitem.js"/>
 			<path path="list.js"/>
-			<path path="listpicker.js"/>
 		</concat>
   </target>
   

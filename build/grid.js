@@ -1171,6 +1171,10 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
           width = _self.get('width'),
           totalWidth = 0,
           emptyColumn = null;
+        if(width == 'auto'){
+          //_self.get('el').find('table').width()
+          return;
+        }
         if (_self.get('forceFit')) {
           _self.forceFitColumns();
         }else if(_self._isAllowScrollLeft()){
@@ -1306,9 +1310,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     Header = require('bui/grid/header'),
     Column = require('bui/grid/column');
 
-  function getHeight(dom){
-    var oStyle = dom.currentStyle? dom.currentStyle : window.getComputedStyle(dom, null);
-    return oStyle.height;
+  function isPercent(str){
+    if(BUI.isString(str)){
+      return str.indexOf('%') !== -1;
+    }
+    return false;
   }
 
   var PREFIX = BUI.prefix,
@@ -1437,23 +1443,32 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     //set table width
     setTableWidth:function (columnsWidth) {
+      if(!columnsWidth && isPercent(this.get('width'))){
+        this.get('tableEl').width('100%');
+        return;
+      }
       var _self = this,
         width = _self._getInnerWidth(),
         height = _self.get('height'),
         tableEl = _self.get('tableEl'),
         forceFit = _self.get('forceFit'),
         headerRowEl = _self.get('headerRowEl');
-      columnsWidth = columnsWidth || _self._getColumnsWidth();
-      if (!width) {
-        return;
-      }
-      if (width >= columnsWidth) {
-        columnsWidth = width;
-        if (height) {
-          var scrollWidth = (UA.ie == 6 || UA.ie == 7) ? CLS_SCROLL_WITH + 2 : CLS_SCROLL_WITH;
-          columnsWidth = width - scrollWidth;
+      //使用百分比的宽度，不进行计算
+      if(!isPercent(columnsWidth)){
+        
+        columnsWidth = columnsWidth || _self._getColumnsWidth();
+        if (!width) {
+          return;
+        }
+        if (width >= columnsWidth) {
+          columnsWidth = width;
+          if (height) {
+            var scrollWidth = (UA.ie == 6 || UA.ie == 7) ? CLS_SCROLL_WITH + 2 : CLS_SCROLL_WITH;
+            columnsWidth = width - scrollWidth;
+          }
         }
       }
+      
       tableEl.width(columnsWidth);
     },
     /**
@@ -2129,7 +2144,12 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     _uiSetWidth:function (w) {
       var _self = this;
       if (_self.get('rendered')) {
-        _self.get('header').set('width', _self._getInnerWidth(w));
+        if(!isPercent(w)){
+          _self.get('header').set('width', _self._getInnerWidth(w));
+        }else{
+          _self.get('header').set('width','100%');
+        }
+        
       }
       _self.get('view').setTableWidth();
     },

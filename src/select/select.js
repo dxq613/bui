@@ -4,10 +4,10 @@
  * @ignore
  */
 
-define('bui/select/select',['bui/common','bui/list'],function (require) {
+define('bui/select/select',['bui/common','bui/picker'],function (require) {
 
   var BUI = require('bui/common'),
-    List = require('bui/list'),
+    ListPicker = require('bui/picker').ListPicker,
     PREFIX = BUI.prefix;
 
   function getItemTpl(multiple){
@@ -16,7 +16,7 @@ define('bui/select/select',['bui/common','bui/list'],function (require) {
   }
 
   var Component = BUI.Component,
-    Picker = List.Picker,
+    Picker = ListPicker,
     CLS_INPUT = PREFIX + 'select-input',
     /**
      * 选择控件
@@ -30,6 +30,8 @@ define('bui/select/select',['bui/common','bui/list'],function (require) {
         var _self = this,
           children = _self.get('children'),
           multipleSelect = _self.get('multipleSelect'),
+          picker = _self.get('picker');
+        if(!picker){
           picker = new Picker({
             children:[
               {
@@ -41,11 +43,14 @@ define('bui/select/select',['bui/common','bui/list'],function (require) {
             ],
             valueField : _self.get('valueField')
           });
+          
+          //children.push(picker);
+          _self.set('picker',picker);
+        }
         if(multipleSelect){
           picker.set('hideEvent','');
         }
-        //children.push(picker);
-        _self.set('picker',picker);
+        
       },
       //渲染DOM以及选择器
       renderUI : function(){
@@ -184,7 +189,7 @@ define('bui/select/select',['bui/common','bui/list'],function (require) {
         /**
          * 选择器，浮动出现，供用户选择
          * @readOnly
-         * @type {BUI.Overlay.Picker}
+         * @type {BUI.Picker.ListPicker}
          */
         picker:{
 

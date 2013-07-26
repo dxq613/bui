@@ -1,5 +1,5 @@
 
-seajs.use(['bui/common','bui/data','bui/list',
+seajs.use(['bui/common','bui/data','bui/list','bui/picker',
   'bui/menu','bui/toolbar','bui/progressbar','bui/cookie',
   'bui/form','bui/mask','bui/select','bui/tab',
   'bui/calendar','bui/overlay','bui/grid'
@@ -95,14 +95,23 @@ seajs.use(['bui/common','bui/data','bui/list',
       ];
       isExist(arr);
     });
+    it('测试picker',function(){
+      var Picker = BUI.Picker;
+      var arr = [
+        Picker,
+        Picker.Picker,
+        Picker.ListPicker
+      ];
+      isExist(arr);
+    });
 
     it('测试List 加载',function(){
       var List = BUI.List;
       var arr = [
         List,
+        List.List,
         List.ListItem,
         List.SimpleList,
-        List.Picker,
         List.Listbox
       ];
       isExist(arr);
@@ -145,8 +154,7 @@ seajs.use(['bui/common','bui/data','bui/list',
       var arr = [
         Overlay,
         Overlay.Overlay,
-        Overlay.Dialog,
-        Overlay.Picker
+        Overlay.Dialog
       ];
       isExist(arr);
     });

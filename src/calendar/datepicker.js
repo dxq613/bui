@@ -3,10 +3,10 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/calendar/datepicker',['bui/common','bui/overlay','bui/calendar/calendar'],function(require){
+define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calendar'],function(require){
   
   var BUI = require('bui/common'),
-    Picker = require('bui/overlay').Picker,
+    Picker = require('bui/picker').Picker,
     Calendar = require('bui/calendar/calendar'),
     DateUtil = BUI.Date;
 
@@ -17,7 +17,7 @@ define('bui/calendar/datepicker',['bui/common','bui/overlay','bui/calendar/calen
    * </p>
    * xclass : 'calendar-datepicker'
    * @class BUI.Calendar.DatePicker
-   * @extends BUI.Overlay.Picker
+   * @extends BUI.Picker.Picker
    */
   var datepicker = Picker.extend({
 
