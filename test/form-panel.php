@@ -57,7 +57,7 @@
               </div>
             </div>
           <div>
-            <label>日期：</label><input type="text" name="c2" class="calendar calendar-time"/>
+            <label>日期：</label><input type="text" name="c2" class="calendar calendar-time" data-tip="{text : '请输入日期'}"/>
           </div>
           <div class="bui-bar">
             <button type="submit">提交</button>

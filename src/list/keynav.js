@@ -7,7 +7,7 @@
 define('bui/list/keynav',function () {
   'use strict';
   /**
-   * @class List.KeyNav
+   * @class BUI.List.KeyNav
    * 列表导航扩展类
    */
   var  KeyNav = function(){};

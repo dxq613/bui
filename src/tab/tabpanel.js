@@ -10,6 +10,23 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
 
   /**
    * 带有面板的切换标签
+   * <pre><code>
+   * BUI.use('bui/tab',function(Tab){
+   *   
+   *     var tab = new Tab.TabPanel({
+   *       render : '#tab',
+   *       elCls : 'nav-tabs',
+   *       panelContainer : '#panel',
+   *       autoRender: true,
+   *       children:[
+   *         {text:'源代码',value:'1'},
+   *         {text:'HTML',value:'2'},
+   *         {text:'JS',value:'3'}
+   *       ]
+   *     });
+   *     tab.setSelected(tab.getItemAt(0));
+   *   });
+   * </code></pre>
    * @class BUI.Tab.TabPanel
    * @extends BUI.Tab.Tab
    */

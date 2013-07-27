@@ -405,7 +405,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       setItemAttr(item,'statusCls',statusCls)
       //item.statusCls = statusCls;
     }
-    clearSelected(item);
+   // clearSelected(item);
   }
   function setItemAttr(item,name,val){
     if(item.isController){

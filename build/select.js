@@ -20,15 +20,10 @@ define('bui/select',['bui/common','bui/select/select','bui/select/combox','bui/s
  */
 
 define('bui/select/select',['bui/common','bui/picker'],function (require) {
-
+  'use strict';
   var BUI = require('bui/common'),
     ListPicker = require('bui/picker').ListPicker,
     PREFIX = BUI.prefix;
-
-  function getItemTpl(multiple){
-    var text = multiple ? '<span class="checkbox"><input type="checkbox" />{text}</span>' : '{text}';
-    return '<li role="option" class="' + PREFIX + 'list-item" data-value="{value}">' + text + '</li>';
-  }
 
   var Component = BUI.Component,
     Picker = ListPicker,
@@ -36,6 +31,27 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
     /**
      * 选择控件
      * xclass:'select'
+     * <pre><code>
+     *  BUI.use('bui/select',function(Select){
+     * 
+     *   var items = [
+     *         {text:'选项1',value:'a'},
+     *         {text:'选项2',value:'b'},
+     *         {text:'选项3',value:'c'}
+     *       ],
+     *       select = new Select.Select({  
+     *         render:'#s1',
+     *         valueField:'#hide',
+     *         //multipleSelect: true, //是否多选
+     *         items:items
+     *       });
+     *   select.render();
+     *   select.on('change', function(ev){
+     *     //ev.text,ev.value,ev.item
+     *   });
+     *   
+     * });
+     * </code></pre>
      * @class BUI.Select.Select
      * @extends BUI.Component.Controller
      */
@@ -43,17 +59,17 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       //初始化
       initializer:function(){
         var _self = this,
-          children = _self.get('children'),
           multipleSelect = _self.get('multipleSelect'),
+          xclass,
           picker = _self.get('picker');
         if(!picker){
+          xclass = multipleSelect ? 'listbox' : 'simple-list';
           picker = new Picker({
             children:[
               {
+                xclass : xclass,
                 elCls:PREFIX + 'select-list',
-                items:_self.get('items'),
-                itemTpl : getItemTpl(multipleSelect),
-                multipleSelect : multipleSelect
+                items:_self.get('items')/**/
               }
             ],
             valueField : _self.get('valueField')
@@ -61,6 +77,8 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           
           //children.push(picker);
           _self.set('picker',picker);
+        }else{
+          picker.set('valueField',_self.get('valueField'));
         }
         if(multipleSelect){
           picker.set('hideEvent','');
@@ -77,24 +95,21 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        picker.set('width',el.outerWidth());
+        if(_self.get('forceFit')){
+          picker.set('width',el.outerWidth());
+        }
+        
         picker.render();
       },
       //绑定事件
       bindUI : function(){
         var _self = this,
-          multipleSelect = _self.get('multipleSelect'),
-          list = _self._getList();
-
-          //选项发生改变时
-          list.on('selectedchange',function(ev){
-            if(multipleSelect){
-              var sender = $(ev.domTarget),
-                checkbox = sender.find('input');
-              checkbox.attr('checked',ev.selected);
-            }
-            _self.fire('change',{item : ev.item});
-          });
+          picker = _self.get('picker');
+          
+        //选项发生改变时
+        picker.on('selectedchange',function(ev){
+          _self.fire('change',{text : ev.text,value : ev.value,item : ev.item});
+        });
       },
       /**
        * 是否包含元素
@@ -108,6 +123,9 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       },
       //设置子项
       _uiSetItems : function(items){
+        if(!items){
+          return;
+        }
         var _self = this,
           picker = _self.get('picker'),
           list = picker.get('list'),
@@ -134,7 +152,10 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
             picker = _self.get('picker'),
             width = v - iconEl.outerWidth() - appendWidth;
           textEl.width(width);
-          picker.set('width',v);
+          if(_self.get('forceFit')){
+            picker.set('width',v);
+          }
+          
         }
       },
       _getTextEl : function(){
@@ -148,7 +169,9 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       destructor:function(){
         var _self = this,
           picker = _self.get('picker');
-        picker && picker.destroy();
+        if(picker){
+          picker.destroy();
+        }
       },
       //获取List控件
       _getList:function(){
@@ -158,21 +181,21 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         return list;
       },
       /**
-       * 获取选中项的值
+       * 获取选中项的值，如果是多选则，返回的'1,2,3'形式的字符串
+       * <pre><code>
+       *  var value = select.getSelectedValue();
+       * </code></pre>
        * @return {String} 选中项的值
        */
       getSelectedValue:function(){
-        var _self = this,
-          list = _self._getList(),
-          selection = list.getSelection(),
-          result = [];
-        for (var i = 0; i < selection.length; i++) {
-          result.push(selection[i]['value']);
-        };
-        return result.join(',');
+        return this.get('picker').getSelectedValue();
       },
       /**
        * 设置选中的值
+       * <pre><code>
+       * select.setSelectedValue('1'); //单选模式下
+       * select.setSelectedValue('1,2,3'); //多选模式下
+       * </code></pre>
        * @param {String} value 选中的值
        */
       setSelectedValue : function(value){
@@ -181,18 +204,14 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.setSelectedValue(value);
       },
       /**
-       * 获取选中项的文本
+       * 获取选中项的文本，如果是多选则，返回的'text1,text2,text3'形式的字符串
+       * <pre><code>
+       *  var value = select.getSelectedText();
+       * </code></pre>
        * @return {String} 选中项的文本
        */
       getSelectedText:function(){
-        var _self = this,
-          list = _self._getList(),
-          selection = list.getSelection(),
-          result = [];
-        for (var i = 0; i < selection.length; i++) {
-          result.push(selection[i]['text']);
-        };
-        return result.join(',');
+        return this.get('picker').getSelectedText();
       }
     },{
       ATTRS : 
@@ -201,6 +220,38 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
        * @ignore
        */
       {
+
+        /**
+         * 选择器，浮动出现，供用户选择
+         * @cfg {BUI.Picker.ListPicker} picker
+         * <pre><code>
+         * var columns = [
+         *       {title : '表头1(30%)',dataIndex :'a', width:'30%'},
+         *       {id: '123',title : '表头2(30%)',dataIndex :'b', width:'30%'},
+         *       {title : '表头3(40%)',dataIndex : 'c',width:'40%'}
+         *     ],   
+         *   data = [{a:'123',b:'选择文本1'},{a:'cdd',b:'选择文本2'},{a:'1333',b:'选择文本3',c:'eee',d:2}],
+         *   grid = new Grid.SimpleGrid({
+         *     idField : 'a', //设置作为key 的字段，放到valueField中
+         *     columns : columns,
+         *     textGetter: function(item){ //返回选中的文本
+         *       return item.b;
+         *     }
+         *   }),
+         *   picker = new Picker.ListPicker({
+         *     width:300,  //指定宽度
+         *     children : [grid] //配置picker内的列表
+         *   }),
+         *   select = new Select.Select({  
+         *     render:'#s1',
+         *     picker : picker,
+         *     forceFit:false, //不强迫列表跟选择器宽度一致
+         *     valueField:'#hide',
+         *     items : data
+         *   });
+         * select.render();
+         * </code></pre>
+         */
         /**
          * 选择器，浮动出现，供用户选择
          * @readOnly
@@ -234,7 +285,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           value:false
         },
         /**
-         * 控件的name，便于表单提交
+         * 控件的name，用于存放选中的文本，便于表单提交
          * @cfg {Object} name
          */
         /**
@@ -247,13 +298,31 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         /**
          * 选项
          * @cfg {Array} items
+         * <pre><code>
+         *  BUI.use('bui/select',function(Select){
+         * 
+         *   var items = [
+         *         {text:'选项1',value:'a'},
+         *         {text:'选项2',value:'b'},
+         *         {text:'选项3',value:'c'}
+         *       ],
+         *       select = new Select.Select({  
+         *         render:'#s1',
+         *         valueField:'#hide',
+         *         //multipleSelect: true, //是否多选
+         *         items:items
+         *       });
+         *   select.render();
+         *   
+         * });
+         * </code></pre>
          */
         /**
          * 选项
          * @type {Array}
          */
         items:{
-         value:[]
+          sync:false
         },
         /**
          * 标示选择完成后，显示文本的DOM节点的样式
@@ -264,12 +333,35 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         inputCls:{
           value:CLS_INPUT
         },
+        /**
+         * 是否使选择列表跟选择框同等宽度
+         * <pre><code>
+         *   picker = new Picker.ListPicker({
+         *     width:300,  //指定宽度
+         *     children : [grid] //配置picker内的列表
+         *   }),
+         *   select = new Select.Select({  
+         *     render:'#s1',
+         *     picker : picker,
+         *     forceFit:false, //不强迫列表跟选择器宽度一致
+         *     valueField:'#hide',
+         *     items : data
+         *   });
+         * select.render();
+         * </code></pre>
+         * @cfg {Boolean} [forceFit=true]
+         */
+        forceFit : {
+          value : true
+        },
         events : {
           value : {
             /**
              * 选择值发生改变时
              * @event
              * @param {Object} e 事件对象
+             * @param {String} e.text 选中的文本
+             * @param {String} e.value 选中的value
              * @param {Object} e.item 发生改变的选项
              */
             'change' : false
@@ -322,6 +414,17 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
   /**
    * 组合框 用于提示输入
    * xclass:'combox'
+   * <pre><code>
+   * BUI.use('bui/select',function(Select){
+   * 
+   *  var select = new Select.Combox({
+   *    render:'#c1',
+   *    name:'combox',
+   *    items:['选项1','选项2','选项3','选项4']
+   *  });
+   *  select.render();
+   * });
+   * </code></pre>
    * @class BUI.Select.Combox
    * @extends BUI.Select.Select
    */
@@ -383,46 +486,52 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
  */
 
 define('bui/select/suggest',['bui/common','bui/select/combox'],function (require) {
-
+  'use strict';
   var BUI = require('bui/common'),
     Combox = require('bui/select/combox'),
-    /*CODE_ENTER = BUI.KeyCode.ENTER,
-    CODE_TAB = 9,
-    CODE_EXPCEPT = [CODE_ENTER,CODE_TAB],
-    */
     TIMER_DELAY = 200,
-    EMPTY = '',
-    EMPTY_ARRAY = [];
-    
-    //浏览器版本
-    ie = BUI.UA['ie'];
-
+    EMPTY = '';
 
   /**
    * 组合框 用于提示输入
    * xclass:'suggest'
+   * ** 简单使用静态数据 **
+   * <pre><code>
+   * BUI.use('bui/select',function (Select) {
+   *
+   *  var suggest = new Select.Suggest({
+   *     render:'#c2',
+   *     name:'suggest', //形成输入框的name
+   *     data:['1222224','234445','122','1111111']
+   *   });
+   *   suggest.render();
+   *   
+   * });
+   * </code></pre>
+   * ** 查询服务器数据 **
+   * <pre><code>
+   * BUI.use('bui/select',function(Select){
+   *
+   *  var suggest = new Select.Suggest({
+   *    render:'#s1',
+   *    name:'suggest', 
+   *    url:'server-data.php'
+   *  });
+   *  suggest.render();
+   *
+   * });
+   * <code></pre>
    * @class BUI.Select.Suggest
    * @extends BUI.Select.Combox
    */
   var suggest = Combox.extend({
-    renderUI:function(){
-      var _self = this;
-        picker = _self.get('picker');
-      if (_self.get('itemTpl')) {
-        var picker = _self.get('picker'),
-          list = picker.get('list');
-        list.set('itemTpl', _self.get('itemTpl'));
-      }
-    },
     bindUI : function(){
       var _self = this,
         textEl = _self.get('el').find('input'),
-        picker = _self.get('picker'),
-        list = picker.get('list'),
         triggerEvent = (_self.get('triggerEvent') === 'keyup') ? 'keyup' : 'keyup click';
 
       //监听 keyup 事件
-      textEl.on(triggerEvent, function(ev){
+      textEl.on(triggerEvent, function(){
         _self._start();
       });
     },
@@ -439,8 +548,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       var _self = this,
         isStatic = _self.get('data'),
         textEl = _self.get('el').find('input'),
-        text,
-        picker = _self.get('picker');
+        text;
 
       //检测是否需要更新。注意：加入空格也算有变化
       if (!isStatic && (textEl.val() === _self.get('query'))) {
@@ -479,39 +587,65 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       }else if (data) {
         //使用静态数据源
         //BUI.log('use static datasource');
-        _self._handleResponse(data);
+        _self._handleResponse(data,true);
       }
     },
-    
+    //如果存在数据源
+    _getStore : function(){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list');
+      if(list){
+        return list.get('store');
+      }
+    },
     //通过 script 元素异步加载数据
     _requestData:function(){
       var _self = this,
         textEl = _self.get('el').find('input'),
+        callback = _self.get('callback'),
+        store = _self.get('store'),
         param = {};
-        param[textEl.attr('name')] = textEl.val();
-      $.ajax({
-        url:_self.get('url'),
-        type:'post',
-        dataType:'jsonp',
-        data:param,
-        success:function(data){
-          _self._handleResponse(data);
-        },
-        error:function(){
-          //BUI.log('server error');
-        }
-      });
+
+      param[textEl.attr('name')] = textEl.val();
+      if(store){
+        param.start = 0; //回滚到第一页
+        store.load(param,callback);
+      }else{
+        $.ajax({
+          url:_self.get('url'),
+          type:'post',
+          dataType:_self.get('dataType'),
+          data:param,
+          success:function(data){
+            _self._handleResponse(data);
+            if(callback){
+              callback(data);
+            }
+          }
+        });
+      }
+      
     },
     //处理获取的数据
-    _handleResponse:function(data){
+    _handleResponse:function(data,filter){
       var _self = this,
-        items = _self._getFilterItems(data),
-        picker = _self.get('picker');
-        _self.set('items',items);
+        items = filter ? _self._getFilterItems(data) : data;
+      _self.set('items',items);
 
       if(_self.get('cacheable')){
         _self.get('dataCache')[_self.get('query')] = items;
       }
+    },
+    //如果列表记录是对象获取显示的文本
+    _getItemText : function(item){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list');
+      if(list){
+        return list.getItemText(item);
+      }
+      return '';
     },
     //获取过滤的文本
     _getFilterItems:function(data){
@@ -520,17 +654,29 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
         textEl = _self.get('el').find('input'),
         text = textEl.val(),
         isStatic = _self.get('data');
-      data = data ? data : [];
-      $.each(data, function(index, item){
-        var str = BUI.isString(item) ? item : item['text'];
+      data = data || [];
+      /**
+       * @private
+       * @ignore
+       */
+      function push(str,item){
+        if(BUI.isString(item)){
+          result.push(str);
+        }else{
+          result.push(item);
+        }
+      }
+      BUI.each(data, function(item){
+        var str = BUI.isString(item) ? item : _self._getItemText(item);
         if(isStatic){
           if(str.indexOf($.trim(text)) !== -1){
-            result.push(str);
+            push(str,item);
           }
         }else{
-          result.push(str);
+          push(str,item);
         }
       });
+      
       return result;
     },
     /**
@@ -540,7 +686,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
      */
     later:function (fn, when, periodic) {
       when = when || 0;
-      var r = (periodic) ? setInterval(fn, when) : setTimeout(fn, when);
+      var r = periodic ? setInterval(fn, when) : setTimeout(fn, when);
 
       return {
         id:r,
@@ -563,11 +709,19 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
     {
       /**
        * 用于显示提示的数据源
+       * <pre><code>
+       *   var suggest = new Select.Suggest({
+       *     render:'#c2',
+       *     name:'suggest', //形成输入框的name
+       *     data:['1222224','234445','122','1111111']
+       *   });
+       * </code></pre>
        * @cfg {Array} data
        */
       /**
        * 用于显示提示的数据源
        * @type {Array}
+       * @ignore
        */
       data:{
         value : null
@@ -575,6 +729,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * 输入框的值
        * @type {String}
+       * @private
        */
       query:{
         value : EMPTY
@@ -600,11 +755,52 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
         value:{}
       },
       /**
-       * 列表项的模板
-       * @cfg {String} itemTpl
+       * 请求返回的数据格式默认为'jsonp'
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @cfg {Object} [dataType = 'jsonp']
        */
-      itemTpl:{
-        value:EMPTY
+      dataType : {
+        value : 'jsonp'
+      },
+      /**
+       * 请求数据的url
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @cfg {String} url
+       */
+      url : {
+
+      },
+      /**
+       * 请求完数据的回调函数
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    callback : function(data){
+       *      //do something
+       *    },
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @type {Function}
+       */
+      callback : {
+
       },
       /**
        * 触发的事件

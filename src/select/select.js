@@ -5,15 +5,10 @@
  */
 
 define('bui/select/select',['bui/common','bui/picker'],function (require) {
-
+  'use strict';
   var BUI = require('bui/common'),
     ListPicker = require('bui/picker').ListPicker,
     PREFIX = BUI.prefix;
-
-  function getItemTpl(multiple){
-    var text = multiple ? '<span class="checkbox"><input type="checkbox" />{text}</span>' : '{text}';
-    return '<li role="option" class="' + PREFIX + 'list-item" data-value="{value}">' + text + '</li>';
-  }
 
   var Component = BUI.Component,
     Picker = ListPicker,
@@ -21,6 +16,27 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
     /**
      * 选择控件
      * xclass:'select'
+     * <pre><code>
+     *  BUI.use('bui/select',function(Select){
+     * 
+     *   var items = [
+     *         {text:'选项1',value:'a'},
+     *         {text:'选项2',value:'b'},
+     *         {text:'选项3',value:'c'}
+     *       ],
+     *       select = new Select.Select({  
+     *         render:'#s1',
+     *         valueField:'#hide',
+     *         //multipleSelect: true, //是否多选
+     *         items:items
+     *       });
+     *   select.render();
+     *   select.on('change', function(ev){
+     *     //ev.text,ev.value,ev.item
+     *   });
+     *   
+     * });
+     * </code></pre>
      * @class BUI.Select.Select
      * @extends BUI.Component.Controller
      */
@@ -28,17 +44,17 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       //初始化
       initializer:function(){
         var _self = this,
-          children = _self.get('children'),
           multipleSelect = _self.get('multipleSelect'),
+          xclass,
           picker = _self.get('picker');
         if(!picker){
+          xclass = multipleSelect ? 'listbox' : 'simple-list';
           picker = new Picker({
             children:[
               {
+                xclass : xclass,
                 elCls:PREFIX + 'select-list',
-                items:_self.get('items'),
-                itemTpl : getItemTpl(multipleSelect),
-                multipleSelect : multipleSelect
+                items:_self.get('items')/**/
               }
             ],
             valueField : _self.get('valueField')
@@ -46,6 +62,8 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           
           //children.push(picker);
           _self.set('picker',picker);
+        }else{
+          picker.set('valueField',_self.get('valueField'));
         }
         if(multipleSelect){
           picker.set('hideEvent','');
@@ -62,24 +80,21 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        picker.set('width',el.outerWidth());
+        if(_self.get('forceFit')){
+          picker.set('width',el.outerWidth());
+        }
+        
         picker.render();
       },
       //绑定事件
       bindUI : function(){
         var _self = this,
-          multipleSelect = _self.get('multipleSelect'),
-          list = _self._getList();
-
-          //选项发生改变时
-          list.on('selectedchange',function(ev){
-            if(multipleSelect){
-              var sender = $(ev.domTarget),
-                checkbox = sender.find('input');
-              checkbox.attr('checked',ev.selected);
-            }
-            _self.fire('change',{item : ev.item});
-          });
+          picker = _self.get('picker');
+          
+        //选项发生改变时
+        picker.on('selectedchange',function(ev){
+          _self.fire('change',{text : ev.text,value : ev.value,item : ev.item});
+        });
       },
       /**
        * 是否包含元素
@@ -93,6 +108,9 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       },
       //设置子项
       _uiSetItems : function(items){
+        if(!items){
+          return;
+        }
         var _self = this,
           picker = _self.get('picker'),
           list = picker.get('list'),
@@ -119,7 +137,10 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
             picker = _self.get('picker'),
             width = v - iconEl.outerWidth() - appendWidth;
           textEl.width(width);
-          picker.set('width',v);
+          if(_self.get('forceFit')){
+            picker.set('width',v);
+          }
+          
         }
       },
       _getTextEl : function(){
@@ -133,7 +154,9 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       destructor:function(){
         var _self = this,
           picker = _self.get('picker');
-        picker && picker.destroy();
+        if(picker){
+          picker.destroy();
+        }
       },
       //获取List控件
       _getList:function(){
@@ -143,21 +166,21 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         return list;
       },
       /**
-       * 获取选中项的值
+       * 获取选中项的值，如果是多选则，返回的'1,2,3'形式的字符串
+       * <pre><code>
+       *  var value = select.getSelectedValue();
+       * </code></pre>
        * @return {String} 选中项的值
        */
       getSelectedValue:function(){
-        var _self = this,
-          list = _self._getList(),
-          selection = list.getSelection(),
-          result = [];
-        for (var i = 0; i < selection.length; i++) {
-          result.push(selection[i]['value']);
-        };
-        return result.join(',');
+        return this.get('picker').getSelectedValue();
       },
       /**
        * 设置选中的值
+       * <pre><code>
+       * select.setSelectedValue('1'); //单选模式下
+       * select.setSelectedValue('1,2,3'); //多选模式下
+       * </code></pre>
        * @param {String} value 选中的值
        */
       setSelectedValue : function(value){
@@ -166,18 +189,14 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.setSelectedValue(value);
       },
       /**
-       * 获取选中项的文本
+       * 获取选中项的文本，如果是多选则，返回的'text1,text2,text3'形式的字符串
+       * <pre><code>
+       *  var value = select.getSelectedText();
+       * </code></pre>
        * @return {String} 选中项的文本
        */
       getSelectedText:function(){
-        var _self = this,
-          list = _self._getList(),
-          selection = list.getSelection(),
-          result = [];
-        for (var i = 0; i < selection.length; i++) {
-          result.push(selection[i]['text']);
-        };
-        return result.join(',');
+        return this.get('picker').getSelectedText();
       }
     },{
       ATTRS : 
@@ -186,6 +205,38 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
        * @ignore
        */
       {
+
+        /**
+         * 选择器，浮动出现，供用户选择
+         * @cfg {BUI.Picker.ListPicker} picker
+         * <pre><code>
+         * var columns = [
+         *       {title : '表头1(30%)',dataIndex :'a', width:'30%'},
+         *       {id: '123',title : '表头2(30%)',dataIndex :'b', width:'30%'},
+         *       {title : '表头3(40%)',dataIndex : 'c',width:'40%'}
+         *     ],   
+         *   data = [{a:'123',b:'选择文本1'},{a:'cdd',b:'选择文本2'},{a:'1333',b:'选择文本3',c:'eee',d:2}],
+         *   grid = new Grid.SimpleGrid({
+         *     idField : 'a', //设置作为key 的字段，放到valueField中
+         *     columns : columns,
+         *     textGetter: function(item){ //返回选中的文本
+         *       return item.b;
+         *     }
+         *   }),
+         *   picker = new Picker.ListPicker({
+         *     width:300,  //指定宽度
+         *     children : [grid] //配置picker内的列表
+         *   }),
+         *   select = new Select.Select({  
+         *     render:'#s1',
+         *     picker : picker,
+         *     forceFit:false, //不强迫列表跟选择器宽度一致
+         *     valueField:'#hide',
+         *     items : data
+         *   });
+         * select.render();
+         * </code></pre>
+         */
         /**
          * 选择器，浮动出现，供用户选择
          * @readOnly
@@ -219,7 +270,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           value:false
         },
         /**
-         * 控件的name，便于表单提交
+         * 控件的name，用于存放选中的文本，便于表单提交
          * @cfg {Object} name
          */
         /**
@@ -232,13 +283,31 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         /**
          * 选项
          * @cfg {Array} items
+         * <pre><code>
+         *  BUI.use('bui/select',function(Select){
+         * 
+         *   var items = [
+         *         {text:'选项1',value:'a'},
+         *         {text:'选项2',value:'b'},
+         *         {text:'选项3',value:'c'}
+         *       ],
+         *       select = new Select.Select({  
+         *         render:'#s1',
+         *         valueField:'#hide',
+         *         //multipleSelect: true, //是否多选
+         *         items:items
+         *       });
+         *   select.render();
+         *   
+         * });
+         * </code></pre>
          */
         /**
          * 选项
          * @type {Array}
          */
         items:{
-         value:[]
+          sync:false
         },
         /**
          * 标示选择完成后，显示文本的DOM节点的样式
@@ -249,12 +318,35 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         inputCls:{
           value:CLS_INPUT
         },
+        /**
+         * 是否使选择列表跟选择框同等宽度
+         * <pre><code>
+         *   picker = new Picker.ListPicker({
+         *     width:300,  //指定宽度
+         *     children : [grid] //配置picker内的列表
+         *   }),
+         *   select = new Select.Select({  
+         *     render:'#s1',
+         *     picker : picker,
+         *     forceFit:false, //不强迫列表跟选择器宽度一致
+         *     valueField:'#hide',
+         *     items : data
+         *   });
+         * select.render();
+         * </code></pre>
+         * @cfg {Boolean} [forceFit=true]
+         */
+        forceFit : {
+          value : true
+        },
         events : {
           value : {
             /**
              * 选择值发生改变时
              * @event
              * @param {Object} e 事件对象
+             * @param {String} e.text 选中的文本
+             * @param {String} e.value 选中的value
              * @param {Object} e.item 发生改变的选项
              */
             'change' : false

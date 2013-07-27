@@ -12,6 +12,39 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		hasEnded = 2;
 	/**
 	 * 异步加载进度条
+	 *<pre><code>
+	 *  BUI.use('bui/progressbar',function(ProgressBar){
+   *   
+   *    var Progressbar = ProgressBar.Load;
+   *    var num = 10,
+   *      ajaxCfg = {     
+   *        url : 'data/progress-bar-data.php',
+   *        dataType : 'json',
+   *        data : {
+   *          id :num
+   *        }
+   *      };
+   *    var progressbar = new Progressbar({
+   *      render : '#progressbar',
+   *      tpl : '<div class="bar"></div>',
+   *      elCls:'progress progress-striped active',
+   *      ajaxCfg : ajaxCfg,
+   *      interval : 1000
+   *    });
+   *
+   *    progressbar.render();
+	 *		$('.button-primary').click(function(){
+   *      num = 10;
+   *      ajaxCfg.data.id = num;
+   *      progressbar.start();
+   *    });
+ 
+   *    $('.button-danger').click(function(){
+   *      progressbar.cancel();
+   *    });
+   *      
+   *  });
+   * </code></pre>
 	 * @extends BUI.ProgressBar.Base
 	 * @class  BUI.ProgressBar.Load
 	 */
@@ -36,6 +69,9 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		},
 		/**
 		 * 开始
+		 * <pre><code>
+		 *   progressbar.start();
+		 * </code></pre>
 		 */
 		start : function  () {
 			var _self = this;
@@ -45,6 +81,9 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		},
 		/**
 		 * 完成
+		 * <pre><code>
+		 *   progressbar.complete();
+		 * </code></pre>
 		 */
 		complete : function(){
 			var _self = this;
@@ -54,8 +93,11 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		},
 		/**
 		 * 取消
+		 * <pre><code>
+		 *   progressbar.cancel();
+		 * </code></pre>
 		 */
-		cancle : function(){
+		cancel : function(){
 			var _self = this;
 			clearTimeout(_self.get('t'));
 			if(_self.get('percent')){
@@ -96,9 +138,17 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 			_self.fire('completed');
 			
 		},
+		/**
+		 * 是否正在加载
+		 * @return {Boolean} 是否正在加载
+		 */
 		isLoading : function  () {
 			return this.get('status') === hasStarted;
 		},
+		/**
+		 * 是否已经加载完毕
+		 * @return {Boolean} 是否加载完毕
+		 */
 		isCompleted : function () {
 			return this.get('status') === hasEnded;
 		},

@@ -132,8 +132,24 @@ define('bui/grid/column',['bui/common'],function (require) {
     });
 
     /**
-     * 表格的列对象，存储列信息
+     * 表格的列对象，存储列信息，此对象不会由用户创建，而是配置在Grid中
      * xclass:'grid-column'
+     * <pre><code>
+     * columns = [{
+     *        title : '表头1',
+     *        dataIndex :'a',
+     *        width:100
+     *      },{
+     *        title : '表头2',
+     *        dataIndex :'b',
+     *        visible : false, //隐藏
+     *        width:200
+     *      },{
+     *        title : '表头3',
+     *        dataIndex : 'c',
+     *        width:200
+     *    }];
+     * </code></pre>
      * @class BUI.Grid.Column
      * @extends BUI.Component.Controller
      */
@@ -188,6 +204,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                 /**
                  * 表头展开显示菜单，
                  * @type {Boolean}
+                 * @protected
                  */
                 open : {
                     view : true,
@@ -195,6 +212,13 @@ define('bui/grid/column',['bui/common'],function (require) {
                 },
                 /**
                  * 此列对应显示数据的字段名称
+                 * <pre><code>
+                 * {
+                 *     title : '表头1',
+                 *     dataIndex :'a', //对应的数据的字段名称，如 ： {a:'123',b:'456'}
+                 *     width:100
+                 * }
+                 * </code></pre>
                  * @cfg {String} dataIndex
                  */
                 /**
@@ -218,8 +242,21 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:true
                 },
                 /**
-                 * 编辑器，暂时为支持
-                 * @private
+                 * 编辑器,用于可编辑表格中<br>
+                 * ** 常用编辑器 **
+                 *  - xtype 指的是表单字段的类型 {@link BUI.Form.Field}
+                 *  - 其他的配置项对应于表单字段的配置项
+                 * <pre><code>
+                 * columns = [
+                 *   {title : '文本',dataIndex :'a',editor : {xtype : 'text'}}, 
+                 *   {title : '数字', dataIndex :'b',editor : {xtype : 'number',rules : {required : true}}},
+                 *   {title : '日期',dataIndex :'c', editor : {xtype : 'date'},renderer : Grid.Format.dateRenderer},
+                 *   {title : '单选',dataIndex : 'd', editor : {xtype :'select',items : enumObj},renderer : Grid.Format.enumRenderer(enumObj)},
+                 *   {title : '多选',dataIndex : 'e', editor : {xtype :'select',select:{multipleSelect : true},items : enumObj},
+                 *       renderer : Grid.Format.multipleItemsRenderer(enumObj)
+                 *   }
+                 * ]
+                 * </code></pre>
                  * @type {Object}
                  */
                 editor:{
@@ -236,10 +273,6 @@ define('bui/grid/column',['bui/common'],function (require) {
                  * 固定列,主要用于在首行显示一些特殊内容，如单选框，复选框，序号等。插件不能对此列进行特殊操作，如：移动位置，隐藏等
                  * @cfg {Boolean} fixed
                  */
-                /**
-                 * 固定列,主要用于在首行显示一些特殊内容，如单选框，复选框，序号等。插件不能对此列进行特殊操作，如：移动位置，隐藏等
-                 * @type {Boolean}
-                 */
                 fixed : {
                     value : false
                 },
@@ -247,24 +280,18 @@ define('bui/grid/column',['bui/common'],function (require) {
                  * 控件的编号
                  * @cfg {String} id
                  */
-                /**
-                 * 控件的编号
-                 * @type {String}
-                 * @default null
-                 */
                 id:{
 
                 },
                 /**
                  * 渲染表格单元格的格式化函数
                  * "function(value,obj,index){return value;}"
+                 * <pre><code>
+                 * {title : '操作',renderer : function(){
+                 *     return '<span class="grid-command btn-edit">编辑</span>'
+                 *   }}
+                 * </code></pre>
                  * @cfg {Function} renderer
-                 */
-                /**
-                 * 渲染表格单元格的格式化函数
-                 * "function(value,obj,index){return value;}"
-                 * @type {Function}
-                 * @default
                  */
                 renderer:{
 
@@ -272,17 +299,17 @@ define('bui/grid/column',['bui/common'],function (require) {
                 /**
                  * 是否可以调整宽度，应用于拖拽或者自适应宽度时
                  * @type {Boolean}
+                 * @protected
                  * @default true
                  */
                 resizable:{
                     value:true
                 },
                 /* 是否可以按照此列排序，如果设置true,那么点击列头时
+                 * <pre><code>
+                 *     {title : '数字', dataIndex :'b',sortable : false},
+                 * </code></pre>
                  * @cfg {Boolean} [sortable=true]
-                 */
-                /* 是否可以按照此列排序，如果设置true,那么点击列头时
-                 * @type {Boolean}
-                 * @default true.
                  */
                 sortable:{
 					sync:false,
@@ -292,6 +319,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                 /**
                  * 排序状态，当前排序是按照升序、降序。有3种值 null, 'ASC','DESC'
                  * @type {String}
+                 * @protected
                  * @default null
                  */
                 sortState:{
@@ -304,6 +332,10 @@ define('bui/grid/column',['bui/common'],function (require) {
                  */
                 /**
                  * 列标题
+                 * <pre><code>
+                 * var column = grid.findColumn('id');
+                 * column.get('title');
+                 * </code></pre>
                  * Note: to have a clickable header with no text displayed you can use the default of &#160; aka &nbsp;.
                  * @type {String}
                  * @default {String} &#160;
@@ -314,9 +346,23 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:'&#160;'
                 },
                 /**
-                 * 列的宽度,可以使数字或者百分比
+                 * 列的宽度,可以使数字或者百分比,不要使用 width : '100'或者width : '100px'
+                 * <pre><code>
+                 *  {title : '文本',width:100,dataIndex :'a',editor : {xtype : 'text'}}
+                 *  
+                 *  {title : '文本',width:'10%',dataIndex :'a',editor : {xtype : 'text'}}
+                 * </code></pre>
                  * @type {Number|String}
-                 * @default {Number} 80
+                 * @cfg {Number} [width = 80]
+                 */
+                
+                /**
+                 * 列宽度
+                 * <pre><code>
+                 *  grid.findColumn(id).set('width',200);
+                 * </code></pre>
+                 * 
+                 * @type {Object}
                  */
                 width:{
                     value:100

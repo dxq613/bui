@@ -8,6 +8,8 @@
         <div id="c1"></div>
         <h2>suggest</h2>
         <div id="c2"></div>
+        <h2>复杂suggest</h2>
+        <div id="c3"></div>
       </div>
        <div class="span8">
         <h2>Select</h2>

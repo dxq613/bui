@@ -6597,6 +6597,7 @@ define('bui/component/uibase/position',function () {
             },
             /**
              * xy \u7eaf\u4e2d\u8f6c\u4f5c\u7528
+             * @ignore
              */
             getter:function () {
                 return [this.get('x'), this.get('y')];
@@ -8417,7 +8418,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       setItemAttr(item,'statusCls',statusCls)
       //item.statusCls = statusCls;
     }
-    clearSelected(item);
+   // clearSelected(item);
   }
   function setItemAttr(item,name,val){
     if(item.isController){
@@ -13521,7 +13522,43 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    * <p>
    * <img src="../assets/img/class-overlay.jpg"/>
    * </p>
-   * 
+   * ** \u666e\u901a\u5f39\u51fa\u6846 **
+   * <pre><code>
+   *  BUI.use('bui/overlay',function(Overlay){
+   *      var dialog = new Overlay.Dialog({
+   *        title:'\u975e\u6a21\u6001\u7a97\u53e3',
+   *        width:500,
+   *        height:300,
+   *        mask:false,  //\u8bbe\u7f6e\u662f\u5426\u6a21\u6001
+   *        buttons:[],
+   *        bodyContent:'<p>\u8fd9\u662f\u4e00\u4e2a\u975e\u6a21\u6001\u7a97\u53e3,\u5e76\u4e14\u4e0d\u5e26\u6309\u94ae</p>'
+   *      });
+   *    dialog.show();
+   *    $('#btnShow').on('click',function () {
+   *      dialog.show();
+   *    });
+   *  });
+   * </code></pre>
+   *
+   * ** \u4f7f\u7528\u73b0\u6709\u7684html\u7ed3\u6784 **
+   * <pre><code>
+   *  BUI.use('bui/overlay',function(Overlay){
+   *      var dialog = new Overlay.Dialog({
+   *        title:'\u914d\u7f6eDOM',
+   *        width:500,
+   *        height:250,
+   *        contentId:'content',//\u914d\u7f6eDOM\u5bb9\u5668\u7684\u7f16\u53f7
+   *        success:function () {
+   *          alert('\u786e\u8ba4');
+   *          this.hide();
+   *        }
+   *      });
+   *    dialog.show();
+   *    $('#btnShow').on('click',function () {
+   *      dialog.show();
+   *    });
+   *  });
+   * </code></pre>
    * @class BUI.Overlay.Dialog
    * @extends BUI.Overlay.Overlay
    * @mixins BUI.Component.UIBase.StdMod
@@ -13568,6 +13605,31 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       },
      /**
        * \u5f39\u51fa\u5e93\u7684\u6309\u94ae\uff0c\u53ef\u4ee5\u6709\u591a\u4e2a,\u67093\u4e2a\u53c2\u6570
+       * var dialog = new Overlay.Dialog({
+       *     title:'\u81ea\u5b9a\u4e49\u6309\u94ae',
+       *     width:500,
+       *     height:300,
+       *     mask:false,
+       *     buttons:[
+       *       {
+       *         text:'\u81ea\u5b9a\u4e49',
+       *         elCls : 'button button-primary',
+       *         handler : function(){
+       *           //do some thing
+       *           this.hide();
+       *         }
+       *       },{
+       *         text:'\u5173\u95ed',
+       *         elCls : 'button',
+       *         handler : function(){
+       *           this.hide();
+       *         }
+       *       }
+       *     ],
+       *     
+       *     bodyContent:'<p>\u8fd9\u662f\u4e00\u4e2a\u81ea\u5b9a\u4e49\u6309\u94ae\u7a97\u53e3,\u53ef\u4ee5\u914d\u7f6e\u4e8b\u4ef6\u548c\u6587\u672c\u6837\u5f0f</p>'
+       *   });
+       *  dialog.show();
        * <ol>
        *   <li>text:\u6309\u94ae\u6587\u672c</li>
        *   <li>elCls:\u6309\u94ae\u6837\u5f0f</li>
@@ -13576,16 +13638,6 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        * @cfg {Array} buttons
        * @default '\u786e\u5b9a'\u3001'\u53d6\u6d88'2\u4e2a\u6309\u94ae
        * 
-       */
-      /**
-       * \u5f39\u51fa\u5e93\u7684\u6309\u94ae\uff0c\u53ef\u4ee5\u6709\u591a\u4e2a,\u67093\u4e2a\u53c2\u6570
-       * <ol>
-       *   <li>text:\u6309\u94ae\u6587\u672c</li>
-       *   <li>elCls:\u6309\u94ae\u6837\u5f0f</li>
-       *   <li>handler:\u70b9\u51fb\u6309\u94ae\u7684\u56de\u8c03\u4e8b\u4ef6</li>
-       * </ol>
-       * @type {Array}
-       * @default '\u786e\u5b9a'\u3001'\u53d6\u6d88'2\u4e2a\u6309\u94ae
        */
       buttons:{
         value:[
@@ -13612,20 +13664,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        * \u5f39\u51fa\u6846\u663e\u793a\u5185\u5bb9\u7684DOM\u5bb9\u5668ID
        * @cfg {Object} contentId
        */
-      /**
-       * \u5f39\u51fa\u6846\u663e\u793a\u5185\u5bb9\u7684DOM\u5bb9\u5668ID
-       * @type {Object}
-       */
       contentId:{
         view:true
       },
   	  /**
       * \u70b9\u51fb\u6210\u529f\u65f6\u7684\u56de\u8c03\u51fd\u6570
       * @cfg {Function} success
-      */
-      /**
-      * \u70b9\u51fb\u6210\u529f\u65f6\u7684\u56de\u8c03\u51fd\u6570
-      * @type {Function}
       */
       success : {
         value : function(){
@@ -13646,6 +13690,9 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        */
       /**
        * \u5f39\u51fa\u6846\u6807\u9898
+       * <pre><code>
+       *  dialog.set('title','new title');
+       * </code></pre>
        * @type {String}
        */
       title : {
@@ -13697,6 +13744,31 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
 
   /**
    * \u6d88\u606f\u6846\u7c7b\uff0c\u4e00\u822c\u4e0d\u76f4\u63a5\u521b\u5efa\u5bf9\u8c61\uff0c\u800c\u662f\u8c03\u7528\u5176Alert\u548cConfirm\u65b9\u6cd5
+   * <pre><code>
+   ** BUI.use('bui/overlay',function(overlay){
+   * 
+   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u63d0\u793a\u4fe1\u606f','info');
+   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u6210\u529f\u4fe1\u606f','success');
+   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u8b66\u544a\u4fe1\u606f','warning');
+   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u9519\u8bef\u4fe1\u606f','error');
+   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u8be2\u95ee\u4fe1\u606f','question');
+   *
+   *    //\u56de\u8c03\u51fd\u6570
+   *    BUI.Message.Alert('\u70b9\u51fb\u89e6\u53d1\u56de\u8c03\u51fd\u6570',function() {
+   *         alert('\u6267\u884c\u56de\u8c03');
+   *       },'error');
+   *       
+   *    //\u590d\u6742\u7684\u63d0\u793a\u4fe1\u606f
+   *    var msg = '<h2>\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u4e0a\u4f2010M\u4ee5\u5185\u7684\u6587\u4ef6</h2>'+
+   *       '<p class="auxiliary-text">\u5982\u8fde\u7eed\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u53ca\u65f6\u8054\u7cfb\u5ba2\u670d\u70ed\u7ebf\uff1a0511-23883767834</p>'+
+   *       '<p><a href="#">\u8fd4\u56delist\u9875\u9762</a> <a href="#">\u67e5\u770b\u8be6\u60c5</a></p>';
+   *     BUI.Message.Alert(msg,'error');
+   *    //\u786e\u8ba4\u4fe1\u606f
+   *    BUI.Message.Confirm('\u786e\u8ba4\u8981\u66f4\u6539\u4e48\uff1f',function(){
+   *       alert('\u786e\u8ba4');
+   *     },'question');
+   * });
+   * </code></pre>
    * @class BUI.Overlay.Message
    * @private
    * @extends BUI.Overlay.Dialog
@@ -13891,6 +13963,11 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
 
   /**
    * \u663e\u793a\u786e\u8ba4\u6846
+   * <pre><code>
+   * BUI.Message.Confirm('\u786e\u8ba4\u8981\u66f4\u6539\u4e48\uff1f',function(){
+   *       alert('\u786e\u8ba4');
+   * },'question');
+   * </code></pre>
    * @static
    * @method
    * @member BUI.Message
@@ -14848,7 +14925,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
 define('bui/list/keynav',function () {
   'use strict';
   /**
-   * @class List.KeyNav
+   * @class BUI.List.KeyNav
    * \u5217\u8868\u5bfc\u822a\u6269\u5c55\u7c7b
    */
   var  KeyNav = function(){};
@@ -15486,7 +15563,30 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
   var Overlay = require('bui/overlay').Overlay;
 
   /**
-   * \u9009\u62e9\u5668\u63a7\u4ef6\uff0c\u5f39\u51fa\u4e00\u4e2a\u5c42\u6765\u9009\u62e9\u6570\u636e
+   * \u9009\u62e9\u5668\u63a7\u4ef6\u7684\u57fa\u7c7b\uff0c\u5f39\u51fa\u4e00\u4e2a\u5c42\u6765\u9009\u62e9\u6570\u636e\uff0c\u4e0d\u8981\u4f7f\u7528\u6b64\u7c7b\u521b\u5efa\u63a7\u4ef6\uff0c\u4ec5\u7528\u4e8e\u7ee7\u627f\u5b9e\u73b0\u63a7\u4ef6
+   * xclass : 'picker'
+   * <pre><code>
+   * BUI.use(['bui/picker','bui/list'],function(Picker,List){
+   *
+   * var items = [
+   *       {text:'\u9009\u98791',value:'a'},
+   *       {text:'\u9009\u98792',value:'b'},
+   *      {text:'\u9009\u98793',value:'c'}
+   *     ],
+   *   list = new List.SimpleList({
+   *     elCls:'bui-select-list',
+   *     items : items
+   *   }),
+   *   picker = new Picker.ListPicker({
+   *     trigger : '#show',  
+   *     valueField : '#hide', //\u5982\u679c\u9700\u8981\u5217\u8868\u8fd4\u56de\u7684value\uff0c\u653e\u5728\u9690\u85cf\u57df\uff0c\u90a3\u4e48\u6307\u5b9a\u9690\u85cf\u57df
+   *     width:100,  //\u6307\u5b9a\u5bbd\u5ea6
+   *     children : [list] //\u914d\u7f6epicker\u5185\u7684\u5217\u8868
+   *   });
+   * picker.render();
+   * });
+   * </code></pre>
+   * @abstract
    * @class BUI.Picker.Picker
    * @extends BUI.Overlay.Overlay
    */
@@ -15530,18 +15630,27 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             }
           }
           if(isChange){
-            _self.fire('selectedchange',{value : selValue,curTrigger : curTrigger});
+            _self.onChange(selText,selValue,e);
           }
-          
         });
         if(hideEvent){
           innerControl.on(_self.get('hideEvent'),function(){
+            var curTrigger = _self.get('curTrigger');
+            try{ //\u9690\u85cf\u65f6\uff0c\u5728ie6,7\u4e0b\u4f1a\u62a5\u9519
+              if(curTrigger){
+                curTrigger.focus();
+              }
+            }catch(e){
+              BUI.log(e);
+            }
             _self.hide();
           });
         }
       },
       /**
        * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
+       * @template
+       * @protected
        * @param {String} val \u8bbe\u7f6e\u503c
        */
       setSelectedValue : function(val){
@@ -15549,6 +15658,8 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       },
       /**
        * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
+       * @template
+       * @protected
        * @return {String} \u9009\u4e2d\u7684\u503c
        */
       getSelectedValue : function(){
@@ -15556,10 +15667,21 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       },
       /**
        * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
+       * @template
+       * @protected
        * @return {String} \u9009\u4e2d\u7684\u6587\u672c
        */
       getSelectedText : function(){
 
+      },
+      /**
+       * @protected
+       * \u53d1\u751f\u6539\u53d8
+       */
+      onChange : function(selText,selValue,ev){
+        var _self = this,
+          curTrigger = _self.get('curTrigger');
+        _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
       },
       _uiSetValueField : function(v){
         var _self = this;
@@ -15662,6 +15784,13 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       valueField:{
 
       }
+      /**
+       * @event selectedchange
+       * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+       * @param {String} text \u9009\u4e2d\u7684\u6587\u672c
+       * @param {string} value \u9009\u4e2d\u7684\u503c
+       * @param {jQuery} curTrigger \u5f53\u524d\u89e6\u53d1picker\u7684\u5143\u7d20
+       */
     }
   },{
     xclass:'picker'
@@ -15678,7 +15807,27 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
   var List = require('bui/list'),
     Picker = require('bui/picker/picker'),
     /**
-     * \u5217\u8868\u9009\u62e9\u5668
+     * \u5217\u8868\u9009\u62e9\u5668,xclass = 'list-picker'
+     * <pre><code>
+     * BUI.use(['bui/picker'],function(Picker){
+     *
+     * var items = [
+     *       {text:'\u9009\u98791',value:'a'},
+     *       {text:'\u9009\u98792',value:'b'},
+     *      {text:'\u9009\u98793',value:'c'}
+     *     ],
+     *   picker = new Picker.ListPicker({
+     *     trigger : '#show',  
+     *     valueField : '#hide', //\u5982\u679c\u9700\u8981\u5217\u8868\u8fd4\u56de\u7684value\uff0c\u653e\u5728\u9690\u85cf\u57df\uff0c\u90a3\u4e48\u6307\u5b9a\u9690\u85cf\u57df
+     *     width:100,  //\u6307\u5b9a\u5bbd\u5ea6
+     *     children : [{
+     *        elCls:'bui-select-list',
+     *        items : items
+     *     }] //\u914d\u7f6epicker\u5185\u7684\u5217\u8868
+     *   });
+     * picker.render();
+     * });
+     * </code></pre>
      * @class BUI.Picker.ListPicker
      * @extends BUI.Picker.Picker
      */
@@ -15695,6 +15844,8 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       },
       /**
        * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
+       * @override
+       * @protected
        * @param {String} val \u8bbe\u7f6e\u503c
        */
       setSelectedValue : function(val){
@@ -15710,7 +15861,17 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
         }   
       },
       /**
+       * @protected
+       * @ignore
+       */
+      onChange : function(selText,selValue,ev){
+        var _self = this,
+          curTrigger = _self.get('curTrigger');
+        _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger,item : ev.item});
+      },
+      /**
        * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
+       * @protected
        * @return {String} \u9009\u4e2d\u7684\u503c
        */
       getSelectedValue : function(){
@@ -15718,6 +15879,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       },
       /**
        * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
+       * @protected
        * @return {String} \u9009\u4e2d\u7684\u6587\u672c
        */
       getSelectedText : function(){
@@ -15735,6 +15897,10 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
         },
         /**
          * \u9009\u62e9\u7684\u5217\u8868
+         * <pre><code>
+         *  var list = picker.get('list');
+         *  list.getSelected();
+         * </code></pre>
          * @type {BUI.List.SimpleList}
          * @readOnly
          */
@@ -15743,6 +15909,15 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
             return this.get('children')[0];
           }
         }
+        /**
+         * @event selectedchange
+         * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u4e8b\u4ef6
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {String} e.text \u9009\u4e2d\u7684\u6587\u672c
+         * @param {string} e.value \u9009\u4e2d\u7684\u503c
+         * @param {Object} e.item \u53d1\u751f\u6539\u53d8\u7684\u9009\u9879
+         * @param {jQuery} e.curTrigger \u5f53\u524d\u89e6\u53d1picker\u7684\u5143\u7d20
+         */
       }
     },{
       xclass : 'list-picker'
@@ -19961,15 +20136,10 @@ define('bui/select',['bui/common','bui/select/select','bui/select/combox','bui/s
  */
 
 define('bui/select/select',['bui/common','bui/picker'],function (require) {
-
+  'use strict';
   var BUI = require('bui/common'),
     ListPicker = require('bui/picker').ListPicker,
     PREFIX = BUI.prefix;
-
-  function getItemTpl(multiple){
-    var text = multiple ? '<span class="checkbox"><input type="checkbox" />{text}</span>' : '{text}';
-    return '<li role="option" class="' + PREFIX + 'list-item" data-value="{value}">' + text + '</li>';
-  }
 
   var Component = BUI.Component,
     Picker = ListPicker,
@@ -19977,6 +20147,27 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
     /**
      * \u9009\u62e9\u63a7\u4ef6
      * xclass:'select'
+     * <pre><code>
+     *  BUI.use('bui/select',function(Select){
+     * 
+     *   var items = [
+     *         {text:'\u9009\u98791',value:'a'},
+     *         {text:'\u9009\u98792',value:'b'},
+     *         {text:'\u9009\u98793',value:'c'}
+     *       ],
+     *       select = new Select.Select({  
+     *         render:'#s1',
+     *         valueField:'#hide',
+     *         //multipleSelect: true, //\u662f\u5426\u591a\u9009
+     *         items:items
+     *       });
+     *   select.render();
+     *   select.on('change', function(ev){
+     *     //ev.text,ev.value,ev.item
+     *   });
+     *   
+     * });
+     * </code></pre>
      * @class BUI.Select.Select
      * @extends BUI.Component.Controller
      */
@@ -19984,17 +20175,17 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       //\u521d\u59cb\u5316
       initializer:function(){
         var _self = this,
-          children = _self.get('children'),
           multipleSelect = _self.get('multipleSelect'),
+          xclass,
           picker = _self.get('picker');
         if(!picker){
+          xclass = multipleSelect ? 'listbox' : 'simple-list';
           picker = new Picker({
             children:[
               {
+                xclass : xclass,
                 elCls:PREFIX + 'select-list',
-                items:_self.get('items'),
-                itemTpl : getItemTpl(multipleSelect),
-                multipleSelect : multipleSelect
+                items:_self.get('items')/**/
               }
             ],
             valueField : _self.get('valueField')
@@ -20002,6 +20193,8 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           
           //children.push(picker);
           _self.set('picker',picker);
+        }else{
+          picker.set('valueField',_self.get('valueField'));
         }
         if(multipleSelect){
           picker.set('hideEvent','');
@@ -20018,24 +20211,21 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        picker.set('width',el.outerWidth());
+        if(_self.get('forceFit')){
+          picker.set('width',el.outerWidth());
+        }
+        
         picker.render();
       },
       //\u7ed1\u5b9a\u4e8b\u4ef6
       bindUI : function(){
         var _self = this,
-          multipleSelect = _self.get('multipleSelect'),
-          list = _self._getList();
-
-          //\u9009\u9879\u53d1\u751f\u6539\u53d8\u65f6
-          list.on('selectedchange',function(ev){
-            if(multipleSelect){
-              var sender = $(ev.domTarget),
-                checkbox = sender.find('input');
-              checkbox.attr('checked',ev.selected);
-            }
-            _self.fire('change',{item : ev.item});
-          });
+          picker = _self.get('picker');
+          
+        //\u9009\u9879\u53d1\u751f\u6539\u53d8\u65f6
+        picker.on('selectedchange',function(ev){
+          _self.fire('change',{text : ev.text,value : ev.value,item : ev.item});
+        });
       },
       /**
        * \u662f\u5426\u5305\u542b\u5143\u7d20
@@ -20049,6 +20239,9 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       },
       //\u8bbe\u7f6e\u5b50\u9879
       _uiSetItems : function(items){
+        if(!items){
+          return;
+        }
         var _self = this,
           picker = _self.get('picker'),
           list = picker.get('list'),
@@ -20075,7 +20268,10 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
             picker = _self.get('picker'),
             width = v - iconEl.outerWidth() - appendWidth;
           textEl.width(width);
-          picker.set('width',v);
+          if(_self.get('forceFit')){
+            picker.set('width',v);
+          }
+          
         }
       },
       _getTextEl : function(){
@@ -20089,7 +20285,9 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       destructor:function(){
         var _self = this,
           picker = _self.get('picker');
-        picker && picker.destroy();
+        if(picker){
+          picker.destroy();
+        }
       },
       //\u83b7\u53d6List\u63a7\u4ef6
       _getList:function(){
@@ -20099,21 +20297,21 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         return list;
       },
       /**
-       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u503c
+       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u503c\uff0c\u5982\u679c\u662f\u591a\u9009\u5219\uff0c\u8fd4\u56de\u7684'1,2,3'\u5f62\u5f0f\u7684\u5b57\u7b26\u4e32
+       * <pre><code>
+       *  var value = select.getSelectedValue();
+       * </code></pre>
        * @return {String} \u9009\u4e2d\u9879\u7684\u503c
        */
       getSelectedValue:function(){
-        var _self = this,
-          list = _self._getList(),
-          selection = list.getSelection(),
-          result = [];
-        for (var i = 0; i < selection.length; i++) {
-          result.push(selection[i]['value']);
-        };
-        return result.join(',');
+        return this.get('picker').getSelectedValue();
       },
       /**
        * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
+       * <pre><code>
+       * select.setSelectedValue('1'); //\u5355\u9009\u6a21\u5f0f\u4e0b
+       * select.setSelectedValue('1,2,3'); //\u591a\u9009\u6a21\u5f0f\u4e0b
+       * </code></pre>
        * @param {String} value \u9009\u4e2d\u7684\u503c
        */
       setSelectedValue : function(value){
@@ -20122,18 +20320,14 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.setSelectedValue(value);
       },
       /**
-       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c
+       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u5982\u679c\u662f\u591a\u9009\u5219\uff0c\u8fd4\u56de\u7684'text1,text2,text3'\u5f62\u5f0f\u7684\u5b57\u7b26\u4e32
+       * <pre><code>
+       *  var value = select.getSelectedText();
+       * </code></pre>
        * @return {String} \u9009\u4e2d\u9879\u7684\u6587\u672c
        */
       getSelectedText:function(){
-        var _self = this,
-          list = _self._getList(),
-          selection = list.getSelection(),
-          result = [];
-        for (var i = 0; i < selection.length; i++) {
-          result.push(selection[i]['text']);
-        };
-        return result.join(',');
+        return this.get('picker').getSelectedText();
       }
     },{
       ATTRS : 
@@ -20142,6 +20336,38 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
        * @ignore
        */
       {
+
+        /**
+         * \u9009\u62e9\u5668\uff0c\u6d6e\u52a8\u51fa\u73b0\uff0c\u4f9b\u7528\u6237\u9009\u62e9
+         * @cfg {BUI.Picker.ListPicker} picker
+         * <pre><code>
+         * var columns = [
+         *       {title : '\u8868\u59341(30%)',dataIndex :'a', width:'30%'},
+         *       {id: '123',title : '\u8868\u59342(30%)',dataIndex :'b', width:'30%'},
+         *       {title : '\u8868\u59343(40%)',dataIndex : 'c',width:'40%'}
+         *     ],   
+         *   data = [{a:'123',b:'\u9009\u62e9\u6587\u672c1'},{a:'cdd',b:'\u9009\u62e9\u6587\u672c2'},{a:'1333',b:'\u9009\u62e9\u6587\u672c3',c:'eee',d:2}],
+         *   grid = new Grid.SimpleGrid({
+         *     idField : 'a', //\u8bbe\u7f6e\u4f5c\u4e3akey \u7684\u5b57\u6bb5\uff0c\u653e\u5230valueField\u4e2d
+         *     columns : columns,
+         *     textGetter: function(item){ //\u8fd4\u56de\u9009\u4e2d\u7684\u6587\u672c
+         *       return item.b;
+         *     }
+         *   }),
+         *   picker = new Picker.ListPicker({
+         *     width:300,  //\u6307\u5b9a\u5bbd\u5ea6
+         *     children : [grid] //\u914d\u7f6epicker\u5185\u7684\u5217\u8868
+         *   }),
+         *   select = new Select.Select({  
+         *     render:'#s1',
+         *     picker : picker,
+         *     forceFit:false, //\u4e0d\u5f3a\u8feb\u5217\u8868\u8ddf\u9009\u62e9\u5668\u5bbd\u5ea6\u4e00\u81f4
+         *     valueField:'#hide',
+         *     items : data
+         *   });
+         * select.render();
+         * </code></pre>
+         */
         /**
          * \u9009\u62e9\u5668\uff0c\u6d6e\u52a8\u51fa\u73b0\uff0c\u4f9b\u7528\u6237\u9009\u62e9
          * @readOnly
@@ -20175,7 +20401,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           value:false
         },
         /**
-         * \u63a7\u4ef6\u7684name\uff0c\u4fbf\u4e8e\u8868\u5355\u63d0\u4ea4
+         * \u63a7\u4ef6\u7684name\uff0c\u7528\u4e8e\u5b58\u653e\u9009\u4e2d\u7684\u6587\u672c\uff0c\u4fbf\u4e8e\u8868\u5355\u63d0\u4ea4
          * @cfg {Object} name
          */
         /**
@@ -20188,13 +20414,31 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         /**
          * \u9009\u9879
          * @cfg {Array} items
+         * <pre><code>
+         *  BUI.use('bui/select',function(Select){
+         * 
+         *   var items = [
+         *         {text:'\u9009\u98791',value:'a'},
+         *         {text:'\u9009\u98792',value:'b'},
+         *         {text:'\u9009\u98793',value:'c'}
+         *       ],
+         *       select = new Select.Select({  
+         *         render:'#s1',
+         *         valueField:'#hide',
+         *         //multipleSelect: true, //\u662f\u5426\u591a\u9009
+         *         items:items
+         *       });
+         *   select.render();
+         *   
+         * });
+         * </code></pre>
          */
         /**
          * \u9009\u9879
          * @type {Array}
          */
         items:{
-         value:[]
+          sync:false
         },
         /**
          * \u6807\u793a\u9009\u62e9\u5b8c\u6210\u540e\uff0c\u663e\u793a\u6587\u672c\u7684DOM\u8282\u70b9\u7684\u6837\u5f0f
@@ -20205,12 +20449,35 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         inputCls:{
           value:CLS_INPUT
         },
+        /**
+         * \u662f\u5426\u4f7f\u9009\u62e9\u5217\u8868\u8ddf\u9009\u62e9\u6846\u540c\u7b49\u5bbd\u5ea6
+         * <pre><code>
+         *   picker = new Picker.ListPicker({
+         *     width:300,  //\u6307\u5b9a\u5bbd\u5ea6
+         *     children : [grid] //\u914d\u7f6epicker\u5185\u7684\u5217\u8868
+         *   }),
+         *   select = new Select.Select({  
+         *     render:'#s1',
+         *     picker : picker,
+         *     forceFit:false, //\u4e0d\u5f3a\u8feb\u5217\u8868\u8ddf\u9009\u62e9\u5668\u5bbd\u5ea6\u4e00\u81f4
+         *     valueField:'#hide',
+         *     items : data
+         *   });
+         * select.render();
+         * </code></pre>
+         * @cfg {Boolean} [forceFit=true]
+         */
+        forceFit : {
+          value : true
+        },
         events : {
           value : {
             /**
              * \u9009\u62e9\u503c\u53d1\u751f\u6539\u53d8\u65f6
              * @event
              * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+             * @param {String} e.text \u9009\u4e2d\u7684\u6587\u672c
+             * @param {String} e.value \u9009\u4e2d\u7684value
              * @param {Object} e.item \u53d1\u751f\u6539\u53d8\u7684\u9009\u9879
              */
             'change' : false
@@ -20263,6 +20530,17 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
   /**
    * \u7ec4\u5408\u6846 \u7528\u4e8e\u63d0\u793a\u8f93\u5165
    * xclass:'combox'
+   * <pre><code>
+   * BUI.use('bui/select',function(Select){
+   * 
+   *  var select = new Select.Combox({
+   *    render:'#c1',
+   *    name:'combox',
+   *    items:['\u9009\u98791','\u9009\u98792','\u9009\u98793','\u9009\u98794']
+   *  });
+   *  select.render();
+   * });
+   * </code></pre>
    * @class BUI.Select.Combox
    * @extends BUI.Select.Select
    */
@@ -20324,46 +20602,52 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
  */
 
 define('bui/select/suggest',['bui/common','bui/select/combox'],function (require) {
-
+  'use strict';
   var BUI = require('bui/common'),
     Combox = require('bui/select/combox'),
-    /*CODE_ENTER = BUI.KeyCode.ENTER,
-    CODE_TAB = 9,
-    CODE_EXPCEPT = [CODE_ENTER,CODE_TAB],
-    */
     TIMER_DELAY = 200,
-    EMPTY = '',
-    EMPTY_ARRAY = [];
-    
-    //\u6d4f\u89c8\u5668\u7248\u672c
-    ie = BUI.UA['ie'];
-
+    EMPTY = '';
 
   /**
    * \u7ec4\u5408\u6846 \u7528\u4e8e\u63d0\u793a\u8f93\u5165
    * xclass:'suggest'
+   * ** \u7b80\u5355\u4f7f\u7528\u9759\u6001\u6570\u636e **
+   * <pre><code>
+   * BUI.use('bui/select',function (Select) {
+   *
+   *  var suggest = new Select.Suggest({
+   *     render:'#c2',
+   *     name:'suggest', //\u5f62\u6210\u8f93\u5165\u6846\u7684name
+   *     data:['1222224','234445','122','1111111']
+   *   });
+   *   suggest.render();
+   *   
+   * });
+   * </code></pre>
+   * ** \u67e5\u8be2\u670d\u52a1\u5668\u6570\u636e **
+   * <pre><code>
+   * BUI.use('bui/select',function(Select){
+   *
+   *  var suggest = new Select.Suggest({
+   *    render:'#s1',
+   *    name:'suggest', 
+   *    url:'server-data.php'
+   *  });
+   *  suggest.render();
+   *
+   * });
+   * <code></pre>
    * @class BUI.Select.Suggest
    * @extends BUI.Select.Combox
    */
   var suggest = Combox.extend({
-    renderUI:function(){
-      var _self = this;
-        picker = _self.get('picker');
-      if (_self.get('itemTpl')) {
-        var picker = _self.get('picker'),
-          list = picker.get('list');
-        list.set('itemTpl', _self.get('itemTpl'));
-      }
-    },
     bindUI : function(){
       var _self = this,
         textEl = _self.get('el').find('input'),
-        picker = _self.get('picker'),
-        list = picker.get('list'),
         triggerEvent = (_self.get('triggerEvent') === 'keyup') ? 'keyup' : 'keyup click';
 
       //\u76d1\u542c keyup \u4e8b\u4ef6
-      textEl.on(triggerEvent, function(ev){
+      textEl.on(triggerEvent, function(){
         _self._start();
       });
     },
@@ -20380,8 +20664,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       var _self = this,
         isStatic = _self.get('data'),
         textEl = _self.get('el').find('input'),
-        text,
-        picker = _self.get('picker');
+        text;
 
       //\u68c0\u6d4b\u662f\u5426\u9700\u8981\u66f4\u65b0\u3002\u6ce8\u610f\uff1a\u52a0\u5165\u7a7a\u683c\u4e5f\u7b97\u6709\u53d8\u5316
       if (!isStatic && (textEl.val() === _self.get('query'))) {
@@ -20420,39 +20703,65 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       }else if (data) {
         //\u4f7f\u7528\u9759\u6001\u6570\u636e\u6e90
         //BUI.log('use static datasource');
-        _self._handleResponse(data);
+        _self._handleResponse(data,true);
       }
     },
-    
+    //\u5982\u679c\u5b58\u5728\u6570\u636e\u6e90
+    _getStore : function(){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list');
+      if(list){
+        return list.get('store');
+      }
+    },
     //\u901a\u8fc7 script \u5143\u7d20\u5f02\u6b65\u52a0\u8f7d\u6570\u636e
     _requestData:function(){
       var _self = this,
         textEl = _self.get('el').find('input'),
+        callback = _self.get('callback'),
+        store = _self.get('store'),
         param = {};
-        param[textEl.attr('name')] = textEl.val();
-      $.ajax({
-        url:_self.get('url'),
-        type:'post',
-        dataType:'jsonp',
-        data:param,
-        success:function(data){
-          _self._handleResponse(data);
-        },
-        error:function(){
-          //BUI.log('server error');
-        }
-      });
+
+      param[textEl.attr('name')] = textEl.val();
+      if(store){
+        param.start = 0; //\u56de\u6eda\u5230\u7b2c\u4e00\u9875
+        store.load(param,callback);
+      }else{
+        $.ajax({
+          url:_self.get('url'),
+          type:'post',
+          dataType:_self.get('dataType'),
+          data:param,
+          success:function(data){
+            _self._handleResponse(data);
+            if(callback){
+              callback(data);
+            }
+          }
+        });
+      }
+      
     },
     //\u5904\u7406\u83b7\u53d6\u7684\u6570\u636e
-    _handleResponse:function(data){
+    _handleResponse:function(data,filter){
       var _self = this,
-        items = _self._getFilterItems(data),
-        picker = _self.get('picker');
-        _self.set('items',items);
+        items = filter ? _self._getFilterItems(data) : data;
+      _self.set('items',items);
 
       if(_self.get('cacheable')){
         _self.get('dataCache')[_self.get('query')] = items;
       }
+    },
+    //\u5982\u679c\u5217\u8868\u8bb0\u5f55\u662f\u5bf9\u8c61\u83b7\u53d6\u663e\u793a\u7684\u6587\u672c
+    _getItemText : function(item){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list');
+      if(list){
+        return list.getItemText(item);
+      }
+      return '';
     },
     //\u83b7\u53d6\u8fc7\u6ee4\u7684\u6587\u672c
     _getFilterItems:function(data){
@@ -20461,17 +20770,29 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
         textEl = _self.get('el').find('input'),
         text = textEl.val(),
         isStatic = _self.get('data');
-      data = data ? data : [];
-      $.each(data, function(index, item){
-        var str = BUI.isString(item) ? item : item['text'];
+      data = data || [];
+      /**
+       * @private
+       * @ignore
+       */
+      function push(str,item){
+        if(BUI.isString(item)){
+          result.push(str);
+        }else{
+          result.push(item);
+        }
+      }
+      BUI.each(data, function(item){
+        var str = BUI.isString(item) ? item : _self._getItemText(item);
         if(isStatic){
           if(str.indexOf($.trim(text)) !== -1){
-            result.push(str);
+            push(str,item);
           }
         }else{
-          result.push(str);
+          push(str,item);
         }
       });
+      
       return result;
     },
     /**
@@ -20481,7 +20802,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
      */
     later:function (fn, when, periodic) {
       when = when || 0;
-      var r = (periodic) ? setInterval(fn, when) : setTimeout(fn, when);
+      var r = periodic ? setInterval(fn, when) : setTimeout(fn, when);
 
       return {
         id:r,
@@ -20504,11 +20825,19 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
     {
       /**
        * \u7528\u4e8e\u663e\u793a\u63d0\u793a\u7684\u6570\u636e\u6e90
+       * <pre><code>
+       *   var suggest = new Select.Suggest({
+       *     render:'#c2',
+       *     name:'suggest', //\u5f62\u6210\u8f93\u5165\u6846\u7684name
+       *     data:['1222224','234445','122','1111111']
+       *   });
+       * </code></pre>
        * @cfg {Array} data
        */
       /**
        * \u7528\u4e8e\u663e\u793a\u63d0\u793a\u7684\u6570\u636e\u6e90
        * @type {Array}
+       * @ignore
        */
       data:{
         value : null
@@ -20516,6 +20845,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * \u8f93\u5165\u6846\u7684\u503c
        * @type {String}
+       * @private
        */
       query:{
         value : EMPTY
@@ -20541,11 +20871,52 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
         value:{}
       },
       /**
-       * \u5217\u8868\u9879\u7684\u6a21\u677f
-       * @cfg {String} itemTpl
+       * \u8bf7\u6c42\u8fd4\u56de\u7684\u6570\u636e\u683c\u5f0f\u9ed8\u8ba4\u4e3a'jsonp'
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @cfg {Object} [dataType = 'jsonp']
        */
-      itemTpl:{
-        value:EMPTY
+      dataType : {
+        value : 'jsonp'
+      },
+      /**
+       * \u8bf7\u6c42\u6570\u636e\u7684url
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @cfg {String} url
+       */
+      url : {
+
+      },
+      /**
+       * \u8bf7\u6c42\u5b8c\u6570\u636e\u7684\u56de\u8c03\u51fd\u6570
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    callback : function(data){
+       *      //do something
+       *    },
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @type {Function}
+       */
+      callback : {
+
       },
       /**
        * \u89e6\u53d1\u7684\u4e8b\u4ef6
@@ -21804,6 +22175,16 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       if(parent && v){
         parent._setItemActived(_self);
       }
+    },
+    _uiSetCloseable : function(v){
+      var _self = this,
+        el = _self.get('el'),
+        closeEl = el.find('.' + CLS_ITEM_CLOSE);
+      if(v){
+        closeEl.show();
+      }else{
+        closeEl.hide();
+      }
     }
   },{
     ATTRS : 
@@ -21822,6 +22203,13 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       actived : {
         view:true,
         value : false
+      }, 
+      /**
+       * \u662f\u5426\u53ef\u5173\u95ed
+       * @type {Boolean}
+       */
+      closeable : {
+        value : true
       },
       allowTextSelection:{
         view:false,
@@ -21900,6 +22288,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
        */
       /**
        * \u6807\u7b7e\u6587\u672c
+       * tab.getItem('id').set('title','new title');
        * @type {String}
        * @default ''
        */
@@ -21935,6 +22324,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     CLS_NAV_LIST = 'tab-nav-list',
     CLS_ARROW_LEFT = 'arrow-left',
     CLS_ARROW_RIGHT = 'arrow-right',
+    ID_CLOSE = 'm_close',
     ITEM_WIDTH = 140;
 
   /**
@@ -22081,11 +22471,18 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       _showMenu : function(item,position){
         var _self = this,
-            menu = _self._getMenu();
+            menu = _self._getMenu(),
+            closeable = item.get('closeable'),
+            closeItem;
 
         _self.set('showMenuItem',item);
+
         menu.set('xy',[position.x,position.y]);
         menu.show();
+        closeItem = menu.getItem(ID_CLOSE);
+        if(closeItem){
+          closeItem.set('disabled',!closeable);
+        }
       },
       /**
        * \u901a\u8fc7id,\u8bbe\u7f6e\u9009\u4e2d\u7684\u6807\u7b7e\u9879
@@ -22139,6 +22536,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           menu = new Menu.ContextMenu({
               children : [
               {
+
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-refresh',
                 text : '\u5237\u65b0',
@@ -22152,7 +22550,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
                 }
               },
               {
-                id : 'm12',
+                id : ID_CLOSE,
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-remove',
                 text: '\u5173\u95ed',
@@ -22521,6 +22919,27 @@ define('bui/tab/tab',['bui/common'],function (require) {
   /**
    * \u5217\u8868
    * xclass:'tab'
+   * <pre><code>
+   * BUI.use('bui/tab',function(Tab){
+   *   
+   *     var tab = new Tab.Tab({
+   *         render : '#tab',
+   *         elCls : 'nav-tabs',
+   *         autoRender: true,
+   *         children:[
+   *           {text:'\u6807\u7b7e\u4e00',value:'1'},
+   *           {text:'\u6807\u7b7e\u4e8c',value:'2'},
+   *           {text:'\u6807\u7b7e\u4e09',value:'3'}
+   *         ]
+   *       });
+   *     tab.on('selectedchange',function (ev) {
+   *       var item = ev.item;
+   *       $('#log').text(item.get('text') + ' ' + item.get('value'));
+   *     });
+   *     tab.setSelected(tab.getItemAt(0)); //\u8bbe\u7f6e\u9009\u4e2d\u7b2c\u4e00\u4e2a
+   *   
+   *   });
+   *  </code></pre>
    * @class BUI.Tab.Tab
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList
@@ -22651,6 +23070,23 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
 
   /**
    * \u5e26\u6709\u9762\u677f\u7684\u5207\u6362\u6807\u7b7e
+   * <pre><code>
+   * BUI.use('bui/tab',function(Tab){
+   *   
+   *     var tab = new Tab.TabPanel({
+   *       render : '#tab',
+   *       elCls : 'nav-tabs',
+   *       panelContainer : '#panel',
+   *       autoRender: true,
+   *       children:[
+   *         {text:'\u6e90\u4ee3\u7801',value:'1'},
+   *         {text:'HTML',value:'2'},
+   *         {text:'JS',value:'3'}
+   *       ]
+   *     });
+   *     tab.setSelected(tab.getItemAt(0));
+   *   });
+   * </code></pre>
    * @class BUI.Tab.TabPanel
    * @extends BUI.Tab.Tab
    */
@@ -23811,9 +24247,22 @@ define('bui/progressbar/base',['bui/common'],function(require){
 		}
 	});
 	/**
-   	* \u57fa\u7840\u8fdb\u5ea6\u6761\uff0c\u7528\u4e8e\u663e\u793a\u8fdb\u5ea6
-   	* xclass:'progress-bar'
-   	* @class BUI.ProgressBar.Base
+ 	* \u57fa\u7840\u8fdb\u5ea6\u6761\uff0c\u7528\u4e8e\u663e\u793a\u8fdb\u5ea6
+ 	* xclass:'progress-bar'
+ 	* <pre><code>
+ 	*  BUI.use('bui/progressbar',function(ProgressBar){
+  *   
+  *     var Progressbar = ProgressBar.Base,
+  *       progressbar = new Progressbar({
+  *         elCls : 'progress progress-striped active',
+  *         render : '#progressbar',
+  *         tpl : '<div class="bar"></div>',
+  *         percent:10
+  *       });
+  *     progressbar.render();
+  *  });
+  * </code></pre>
+ 	* @class BUI.ProgressBar.Base
 	* @extends BUI.Component.Controller
 	*/
 	var progressBar = BUI.Component.Controller.extend({
@@ -23855,6 +24304,39 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		hasEnded = 2;
 	/**
 	 * \u5f02\u6b65\u52a0\u8f7d\u8fdb\u5ea6\u6761
+	 *<pre><code>
+	 *  BUI.use('bui/progressbar',function(ProgressBar){
+   *   
+   *    var Progressbar = ProgressBar.Load;
+   *    var num = 10,
+   *      ajaxCfg = {     
+   *        url : 'data/progress-bar-data.php',
+   *        dataType : 'json',
+   *        data : {
+   *          id :num
+   *        }
+   *      };
+   *    var progressbar = new Progressbar({
+   *      render : '#progressbar',
+   *      tpl : '<div class="bar"></div>',
+   *      elCls:'progress progress-striped active',
+   *      ajaxCfg : ajaxCfg,
+   *      interval : 1000
+   *    });
+   *
+   *    progressbar.render();
+	 *		$('.button-primary').click(function(){
+   *      num = 10;
+   *      ajaxCfg.data.id = num;
+   *      progressbar.start();
+   *    });
+ 
+   *    $('.button-danger').click(function(){
+   *      progressbar.cancel();
+   *    });
+   *      
+   *  });
+   * </code></pre>
 	 * @extends BUI.ProgressBar.Base
 	 * @class  BUI.ProgressBar.Load
 	 */
@@ -23879,6 +24361,9 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		},
 		/**
 		 * \u5f00\u59cb
+		 * <pre><code>
+		 *   progressbar.start();
+		 * </code></pre>
 		 */
 		start : function  () {
 			var _self = this;
@@ -23888,6 +24373,9 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		},
 		/**
 		 * \u5b8c\u6210
+		 * <pre><code>
+		 *   progressbar.complete();
+		 * </code></pre>
 		 */
 		complete : function(){
 			var _self = this;
@@ -23897,8 +24385,11 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		},
 		/**
 		 * \u53d6\u6d88
+		 * <pre><code>
+		 *   progressbar.cancel();
+		 * </code></pre>
 		 */
-		cancle : function(){
+		cancel : function(){
 			var _self = this;
 			clearTimeout(_self.get('t'));
 			if(_self.get('percent')){
@@ -23939,9 +24430,17 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 			_self.fire('completed');
 			
 		},
+		/**
+		 * \u662f\u5426\u6b63\u5728\u52a0\u8f7d
+		 * @return {Boolean} \u662f\u5426\u6b63\u5728\u52a0\u8f7d
+		 */
 		isLoading : function  () {
 			return this.get('status') === hasStarted;
 		},
+		/**
+		 * \u662f\u5426\u5df2\u7ecf\u52a0\u8f7d\u5b8c\u6bd5
+		 * @return {Boolean} \u662f\u5426\u52a0\u8f7d\u5b8c\u6bd5
+		 */
 		isCompleted : function () {
 			return this.get('status') === hasEnded;
 		},
@@ -24386,7 +24885,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
    * \u65e5\u5386\u63a7\u4ef6\u663e\u793a\u9009\u62e9\u5e74\u6708
    * xclass:'calendar-header'
    * @class BUI.Calendar.Header
-   * @protected
+   * @private
    * @extends BUI.Component.Controller
    */
   var header = Component.Controller.extend({
@@ -24685,7 +25184,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
    * \u65e5\u5386\u63a7\u4ef6\u663e\u793a\u65e5\u671f\u7684\u5bb9\u5668
    * xclass:'calendar-panel'
    * @class BUI.Calendar.Panel
-   * @protected
+   * @private
    * @extends BUI.Component.Controller
    */
   var panel = Component.Controller.extend(
@@ -25641,6 +26140,35 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   /**
    * \u7b80\u5355\u8868\u683c
    * xclass:'simple-grid'
+   * <pre><code>
+   *  BUI.use('bui/grid',function(Grid){
+   *     
+   *    var columns = [{
+   *             title : '\u8868\u59341(10%)',
+   *             dataIndex :'a',
+   *             width:'10%'
+   *           },{
+   *             id: '123',
+   *             title : '\u8868\u59342(20%)',
+   *             dataIndex :'b',
+   *             width:'20%'
+   *           },{
+   *             title : '\u8868\u59343(70%)',
+   *             dataIndex : 'c',
+   *             width:'70%'
+   *         }],
+   *         data = [{a:'123'},{a:'cdd',b:'edd'},{a:'1333',c:'eee',d:2}];
+   *
+   *     var grid = new Grid.SimpleGrid({
+   *       render:'#grid',
+   *       columns : columns,
+   *       items : data,
+   *       idField : 'a'
+   *     });
+   *
+   *     grid.render();
+   *   });
+   * </code></pre>
    * @class BUI.Grid.SimpleGrid
    * @extends BUI.List.SimpleList
    */
@@ -25673,6 +26201,13 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
     },
     /**
      * \u663e\u793a\u6570\u636e
+     * <pre><code>
+     *   var data = [{},{}];
+     *   grid.showData(data);
+     *
+     *   //\u7b49\u540c
+     *   grid.set('items',data);
+     * </code></pre>
      * @param  {Array} data \u8981\u663e\u793a\u7684\u6570\u636e
      */
     showData : function(data){
@@ -25711,6 +26246,15 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
       },
       /**
        * \u8868\u683c\u5e94\u7528\u7684\u6837\u5f0f\uff0c\u66f4\u6539\u6b64\u503c\uff0c\u5219\u4e0d\u5e94\u7528\u9ed8\u8ba4\u8868\u683c\u6837\u5f0f
+       * <pre><code>
+       * grid = new Grid.SimpleGrid({
+       *   render:'#grid',
+       *   columns : columns,
+       *   innerBorder : false,
+       *   tableCls:'table table-bordered table-striped', 
+       *   store : store 
+       * }); 
+       * </code></pre>
        * @type {Object}
        */
       tableCls : {
@@ -25748,6 +26292,16 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
       },
       /**
        * \u5355\u5143\u683c\u5de6\u53f3\u4e4b\u95f4\u662f\u5426\u51fa\u73b0\u8fb9\u6846
+       * <pre><code>
+       * <pre><code>
+       * grid = new Grid.SimpleGrid({
+       *   render:'#grid',
+       *   columns : columns,
+       *   innerBorder : false,
+       *   store : store 
+       * }); 
+       * </code></pre>
+       * </code></pre>
        * @cfg {Boolean} [innerBorder=true]
        */
       /**
@@ -25936,8 +26490,24 @@ define('bui/grid/column',['bui/common'],function (require) {
     });
 
     /**
-     * \u8868\u683c\u7684\u5217\u5bf9\u8c61\uff0c\u5b58\u50a8\u5217\u4fe1\u606f
+     * \u8868\u683c\u7684\u5217\u5bf9\u8c61\uff0c\u5b58\u50a8\u5217\u4fe1\u606f\uff0c\u6b64\u5bf9\u8c61\u4e0d\u4f1a\u7531\u7528\u6237\u521b\u5efa\uff0c\u800c\u662f\u914d\u7f6e\u5728Grid\u4e2d
      * xclass:'grid-column'
+     * <pre><code>
+     * columns = [{
+     *        title : '\u8868\u59341',
+     *        dataIndex :'a',
+     *        width:100
+     *      },{
+     *        title : '\u8868\u59342',
+     *        dataIndex :'b',
+     *        visible : false, //\u9690\u85cf
+     *        width:200
+     *      },{
+     *        title : '\u8868\u59343',
+     *        dataIndex : 'c',
+     *        width:200
+     *    }];
+     * </code></pre>
      * @class BUI.Grid.Column
      * @extends BUI.Component.Controller
      */
@@ -25992,6 +26562,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                 /**
                  * \u8868\u5934\u5c55\u5f00\u663e\u793a\u83dc\u5355\uff0c
                  * @type {Boolean}
+                 * @protected
                  */
                 open : {
                     view : true,
@@ -25999,6 +26570,13 @@ define('bui/grid/column',['bui/common'],function (require) {
                 },
                 /**
                  * \u6b64\u5217\u5bf9\u5e94\u663e\u793a\u6570\u636e\u7684\u5b57\u6bb5\u540d\u79f0
+                 * <pre><code>
+                 * {
+                 *     title : '\u8868\u59341',
+                 *     dataIndex :'a', //\u5bf9\u5e94\u7684\u6570\u636e\u7684\u5b57\u6bb5\u540d\u79f0\uff0c\u5982 \uff1a {a:'123',b:'456'}
+                 *     width:100
+                 * }
+                 * </code></pre>
                  * @cfg {String} dataIndex
                  */
                 /**
@@ -26022,8 +26600,21 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:true
                 },
                 /**
-                 * \u7f16\u8f91\u5668\uff0c\u6682\u65f6\u4e3a\u652f\u6301
-                 * @private
+                 * \u7f16\u8f91\u5668,\u7528\u4e8e\u53ef\u7f16\u8f91\u8868\u683c\u4e2d<br>
+                 * ** \u5e38\u7528\u7f16\u8f91\u5668 **
+                 *  - xtype \u6307\u7684\u662f\u8868\u5355\u5b57\u6bb5\u7684\u7c7b\u578b {@link BUI.Form.Field}
+                 *  - \u5176\u4ed6\u7684\u914d\u7f6e\u9879\u5bf9\u5e94\u4e8e\u8868\u5355\u5b57\u6bb5\u7684\u914d\u7f6e\u9879
+                 * <pre><code>
+                 * columns = [
+                 *   {title : '\u6587\u672c',dataIndex :'a',editor : {xtype : 'text'}}, 
+                 *   {title : '\u6570\u5b57', dataIndex :'b',editor : {xtype : 'number',rules : {required : true}}},
+                 *   {title : '\u65e5\u671f',dataIndex :'c', editor : {xtype : 'date'},renderer : Grid.Format.dateRenderer},
+                 *   {title : '\u5355\u9009',dataIndex : 'd', editor : {xtype :'select',items : enumObj},renderer : Grid.Format.enumRenderer(enumObj)},
+                 *   {title : '\u591a\u9009',dataIndex : 'e', editor : {xtype :'select',select:{multipleSelect : true},items : enumObj},
+                 *       renderer : Grid.Format.multipleItemsRenderer(enumObj)
+                 *   }
+                 * ]
+                 * </code></pre>
                  * @type {Object}
                  */
                 editor:{
@@ -26040,10 +26631,6 @@ define('bui/grid/column',['bui/common'],function (require) {
                  * \u56fa\u5b9a\u5217,\u4e3b\u8981\u7528\u4e8e\u5728\u9996\u884c\u663e\u793a\u4e00\u4e9b\u7279\u6b8a\u5185\u5bb9\uff0c\u5982\u5355\u9009\u6846\uff0c\u590d\u9009\u6846\uff0c\u5e8f\u53f7\u7b49\u3002\u63d2\u4ef6\u4e0d\u80fd\u5bf9\u6b64\u5217\u8fdb\u884c\u7279\u6b8a\u64cd\u4f5c\uff0c\u5982\uff1a\u79fb\u52a8\u4f4d\u7f6e\uff0c\u9690\u85cf\u7b49
                  * @cfg {Boolean} fixed
                  */
-                /**
-                 * \u56fa\u5b9a\u5217,\u4e3b\u8981\u7528\u4e8e\u5728\u9996\u884c\u663e\u793a\u4e00\u4e9b\u7279\u6b8a\u5185\u5bb9\uff0c\u5982\u5355\u9009\u6846\uff0c\u590d\u9009\u6846\uff0c\u5e8f\u53f7\u7b49\u3002\u63d2\u4ef6\u4e0d\u80fd\u5bf9\u6b64\u5217\u8fdb\u884c\u7279\u6b8a\u64cd\u4f5c\uff0c\u5982\uff1a\u79fb\u52a8\u4f4d\u7f6e\uff0c\u9690\u85cf\u7b49
-                 * @type {Boolean}
-                 */
                 fixed : {
                     value : false
                 },
@@ -26051,24 +26638,18 @@ define('bui/grid/column',['bui/common'],function (require) {
                  * \u63a7\u4ef6\u7684\u7f16\u53f7
                  * @cfg {String} id
                  */
-                /**
-                 * \u63a7\u4ef6\u7684\u7f16\u53f7
-                 * @type {String}
-                 * @default null
-                 */
                 id:{
 
                 },
                 /**
                  * \u6e32\u67d3\u8868\u683c\u5355\u5143\u683c\u7684\u683c\u5f0f\u5316\u51fd\u6570
                  * "function(value,obj,index){return value;}"
+                 * <pre><code>
+                 * {title : '\u64cd\u4f5c',renderer : function(){
+                 *     return '<span class="grid-command btn-edit">\u7f16\u8f91</span>'
+                 *   }}
+                 * </code></pre>
                  * @cfg {Function} renderer
-                 */
-                /**
-                 * \u6e32\u67d3\u8868\u683c\u5355\u5143\u683c\u7684\u683c\u5f0f\u5316\u51fd\u6570
-                 * "function(value,obj,index){return value;}"
-                 * @type {Function}
-                 * @default
                  */
                 renderer:{
 
@@ -26076,17 +26657,17 @@ define('bui/grid/column',['bui/common'],function (require) {
                 /**
                  * \u662f\u5426\u53ef\u4ee5\u8c03\u6574\u5bbd\u5ea6\uff0c\u5e94\u7528\u4e8e\u62d6\u62fd\u6216\u8005\u81ea\u9002\u5e94\u5bbd\u5ea6\u65f6
                  * @type {Boolean}
+                 * @protected
                  * @default true
                  */
                 resizable:{
                     value:true
                 },
                 /* \u662f\u5426\u53ef\u4ee5\u6309\u7167\u6b64\u5217\u6392\u5e8f\uff0c\u5982\u679c\u8bbe\u7f6etrue,\u90a3\u4e48\u70b9\u51fb\u5217\u5934\u65f6
+                 * <pre><code>
+                 *     {title : '\u6570\u5b57', dataIndex :'b',sortable : false},
+                 * </code></pre>
                  * @cfg {Boolean} [sortable=true]
-                 */
-                /* \u662f\u5426\u53ef\u4ee5\u6309\u7167\u6b64\u5217\u6392\u5e8f\uff0c\u5982\u679c\u8bbe\u7f6etrue,\u90a3\u4e48\u70b9\u51fb\u5217\u5934\u65f6
-                 * @type {Boolean}
-                 * @default true.
                  */
                 sortable:{
 					sync:false,
@@ -26096,6 +26677,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                 /**
                  * \u6392\u5e8f\u72b6\u6001\uff0c\u5f53\u524d\u6392\u5e8f\u662f\u6309\u7167\u5347\u5e8f\u3001\u964d\u5e8f\u3002\u67093\u79cd\u503c null, 'ASC','DESC'
                  * @type {String}
+                 * @protected
                  * @default null
                  */
                 sortState:{
@@ -26108,6 +26690,10 @@ define('bui/grid/column',['bui/common'],function (require) {
                  */
                 /**
                  * \u5217\u6807\u9898
+                 * <pre><code>
+                 * var column = grid.findColumn('id');
+                 * column.get('title');
+                 * </code></pre>
                  * Note: to have a clickable header with no text displayed you can use the default of &#160; aka &nbsp;.
                  * @type {String}
                  * @default {String} &#160;
@@ -26118,9 +26704,23 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:'&#160;'
                 },
                 /**
-                 * \u5217\u7684\u5bbd\u5ea6,\u53ef\u4ee5\u4f7f\u6570\u5b57\u6216\u8005\u767e\u5206\u6bd4
+                 * \u5217\u7684\u5bbd\u5ea6,\u53ef\u4ee5\u4f7f\u6570\u5b57\u6216\u8005\u767e\u5206\u6bd4,\u4e0d\u8981\u4f7f\u7528 width : '100'\u6216\u8005width : '100px'
+                 * <pre><code>
+                 *  {title : '\u6587\u672c',width:100,dataIndex :'a',editor : {xtype : 'text'}}
+                 *  
+                 *  {title : '\u6587\u672c',width:'10%',dataIndex :'a',editor : {xtype : 'text'}}
+                 * </code></pre>
                  * @type {Number|String}
-                 * @default {Number} 80
+                 * @cfg {Number} [width = 80]
+                 */
+                
+                /**
+                 * \u5217\u5bbd\u5ea6
+                 * <pre><code>
+                 *  grid.findColumn(id).set('width',200);
+                 * </code></pre>
+                 * 
+                 * @type {Object}
                  */
                 width:{
                     value:100
@@ -27210,7 +27810,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
   /**
    * @class BUI.Grid.Grid
    *
-   * \u8868\u683c\u63a7\u4ef6,\u8868\u683c\u63a7\u4ef6\u7c7b\u56fe
+   * \u8868\u683c\u63a7\u4ef6,\u8868\u683c\u63a7\u4ef6\u7c7b\u56fe\uff0c\u4e00\u822c\u60c5\u51b5\u4e0b\u914d\u5408{@link BUI.Data.Store} \u4e00\u8d77\u4f7f\u7528
    * <p>
    * <img src="../assets/img/class-grid.jpg"/>
    * </p>
@@ -27218,6 +27818,42 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    * <p>
    * <img src="../assets/img/class-grid-plugins.jpg"/>
    * </p>
+   *
+   * <pre><code>
+   *  BUI.use(['bui/grid','bui/data'],function(Grid,Data){
+   *    var Grid = Grid,
+   *      Store = Data.Store,
+   *      columns = [{  //\u58f0\u660e\u5217\u6a21\u578b
+   *          title : '\u8868\u59341(20%)',
+   *          dataIndex :'a',
+   *          width:'20%'
+   *        },{
+   *          id: '123',
+   *          title : '\u8868\u59342(30%)',
+   *          dataIndex :'b',
+   *          width:'30%'
+   *        },{
+   *          title : '\u8868\u59343(50%)',
+   *          dataIndex : 'c',
+   *          width:'50%'
+   *      }],
+   *      data = [{a:'123'},{a:'cdd',b:'edd'},{a:'1333',c:'eee',d:2}]; //\u663e\u793a\u7684\u6570\u636e
+   *
+   *    var store = new Store({
+   *        data : data,
+   *        autoLoad:true
+   *      }),
+   *       grid = new Grid.Grid({
+   *         render:'#grid',
+   *         width:'100%',//\u8fd9\u4e2a\u5c5e\u6027\u4e00\u5b9a\u8981\u8bbe\u7f6e
+   *         columns : columns,
+   *         idField : 'a',
+   *         store : store
+   *       });
+   *
+   *     grid.render();
+   *   });
+   * </code></pre>
    * @extends BUI.List.SimpleList
    */
   var grid = List.SimpleList.extend({
@@ -27278,6 +27914,12 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     /**
      * \u6dfb\u52a0\u5217
+     * <pre><code>
+     *   //\u6dfb\u52a0\u5230\u6700\u540e
+     *   grid.addColumn({title : 'new column',dataIndex : 'new',width:100});
+     *   //\u6dfb\u52a0\u5230\u6700\u524d
+     *   grid.addColumn({title : 'new column',dataIndex : 'new',width:100},0);
+     * </code></pre>
      * @param {Object|BUI.Grid.Column} column \u5217\u7684\u914d\u7f6e\uff0c\u5217\u7c7b\u7684\u5b9a\u4e49 {@link BUI.Grid.Column}
      * @param {Number} index \u6dfb\u52a0\u5230\u7684\u4f4d\u7f6e
      * @return {BUI.Grid.Column}
@@ -27296,7 +27938,9 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     /**
      * \u6e05\u9664\u663e\u793a\u7684\u6570\u636e
-     *         grid.clearData();
+     * <pre><code>
+     *   grid.clearData();
+     * </code></pre>       
      */
     clearData : function(){
       this.clearItems();
@@ -27304,12 +27948,21 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     /**
      * \u5f53\u524d\u663e\u793a\u5728\u8868\u683c\u4e2d\u7684\u6570\u636e
      * @return {Array} \u7eaa\u5f55\u96c6\u5408
+     * @private
      */
     getRecords : function(){
       return this.getItems();
     },
     /**
      * \u4f7f\u7528\u7d22\u5f15\u6216\u8005id\u67e5\u627e\u5217
+     * <pre><code>
+     *  //\u8bbe\u7f6e\u5217\u7684id,\u5426\u5219\u4f1a\u81ea\u52a8\u751f\u6210
+     *  {id : '1',title : '\u8868\u5934',dataIndex : 'a'}
+     *  //\u83b7\u53d6\u5217
+     *  var column = grid.findColumn('id');
+     *  //\u64cd\u4f5c\u5217
+     *  column.set('visible',false);
+     * </code></pre>
      * @param {String|Number} id|index  \u6587\u672c\u503c\u4ee3\u8868\u7f16\u53f7\uff0c\u6570\u5b57\u4ee3\u8868\u7d22\u5f15
      */
     findColumn : function(id){
@@ -27323,6 +27976,14 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     /**
      * \u4f7f\u7528\u5b57\u6bb5\u540d\u67e5\u627e\u5217
+     * <pre><code>
+     * //\u8bbe\u7f6e\u5217dataIndex
+     *  {id : '1',title : '\u8868\u5934',dataIndex : 'a'}
+     *  //\u83b7\u53d6\u5217
+     *  var column = grid.findColumnByField('a');
+     *  //\u64cd\u4f5c\u5217
+     *  column.set('visible',false);
+     * </code></pre>
      * @param {String} field \u5217\u7684\u5b57\u6bb5\u540d dataIndex
      */
     findColumnByField : function(field){
@@ -27336,6 +27997,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
      * \u6839\u636e\u5217\u7684Id\u67e5\u627e\u5bf9\u5e94\u7684\u5355\u5143\u683c
      * @param {String|Number} id \u5217id
      * @param {Object|jQuery} record \u672c\u884c\u5bf9\u5e94\u7684\u8bb0\u5f55\uff0c\u6216\u8005\u662f\u672c\u884c\u7684\uff24\uff2f\uff2d\u5bf9\u8c61
+     * @protected
      * @return  {jQuery}
      */
     findCell:function (id, record) {
@@ -27354,6 +28016,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     /**
      * find the dom by the record in this component
      * @param {Object} record the record used to find row dom
+     * @protected
      * @return jQuery
      */
     findRow:function (record) {
@@ -27362,6 +28025,10 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     /**
      * \u79fb\u9664\u5217
+     * <pre><code>
+     *   var column = grid.findColumn('id');
+     *   grid.removeColumn(column);
+     * </code></pre>
      * @param {BUI.Grid.Column} column \u8981\u79fb\u9664\u7684\u5217
      */
     removeColumn:function (column) {
@@ -27369,7 +28036,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         _self.get('header').removeColumn(column);
     },
     /**
-     * \u663e\u793a\u6570\u636e
+     * \u663e\u793a\u6570\u636e,\u5f53\u4e0d\u4f7f\u7528store\u65f6\uff0c\u53ef\u4ee5\u5355\u72ec\u663e\u793a\u6570\u636e
+     * <pre><code>
+     *   var data = [{},{}];
+     *   grid.showData(data);
+     * </code></pre>
      * @param  {Array} data \u663e\u793a\u7684\u6570\u636e\u96c6\u5408
      */
     showData : function(data){
@@ -27664,11 +28335,39 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       },
       /**
        * @see {BUI.Grid.Grid#tbar}
+       * <pre><code>
+       * grid = new Grid.Grid({
+       *    render:'#grid',
+       *    columns : columns,
+       *    width : 700,
+       *    forceFit : true,
+       *    tbar:{ //\u6dfb\u52a0\u3001\u5220\u9664
+       *        items : [{
+       *          btnCls : 'button button-small',
+       *          text : '<i class="icon-plus"></i>\u6dfb\u52a0',
+       *          listeners : {
+       *            'click' : addFunction
+       *          }
+       *        },
+       *        {
+       *          btnCls : 'button button-small',
+       *          text : '<i class="icon-remove"></i>\u5220\u9664',
+       *          listeners : {
+       *            'click' : delFunction
+       *          }
+       *        }]
+       *    },
+       *    store : store
+       *  });
+       *
+       * grid.render();
+       * </code></pre>
        * @cfg {Object|BUI.Toolbar.Bar} bbar
        */
       /**
        * @see {BUI.Grid.Grid#tbar}
        * @type {Object}
+       * @ignore
        */
       bbar:{
 
@@ -27680,20 +28379,28 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
        * \u5217\u7684\u914d\u7f6e \u7528\u6765\u914d\u7f6e \u8868\u5934 \u548c \u8868\u5185\u5bb9\u3002{@link BUI.Grid.Column}
        * @cfg {Array} columns
        */
-      /**
-       * \u5217\u7684\u914d\u7f6e \u7528\u6765\u914d\u7f6e \u8868\u5934 \u548c \u8868\u5185\u5bb9\u3002{@link BUI.Grid.Column}
-       * @type {Array}
-       */
       columns:{
         view : true,
         value:[]
       },
       /**
        * \u5f3a\u8feb\u5217\u81ea\u9002\u5e94\u5bbd\u5ea6\uff0c\u5982\u679c\u5217\u5bbd\u5ea6\u5927\u4e8eGrid\u6574\u4f53\u5bbd\u5ea6\uff0c\u7b49\u6bd4\u4f8b\u7f29\u51cf\uff0c\u5426\u5219\u7b49\u6bd4\u4f8b\u589e\u52a0
+       * <pre><code>
+       *  var grid = new Grid.Grid({
+       *    render:'#grid',
+       *    columns : columns,
+       *    width : 700,
+       *    forceFit : true, //\u81ea\u9002\u5e94\u5bbd\u5ea6
+       *    store : store
+       *  });
+       * </code></pre>
        * @cfg {Boolean} [forceFit= false]
        */
       /**
        * \u5f3a\u8feb\u5217\u81ea\u9002\u5e94\u5bbd\u5ea6\uff0c\u5982\u679c\u5217\u5bbd\u5ea6\u5927\u4e8eGrid\u6574\u4f53\u5bbd\u5ea6\uff0c\u7b49\u6bd4\u4f8b\u7f29\u51cf\uff0c\u5426\u5219\u7b49\u6bd4\u4f8b\u589e\u52a0
+       * <pre><code>
+       *  grid.set('forceFit',true);
+       * </code></pre>
        * @type {Boolean}
        * @default 'false'
        */
@@ -27702,8 +28409,20 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:false
       },
       /**
-       * \u6570\u636e\u4e3a\u7a7a\u65f6\uff0c\u663e\u793a\u7684\u5185\u5bb9
-       * @type {Object}
+       * \u6570\u636e\u4e3a\u7a7a\u65f6\uff0c\u663e\u793a\u7684\u63d0\u793a\u5185\u5bb9
+       * <pre><code>
+       *  var grid = new Grid({
+       *   render:'#J_Grid4',
+       *   columns : columns,
+       *   store : store,
+       *   emptyDataTpl : '&lt;div class="centered"&gt;&lt;img alt="Crying" src="http://img03.taobaocdn.com/tps/i3/T1amCdXhXqXXXXXXXX-60-67.png"&gt;&lt;h2&gt;\u67e5\u8be2\u7684\u6570\u636e\u4e0d\u5b58\u5728&lt;/h2&gt;&lt;/div&gt;',
+       *   width:'100%'
+       *
+       * });
+       * 
+       * grid.render();
+       * </code></pre>
+       ** @cfg {Object} emptyDataTpl
        */
       emptyDataTpl : {
         view : true
@@ -27867,28 +28586,27 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
        * \u8fd8\u53ef\u4ee5\u662f\u5305\u542b\u4ee5\u4e0b\u5b57\u6bb5\u7684\u914d\u7f6e\u9879
        * <ol>
        * <li>items:\u5de5\u5177\u680f\u7684\u9879\uff0c
-       * \u53ef\u4ee5\u662f\u6309\u94ae(bar-item-button)\u3001
-       * \u6587\u672c(bar-item-text)\u3001
-       * \u94fe\u63a5(bar-item-link)\u3001
-       * \u5206\u9694\u7b26(bar-item-separator)\u4ee5\u53ca\u81ea\u5b9a\u4e49\u9879
+       *    - \u9ed8\u8ba4\u662f\u6309\u94ae(xtype : button)\u3001
+       *    - \u6587\u672c(xtype : text)\u3001
+       *    - \u94fe\u63a5(xtype : link)\u3001
+       *    - \u5206\u9694\u7b26(bar-item-separator)\u4ee5\u53ca\u81ea\u5b9a\u4e49\u9879
        * </li>
-       * <li>pageSize:\u8868\u660e\u5305\u542b\u5206\u9875\u680f</li>
+       * <li>pagingBar:\u8868\u660e\u5305\u542b\u5206\u9875\u680f</li>
        * </ol>
        * @type {Object|BUI.Toolbar.Bar}
        * @example
        * tbar:{
        *     items:[
        *         {
-       *             xclass:'bar-item-button',
-       *             text:'\u547d\u4ee4\u4e00'
+       *             text:'\u547d\u4ee4\u4e00' //\u9ed8\u8ba4\u662f\u6309\u94ae
        *             
        *         },
        *         {
-       *             xclass:'bar-item-text',
+       *             xtype:'text',
        *             text:'\u6587\u672c'
        *         }
        *     ],
-       *     pageSize:30
+       *     pagingBar:true
        * }
        */
       tbar:{
@@ -27896,7 +28614,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       },
       /**
        * \u53ef\u4ee5\u9644\u52a0\u5230\u8868\u683c\u4e0a\u7684\u6837\u5f0f.
-       * @type {String}
+       * @cfg {String} tableCls
        * @default 'bui-grid-table' this css cannot be overridden
        */
       tableCls:{
@@ -27920,10 +28638,19 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       },
       /**
        * \u5355\u5143\u683c\u5de6\u53f3\u4e4b\u95f4\u662f\u5426\u51fa\u73b0\u8fb9\u6846
+       * 
        * @cfg {Boolean} [innerBorder=true]
        */
       /**
        * \u5355\u5143\u683c\u5de6\u53f3\u4e4b\u95f4\u662f\u5426\u51fa\u73b0\u8fb9\u6846
+       * <pre><code>
+       *   var  grid = new Grid.Grid({
+       *     render:'#grid',
+       *     innerBorder: false, // \u9ed8\u8ba4\u4e3atrue
+       *     columns : columns,
+       *     store : store
+       *   });
+       * </code></pre>
        * @type {Boolean}
        * @default true
        */
@@ -27934,6 +28661,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       /**
        * \u662f\u5426\u4f7f\u7528\u7a7a\u767d\u5355\u5143\u683c\u7528\u4e8e\u5360\u4f4d\uff0c\u4f7f\u5217\u5bbd\u7b49\u4e8e\u8bbe\u7f6e\u7684\u5bbd\u5ea6
        * @type {Boolean}
+       * @private
        */
       useEmptyCell : {
         view : true,
@@ -27942,6 +28670,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       /**
        * \u662f\u5426\u9996\u884c\u4f7f\u7528\u7a7a\u767d\u884c\uff0c\u7528\u4ee5\u786e\u5b9a\u8868\u683c\u5217\u7684\u5bbd\u5ea6
        * @type {Boolean}
+       * @private
        */
       useHeaderRow : {
         view : true,
@@ -28407,6 +29136,28 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
 
   /**
    * \u7ea7\u8054\u8868\u683c
+   * <pre><code>
+   *  // \u5b9e\u4f8b\u5316 Grid.Plugins.Cascade \u63d2\u4ef6
+   *    var cascade = new Grid.Plugins.Cascade({
+   *      renderer : function(record){
+   *        return '<div style="padding: 10px 20px;"><h2>\u8be6\u60c5\u4fe1\u606f</h2><p>' + record.detail + '</p></div>';
+   *      }
+   *    });
+   *    var store = new Store({
+   *        data : data,
+   *        autoLoad:true
+   *      }),
+   *      grid = new Grid.Grid({
+   *        render:'#grid',
+   *        columns : columns,
+   *        store: store,
+   *        plugins: [cascade]  // Grid.Plugins.Cascade \u63d2\u4ef6
+   *      });
+   *
+   *    grid.render();
+   *    
+   *    cascade.expandAll();//\u5c55\u5f00\u6240\u6709
+   * </code></pre>
    * @class BUI.Grid.Plugins.Cascade
    * @extends BUI.Base
    */
@@ -28552,6 +29303,9 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * \u5c55\u5f00\u6240\u6709\u7ea7\u8054\u6570\u636e
+     * <pre><code>
+     *   cascade.expandAll();
+     * </code></pre>
      */
     expandAll : function(){
       var _self = this,
@@ -28563,6 +29317,10 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * \u5c55\u5f00\u67d0\u6761\u7eaa\u5f55
+     * <pre><code>
+     *   var record = grid.getItem('a');
+     *   cascade.expand(record);
+     * </code></pre>
      * @param  {Object} record \u7eaa\u5f55
      */
     expand : function(record){
@@ -28576,6 +29334,10 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * \u6298\u53e0\u67d0\u6761\u7eaa\u5f55
+     * <pre><code>
+     *   var record = grid.getItem('a');
+     *   cascade.collapse(record);
+     * </code></pre>
      * @param  {Object} record \u7eaa\u5f55
      */
     collapse : function(record){
@@ -28589,6 +29351,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * \u79fb\u9664\u6240\u6709\u7ea7\u8054\u6570\u636e\u7684\uff24\uff2f\uff2d
+     * @protected
      */
     removeAll : function(){
       var _self = this,
@@ -28601,6 +29364,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * \u6839\u636e\u7eaa\u5f55\u5220\u9664\u7ea7\u8054\u4fe1\u606f
+     * @protected
      * @param  {Object} record \u7ea7\u8054\u4fe1\u606f\u5bf9\u5e94\u7684\u7eaa\u5f55
      */
     remove : function(record){
@@ -28613,6 +29377,9 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * \u6298\u53e0\u6240\u6709\u7ea7\u8054\u6570\u636e
+     * <pre><code>
+     *  cascade.collapseAll();
+     * </code></pre>
      */
     collapseAll : function(){
       var _self = this,
@@ -28759,6 +29526,25 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
     
   /**
   * \u9009\u62e9\u884c\u63d2\u4ef6
+  * <pre><code>
+  ** var store = new Store({
+  *       data : data,
+  *       autoLoad:true
+  *     }),
+  *     grid = new Grid.Grid({
+  *       render:'#grid',
+  *       columns : columns,
+  *       itemStatusFields : { //\u8bbe\u7f6e\u6570\u636e\u8ddf\u72b6\u6001\u7684\u5bf9\u5e94\u5173\u7cfb
+  *         selected : 'selected',
+  *         disabled : 'disabled'
+  *       },
+  *       store : store,
+  *       plugins : [Grid.Plugins.CheckSelection] // \u63d2\u4ef6\u5f62\u5f0f\u5f15\u5165\u591a\u9009\u8868\u683c
+  *      //multiSelect: true  // \u63a7\u5236\u8868\u683c\u662f\u5426\u53ef\u4ee5\u591a\u9009\uff0c\u4f46\u662f\u8fd9\u79cd\u65b9\u5f0f\u6ca1\u6709\u524d\u9762\u7684\u590d\u9009\u6846 \u9ed8\u8ba4\u4e3afalse
+  *     });
+  *
+  *   grid.render();
+  * </code></pre>
   * @class BUI.Grid.Plugins.CheckSelection
   * @extends BUI.Base
   */
@@ -28991,6 +29777,22 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
   /**
    * \u8868\u683c\u83dc\u5355\u63d2\u4ef6 
+   * <pre><code>
+   * var store = new Store({
+   *      url : 'data/summary.json',
+   *      pageSize : 10,
+   *      autoLoad:true
+   *    }),
+   *    grid = new Grid.Grid({
+   *      render:'#grid',
+   *      columns : columns,
+   *      store: store,
+   *      bbar : {pagingBar : true},
+   *      plugins : [Grid.Plugins.Summary] // \u63d2\u4ef6\u5f62\u5f0f\u5f15\u5165\u5355\u9009\u8868\u683c
+   *    });
+   *
+   *  grid.render();
+   * </code></pre>
    * @class BUI.Grid.Plugins.Summary
    */
   var summary = function (config) {

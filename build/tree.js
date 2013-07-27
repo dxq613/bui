@@ -260,6 +260,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }  
     },
     /**
+     * 文件夹是否可选，用于选择节点时，避免选中非叶子节点
+     * @cfg {Boolean} [dirSelectable = true]
+     */
+    dirSelectable : {
+      value : true
+    },
+    /**
      * 是否显示根节点
      * <pre><code>
      *
@@ -551,7 +558,6 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       element = _self.findElement(node);
       _self._toggleExpand(node,element);
     },
-
     /**
      * 设置节点勾选状态
      * <pre><code>
@@ -712,12 +718,16 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       _self.on('itemclick',function(ev){
         var sender = $(ev.domTarget),
           element = ev.element,
+          dirSelectable = _self.get('dirSelectable'),
           node = ev.item;
         if(sender.hasClass(CLS_EXPANDER)){
           _self._toggleExpand(node,element);
         }else if(sender.hasClass(CLS_CHECKBOX)){
           var checked = _self.isChecked(node);
           _self.setNodeChecked(node,!checked);
+        }
+        if(!dirSelectable && !node.leaf){ //如果阻止非叶子节点选中
+          return false;
         }
       });
 

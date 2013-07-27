@@ -13,6 +13,25 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
     
   /**
   * 选择行插件
+  * <pre><code>
+  ** var store = new Store({
+  *       data : data,
+  *       autoLoad:true
+  *     }),
+  *     grid = new Grid.Grid({
+  *       render:'#grid',
+  *       columns : columns,
+  *       itemStatusFields : { //设置数据跟状态的对应关系
+  *         selected : 'selected',
+  *         disabled : 'disabled'
+  *       },
+  *       store : store,
+  *       plugins : [Grid.Plugins.CheckSelection] // 插件形式引入多选表格
+  *      //multiSelect: true  // 控制表格是否可以多选，但是这种方式没有前面的复选框 默认为false
+  *     });
+  *
+  *   grid.render();
+  * </code></pre>
   * @class BUI.Grid.Plugins.CheckSelection
   * @extends BUI.Base
   */

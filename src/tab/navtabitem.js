@@ -211,6 +211,16 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       if(parent && v){
         parent._setItemActived(_self);
       }
+    },
+    _uiSetCloseable : function(v){
+      var _self = this,
+        el = _self.get('el'),
+        closeEl = el.find('.' + CLS_ITEM_CLOSE);
+      if(v){
+        closeEl.show();
+      }else{
+        closeEl.hide();
+      }
     }
   },{
     ATTRS : 
@@ -229,6 +239,13 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       actived : {
         view:true,
         value : false
+      }, 
+      /**
+       * 是否可关闭
+       * @type {Boolean}
+       */
+      closeable : {
+        value : true
       },
       allowTextSelection:{
         view:false,
@@ -307,6 +324,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
        */
       /**
        * 标签文本
+       * tab.getItem('id').set('title','new title');
        * @type {String}
        * @default ''
        */

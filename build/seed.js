@@ -6597,6 +6597,7 @@ define('bui/component/uibase/position',function () {
             },
             /**
              * xy 纯中转作用
+             * @ignore
              */
             getter:function () {
                 return [this.get('x'), this.get('y')];
@@ -8417,7 +8418,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       setItemAttr(item,'statusCls',statusCls)
       //item.statusCls = statusCls;
     }
-    clearSelected(item);
+   // clearSelected(item);
   }
   function setItemAttr(item,name,val){
     if(item.isController){

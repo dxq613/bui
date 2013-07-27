@@ -375,7 +375,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
    * 日历控件显示选择年月
    * xclass:'calendar-header'
    * @class BUI.Calendar.Header
-   * @protected
+   * @private
    * @extends BUI.Component.Controller
    */
   var header = Component.Controller.extend({
@@ -674,7 +674,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
    * 日历控件显示日期的容器
    * xclass:'calendar-panel'
    * @class BUI.Calendar.Panel
-   * @protected
+   * @private
    * @extends BUI.Component.Controller
    */
   var panel = Component.Controller.extend(

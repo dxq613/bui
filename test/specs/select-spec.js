@@ -76,3 +76,32 @@ BUI.use('bui/select',function (Select) {
   suggest.render();
   
 });
+
+BUI.use(['bui/select','bui/picker','bui/grid'],function(Select,Picker,Grid){
+  var columns = [
+          {title : '表头1(30%)',dataIndex :'a', width:'30%'},
+          {id: '123',title : '表头2(30%)',dataIndex :'b', width:'30%'},
+          {title : '表头3(40%)',dataIndex : 'c',width:'40%'}
+        ],   
+      data = [{a:'123',b:'选择文本1'},{a:'cdd',b:'选择文本2'},{a:'1333',b:'选择文本3',c:'eee',d:2}],
+      grid = new Grid.SimpleGrid({
+        dataField : 'a',
+        columns : columns,
+        textGetter: function(item){ //返回选中的文本
+          return item.b;
+        }
+      }),
+      picker = new Picker.ListPicker({
+        width:300,  //指定宽度
+        children : [grid] //配置picker内的列表
+      });
+  var suggest = new Select.Suggest({
+    render:'#c3',
+    name:'suggest',
+    forceFit:false,
+    picker : picker,
+    data:data
+  });
+  suggest.render();
+  
+});

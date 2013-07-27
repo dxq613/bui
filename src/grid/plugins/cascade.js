@@ -17,6 +17,28 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
 
   /**
    * 级联表格
+   * <pre><code>
+   *  // 实例化 Grid.Plugins.Cascade 插件
+   *    var cascade = new Grid.Plugins.Cascade({
+   *      renderer : function(record){
+   *        return '<div style="padding: 10px 20px;"><h2>详情信息</h2><p>' + record.detail + '</p></div>';
+   *      }
+   *    });
+   *    var store = new Store({
+   *        data : data,
+   *        autoLoad:true
+   *      }),
+   *      grid = new Grid.Grid({
+   *        render:'#grid',
+   *        columns : columns,
+   *        store: store,
+   *        plugins: [cascade]  // Grid.Plugins.Cascade 插件
+   *      });
+   *
+   *    grid.render();
+   *    
+   *    cascade.expandAll();//展开所有
+   * </code></pre>
    * @class BUI.Grid.Plugins.Cascade
    * @extends BUI.Base
    */
@@ -162,6 +184,9 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * 展开所有级联数据
+     * <pre><code>
+     *   cascade.expandAll();
+     * </code></pre>
      */
     expandAll : function(){
       var _self = this,
@@ -173,6 +198,10 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * 展开某条纪录
+     * <pre><code>
+     *   var record = grid.getItem('a');
+     *   cascade.expand(record);
+     * </code></pre>
      * @param  {Object} record 纪录
      */
     expand : function(record){
@@ -186,6 +215,10 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * 折叠某条纪录
+     * <pre><code>
+     *   var record = grid.getItem('a');
+     *   cascade.collapse(record);
+     * </code></pre>
      * @param  {Object} record 纪录
      */
     collapse : function(record){
@@ -199,6 +232,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * 移除所有级联数据的ＤＯＭ
+     * @protected
      */
     removeAll : function(){
       var _self = this,
@@ -211,6 +245,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * 根据纪录删除级联信息
+     * @protected
      * @param  {Object} record 级联信息对应的纪录
      */
     remove : function(record){
@@ -223,6 +258,9 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     /**
      * 折叠所有级联数据
+     * <pre><code>
+     *  cascade.collapseAll();
+     * </code></pre>
      */
     collapseAll : function(){
       var _self = this,

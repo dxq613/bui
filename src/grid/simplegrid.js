@@ -141,6 +141,35 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   /**
    * 简单表格
    * xclass:'simple-grid'
+   * <pre><code>
+   *  BUI.use('bui/grid',function(Grid){
+   *     
+   *    var columns = [{
+   *             title : '表头1(10%)',
+   *             dataIndex :'a',
+   *             width:'10%'
+   *           },{
+   *             id: '123',
+   *             title : '表头2(20%)',
+   *             dataIndex :'b',
+   *             width:'20%'
+   *           },{
+   *             title : '表头3(70%)',
+   *             dataIndex : 'c',
+   *             width:'70%'
+   *         }],
+   *         data = [{a:'123'},{a:'cdd',b:'edd'},{a:'1333',c:'eee',d:2}];
+   *
+   *     var grid = new Grid.SimpleGrid({
+   *       render:'#grid',
+   *       columns : columns,
+   *       items : data,
+   *       idField : 'a'
+   *     });
+   *
+   *     grid.render();
+   *   });
+   * </code></pre>
    * @class BUI.Grid.SimpleGrid
    * @extends BUI.List.SimpleList
    */
@@ -173,6 +202,13 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
     },
     /**
      * 显示数据
+     * <pre><code>
+     *   var data = [{},{}];
+     *   grid.showData(data);
+     *
+     *   //等同
+     *   grid.set('items',data);
+     * </code></pre>
      * @param  {Array} data 要显示的数据
      */
     showData : function(data){
@@ -211,6 +247,15 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
       },
       /**
        * 表格应用的样式，更改此值，则不应用默认表格样式
+       * <pre><code>
+       * grid = new Grid.SimpleGrid({
+       *   render:'#grid',
+       *   columns : columns,
+       *   innerBorder : false,
+       *   tableCls:'table table-bordered table-striped', 
+       *   store : store 
+       * }); 
+       * </code></pre>
        * @type {Object}
        */
       tableCls : {
@@ -248,6 +293,16 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
       },
       /**
        * 单元格左右之间是否出现边框
+       * <pre><code>
+       * <pre><code>
+       * grid = new Grid.SimpleGrid({
+       *   render:'#grid',
+       *   columns : columns,
+       *   innerBorder : false,
+       *   store : store 
+       * }); 
+       * </code></pre>
+       * </code></pre>
        * @cfg {Boolean} [innerBorder=true]
        */
       /**

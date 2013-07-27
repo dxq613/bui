@@ -66,7 +66,43 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    * <p>
    * <img src="../assets/img/class-overlay.jpg"/>
    * </p>
-   * 
+   * ** 普通弹出框 **
+   * <pre><code>
+   *  BUI.use('bui/overlay',function(Overlay){
+   *      var dialog = new Overlay.Dialog({
+   *        title:'非模态窗口',
+   *        width:500,
+   *        height:300,
+   *        mask:false,  //设置是否模态
+   *        buttons:[],
+   *        bodyContent:'<p>这是一个非模态窗口,并且不带按钮</p>'
+   *      });
+   *    dialog.show();
+   *    $('#btnShow').on('click',function () {
+   *      dialog.show();
+   *    });
+   *  });
+   * </code></pre>
+   *
+   * ** 使用现有的html结构 **
+   * <pre><code>
+   *  BUI.use('bui/overlay',function(Overlay){
+   *      var dialog = new Overlay.Dialog({
+   *        title:'配置DOM',
+   *        width:500,
+   *        height:250,
+   *        contentId:'content',//配置DOM容器的编号
+   *        success:function () {
+   *          alert('确认');
+   *          this.hide();
+   *        }
+   *      });
+   *    dialog.show();
+   *    $('#btnShow').on('click',function () {
+   *      dialog.show();
+   *    });
+   *  });
+   * </code></pre>
    * @class BUI.Overlay.Dialog
    * @extends BUI.Overlay.Overlay
    * @mixins BUI.Component.UIBase.StdMod
@@ -113,6 +149,31 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       },
      /**
        * 弹出库的按钮，可以有多个,有3个参数
+       * var dialog = new Overlay.Dialog({
+       *     title:'自定义按钮',
+       *     width:500,
+       *     height:300,
+       *     mask:false,
+       *     buttons:[
+       *       {
+       *         text:'自定义',
+       *         elCls : 'button button-primary',
+       *         handler : function(){
+       *           //do some thing
+       *           this.hide();
+       *         }
+       *       },{
+       *         text:'关闭',
+       *         elCls : 'button',
+       *         handler : function(){
+       *           this.hide();
+       *         }
+       *       }
+       *     ],
+       *     
+       *     bodyContent:'<p>这是一个自定义按钮窗口,可以配置事件和文本样式</p>'
+       *   });
+       *  dialog.show();
        * <ol>
        *   <li>text:按钮文本</li>
        *   <li>elCls:按钮样式</li>
@@ -121,16 +182,6 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        * @cfg {Array} buttons
        * @default '确定'、'取消'2个按钮
        * 
-       */
-      /**
-       * 弹出库的按钮，可以有多个,有3个参数
-       * <ol>
-       *   <li>text:按钮文本</li>
-       *   <li>elCls:按钮样式</li>
-       *   <li>handler:点击按钮的回调事件</li>
-       * </ol>
-       * @type {Array}
-       * @default '确定'、'取消'2个按钮
        */
       buttons:{
         value:[
@@ -157,20 +208,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        * 弹出框显示内容的DOM容器ID
        * @cfg {Object} contentId
        */
-      /**
-       * 弹出框显示内容的DOM容器ID
-       * @type {Object}
-       */
       contentId:{
         view:true
       },
   	  /**
       * 点击成功时的回调函数
       * @cfg {Function} success
-      */
-      /**
-      * 点击成功时的回调函数
-      * @type {Function}
       */
       success : {
         value : function(){
@@ -191,6 +234,9 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        */
       /**
        * 弹出框标题
+       * <pre><code>
+       *  dialog.set('title','new title');
+       * </code></pre>
        * @type {String}
        */
       title : {
