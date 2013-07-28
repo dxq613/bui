@@ -1,7 +1,10 @@
 
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
-    render: '#J_Uploader'//,
+    render: '#J_Uploader',
+    queueTarget: '#J_UploaderQueue',
+    url: 'upload/upload.php',
+    buttonCls: 'defaultTheme-button'//,
     // text: '上传'
   });
   uploader.render();

@@ -3,7 +3,7 @@
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  **/
 define('bui/uploader/type/ajax',function(require) {
-    var EMPTY = '',$ = Node.all,LOG_PREFIX = '[uploader-AjaxType]:';
+    var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:';
 
     var UploadType = require('bui/uploader/type/base');
 
@@ -23,7 +23,7 @@ define('bui/uploader/type/ajax',function(require) {
         /**
          * 事件列表
          */
-        event : BUI.merge(UploadType.event,{
+        event : BUI.merge(UploadType.event, {
             PROGRESS : 'progress'
         })
     });
@@ -31,18 +31,18 @@ define('bui/uploader/type/ajax',function(require) {
     BUI.extend(AjaxType, UploadType, /** @lends AjaxType.prototype*/{
         /**
          * 上传文件
-         * @param {File} fileData 文件数据
+         * @param {Object} File
          * @return {AjaxType}
          */
-        upload : function(fileData) {
+        upload : function(file) {
             //不存在文件信息集合直接退出
-            if (!fileData) {
+            if (!file || !file.file) {
                 BUI.log(LOG_PREFIX + 'upload()，fileData参数有误！');
                 return false;
             }
             var self = this;
             self._setFormData();
-            self._addFileData(fileData);
+            self._addFileData(file.file);
             self.send();
             return self;
         },
@@ -117,7 +117,7 @@ define('bui/uploader/type/ajax',function(require) {
          * @param {Object} file 文件信息
          */
         _addFileData : function(file) {
-            if (!BUI.isObject(file)) {
+            if (!file) {
                 BUI.log(LOG_PREFIX + '_addFileData()，file参数有误！');
                 return false;
             }
@@ -131,22 +131,12 @@ define('bui/uploader/type/ajax',function(require) {
         /**
          * 表单数据对象
          */
-        formData : {value : EMPTY},
-        /**
-         * ajax配置
-         */
-        ajaxConfig : {value : {
-            type : 'post',
-            processData : false,
-            cache : false,
-            dataType : 'json',
-            contentType: false
-        }
+        formData: {
         },
-        xhr : {value : EMPTY},
-        fileDataName : {value : EMPTY},
-        form : {value : {}},
-        fileInput : {value : EMPTY}
+        data: {
+        },
+        xhr: {
+        }
     }
     });
     return AjaxType;

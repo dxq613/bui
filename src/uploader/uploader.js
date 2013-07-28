@@ -6,7 +6,11 @@ define('bui/uploader/uploader', function (require) {
 
   var BUI = require('bui/common'),
     HtmlButton = require('bui/uploader/button/htmlButton'),
-    SwfButton = require('bui/uploader/button/swfButton');
+    SwfButton = require('bui/uploader/button/swfButton'),
+    Queue = require('bui/uploader/queue'),
+    Ajax = require('bui/uploader/type/ajax'),
+    Flash = require('bui/uploader/type/flash'),
+    Iframe = require('bui/uploader/type/iframe');
 
 
   var Component = BUI.Component,
@@ -44,10 +48,14 @@ define('bui/uploader/uploader', function (require) {
   var Uploader = Component.Controller.extend(/** @lends Uploader.prototype*/{
     initializer: function(){
       var _self = this;
-
+      //初始化上传类型
       _self._initType();
-
-      console.log(this);
+      //初始化上传的button
+      _self._initButton();
+      //初始化文件对列
+      _self._initQueue();
+      //初始化进行上传的类
+      _self._initUploaderType();
     },
     /**
      * 根据上传的类型获取实例化button的类
@@ -64,6 +72,59 @@ define('bui/uploader/uploader', function (require) {
       else{
         return SwfButton;
       }
+    },
+    /**
+     * 获取上传的类
+     * @return {[type]} [description]
+     */
+    _getUploaderType: function(type){
+      var _self = this,
+        types = _self.get('types'),
+        uploaderType;
+      switch (type){
+        case types.AJAX:
+          uploaderType = Ajax;
+          break;
+        case types.FLASH:
+          uploaderType = Flash;
+          break;
+        case types.IFRAME:
+          uploaderType = Iframe;
+          break;
+        default:
+          break;
+      }
+      return uploaderType;
+    },
+    /**
+     * 初始化Button
+     * @return {[type]} [description]
+     */
+    _initButton: function(){
+      var _self = this,
+        type = _self.get('type'),
+        ButtonClass = _self._getButtonClass(type),
+        name = _self.get('name'),
+        multiple = _self.get('multiple'),
+        filter = _self.get('filter'),
+        button = new ButtonClass({
+          //name: name,
+          multiple: multiple,
+          filter: filter
+        });
+      _self.set('button', button);
+    },
+    /**
+     * 初始化上传的对列
+     * @return {[type]} [description]
+     */
+    _initQueue: function(){
+      var _self = this,
+        queueTarget = _self.get('queueTarget'),
+        queue = new Queue({
+          render: queueTarget
+        });
+      _self.set('queue', queue);
     },
     /**
      * 初始化上传类型
@@ -87,44 +148,101 @@ define('bui/uploader/uploader', function (require) {
         }
       }
     },
+    _initUploaderType: function(){
+      var _self = this,
+        type = _self.get('type'),
+        UploaderType = _self._getUploaderType(type),
+        uploaderType = new UploaderType({
+          action: _self.get('url'),
+          data: _self.get('data')
+        });
+      _self.set('uploaderType', uploaderType);
+    },
     /**
      * 渲染button, ajax和iframe用原生的input[type=file], flash的需要加载flash组件
      * @private
      */
     _renderButton: function(){
       var _self = this,
-        type = _self.get('type'),
         buttonEl = _self.get('view').get('el').find('.' + CLS_UPLOADER_BUTTON),
-        ButtonClass = _self._getButtonClass(type),
-        button = new ButtonClass({
-          render: buttonEl
-        });
+        button = _self.get('button');
+      button.set('render', buttonEl);
       button.render();
-      _self.set('button', button);
     },
-    _renderUploaderCore: function () {
+    _bindButton: function () {
       var _self = this,
         button = _self.get('button'),
+        queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
-        button.on('select', function(ev){
-          uploaderType.upload();
-        });
+
+      button.on('change', function(ev) {
+        queue.addItems(ev.files);
+        // console.log(queue.get('files'));
+        // _self.uploadFiles();
+      });
+    },
+    _bindQueue: function () {
+      var _self = this,
+        queue = _self.get('queue');
+      queue.on('itemrendered itemupdated', function(ev) {
+        var status = ev.newStatus;
+        if (status === 'waiting') {
+          //如果文件被置为等等状态，则要进行重新上传
+        }
+          _self.uploadFiles();
+      });
+      queue.on('itemupdated', function(ev){
+        var item = ev.item,
+          element = ev.domTarget,
+          url = item.url;
+        if (url) {
+          $(element).attr('data-url', url);
+        }
+      })
     },
     /**
-     * 设置上传类型，只有是types里面的才能设置进去
-     * @param  {[type]} v [description]
-     * @return {[type]}   [description]
-     * note: 这里有一个死循环，固去掉
+     * 
+     * @return {[type]} [description]
      */
-    // _uiSetType: function(v) {
-    //   var _self = this,
-    //     types = _self.get('types');
-    //   BUI.each(types, function(type){
-    //     if(v === type) {
-    //       _self.set('type', v);
-    //     }
-    //   });
-    // },
+    _bindUploaderCore: function () {
+      var _self = this,
+        queue = _self.get('queue'),
+        uploaderType = _self.get('uploaderType');
+
+      _self._bindButton();
+      _self._bindQueue();
+
+      uploaderType.on('start', function(){});
+      uploaderType.on('progress', function(){});
+      uploaderType.on('stop', function(){});
+      uploaderType.on('success', function(ev){
+
+        var result = ev.result;
+
+        var waitFiles = queue.getItemsByStatus('waiting'),
+          curUploadItem = _self.get('curUploadItem');
+
+        curUploadItem.url = result.url;
+
+        //设置对列中完成的文件
+        queue.clearItemStatus(curUploadItem);
+        queue.setStatusValue(curUploadItem, 'success', true);
+        queue.updateItem(curUploadItem);
+
+        //queue.setItemStatus(curUploadItem, 'success', 'success');
+
+        _self.set('curUploadItem', null);
+
+        //上传完了之后，如是对列中还有未上传的文件，则继续进行上传
+        if (waitFiles.length){
+          _self.uploadFile(waitFiles[0]);
+        }
+      });
+      uploaderType.on('error', function(){});
+    },
+    _isContinueUpload: function () {
+
+    },
     /**
      * 检测浏览器是否支持ajax类型上传方式
      * @return {Boolean}
@@ -141,12 +259,43 @@ define('bui/uploader/uploader', function (require) {
     },
     renderUI: function(){
       var _self = this;
-
       _self._renderButton();
-      _self._renderUploaderCore();
+      _self.get('queue').render();
     },
-    bindUI: function(){
+    bindUI: function () {
       var _self = this;
+      _self._bindUploaderCore();
+    },
+    uploadFile: function (item) {
+      var _self = this,
+        queue = _self.get('queue'),
+        uploaderType = _self.get('uploaderType'),
+        curUploadItem = _self.get('curUploadItem');
+
+      //如果有文件正等侍上传，而且上传组件当前处理空闲状态，才进行上传
+      if (item && !curUploadItem) {
+        //设置正在上传的状态
+        _self.set('curUploadItem', item);
+        //清除当前的状态
+        queue.clearItemStatus(item);
+        //设置对列中的文件处理开始上传状态
+        queue.setItemStatus(item, 'start', true);
+
+        uploaderType.upload(item);
+      }
+    },
+    /**
+     * 上传文件，只对对列中所有waiting状态的文件
+     * @return {[type]} [description]
+     */
+    uploadFiles: function () {
+      var _self = this,
+        queue = _self.get('queue'),
+        //所有文件只有在waiting状态才可以上传
+        items = queue.getItemsByStatus('waiting');
+      if (items.length) {
+        _self.uploadFile(items[0]);
+      }
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{
@@ -180,6 +329,12 @@ define('bui/uploader/uploader', function (require) {
        * @type {String}
        */
       type: {
+      },
+      /**
+       * 当前上传的状
+       * @type {Object}
+       */
+      uploadStatus: {
       },
       xview: {
         value: UploaderView

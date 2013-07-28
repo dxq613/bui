@@ -22,11 +22,11 @@ define('bui/uploader/type/flash', function (require) {
         self._init();
     }
 
-    S.mix(FlashType, /** @lends FlashType.prototype*/{
+    BUI.mix(FlashType, /** @lends FlashType.prototype*/{
         /**
          * 事件列表
          */
-        event:S.merge(UploadType.event, {
+        event:BUI.merge(UploadType.event, {
             //swf文件已经准备就绪
             SWF_READY: 'swfReady',
             //正在上传
@@ -34,14 +34,14 @@ define('bui/uploader/type/flash', function (require) {
         })
     });
 
-    S.extend(FlashType, UploadType, /** @lends FlashType.prototype*/{
+    BUI.extend(FlashType, UploadType, /** @lends FlashType.prototype*/{
         /**
          * 初始化
          */
         _init:function () {
             var self = this, swfUploader = self.get('swfUploader');
             if(!swfUploader){
-                S.log(LOG_PREFIX + 'swfUploader对象为空！');
+                BUI.log(LOG_PREFIX + 'swfUploader对象为空！');
                 return false;
             }
             //SWF 内容准备就绪
@@ -69,7 +69,7 @@ define('bui/uploader/type/flash', function (require) {
                 name = self.get('fileDataName');
             if(!name) name = 'Filedata';
             self.set('uploadingId',id);
-            S.mix(data,{"type":"flash"});
+            BUI.mix(data,{"type":"flash"});
             swfUploader.upload(id, action, method, data,name);
             return self;
         },
@@ -100,13 +100,13 @@ define('bui/uploader/type/flash', function (require) {
          */
         _uploadProgressHandler:function (ev) {
             var self = this;
-            S.mix(ev, {
+            BUI.mix(ev, {
                 //已经读取的文件字节数
                 loaded:ev.bytesLoaded,
                 //文件总共字节数
                 total : ev.bytesTotal
             });
-            S.log(LOG_PREFIX + '已经上传字节数为：' + ev.bytesLoaded);
+            BUI.log(LOG_PREFIX + '已经上传字节数为：' + ev.bytesLoaded);
             self.fire(FlashType.event.PROGRESS, { 'loaded':ev.loaded, 'total':ev.total });
         },
         /**
@@ -132,11 +132,11 @@ define('bui/uploader/type/flash', function (require) {
          */
         isHasCrossdomain:function(){
             var domain = location.hostname;
-             S.io({
+             BUI.io({
                  url:'http://' + domain + '/crossdomain.xml',
                  dataType:"xml",
                  error:function(){
-                     S.log('缺少crossdomain.xml文件或该文件不合法！');
+                     BUI.log('缺少crossdomain.xml文件或该文件不合法！');
                  }
              })
         }
@@ -151,7 +151,7 @@ define('bui/uploader/type/flash', function (require) {
                 //不是绝对路径拼接成绝对路径
                 if(!reg.test(v)){
                      var href = location.href,uris = href.split('/'),newUris;
-                    newUris  = S.filter(uris,function(item,i){
+                    newUris  = BUI.filter(uris,function(item,i){
                         return i < uris.length - 1;
                     });
                     v = newUris.join('/') + '/' + v;

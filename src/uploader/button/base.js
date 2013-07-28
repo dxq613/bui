@@ -33,8 +33,88 @@ define('bui/uploader/button/base', function(require) {
     Base.superclass.constructor.call(_self, config);
   }
 
+  Base.ATTRS = /** @lends Base.prototype */{
+    /**
+     * 按钮渲染的容器
+     * @type Node
+     * @default null
+     */
+    render: {
+    },
+    /**
+     * 文件上传域容器
+     * @type KISSY.Node
+     * @default ""
+     */
+    el: {
+    },
+    buttonCls: {
+    },
+    textCls: {
+      setter: function(v){
+        this._setTextCls(v);
+        return v;
+      }
+    },
+    text: {
+      value: '上传文件',
+      setter: function(v){
+        this._setText(v);
+        return v;
+      }
+    },
+    tpl:{
+    },
+    /**
+     * 隐藏的表单上传域的name值
+     * @type String
+     * @default "fileInput"
+     */
+    name: {
+      value : 'fileInput'
+    },
+    filter: {
+    },
+    /**
+     * 按钮当前的状态
+     * @type Object
+     * @default  { disabled : 'disabled' }
+     */
+    status : {
+      value : {
+        disabled : 'disabled',
+        multiple: 'multiple'
+      }
+    },
+    /**
+     * 按钮当前的状态对应的class
+     * @type Object
+     * @default  { disabled : 'disabled' }
+     */
+    statusCls : {
+      value : {
+        disabled : 'disabled',
+        multiple: 'multiple'
+      }
+    },
+    /**
+     * 事件
+     * @type {Object}
+     */
+    events : {
+      'beforeshow': 'beforeshow',
+      'aftershow': 'aftershow',
+      'beforehide': 'beforehide',
+      'afterhide': 'afterhide',
+      'beforerender' : 'beforerender',
+      'afterrender' : 'afterrender',
+      'change' : 'change'
+    }
+  }
 
-  BUI.extend(Base, BUI.Base, /** @lends Base.prototype*/{
+  BUI.extend(Base, BUI.Base);
+
+  BUI.augment(Base, /** @lends Base.prototype*/{
     /**
      * 运行
      * @return {Button} Button的实例
@@ -115,86 +195,6 @@ define('bui/uploader/button/base', function(require) {
      */
     _getStatus: function(name){
       return '';
-    }
-  }, {
-    ATTRS : /** @lends Base.prototype */{
-      /**
-       * 按钮渲染的容器
-       * @type Node
-       * @default null
-       */
-      render: {
-      },
-      /**
-       * 文件上传域容器
-       * @type KISSY.Node
-       * @default ""
-       */
-      el: {
-      },
-      buttonCls: {
-      },
-      textCls: {
-        setter: function(v){
-          this._setTextCls(v);
-          return v;
-        }
-      },
-      text: {
-        value: '上传文件',
-        setter: function(v){
-          this._setText(v);
-          return v;
-        }
-      },
-      tpl: {
-        value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '  {buttonCls}"><span class="' + CLS_UPLOADER_BUTTON_TEXT + ' {textCls}">{text}</span>{buttonTpl}</a>'
-      },
-      /**
-       * 隐藏的表单上传域的name值
-       * @type String
-       * @default "fileInput"
-       */
-      name: {
-        value : 'fileInput'
-      },
-      filter: {
-      },
-      /**
-       * 按钮当前的状态
-       * @type Object
-       * @default  { disabled : 'disabled' }
-       */
-      status : {
-        value : {
-          disabled : 'disabled',
-          multiple: 'multiple'
-        }
-      },
-      /**
-       * 按钮当前的状态对应的class
-       * @type Object
-       * @default  { disabled : 'disabled' }
-       */
-      statusCls : {
-        value : {
-          disabled : 'disabled',
-          multiple: 'multiple'
-        }
-      },
-      /**
-       * 事件
-       * @type {Object}
-       */
-      events : {
-        'beforeshow': 'beforeshow',
-        'aftershow': 'aftershow',
-        'beforehide': 'beforehide',
-        'afterhide': 'afterhide',
-        'beforerender' : 'beforerender',
-        'afterrender' : 'afterrender',
-        'change' : 'change'
-      }
     }
   });
 
