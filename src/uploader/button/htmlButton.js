@@ -106,7 +106,7 @@ define('bui/uploader/button/htmlButton', function(require) {
     multiple : {
       value : true,
       setter : function(v){
-        //this._setMultiple(v);
+        this._setMultiple(v);
         return v;
       }
     },
@@ -158,6 +158,7 @@ define('bui/uploader/button/htmlButton', function(require) {
         render = _self.get('render'),
         name = _self.get('name'),
         tpl = _self.get('tpl'),
+        multiple = _self.get('multiple'),
         html,
         inputContainer,
         fileInput;
@@ -176,6 +177,8 @@ define('bui/uploader/button/htmlButton', function(require) {
       _self._bindChangeHandler(fileInput);
       _self.set('fileInput', fileInput);
       _self.set('el', inputContainer);
+
+      multiple && _self._setMultiple(multiple);
       return inputContainer;
     },
     _bindChangeHandler: function(fileInput) {
@@ -224,6 +227,21 @@ define('bui/uploader/button/htmlButton', function(require) {
       //重新创建表单上传域
       _self._createInput();
       return _self;
+    },
+    /**
+     * 设置上传组件的禁用
+     * @param {Boolean} multiple 是否禁用
+     * @return {Boolean}
+     */
+    _setMultiple : function(multiple){
+      var _self = this,
+        fileInput = _self.get('fileInput');
+
+      if(!fileInput || !fileInput.length){
+        return false
+      };
+      multiple && fileInput.attr('multiple', 'multiple') || fileInput.removeAttr('multiple');
+      return multiple;
     }
   });
 

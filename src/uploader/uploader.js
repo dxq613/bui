@@ -185,20 +185,23 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         queue = _self.get('queue');
       queue.on('itemrendered itemupdated', function(ev) {
-        var status = ev.newStatus;
-        if (status === 'waiting') {
+        var items = queue.getItemsByStatus('waiting');
+
+        //如果有等待的文件则进行上传
+        if (items.length) {
+          _self.uploadFiles();
           //如果文件被置为等等状态，则要进行重新上传
         }
-          _self.uploadFiles();
       });
-      queue.on('itemupdated', function(ev){
-        var item = ev.item,
-          element = ev.domTarget,
-          url = item.url;
-        if (url) {
-          $(element).attr('data-url', url);
-        }
-      })
+
+      // queue.on('itemupdated', function(ev){
+      //   var item = ev.item,
+      //     element = ev.domTarget,
+      //     url = item.url;
+      //   if (url) {
+      //     $(element).attr('data-url', url);
+      //   }
+      // });
     },
     /**
      * 
@@ -213,8 +216,20 @@ define('bui/uploader/uploader', function (require) {
       _self._bindQueue();
 
       uploaderType.on('start', function(){});
+
       uploaderType.on('progress', function(){});
-      uploaderType.on('stop', function(){});
+
+      uploaderType.on('stop', function(ev){
+        var curUploadItem = _self.get('curUploadItem');
+
+        queue.clearItemStatus(curUploadItem);
+        queue.setItemStatus(curUploadItem, 'cancel', true);
+
+        _self.set('curUploadItem', null);
+
+        _self.fire('stop', {curUploadItem: curUploadItem});
+      });
+
       uploaderType.on('success', function(ev){
 
         var result = ev.result;
@@ -223,10 +238,13 @@ define('bui/uploader/uploader', function (require) {
           curUploadItem = _self.get('curUploadItem');
 
         curUploadItem.url = result.url;
+        BUI.mix(curUploadItem, {
+          url: result.url
+        });
 
         //设置对列中完成的文件
         queue.clearItemStatus(curUploadItem);
-        queue.setStatusValue(curUploadItem, 'success', true);
+        queue.setItemStatus(curUploadItem, 'success', true);
         queue.updateItem(curUploadItem);
 
         //queue.setItemStatus(curUploadItem, 'success', 'success');
@@ -237,6 +255,12 @@ define('bui/uploader/uploader', function (require) {
         if (waitFiles.length){
           _self.uploadFile(waitFiles[0]);
         }
+        else {
+          //如果没有可上传的文件，则触发结束事件
+          _self.fire('end');
+        }
+
+        _self.fire('success', {item: curUploadItem});
       });
       uploaderType.on('error', function(){});
     },
@@ -281,6 +305,7 @@ define('bui/uploader/uploader', function (require) {
         //设置对列中的文件处理开始上传状态
         queue.setItemStatus(item, 'start', true);
 
+        _self.fire('itemstart', {item: item});
         uploaderType.upload(item);
       }
     },
@@ -292,8 +317,12 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         queue = _self.get('queue'),
         //所有文件只有在waiting状态才可以上传
-        items = queue.getItemsByStatus('waiting');
-      if (items.length) {
+        items = queue.getItemsByStatus('waiting'),
+        curUploadItem = _self.get('curUploadItem');
+
+      if (items.length && !curUploadItem) {
+        //开始进行对列中的上传
+        _self.fire('start');
         _self.uploadFile(items[0]);
       }
     }

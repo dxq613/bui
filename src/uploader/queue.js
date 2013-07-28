@@ -21,7 +21,16 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       BUI.each(itemStatusFields, function(v, k){
         _self.setItemStatus(item, k, false);
       });
-    }
+    }//,
+    /**
+     * 设置item的状态
+     * @return {[type]} [description]
+     */
+    // setItemStatus : function(item, status, value, element){
+    //   var _self = this;
+    //   _self.clearItemStatus(item);
+    //   Queue.superclass.setItemStatus.call(_self, item, status, value, element);
+    // }
   }, {
     ATTRS: {
       itemCls: {
