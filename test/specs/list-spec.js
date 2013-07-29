@@ -426,7 +426,9 @@ BUI.use('bui/list',function (List) {
     items : items
   });
   list.render();
-
+  $('#clear').on('click',function(){
+    list.clearItems();
+  });
   var el = list.get('el');
 
 

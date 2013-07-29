@@ -62,6 +62,17 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
    * <img src="../assets/img/class-calendar.jpg"/>
    * </p>
    * xclass:'calendar'
+   * <pre><code>
+   *  BUI.use('bui/calendar',function(Calendar){
+   *    var calendar = new Calendar.Calendar({
+   *      render:'#calendar'
+   *    });
+   *    calendar.render();
+   *    calendar.on('selectedchange',function (ev) {
+   *      alert(ev.date);
+   *    });
+   * });
+   * </code></pre>
    * @class BUI.Calendar.Calendar
    * @extends BUI.Component.Controller
    */
@@ -306,6 +317,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * 最大日期
+       * <pre><code>
+       *   calendar.set('maxDate','2013-07-29');
+       * </code></pre>
        * @type {Date}
        */
       maxDate : {
@@ -313,6 +327,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * 最小日期
+       * <pre><code>
+       *   calendar.set('minDate','2013-07-29');
+       * </code></pre>
        * @type {Date}
        */
       minDate : {
@@ -370,11 +387,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * 是否选择时间,此选项决定是否可以选择时间
+       * 
        * @cfg {Boolean} showTime
-       */
-      /**
-       * 是否选择时间
-       * @type {Boolean}
        */
       showTime : {
         value : false
@@ -384,20 +398,25 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * 选择的日期,默认为当天
+       * <pre><code>
+       *  var calendar = new Calendar.Calendar({
+       *  render:'#calendar',
+       *   selectedDate : new Date('2013/07/01') //不能使用字符串
+       * });
+       * </code></pre>
        * @cfg {Date} selectedDate
        */
       /**
        * 选择的日期
+       * <pre><code>
+       *   calendar.set('selectedDate',new Date('2013-9-01'));
+       * </code></pre>
        * @type {Date}
        * @default today
        */
       selectedDate : {
         value : today()
       },
-      /**
-       * 小时,默认为当前小时
-       * @cfg {Number} hour
-       */
       /**
        * 小时,默认为当前小时
        * @type {Number}
@@ -408,19 +427,11 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * 分,默认为当前分
-       * @cfg {Number} minute
-       */
-      /**
-       * 分,默认为当前分
        * @type {Number}
        */
       minute:{
         value : new Date().getMinutes()
       },
-      /**
-       * 秒,默认为当前秒
-       * @cfg {Number} second
-       */
       /**
        * 秒,默认为当前秒
        * @type {Number}

@@ -11212,12 +11212,6 @@ define('bui/data/sortable',function() {
      * \u51fd\u6570\u539f\u578b function(v1,v2)\uff0c\u6bd4\u8f832\u4e2a\u5b57\u6bb5\u662f\u5426\u76f8\u7b49
      * \u5982\u679c\u662f\u5b57\u7b26\u4e32\u5219\u6309\u7167\u672c\u5730\u6bd4\u8f83\u7b97\u6cd5\uff0c\u5426\u5219\u4f7f\u7528 > ,== \u9a8c\u8bc1
      */
-    /**
-     * \u6bd4\u8f83\u51fd\u6570
-     * @type {Function}
-     * \u51fd\u6570\u539f\u578b function(v1,v2)\uff0c\u6bd4\u8f832\u4e2a\u5b57\u6bb5\u662f\u5426\u76f8\u7b49
-     * \u5982\u679c\u662f\u5b57\u7b26\u4e32\u5219\u6309\u7167\u672c\u5730\u6bd4\u8f83\u7b97\u6cd5\uff0c\u5426\u5219\u4f7f\u7528 > ,== \u9a8c\u8bc1
-     */
     compareFunction:{
       value : function(v1,v2){
         if(v1 === undefined){
@@ -11491,17 +11485,6 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'GET'
     },
     /**
-     * \u662f\u5426\u4e0d\u8bfb\u53d6\u7f13\u5b58\u6570\u636e
-     * @cfg {Boolean} [noCache=true]
-     */
-    /**
-     * \u662f\u5426\u4e0d\u8bfb\u53d6\u7f13\u5b58\u6570\u636e
-     * @type {Boolean}
-     */
-    noCache : {
-      value : true
-    },
-    /**
      * \u662f\u5426\u4f7f\u7528Cache
      * @type {Boolean}
      */
@@ -11632,7 +11615,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
 
   /**
    * @class BUI.Data.AbstractStore
-   * \u6570\u636e\u7f13\u51b2\u62bd\u8c61\u7c7b
+   * \u6570\u636e\u7f13\u51b2\u62bd\u8c61\u7c7b,\u6b64\u7c7b\u4e0d\u8fdb\u884c\u5b9e\u4f8b\u5316
    * @extends BUI.Base
    */
   function AbstractStore(config){
@@ -11643,12 +11626,13 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
   AbstractStore.ATTRS = {
     /**
     * \u521b\u5efa\u5bf9\u8c61\u65f6\u662f\u5426\u81ea\u52a8\u52a0\u8f7d
+    * <pre><code>
+    *   var store = new Data.Store({
+    *     url : 'data.php',  //\u8bbe\u7f6e\u52a0\u8f7d\u6570\u636e\u7684URL
+    *     autoLoad : true    //\u521b\u5efaStore\u65f6\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
+    *   });
+    * </code></pre>
     * @cfg {Boolean} [autoLoad=false]
-    */
-    /**
-    * \u521b\u5efa\u5bf9\u8c61\u65f6\u662f\u5426\u81ea\u52a8\u52a0\u8f7d
-    * @type {Boolean}
-    * @default false
     */
     autoLoad: {
       value :false 
@@ -11663,15 +11647,34 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     },
     /**
      * \u521d\u59cb\u5316\u65f6\u67e5\u8be2\u7684\u53c2\u6570\uff0c\u5728\u521d\u59cb\u5316\u65f6\u6709\u6548
+     * <pre><code>
+     * var store = new Data.Store({
+    *     url : 'data.php',  //\u8bbe\u7f6e\u52a0\u8f7d\u6570\u636e\u7684URL
+    *     autoLoad : true,    //\u521b\u5efaStore\u65f6\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
+    *     params : {         //\u8bbe\u7f6e\u8bf7\u6c42\u65f6\u7684\u53c2\u6570
+    *       id : '1',
+    *       type : '1'
+    *     }
+    *   });
+     * </code></pre>
      * @cfg {Object} params
      */
     params : {
 
     },
     /**
-     * \u6570\u636e\u4ee3\u7406\u5bf9\u8c61
-     * @type {Object|BUI.Data.Proxy}
-     * @protected
+     * \u6570\u636e\u4ee3\u7406\u5bf9\u8c61,\u7528\u4e8e\u52a0\u8f7d\u6570\u636e\u7684ajax\u914d\u7f6e\uff0c{@link BUI.Data.Proxy}
+     * <pre><code>
+     *   var store = new Data.Store({
+    *     url : 'data.php',  //\u8bbe\u7f6e\u52a0\u8f7d\u6570\u636e\u7684URL
+    *     autoLoad : true,    //\u521b\u5efaStore\u65f6\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
+    *     proxy : {
+    *       method : 'post',
+    *       dataType : 'jsonp'
+    *     }
+    *   });
+     * </code></pre>
+     * @cfg {Object|BUI.Data.Proxy} proxy
      */
     proxy : {
       value : {
@@ -11681,11 +11684,38 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     /**
      * \u8bf7\u6c42\u6570\u636e\u7684\u5730\u5740\uff0c\u901a\u8fc7ajax\u52a0\u8f7d\u6570\u636e\uff0c
      * \u6b64\u53c2\u6570\u8bbe\u7f6e\u5219\u52a0\u8f7d\u8fdc\u7a0b\u6570\u636e
+     * ** \u4f60\u53ef\u4ee5\u8bbe\u7f6e\u5728proxy\u5916\u90e8 **
+     * <pre><code>
+     *   var store = new Data.Store({
+    *     url : 'data.php',  //\u8bbe\u7f6e\u52a0\u8f7d\u6570\u636e\u7684URL
+    *     autoLoad : true,    //\u521b\u5efaStore\u65f6\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
+    *     proxy : {
+    *       method : 'post',
+    *       dataType : 'jsonp'
+    *     }
+    *   });
+     * </code></pre>
+     * ** \u4f60\u4e5f\u53ef\u4ee5\u8bbe\u7f6e\u5728proxy\u4e0a **
+     * <pre><code>
+     *   var store = new Data.Store({
+    *     autoLoad : true,    //\u521b\u5efaStore\u65f6\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
+    *     proxy : {
+    *       url : 'data.php',  //\u8bbe\u7f6e\u52a0\u8f7d\u6570\u636e\u7684URL
+    *       method : 'post',
+    *       dataType : 'jsonp'
+    *     }
+    *   });
+     * </code></pre>
      * \u5426\u5219\u628a {BUI.Data.Store#cfg-data}\u4f5c\u4e3a\u672c\u5730\u7f13\u5b58\u6570\u636e\u52a0\u8f7d
      * @cfg {String} url
      */
     /**
-     * @ignore
+     * \u8bf7\u6c42\u6570\u636e\u7684url
+     * <pre><code>
+     *   //\u66f4\u6539url
+     *   store.get('proxy').set('url',url);
+     * </code></pre>
+     * @type {String}
      */
     url : {
 
@@ -11865,6 +11895,20 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     },
     /**
      * \u52a0\u8f7d\u6570\u636e
+     * <pre><code>
+     *  //\u4e00\u822c\u8c03\u7528
+     *  store.load(params);
+     *  
+     *  //\u4f7f\u7528\u56de\u8c03\u51fd\u6570
+     *  store.load(params,function(data){
+     *  
+     *  });
+     *
+     *  //load\u6709\u8bb0\u5fc6\u53c2\u6570\u7684\u529f\u80fd
+     *  store.load({id : '123',type="1"});
+     *  //\u4e0b\u4e00\u6b21\u8c03\u7528
+     *  store.load();\u9ed8\u8ba4\u4f7f\u7528\u4e0a\u6b21\u7684\u53c2\u6570\uff0c\u53ef\u4ee5\u5bf9\u5bf9\u5e94\u7684\u53c2\u6570\u8fdb\u884c\u8986\u76d6
+     * </code></pre>
      * @param  {Object} params \u53c2\u6570\u952e\u503c\u5bf9
      * @param {Function} fn \u56de\u8c03\u51fd\u6570\uff0c\u9ed8\u8ba4\u4e3a\u7a7a
      */
@@ -11888,6 +11932,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     },
     /**
      * \u52a0\u8f7d\u5b8c\u6570\u636e
+     * @protected
      * @template
      */
     onLoad : function(data,params){
@@ -12632,6 +12677,25 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
    * <p>
    * <img src="../assets/img/class-data.jpg"/>
    * </p>
+   * ** \u7f13\u5b58\u9759\u6001\u6570\u636e ** 
+   * <pre><code>
+   *  var store = new Store({
+   *    data : [{},{}]
+   *  });
+   * </code></pre>
+   * ** \u5f02\u6b65\u52a0\u8f7d\u6570\u636e **
+   * <pre><code>
+   *  var store = new Store({
+   *    url : 'data.json',
+   *    autoLoad : true,
+   *    params : {id : '123'},
+   *    sortInfo : {
+   *      field : 'id',
+   *      direction : 'ASC' //ASC,DESC
+   *    }
+   *  });
+   * </code></pre>
+   * 
    * @class BUI.Data.Store
    * @extends BUI.Data.AbstractStore
    * @mixins BUI.Data.Sortable
@@ -12650,11 +12714,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * \u5f53\u524d\u9875\u7801
      * @cfg {Number} [currentPage=0]
+     * @ignore
      */
     /**
      * \u5f53\u524d\u9875\u7801
      * @type {Number}
-     * @default 0
+     * @ignore
+     * @readOnly
      */
     currentPage:{
       value : 0
@@ -12663,6 +12729,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * \u5220\u9664\u6389\u7684\u7eaa\u5f55
      * @readOnly
+     * @private
      * @type {Array}
      */
     deletedRecords : {
@@ -12670,24 +12737,45 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * \u9519\u8bef\u5b57\u6bb5,\u5305\u542b\u5728\u8fd4\u56de\u4fe1\u606f\u4e2d\u8868\u793a\u9519\u8bef\u4fe1\u606f\u7684\u5b57\u6bb5
+     * <pre><code>
+     *   //\u53ef\u4ee5\u4fee\u6539\u63a5\u6536\u7684\u540e\u53f0\u53c2\u6570\u7684\u542b\u4e49
+     *   var store = new Store({
+     *     url : 'data.json',
+     *     errorProperty : 'errorMsg', //\u5b58\u653e\u9519\u8bef\u4fe1\u606f\u7684\u5b57\u6bb5(error)
+     *     hasErrorProperty : 'isError', //\u662f\u5426\u9519\u8bef\u7684\u5b57\u6bb5\uff08hasError)
+     *     root : 'data',               //\u5b58\u653e\u6570\u636e\u7684\u5b57\u6bb5\u540d(rows)
+     *     totalProperty : 'total'     //\u5b58\u653e\u8bb0\u5f55\u603b\u6570\u7684\u5b57\u6bb5\u540d(results)
+     *   });
+     * </code></pre>
      * @cfg {String} [errorProperty='error']
      */
     /**
      * \u9519\u8bef\u5b57\u6bb5
      * @type {String}
-     * @default 'error'
+     * @ignore
      */
     errorProperty : {
       value : 'error'
     },
     /**
      * \u662f\u5426\u5b58\u5728\u9519\u8bef,\u52a0\u8f7d\u6570\u636e\u65f6\u5982\u679c\u8fd4\u56de\u9519\u8bef\uff0c\u6b64\u5b57\u6bb5\u8868\u793a\u6709\u9519\u8bef\u53d1\u751f
+     * <pre><code>
+     *   //\u53ef\u4ee5\u4fee\u6539\u63a5\u6536\u7684\u540e\u53f0\u53c2\u6570\u7684\u542b\u4e49
+     *   var store = new Store({
+     *     url : 'data.json',
+     *     errorProperty : 'errorMsg', //\u5b58\u653e\u9519\u8bef\u4fe1\u606f\u7684\u5b57\u6bb5(error)
+     *     hasErrorProperty : 'isError', //\u662f\u5426\u9519\u8bef\u7684\u5b57\u6bb5\uff08hasError)
+     *     root : 'data',               //\u5b58\u653e\u6570\u636e\u7684\u5b57\u6bb5\u540d(rows)
+     *     totalProperty : 'total'     //\u5b58\u653e\u8bb0\u5f55\u603b\u6570\u7684\u5b57\u6bb5\u540d(results)
+     *   });
+     * </code></pre>
      * @cfg {String} [hasErrorProperty='hasError']
      */
     /**
      * \u662f\u5426\u5b58\u5728\u9519\u8bef
      * @type {String}
      * @default 'hasError'
+     * @ignore
      */
     hasErrorProperty : {
       value : 'hasError'
@@ -12716,6 +12804,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * \u66f4\u6539\u7684\u7eaa\u5f55\u96c6\u5408
      * @type {Array}
+     * @private
      * @readOnly
      */
     modifiedRecords : {
@@ -12724,23 +12813,18 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * \u65b0\u6dfb\u52a0\u7684\u7eaa\u5f55\u96c6\u5408\uff0c\u53ea\u8bfb
      * @type {Array}
+     * @private
      * @readOnly
      */
     newRecords : {
       value : []
     },
     /**
-     * \u662f\u5426\u8fdc\u7a0b\u6392\u5e8f\uff0c\u7531\u4e8e\u5f53\u524dStore\u5b58\u50a8\u7684\u4e0d\u4e00\u5b9a\u662f\u6570\u636e\u6e90\u7684\u5168\u96c6\uff0c\u6240\u4ee5\u6b64\u914d\u7f6e\u9879\u9700\u8981\u91cd\u65b0\u8bfb\u53d6\u6570\u636e
-     * \u5728\u5206\u9875\u72b6\u6001\u4e0b\uff0c\u8fdb\u884c\u8fdc\u7a0b\u6392\u5e8f\uff0c\u4f1a\u8fdb\u884c\u5168\u96c6\u6570\u636e\u7684\u6392\u5e8f\uff0c\u5e76\u8fd4\u56de\u9996\u9875\u7684\u6570\u636e
-     * remoteSort\u4e3a false\u7684\u60c5\u51b5\u4e0b\uff0c\u4ec5\u5bf9\u5f53\u524d\u9875\u7684\u6570\u636e\u8fdb\u884c\u6392\u5e8f
+     * \u662f\u5426\u8fdc\u7a0b\u6392\u5e8f\uff0c\u9ed8\u8ba4\u72b6\u6001\u4e0b\u5185\u5b58\u6392\u5e8f
+     *   - \u7531\u4e8e\u5f53\u524dStore\u5b58\u50a8\u7684\u4e0d\u4e00\u5b9a\u662f\u6570\u636e\u6e90\u7684\u5168\u96c6\uff0c\u6240\u4ee5\u6b64\u914d\u7f6e\u9879\u9700\u8981\u91cd\u65b0\u8bfb\u53d6\u6570\u636e
+     *   - \u5728\u5206\u9875\u72b6\u6001\u4e0b\uff0c\u8fdb\u884c\u8fdc\u7a0b\u6392\u5e8f\uff0c\u4f1a\u8fdb\u884c\u5168\u96c6\u6570\u636e\u7684\u6392\u5e8f\uff0c\u5e76\u8fd4\u56de\u9996\u9875\u7684\u6570\u636e
+     *   - remoteSort\u4e3a false\u7684\u60c5\u51b5\u4e0b\uff0c\u4ec5\u5bf9\u5f53\u524d\u9875\u7684\u6570\u636e\u8fdb\u884c\u6392\u5e8f
      * @cfg {Boolean} [remoteSort=false]
-     */
-    /**
-     * \u662f\u5426\u8fdc\u7a0b\u6392\u5e8f\uff0c\u7531\u4e8e\u5f53\u524dStore\u5b58\u50a8\u7684\u4e0d\u4e00\u5b9a\u662f\u6570\u636e\u6e90\u7684\u5168\u96c6\uff0c\u6240\u4ee5\u6b64\u914d\u7f6e\u9879\u9700\u8981\u91cd\u65b0\u8bfb\u53d6\u6570\u636e
-     * \u5728\u5206\u9875\u72b6\u6001\u4e0b\uff0c\u8fdb\u884c\u8fdc\u7a0b\u6392\u5e8f\uff0c\u4f1a\u8fdb\u884c\u5168\u96c6\u6570\u636e\u7684\u6392\u5e8f\uff0c\u5e76\u8fd4\u56de\u9996\u9875\u7684\u6570\u636e
-     * remoteSort\u4e3a false\u7684\u60c5\u51b5\u4e0b\uff0c\u4ec5\u5bf9\u5f53\u524d\u9875\u7684\u6570\u636e\u8fdb\u884c\u6392\u5e8f
-     * @type {Boolean}
-     * @default false
      */
     remoteSort : {
       value : false
@@ -12752,52 +12836,69 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * <li>results: \u603b\u7684\u6570\u636e\u6761\u6570</li>
      * </ol>
      * @type {Object}
-     * @protected
+     * @private
      * @readOnly
      */
     resultMap : {
       value : {}
     },
     /**
-    * \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u6570\u636e\u7684\u6839\u76ee\u5f55
-    * @cfg {String} [root='rows']
-    *   '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
-    */
-    /**
-    * \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u6570\u636e\u7684\u6839\u76ee\u5f55
-    * @field
-    * @type {String}
-    * @default  "rows"
-    *   '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
-    */
+     * \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u6570\u636e\u7684\u6839\u76ee\u5f55
+     * @cfg {String} [root='rows']
+     * <pre><code>
+     *    //\u9ed8\u8ba4\u8fd4\u56de\u6570\u636e\u7c7b\u578b\uff1a
+     *    '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
+     *   //\u53ef\u4ee5\u4fee\u6539\u63a5\u6536\u7684\u540e\u53f0\u53c2\u6570\u7684\u542b\u4e49
+     *   var store = new Store({
+     *     url : 'data.json',
+     *     errorProperty : 'errorMsg', //\u5b58\u653e\u9519\u8bef\u4fe1\u606f\u7684\u5b57\u6bb5(error)
+     *     hasErrorProperty : 'isError', //\u662f\u5426\u9519\u8bef\u7684\u5b57\u6bb5\uff08hasError)
+     *     root : 'data',               //\u5b58\u653e\u6570\u636e\u7684\u5b57\u6bb5\u540d(rows)
+     *     totalProperty : 'total'     //\u5b58\u653e\u8bb0\u5f55\u603b\u6570\u7684\u5b57\u6bb5\u540d(results)
+     *   });
+     * </code></pre>
+     *   
+     */
     root: { value : 'rows'}, 
 
     /**
      * \u5f53\u524dStore\u7f13\u5b58\u7684\u6570\u636e\u6761\u6570
      * @type {Number}
+     * @private
      * @readOnly
      */
     rowCount :{
       value : 0
     },
     /**
-    * \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u8bb0\u5f55\u7684\u603b\u6570\u7684\u5b57\u6bb5\uff0c\u7528\u4e8e\u5206\u9875
-    * @cfg {String} [totalProperty='results']
-    *
-    *   '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
-    */
-    /**
-    * \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u8bb0\u5f55\u7684\u603b\u6570\u7684\u5b57\u6bb5\uff0c\u7528\u4e8e\u5206\u9875
-    * @field
-    * @type {String}
-    * @default  "results"
-    *
-    *   '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
-    */
+     * \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u8bb0\u5f55\u7684\u603b\u6570\u7684\u5b57\u6bb5\uff0c\u7528\u4e8e\u5206\u9875
+     * @cfg {String} [totalProperty='results']
+     *<pre><code>
+     *    //\u9ed8\u8ba4\u8fd4\u56de\u6570\u636e\u7c7b\u578b\uff1a
+     *    '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
+     *   //\u53ef\u4ee5\u4fee\u6539\u63a5\u6536\u7684\u540e\u53f0\u53c2\u6570\u7684\u542b\u4e49
+     *   var store = new Store({
+     *     url : 'data.json',
+     *     errorProperty : 'errorMsg', //\u5b58\u653e\u9519\u8bef\u4fe1\u606f\u7684\u5b57\u6bb5(error)
+     *     hasErrorProperty : 'isError', //\u662f\u5426\u9519\u8bef\u7684\u5b57\u6bb5\uff08hasError)
+     *     root : 'data',               //\u5b58\u653e\u6570\u636e\u7684\u5b57\u6bb5\u540d(rows)
+     *     totalProperty : 'total'     //\u5b58\u653e\u8bb0\u5f55\u603b\u6570\u7684\u5b57\u6bb5\u540d(results)
+     *   });
+     * </code></pre>
+     */
     totalProperty: {value :'results'}, 
 
     /**
      * \u52a0\u8f7d\u6570\u636e\u7684\u8d77\u59cb\u4f4d\u7f6e
+     * <pre><code>
+     *  //\u521d\u59cb\u5316\u65f6\uff0c\u53ef\u4ee5\u5728params\u4e2d\u914d\u7f6e
+     *  var store = new Store({
+     *    url : 'data.json',
+     *    params : {
+     *      start : 100
+     *    }
+     *  });
+     * </code></pre>
      * @type {Object}
      */
     start:{
@@ -12805,11 +12906,14 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * \u6bcf\u9875\u591a\u5c11\u6761\u8bb0\u5f55,\u9ed8\u8ba4\u4e3anull,\u6b64\u65f6\u4e0d\u5206\u9875\uff0c\u5f53\u6307\u5b9a\u4e86\u6b64\u503c\u65f6\u5206\u9875
+     * <pre><code>
+     *  //\u5f53\u8bf7\u6c42\u7684\u6570\u636e\u5206\u9875\u65f6
+     *  var store = new Store({
+     *    url : 'data.json',
+     *    pageSize : 30
+     *  });
+     * </code></pre>
      * @cfg {Number} pageSize
-     */
-    /**
-     * \u6bcf\u9875\u591a\u5c11\u6761\u8bb0\u5f55,\u9ed8\u8ba4\u4e3anull,\u6b64\u65f6\u4e0d\u5206\u9875\uff0c\u5f53\u6307\u5b9a\u4e86\u6b64\u503c\u65f6\u5206\u9875
-     * @type {Number}
      */
     pageSize : {
 
@@ -12827,6 +12931,17 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   {
     /**
     * \u6dfb\u52a0\u8bb0\u5f55,\u9ed8\u8ba4\u6dfb\u52a0\u5728\u540e\u9762
+    * <pre><code>
+    *  //\u6dfb\u52a0\u8bb0\u5f55
+    *  store.add({id : '2',text: 'new data'});
+    *  //\u662f\u5426\u53bb\u91cd\uff0c\u91cd\u590d\u6570\u636e\u4e0d\u80fd\u6dfb\u52a0
+    *  store.add(obj,true); //\u4e0d\u80fd\u6dfb\u52a0\u91cd\u590d\u6570\u636e\uff0c\u6b64\u65f6\u7528obj1 === obj2\u5224\u65ad
+    *  //\u4f7f\u7528\u5339\u914d\u51fd\u53bb\u91cd
+    *  store.add(obj,true,function(obj1,obj2){
+    *    return obj1.id == obj2.id;
+    *  });
+    *  
+    * </code></pre>
     * @param {Array|Object} data \u6dfb\u52a0\u7684\u6570\u636e\uff0c\u53ef\u4ee5\u662f\u6570\u7ec4\uff0c\u53ef\u4ee5\u662f\u5355\u6761\u8bb0\u5f55
     * @param {Boolean} [noRepeat = false] \u662f\u5426\u53bb\u91cd,\u53ef\u4ee5\u4e3a\u7a7a\uff0c\u9ed8\u8ba4\uff1a false 
     * @param {Function} [match] \u5339\u914d\u51fd\u6570\uff0c\u53ef\u4ee5\u4e3a\u7a7a\uff0c
@@ -12843,6 +12958,10 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u6dfb\u52a0\u8bb0\u5f55,\u6307\u5b9a\u7d22\u5f15\u503c
+    * <pre><code>
+    *  //\u4f7f\u7528\u65b9\u5f0f\u8ddf\u7c7b\u4f3c\u4e8eadd,\u589e\u52a0\u4e86index\u53c2\u6570
+    *  store.add(obj,0);//\u6dfb\u52a0\u5728\u6700\u524d\u9762
+    * </code></pre>
     * @param {Array|Object} data \u6dfb\u52a0\u7684\u6570\u636e\uff0c\u53ef\u4ee5\u662f\u6570\u7ec4\uff0c\u53ef\u4ee5\u662f\u5355\u6761\u8bb0\u5f55
     * @param {Number} index \u5f00\u59cb\u6dfb\u52a0\u6570\u636e\u7684\u4f4d\u7f6e
     * @param {Boolean} [noRepeat = false] \u662f\u5426\u53bb\u91cd,\u53ef\u4ee5\u4e3a\u7a7a\uff0c\u9ed8\u8ba4\uff1a false 
@@ -12869,6 +12988,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u9a8c\u8bc1\u662f\u5426\u5b58\u5728\u6307\u5b9a\u8bb0\u5f55
+    * <pre><code>
+    *  store.contains(obj); //\u662f\u5426\u5305\u542b\u6307\u5b9a\u7684\u8bb0\u5f55
+    *
+    *  store.contains(obj,function(obj1,obj2){ //\u4f7f\u7528\u5339\u914d\u51fd\u6570
+    *    return obj1.id == obj2.id;
+    *  });
+    * </code></pre>
     * @param {Object} record \u6307\u5b9a\u7684\u8bb0\u5f55
     * @param {Function} [match = function(obj1,obj2){return obj1 == obj2}] \u9ed8\u8ba4\u4e3a\u6bd4\u8f832\u4e2a\u5bf9\u8c61\u662f\u5426\u76f8\u540c
     * @return {Boolean}
@@ -12878,6 +13004,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u67e5\u627e\u8bb0\u5f55\uff0c\u4ec5\u8fd4\u56de\u7b2c\u4e00\u6761
+    * <pre><code>
+    *  var record = store.find('id','123');
+    * </code></pre>
     * @param {String} field \u5b57\u6bb5\u540d
     * @param {String} value \u5b57\u6bb5\u503c
     * @return {Object|null}
@@ -12896,6 +13025,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u67e5\u627e\u8bb0\u5f55\uff0c\u8fd4\u56de\u6240\u6709\u7b26\u5408\u67e5\u8be2\u6761\u4ef6\u7684\u8bb0\u5f55
+    * <pre><code>
+    *   var records = store.findAll('type','0');
+    * </code></pre>
     * @param {String} field \u5b57\u6bb5\u540d
     * @param {String} value \u5b57\u6bb5\u503c
     * @return {Array}
@@ -12913,6 +13045,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u6839\u636e\u7d22\u5f15\u67e5\u627e\u8bb0\u5f55
+    * <pre><code>
+    *  var record = store.findByIndex(1);
+    * </code></pre>
     * @param {Number} index \u7d22\u5f15
     * @return {Object} \u67e5\u627e\u7684\u8bb0\u5f55
     */
@@ -12921,6 +13056,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u67e5\u627e\u6570\u636e\u6240\u5728\u7684\u7d22\u5f15\u4f4d\u7f6e,\u82e5\u4e0d\u5b58\u5728\u8fd4\u56de-1
+    * <pre><code>
+    *  var index = store.findIndexBy(obj);
+    *
+    *  var index = store.findIndexBy(obj,function(obj1,obj2){
+    *    return obj1.id == obj2.id;
+    *  });
+    * </code></pre>
     * @param {Object} target \u6307\u5b9a\u7684\u8bb0\u5f55
     * @param {Function} [match = matchFunction] @see {BUI.Data.Store#matchFunction}\u9ed8\u8ba4\u4e3a\u6bd4\u8f832\u4e2a\u5bf9\u8c61\u662f\u5426\u76f8\u540c
     * @return {Number}
@@ -12943,6 +13085,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u83b7\u53d6\u4e0b\u4e00\u6761\u8bb0\u5f55
+    * <pre><code>
+    *  var record = store.findNextRecord(obj);
+    * </code></pre>
     * @param {Object} record \u5f53\u524d\u8bb0\u5f55
     * @return {Object} \u4e0b\u4e00\u6761\u8bb0\u5f55
     */
@@ -12956,6 +13101,11 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * \u83b7\u53d6\u7f13\u5b58\u7684\u8bb0\u5f55\u6570
+     * <pre><code>
+     *  var count = store.getCount(); //\u7f13\u5b58\u7684\u6570\u636e\u6570\u91cf
+     *
+     *  var totalCount = store.getTotalCount(); //\u6570\u636e\u7684\u603b\u6570\uff0c\u5982\u679c\u6709\u5206\u9875\u65f6\uff0ctotalCount != count
+     * </code></pre>
      * @return {Number} \u8bb0\u5f55\u6570
      */
     getCount : function(){
@@ -12963,6 +13113,11 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * \u83b7\u53d6\u6570\u636e\u6e90\u7684\u6570\u636e\u603b\u6570\uff0c\u5206\u9875\u65f6\uff0c\u5f53\u524d\u4ec5\u7f13\u5b58\u5f53\u524d\u9875\u6570\u636e
+     * <pre><code>
+     *  var count = store.getCount(); //\u7f13\u5b58\u7684\u6570\u636e\u6570\u91cf
+     *
+     *  var totalCount = store.getTotalCount(); //\u6570\u636e\u7684\u603b\u6570\uff0c\u5982\u679c\u6709\u5206\u9875\u65f6\uff0ctotalCount != count
+     * </code></pre>
      * @return {Number} \u8bb0\u5f55\u7684\u603b\u6570
      */
     getTotalCount : function(){
@@ -12973,6 +13128,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * \u83b7\u53d6\u5f53\u524d\u7f13\u5b58\u7684\u7eaa\u5f55
+     * <pre><code>
+     *   var records = store.getResult();
+     * </code></pre>
      * @return {Array} \u7eaa\u5f55\u96c6\u5408
      */
     getResult : function(){
@@ -12989,7 +13147,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       return this.getCount() !== 0;
     },
     /**
-     * \u8bbe\u7f6e\u6570\u636e\u6e90
+     * \u8bbe\u7f6e\u6570\u636e\u6e90,\u975e\u5f02\u6b65\u52a0\u8f7d\u65f6\uff0c\u8bbe\u7f6e\u7f13\u5b58\u7684\u6570\u636e
+     * <pre><code>
+     *   store.setResult([]); //\u6e05\u7a7a\u6570\u636e
+     *
+     *   var data = [{},{}];
+     *   store.setResult(data); //\u91cd\u8bbe\u6570\u636e
+     * </code></pre>
      */
     setResult : function(data){
       var _self = this,
@@ -13003,7 +13167,16 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
 
     /**
-    * \u5220\u9664\u8bb0\u5f55\u89e6\u53d1 remove \u4e8b\u4ef6.
+    * \u5220\u9664\u4e00\u6761\u6216\u591a\u6761\u8bb0\u5f55\u89e6\u53d1 remove \u4e8b\u4ef6.
+    * <pre><code>
+    *  store.remove(obj);  //\u5220\u9664\u4e00\u6761\u8bb0\u5f55
+    *
+    *  store.remove([obj1,obj2...]); //\u5220\u9664\u591a\u4e2a\u6761\u8bb0\u5f55
+    *
+    *  store.remvoe(obj,funciton(obj1,obj2){ //\u4f7f\u7528\u5339\u914d\u51fd\u6570
+    *    return obj1.id == obj2.id;
+    *  });
+    * </code></pre>
     * @param {Array|Object} data \u6dfb\u52a0\u7684\u6570\u636e\uff0c\u53ef\u4ee5\u662f\u6570\u7ec4\uff0c\u53ef\u4ee5\u662f\u5355\u6761\u8bb0\u5f55
     * @param {Function} [match = function(obj1,obj2){return obj1 == obj2}] \u5339\u914d\u51fd\u6570\uff0c\u53ef\u4ee5\u4e3a\u7a7a
     */
@@ -13027,7 +13200,10 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }); 
     },
     /**
-     * \u6392\u5e8f
+     * \u6392\u5e8f\uff0c\u5982\u679cremoteSort = true,\u53d1\u9001\u8bf7\u6c42\uff0c\u540e\u7aef\u6392\u5e8f
+     * <pre><code>
+     *   store.sort('id','DESC'); //\u4ee5id\u4e3a\u6392\u5e8f\u5b57\u6bb5\uff0c\u5012\u5e8f\u6392\u5e8f
+     * </code></pre>
      * @param  {String} field     \u6392\u5e8f\u5b57\u6bb5
      * @param  {String} direction \u6392\u5e8f\u65b9\u5411
      */
@@ -13045,6 +13221,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * \u8ba1\u7b97\u6307\u5b9a\u5b57\u6bb5\u7684\u548c
+     * <pre><code>
+     *   var sum = store.sum('number');
+     * </code></pre>
      * @param  {String} field \u5b57\u6bb5\u540d
      * @param  {Array} [data] \u8ba1\u7b97\u7684\u96c6\u5408\uff0c\u9ed8\u8ba4\u4e3aStore\u4e2d\u7684\u6570\u636e\u96c6\u5408
      * @return {Number} \u6c47\u603b\u548c
@@ -13063,6 +13242,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u8bbe\u7f6e\u8bb0\u5f55\u7684\u503c \uff0c\u89e6\u53d1 update \u4e8b\u4ef6
+    * <pre><code>
+    *  store.setValue(obj,'value','new value');
+    * </code></pre>
     * @param {Object} obj \u4fee\u6539\u7684\u8bb0\u5f55
     * @param {String} field \u4fee\u6539\u7684\u5b57\u6bb5\u540d
     * @param {Object} value \u4fee\u6539\u7684\u503c
@@ -13079,6 +13261,12 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * \u66f4\u65b0\u8bb0\u5f55 \uff0c\u89e6\u53d1 update\u4e8b\u4ef6
+    * <pre><code>
+    *   var record = store.find('id','12');
+    *   record.value = 'new value';
+    *   record.text = 'new text';
+    *   store.update(record); //\u89e6\u53d1update\u4e8b\u4ef6\uff0c\u5f15\u8d77\u7ed1\u5b9a\u4e86store\u7684\u63a7\u4ef6\u66f4\u65b0
+    * </code></pre>
     * @param {Object} obj \u4fee\u6539\u7684\u8bb0\u5f55
     * @param {Boolean} [isMatch = false] \u662f\u5426\u9700\u8981\u8fdb\u884c\u5339\u914d\uff0c\u68c0\u6d4b\u6307\u5b9a\u7684\u8bb0\u5f55\u662f\u5426\u5728\u96c6\u5408\u4e2d
     */
@@ -21899,14 +22087,11 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
     _initSubMenuCfg : function(subItem){
       var _self = this,
         cfg = {
-          id : subItem.id,
           xclass : 'menu-item',
           elCls : 'menu-leaf',
-          tpl : '<a href="{href}"><em>{text}</em></a>',
-          href : subItem.href,
-          text : subItem.text
+          tpl : '<a href="{href}"><em>{text}</em></a>'
         };
-      return cfg;
+      return BUI.mix(cfg,subItem);
     }
   },{
 
@@ -25026,6 +25211,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     DateUtil = BUI.Date,
     CLS_DATE = 'x-datepicker-date',
     CLS_TODAY = 'x-datepicker-today',
+    CLS_DISABLED = 'x-datepicker-disabled',
     CLS_ACTIVE = 'x-datepicker-active',
     DATA_DATE = 'data-date',//\u5b58\u50a8\u65e5\u671f\u5bf9\u8c61
     DATE_MASK = 'isoDate',
@@ -25049,6 +25235,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     renderUI : function(){
       this.updatePanel();
     },
+
     //\u66f4\u65b0\u5bb9\u5668\uff0c\u5f53\u6708\u3001\u5e74\u53d1\u751f\u6539\u53d8\u65f6
     updatePanel : function(){
       var _self = this,
@@ -25218,6 +25405,10 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         el = _self.get('el');
       el.delegate('.' + CLS_DATE,'click',function(e){
         e.preventDefault();
+      });
+      //\u963b\u6b62\u7981\u7528\u7684\u65e5\u671f\u88ab\u9009\u62e9
+      el.delegate('.' + CLS_DISABLED,'mouseup',function(e){
+        e.stopPropagation();
       });
     },
     /**
@@ -25467,6 +25658,17 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
    * <img src="../assets/img/class-calendar.jpg"/>
    * </p>
    * xclass:'calendar'
+   * <pre><code>
+   *  BUI.use('bui/calendar',function(Calendar){
+   *    var calendar = new Calendar.Calendar({
+   *      render:'#calendar'
+   *    });
+   *    calendar.render();
+   *    calendar.on('selectedchange',function (ev) {
+   *      alert(ev.date);
+   *    });
+   * });
+   * </code></pre>
    * @class BUI.Calendar.Calendar
    * @extends BUI.Component.Controller
    */
@@ -25711,6 +25913,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * \u6700\u5927\u65e5\u671f
+       * <pre><code>
+       *   calendar.set('maxDate','2013-07-29');
+       * </code></pre>
        * @type {Date}
        */
       maxDate : {
@@ -25718,6 +25923,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * \u6700\u5c0f\u65e5\u671f
+       * <pre><code>
+       *   calendar.set('minDate','2013-07-29');
+       * </code></pre>
        * @type {Date}
        */
       minDate : {
@@ -25775,11 +25983,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * \u662f\u5426\u9009\u62e9\u65f6\u95f4,\u6b64\u9009\u9879\u51b3\u5b9a\u662f\u5426\u53ef\u4ee5\u9009\u62e9\u65f6\u95f4
+       * 
        * @cfg {Boolean} showTime
-       */
-      /**
-       * \u662f\u5426\u9009\u62e9\u65f6\u95f4
-       * @type {Boolean}
        */
       showTime : {
         value : false
@@ -25789,20 +25994,25 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * \u9009\u62e9\u7684\u65e5\u671f,\u9ed8\u8ba4\u4e3a\u5f53\u5929
+       * <pre><code>
+       *  var calendar = new Calendar.Calendar({
+       *  render:'#calendar',
+       *   selectedDate : new Date('2013/07/01') //\u4e0d\u80fd\u4f7f\u7528\u5b57\u7b26\u4e32
+       * });
+       * </code></pre>
        * @cfg {Date} selectedDate
        */
       /**
        * \u9009\u62e9\u7684\u65e5\u671f
+       * <pre><code>
+       *   calendar.set('selectedDate',new Date('2013-9-01'));
+       * </code></pre>
        * @type {Date}
        * @default today
        */
       selectedDate : {
         value : today()
       },
-      /**
-       * \u5c0f\u65f6,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u5c0f\u65f6
-       * @cfg {Number} hour
-       */
       /**
        * \u5c0f\u65f6,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u5c0f\u65f6
        * @type {Number}
@@ -25813,19 +26023,11 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * \u5206,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u5206
-       * @cfg {Number} minute
-       */
-      /**
-       * \u5206,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u5206
        * @type {Number}
        */
       minute:{
         value : new Date().getMinutes()
       },
-      /**
-       * \u79d2,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u79d2
-       * @cfg {Number} second
-       */
       /**
        * \u79d2,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u79d2
        * @type {Number}
@@ -25858,6 +26060,15 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
    * <img src="../assets/img/class-calendar.jpg"/>
    * </p>
    * xclass : 'calendar-datepicker'
+   * <pre><code>
+   *   BUI.use('bui/calendar',function(Calendar){
+   *      var datepicker = new Calendar.DatePicker({
+   *        trigger:'.calendar',
+   *        //delegateTigger : true, //\u5982\u679c\u8bbe\u7f6e\u6b64\u53c2\u6570\uff0c\u90a3\u4e48\u65b0\u589e\u52a0\u7684.calendar\u5143\u7d20\u4e5f\u4f1a\u652f\u6301\u65e5\u5386\u9009\u62e9
+   *        autoRender : true
+   *      });
+   *    });
+   * </code></pre>
    * @class BUI.Calendar.DatePicker
    * @extends BUI.Picker.Picker
    */
@@ -25875,7 +26086,11 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     },
     /**
      * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
+     * <pre><code>
+     *   datePicker.setSelectedValue('2012-01-1');
+     * </code></pre>
      * @param {String} val \u8bbe\u7f6e\u503c
+     * @protected
      */
     setSelectedValue : function(val){
       var _self = this,
@@ -25890,7 +26105,8 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       }
     },
     /**
-     * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u503c
+     * @protected
      * @return {String} \u9009\u4e2d\u7684\u503c
      */
     getSelectedValue : function(){
@@ -25906,6 +26122,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     },
     /**
      * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
+     * @protected
      * @return {String} \u9009\u4e2d\u7684\u6587\u672c
      */
     getSelectedText : function(){
@@ -25937,6 +26154,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     {
       /**
        * \u662f\u5426\u663e\u793a\u65e5\u671f
+       * <pre><code>
+       *  var datepicker = new Calendar.DatePicker({
+       *    trigger:'.calendar',
+       *    showTime : true, //\u53ef\u4ee5\u9009\u62e9\u65e5\u671f
+       *    autoRender : true
+       *  });
+       * </code></pre>
        * @type {Boolean}
        */
       showTime : {
@@ -25944,6 +26168,14 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       },
       /**
        * \u6700\u5927\u65e5\u671f
+       * <pre><code>
+       *   var datepicker = new Calendar.DatePicker({
+       *     trigger:'.calendar',
+       *     maxDate : '2014-01-01',
+       *     minDate : '2013-7-25',
+       *     autoRender : true
+       *   });
+       * </code></pre>
        * @type {Date}
        */
       maxDate : {
@@ -25951,6 +26183,14 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       },
       /**
        * \u6700\u5c0f\u65e5\u671f
+       * <pre><code>
+       *   var datepicker = new Calendar.DatePicker({
+       *     trigger:'.calendar',
+       *     maxDate : '2014-01-01',
+       *     minDate : '2013-7-25',
+       *     autoRender : true
+       *   });
+       * </code></pre>
        * @type {Date}
        */
       minDate : {

@@ -10,6 +10,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     DateUtil = BUI.Date,
     CLS_DATE = 'x-datepicker-date',
     CLS_TODAY = 'x-datepicker-today',
+    CLS_DISABLED = 'x-datepicker-disabled',
     CLS_ACTIVE = 'x-datepicker-active',
     DATA_DATE = 'data-date',//存储日期对象
     DATE_MASK = 'isoDate',
@@ -33,6 +34,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     renderUI : function(){
       this.updatePanel();
     },
+
     //更新容器，当月、年发生改变时
     updatePanel : function(){
       var _self = this,
@@ -202,6 +204,10 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         el = _self.get('el');
       el.delegate('.' + CLS_DATE,'click',function(e){
         e.preventDefault();
+      });
+      //阻止禁用的日期被选择
+      el.delegate('.' + CLS_DISABLED,'mouseup',function(e){
+        e.stopPropagation();
       });
     },
     /**

@@ -29,12 +29,6 @@ define('bui/data/sortable',function() {
      * 函数原型 function(v1,v2)，比较2个字段是否相等
      * 如果是字符串则按照本地比较算法，否则使用 > ,== 验证
      */
-    /**
-     * 比较函数
-     * @type {Function}
-     * 函数原型 function(v1,v2)，比较2个字段是否相等
-     * 如果是字符串则按照本地比较算法，否则使用 > ,== 验证
-     */
     compareFunction:{
       value : function(v1,v2){
         if(v1 === undefined){

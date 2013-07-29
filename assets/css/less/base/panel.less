@@ -11,3 +11,24 @@
     padding: @baseLineHeight/2;
   }
 }
+
+.panel-small{
+  .panel-header{
+    padding: 2px;
+  }
+
+  .panel-body{
+    padding: 0;
+  }
+}
+
+.panel-head-borded{
+  border:none;
+  .panel-header{
+    .border-radius(@radius);
+    border:1px solid @borderColor;
+  }
+  .panel-body{
+    padding: 0;
+  }
+}

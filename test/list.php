@@ -39,6 +39,7 @@
       </div>
       <div class="span8">
         <h2>列表选择框</h2>
+        <button class="button" id="clear">清理</button>
         <div id="lb1"></div>
       </div>
     </div>

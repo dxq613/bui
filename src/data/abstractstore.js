@@ -9,7 +9,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
 
   /**
    * @class BUI.Data.AbstractStore
-   * 数据缓冲抽象类
+   * 数据缓冲抽象类,此类不进行实例化
    * @extends BUI.Base
    */
   function AbstractStore(config){
@@ -20,12 +20,13 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
   AbstractStore.ATTRS = {
     /**
     * 创建对象时是否自动加载
+    * <pre><code>
+    *   var store = new Data.Store({
+    *     url : 'data.php',  //设置加载数据的URL
+    *     autoLoad : true    //创建Store时自动加载数据
+    *   });
+    * </code></pre>
     * @cfg {Boolean} [autoLoad=false]
-    */
-    /**
-    * 创建对象时是否自动加载
-    * @type {Boolean}
-    * @default false
     */
     autoLoad: {
       value :false 
@@ -40,15 +41,34 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     },
     /**
      * 初始化时查询的参数，在初始化时有效
+     * <pre><code>
+     * var store = new Data.Store({
+    *     url : 'data.php',  //设置加载数据的URL
+    *     autoLoad : true,    //创建Store时自动加载数据
+    *     params : {         //设置请求时的参数
+    *       id : '1',
+    *       type : '1'
+    *     }
+    *   });
+     * </code></pre>
      * @cfg {Object} params
      */
     params : {
 
     },
     /**
-     * 数据代理对象
-     * @type {Object|BUI.Data.Proxy}
-     * @protected
+     * 数据代理对象,用于加载数据的ajax配置，{@link BUI.Data.Proxy}
+     * <pre><code>
+     *   var store = new Data.Store({
+    *     url : 'data.php',  //设置加载数据的URL
+    *     autoLoad : true,    //创建Store时自动加载数据
+    *     proxy : {
+    *       method : 'post',
+    *       dataType : 'jsonp'
+    *     }
+    *   });
+     * </code></pre>
+     * @cfg {Object|BUI.Data.Proxy} proxy
      */
     proxy : {
       value : {
@@ -58,11 +78,38 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     /**
      * 请求数据的地址，通过ajax加载数据，
      * 此参数设置则加载远程数据
+     * ** 你可以设置在proxy外部 **
+     * <pre><code>
+     *   var store = new Data.Store({
+    *     url : 'data.php',  //设置加载数据的URL
+    *     autoLoad : true,    //创建Store时自动加载数据
+    *     proxy : {
+    *       method : 'post',
+    *       dataType : 'jsonp'
+    *     }
+    *   });
+     * </code></pre>
+     * ** 你也可以设置在proxy上 **
+     * <pre><code>
+     *   var store = new Data.Store({
+    *     autoLoad : true,    //创建Store时自动加载数据
+    *     proxy : {
+    *       url : 'data.php',  //设置加载数据的URL
+    *       method : 'post',
+    *       dataType : 'jsonp'
+    *     }
+    *   });
+     * </code></pre>
      * 否则把 {BUI.Data.Store#cfg-data}作为本地缓存数据加载
      * @cfg {String} url
      */
     /**
-     * @ignore
+     * 请求数据的url
+     * <pre><code>
+     *   //更改url
+     *   store.get('proxy').set('url',url);
+     * </code></pre>
+     * @type {String}
      */
     url : {
 
@@ -242,6 +289,20 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     },
     /**
      * 加载数据
+     * <pre><code>
+     *  //一般调用
+     *  store.load(params);
+     *  
+     *  //使用回调函数
+     *  store.load(params,function(data){
+     *  
+     *  });
+     *
+     *  //load有记忆参数的功能
+     *  store.load({id : '123',type="1"});
+     *  //下一次调用
+     *  store.load();默认使用上次的参数，可以对对应的参数进行覆盖
+     * </code></pre>
      * @param  {Object} params 参数键值对
      * @param {Function} fn 回调函数，默认为空
      */
@@ -265,6 +326,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     },
     /**
      * 加载完数据
+     * @protected
      * @template
      */
     onLoad : function(data,params){

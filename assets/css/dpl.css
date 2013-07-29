@@ -2009,6 +2009,24 @@ table .span24 {
 .panel .panel-body {
   padding: 9px;
 }
+.panel-small .panel-header {
+  padding: 2px;
+}
+.panel-small .panel-body {
+  padding: 0;
+}
+.panel-head-borded {
+  border: none;
+}
+.panel-head-borded .panel-header {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  border: 1px solid #c3c3d6;
+}
+.panel-head-borded .panel-body {
+  padding: 0;
+}
 .form-page,
 .search-page,
 .detail-page {
