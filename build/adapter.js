@@ -187,6 +187,45 @@ var jQuery = jQuery || (function () {
         offset.top -= parentOffset.top;
       }
       return offset;
+    },
+    /**
+    * 将表单数据序列化成对象
+    * @return {Object} 表单元素的
+    */
+    serializeArray:function(){
+      var form = this[0],
+        originElements = null,
+        elements = null,
+        arr =[],
+        checkboxElements = null,
+        result={};
+      if(S.isArray(form)){
+        originElements = form;
+      }else{
+        originElements =  S.makeArray(form.elements);
+      }
+      elements = S.filter(originElements,function(item){
+        return (item.id ||item.name) && !item.disabled &&
+          (item.checked || /select|textarea/i.test(item.nodeName) ||
+            /text|hidden|password/i.test(item.type));
+      });
+      //checkbox 做特殊处理，如果所有checkbox都未选中时,设置字段为空
+      checkboxElements = S.filter(originElements,function(item){
+        return (item.id ||item.name) && !item.disabled &&(/checkbox/i.test(item.type));
+      });
+      S.each(elements,function(elem){
+        var val = S.one(elem).val(),
+          name = elem.name||elem.id,
+          obj = val == null ? {name:  name, value: ''} : S.isArray(val) ?
+          S.map( val, function(val, i){
+            return {name: name, value: val};
+          }) :
+          {name:  name, value: val};
+        if(obj){
+          arr.push(obj);
+        }
+      });
+      return arr;
     }
   });
 
