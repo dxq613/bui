@@ -30363,6 +30363,20 @@ define('bui/grid/plugins/editing',function (require) {
      */
     editors : {
       value : []
+    },
+    /**
+     * \u89e6\u53d1\u7f16\u8f91\u6837\u5f0f\uff0c\u4e3a\u7a7a\u65f6\u9ed8\u8ba4\u70b9\u51fb\u6574\u884c\u90fd\u4f1a\u89e6\u53d1\u7f16\u8f91
+     * @type {String}
+     */
+    triggerCls : {
+
+    },
+    /**
+     * \u8fdb\u884c\u7f16\u8f91\u65f6\u662f\u5426\u89e6\u53d1\u9009\u4e2d
+     * @type {Boolean}
+     */
+    triggerSelected : {
+      value : true
     }
   };
 
@@ -30399,6 +30413,8 @@ define('bui/grid/plugins/editing',function (require) {
       grid.on('cellclick',function(ev){
 
         var editor = null,
+          domTarget = ev.domTarget,
+          triggerCls = _self.get('triggerCls'),
           curEditor = _self._getCurEditor();
         if(curEditor && curEditor.get('acceptEvent')){
           curEditor.accept();
@@ -30407,13 +30423,16 @@ define('bui/grid/plugins/editing',function (require) {
           curEditor && curEditor.cancel();
         }
 
-        if(ev.field){
+        //if(ev.field){
           editor = _self.getEditor(ev.field);
-        }
-        if(editor){
+        //}
+        if(editor && $(domTarget).closest('.' + triggerCls).length){
           _self.showEditor(editor,ev);
           //if(curEditor && curEditor.get('acceptEvent')){
+          if(!_self.get('triggerSelected')){
             return false; //\u6b64\u65f6\u4e0d\u89e6\u53d1\u9009\u4e2d\u4e8b\u4ef6
+          }
+            
           //}
         }
       });
@@ -30788,7 +30807,8 @@ define('bui/grid/plugins/editing',function (require) {
 
 define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (require) {
   var Editing = require('bui/grid/plugins/editing'),
-    CLS_BODY = BUI.prefix + 'grid-body';
+    CLS_BODY = BUI.prefix + 'grid-body',
+    CLS_CELL = BUI.prefix + 'grid-cell';
 
   /**
    * @class BUI.Grid.Plugins.CellEditing
@@ -30800,7 +30820,13 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
   };
 
   CellEditing.ATTRS = {
-    
+    /**
+     * \u89e6\u53d1\u7f16\u8f91\u6837\u5f0f\uff0c\u4e3a\u7a7a\u65f6\u9ed8\u8ba4\u70b9\u51fb\u6574\u884c\u90fd\u4f1a\u89e6\u53d1\u7f16\u8f91
+     * @cfg {String} [triggerCls = 'bui-grid-cell']
+     */
+    triggerCls : {
+      value : CLS_CELL
+    }
   };
 
   BUI.extend(CellEditing,Editing);
@@ -30829,6 +30855,9 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
      * @return {BUI.Editor.Editor}  \u7f16\u8f91\u5668
      */
     getEditor : function(field){
+      if(!field){
+        return null;
+      }
       var  _self = this,
         editors = _self.get('editors'),
         editor = null;
@@ -30916,8 +30945,10 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
  * @ignore
  */
 
-define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (require) {
-   var Editing = require('bui/grid/plugins/editing');
+define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],function (require) {
+   var BUI = require('bui/common'),
+    Editing = require('bui/grid/plugins/editing'),
+    CLS_ROW = BUI.prefix + 'grid-row';
 
   /**
    * @class BUI.Grid.Plugins.RowEditing
@@ -30939,12 +30970,20 @@ define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (requ
         points: ['tl','tl'],
         offset : [-2,0]
       }
+    },
+    /**
+     * \u89e6\u53d1\u7f16\u8f91\u6837\u5f0f\uff0c\u4e3a\u7a7a\u65f6\u9ed8\u8ba4\u70b9\u51fb\u6574\u884c\u90fd\u4f1a\u89e6\u53d1\u7f16\u8f91
+     * @cfg {String} [triggerCls = 'bui-grid-row']
+     */
+    triggerCls : {
+      value : CLS_ROW
     }
   };
 
   BUI.extend(RowEditing,Editing);
 
   BUI.augment(RowEditing,{
+
     /**
      * @protected
      * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u914d\u7f6e\u9879

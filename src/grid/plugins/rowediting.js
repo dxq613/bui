@@ -3,8 +3,10 @@
  * @ignore
  */
 
-define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (require) {
-   var Editing = require('bui/grid/plugins/editing');
+define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],function (require) {
+   var BUI = require('bui/common'),
+    Editing = require('bui/grid/plugins/editing'),
+    CLS_ROW = BUI.prefix + 'grid-row';
 
   /**
    * @class BUI.Grid.Plugins.RowEditing
@@ -26,12 +28,20 @@ define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (requ
         points: ['tl','tl'],
         offset : [-2,0]
       }
+    },
+    /**
+     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * @cfg {String} [triggerCls = 'bui-grid-row']
+     */
+    triggerCls : {
+      value : CLS_ROW
     }
   };
 
   BUI.extend(RowEditing,Editing);
 
   BUI.augment(RowEditing,{
+
     /**
      * @protected
      * 获取编辑器的配置项

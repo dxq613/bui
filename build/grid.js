@@ -4145,6 +4145,20 @@ define('bui/grid/plugins/editing',function (require) {
      */
     editors : {
       value : []
+    },
+    /**
+     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * @type {String}
+     */
+    triggerCls : {
+
+    },
+    /**
+     * 进行编辑时是否触发选中
+     * @type {Boolean}
+     */
+    triggerSelected : {
+      value : true
     }
   };
 
@@ -4181,6 +4195,8 @@ define('bui/grid/plugins/editing',function (require) {
       grid.on('cellclick',function(ev){
 
         var editor = null,
+          domTarget = ev.domTarget,
+          triggerCls = _self.get('triggerCls'),
           curEditor = _self._getCurEditor();
         if(curEditor && curEditor.get('acceptEvent')){
           curEditor.accept();
@@ -4189,13 +4205,16 @@ define('bui/grid/plugins/editing',function (require) {
           curEditor && curEditor.cancel();
         }
 
-        if(ev.field){
+        //if(ev.field){
           editor = _self.getEditor(ev.field);
-        }
-        if(editor){
+        //}
+        if(editor && $(domTarget).closest('.' + triggerCls).length){
           _self.showEditor(editor,ev);
           //if(curEditor && curEditor.get('acceptEvent')){
+          if(!_self.get('triggerSelected')){
             return false; //此时不触发选中事件
+          }
+            
           //}
         }
       });
@@ -4570,7 +4589,8 @@ define('bui/grid/plugins/editing',function (require) {
 
 define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (require) {
   var Editing = require('bui/grid/plugins/editing'),
-    CLS_BODY = BUI.prefix + 'grid-body';
+    CLS_BODY = BUI.prefix + 'grid-body',
+    CLS_CELL = BUI.prefix + 'grid-cell';
 
   /**
    * @class BUI.Grid.Plugins.CellEditing
@@ -4582,7 +4602,13 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
   };
 
   CellEditing.ATTRS = {
-    
+    /**
+     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * @cfg {String} [triggerCls = 'bui-grid-cell']
+     */
+    triggerCls : {
+      value : CLS_CELL
+    }
   };
 
   BUI.extend(CellEditing,Editing);
@@ -4611,6 +4637,9 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
      * @return {BUI.Editor.Editor}  编辑器
      */
     getEditor : function(field){
+      if(!field){
+        return null;
+      }
       var  _self = this,
         editors = _self.get('editors'),
         editor = null;
@@ -4698,8 +4727,10 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
  * @ignore
  */
 
-define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (require) {
-   var Editing = require('bui/grid/plugins/editing');
+define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],function (require) {
+   var BUI = require('bui/common'),
+    Editing = require('bui/grid/plugins/editing'),
+    CLS_ROW = BUI.prefix + 'grid-row';
 
   /**
    * @class BUI.Grid.Plugins.RowEditing
@@ -4721,12 +4752,20 @@ define('bui/grid/plugins/rowediting',['bui/grid/plugins/editing'],function (requ
         points: ['tl','tl'],
         offset : [-2,0]
       }
+    },
+    /**
+     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * @cfg {String} [triggerCls = 'bui-grid-row']
+     */
+    triggerCls : {
+      value : CLS_ROW
     }
   };
 
   BUI.extend(RowEditing,Editing);
 
   BUI.augment(RowEditing,{
+
     /**
      * @protected
      * 获取编辑器的配置项
