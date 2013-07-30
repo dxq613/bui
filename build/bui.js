@@ -14664,7 +14664,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
           return;
         }
-        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent:ev});
+        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target});
         if(rst !== false && selectedEvent == 'click'){
           setItemSelectedStatus(item,itemEl); 
         }
@@ -14679,6 +14679,15 @@ define('bui/list/domlist',['bui/common'],function (require) {
           setItemSelectedStatus(item,itemEl); 
         });
       }
+
+      itemContainer.delegate('.' + itemCls,'dbclick',function(ev){
+        var itemEl = $(ev.currentTarget),
+          item = _self.getItemByElement(itemEl);
+        if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
+          return;
+        }
+        _self.fire('itemdbclick',{item:item,element : itemEl[0],domTarget:ev.target});
+      });
       
       function setItemSelectedStatus(item,itemEl){
         var multipleSelect = _self.get('multipleSelect'),
@@ -16771,6 +16780,13 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         tip.resetVisible();
       }
     },
+    /**
+     * \u91cd\u7f6e\u663e\u793a\u63d0\u793a\u4fe1\u606f
+     * field.resetTip();
+     */
+    resetTip : function(){
+      this._resetTip();
+    },
     //\u8bbe\u7f6e\u503c
     _uiSetValue : function(v){
       var _self = this;
@@ -17178,8 +17194,9 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
     //\u751f\u6210select
     renderUI : function(){
       var _self = this,
+        innerControl = _self.getInnerControl(),
         select = _self.get('select');
-      if(_self.get('srcNode')){ //\u5982\u679c\u4f7f\u7528\u73b0\u6709DOM\u751f\u6210\uff0c\u4e0d\u4f7f\u7528\u81ea\u5b9a\u4e49\u9009\u62e9\u6846\u63a7\u4ef6
+      if(_self.get('srcNode') && innerControl.is('select')){ //\u5982\u679c\u4f7f\u7528\u73b0\u6709DOM\u751f\u6210\uff0c\u4e0d\u4f7f\u7528\u81ea\u5b9a\u4e49\u9009\u62e9\u6846\u63a7\u4ef6
         return;
       }
       //select = select || {};
@@ -17188,11 +17205,15 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       }
     },
     _initSelect : function(select){
-      var _self = this;
+      var _self = this,
+        items = _self.get('items');
       BUI.use('bui/select',function(Select){
         select.render = _self.getControlContainer();
         select.valueField = _self.getInnerControl();
         select.autoRender = true;
+        if(items){
+          select.items = items;
+        }
         select = new Select.Select(select);
         _self.set('select',select);
         _self.set('isCreate',true);
@@ -17328,6 +17349,19 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
           rst = $(options[0]).text();
         }
         return rst;
+      },
+      value : function(el){
+        var _self = this,
+          value = _self.get('value');
+        if(!value){
+          if(el.is('select')){
+            value = el.val();
+          }else{
+            value = el.find('input').val(); 
+          }
+          
+        }
+        return  value;
       }
     }
   },{
@@ -19145,6 +19179,22 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       var _self = this,
         initRecord = _self.get('initRecord');
       _self.setRecord(initRecord);
+    },
+    /**
+     * \u91cd\u7f6e\u63d0\u793a\u4fe1\u606f\uff0c\u56e0\u4e3a\u5728\u8868\u5355\u9690\u85cf\u72b6\u6001\u4e0b\uff0c\u63d0\u793a\u4fe1\u606f\u5b9a\u4f4d\u9519\u8bef
+     * <pre><code>
+     * dialog.on('show',function(){
+     *   form.resetTips();
+     * });
+     *   
+     * </code></pre>
+     */
+    resetTips : function(){
+      var _self = this,
+        fields = _self.getFields();
+      BUI.each(fields,function(field){
+        field.resetTip();
+      });
     },
     /**
      * @protected

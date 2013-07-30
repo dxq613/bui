@@ -32,8 +32,9 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
     //生成select
     renderUI : function(){
       var _self = this,
+        innerControl = _self.getInnerControl(),
         select = _self.get('select');
-      if(_self.get('srcNode')){ //如果使用现有DOM生成，不使用自定义选择框控件
+      if(_self.get('srcNode') && innerControl.is('select')){ //如果使用现有DOM生成，不使用自定义选择框控件
         return;
       }
       //select = select || {};
@@ -42,11 +43,15 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       }
     },
     _initSelect : function(select){
-      var _self = this;
+      var _self = this,
+        items = _self.get('items');
       BUI.use('bui/select',function(Select){
         select.render = _self.getControlContainer();
         select.valueField = _self.getInnerControl();
         select.autoRender = true;
+        if(items){
+          select.items = items;
+        }
         select = new Select.Select(select);
         _self.set('select',select);
         _self.set('isCreate',true);
@@ -182,6 +187,19 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
           rst = $(options[0]).text();
         }
         return rst;
+      },
+      value : function(el){
+        var _self = this,
+          value = _self.get('value');
+        if(!value){
+          if(el.is('select')){
+            value = el.val();
+          }else{
+            value = el.find('input').val(); 
+          }
+          
+        }
+        return  value;
       }
     }
   },{

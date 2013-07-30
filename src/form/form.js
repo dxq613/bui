@@ -109,6 +109,22 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       _self.setRecord(initRecord);
     },
     /**
+     * 重置提示信息，因为在表单隐藏状态下，提示信息定位错误
+     * <pre><code>
+     * dialog.on('show',function(){
+     *   form.resetTips();
+     * });
+     *   
+     * </code></pre>
+     */
+    resetTips : function(){
+      var _self = this,
+        fields = _self.getFields();
+      BUI.each(fields,function(field){
+        field.resetTip();
+      });
+    },
+    /**
      * @protected
      * @ignore
      */

@@ -25,8 +25,9 @@
 .panel-head-borded{
   border:none;
   .panel-header{
-    .border-radius(@radius);
+    .border-radius(@radius,@radius,0,0);
     border:1px solid @borderColor;
+	border-bottom:none;
   }
   .panel-body{
     padding: 0;

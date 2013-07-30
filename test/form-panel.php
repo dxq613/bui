@@ -77,9 +77,15 @@
             </div>
           </div>
           <div class="control-group span8">
+            <label class="control-label"><s>*</s>供应商编码：</label>
+            <div class="controls bui-form-field-select" data-select="{multipleSelect:true,items:[{text : '1',value:'1'},{text : '2',value:'2'},{text : '3',value:'3'}]}">
+              <input name="select"  type="hidden" class="input-normal control-text" value="2">
+            </div>
+          </div>
+          <div class="control-group span8">
             <label class="control-label">供应商类型：</label>
             <div class="controls">
-              <select  data-rules="{required:true}" value="saler"  name="type" class="input-normal"> 
+              <select  data-rules="{required:true}" value="large"  name="type" class="input-normal"> 
                 <option value="">请选择</option>
                 <option value="saler">淘宝卖家</option>
                 <option value="large">大厂直供</option>
@@ -157,7 +163,7 @@
     
     <script type="text/javascript" src="specs/form-base-spec.js"></script>
     <script type="text/javascript" src="specs/form-horizontal-spec.js"></script>
-    <!---->
+        <!---->
     
     <script type="text/javascript" src="specs/form-decorate-spec.js"></script>
     

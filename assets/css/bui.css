@@ -1539,6 +1539,7 @@ input.x-datepicker-time {
 .bui-tree-list {
   border: 1px solid #c3c3d6;
   overflow: auto;
+  background-color: #ffffff;
 }
 .bui-tree-list ul {
   overflow: hidden;

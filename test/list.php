@@ -14,7 +14,11 @@
     <div class="row">
       <div class="span8">
         <h2>简单列表</h2>
-        <div id="list1"></div>
+        <div class="panel panel-head-borded">
+          <div class="panel-header">列表</div>
+          <div id="list1"></div>
+        </div>
+        
 
         <h2>选择列表</h2>
         <div id="lp" style="height:200px;position:relative">
