@@ -462,7 +462,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
           return;
         }
-        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent:ev});
+        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target});
         if(rst !== false && selectedEvent == 'click'){
           setItemSelectedStatus(item,itemEl); 
         }
@@ -477,6 +477,15 @@ define('bui/list/domlist',['bui/common'],function (require) {
           setItemSelectedStatus(item,itemEl); 
         });
       }
+
+      itemContainer.delegate('.' + itemCls,'dbclick',function(ev){
+        var itemEl = $(ev.currentTarget),
+          item = _self.getItemByElement(itemEl);
+        if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
+          return;
+        }
+        _self.fire('itemdbclick',{item:item,element : itemEl[0],domTarget:ev.target});
+      });
       
       function setItemSelectedStatus(item,itemEl){
         var multipleSelect = _self.get('multipleSelect'),

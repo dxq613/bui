@@ -247,6 +247,7 @@ BUI.use('bui/list',function (List) {
       list.setSelectedByField('a');
       expect(selectCallback).toHaveBeenCalled();
     });
+
   });
 
 });
@@ -360,6 +361,18 @@ BUI.use('bui/list',function (List) {
       expect($(element).hasClass('bui-list-item-active')).toBe(false);
     });
 
+    it('测试双击事件',function(){
+      var item = list.getFirstItem(),
+        callback = jasmine.createSpy(),
+        element = list.findElement(item);
+      list.on('itemdbclick',callback);
+      $(element).trigger('dbclick');
+      waits(100);
+      runs(function(){
+        expect(callback).toHaveBeenCalled();
+        list.off('itemdbclick',callback);
+      });
+    });
   });
 });
 
