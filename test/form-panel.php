@@ -77,8 +77,8 @@
             </div>
           </div>
           <div class="control-group span8">
-            <label class="control-label"><s>*</s>供应商编码：</label>
-            <div class="controls bui-form-field-select" data-select="{multipleSelect:true,items:[{text : '1',value:'1'},{text : '2',value:'2'},{text : '3',value:'3'}]}">
+            <label class="control-label"><s>*</s>单选</label>
+            <div class="controls bui-form-field-select" data-items="{'1':'1','2':'2','3':'3'}">
               <input name="select"  type="hidden" class="input-normal control-text" value="2">
             </div>
           </div>
@@ -106,6 +106,12 @@
           </div>
         </div>
         <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>多选</label>
+            <div class="controls bui-form-field-select" data-select="{multipleSelect:true,items : [{text : '1',value:'1'},{text : '2',value:'2'},{text : '3',value:'3'}]}">
+              <input name="m_select"  type="hidden" class="input-normal control-text" value="2,3">
+            </div>
+          </div>
           <div class="control-group span15">
             <label class="control-label">起始日期：</label>
             <div class="controls bui-form-group" data-rules="{dateRange : true}">
@@ -115,6 +121,12 @@
         </div>
          <!---->
         <div class="row">
+          <div class="control-group span8">
+            <label class="control-label"><s>*</s>单选</label>
+            <div class="controls bui-form-field-select" data-items="[{value : '1',text:'1'},{value : '2',text:'2'}]">
+              <input name="select0"  type="hidden" class="input-normal control-text" value="2">
+            </div>
+          </div>
           <div class="control-group span15">
             <label class="control-label">备注：</label>
             <div class="controls control-row4">

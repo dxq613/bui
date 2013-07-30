@@ -1088,9 +1088,9 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         select.render = _self.getControlContainer();
         select.valueField = _self.getInnerControl();
         select.autoRender = true;
-        if(items){
+       /* if(items){
           select.items = items;
-        }
+        }*/
         select = new Select.Select(select);
         _self.set('select',select);
         _self.set('isCreate',true);
@@ -1116,7 +1116,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         });
         items = tmp;
       }
-      if(select && !_self.get('srcNode')){
+      if(select){
         if(select.set){
           select.set('items',items);
         }else{
@@ -1226,6 +1226,19 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
           rst = $(options[0]).text();
         }
         return rst;
+      },
+      name : function(el){
+        var _self = this,
+          name = _self.get('name');
+        if(!name){
+          if(el.is('select')){
+            name = el.attr('name');
+          }else{
+            name = el.find('input').attr('name'); 
+          }
+          
+        }
+        return  name;
       },
       value : function(el){
         var _self = this,

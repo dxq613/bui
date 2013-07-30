@@ -100,9 +100,46 @@ BUI.use('bui/form',function (Form) {
 
 BUI.use('bui/form',function(Form){
 
-  new Form.HForm({
+  var form = new Form.HForm({
     srcNode:'#J_Form'
   }).render();
 
+  describe('select',function(){
+    it('测试一般select',function(){
+      var select = form.getField('type');
+      expect(select).not.toBe(null);
+      expect(select.get('value')).toBe('large');
+    });
+
+
+    it('测试单选select',function(){
+      var select = form.getField('select'),
+      innerSelect = select.get('select');
+      expect(select).not.toBe(null);
+      expect(select.get('value')).not.toBe('');
+      expect(innerSelect.getSelectedValue()).toBe(select.get('value'));
+    });
+
+
+    it('测试单选select，对象格式',function(){
+      var select = form.getField('select0'),
+      innerSelect = select.get('select');
+      expect(select).not.toBe(null);
+      expect(select.get('value')).not.toBe('');
+      expect(innerSelect.getSelectedValue()).toBe(select.get('value'));
+    });
+
+    it('测试多选select',function(){
+      var select = form.getField('m_select'),
+      innerSelect = select.get('select');
+      expect(select).not.toBe(null);
+      expect(select.get('value')).not.toBe('');
+      expect(innerSelect.getSelectedValue()).toBe(select.get('value'));
+    });
+
+    it('测试多选对象格式',function(){
+
+    });
+  });
 });
 /**/

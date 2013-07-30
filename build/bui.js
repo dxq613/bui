@@ -17211,9 +17211,9 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         select.render = _self.getControlContainer();
         select.valueField = _self.getInnerControl();
         select.autoRender = true;
-        if(items){
+       /* if(items){
           select.items = items;
-        }
+        }*/
         select = new Select.Select(select);
         _self.set('select',select);
         _self.set('isCreate',true);
@@ -17239,7 +17239,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         });
         items = tmp;
       }
-      if(select && !_self.get('srcNode')){
+      if(select){
         if(select.set){
           select.set('items',items);
         }else{
@@ -17349,6 +17349,19 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
           rst = $(options[0]).text();
         }
         return rst;
+      },
+      name : function(el){
+        var _self = this,
+          name = _self.get('name');
+        if(!name){
+          if(el.is('select')){
+            name = el.attr('name');
+          }else{
+            name = el.find('input').attr('name'); 
+          }
+          
+        }
+        return  name;
       },
       value : function(el){
         var _self = this,
@@ -20379,6 +20392,18 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
     ListPicker = require('bui/picker').ListPicker,
     PREFIX = BUI.prefix;
 
+  function formatItems(items){
+
+    if($.isPlainObject(items)){
+      var tmp = [];
+      BUI.each(items,function(v,n){
+        tmp.push({value : n,text : v});
+      });
+      return tmp;
+    }
+    return items;
+  }
+
   var Component = BUI.Component,
     Picker = ListPicker,
     CLS_INPUT = PREFIX + 'select-input',
@@ -20423,7 +20448,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
               {
                 xclass : xclass,
                 elCls:PREFIX + 'select-list',
-                items:_self.get('items')/**/
+                items : formatItems(_self.get('items'))/**/
               }
             ],
             valueField : _self.get('valueField')
@@ -20475,6 +20500,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
 
         return Component.Controller.prototype.containsElement.call(this,elem) || picker.containsElement(elem);
       },
+
       //\u8bbe\u7f6e\u5b50\u9879
       _uiSetItems : function(items){
         if(!items){
@@ -20484,7 +20510,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           picker = _self.get('picker'),
           list = picker.get('list'),
           valueField = _self.get('valueField');
-        list.set('items',items);
+        list.set('items',formatItems(items));
         if(valueField){
           picker.setSelectedValue($(valueField).val());
         }

@@ -35,9 +35,16 @@ BUI.use('bui/select',function (Select) {
   describe('设置选项',function(){
 	var items1 = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:'选项4',value:'d'}]
     it('更改选项',function(){
-	  select.set('items',items1);
+	    select.set('items',items1);
       expect(control.get('items').length).toBe(select.get('items').length);
     });
+
+    it('更改选项',function(){
+      var items2 = {'a' : '选项1','b':'选项2','c' : '选项3'}
+      select.set('items',items2);
+      expect(control.get('items').length).toBe(3);
+    });
+
 
   });
   
