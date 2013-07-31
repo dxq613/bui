@@ -120,11 +120,14 @@ define('bui/uploader/uploader', function (require) {
      */
     _initQueue: function(){
       var _self = this,
-        queueTarget = _self.get('queueTarget'),
+        queue = _self.get('queue'),
+        render = _self.get('render');
+      if (!queue) {
         queue = new Queue({
-          render: queueTarget
+          render: render
         });
       _self.set('queue', queue);
+      };
     },
     /**
      * 初始化上传类型
@@ -177,8 +180,6 @@ define('bui/uploader/uploader', function (require) {
 
       button.on('change', function(ev) {
         queue.addItems(ev.files);
-        // console.log(queue.get('files'));
-        // _self.uploadFiles();
       });
     },
     _bindQueue: function () {
@@ -230,11 +231,13 @@ define('bui/uploader/uploader', function (require) {
 
         BUI.mix(curUploadItem, {
           loaded: loaded,
+          total: total,
           loadedPercent: loaded * 100 / total
         });
 
         // console.log(curUploadItem);
         queue.updateItem(curUploadItem);
+
         _self.fire('progress', {item: curUploadItem, total: total, loaded: loaded});
       });
 
@@ -284,9 +287,6 @@ define('bui/uploader/uploader', function (require) {
       uploaderType.on('error', function(ev){
         _self.fire('error');
       });
-    },
-    _isContinueUpload: function () {
-
     },
     /**
      * 检测浏览器是否支持ajax类型上传方式

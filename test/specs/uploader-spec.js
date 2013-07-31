@@ -1,5 +1,7 @@
 
 BUI.use(['bui/uploader'], function (Uploader) {
+
+  
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
     queueTarget: '#J_UploaderQueue',
