@@ -1,6 +1,7 @@
 <?php  $title='文件上传测试' ?>
 <?php include("./templates/header.php"); ?>
 
+<link rel="stylesheet" href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css"/>
 <link rel="stylesheet" href="../src/uploader/css/style.css"/>
 
 

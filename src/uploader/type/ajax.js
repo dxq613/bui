@@ -73,6 +73,7 @@ define('bui/uploader/type/ajax',function(require) {
             var xhr = new XMLHttpRequest();
             //TODO:如果使用onProgress存在第二次上传不触发progress事件的问题
             xhr.upload.addEventListener('progress',function(ev){
+                console.log(ev);
                 self.fire(AjaxType.event.PROGRESS, { 'loaded': ev.loaded, 'total': ev.total });
             });
             xhr.onload = function(ev){

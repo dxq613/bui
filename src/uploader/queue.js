@@ -18,6 +18,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
     clearItemStatus: function(item){
       var _self = this,
         itemStatusFields = _self.get('itemStatusFields');
+        
       BUI.each(itemStatusFields, function(v, k){
         _self.setItemStatus(item, k, false);
       });
@@ -37,7 +38,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
         value: CLS_QUEUE
       },
       itemTpl: {
-        value: '<li data-url="{url}">{name}</li>'
+        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div></li>'
       },
       itemCls: {
         value: CLS_QUEUE_ITEM

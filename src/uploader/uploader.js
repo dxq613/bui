@@ -215,9 +215,28 @@ define('bui/uploader/uploader', function (require) {
       _self._bindButton();
       _self._bindQueue();
 
-      uploaderType.on('start', function(){});
+      //已经处理过了
+      //uploaderType.on('start', function(ev){});
 
-      uploaderType.on('progress', function(){});
+      uploaderType.on('progress', function(ev){
+
+        var curUploadItem = _self.get('curUploadItem'),
+          loaded = ev.loaded,
+          total = ev.total;
+
+        //设置当前正处于的状态
+        queue.clearItemStatus(curUploadItem);
+        queue.setItemStatus(curUploadItem, 'progress', true);
+
+        BUI.mix(curUploadItem, {
+          loaded: loaded,
+          loadedPercent: loaded * 100 / total
+        });
+
+        // console.log(curUploadItem);
+        queue.updateItem(curUploadItem);
+        _self.fire('progress', {item: curUploadItem, total: total, loaded: loaded});
+      });
 
       uploaderType.on('stop', function(ev){
         var curUploadItem = _self.get('curUploadItem');
@@ -262,7 +281,9 @@ define('bui/uploader/uploader', function (require) {
 
         _self.fire('success', {item: curUploadItem});
       });
-      uploaderType.on('error', function(){});
+      uploaderType.on('error', function(ev){
+        _self.fire('error');
+      });
     },
     _isContinueUpload: function () {
 
