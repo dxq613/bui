@@ -40,7 +40,7 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   /**
-   * 表单隐藏域
+   * 表单文本域，不能编辑
    * @class BUI.Form.Field.PlainField
    * @extends BUI.Form.Field
    */
