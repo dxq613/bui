@@ -184,6 +184,7 @@ define('bui/component/uibase/position',function () {
             },
             /**
              * xy 纯中转作用
+             * @ignore
              */
             getter:function () {
                 return [this.get('x'), this.get('y')];

@@ -35,9 +35,16 @@ BUI.use('bui/select',function (Select) {
   describe('设置选项',function(){
 	var items1 = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:'选项4',value:'d'}]
     it('更改选项',function(){
-	  select.set('items',items1);
+	    select.set('items',items1);
       expect(control.get('items').length).toBe(select.get('items').length);
     });
+
+    it('更改选项',function(){
+      var items2 = {'a' : '选项1','b':'选项2','c' : '选项3'}
+      select.set('items',items2);
+      expect(control.get('items').length).toBe(3);
+    });
+
 
   });
   
@@ -72,6 +79,35 @@ BUI.use('bui/select',function (Select) {
     render:'#c2',
     name:'suggest',
     data:['1222224','234445','122','1111111']
+  });
+  suggest.render();
+  
+});
+
+BUI.use(['bui/select','bui/picker','bui/grid'],function(Select,Picker,Grid){
+  var columns = [
+          {title : '表头1(30%)',dataIndex :'a', width:'30%'},
+          {id: '123',title : '表头2(30%)',dataIndex :'b', width:'30%'},
+          {title : '表头3(40%)',dataIndex : 'c',width:'40%'}
+        ],   
+      data = [{a:'123',b:'选择文本1'},{a:'cdd',b:'选择文本2'},{a:'1333',b:'选择文本3',c:'eee',d:2}],
+      grid = new Grid.SimpleGrid({
+        dataField : 'a',
+        columns : columns,
+        textGetter: function(item){ //返回选中的文本
+          return item.b;
+        }
+      }),
+      picker = new Picker.ListPicker({
+        width:300,  //指定宽度
+        children : [grid] //配置picker内的列表
+      });
+  var suggest = new Select.Suggest({
+    render:'#c3',
+    name:'suggest',
+    forceFit:false,
+    picker : picker,
+    data:data
   });
   suggest.render();
   

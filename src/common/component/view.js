@@ -8,7 +8,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
 
   var win = window,
     Manager = require('bui/component/manage'),
-    UIBase = require('bui/component/uibase');//BUI.Component.UIBase,
+    UIBase = require('bui/component/uibase'),//BUI.Component.UIBase,
     doc = document;
     
     /**

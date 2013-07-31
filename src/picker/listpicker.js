@@ -3,13 +3,34 @@
  * @ignore
  */
 
-define('bui/list/listpicker',['bui/overlay'],function (require) {
+define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (require) {
 
-  var Picker = require('bui/overlay').Picker,
+  var List = require('bui/list'),
+    Picker = require('bui/picker/picker'),
     /**
-     * 列表选择器
-     * @class BUI.List.Picker
-     * @extends BUI.Overlay.Picker
+     * 列表选择器,xclass = 'list-picker'
+     * <pre><code>
+     * BUI.use(['bui/picker'],function(Picker){
+     *
+     * var items = [
+     *       {text:'选项1',value:'a'},
+     *       {text:'选项2',value:'b'},
+     *      {text:'选项3',value:'c'}
+     *     ],
+     *   picker = new Picker.ListPicker({
+     *     trigger : '#show',  
+     *     valueField : '#hide', //如果需要列表返回的value，放在隐藏域，那么指定隐藏域
+     *     width:100,  //指定宽度
+     *     children : [{
+     *        elCls:'bui-select-list',
+     *        items : items
+     *     }] //配置picker内的列表
+     *   });
+     * picker.render();
+     * });
+     * </code></pre>
+     * @class BUI.Picker.ListPicker
+     * @extends BUI.Picker.Picker
      */
     listPicker = Picker.extend({
       initializer : function(){
@@ -24,6 +45,8 @@ define('bui/list/listpicker',['bui/overlay'],function (require) {
       },
       /**
        * 设置选中的值
+       * @override
+       * @protected
        * @param {String} val 设置值
        */
       setSelectedValue : function(val){
@@ -39,7 +62,17 @@ define('bui/list/listpicker',['bui/overlay'],function (require) {
         }   
       },
       /**
+       * @protected
+       * @ignore
+       */
+      onChange : function(selText,selValue,ev){
+        var _self = this,
+          curTrigger = _self.get('curTrigger');
+        _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger,item : ev.item});
+      },
+      /**
        * 获取选中的值，多选状态下，值以','分割
+       * @protected
        * @return {String} 选中的值
        */
       getSelectedValue : function(){
@@ -47,6 +80,7 @@ define('bui/list/listpicker',['bui/overlay'],function (require) {
       },
       /**
        * 获取选中项的文本，多选状态下，文本以','分割
+       * @protected
        * @return {String} 选中的文本
        */
       getSelectedText : function(){
@@ -64,6 +98,10 @@ define('bui/list/listpicker',['bui/overlay'],function (require) {
         },
         /**
          * 选择的列表
+         * <pre><code>
+         *  var list = picker.get('list');
+         *  list.getSelected();
+         * </code></pre>
          * @type {BUI.List.SimpleList}
          * @readOnly
          */
@@ -72,6 +110,15 @@ define('bui/list/listpicker',['bui/overlay'],function (require) {
             return this.get('children')[0];
           }
         }
+        /**
+         * @event selectedchange
+         * 选择发生改变事件
+         * @param {Object} e 事件对象
+         * @param {String} e.text 选中的文本
+         * @param {string} e.value 选中的值
+         * @param {Object} e.item 发生改变的选项
+         * @param {jQuery} e.curTrigger 当前触发picker的元素
+         */
       }
     },{
       xclass : 'list-picker'

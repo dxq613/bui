@@ -4,7 +4,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
   var data = [
       {text : '1',id : '1',leaf : false,children: []},
       {text : '2',id : '2',expanded : true,children : [
-          {text : '21',id : '21',children : [{text : '211',id : '211'},{text : '212',id : '212'}]},
+          {text : '21',id : '21',children : [{text : '211',id : '211'},{text : '212',id : '212',children : [{text : '2121',id : '2121'},{text : '2122',id : '2122'}]}]},
           {text : '22',id : '22'}
       ]},
       {text : '3',id : '3'},
@@ -159,6 +159,15 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       tree.expandNode(node);
       expect(tree.isExpanded(node.children[0])).toBe(true);
       expect(tree.getItem('211')).not.toBe(null);
+
+    });
+
+    it('展开path',function(){
+      tree.collapseAll();
+      var path = '2,21,212,2121';
+      tree.expandPath(path);
+      var node = tree.getItem('2121');
+      expect(node).not.toBe(null);
 
     });
 

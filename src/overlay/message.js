@@ -17,6 +17,31 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
 
   /**
    * 消息框类，一般不直接创建对象，而是调用其Alert和Confirm方法
+   * <pre><code>
+   ** BUI.use('bui/overlay',function(overlay){
+   * 
+   *    BUI.Message.Alert('这只是简单的提示信息','info');
+   *    BUI.Message.Alert('这只是简单的成功信息','success');
+   *    BUI.Message.Alert('这只是简单的警告信息','warning');
+   *    BUI.Message.Alert('这只是简单的错误信息','error');
+   *    BUI.Message.Alert('这只是简单的询问信息','question');
+   *
+   *    //回调函数
+   *    BUI.Message.Alert('点击触发回调函数',function() {
+   *         alert('执行回调');
+   *       },'error');
+   *       
+   *    //复杂的提示信息
+   *    var msg = '<h2>上传失败，请上传10M以内的文件</h2>'+
+   *       '<p class="auxiliary-text">如连续上传失败，请及时联系客服热线：0511-23883767834</p>'+
+   *       '<p><a href="#">返回list页面</a> <a href="#">查看详情</a></p>';
+   *     BUI.Message.Alert(msg,'error');
+   *    //确认信息
+   *    BUI.Message.Confirm('确认要更改么？',function(){
+   *       alert('确认');
+   *     },'question');
+   * });
+   * </code></pre>
    * @class BUI.Overlay.Message
    * @private
    * @extends BUI.Overlay.Dialog
@@ -40,8 +65,12 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
            * fix ie6,7 bug
            * @ignore
            */
-            _self.get('header').width(body.outerWidth() - 20);
-            _self.get('footer').width(body.outerWidth());
+            var outerWidth = body.outerWidth();
+            if(BUI.UA.ie == 6){
+              outerWidth = outerWidth > 350 ? 350 : outerWidth;
+            }
+            _self.get('header').width(outerWidth - 20);
+            _self.get('footer').width(outerWidth);
           }
         }
       });
@@ -207,6 +236,11 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
 
   /**
    * 显示确认框
+   * <pre><code>
+   * BUI.Message.Confirm('确认要更改么？',function(){
+   *       alert('确认');
+   * },'question');
+   * </code></pre>
    * @static
    * @method
    * @member BUI.Message

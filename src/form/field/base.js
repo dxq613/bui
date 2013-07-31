@@ -378,6 +378,13 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         tip.resetVisible();
       }
     },
+    /**
+     * 重置显示提示信息
+     * field.resetTip();
+     */
+    resetTip : function(){
+      this._resetTip();
+    },
     //设置值
     _uiSetValue : function(v){
       var _self = this;

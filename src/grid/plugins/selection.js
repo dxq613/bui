@@ -8,10 +8,30 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
     CLS_CHECKBOX = PREFIX + 'grid-checkBox',
+    CLS_CHECK_ICON = 'x-grid-checkbox',
     CLS_RADIO = PREFIX + 'grid-radio';
     
   /**
   * 选择行插件
+  * <pre><code>
+  ** var store = new Store({
+  *       data : data,
+  *       autoLoad:true
+  *     }),
+  *     grid = new Grid.Grid({
+  *       render:'#grid',
+  *       columns : columns,
+  *       itemStatusFields : { //设置数据跟状态的对应关系
+  *         selected : 'selected',
+  *         disabled : 'disabled'
+  *       },
+  *       store : store,
+  *       plugins : [Grid.Plugins.CheckSelection] // 插件形式引入多选表格
+  *      //multiSelect: true  // 控制表格是否可以多选，但是这种方式没有前面的复选框 默认为false
+  *     });
+  *
+  *   grid.render();
+  * </code></pre>
   * @class BUI.Grid.Plugins.CheckSelection
   * @extends BUI.Base
   */
@@ -41,9 +61,10 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
     },
     /**
     * @private
+    * <input  class="' + CLS_CHECKBOX + '" type="checkbox">
     */
     cellInner : {
-      value : '<div class="'+CLS_CHECKBOX+'-container"><input  class="' + CLS_CHECKBOX + '" type="checkbox"></div>'
+      value : '<div class="'+CLS_CHECKBOX+'-container"><span class="' + CLS_CHECK_ICON +'"></span></div>'
     }
   };
 
@@ -74,38 +95,28 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
     bindUI : function(grid){
       var _self = this,
         col = _self.get('column'),
-        checkBox = col.get('el').find('.' + CLS_CHECKBOX);
+        colEl = col.get('el'),
+        checkBox = colEl.find('.' + CLS_CHECK_ICON);
       checkBox.on('click',function(){
-        //e.preventDefault();
-        var checked = checkBox.attr('checked');
-        checkBox.attr('checked',checked);
-        if(checked){
+        var checked = colEl.hasClass('checked');     
+        if(!checked){
           grid.setAllSelection();
+          colEl.addClass('checked');
         }else{
           grid.clearSelection();
+          colEl.removeClass('checked');
         }
       });
-
-      grid.on('rowselected',function(e){
-        _self._setRowChecked(e.row,true);
+      grid.on('rowunselected',function(e){
+        
+        colEl.removeClass('checked');
       });
       
-      grid.on('rowcreated',function(){
-        checkBox.attr('checked',false);
-      });
-      grid.on('rowunselected',function(e){
-        _self._setRowChecked(e.row,false);
-        checkBox.attr('checked',false);
-      });
       //清除纪录时取全选
       grid.on('clear',function(){
-        checkBox.attr('checked',false);
+        //checkBox.attr('checked',false);
+        colEl.removeClass('checked');
       });
-    },
-    _setRowChecked : function(row,checked){
-      var rowEl = $(row),
-        checkBox = rowEl.find('.' + CLS_CHECKBOX);
-      checkBox.attr('checked',checked);
     }
   });
   

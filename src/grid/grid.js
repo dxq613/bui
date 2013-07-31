@@ -15,6 +15,13 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     Header = require('bui/grid/header'),
     Column = require('bui/grid/column');
 
+  function isPercent(str){
+    if(BUI.isString(str)){
+      return str.indexOf('%') !== -1;
+    }
+    return false;
+  }
+
   var PREFIX = BUI.prefix,
     CLS_GRID_HEADER_CONTAINER = PREFIX + 'grid-header-container',
     CLS_GRID_BODY = PREFIX + 'grid-body',
@@ -141,23 +148,32 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     //set table width
     setTableWidth:function (columnsWidth) {
+      if(!columnsWidth && isPercent(this.get('width'))){
+        this.get('tableEl').width('100%');
+        return;
+      }
       var _self = this,
         width = _self._getInnerWidth(),
         height = _self.get('height'),
         tableEl = _self.get('tableEl'),
         forceFit = _self.get('forceFit'),
         headerRowEl = _self.get('headerRowEl');
-      columnsWidth = columnsWidth || _self._getColumnsWidth();
-      if (!width) {
-        return;
-      }
-      if (width >= columnsWidth) {
-        columnsWidth = width;
-        if (height) {
-          var scrollWidth = (UA.ie == 6 || UA.ie == 7) ? CLS_SCROLL_WITH + 2 : CLS_SCROLL_WITH;
-          columnsWidth = width - scrollWidth;
+      //使用百分比的宽度，不进行计算
+      if(!isPercent(columnsWidth)){
+        
+        columnsWidth = columnsWidth || _self._getColumnsWidth();
+        if (!width) {
+          return;
+        }
+        if (width >= columnsWidth) {
+          columnsWidth = width;
+          if (height) {
+            var scrollWidth = (UA.ie == 6 || UA.ie == 7) ? CLS_SCROLL_WITH + 2 : CLS_SCROLL_WITH;
+            columnsWidth = width - scrollWidth;
+          }
         }
       }
+      
       tableEl.width(columnsWidth);
     },
     /**
@@ -182,7 +198,9 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         siblings = bodyEl.siblings();
 
       BUI.each(siblings,function(item){
-        bodyHeight -= $(item).outerHeight();
+        if($(item).css('display') !== 'none'){
+          bodyHeight -= $(item).outerHeight();
+        }
       });
       bodyEl.height(bodyHeight);
     },
@@ -418,7 +436,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
   /**
    * @class BUI.Grid.Grid
    *
-   * 表格控件,表格控件类图
+   * 表格控件,表格控件类图，一般情况下配合{@link BUI.Data.Store} 一起使用
    * <p>
    * <img src="../assets/img/class-grid.jpg"/>
    * </p>
@@ -426,6 +444,42 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    * <p>
    * <img src="../assets/img/class-grid-plugins.jpg"/>
    * </p>
+   *
+   * <pre><code>
+   *  BUI.use(['bui/grid','bui/data'],function(Grid,Data){
+   *    var Grid = Grid,
+   *      Store = Data.Store,
+   *      columns = [{  //声明列模型
+   *          title : '表头1(20%)',
+   *          dataIndex :'a',
+   *          width:'20%'
+   *        },{
+   *          id: '123',
+   *          title : '表头2(30%)',
+   *          dataIndex :'b',
+   *          width:'30%'
+   *        },{
+   *          title : '表头3(50%)',
+   *          dataIndex : 'c',
+   *          width:'50%'
+   *      }],
+   *      data = [{a:'123'},{a:'cdd',b:'edd'},{a:'1333',c:'eee',d:2}]; //显示的数据
+   *
+   *    var store = new Store({
+   *        data : data,
+   *        autoLoad:true
+   *      }),
+   *       grid = new Grid.Grid({
+   *         render:'#grid',
+   *         width:'100%',//这个属性一定要设置
+   *         columns : columns,
+   *         idField : 'a',
+   *         store : store
+   *       });
+   *
+   *     grid.render();
+   *   });
+   * </code></pre>
    * @extends BUI.List.SimpleList
    */
   var grid = List.SimpleList.extend({
@@ -486,6 +540,12 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     /**
      * 添加列
+     * <pre><code>
+     *   //添加到最后
+     *   grid.addColumn({title : 'new column',dataIndex : 'new',width:100});
+     *   //添加到最前
+     *   grid.addColumn({title : 'new column',dataIndex : 'new',width:100},0);
+     * </code></pre>
      * @param {Object|BUI.Grid.Column} column 列的配置，列类的定义 {@link BUI.Grid.Column}
      * @param {Number} index 添加到的位置
      * @return {BUI.Grid.Column}
@@ -504,7 +564,9 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     /**
      * 清除显示的数据
-     *         grid.clearData();
+     * <pre><code>
+     *   grid.clearData();
+     * </code></pre>       
      */
     clearData : function(){
       this.clearItems();
@@ -512,12 +574,21 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     /**
      * 当前显示在表格中的数据
      * @return {Array} 纪录集合
+     * @private
      */
     getRecords : function(){
       return this.getItems();
     },
     /**
      * 使用索引或者id查找列
+     * <pre><code>
+     *  //设置列的id,否则会自动生成
+     *  {id : '1',title : '表头',dataIndex : 'a'}
+     *  //获取列
+     *  var column = grid.findColumn('id');
+     *  //操作列
+     *  column.set('visible',false);
+     * </code></pre>
      * @param {String|Number} id|index  文本值代表编号，数字代表索引
      */
     findColumn : function(id){
@@ -531,6 +602,14 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     /**
      * 使用字段名查找列
+     * <pre><code>
+     * //设置列dataIndex
+     *  {id : '1',title : '表头',dataIndex : 'a'}
+     *  //获取列
+     *  var column = grid.findColumnByField('a');
+     *  //操作列
+     *  column.set('visible',false);
+     * </code></pre>
      * @param {String} field 列的字段名 dataIndex
      */
     findColumnByField : function(field){
@@ -544,6 +623,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
      * 根据列的Id查找对应的单元格
      * @param {String|Number} id 列id
      * @param {Object|jQuery} record 本行对应的记录，或者是本行的ＤＯＭ对象
+     * @protected
      * @return  {jQuery}
      */
     findCell:function (id, record) {
@@ -562,6 +642,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     /**
      * find the dom by the record in this component
      * @param {Object} record the record used to find row dom
+     * @protected
      * @return jQuery
      */
     findRow:function (record) {
@@ -570,6 +651,10 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     },
     /**
      * 移除列
+     * <pre><code>
+     *   var column = grid.findColumn('id');
+     *   grid.removeColumn(column);
+     * </code></pre>
      * @param {BUI.Grid.Column} column 要移除的列
      */
     removeColumn:function (column) {
@@ -577,7 +662,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         _self.get('header').removeColumn(column);
     },
     /**
-     * 显示数据
+     * 显示数据,当不使用store时，可以单独显示数据
+     * <pre><code>
+     *   var data = [{},{}];
+     *   grid.showData(data);
+     * </code></pre>
      * @param  {Array} data 显示的数据集合
      */
     showData : function(data){
@@ -831,7 +920,12 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     _uiSetWidth:function (w) {
       var _self = this;
       if (_self.get('rendered')) {
-        _self.get('header').set('width', _self._getInnerWidth(w));
+        if(!isPercent(w)){
+          _self.get('header').set('width', _self._getInnerWidth(w));
+        }else{
+          _self.get('header').set('width','100%');
+        }
+        
       }
       _self.get('view').setTableWidth();
     },
@@ -867,11 +961,39 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       },
       /**
        * @see {BUI.Grid.Grid#tbar}
+       * <pre><code>
+       * grid = new Grid.Grid({
+       *    render:'#grid',
+       *    columns : columns,
+       *    width : 700,
+       *    forceFit : true,
+       *    tbar:{ //添加、删除
+       *        items : [{
+       *          btnCls : 'button button-small',
+       *          text : '<i class="icon-plus"></i>添加',
+       *          listeners : {
+       *            'click' : addFunction
+       *          }
+       *        },
+       *        {
+       *          btnCls : 'button button-small',
+       *          text : '<i class="icon-remove"></i>删除',
+       *          listeners : {
+       *            'click' : delFunction
+       *          }
+       *        }]
+       *    },
+       *    store : store
+       *  });
+       *
+       * grid.render();
+       * </code></pre>
        * @cfg {Object|BUI.Toolbar.Bar} bbar
        */
       /**
        * @see {BUI.Grid.Grid#tbar}
        * @type {Object}
+       * @ignore
        */
       bbar:{
 
@@ -883,20 +1005,28 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
        * 列的配置 用来配置 表头 和 表内容。{@link BUI.Grid.Column}
        * @cfg {Array} columns
        */
-      /**
-       * 列的配置 用来配置 表头 和 表内容。{@link BUI.Grid.Column}
-       * @type {Array}
-       */
       columns:{
         view : true,
         value:[]
       },
       /**
        * 强迫列自适应宽度，如果列宽度大于Grid整体宽度，等比例缩减，否则等比例增加
+       * <pre><code>
+       *  var grid = new Grid.Grid({
+       *    render:'#grid',
+       *    columns : columns,
+       *    width : 700,
+       *    forceFit : true, //自适应宽度
+       *    store : store
+       *  });
+       * </code></pre>
        * @cfg {Boolean} [forceFit= false]
        */
       /**
        * 强迫列自适应宽度，如果列宽度大于Grid整体宽度，等比例缩减，否则等比例增加
+       * <pre><code>
+       *  grid.set('forceFit',true);
+       * </code></pre>
        * @type {Boolean}
        * @default 'false'
        */
@@ -905,8 +1035,20 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:false
       },
       /**
-       * 数据为空时，显示的内容
-       * @type {Object}
+       * 数据为空时，显示的提示内容
+       * <pre><code>
+       *  var grid = new Grid({
+       *   render:'#J_Grid4',
+       *   columns : columns,
+       *   store : store,
+       *   emptyDataTpl : '&lt;div class="centered"&gt;&lt;img alt="Crying" src="http://img03.taobaocdn.com/tps/i3/T1amCdXhXqXXXXXXXX-60-67.png"&gt;&lt;h2&gt;查询的数据不存在&lt;/h2&gt;&lt;/div&gt;',
+       *   width:'100%'
+       *
+       * });
+       * 
+       * grid.render();
+       * </code></pre>
+       ** @cfg {Object} emptyDataTpl
        */
       emptyDataTpl : {
         view : true
@@ -1070,28 +1212,27 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
        * 还可以是包含以下字段的配置项
        * <ol>
        * <li>items:工具栏的项，
-       * 可以是按钮(bar-item-button)、
-       * 文本(bar-item-text)、
-       * 链接(bar-item-link)、
-       * 分隔符(bar-item-separator)以及自定义项
+       *    - 默认是按钮(xtype : button)、
+       *    - 文本(xtype : text)、
+       *    - 链接(xtype : link)、
+       *    - 分隔符(bar-item-separator)以及自定义项
        * </li>
-       * <li>pageSize:表明包含分页栏</li>
+       * <li>pagingBar:表明包含分页栏</li>
        * </ol>
        * @type {Object|BUI.Toolbar.Bar}
        * @example
        * tbar:{
        *     items:[
        *         {
-       *             xclass:'bar-item-button',
-       *             text:'命令一'
+       *             text:'命令一' //默认是按钮
        *             
        *         },
        *         {
-       *             xclass:'bar-item-text',
+       *             xtype:'text',
        *             text:'文本'
        *         }
        *     ],
-       *     pageSize:30
+       *     pagingBar:true
        * }
        */
       tbar:{
@@ -1099,7 +1240,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       },
       /**
        * 可以附加到表格上的样式.
-       * @type {String}
+       * @cfg {String} tableCls
        * @default 'bui-grid-table' this css cannot be overridden
        */
       tableCls:{
@@ -1123,10 +1264,19 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       },
       /**
        * 单元格左右之间是否出现边框
+       * 
        * @cfg {Boolean} [innerBorder=true]
        */
       /**
        * 单元格左右之间是否出现边框
+       * <pre><code>
+       *   var  grid = new Grid.Grid({
+       *     render:'#grid',
+       *     innerBorder: false, // 默认为true
+       *     columns : columns,
+       *     store : store
+       *   });
+       * </code></pre>
        * @type {Boolean}
        * @default true
        */
@@ -1137,6 +1287,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       /**
        * 是否使用空白单元格用于占位，使列宽等于设置的宽度
        * @type {Boolean}
+       * @private
        */
       useEmptyCell : {
         view : true,
@@ -1145,6 +1296,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       /**
        * 是否首行使用空白行，用以确定表格列的宽度
        * @type {Boolean}
+       * @private
        */
       useHeaderRow : {
         view : true,

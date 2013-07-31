@@ -3,15 +3,14 @@
  * @ignore
  */
 
-define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message','bui/overlay/picker'],function (require) {
+define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message'],function (require) {
   var BUI = require('bui/common'),
     Overlay = BUI.namespace('Overlay');
 
   BUI.mix(Overlay,{
     Overlay : require('bui/overlay/overlay'),
     Dialog : require('bui/overlay/dialog'),
-    Message : require('bui/overlay/message'),
-    Picker : require('bui/overlay/picker')
+    Message : require('bui/overlay/message')
   });
 
   BUI.mix(Overlay,{

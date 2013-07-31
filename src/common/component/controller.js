@@ -187,6 +187,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
      * @mixins BUI.Component.UIBase.Tpl
      * @mixins BUI.Component.UIBase.Decorate
      * @mixins BUI.Component.UIBase.Depends
+     * @mixins BUI.Component.UIBase.ChildCfg
      * @class BUI.Component.Controller
      */
     var Controller = UIBase.extend([UIBase.Decorate,UIBase.Tpl,UIBase.ChildCfg,UIBase.KeyNav,UIBase.Depends],
@@ -1103,7 +1104,6 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * @cfg {Object} elAttrs
-             * @ignore
 			 * 控件根节点应用的属性，以键值对形式:
              * <pre><code>
              *  new Control({

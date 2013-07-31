@@ -131,17 +131,6 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'GET'
     },
     /**
-     * 是否不读取缓存数据
-     * @cfg {Boolean} [noCache=true]
-     */
-    /**
-     * 是否不读取缓存数据
-     * @type {Boolean}
-     */
-    noCache : {
-      value : true
-    },
-    /**
      * 是否使用Cache
      * @type {Boolean}
      */

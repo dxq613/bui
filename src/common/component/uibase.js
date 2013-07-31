@@ -36,8 +36,8 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
     CloseView : UIBase.Close.View,
     CollapseableView : UIBase.Collapseable.View,
     ChildList : UIBase.List.ChildList,
-    DomList : UIBase.List.DomList,
-    DomListView : UIBase.List.DomList.View,
+    /*DomList : UIBase.List.DomList,
+    DomListView : UIBase.List.DomList.View,*/
     ListItemView : UIBase.ListItem.View,
     MaskView : UIBase.Mask.View,
     PositionView : UIBase.Position.View,

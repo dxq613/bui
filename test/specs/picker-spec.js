@@ -1,5 +1,5 @@
 
-BUI.use(['bui/list','bui/overlay'],function (List,Overlay) {
+BUI.use(['bui/picker/listpicker','bui/list'],function (Picker) {
 
   var Overlay = BUI.Overlay;
 
@@ -13,7 +13,7 @@ BUI.use(['bui/list','bui/overlay'],function (List,Overlay) {
       elCls:'bui-select-list',
       items : items
     }),
-    picker = new BUI.List.Picker({
+    picker = new Picker({
       children:[list],
       trigger:'#c1',
       valueField : '#r2',
@@ -68,6 +68,41 @@ BUI.use(['bui/list','bui/overlay'],function (List,Overlay) {
       expect(valueEl.val()).toBe('');
       expect(textEl.val()).toBe('');
     });
+  });
+
+});
+
+BUI.use('bui/picker/listpicker',function (Picker) {
+
+  var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}],
+    picker = new Picker({
+    render : '#lp',
+    align:{
+      points : ['tl','tl']
+    },
+    children:[{
+        elCls:'bui-select-list',
+        items : items
+      }
+    ]
+  });
+  picker.show();
+  var el = picker.get('el');
+
+  describe('测试选择器生成',function(){
+
+    it('列表生成',function(){
+      expect(picker.get('list')).not.toBe(null);
+      expect(el.find('.bui-select-list').length).not.toBe(0);
+      expect(el.find('.bui-list-item').length).toBe(items.length);
+    });
+
+    it('重置数据',function(){
+      var items1 = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3},{text:"123",value:4}];
+      picker.get('list').set('items',items1);
+      expect(el.find('.bui-list-item').length).toBe(items1.length);
+    });
+
   });
 
 });

@@ -12,11 +12,19 @@
         <input type="text" id="r2" />
       </div>
     </div>
+    <div class="row">
+      <div class="span8">
+        <div id="lp"></div>
+      </div>
+       
+    </div>
   </div>
   
-    <?php $url = 'bui/list'?>
-    <?php include("./templates/script.php"); ?>
-
-    <script type="text/javascript" src="specs/picker-spec.js"></script>
+  <?php $url = 'bui/picker'?>
+  <?php include("./templates/script.php"); ?>
+  <script type="text/javascript" src="../src/picker/picker.js"></script>
+  <script type="text/javascript" src="../src/picker/listpicker.js"></script>
+  <script type="text/javascript" src="../src/picker/base.js"></script>
+  <script type="text/javascript" src="specs/picker-spec.js"></script>
 
 <?php include("./templates/footer.php"); ?>

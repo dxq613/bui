@@ -4223,8 +4223,8 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
     CloseView : UIBase.Close.View,
     CollapseableView : UIBase.Collapseable.View,
     ChildList : UIBase.List.ChildList,
-    DomList : UIBase.List.DomList,
-    DomListView : UIBase.List.DomList.View,
+    /*DomList : UIBase.List.DomList,
+    DomListView : UIBase.List.DomList.View,*/
     ListItemView : UIBase.ListItem.View,
     MaskView : UIBase.Mask.View,
     PositionView : UIBase.Position.View,
@@ -4247,9 +4247,8 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     UI_SET = '_uiSet',
         ATTRS = 'ATTRS',
         ucfirst = BUI.ucfirst,
-        noop = $.noop;
-
-    Base = require('bui/base');
+        noop = $.noop,
+        Base = require('bui/base');
    /**
      * 模拟多继承
      * init attr using constructors ATTRS meta info
@@ -6118,23 +6117,11 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       }
     },
     /**
-     * 向上导航
-     */
-    navUp : function () {
-      // body...
-    },
-    /**
      * 处理向上导航
      * @protected
      * @param  {jQuery.Event} ev 事件对象
      */
     handleNavUp : function (ev) {
-      // body...
-    },
-    /**
-     * 向下导航
-     */
-    navDown : function () {
       // body...
     },
     /**
@@ -6146,23 +6133,11 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       // body...
     },
     /**
-     * 向左导航
-     */
-    navLeft : function () {
-      // body...
-    },
-    /**
      * 处理向左导航
      * @protected
      * @param  {jQuery.Event} ev 事件对象
      */
     handleNavLeft : function (ev) {
-      // body...
-    },
-    /**
-     * 向右导航
-     */
-    navRight : function  () {
       // body...
     },
     /**
@@ -6174,23 +6149,11 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       // body...
     },
     /**
-     * 按下确认键
-     */
-    navEnter : function () {
-      // body...
-    },
-    /**
      * 处理确认键
      * @protected
      * @param  {jQuery.Event} ev 事件对象
      */
     handleNavEnter : function (ev) {
-      // body...
-    },
-    /**
-     * 按下 esc 键
-     */
-    navEsc : function () {
       // body...
     },
     /**
@@ -6634,6 +6597,7 @@ define('bui/component/uibase/position',function () {
             },
             /**
              * xy 纯中转作用
+             * @ignore
              */
             getter:function () {
                 return [this.get('x'), this.get('y')];
@@ -7701,6 +7665,16 @@ define('bui/component/uibase/selection',function () {
                    * @param {Boolean} e.selected 是否选中
                    */
                 'selectedchange' : false,
+
+                /**
+                   * 选择改变前触发，可以通过return false，阻止selectedchange事件
+                   * @event
+                   * @param {Object} e 事件对象
+                   * @param {Object} e.item 当前选中的项
+                   * @param {Boolean} e.selected 是否选中
+                   */
+                'beforeselectedchange' : false,
+
                 /**
                    * 菜单选中
                    * @event
@@ -7931,8 +7905,9 @@ define('bui/component/uibase/selection',function () {
                     return;
                 }
             }
-
-            _self.setItemSelectedStatus(item,selected);
+            if(_self.fire('beforeselectedchange') !== false){
+                _self.setItemSelectedStatus(item,selected);
+            }
         },
         /**
          * 设置选项的选中状态
@@ -8021,6 +7996,7 @@ define('bui/component/uibase/selection',function () {
          */
         afterSelected : function(item,selected,element){
             var _self = this;
+
             if(selected){
                 _self.fire('itemselected',{item:item,domTarget:element});
                 _self.fire('selectedchange',{item:item,domTarget:element,selected:selected});
@@ -8401,767 +8377,9 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     }
   }
 
-  /**
-   * 选项是DOM的列表的视图类
-   * @private
-   * @class BUI.Component.UIBase.DomListView
-   */
-  var domListView = function(){
+  
 
-  };
-
-  domListView.ATTRS = {
-    items : {}
-  };
-
-  domListView.prototype = {
-    /**
-     * @protected
-     * 清除者列表项的DOM
-     */
-    clearControl : function(){
-      var _self = this,
-        listEl = _self.getItemContainer(),
-        itemCls = _self.get('itemCls');
-      listEl.find('.'+itemCls).remove();
-    },
-    /**
-     * 添加选项
-     * @param {Object} item  选项值
-     * @param {Number} index 索引
-     */
-    addItem : function(item,index){
-      return this._createItem(item,index);;
-    },
-    /**
-     * 获取所有的记录
-     * @return {Array} 记录集合
-     */
-    getItems : function(){
-      var _self = this,
-        elements = _self.getAllElements(),
-        rst = [];
-      BUI.each(elements,function(elem){
-        rst.push(_self.getItemByElement(elem));
-      });
-      return rst;
-    },
-    /**
-     * 更新列表项
-     * @param  {Object} item 选项值
-     * @ignore
-     */
-    updateItem : function(item){
-      var _self = this, 
-        items = _self.getItems(),
-        index = BUI.Array.indexOf(item,items),
-        element = null,
-        tpl;
-      if(index >=0 ){
-        element = _self.findElement(item);
-        tpl = _self.getItemTpl(item,index);
-        if(element){
-          $(element).html($(tpl).html());
-        }
-      }
-      return element;
-    },
-    /**
-     * 移除选项
-     * @param  {jQuery} element
-     * @ignore
-     */
-    removeItem:function(item,element){
-      element = element || this.findElement(item);
-      $(element).remove();
-    },
-    /**
-     * 获取列表项的容器
-     * @return {jQuery} 列表项容器
-     * @protected
-     */
-    getItemContainer : function  () {
-      return this.get('itemContainer') || this.get('el');
-    },
-    /**
-     * 获取记录的模板,itemTpl 和 数据item 合并产生的模板
-     * @protected 
-     */
-    getItemTpl : function  (item,index) {
-      var _self = this,
-        render = _self.get('itemTplRender'),
-        itemTpl = _self.get('itemTpl');  
-      if(render){
-        return render(item,index);
-      }
-      
-      return BUI.substitute(itemTpl,item);;
-    },
-    //创建项
-    _createItem : function(item,index){
-      var _self = this,
-        listEl = _self.getItemContainer(),
-        itemCls = _self.get('itemCls'),
-        dataField = _self.get('dataField'),
-        tpl = _self.getItemTpl(item,index),
-        node = $(tpl);
-      if(index !== undefined){
-        var target = listEl.find('.'+itemCls)[index];
-        if(target){
-          node.insertBefore(target);
-        }else{
-          node.appendTo(listEl);
-        }
-      }else{
-        node.appendTo(listEl);
-      }
-      node.addClass(itemCls);
-      node.data(dataField,item);
-      return node;
-    },
-    /**
-     * 获取列表项对应状态的样式
-     * @param  {String} name 状态名称
-     * @return {String} 状态的样式
-     */
-    getItemStatusCls : function(name){
-      var _self = this,
-        itemCls = _self.get('itemCls'),
-        itemStatusCls = _self.get('itemStatusCls');
-      if(itemStatusCls && itemStatusCls[name]){
-        return itemStatusCls[name];
-      }
-      return itemCls + '-' + name;
-    },
-    /**
-     * 设置列表项选中
-     * @protected
-     * @param {*} name 状态名称
-     * @param {HTMLElement} element DOM结构
-     * @param {Boolean} value 设置或取消此状态
-     */
-    setItemStatusCls : function(name,element,value){
-      var _self = this,
-        cls = _self.getItemStatusCls(name),
-        method = value ? 'addClass' : 'removeClass';
-      if(element){
-        $(element)[method](cls);
-      }
-    },
-    /**
-     * 是否有某个状态
-     * @param {*} name 状态名称
-     * @param {HTMLElement} element DOM结构
-     * @return {Boolean} 是否具有状态
-     */
-    hasStatus : function(name,element){
-      var _self = this,
-        cls = _self.getItemStatusCls(name);
-      return $(element).hasClass(cls);
-    },
-    /**
-     * 设置列表项选中
-     * @param {*} item   记录
-     * @param {Boolean} selected 是否选中
-     * @param {HTMLElement} element DOM结构
-     */
-    setItemSelected: function(item,selected,element){
-      var _self = this;
-
-      element = element || _self.findElement(item);
-      _self.setItemStatusCls('selected',element,selected);
-    },
-    /**
-     * 获取所有列表项的DOM结构
-     * @return {Array} DOM列表
-     */
-    getAllElements : function(){
-      var _self = this,
-        itemCls = _self.get('itemCls'),
-        el = _self.get('el');
-      return el.find('.' + itemCls);
-    },
-    /**
-     * 获取DOM结构中的数据
-     * @param {HTMLElement} element DOM 结构
-     * @return {Object} 该项对应的值
-     */
-    getItemByElement : function(element){
-      var _self = this,
-        dataField = _self.get('dataField');
-      return $(element).data(dataField);
-    },
-    /**
-     * 根据状态获取DOM
-     * @return {Array} DOM数组
-     */
-    getElementsByStatus : function(status){
-      var _self = this,
-        cls = _self.getItemStatusCls(status),
-        el = _self.get('el');
-      return el.find('.' + cls);
-    },
-    /**
-     * 通过样式查找DOM元素
-     * @param {String} css样式
-     * @return {jQuery} DOM元素的数组对象
-     */
-    getSelectedElements : function(){
-      var _self = this,
-        cls = _self.getItemStatusCls('selected'),
-        el = _self.get('el');
-      return el.find('.' + cls);
-    },
-    /**
-     * 查找指定的项的DOM结构
-     * @param  {Object} item 
-     * @return {HTMLElement} element
-     */
-    findElement : function(item){
-      var _self = this,
-        elements = _self.getAllElements(),
-        result = null;
-
-      $.each(elements,function(index,element){
-        if(_self.getItemByElement(element) == item){
-            result = element;
-            return false;
-        }
-      });
-      return result;
-    },
-    /**
-     * 列表项是否选中
-     * @param  {HTMLElement}  element 是否选中
-     * @return {Boolean}  是否选中
-     */
-    isElementSelected : function(element){
-      var _self = this,
-        cls = _self.getItemStatusCls('selected');
-      return element && $(element).hasClass(cls);
-    }
-  };
-
-  /**
-   * @class BUI.Component.UIBase.DomList
-   * 选项是DOM结构的列表
-   * @extends BUI.Component.UIBase.List
-   * @mixins BUI.Component.UIBase.Selection
-   */
-  var domList = function(){
-
-  };
-  domList.ATTRS =BUI.merge(true,list.ATTRS,Selection.ATTRS,{
-    /**
-     * 在DOM节点上存储数据的字段
-     * @type {String}
-     * @protected
-     */
-    dataField : {
-        view:true,
-        value:'data-item'
-    },
-    /**
-     * 选项所在容器，如果未设定，使用 el
-     * @type {jQuery}
-     * @protected
-     */
-    itemContainer : {
-        view : true
-    },
-    /**
-     * 选项状态对应的选项值
-     * 
-     *   - 此字段用于将选项记录的值跟显示的DOM状态相对应
-     *   - 例如：下面记录中 <code> checked : true </code>，可以使得此记录对应的DOM上应用对应的状态(默认为 'list-item-checked')
-     *     <pre><code>{id : '1',text : 1,checked : true}</code></pre>
-     *   - 当更改DOM的状态时，记录中对应的字段属性也会跟着变化
-     * <pre><code>
-     *   var list = new List.SimpleList({
-     *   render : '#t1',
-     *   idField : 'id', //自定义样式名称
-     *   itemStatusFields : {
-     *     checked : 'checked',
-     *     disabled : 'disabled'
-     *   },
-     *   items : [{id : '1',text : '1',checked : true},{id : '2',text : '2',disabled : true}]
-     * });
-     * list.render(); //列表渲染后，会自动带有checked,和disabled对应的样式
-     *
-     * var item = list.getItem('1');
-     * list.hasStatus(item,'checked'); //true
-     *
-     * list.setItemStatus(item,'checked',false);
-     * list.hasStatus(item,'checked');  //false
-     * item.checked;                    //false
-     * 
-     * </code></pre>
-     * ** 注意 **
-     * 此字段跟 {@link #itemStatusCls} 一起使用效果更好，可以自定义对应状态的样式
-     * @cfg {Object} itemStatusFields
-     */
-    itemStatusFields : {
-      value : {}
-    },
-    /**
-     * 项的样式，用来获取子项
-     * @cfg {Object} itemCls
-     */
-    itemCls : {
-      view : true
-    },        
-    /**
-     * 获取项的文本，默认获取显示的文本
-     * @type {Object}
-     * @protected
-     */
-    textGetter : {
-
-    },
-    events : {
-      value : {
-        /**
-         * 选项对应的DOM创建完毕
-         * @event
-         * @param {Object} e 事件对象
-         * @param {Object} e.item 渲染DOM对应的选项
-         * @param {HTMLElement} e.domTarget 渲染的DOM对象
-         */
-        'itemrendered' : true,
-        /**
-         * @event
-         * 删除选项
-         * @param {Object} e 事件对象
-         * @param {Object} e.item 删除DOM对应的选项
-         * @param {HTMLElement} e.domTarget 删除的DOM对象
-         */
-        'itemremoved' : true,
-        /**
-         * @event
-         * 更新选项
-         * @param {Object} e 事件对象
-         * @param {Object} e.item 更新DOM对应的选项
-         * @param {HTMLElement} e.domTarget 更新的DOM对象
-         */
-        'itemupdated' : true,
-        /**
-        * 设置记录时，所有的记录显示完毕后触发
-        * @event
-        */
-        'itemsshow' : false,
-        /**
-        * 设置记录后，所有的记录显示前触发
-        * @event:
-        */
-        'beforeitemsshow' : false,
-        /**
-        * 清空所有记录，DOM清理完成后
-        * @event
-        */
-        'itemsclear' : false,
-        /**
-        * 清空所有Dom前触发
-        * @event
-        */
-        'beforeitemsclear' : false
-         
-      } 
-    }
-  });
-
-  BUI.augment(domList,list,Selection,{
-    //设置记录
-    _uiSetItems : function (items) {
-      var _self = this;
-      //清理子控件
-      _self.clearControl();
-      _self.fire('beforeitemsshow');
-      BUI.each(items,function(item,index){
-        _self.addItemToView(item,index);
-      });
-      _self.fire('itemsshow');
-    },
-    __bindUI : function(){
-      var _self = this,
-        selectedEvent = _self.get('selectedEvent'),
-        itemCls = _self.get('itemCls'),
-        itemContainer = _self.get('view').getItemContainer(),
-        el = _self.get('el');
-
-      itemContainer.delegate('.'+itemCls,'click',function(ev){
-        var itemEl = $(ev.currentTarget),
-          item = _self.getItemByElement(itemEl);
-        if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
-          return;
-        }
-        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent:ev});
-        if(rst !== false && selectedEvent == 'click'){
-          setItemSelectedStatus(item,itemEl); 
-        }
-      });
-      if(selectedEvent !== 'click'){ //如果选中事件不等于click，则进行监听选中
-        itemContainer.delegate('.'+itemCls,selectedEvent,function(ev){
-          var itemEl = $(ev.currentTarget),
-            item = _self.getItemByElement(itemEl);
-          if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
-            return;
-          }
-          setItemSelectedStatus(item,itemEl); 
-        });
-      }
-      
-      function setItemSelectedStatus(item,itemEl){
-        var multipleSelect = _self.get('multipleSelect'),
-          isSelected;
-        isSelected = _self.isItemSelected(item,itemEl);
-        if(!isSelected){
-          if(!multipleSelect){
-            _self.clearSelected();
-          }
-          _self.setItemSelected(item,true,itemEl);
-        }else if(multipleSelect){
-          _self.setItemSelected(item,false,itemEl);
-        }           
-      }
-      _self.on('itemrendered itemupdated',function(ev){
-        var item = ev.item,
-          element = ev.domTarget;
-        _self._syncItemStatus(item,element);
-      });
-    },
-    //获取值，通过字段
-    getValueByField : function(item,field){
-      return item && item[field];
-    }, 
-    //同步选项状态
-    _syncItemStatus : function(item,element){
-      var _self = this,
-        itemStatusFields = _self.get('itemStatusFields');
-      BUI.each(itemStatusFields,function(v,k){
-        _self.get('view').setItemStatusCls(k,element,item[v]);
-      });
-    },
-    /**
-     * @protected
-     * 获取记录中的状态值，未定义则为undefined
-     * @param  {Object} item  记录
-     * @param  {String} status 状态名
-     * @return {Boolean|undefined}  
-     */
-    getStatusValue : function(item,status){
-      var _self = this,
-        itemStatusFields = _self.get('itemStatusFields'),
-        field = itemStatusFields[status];
-      return item[field];
-    },
-    /**
-     * 更改状态值对应的字段
-     * @protected
-     * @param  {String} status 状态名
-     * @return {String} 状态对应的字段
-     */
-    getStatusField : function(status){
-      var _self = this,
-        itemStatusFields = _self.get('itemStatusFields');
-      return itemStatusFields[status];
-    },
-    /**
-     * 设置记录状态值
-     * @protected
-     * @param  {Object} item  记录
-     * @param  {String} status 状态名
-     * @param {Boolean} value 状态值
-     */
-    setStatusValue : function(item,status,value){
-      var _self = this,
-        itemStatusFields = _self.get('itemStatusFields'),
-        field = itemStatusFields[status];
-      if(field){
-        item[field] = value;
-      }
-    },
-    /**
-     * @ignore
-     * 获取选项文本
-     */
-    getItemText : function(item){
-      var _self = this,
-          textGetter = _self.get('textGetter');
-      if(!item)
-      {
-          return '';
-      }
-      if(textGetter){
-        return textGetter(item);
-      }else{
-        return $(_self.findElement(item)).text();
-      }
-    },
-    /**
-     * 删除项
-     * @param  {Object} item 选项记录
-     * @ignore
-     */
-    removeItem : function (item) {
-      var _self = this,
-        items = _self.get('items'),
-        element = _self.findElement(item),
-        index;
-      index = BUI.Array.indexOf(item,items);
-      if(index !== -1){
-        items.splice(index, 1);
-      }
-      _self.get('view').removeItem(item,element);
-      _self.fire('itemremoved',{item:item,domTarget: $(element)[0]});
-    },
-    /**
-     * 在指定位置添加选项,选项值为一个对象
-     * @param {Object} item 选项
-     * @param {Number} index 索引
-     * @ignore
-     */
-    addItemAt : function(item,index) {
-      var _self = this,
-        items = _self.get('items');
-      if(index === undefined) {
-          index = items.length;
-      }
-      items.splice(index, 0, item);
-      _self.addItemToView(item,index);
-      return item;
-    }, 
-    /**
-     * @protected
-     * 直接在View上显示
-     * @param {Object} item 选项
-     * @param {Number} index 索引
-     * 
-     */
-    addItemToView : function(item,index){
-      var _self = this,
-        element = _self.get('view').addItem(item,index);
-      _self.fire('itemrendered',{item:item,domTarget : $(element)[0]});
-    },
-    /**
-     * 更新列表项
-     * @param  {Object} item 选项值
-     * @ignore
-     */
-    updateItem : function(item){
-      var _self = this,
-        element =  _self.get('view').updateItem(item);
-      _self.fire('itemupdated',{item : item,domTarget : $(element)[0]})
-    },
-    /**
-     * 获取所有选项
-     * @return {Array} 选项集合
-     * @override
-     * @ignore
-     */
-    getItems : function () {
-      
-      return this.get('items');
-    },
-     /**
-     * 获取DOM结构中的数据
-     * @protected
-     * @param {HTMLElement} element DOM 结构
-     * @return {Object} 该项对应的值
-     */
-    getItemByElement : function(element){
-      return this.get('view').getItemByElement(element);
-    },
-    /**
-     * 根据状态获取选项
-     * <pre><code>
-     *   //设置状态
-     *   list.setItemStatus(item,'active');
-     *   
-     *   //获取'active'状态的选项
-     *   list.getItemsByStatus('active');
-     * </code></pre>
-     * @param  {String} status 状态名
-     * @return {Array}  选项组集合
-     */
-    getItemsByStatus : function(status){
-      var _self = this,
-        elements = _self.get('view').getElementsByStatus(status),
-        rst = [];
-      BUI.each(elements,function(element){
-        rst.push(_self.getItemByElement(element));
-      });
-      return rst;
-    },
-    /**
-     * 查找指定的项的DOM结构
-     * <pre><code>
-     *   var item = list.getItem('2'); //获取选项
-     *   var element = list.findElement(item);
-     *   $(element).addClass('xxx');
-     * </code></pre>
-     * @param  {Object} item 
-     * @return {HTMLElement} element
-     */
-    findElement : function(item){
-      var _self = this;
-      if(BUI.isString(item)){
-        item = _self.getItem(item);
-      }
-      return this.get('view').findElement(item);
-    },
-    findItemByField : function(field,value){
-      var _self = this,
-        items = _self.get('items'),
-        result = null;
-      BUI.each(items,function(item){
-        if(item[field] === value){
-            result = item;
-            return false;
-        }
-      });
-
-      return result;
-    },
-    /**
-     * @override
-     * @ignore
-     */
-    setItemSelectedStatus : function(item,selected,element){
-      var _self = this;
-      element = element || _self.findElement(item);
-      //_self.get('view').setItemSelected(item,selected,element);
-      _self.setItemStatus(item,'selected',selected,element);
-      _self.afterSelected(item,selected,element);
-    },
-    /**
-     * 设置所有选项选中
-     * @ignore
-     */
-    setAllSelection : function(){
-      var _self = this,
-        items = _self.getItems();
-      _self.setSelection(items);
-    },
-    /**
-     * 选项是否被选中
-     * <pre><code>
-     *   var item = list.getItem('2');
-     *   if(list.isItemSelected(item)){
-     *     //TO DO
-     *   }
-     * </code></pre>
-     * @override
-     * @param  {Object}  item 选项
-     * @return {Boolean}  是否选中
-     */
-    isItemSelected : function(item,element){
-      var _self = this;
-      element = element || _self.findElement(item);
-
-      return _self.get('view').isElementSelected(element);
-    },
-    /**
-     * 是否选项被禁用
-     * <pre><code>
-     * var item = list.getItem('2');
-     * if(list.isItemDisabled(item)){ //如果选项禁用
-     *   //TO DO
-     * }
-     * </code></pre>
-     * @param {Object} item 选项
-     * @return {Boolean} 选项是否禁用
-     */
-    isItemDisabled : function(item,element){
-      return this.hasStatus(item,'disabled',element);
-    },
-    /**
-     * 设置选项禁用
-     * <pre><code>
-     * var item = list.getItem('2');
-     * list.setItemDisabled(item,true);//设置选项禁用，会在DOM上添加 itemCls + 'disabled'的样式
-     * list.setItemDisabled(item,false); //取消禁用，可以用{@link #itemStatusCls} 来替换样式
-     * </code></pre>
-     * @param {Object} item 选项
-     */
-    setItemDisabled : function(item,disabled){
-      
-      var _self = this;
-      if(disabled){
-        //清除选择
-        _self.setItemSelected(item,false);
-      }
-      _self.setItemStatus(item,'disabled',disabled);
-    },
-    /**
-     * 获取选中的项的值
-     * @override
-     * @return {Array} 
-     * @ignore
-     */
-    getSelection : function(){
-      var _self = this,
-        elements = _self.get('view').getSelectedElements(),
-        rst = [];
-      BUI.each(elements,function(elem){
-        rst.push(_self.getItemByElement(elem));
-      });
-      return rst;
-    },
-    /**
-     * @protected
-     * @override
-     * 清除者列表项的DOM
-     */
-    clearControl : function(){
-      this.fire('beforeitemsclear');
-      this.get('view').clearControl();
-      this.fire('itemsclear');
-    },
-    /**
-     * 选项是否存在某种状态
-     * <pre><code>
-     * var item = list.getItem('2');
-     * list.setItemStatus(item,'active',true);
-     * list.hasStatus(item,'active'); //true
-     *
-     * list.setItemStatus(item,'active',false);
-     * list.hasStatus(item,'false'); //true
-     * </code></pre>
-     * @param {*} item 选项
-     * @param {String} status 状态名称，如selected,hover,open等等
-     * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
-     * @return {Boolean} 是否具有某种状态
-     */
-    hasStatus : function(item,status,element){
-      var _self = this,
-        element = element || _self.findElement(item);
-      return _self.get('view').hasStatus(status,element);
-    },
-    /**
-     * 设置选项状态,可以设置任何自定义状态
-     * <pre><code>
-     * var item = list.getItem('2');
-     * list.setItemStatus(item,'active',true);
-     * list.hasStatus(item,'active'); //true
-     *
-     * list.setItemStatus(item,'active',false);
-     * list.hasStatus(item,'false'); //true
-     * </code></pre>
-     * @param {*} item 选项
-     * @param {String} status 状态名称
-     * @param {Boolean} value 状态值，true,false
-     * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
-     */
-    setItemStatus : function(item,status,value,element){
-      var _self = this,
-        element = element || _self.findElement(item);
-      if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //禁用后，阻止添加任何状态变化
-        _self.setStatusValue(item,status,value);
-        _self.get('view').setItemStatusCls(status,element,value);
-      }
-      
-    }
-  });
+  
 
   function clearSelected(item){
     if(item.selected){
@@ -9200,7 +8418,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       setItemAttr(item,'statusCls',statusCls)
       //item.statusCls = statusCls;
     }
-    clearSelected(item);
+   // clearSelected(item);
   }
   function setItemAttr(item,name,val){
     if(item.isController){
@@ -9427,8 +8645,6 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
   });
 
   list.ChildList = childList;
-  list.DomList = domList;
-  list.DomList.View = domListView;
 
   return list;
 });
@@ -9923,7 +9139,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
 
   var win = window,
     Manager = require('bui/component/manage'),
-    UIBase = require('bui/component/uibase');//BUI.Component.UIBase,
+    UIBase = require('bui/component/uibase'),//BUI.Component.UIBase,
     doc = document;
     
     /**
@@ -10510,6 +9726,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
      * @mixins BUI.Component.UIBase.Tpl
      * @mixins BUI.Component.UIBase.Decorate
      * @mixins BUI.Component.UIBase.Depends
+     * @mixins BUI.Component.UIBase.ChildCfg
      * @class BUI.Component.Controller
      */
     var Controller = UIBase.extend([UIBase.Decorate,UIBase.Tpl,UIBase.ChildCfg,UIBase.KeyNav,UIBase.Depends],
@@ -11426,7 +10643,6 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * @cfg {Object} elAttrs
-             * @ignore
 			 * 控件根节点应用的属性，以键值对形式:
              * <pre><code>
              *  new Control({

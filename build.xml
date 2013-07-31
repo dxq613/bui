@@ -15,6 +15,10 @@
             <fileset dir="${des.dir}" includes="**/*-min.js,*.js"/>
 			
         </delete>
+		<copy todir="${des.dir}">
+			<fileset dir="${base.dir}/src/common/"  includes="adapter.js">
+        </fileset>
+	  </copy>
     </target>
 
 	 <target name="build-all">
@@ -38,6 +42,7 @@
 			<path path="${des.dir}/data.js"/>
 			<path path="${des.dir}/overlay.js"/>
 			<path path="${des.dir}/list.js"/>
+			<path path="${des.dir}/picker.js"/>
 			<path path="${des.dir}/form.js"/>
 			<path path="${des.dir}/select.js"/>
 			<path path="${des.dir}/mask.js"/>
@@ -90,5 +95,6 @@
           <fileset dir="${base.dir}/assets/css"  includes="*.css">
           </fileset>
       </copy>
+	  
   </target>
 </project>

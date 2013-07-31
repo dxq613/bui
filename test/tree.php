@@ -1,8 +1,11 @@
 <?php $title="测试Tree"; ?>
 <?php include("./templates/header.php"); ?>
   <style>
+    .bui-tree-height{
+      overflow: auto;
+    }
     .icon-pkg,.icon-example,.task,.task-folder{
-      background: url('http://localhost/extjs/docs/resources/images/icons.png') no-repeat -999px -999px;
+      background: url('http://img04.taobaocdn.com/tps/i4/T12.xMFiNXXXanXMzg-20-680.gif') no-repeat -999px -999px;
     }
 
     .icon-pkg{
@@ -64,8 +67,8 @@
 
   <script type="text/javascript" src="../src/tree/treemixin.js"></script>
   <script type="text/javascript" src="../src/tree/treelist.js"></script>
-  <script type="text/javascript" src="specs/tree-base-spec.js"></script><!-- -->
-  <script type="text/javascript" src="specs/tree-check-spec.js"></script>
-  <script type="text/javascript" src="specs/tree-store-spec.js"></script><!-- -->
-  <script type="text/javascript" src="specs/tree-icon-spec.js"></script>
+  <script type="text/javascript" src="specs/tree-base-spec.js"></script>
+  <script type="text/javascript" src="specs/tree-check-spec.js"></script> <!-- -->
+  <script type="text/javascript" src="specs/tree-store-spec.js"></script>
+  <script type="text/javascript" src="specs/tree-icon-spec.js"></script><!-- -->
 <?php include("./templates/footer.php"); ?>

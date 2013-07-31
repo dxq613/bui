@@ -11,6 +11,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     CLS_NAV_LIST = 'tab-nav-list',
     CLS_ARROW_LEFT = 'arrow-left',
     CLS_ARROW_RIGHT = 'arrow-right',
+    ID_CLOSE = 'm_close',
     ITEM_WIDTH = 140;
 
   /**
@@ -157,11 +158,18 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       _showMenu : function(item,position){
         var _self = this,
-            menu = _self._getMenu();
+            menu = _self._getMenu(),
+            closeable = item.get('closeable'),
+            closeItem;
 
         _self.set('showMenuItem',item);
+
         menu.set('xy',[position.x,position.y]);
         menu.show();
+        closeItem = menu.getItem(ID_CLOSE);
+        if(closeItem){
+          closeItem.set('disabled',!closeable);
+        }
       },
       /**
        * 通过id,设置选中的标签项
@@ -215,6 +223,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           menu = new Menu.ContextMenu({
               children : [
               {
+
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-refresh',
                 text : '刷新',
@@ -228,7 +237,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
                 }
               },
               {
-                id : 'm12',
+                id : ID_CLOSE,
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-remove',
                 text: '关闭',

@@ -122,6 +122,7 @@ BUI.use('bui/tab/navtab',function(NavTab){
       var config = {
         id:'add2',
         title : '添加标签',
+        closeable : false,
         href : 'http://www.taobao.com'
       };
       var item = tab.addTab(config);
@@ -151,9 +152,10 @@ BUI.use('bui/tab',function(Tab){
     it('初始化',function(){
       expect(el.find('.bui-tab-item').length).toBe(tab.getItemCount());
     });
-    it('默认选中不起作用',function(){
+    /*it('默认选中不起作用',function(){
       expect(tab.getSelected()).toBe(undefined);
     });
+*/
     it('设置，取消选中',function(){
       tab.setSelected(tab.getItemAt(0));
       expect(tab.getSelected()).not.toBe(undefined);
@@ -162,8 +164,8 @@ BUI.use('bui/tab',function(Tab){
     });
 
     it('添加选项,并设置选中',function(){
-      tab.addItem({text:'新标签',value:'1',selected:true})
-      expect(tab.getSelected()).toBe(undefined);
+      var item = tab.addItem({text:'新标签',value:'1',selected:true})
+      expect(tab.getSelected()).toBe(item);
     });
 
     it('删除选中选项',function(){

@@ -33,6 +33,22 @@ define('bui/toolbar/bar',function(){
    * <p>
    * <img src="../assets/img/class-toolbar.jpg"/>
    * </p>
+   * ## 按钮组
+   * <pre><code>
+   *   BUI.use('bui/toolbar',function(Toolbar){
+   *     var buttonGroup = new Toolbar.Bar({
+   *       elCls : 'button-group',
+   *       defaultChildCfg : {
+   *         elCls : 'button button-small'
+   *       },
+   *       children : [{content : '增加'},{content : '修改'},{content : '删除'}],
+   *       
+   *       render : '#b1'
+   *     });
+   *
+   *     buttonGroup.render();
+   *   });
+   * </code></pre>
    * @class BUI.Toolbar.Bar
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList

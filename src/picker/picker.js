@@ -3,12 +3,36 @@
  * @ignore
  */
 
-define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
+define('bui/picker/picker',['bui/overlay'],function (require) {
   
-  var Overlay = require('bui/overlay/overlay');
+  var Overlay = require('bui/overlay').Overlay;
+
   /**
-   * 选择器控件，弹出一个层来选择数据
-   * @class BUI.Overlay.Picker
+   * 选择器控件的基类，弹出一个层来选择数据，不要使用此类创建控件，仅用于继承实现控件
+   * xclass : 'picker'
+   * <pre><code>
+   * BUI.use(['bui/picker','bui/list'],function(Picker,List){
+   *
+   * var items = [
+   *       {text:'选项1',value:'a'},
+   *       {text:'选项2',value:'b'},
+   *      {text:'选项3',value:'c'}
+   *     ],
+   *   list = new List.SimpleList({
+   *     elCls:'bui-select-list',
+   *     items : items
+   *   }),
+   *   picker = new Picker.ListPicker({
+   *     trigger : '#show',  
+   *     valueField : '#hide', //如果需要列表返回的value，放在隐藏域，那么指定隐藏域
+   *     width:100,  //指定宽度
+   *     children : [list] //配置picker内的列表
+   *   });
+   * picker.render();
+   * });
+   * </code></pre>
+   * @abstract
+   * @class BUI.Picker.Picker
    * @extends BUI.Overlay.Overlay
    */
   var picker = Overlay.extend({
@@ -51,18 +75,27 @@ define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
             }
           }
           if(isChange){
-            _self.fire('selectedchange',{value : selValue,curTrigger : curTrigger});
+            _self.onChange(selText,selValue,e);
           }
-          
         });
         if(hideEvent){
           innerControl.on(_self.get('hideEvent'),function(){
+            var curTrigger = _self.get('curTrigger');
+            try{ //隐藏时，在ie6,7下会报错
+              if(curTrigger){
+                curTrigger.focus();
+              }
+            }catch(e){
+              BUI.log(e);
+            }
             _self.hide();
           });
         }
       },
       /**
        * 设置选中的值
+       * @template
+       * @protected
        * @param {String} val 设置值
        */
       setSelectedValue : function(val){
@@ -70,6 +103,8 @@ define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
       },
       /**
        * 获取选中的值，多选状态下，值以','分割
+       * @template
+       * @protected
        * @return {String} 选中的值
        */
       getSelectedValue : function(){
@@ -77,10 +112,21 @@ define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
       },
       /**
        * 获取选中项的文本，多选状态下，文本以','分割
+       * @template
+       * @protected
        * @return {String} 选中的文本
        */
       getSelectedText : function(){
 
+      },
+      /**
+       * @protected
+       * 发生改变
+       */
+      onChange : function(selText,selValue,ev){
+        var _self = this,
+          curTrigger = _self.get('curTrigger');
+        _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
       },
       _uiSetValueField : function(v){
         var _self = this;
@@ -183,6 +229,13 @@ define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
       valueField:{
 
       }
+      /**
+       * @event selectedchange
+       * @param {Object} e 事件对象
+       * @param {String} text 选中的文本
+       * @param {string} value 选中的值
+       * @param {jQuery} curTrigger 当前触发picker的元素
+       */
     }
   },{
     xclass:'picker'

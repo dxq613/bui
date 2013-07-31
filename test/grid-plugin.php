@@ -38,6 +38,6 @@
    <script type="text/javascript" src="specs/plugin-radio-spec.js"></script>
     <script type="text/javascript" src="specs/plugin-cascade-spec.js"></script>
 	  <script type="text/javascript" src="specs/plugin-menu-spec.js"></script>  
-    <script type="text/javascript" src="specs/plugin-summary-spec.js"></script>  <!-- -->
+    <script type="text/javascript" src="specs/plugin-summary-spec.js"></script> <!--  -->
 
 <?php include("./templates/footer.php"); ?>       

@@ -1028,8 +1028,28 @@ td.bui-grid-cell-empty {
 .bui-grid-checkBox-container {
   text-align: center;
 }
-th .bui-grid-checkBox-container {
-  padding-top: 5px;
+.bui-grid .x-grid-checkbox {
+  background: url("http://img04.taobaocdn.com/tps/i4/T1YTNJFadfXXX6DYsb-100-100.gif") no-repeat 0px 3px transparent;
+  width: 13px;
+  height: 20px;
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+
+  *zoom: 1;
+}
+.x-grid-checkbox:hover {
+  background-position: -16px 3px;
+}
+.bui-grid-row-selected .x-grid-checkbox,
+.checked .x-grid-checkbox {
+  background-position: 0 -18px;
+}
+.bui-grid-row-disabled .x-grid-checkbox {
+  background-position: -48px 3px;
+}
+.bui-grid-row-selected.bui-grid-row-disabled .x-grid-checkbox {
+  background-position: -48px -18px;
 }
 .bui-grid-cascade {
   vertical-align: middle;
@@ -1111,7 +1131,7 @@ th .bui-grid-checkBox-container {
   background: none no-repeat scroll 5px 5px #ffffff;
   line-height: 16px;
   padding: 5px 10px 5px 25px;
-  background-image: url("http://img03.taobaocdn.com/tps/i3/T12gLCXeheXXaHNz_X-16-16.gif");
+  background-image: url("http://img01.taobaocdn.com/tps/i1/T1BHtLFbFdXXaHNz_X-16-16.gif");
 }
 /**chart**/
 .node-info-container,
@@ -1519,6 +1539,10 @@ input.x-datepicker-time {
 .bui-tree-list {
   border: 1px solid #c3c3d6;
   overflow: auto;
+  background-color: #ffffff;
+}
+.bui-tree-list ul {
+  overflow: hidden;
 }
 .bui-tree-item {
   height: 20px;
@@ -1549,10 +1573,10 @@ input.x-datepicker-time {
 .x-tree-elbow,
 .x-tree-elbow-expander-end,
 .x-tree-elbow-end {
-  background: url("http://localhost/bui/assets/img/tree.gif") no-repeat -999px -999px transparent;
+  background: url("http://img04.taobaocdn.com/tps/i4/T1rbpNFaJXXXbylH7R-80-100.gif") no-repeat -999px -999px transparent;
 }
 .x-tree-icon-checkbox {
-  background: url("http://localhost/bui/assets/img/checkbox.gif") no-repeat 0px 0px transparent;
+  background: url("http://img04.taobaocdn.com/tps/i4/T1YTNJFadfXXX6DYsb-100-100.gif") no-repeat 0px 0px transparent;
 }
 .x-tree-elbow-expander {
   background-position: 0 0;
@@ -1602,7 +1626,7 @@ input.x-datepicker-time {
   background-position: 0px -40px;
 }
 .bui-tree-list .bui-tree-item-loading .x-tree-elbow-expander {
-  background: url("http://img03.taobaocdn.com/tps/i3/T12gLCXeheXXaHNz_X-16-16.gif") no-repeat 0 0 transparent;
+  background: url("http://img01.taobaocdn.com/tps/i1/T1BHtLFbFdXXaHNz_X-16-16.gif") no-repeat 0 0 transparent;
 }
 .bui-tree-item-checked {
   font-style: italic;
@@ -1625,7 +1649,7 @@ input.x-datepicker-time {
 .bui-tree-item-disabled .x-tree-icon-checkbox {
   background-position: -48px 0;
 }
-.bui-tree-item-disabled.bui-tree-item-checked .x-tree-icon-checkbox {
+.bui-tree-item-checked.bui-tree-item-disabled .x-tree-icon-checkbox {
   background-position: -48px -20px;
 }
 .x-align-arrow,

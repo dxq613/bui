@@ -36,6 +36,25 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
    * <p>
    * <img src="../assets/img/class-data.jpg"/>
    * </p>
+   * ** 缓存静态数据 ** 
+   * <pre><code>
+   *  var store = new Store({
+   *    data : [{},{}]
+   *  });
+   * </code></pre>
+   * ** 异步加载数据 **
+   * <pre><code>
+   *  var store = new Store({
+   *    url : 'data.json',
+   *    autoLoad : true,
+   *    params : {id : '123'},
+   *    sortInfo : {
+   *      field : 'id',
+   *      direction : 'ASC' //ASC,DESC
+   *    }
+   *  });
+   * </code></pre>
+   * 
    * @class BUI.Data.Store
    * @extends BUI.Data.AbstractStore
    * @mixins BUI.Data.Sortable
@@ -54,11 +73,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 当前页码
      * @cfg {Number} [currentPage=0]
+     * @ignore
      */
     /**
      * 当前页码
      * @type {Number}
-     * @default 0
+     * @ignore
+     * @readOnly
      */
     currentPage:{
       value : 0
@@ -67,6 +88,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 删除掉的纪录
      * @readOnly
+     * @private
      * @type {Array}
      */
     deletedRecords : {
@@ -74,24 +96,45 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * 错误字段,包含在返回信息中表示错误信息的字段
+     * <pre><code>
+     *   //可以修改接收的后台参数的含义
+     *   var store = new Store({
+     *     url : 'data.json',
+     *     errorProperty : 'errorMsg', //存放错误信息的字段(error)
+     *     hasErrorProperty : 'isError', //是否错误的字段（hasError)
+     *     root : 'data',               //存放数据的字段名(rows)
+     *     totalProperty : 'total'     //存放记录总数的字段名(results)
+     *   });
+     * </code></pre>
      * @cfg {String} [errorProperty='error']
      */
     /**
      * 错误字段
      * @type {String}
-     * @default 'error'
+     * @ignore
      */
     errorProperty : {
       value : 'error'
     },
     /**
      * 是否存在错误,加载数据时如果返回错误，此字段表示有错误发生
+     * <pre><code>
+     *   //可以修改接收的后台参数的含义
+     *   var store = new Store({
+     *     url : 'data.json',
+     *     errorProperty : 'errorMsg', //存放错误信息的字段(error)
+     *     hasErrorProperty : 'isError', //是否错误的字段（hasError)
+     *     root : 'data',               //存放数据的字段名(rows)
+     *     totalProperty : 'total'     //存放记录总数的字段名(results)
+     *   });
+     * </code></pre>
      * @cfg {String} [hasErrorProperty='hasError']
      */
     /**
      * 是否存在错误
      * @type {String}
      * @default 'hasError'
+     * @ignore
      */
     hasErrorProperty : {
       value : 'hasError'
@@ -120,6 +163,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 更改的纪录集合
      * @type {Array}
+     * @private
      * @readOnly
      */
     modifiedRecords : {
@@ -128,23 +172,18 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 新添加的纪录集合，只读
      * @type {Array}
+     * @private
      * @readOnly
      */
     newRecords : {
       value : []
     },
     /**
-     * 是否远程排序，由于当前Store存储的不一定是数据源的全集，所以此配置项需要重新读取数据
-     * 在分页状态下，进行远程排序，会进行全集数据的排序，并返回首页的数据
-     * remoteSort为 false的情况下，仅对当前页的数据进行排序
+     * 是否远程排序，默认状态下内存排序
+     *   - 由于当前Store存储的不一定是数据源的全集，所以此配置项需要重新读取数据
+     *   - 在分页状态下，进行远程排序，会进行全集数据的排序，并返回首页的数据
+     *   - remoteSort为 false的情况下，仅对当前页的数据进行排序
      * @cfg {Boolean} [remoteSort=false]
-     */
-    /**
-     * 是否远程排序，由于当前Store存储的不一定是数据源的全集，所以此配置项需要重新读取数据
-     * 在分页状态下，进行远程排序，会进行全集数据的排序，并返回首页的数据
-     * remoteSort为 false的情况下，仅对当前页的数据进行排序
-     * @type {Boolean}
-     * @default false
      */
     remoteSort : {
       value : false
@@ -156,52 +195,69 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * <li>results: 总的数据条数</li>
      * </ol>
      * @type {Object}
-     * @protected
+     * @private
      * @readOnly
      */
     resultMap : {
       value : {}
     },
     /**
-    * 加载数据时，返回数据的根目录
-    * @cfg {String} [root='rows']
-    *   '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
-    */
-    /**
-    * 加载数据时，返回数据的根目录
-    * @field
-    * @type {String}
-    * @default  "rows"
-    *   '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
-    */
+     * 加载数据时，返回数据的根目录
+     * @cfg {String} [root='rows']
+     * <pre><code>
+     *    //默认返回数据类型：
+     *    '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
+     *   //可以修改接收的后台参数的含义
+     *   var store = new Store({
+     *     url : 'data.json',
+     *     errorProperty : 'errorMsg', //存放错误信息的字段(error)
+     *     hasErrorProperty : 'isError', //是否错误的字段（hasError)
+     *     root : 'data',               //存放数据的字段名(rows)
+     *     totalProperty : 'total'     //存放记录总数的字段名(results)
+     *   });
+     * </code></pre>
+     *   
+     */
     root: { value : 'rows'}, 
 
     /**
      * 当前Store缓存的数据条数
      * @type {Number}
+     * @private
      * @readOnly
      */
     rowCount :{
       value : 0
     },
     /**
-    * 加载数据时，返回记录的总数的字段，用于分页
-    * @cfg {String} [totalProperty='results']
-    *
-    *   '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
-    */
-    /**
-    * 加载数据时，返回记录的总数的字段，用于分页
-    * @field
-    * @type {String}
-    * @default  "results"
-    *
-    *   '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
-    */
+     * 加载数据时，返回记录的总数的字段，用于分页
+     * @cfg {String} [totalProperty='results']
+     *<pre><code>
+     *    //默认返回数据类型：
+     *    '{"rows":[{"name":"abc"},{"name":"bcd"}],"results":100}'
+     *   //可以修改接收的后台参数的含义
+     *   var store = new Store({
+     *     url : 'data.json',
+     *     errorProperty : 'errorMsg', //存放错误信息的字段(error)
+     *     hasErrorProperty : 'isError', //是否错误的字段（hasError)
+     *     root : 'data',               //存放数据的字段名(rows)
+     *     totalProperty : 'total'     //存放记录总数的字段名(results)
+     *   });
+     * </code></pre>
+     */
     totalProperty: {value :'results'}, 
 
     /**
      * 加载数据的起始位置
+     * <pre><code>
+     *  //初始化时，可以在params中配置
+     *  var store = new Store({
+     *    url : 'data.json',
+     *    params : {
+     *      start : 100
+     *    }
+     *  });
+     * </code></pre>
      * @type {Object}
      */
     start:{
@@ -209,11 +265,14 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * 每页多少条记录,默认为null,此时不分页，当指定了此值时分页
+     * <pre><code>
+     *  //当请求的数据分页时
+     *  var store = new Store({
+     *    url : 'data.json',
+     *    pageSize : 30
+     *  });
+     * </code></pre>
      * @cfg {Number} pageSize
-     */
-    /**
-     * 每页多少条记录,默认为null,此时不分页，当指定了此值时分页
-     * @type {Number}
      */
     pageSize : {
 
@@ -231,6 +290,17 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   {
     /**
     * 添加记录,默认添加在后面
+    * <pre><code>
+    *  //添加记录
+    *  store.add({id : '2',text: 'new data'});
+    *  //是否去重，重复数据不能添加
+    *  store.add(obj,true); //不能添加重复数据，此时用obj1 === obj2判断
+    *  //使用匹配函去重
+    *  store.add(obj,true,function(obj1,obj2){
+    *    return obj1.id == obj2.id;
+    *  });
+    *  
+    * </code></pre>
     * @param {Array|Object} data 添加的数据，可以是数组，可以是单条记录
     * @param {Boolean} [noRepeat = false] 是否去重,可以为空，默认： false 
     * @param {Function} [match] 匹配函数，可以为空，
@@ -247,6 +317,10 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 添加记录,指定索引值
+    * <pre><code>
+    *  //使用方式跟类似于add,增加了index参数
+    *  store.add(obj,0);//添加在最前面
+    * </code></pre>
     * @param {Array|Object} data 添加的数据，可以是数组，可以是单条记录
     * @param {Number} index 开始添加数据的位置
     * @param {Boolean} [noRepeat = false] 是否去重,可以为空，默认： false 
@@ -273,6 +347,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 验证是否存在指定记录
+    * <pre><code>
+    *  store.contains(obj); //是否包含指定的记录
+    *
+    *  store.contains(obj,function(obj1,obj2){ //使用匹配函数
+    *    return obj1.id == obj2.id;
+    *  });
+    * </code></pre>
     * @param {Object} record 指定的记录
     * @param {Function} [match = function(obj1,obj2){return obj1 == obj2}] 默认为比较2个对象是否相同
     * @return {Boolean}
@@ -282,6 +363,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 查找记录，仅返回第一条
+    * <pre><code>
+    *  var record = store.find('id','123');
+    * </code></pre>
     * @param {String} field 字段名
     * @param {String} value 字段值
     * @return {Object|null}
@@ -300,6 +384,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 查找记录，返回所有符合查询条件的记录
+    * <pre><code>
+    *   var records = store.findAll('type','0');
+    * </code></pre>
     * @param {String} field 字段名
     * @param {String} value 字段值
     * @return {Array}
@@ -317,6 +404,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 根据索引查找记录
+    * <pre><code>
+    *  var record = store.findByIndex(1);
+    * </code></pre>
     * @param {Number} index 索引
     * @return {Object} 查找的记录
     */
@@ -325,6 +415,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 查找数据所在的索引位置,若不存在返回-1
+    * <pre><code>
+    *  var index = store.findIndexBy(obj);
+    *
+    *  var index = store.findIndexBy(obj,function(obj1,obj2){
+    *    return obj1.id == obj2.id;
+    *  });
+    * </code></pre>
     * @param {Object} target 指定的记录
     * @param {Function} [match = matchFunction] @see {BUI.Data.Store#matchFunction}默认为比较2个对象是否相同
     * @return {Number}
@@ -347,6 +444,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 获取下一条记录
+    * <pre><code>
+    *  var record = store.findNextRecord(obj);
+    * </code></pre>
     * @param {Object} record 当前记录
     * @return {Object} 下一条记录
     */
@@ -360,6 +460,11 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * 获取缓存的记录数
+     * <pre><code>
+     *  var count = store.getCount(); //缓存的数据数量
+     *
+     *  var totalCount = store.getTotalCount(); //数据的总数，如果有分页时，totalCount != count
+     * </code></pre>
      * @return {Number} 记录数
      */
     getCount : function(){
@@ -367,6 +472,11 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * 获取数据源的数据总数，分页时，当前仅缓存当前页数据
+     * <pre><code>
+     *  var count = store.getCount(); //缓存的数据数量
+     *
+     *  var totalCount = store.getTotalCount(); //数据的总数，如果有分页时，totalCount != count
+     * </code></pre>
      * @return {Number} 记录的总数
      */
     getTotalCount : function(){
@@ -377,6 +487,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * 获取当前缓存的纪录
+     * <pre><code>
+     *   var records = store.getResult();
+     * </code></pre>
      * @return {Array} 纪录集合
      */
     getResult : function(){
@@ -393,7 +506,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       return this.getCount() !== 0;
     },
     /**
-     * 设置数据源
+     * 设置数据源,非异步加载时，设置缓存的数据
+     * <pre><code>
+     *   store.setResult([]); //清空数据
+     *
+     *   var data = [{},{}];
+     *   store.setResult(data); //重设数据
+     * </code></pre>
      */
     setResult : function(data){
       var _self = this,
@@ -407,7 +526,16 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
 
     /**
-    * 删除记录触发 remove 事件.
+    * 删除一条或多条记录触发 remove 事件.
+    * <pre><code>
+    *  store.remove(obj);  //删除一条记录
+    *
+    *  store.remove([obj1,obj2...]); //删除多个条记录
+    *
+    *  store.remvoe(obj,funciton(obj1,obj2){ //使用匹配函数
+    *    return obj1.id == obj2.id;
+    *  });
+    * </code></pre>
     * @param {Array|Object} data 添加的数据，可以是数组，可以是单条记录
     * @param {Function} [match = function(obj1,obj2){return obj1 == obj2}] 匹配函数，可以为空
     */
@@ -431,7 +559,10 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }); 
     },
     /**
-     * 排序
+     * 排序，如果remoteSort = true,发送请求，后端排序
+     * <pre><code>
+     *   store.sort('id','DESC'); //以id为排序字段，倒序排序
+     * </code></pre>
      * @param  {String} field     排序字段
      * @param  {String} direction 排序方向
      */
@@ -449,6 +580,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
      * 计算指定字段的和
+     * <pre><code>
+     *   var sum = store.sum('number');
+     * </code></pre>
      * @param  {String} field 字段名
      * @param  {Array} [data] 计算的集合，默认为Store中的数据集合
      * @return {Number} 汇总和
@@ -467,6 +601,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 设置记录的值 ，触发 update 事件
+    * <pre><code>
+    *  store.setValue(obj,'value','new value');
+    * </code></pre>
     * @param {Object} obj 修改的记录
     * @param {String} field 修改的字段名
     * @param {Object} value 修改的值
@@ -483,6 +620,12 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     },
     /**
     * 更新记录 ，触发 update事件
+    * <pre><code>
+    *   var record = store.find('id','12');
+    *   record.value = 'new value';
+    *   record.text = 'new text';
+    *   store.update(record); //触发update事件，引起绑定了store的控件更新
+    * </code></pre>
     * @param {Object} obj 修改的记录
     * @param {Boolean} [isMatch = false] 是否需要进行匹配，检测指定的记录是否在集合中
     */

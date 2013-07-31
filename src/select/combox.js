@@ -20,6 +20,17 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
   /**
    * 组合框 用于提示输入
    * xclass:'combox'
+   * <pre><code>
+   * BUI.use('bui/select',function(Select){
+   * 
+   *  var select = new Select.Combox({
+   *    render:'#c1',
+   *    name:'combox',
+   *    items:['选项1','选项2','选项3','选项4']
+   *  });
+   *  select.render();
+   * });
+   * </code></pre>
    * @class BUI.Select.Combox
    * @extends BUI.Select.Select
    */

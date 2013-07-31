@@ -5,7 +5,8 @@
 
 define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (require) {
   var Editing = require('bui/grid/plugins/editing'),
-    CLS_BODY = BUI.prefix + 'grid-body';
+    CLS_BODY = BUI.prefix + 'grid-body',
+    CLS_CELL = BUI.prefix + 'grid-cell';
 
   /**
    * @class BUI.Grid.Plugins.CellEditing
@@ -17,7 +18,13 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
   };
 
   CellEditing.ATTRS = {
-    
+    /**
+     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * @cfg {String} [triggerCls = 'bui-grid-cell']
+     */
+    triggerCls : {
+      value : CLS_CELL
+    }
   };
 
   BUI.extend(CellEditing,Editing);
@@ -46,6 +53,9 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
      * @return {BUI.Editor.Editor}  编辑器
      */
     getEditor : function(field){
+      if(!field){
+        return null;
+      }
       var  _self = this,
         editors = _self.get('editors'),
         editor = null;

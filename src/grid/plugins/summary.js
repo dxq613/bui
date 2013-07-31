@@ -57,6 +57,22 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
   /**
    * 表格菜单插件 
+   * <pre><code>
+   * var store = new Store({
+   *      url : 'data/summary.json',
+   *      pageSize : 10,
+   *      autoLoad:true
+   *    }),
+   *    grid = new Grid.Grid({
+   *      render:'#grid',
+   *      columns : columns,
+   *      store: store,
+   *      bbar : {pagingBar : true},
+   *      plugins : [Grid.Plugins.Summary] // 插件形式引入单选表格
+   *    });
+   *
+   *  grid.render();
+   * </code></pre>
    * @class BUI.Grid.Plugins.Summary
    */
   var summary = function (config) {

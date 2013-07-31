@@ -18,7 +18,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
    * 日历控件显示选择年月
    * xclass:'calendar-header'
    * @class BUI.Calendar.Header
-   * @protected
+   * @private
    * @extends BUI.Component.Controller
    */
   var header = Component.Controller.extend({

@@ -3,13 +3,17 @@
  * @ignore
  */
 
-define('bui/list/simplelist',function (require) {
+define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav'],function (require) {
+
   /**
    * @name BUI.List
    * @namespace 列表命名空间
    * @ignore
    */
-  var UIBase = BUI.Component.UIBase,
+  var BUI = require('bui/common'),
+    UIBase = BUI.Component.UIBase,
+    DomList = require('bui/list/domlist'),
+    KeyNav = require('bui/list/keynav'),
     CLS_ITEM = BUI.prefix + 'list-item';
   
   /**
@@ -17,7 +21,7 @@ define('bui/list/simplelist',function (require) {
    * 简单列表视图类
    * @extends BUI.Component.View
    */
-  var simpleListView = BUI.Component.View.extend([UIBase.DomListView],{
+  var simpleListView = BUI.Component.View.extend([DomList.View],{
 
     setElementHover : function(element,hover){
       var _self = this;
@@ -43,12 +47,41 @@ define('bui/list/simplelist',function (require) {
    * <img src="../assets/img/class-list.jpg"/>
    * </p>
    * xclass:'simple-list'
+   * ## 显示静态数组的数据
+   * 
+   * ** 最简单的列表 **
+   * <pre><code>
+   * 
+   * BUI.use('bui/list',function(List){
+   *   var list = new List.SimpleList({
+   *     render : '#t1',
+   *     items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+   *   });
+   *   list.render();
+   * });
+   * 
+   * </code></pre>
+   *
+   * ** 自定义模板的列表 **
+   *<pre><code>
+   * 
+   * BUI.use('bui/list',function(List){
+   *   var list = new List.SimpleList({
+   *     render : '#t1',
+   *     items : [{value : '1',text : '1'},{value : '2',text : '2'}]
+   *   });
+   *   list.render();
+   * });
+   * 
+   * </code></pre>
+   * 
    * @class BUI.List.SimpleList
    * @extends BUI.Component.Controller
-   * @mixins BUI.Component.UIBase.DomList
+   * @mixins BUI.List.DomList
+   * @mixins BUI.List.KeyNav
    * @mixins BUI.Component.UIBase.Bindable
    */
-  var  simpleList = BUI.Component.Controller.extend([UIBase.DomList,UIBase.Bindable],
+  var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav],
   /**
    * @lends BUI.List.SimpleList.prototype
    * @ignore
@@ -61,15 +94,20 @@ define('bui/list/simplelist',function (require) {
     bindUI : function(){
       var _self = this,
         itemCls = _self.get('itemCls'),
-        hoverCls = itemCls + '-hover',
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'mouseover',function(ev){
+        var element = ev.currentTarget,
+          item = _self.getItemByElement(element);
         if(_self.isItemDisabled(ev.item,ev.currentTarget)){ //如果禁用
           return;
         }
-        var sender = $(ev.currentTarget);
-        _self.get('view').setElementHover(sender,true);
+        
+        if(_self.get('highlightedStatus') === 'hover'){
+          _self.setHighlighted(item,element)
+        }else{
+          _self.setItemStatus(item,'hover',true,element);
+        }
       }).delegate('.'+itemCls,'mouseout',function(ev){
         var sender = $(ev.currentTarget);
         _self.get('view').setElementHover(sender,false);

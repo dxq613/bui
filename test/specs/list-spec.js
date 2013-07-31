@@ -137,40 +137,7 @@ BUI.use('bui/list',function (List) {
 
 });
 
-BUI.use('bui/list',function (List) {
 
-  var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}],
-    picker = new List.Picker({
-    render : '#lp',
-    align:{
-      points : ['tl','tl']
-    },
-    children:[{
-        elCls:'bui-select-list',
-        items : items
-      }
-    ]
-  });
-  picker.show();
-  var el = picker.get('el');
-
-  describe('测试选择器生成',function(){
-
-    it('列表生成',function(){
-      expect(picker.get('list')).not.toBe(null);
-      expect(el.find('.bui-select-list').length).not.toBe(0);
-      expect(el.find('.bui-list-item').length).toBe(items.length);
-    });
-
-    it('重置数据',function(){
-      var items1 = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3},{text:"123",value:4}];
-      picker.get('list').set('items',items1);
-      expect(el.find('.bui-list-item').length).toBe(items1.length);
-    });
-
-  });
-
-});
 
 BUI.use('bui/list',function (List) {
 
@@ -280,6 +247,7 @@ BUI.use('bui/list',function (List) {
       list.setSelectedByField('a');
       expect(selectCallback).toHaveBeenCalled();
     });
+
   });
 
 });
@@ -393,6 +361,18 @@ BUI.use('bui/list',function (List) {
       expect($(element).hasClass('bui-list-item-active')).toBe(false);
     });
 
+    it('测试双击事件',function(){
+      var item = list.getFirstItem(),
+        callback = jasmine.createSpy(),
+        element = list.findElement(item);
+      list.on('itemdbclick',callback);
+      $(element).trigger('dbclick');
+      waits(100);
+      runs(function(){
+        expect(callback).toHaveBeenCalled();
+        list.off('itemdbclick',callback);
+      });
+    });
   });
 });
 
@@ -459,7 +439,9 @@ BUI.use('bui/list',function (List) {
     items : items
   });
   list.render();
-
+  $('#clear').on('click',function(){
+    list.clearItems();
+  });
   var el = list.get('el');
 
 
@@ -521,13 +503,11 @@ BUI.use('bui/list',function (List) {
       });
       list.setSelection(arr);
       expect(list.getSelection().length).toBe(3);
-      //testSelected(item1,true);
-      //testSelected(item2,true);
     });
 
     it('测试清除所有选中',function(){
       list.clearSelection();
-      expect(list.getSelected()).toBe(undefined);
+      expect(list.getSelected()).toBe(null);
     });
     
   });
@@ -565,12 +545,32 @@ BUI.use('bui/list',function (List) {
       });
 
     });
-
-    it('测试点击禁止选中项',function(){
-      
-    });
-
   });
 
+});
+
+BUI.use('bui/list',function(List){
+  describe('list srcNode',function(){
+    var node = $('<section><ul><li class="item item-active" data-id="1">1</li><li  class="item" data-id="2">2</li><li  class="item" data-id="3">3</li><li class="item" data-id="4">4</li></ul></section>').appendTo('.container'),
+      list = new List.SimpleList({
+        srcNode : node,
+        idField : 'id',
+        itemStatusFields : {
+          active : 'active'
+        },
+        itemCls : 'item'
+      });
+    list.render();
+
+    it('test items',function(){
+      expect(list.getCount()).toBe(node.find('.item').length);
+    });
+
+    it('test item status',function(){
+      var item = list.getItem('1');
+      expect(list.hasStatus(item,'active')).toBe(true);
+      expect(item.active).toBe(true);
+    });
+  });
 });
 

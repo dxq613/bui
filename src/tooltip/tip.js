@@ -84,6 +84,37 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
    * @class BUI.Tooltip.Tip
    * @extends BUI.Overlay.Overlay
    * 简易的提示信息
+   * 
+   * ** 你可以简单的使用单个tip **
+   * <pre><code>
+   * BUI.use('bui/tooltip',function (Tooltip) {
+   *  //不使用模板的，左侧显示
+   *   var t1 = new Tooltip.Tip({
+   *     trigger : '#t1',
+   *     alignType : 'left', //方向
+   *     showArrow : false, //不显示箭头
+   *     offset : 5, //距离左边的距离
+   *     title : '无任何样式，<br>左边的提示信息'
+   *   });
+   *   t1.render();
+   *  });
+   * </code></pre>
+   *
+   * ** 也可以配置模板 **
+   * <pre><code>
+   * BUI.use('bui/tooltip',function (Tooltip) {
+   *  //使用模板的，左侧显示
+   *   var t1 = new Tooltip.Tip({
+   *     trigger : '#t1',
+   *     alignType : 'left', //方向
+   *     titleTpl : '&lt;span class="x-icon x-icon-small x-icon-success"&gt;&lt;i class="icon icon-white icon-question"&gt;&lt;/i&gt;&lt;/span&gt;\
+   *     &lt;div class="tips-content"&gt;{title}&lt;/div&gt;',
+   *     offset : 5, //距离左边的距离
+   *     title : '无任何样式，&lt;br&gt;左边的提示信息'
+   *   });
+   *   t1.render();
+   *  });
+   * </code></pre>
    */
   var Tip = Overlay.Overlay.extend({
     //设置对齐方式
@@ -107,7 +138,8 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
         value : true
       },
       /**
-       * 对齐类型，包括： top,left,right,bottom四种常用方式，其他对齐方式，可以使用@see{BUI.Tooltip.Tip-property-align}属性
+       * 对齐类型，包括： top,left,right,bottom四种常用方式，其他对齐方式，可以使用@see{BUI.Tooltip.Tip#property-align}属性
+       * 
        * @type {String}
        */
       alignType : {
@@ -115,11 +147,24 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
       },
       /**
        * 显示的内容，文本或者键值对
-       *      new Tip({
+       * <pre><code>
+       *     var tip =  new Tip({
        *        title : {a : 'text a',b:'text b'}, //属性是对象
        *        titleTpl : '<p>this is {a},because {b}</p>' // <p>this is text a,because text b</p>
        *      });
-       * @type {String|Object}
+       * </code></pre>
+       * @cfg {String|Object} title
+       */
+      /**
+       * 显示的内容
+       * <pre><code>
+       *  //设置文本
+       *  tip.set('title','new title');
+       *
+       *  //设置对象
+       *  tip.set('title',{a : 'a',b : 'b'})
+       * </code></pre>
+       * @type {Object}
        */
       title : {
         view : true
@@ -128,13 +173,14 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
        * 显示对齐箭头
        * @override
        * @default true
-       * @type {Boolean}
+       * @cfg {Boolean} [showArrow = true]
        */
       showArrow : {
         value : true
       },
       /**
        * 箭头放置在的位置，是一个选择器，例如 .arrow-wraper
+       * <pre><code>
        *     new Tip({ //可以设置整个控件的模板
        *       arrowContainer : '.arrow-wraper',
        *       tpl : '<div class="arrow-wraper"></div>'
@@ -144,8 +190,8 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
        *       arrowContainer : '.arrow-wraper',
        *       titleTpl : '<div class="arrow-wraper">{title}</div>'
        *     });
-       *     
-       * @type {String}
+       * </code></pre>   
+       * @cfg {String} arrowContainer
        */
       arrowContainer : {
         view : true
@@ -160,7 +206,14 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
       },
       /**
       * 显示的tip 距离触发器Dom的距离
-      * @type {Number}
+      * <pre><code>
+      *  var tip =  new Tip({
+      *    title : {a : 'text a',b:'text b'}, //属性是对象
+      *    offset : 10, //距离
+      *    titleTpl : '<p>this is {a},because {b}</p>' // <p>this is text a,because text b</p>
+      *  });
+      * </code></pre>
+      * @cfg {Number} offset
       */
       offset : {
         value : 0
@@ -168,12 +221,20 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
       /**
        * 触发显示tip的事件名称，默认为mouseover
        * @type {String}
+       * @protected
        */
       triggerEvent : {
         value : 'mouseover'
       },
       /**
        * 显示文本的模板
+       * <pre><code>
+       *  var tip =  new Tip({
+       *    title : {a : 'text a',b:'text b'}, //属性是对象
+       *    offset : 10, //距离
+       *    titleTpl : '<p>this is {a},because {b}</p>' // <p>this is text a,because text b</p>
+       *  });
+       * </code></pre>
        * @type {String}
        */
       titleTpl : {

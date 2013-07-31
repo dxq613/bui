@@ -230,6 +230,16 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       if(parent && v){
         parent._setItemActived(_self);
       }
+    },
+    _uiSetCloseable : function(v){
+      var _self = this,
+        el = _self.get('el'),
+        closeEl = el.find('.' + CLS_ITEM_CLOSE);
+      if(v){
+        closeEl.show();
+      }else{
+        closeEl.hide();
+      }
     }
   },{
     ATTRS : 
@@ -248,6 +258,13 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       actived : {
         view:true,
         value : false
+      }, 
+      /**
+       * 是否可关闭
+       * @type {Boolean}
+       */
+      closeable : {
+        value : true
       },
       allowTextSelection:{
         view:false,
@@ -326,6 +343,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
        */
       /**
        * 标签文本
+       * tab.getItem('id').set('title','new title');
        * @type {String}
        * @default ''
        */
@@ -361,6 +379,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     CLS_NAV_LIST = 'tab-nav-list',
     CLS_ARROW_LEFT = 'arrow-left',
     CLS_ARROW_RIGHT = 'arrow-right',
+    ID_CLOSE = 'm_close',
     ITEM_WIDTH = 140;
 
   /**
@@ -507,11 +526,18 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       _showMenu : function(item,position){
         var _self = this,
-            menu = _self._getMenu();
+            menu = _self._getMenu(),
+            closeable = item.get('closeable'),
+            closeItem;
 
         _self.set('showMenuItem',item);
+
         menu.set('xy',[position.x,position.y]);
         menu.show();
+        closeItem = menu.getItem(ID_CLOSE);
+        if(closeItem){
+          closeItem.set('disabled',!closeable);
+        }
       },
       /**
        * 通过id,设置选中的标签项
@@ -565,6 +591,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           menu = new Menu.ContextMenu({
               children : [
               {
+
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-refresh',
                 text : '刷新',
@@ -578,7 +605,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
                 }
               },
               {
-                id : 'm12',
+                id : ID_CLOSE,
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-remove',
                 text: '关闭',
@@ -947,6 +974,27 @@ define('bui/tab/tab',['bui/common'],function (require) {
   /**
    * 列表
    * xclass:'tab'
+   * <pre><code>
+   * BUI.use('bui/tab',function(Tab){
+   *   
+   *     var tab = new Tab.Tab({
+   *         render : '#tab',
+   *         elCls : 'nav-tabs',
+   *         autoRender: true,
+   *         children:[
+   *           {text:'标签一',value:'1'},
+   *           {text:'标签二',value:'2'},
+   *           {text:'标签三',value:'3'}
+   *         ]
+   *       });
+   *     tab.on('selectedchange',function (ev) {
+   *       var item = ev.item;
+   *       $('#log').text(item.get('text') + ' ' + item.get('value'));
+   *     });
+   *     tab.setSelected(tab.getItemAt(0)); //设置选中第一个
+   *   
+   *   });
+   *  </code></pre>
    * @class BUI.Tab.Tab
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList
@@ -1077,6 +1125,23 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
 
   /**
    * 带有面板的切换标签
+   * <pre><code>
+   * BUI.use('bui/tab',function(Tab){
+   *   
+   *     var tab = new Tab.TabPanel({
+   *       render : '#tab',
+   *       elCls : 'nav-tabs',
+   *       panelContainer : '#panel',
+   *       autoRender: true,
+   *       children:[
+   *         {text:'源代码',value:'1'},
+   *         {text:'HTML',value:'2'},
+   *         {text:'JS',value:'3'}
+   *       ]
+   *     });
+   *     tab.setSelected(tab.getItemAt(0));
+   *   });
+   * </code></pre>
    * @class BUI.Tab.TabPanel
    * @extends BUI.Tab.Tab
    */

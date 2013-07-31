@@ -28,6 +28,23 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    * <img src="../assets/img/class-overlay.jpg"/>
    * </p>
    * xclass : 'overlay'
+   * ** 一般来说，overlay的子类，Dialog 、Message、ToolTip已经能够满足日常应用，但是使用overay更适合一些更加灵活的地方 **
+   * ## 简单overlay
+   * <pre><code>
+   *   BUI.use('bui/overlay',function(Overlay){
+   *     //点击#btn，显示overlay
+   *     var overlay = new Overlay.Overlay({
+   *       trigger : '#btn',
+   *       content : '这是内容',
+   *       elCls : '外层应用的样式',
+   *       autoHide : true //点击overlay外面，overlay 会自动隐藏
+   *     });
+   *
+   *     overlay.render();
+   *   });
+   * <code><pre>
+   *
+   * 
    * @class BUI.Overlay.Overlay
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.Position
@@ -158,6 +175,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
       /**
        * 是否显示指向箭头，跟align属性的points相关
        * @type {Boolean}
+       * @protected
        */
       showArrow : {
         value : false
@@ -170,6 +188,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
        *     });
        *     
        * @type {String}
+       * @protected
        */
       arrowContainer : {
         view : true
@@ -177,6 +196,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
       /**
        * 指向箭头的模板
        * @type {Object}
+       * @protected
        */
       arrowTpl : {
         value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'

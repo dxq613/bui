@@ -22,7 +22,6 @@
     <concat destfile="${des.dir}/overlay.js" encoding="${charset}" outputencoding="${charset}">
       <path path="base.js"/>
 			<path path="overlay.js"/>
-			<path path="picker.js"/>
 			<path path="dialog.js"/>
 			<path path="message.js"/>
 		</concat>

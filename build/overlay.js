@@ -3,15 +3,14 @@
  * @ignore
  */
 
-define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message','bui/overlay/picker'],function (require) {
+define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message'],function (require) {
   var BUI = require('bui/common'),
     Overlay = BUI.namespace('Overlay');
 
   BUI.mix(Overlay,{
     Overlay : require('bui/overlay/overlay'),
     Dialog : require('bui/overlay/dialog'),
-    Message : require('bui/overlay/message'),
-    Picker : require('bui/overlay/picker')
+    Message : require('bui/overlay/message')
   });
 
   BUI.mix(Overlay,{
@@ -52,6 +51,23 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    * <img src="../assets/img/class-overlay.jpg"/>
    * </p>
    * xclass : 'overlay'
+   * ** 一般来说，overlay的子类，Dialog 、Message、ToolTip已经能够满足日常应用，但是使用overay更适合一些更加灵活的地方 **
+   * ## 简单overlay
+   * <pre><code>
+   *   BUI.use('bui/overlay',function(Overlay){
+   *     //点击#btn，显示overlay
+   *     var overlay = new Overlay.Overlay({
+   *       trigger : '#btn',
+   *       content : '这是内容',
+   *       elCls : '外层应用的样式',
+   *       autoHide : true //点击overlay外面，overlay 会自动隐藏
+   *     });
+   *
+   *     overlay.render();
+   *   });
+   * <code><pre>
+   *
+   * 
    * @class BUI.Overlay.Overlay
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.Position
@@ -182,6 +198,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
       /**
        * 是否显示指向箭头，跟align属性的points相关
        * @type {Boolean}
+       * @protected
        */
       showArrow : {
         value : false
@@ -194,6 +211,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
        *     });
        *     
        * @type {String}
+       * @protected
        */
       arrowContainer : {
         view : true
@@ -201,6 +219,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
       /**
        * 指向箭头的模板
        * @type {Object}
+       * @protected
        */
       arrowTpl : {
         value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'
@@ -222,197 +241,6 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
   overlay.View = overlayView;
   return overlay;
 
-});/**
- * @fileOverview 选择器
- * @ignore
- */
-
-define('bui/overlay/picker',['bui/overlay/overlay'],function (require) {
-  
-  var Overlay = require('bui/overlay/overlay');
-  /**
-   * 选择器控件，弹出一个层来选择数据
-   * @class BUI.Overlay.Picker
-   * @extends BUI.Overlay.Overlay
-   */
-  var picker = Overlay.extend({
-    
-      bindUI : function(){
-        var _self = this,
-          innerControl = _self.get('innerControl'),
-          hideEvent = _self.get('hideEvent'),
-          trigger = $(_self.get('trigger'));
-
-        trigger.on(_self.get('triggerEvent'),function(e){
-          if(_self.get('autoSetValue')){
-            var valueField = _self.get('valueField') || _self.get('textField') || this,
-              val = $(valueField).val();
-            _self.setSelectedValue(val);
-          }
-        });
-
-        innerControl.on(_self.get('changeEvent'),function(e){
-          var curTrigger = _self.get('curTrigger'),
-            textField = _self.get('textField') || curTrigger,
-            valueField = _self.get('valueField'),
-            selValue = _self.getSelectedValue(),
-            isChange = false;
-
-          if(textField){
-            var selText = _self.getSelectedText(),
-              preText = $(textField).val();
-            if(selText != preText){
-              $(textField).val(selText);
-              isChange = true;
-            }
-          }
-          
-          if(valueField){
-            var preValue = $(valueField).val();  
-            if(valueField != preValue){
-              $(valueField).val(selValue);
-              isChange = true;
-            }
-          }
-          if(isChange){
-            _self.fire('selectedchange',{value : selValue,curTrigger : curTrigger});
-          }
-          
-        });
-        if(hideEvent){
-          innerControl.on(_self.get('hideEvent'),function(){
-            _self.hide();
-          });
-        }
-      },
-      /**
-       * 设置选中的值
-       * @param {String} val 设置值
-       */
-      setSelectedValue : function(val){
-        
-      },
-      /**
-       * 获取选中的值，多选状态下，值以','分割
-       * @return {String} 选中的值
-       */
-      getSelectedValue : function(){
-        
-      },
-      /**
-       * 获取选中项的文本，多选状态下，文本以','分割
-       * @return {String} 选中的文本
-       */
-      getSelectedText : function(){
-
-      },
-      _uiSetValueField : function(v){
-        var _self = this;
-        if(v){
-          _self.setSelectedValue($(v).val());
-        }
-      },
-      _getTextField : function(){
-        var _self = this;
-        return _self.get('textField') || _self.get('curTrigger');
-      }
-  },{
-    ATTRS : {
-      
-      /**
-       * 用于选择的控件，默认为第一个子元素,此控件实现 @see {BUI.Component.UIBase.Selection} 接口
-       * @protected
-       * @type {Object|BUI.Component.Controller}
-       */
-      innerControl : {
-        getter:function(){
-          return this.get('children')[0];
-        }
-      },
-      /**
-       * 显示选择器的事件
-       * @cfg {String} [triggerEvent='click']
-       */
-      /**
-       * 显示选择器的事件
-       * @type {String}
-       * @default 'click'
-       */
-      triggerEvent:{
-        value:'click'
-      },
-      /**
-       * 选择器选中的项，是否随着触发器改变
-       * @cfg {Boolean} [autoSetValue=true]
-       */
-      /**
-       * 选择器选中的项，是否随着触发器改变
-       * @type {Boolean}
-       */
-      autoSetValue : {
-        value : true
-      },
-      /**
-       * 选择发生改变的事件
-       * @cfg {String} [changeEvent='selectedchange']
-       */
-      /**
-       * 选择发生改变的事件
-       * @type {String}
-       */
-      changeEvent : {
-        value:'selectedchange'
-      },
-      /**
-       * 自动隐藏
-       * @type {Boolean}
-       * @override
-       */
-      autoHide:{
-        value : true
-      },
-      /**
-       * 隐藏选择器的事件
-       * @protected
-       * @type {String}
-       */
-      hideEvent:{
-        value:'itemclick'
-      },
-      /**
-       * 返回的文本放在的DOM，一般是input
-       * @cfg {String|HTMLElement|jQuery} textField
-       */
-      /**
-       * 返回的文本放在的DOM，一般是input
-       * @type {String|HTMLElement|jQuery}
-       */
-      textField : {
-
-      },
-      align : {
-        value : {
-           points: ['bl','tl'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
-           offset: [0, 0]      // 有效值为 [n, m]
-        }
-      },
-      /**
-       * 返回的值放置DOM ,一般是input
-       * @cfg {String|HTMLElement|jQuery} valueField
-       */
-      /**
-       * 返回的值放置DOM ,一般是input
-       * @type {String|HTMLElement|jQuery}
-       */
-      valueField:{
-
-      }
-    }
-  },{
-    xclass:'picker'
-  });
-
-  return picker;
 });/**
  * @fileOverview 弹出框
  * @author dxq613@gmail.com
@@ -481,7 +309,43 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    * <p>
    * <img src="../assets/img/class-overlay.jpg"/>
    * </p>
-   * 
+   * ** 普通弹出框 **
+   * <pre><code>
+   *  BUI.use('bui/overlay',function(Overlay){
+   *      var dialog = new Overlay.Dialog({
+   *        title:'非模态窗口',
+   *        width:500,
+   *        height:300,
+   *        mask:false,  //设置是否模态
+   *        buttons:[],
+   *        bodyContent:'<p>这是一个非模态窗口,并且不带按钮</p>'
+   *      });
+   *    dialog.show();
+   *    $('#btnShow').on('click',function () {
+   *      dialog.show();
+   *    });
+   *  });
+   * </code></pre>
+   *
+   * ** 使用现有的html结构 **
+   * <pre><code>
+   *  BUI.use('bui/overlay',function(Overlay){
+   *      var dialog = new Overlay.Dialog({
+   *        title:'配置DOM',
+   *        width:500,
+   *        height:250,
+   *        contentId:'content',//配置DOM容器的编号
+   *        success:function () {
+   *          alert('确认');
+   *          this.hide();
+   *        }
+   *      });
+   *    dialog.show();
+   *    $('#btnShow').on('click',function () {
+   *      dialog.show();
+   *    });
+   *  });
+   * </code></pre>
    * @class BUI.Overlay.Dialog
    * @extends BUI.Overlay.Overlay
    * @mixins BUI.Component.UIBase.StdMod
@@ -528,6 +392,31 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       },
      /**
        * 弹出库的按钮，可以有多个,有3个参数
+       * var dialog = new Overlay.Dialog({
+       *     title:'自定义按钮',
+       *     width:500,
+       *     height:300,
+       *     mask:false,
+       *     buttons:[
+       *       {
+       *         text:'自定义',
+       *         elCls : 'button button-primary',
+       *         handler : function(){
+       *           //do some thing
+       *           this.hide();
+       *         }
+       *       },{
+       *         text:'关闭',
+       *         elCls : 'button',
+       *         handler : function(){
+       *           this.hide();
+       *         }
+       *       }
+       *     ],
+       *     
+       *     bodyContent:'<p>这是一个自定义按钮窗口,可以配置事件和文本样式</p>'
+       *   });
+       *  dialog.show();
        * <ol>
        *   <li>text:按钮文本</li>
        *   <li>elCls:按钮样式</li>
@@ -536,16 +425,6 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        * @cfg {Array} buttons
        * @default '确定'、'取消'2个按钮
        * 
-       */
-      /**
-       * 弹出库的按钮，可以有多个,有3个参数
-       * <ol>
-       *   <li>text:按钮文本</li>
-       *   <li>elCls:按钮样式</li>
-       *   <li>handler:点击按钮的回调事件</li>
-       * </ol>
-       * @type {Array}
-       * @default '确定'、'取消'2个按钮
        */
       buttons:{
         value:[
@@ -572,20 +451,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        * 弹出框显示内容的DOM容器ID
        * @cfg {Object} contentId
        */
-      /**
-       * 弹出框显示内容的DOM容器ID
-       * @type {Object}
-       */
       contentId:{
         view:true
       },
   	  /**
       * 点击成功时的回调函数
       * @cfg {Function} success
-      */
-      /**
-      * 点击成功时的回调函数
-      * @type {Function}
       */
       success : {
         value : function(){
@@ -606,6 +477,9 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        */
       /**
        * 弹出框标题
+       * <pre><code>
+       *  dialog.set('title','new title');
+       * </code></pre>
        * @type {String}
        */
       title : {
@@ -657,6 +531,31 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
 
   /**
    * 消息框类，一般不直接创建对象，而是调用其Alert和Confirm方法
+   * <pre><code>
+   ** BUI.use('bui/overlay',function(overlay){
+   * 
+   *    BUI.Message.Alert('这只是简单的提示信息','info');
+   *    BUI.Message.Alert('这只是简单的成功信息','success');
+   *    BUI.Message.Alert('这只是简单的警告信息','warning');
+   *    BUI.Message.Alert('这只是简单的错误信息','error');
+   *    BUI.Message.Alert('这只是简单的询问信息','question');
+   *
+   *    //回调函数
+   *    BUI.Message.Alert('点击触发回调函数',function() {
+   *         alert('执行回调');
+   *       },'error');
+   *       
+   *    //复杂的提示信息
+   *    var msg = '<h2>上传失败，请上传10M以内的文件</h2>'+
+   *       '<p class="auxiliary-text">如连续上传失败，请及时联系客服热线：0511-23883767834</p>'+
+   *       '<p><a href="#">返回list页面</a> <a href="#">查看详情</a></p>';
+   *     BUI.Message.Alert(msg,'error');
+   *    //确认信息
+   *    BUI.Message.Confirm('确认要更改么？',function(){
+   *       alert('确认');
+   *     },'question');
+   * });
+   * </code></pre>
    * @class BUI.Overlay.Message
    * @private
    * @extends BUI.Overlay.Dialog
@@ -680,8 +579,12 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
            * fix ie6,7 bug
            * @ignore
            */
-            _self.get('header').width(body.outerWidth() - 20);
-            _self.get('footer').width(body.outerWidth());
+            var outerWidth = body.outerWidth();
+            if(BUI.UA.ie == 6){
+              outerWidth = outerWidth > 350 ? 350 : outerWidth;
+            }
+            _self.get('header').width(outerWidth - 20);
+            _self.get('footer').width(outerWidth);
           }
         }
       });
@@ -847,6 +750,11 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
 
   /**
    * 显示确认框
+   * <pre><code>
+   * BUI.Message.Confirm('确认要更改么？',function(){
+   *       alert('确认');
+   * },'question');
+   * </code></pre>
    * @static
    * @method
    * @member BUI.Message

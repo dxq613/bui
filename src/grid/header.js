@@ -380,6 +380,10 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
           width = _self.get('width'),
           totalWidth = 0,
           emptyColumn = null;
+        if(width == 'auto'){
+          //_self.get('el').find('table').width()
+          return;
+        }
         if (_self.get('forceFit')) {
           _self.forceFitColumns();
         }else if(_self._isAllowScrollLeft()){

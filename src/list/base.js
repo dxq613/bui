@@ -4,7 +4,7 @@
  */
 ;(function(){
 var BASE = 'bui/list/';
-define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simplelist',BASE + 'listbox',BASE + 'listpicker'],function (r) {
+define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simplelist',BASE + 'listbox'],function (r) {
   var BUI = r('bui/common'),
     List = BUI.namespace('List');
 
@@ -12,8 +12,7 @@ define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simpleli
     List : r(BASE + 'list'),
     ListItem : r(BASE + 'listitem'),
     SimpleList : r(BASE + 'simplelist'),
-    Listbox : r(BASE + 'listbox'),
-    Picker : r(BASE + 'listpicker')
+    Listbox : r(BASE + 'listbox')
   });
 
   BUI.mix(List,{

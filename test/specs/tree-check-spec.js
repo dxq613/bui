@@ -1,7 +1,7 @@
 /**/
 BUI.use('bui/tree/treelist',function (TreeList) {
   var nodes = [
-      {text : '1',id : '1',leaf : false,checked:false,children : [{text : '11',id : '11',checked : true},{text : '12',id : '12',checked : true}]},
+      {text : '1',id : '1',leaf : false,checked:false,children : [{text : '11',id : '11',checked : true},{text : '12',id : '12',checked : true,children:[{text : '121',id : '121',checked:false},{text : '122',id : '122',checked:false}]}]},
       {text : '2',id : '2',expanded : true,checked:false,children : [
           {text : '21',id : '21',checked : true,children : [{text : '211',id : '211',checked : false},{text : '212',id : '212',disabled:true,checked : false}]},
           {text : '22',id : '22',checked : false}
@@ -71,7 +71,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       it('获取树节点下勾选的值',function(){
         var node = tree.findNode('1'),
           nodes = tree.getCheckedNodes(node);
-        expect(nodes.length).toBe(2);
+        expect(nodes.length).not.toBe(0);
 
       });
       it('获取勾选的所有叶子节点',function(){
@@ -86,9 +86,6 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       });
     });
     describe('勾选操作',function(){
-      it('测试勾选值',function(){
-
-      });
       it('勾选子节点',function(){
         var node = tree.getItem('22');
         tree.setNodeChecked(node,true);
@@ -154,6 +151,19 @@ BUI.use('bui/tree/treelist',function (TreeList) {
         tree.setNodeChecked('22',true);
         expect(tree.hasStatus(node,'checked')).toBe(true);
         expect(tree.hasStatus(node,'partial-checked')).toBe(false);
+      });
+
+      it('递归测试上级节点的半选状态',function(){
+        tree.expandNode('1',true);
+        var node = tree.getItem('122');
+        expect(node).not.toBe(null);
+        tree.setNodeChecked(node,false);
+        expect(tree.hasStatus(node.parent,'partial-checked')).toBe(true);
+        expect(tree.hasStatus(node.parent.parent,'partial-checked')).toBe(true);
+
+        tree.setNodeChecked(node,true);
+        expect(tree.hasStatus(node.parent,'partial-checked')).toBe(false);
+        expect(tree.hasStatus(node.parent.parent,'partial-checked')).toBe(false);
       });
 
       it('折叠后，展开，测试节点勾选状态',function(){
@@ -257,12 +267,12 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
 
 BUI.use('bui/tree/treelist',function (TreeList) {
   var nodes = [
-      {text : '1',id : '1',leaf : false,checked:false,children : [{text : '11',id : '11',checked : true},{text : '12',id : '12',checked : true}]},
+      {text : '1',id : '1',leaf : false,checked:false,children : [{text : '11',id : '11'},{text : '12',id : '12',children:[{text : '121',id : '121'},{text : '122',id : '122'}]}]},
       {text : '2',id : '2',expanded : true,checked:false,children : [
           {text : '21',id : '21',checked : true,children : [{text : '211',id : '211',checked : false},{text : '212',id : '212',checked : false}]},
           {text : '22',id : '22',checked : false}
       ]},
-      {text : '3',id : '3',checked : false,children : [{id : '31',checked:true,text : '31'},{id : '32',text : '32',checked:false}]},
+      {text : '3',id : '3',checked : false,children : [{id : '31',text : '31'},{id : '32',text : '32'}]},
       {text : '4',id : '4',checked : true},
       {text : '5',id : '5'},
       {text : '6',id : '6'},
@@ -298,6 +308,16 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       });
     });
 
+
+
+    it('测试自由勾选',function(){
+      tree.set('checkType','custom');
+      tree.set('nodes',BUI.cloneObject(nodes));
+      BUI.each(tree.get('root').children,function(subNode){
+        expect(tree.isCheckable(subNode)).toBe(subNode.checked != null);
+      });
+    });
+
     it('测试仅叶子节点勾选',function(){
       tree.set('checkType','onlyLeaf');
       tree.set('nodes',BUI.cloneObject(nodes));
@@ -309,14 +329,12 @@ BUI.use('bui/tree/treelist',function (TreeList) {
           expect(tree.hasStatus(subNode,'checked')).toBe(false);
         }
       });
-    });
 
-    it('测试自由勾选',function(){
-      tree.set('checkType','custom');
-      tree.set('nodes',BUI.cloneObject(nodes));
-      BUI.each(tree.get('root').children,function(subNode){
-        expect(tree.isCheckable(subNode)).toBe(subNode.checked != null);
-      });
+      var node = tree.findNode('11');
+      expect(node.checked).toBe(false);
+
+      var node = tree.findNode('21');
+      expect(tree.hasStatus(node,'checked')).toBe(false);
     });
   });
 

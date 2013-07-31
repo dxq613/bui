@@ -11,9 +11,16 @@ define('bui/mask/mask',['bui/common'],function (require) {
       UA = BUI.UA,
       CLS_MASK = BUI.prefix + 'ext-mask',
       CLS_MASK_MSG = CLS_MASK + '-msg';
+
     BUI.mix(Mask,
     /**
     * 屏蔽层
+    * <pre><code>
+    * BUI.use('bui/mask',function(Mask){
+    *   Mask.maskElement('#domId'); //屏蔽dom
+    *   Mask.unmaskElement('#domId'); //解除DOM屏蔽
+    * });
+    * </code></pre>
     * @class BUI.Mask
     * @singleton
     */
@@ -23,7 +30,10 @@ define('bui/mask/mask',['bui/common'],function (require) {
          * @param {String|HTMLElement} element 被屏蔽的元素
          * @param {String} [msg] 屏蔽元素时显示的文本
          * @param {String} [msgCls] 显示文本应用的样式
-         *    BUI.Mask.maskElement('#domId');
+         * <pre><code>
+         *   BUI.Mask.maskElement('#domId');
+         *   
+         * </code></pre>
          */
         maskElement:function (element, msg, msgCls) {
             var maskedEl = $(element),
@@ -59,7 +69,9 @@ define('bui/mask/mask',['bui/common'],function (require) {
         /**
          * @description 解除元素的屏蔽
          * @param {String|HTMLElement} 屏蔽的元素
-         *    BUI.Mask.unmaskElement('#domId');
+         * <pre><code>
+         * BUI.Mask.unmaskElement('#domId');
+         * </code></pre>
          */
         unmaskElement:function (element) {
             var maskedEl = $(element),

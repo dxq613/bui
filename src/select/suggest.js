@@ -4,46 +4,52 @@
  */
 
 define('bui/select/suggest',['bui/common','bui/select/combox'],function (require) {
-
+  'use strict';
   var BUI = require('bui/common'),
     Combox = require('bui/select/combox'),
-    /*CODE_ENTER = BUI.KeyCode.ENTER,
-    CODE_TAB = 9,
-    CODE_EXPCEPT = [CODE_ENTER,CODE_TAB],
-    */
     TIMER_DELAY = 200,
-    EMPTY = '',
-    EMPTY_ARRAY = [];
-    
-    //浏览器版本
-    ie = BUI.UA['ie'];
-
+    EMPTY = '';
 
   /**
    * 组合框 用于提示输入
    * xclass:'suggest'
+   * ** 简单使用静态数据 **
+   * <pre><code>
+   * BUI.use('bui/select',function (Select) {
+   *
+   *  var suggest = new Select.Suggest({
+   *     render:'#c2',
+   *     name:'suggest', //形成输入框的name
+   *     data:['1222224','234445','122','1111111']
+   *   });
+   *   suggest.render();
+   *   
+   * });
+   * </code></pre>
+   * ** 查询服务器数据 **
+   * <pre><code>
+   * BUI.use('bui/select',function(Select){
+   *
+   *  var suggest = new Select.Suggest({
+   *    render:'#s1',
+   *    name:'suggest', 
+   *    url:'server-data.php'
+   *  });
+   *  suggest.render();
+   *
+   * });
+   * <code></pre>
    * @class BUI.Select.Suggest
    * @extends BUI.Select.Combox
    */
   var suggest = Combox.extend({
-    renderUI:function(){
-      var _self = this;
-        picker = _self.get('picker');
-      if (_self.get('itemTpl')) {
-        var picker = _self.get('picker'),
-          list = picker.get('list');
-        list.set('itemTpl', _self.get('itemTpl'));
-      }
-    },
     bindUI : function(){
       var _self = this,
         textEl = _self.get('el').find('input'),
-        picker = _self.get('picker'),
-        list = picker.get('list'),
         triggerEvent = (_self.get('triggerEvent') === 'keyup') ? 'keyup' : 'keyup click';
 
       //监听 keyup 事件
-      textEl.on(triggerEvent, function(ev){
+      textEl.on(triggerEvent, function(){
         _self._start();
       });
     },
@@ -60,8 +66,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       var _self = this,
         isStatic = _self.get('data'),
         textEl = _self.get('el').find('input'),
-        text,
-        picker = _self.get('picker');
+        text;
 
       //检测是否需要更新。注意：加入空格也算有变化
       if (!isStatic && (textEl.val() === _self.get('query'))) {
@@ -100,39 +105,65 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       }else if (data) {
         //使用静态数据源
         //BUI.log('use static datasource');
-        _self._handleResponse(data);
+        _self._handleResponse(data,true);
       }
     },
-    
+    //如果存在数据源
+    _getStore : function(){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list');
+      if(list){
+        return list.get('store');
+      }
+    },
     //通过 script 元素异步加载数据
     _requestData:function(){
       var _self = this,
         textEl = _self.get('el').find('input'),
+        callback = _self.get('callback'),
+        store = _self.get('store'),
         param = {};
-        param[textEl.attr('name')] = textEl.val();
-      $.ajax({
-        url:_self.get('url'),
-        type:'post',
-        dataType:'jsonp',
-        data:param,
-        success:function(data){
-          _self._handleResponse(data);
-        },
-        error:function(){
-          //BUI.log('server error');
-        }
-      });
+
+      param[textEl.attr('name')] = textEl.val();
+      if(store){
+        param.start = 0; //回滚到第一页
+        store.load(param,callback);
+      }else{
+        $.ajax({
+          url:_self.get('url'),
+          type:'post',
+          dataType:_self.get('dataType'),
+          data:param,
+          success:function(data){
+            _self._handleResponse(data);
+            if(callback){
+              callback(data);
+            }
+          }
+        });
+      }
+      
     },
     //处理获取的数据
-    _handleResponse:function(data){
+    _handleResponse:function(data,filter){
       var _self = this,
-        items = _self._getFilterItems(data),
-        picker = _self.get('picker');
-        _self.set('items',items);
+        items = filter ? _self._getFilterItems(data) : data;
+      _self.set('items',items);
 
       if(_self.get('cacheable')){
         _self.get('dataCache')[_self.get('query')] = items;
       }
+    },
+    //如果列表记录是对象获取显示的文本
+    _getItemText : function(item){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list');
+      if(list){
+        return list.getItemText(item);
+      }
+      return '';
     },
     //获取过滤的文本
     _getFilterItems:function(data){
@@ -141,17 +172,29 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
         textEl = _self.get('el').find('input'),
         text = textEl.val(),
         isStatic = _self.get('data');
-      data = data ? data : [];
-      $.each(data, function(index, item){
-        var str = BUI.isString(item) ? item : item['text'];
+      data = data || [];
+      /**
+       * @private
+       * @ignore
+       */
+      function push(str,item){
+        if(BUI.isString(item)){
+          result.push(str);
+        }else{
+          result.push(item);
+        }
+      }
+      BUI.each(data, function(item){
+        var str = BUI.isString(item) ? item : _self._getItemText(item);
         if(isStatic){
           if(str.indexOf($.trim(text)) !== -1){
-            result.push(str);
+            push(str,item);
           }
         }else{
-          result.push(str);
+          push(str,item);
         }
       });
+      
       return result;
     },
     /**
@@ -161,7 +204,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
      */
     later:function (fn, when, periodic) {
       when = when || 0;
-      var r = (periodic) ? setInterval(fn, when) : setTimeout(fn, when);
+      var r = periodic ? setInterval(fn, when) : setTimeout(fn, when);
 
       return {
         id:r,
@@ -184,11 +227,19 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
     {
       /**
        * 用于显示提示的数据源
+       * <pre><code>
+       *   var suggest = new Select.Suggest({
+       *     render:'#c2',
+       *     name:'suggest', //形成输入框的name
+       *     data:['1222224','234445','122','1111111']
+       *   });
+       * </code></pre>
        * @cfg {Array} data
        */
       /**
        * 用于显示提示的数据源
        * @type {Array}
+       * @ignore
        */
       data:{
         value : null
@@ -196,6 +247,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * 输入框的值
        * @type {String}
+       * @private
        */
       query:{
         value : EMPTY
@@ -221,11 +273,52 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
         value:{}
       },
       /**
-       * 列表项的模板
-       * @cfg {String} itemTpl
+       * 请求返回的数据格式默认为'jsonp'
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @cfg {Object} [dataType = 'jsonp']
        */
-      itemTpl:{
-        value:EMPTY
+      dataType : {
+        value : 'jsonp'
+      },
+      /**
+       * 请求数据的url
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @cfg {String} url
+       */
+      url : {
+
+      },
+      /**
+       * 请求完数据的回调函数
+       * <pre><code>
+       *  var suggest = new Select.Suggest({
+       *    render:'#s1',
+       *    name:'suggest', 
+       *    dataType : 'json',
+       *    callback : function(data){
+       *      //do something
+       *    },
+       *    url:'server-data.php'
+       *  }); 
+       * </code></pre>
+       * @type {Function}
+       */
+      callback : {
+
       },
       /**
        * 触发的事件

@@ -74,6 +74,20 @@ define('bui/grid/plugins/editing',function (require) {
      */
     editors : {
       value : []
+    },
+    /**
+     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * @type {String}
+     */
+    triggerCls : {
+
+    },
+    /**
+     * 进行编辑时是否触发选中
+     * @type {Boolean}
+     */
+    triggerSelected : {
+      value : true
     }
   };
 
@@ -110,6 +124,8 @@ define('bui/grid/plugins/editing',function (require) {
       grid.on('cellclick',function(ev){
 
         var editor = null,
+          domTarget = ev.domTarget,
+          triggerCls = _self.get('triggerCls'),
           curEditor = _self._getCurEditor();
         if(curEditor && curEditor.get('acceptEvent')){
           curEditor.accept();
@@ -118,13 +134,16 @@ define('bui/grid/plugins/editing',function (require) {
           curEditor && curEditor.cancel();
         }
 
-        if(ev.field){
+        //if(ev.field){
           editor = _self.getEditor(ev.field);
-        }
-        if(editor){
+        //}
+        if(editor && $(domTarget).closest('.' + triggerCls).length){
           _self.showEditor(editor,ev);
           //if(curEditor && curEditor.get('acceptEvent')){
+          if(!_self.get('triggerSelected')){
             return false; //此时不触发选中事件
+          }
+            
           //}
         }
       });

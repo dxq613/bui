@@ -709,14 +709,11 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
     _initSubMenuCfg : function(subItem){
       var _self = this,
         cfg = {
-          id : subItem.id,
           xclass : 'menu-item',
           elCls : 'menu-leaf',
-          tpl : '<a href="{href}"><em>{text}</em></a>',
-          href : subItem.href,
-          text : subItem.text
+          tpl : '<a href="{href}"><em>{text}</em></a>'
         };
-      return cfg;
+      return BUI.mix(cfg,subItem);
     }
   },{
 
