@@ -1890,7 +1890,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
             render = _self.get('render'),
             width = _self.get('width');
         if(!width){
-            _self.set('width',$(render).width() - WIDTH_BORDER);
+            _self.set('width',$(render).width());
         }
     },
     /**

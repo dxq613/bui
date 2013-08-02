@@ -553,12 +553,33 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       },
       value : function(el){
         var _self = this,
+          selector = 'select,input,textarea',
           value = _self.get('value');
         if(!value){
-          value = el.val()
+          if(el.is(selector)){
+            value = el.val();
+          }else{
+            value = el.find(selector).val(); 
+          }
+          
         }
         return  value;
+      },
+      name : function(el){
+        var _self = this,
+          selector = 'select,input,textarea',
+          name = _self.get('name');
+        if(!name){
+          if(el.is(selector)){
+            name = el.attr('name');
+          }else{
+            name = el.find(selector).attr('name'); 
+          }
+          
+        }
+        return  name;
       }
+      
     }
   },{
     xclass:'form-field'

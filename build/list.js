@@ -503,13 +503,13 @@ define('bui/list/domlist',['bui/common'],function (require) {
         });
       }
 
-      itemContainer.delegate('.' + itemCls,'dbclick',function(ev){
+      itemContainer.delegate('.' + itemCls,'dblclick',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
           return;
         }
-        _self.fire('itemdbclick',{item:item,element : itemEl[0],domTarget:ev.target});
+        _self.fire('itemdblclick',{item:item,element : itemEl[0],domTarget:ev.target});
       });
       
       function setItemSelectedStatus(item,itemEl){
@@ -561,7 +561,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @return {Number} 选项数量
      */
     getCount : function(){
-      return this.getItems().length;
+      var items = this.getItems();
+      return items ? items.length : 0;
     },
     /**
      * 更改状态值对应的字段
@@ -1188,7 +1189,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     ATTRS : {
       itemContainer : {
         valueFn : function(){
-          return this.get('el').children(this.get('listSelector'));
+          return this.get('el').find(this.get('listSelector'));
         }
       }
     }

@@ -14680,13 +14680,13 @@ define('bui/list/domlist',['bui/common'],function (require) {
         });
       }
 
-      itemContainer.delegate('.' + itemCls,'dbclick',function(ev){
+      itemContainer.delegate('.' + itemCls,'dblclick',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
           return;
         }
-        _self.fire('itemdbclick',{item:item,element : itemEl[0],domTarget:ev.target});
+        _self.fire('itemdblclick',{item:item,element : itemEl[0],domTarget:ev.target});
       });
       
       function setItemSelectedStatus(item,itemEl){
@@ -14738,7 +14738,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @return {Number} \u9009\u9879\u6570\u91cf
      */
     getCount : function(){
-      return this.getItems().length;
+      var items = this.getItems();
+      return items ? items.length : 0;
     },
     /**
      * \u66f4\u6539\u72b6\u6001\u503c\u5bf9\u5e94\u7684\u5b57\u6bb5
@@ -15365,7 +15366,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     ATTRS : {
       itemContainer : {
         valueFn : function(){
-          return this.get('el').children(this.get('listSelector'));
+          return this.get('el').find(this.get('listSelector'));
         }
       }
     }
@@ -16050,7 +16051,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
         var _self = this,
           list = _self.get('list'),
           selectedValue = _self.getSelectedValue();
-        if(val !== selectedValue){
+        if(val !== selectedValue && list.getCount()){
           if(list.get('multipleSelect')){
             list.clearSelection();
           }
@@ -16955,12 +16956,33 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       },
       value : function(el){
         var _self = this,
+          selector = 'select,input,textarea',
           value = _self.get('value');
         if(!value){
-          value = el.val()
+          if(el.is(selector)){
+            value = el.val();
+          }else{
+            value = el.find(selector).val(); 
+          }
+          
         }
         return  value;
+      },
+      name : function(el){
+        var _self = this,
+          selector = 'select,input,textarea',
+          name = _self.get('name');
+        if(!name){
+          if(el.is(selector)){
+            name = el.attr('name');
+          }else{
+            name = el.find(selector).attr('name'); 
+          }
+          
+        }
+        return  name;
       }
+      
     }
   },{
     xclass:'form-field'
@@ -17239,20 +17261,21 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         });
         items = tmp;
       }
+
+      var control = _self.getInnerControl();
+      if(control.is('select')){
+        resetOptions(control,items,_self);
+        _self.setControlValue(_self.get('value'));
+        if(!_self.getControlValue()){
+          _self.setInternal('value','');
+        }
+      }
+
       if(select){
         if(select.set){
           select.set('items',items);
         }else{
           select.items = items;
-        }
-      }else{
-        var control = _self.getInnerControl();
-        if(control.is('select')){
-          resetOptions(control,items,_self);
-        }
-        _self.setControlValue(_self.get('value'));
-        if(!_self.getControlValue()){
-          _self.setInternal('value','');
         }
       }
     },
@@ -17349,32 +17372,6 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
           rst = $(options[0]).text();
         }
         return rst;
-      },
-      name : function(el){
-        var _self = this,
-          name = _self.get('name');
-        if(!name){
-          if(el.is('select')){
-            name = el.attr('name');
-          }else{
-            name = el.find('input').attr('name'); 
-          }
-          
-        }
-        return  name;
-      },
-      value : function(el){
-        var _self = this,
-          value = _self.get('value');
-        if(!value){
-          if(el.is('select')){
-            value = el.val();
-          }else{
-            value = el.find('input').val(); 
-          }
-          
-        }
-        return  value;
       }
     }
   },{
@@ -17800,7 +17797,7 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   /**
-   * \u8868\u5355\u9690\u85cf\u57df
+   * \u8868\u5355\u6587\u672c\u57df\uff0c\u4e0d\u80fd\u7f16\u8f91
    * @class BUI.Form.Field.PlainField
    * @extends BUI.Form.Field
    */
@@ -20393,7 +20390,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
     PREFIX = BUI.prefix;
 
   function formatItems(items){
-
+   
     if($.isPlainObject(items)){
       var tmp = [];
       BUI.each(items,function(v,n){
@@ -20401,7 +20398,15 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       });
       return tmp;
     }
-    return items;
+    var rst = [];
+    BUI.each(items,function(item,index){
+      if(BUI.isString(item)){
+        rst.push({value : item,text:item});
+      }else{
+        rst.push(item);
+      }
+    });
+    return rst;
   }
 
   var Component = BUI.Component,
@@ -20448,16 +20453,18 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
               {
                 xclass : xclass,
                 elCls:PREFIX + 'select-list',
+                store : _self.get('store'),
                 items : formatItems(_self.get('items'))/**/
               }
             ],
             valueField : _self.get('valueField')
           });
           
-          //children.push(picker);
           _self.set('picker',picker);
         }else{
-          picker.set('valueField',_self.get('valueField'));
+          if(_self.get('valueField')){
+            picker.set('valueField',_self.get('valueField'));
+          }
         }
         if(multipleSelect){
           picker.set('hideEvent','');
@@ -20483,11 +20490,16 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       //\u7ed1\u5b9a\u4e8b\u4ef6
       bindUI : function(){
         var _self = this,
-          picker = _self.get('picker');
+          picker = _self.get('picker'),
+          list = picker.get('list'),
+          store = list.get('store');
           
         //\u9009\u9879\u53d1\u751f\u6539\u53d8\u65f6
         picker.on('selectedchange',function(ev){
           _self.fire('change',{text : ev.text,value : ev.value,item : ev.item});
+        });
+        list.on('itemsshow',function(){
+          _self._syncValue();
         });
       },
       /**
@@ -20508,9 +20520,14 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         }
         var _self = this,
           picker = _self.get('picker'),
-          list = picker.get('list'),
-          valueField = _self.get('valueField');
+          list = picker.get('list');
         list.set('items',formatItems(items));
+        _self._syncValue();
+      },
+      _syncValue : function(){
+        var _self = this,
+          picker = _self.get('picker'),
+          valueField = _self.get('valueField');
         if(valueField){
           picker.setSelectedValue($(valueField).val());
         }
@@ -20648,6 +20665,24 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
          * @ignore
          */
         valueField : {
+
+        },
+        /**
+         * \u6570\u636e\u7f13\u51b2\u7c7b
+         * <pre><code>
+         *  var store = new Store({
+         *    url : 'data.json',
+         *    autoLoad : true
+         *  });
+         *  var select = new Select({
+         *    render : '#s',
+         *    store : store//\u8bbe\u7f6e\u4e86store\u540e\uff0c\u4e0d\u8981\u518d\u8bbe\u7f6eitems\uff0c\u4f1a\u8fdb\u884c\u8986\u76d6
+         *  });
+         *  select.render();
+         * </code></pre>
+         * @cfg {BUI.Data.Store} Store
+         */
+        store : {
 
         },
         focusable:{
@@ -28184,7 +28219,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
             render = _self.get('render'),
             width = _self.get('width');
         if(!width){
-            _self.set('width',$(render).width() - WIDTH_BORDER);
+            _self.set('width',$(render).width());
         }
     },
     /**

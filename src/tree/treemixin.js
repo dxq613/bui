@@ -704,14 +704,29 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       _self.on('itemclick',function(ev){
         var sender = $(ev.domTarget),
           element = ev.element,
-          dirSelectable = _self.get('dirSelectable'),
           node = ev.item;
         if(sender.hasClass(CLS_EXPANDER)){
-          _self._toggleExpand(node,element);
+          _self._toggleExpand(node,element); //点击展开收缩节点，不触发选中事件
+          return false;
         }else if(sender.hasClass(CLS_CHECKBOX)){
           var checked = _self.isChecked(node);
           _self.setNodeChecked(node,!checked);
         }
+        
+      });
+
+      _self.on('itemdblclick',function(ev){
+        var sender = $(ev.domTarget),
+          element = ev.element,
+          node = ev.item;
+        if(!sender.hasClass(CLS_EXPANDER)){
+          _self._toggleExpand(node,element);
+        }
+      });
+
+      _self.on('beforeselectedchange',function(ev){
+        var dirSelectable = _self.get('dirSelectable'),
+          node = ev.item;
         if(!dirSelectable && !node.leaf){ //如果阻止非叶子节点选中
           return false;
         }

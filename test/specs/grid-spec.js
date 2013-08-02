@@ -377,8 +377,8 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/format'],function(Grid,Data,Format
 	describe("测试Grid forceFit = true", function () {
 		var emptyCell = header.get('el').find('.bui-grid-hd-empty');
 		it('测试表格宽度默认等于容器宽度',function(){
-			expect(grid.get('width')).toBe($('#J_Grid1').width() -2 );
-			expect(grid.get('width')).toBe($('#J_Grid1').width() -2 );
+			expect(grid.get('width')).toBe($('#J_Grid1').width());
+			expect(grid.get('width')).toBe($('#J_Grid1').width());
 		});
 		it('测试列自适应',function(){
 			var width = 500;

@@ -26,7 +26,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
     PREFIX = BUI.prefix;
 
   function formatItems(items){
-
+   
     if($.isPlainObject(items)){
       var tmp = [];
       BUI.each(items,function(v,n){
@@ -34,7 +34,15 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       });
       return tmp;
     }
-    return items;
+    var rst = [];
+    BUI.each(items,function(item,index){
+      if(BUI.isString(item)){
+        rst.push({value : item,text:item});
+      }else{
+        rst.push(item);
+      }
+    });
+    return rst;
   }
 
   var Component = BUI.Component,
@@ -81,16 +89,18 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
               {
                 xclass : xclass,
                 elCls:PREFIX + 'select-list',
+                store : _self.get('store'),
                 items : formatItems(_self.get('items'))/**/
               }
             ],
             valueField : _self.get('valueField')
           });
           
-          //children.push(picker);
           _self.set('picker',picker);
         }else{
-          picker.set('valueField',_self.get('valueField'));
+          if(_self.get('valueField')){
+            picker.set('valueField',_self.get('valueField'));
+          }
         }
         if(multipleSelect){
           picker.set('hideEvent','');
@@ -116,11 +126,16 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       //绑定事件
       bindUI : function(){
         var _self = this,
-          picker = _self.get('picker');
+          picker = _self.get('picker'),
+          list = picker.get('list'),
+          store = list.get('store');
           
         //选项发生改变时
         picker.on('selectedchange',function(ev){
           _self.fire('change',{text : ev.text,value : ev.value,item : ev.item});
+        });
+        list.on('itemsshow',function(){
+          _self._syncValue();
         });
       },
       /**
@@ -141,9 +156,14 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         }
         var _self = this,
           picker = _self.get('picker'),
-          list = picker.get('list'),
-          valueField = _self.get('valueField');
+          list = picker.get('list');
         list.set('items',formatItems(items));
+        _self._syncValue();
+      },
+      _syncValue : function(){
+        var _self = this,
+          picker = _self.get('picker'),
+          valueField = _self.get('valueField');
         if(valueField){
           picker.setSelectedValue($(valueField).val());
         }
@@ -281,6 +301,24 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
          * @ignore
          */
         valueField : {
+
+        },
+        /**
+         * 数据缓冲类
+         * <pre><code>
+         *  var store = new Store({
+         *    url : 'data.json',
+         *    autoLoad : true
+         *  });
+         *  var select = new Select({
+         *    render : '#s',
+         *    store : store//设置了store后，不要再设置items，会进行覆盖
+         *  });
+         *  select.render();
+         * </code></pre>
+         * @cfg {BUI.Data.Store} Store
+         */
+        store : {
 
         },
         focusable:{
