@@ -1546,6 +1546,7 @@ input.x-datepicker-time {
 }
 .bui-tree-item {
   height: 20px;
+  cursor: pointer;
 }
 .bui-tree-item-hover {
   background-color: #dee5ff;

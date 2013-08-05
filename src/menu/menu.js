@@ -11,28 +11,14 @@ define('bui/menu/menu',['bui/common'],function(require){
     UIBase = Component.UIBase;
 
   /**
-   * 菜单的视图类
-   * @class BUI.Menu.MenuView
-   * @extends BUI.Component.View
-   * @mixins BUI.Component.UIBase.PositionView
-   * @private
-   */
-  var menuView = Component.View.extend([UIBase.PositionView],{
-    
-  });
-
-  /**
    * 菜单
    * xclass:'menu'
    * <img src="../assets/img/class-menu.jpg"/>
    * @class BUI.Menu.Menu
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList
-   * @mixins BUI.Component.UIBase.Position
-   * @mixins BUI.Component.UIBase.Align
-   * @mixins BUI.Component.UIBase.AutoHide
    */
-  var Menu = Component.Controller.extend([UIBase.Position,UIBase.Align,UIBase.ChildList,UIBase.AutoHide],{
+  var Menu = Component.Controller.extend([UIBase.ChildList],{
 	  /**
      * 绑定事件
      * @protected
@@ -139,31 +125,12 @@ define('bui/menu/menu',['bui/common'],function(require){
 
       },
       /**
-       * 点击或移出菜单外时，菜单是否隐藏
-       * @type {Boolean} 
-       * @protected
-       */
-      autoHide : {
-        value : false
-      },
-      /**
-       * 点击菜单时，菜单是否隐藏，多选时不隐藏
-       * @type {Boolean} 
-       * @protected
-       */
-      clickHide : {
-        value : false
-      },
-      /**
        * 上一级菜单
        * @type {BUI.Menu.Menu}
        * @readOnly
        */
       parentMenu : {
 
-      },
-      xview:{
-        value:menuView
       }
     }
     
@@ -171,7 +138,6 @@ define('bui/menu/menu',['bui/common'],function(require){
     xclass : 'menu',
     priority : 0
   });
-  
-  Menu.View = menuView;
+
   return Menu;
 });

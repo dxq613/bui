@@ -1553,19 +1553,12 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
   return BUI;
 });
 /**
- * 定义命名空间
- * <p>
- * <img src="../assets/img/class-bui.jpg"/>
- * </p>
- * @class  BUI
+ * @class BUI
+ * 控件库的基础命名空间
  * @singleton
  */  
 var BUI = BUI || {};
 
-/**
- * BUI 的静态函数
- * @ignore
- */
 define('bui/util',function(){
   
     /**

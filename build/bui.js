@@ -1553,19 +1553,12 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
   return BUI;
 });
 /**
- * \u5b9a\u4e49\u547d\u540d\u7a7a\u95f4
- * <p>
- * <img src="../assets/img/class-bui.jpg"/>
- * </p>
- * @class  BUI
+ * @class BUI
+ * \u63a7\u4ef6\u5e93\u7684\u57fa\u7840\u547d\u540d\u7a7a\u95f4
  * @singleton
  */  
 var BUI = BUI || {};
 
-/**
- * BUI \u7684\u9759\u6001\u51fd\u6570
- * @ignore
- */
 define('bui/util',function(){
   
     /**
@@ -21767,28 +21760,14 @@ define('bui/menu/menu',['bui/common'],function(require){
     UIBase = Component.UIBase;
 
   /**
-   * \u83dc\u5355\u7684\u89c6\u56fe\u7c7b
-   * @class BUI.Menu.MenuView
-   * @extends BUI.Component.View
-   * @mixins BUI.Component.UIBase.PositionView
-   * @private
-   */
-  var menuView = Component.View.extend([UIBase.PositionView],{
-    
-  });
-
-  /**
    * \u83dc\u5355
    * xclass:'menu'
    * <img src="../assets/img/class-menu.jpg"/>
    * @class BUI.Menu.Menu
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList
-   * @mixins BUI.Component.UIBase.Position
-   * @mixins BUI.Component.UIBase.Align
-   * @mixins BUI.Component.UIBase.AutoHide
    */
-  var Menu = Component.Controller.extend([UIBase.Position,UIBase.Align,UIBase.ChildList,UIBase.AutoHide],{
+  var Menu = Component.Controller.extend([UIBase.ChildList],{
 	  /**
      * \u7ed1\u5b9a\u4e8b\u4ef6
      * @protected
@@ -21895,31 +21874,12 @@ define('bui/menu/menu',['bui/common'],function(require){
 
       },
       /**
-       * \u70b9\u51fb\u6216\u79fb\u51fa\u83dc\u5355\u5916\u65f6\uff0c\u83dc\u5355\u662f\u5426\u9690\u85cf
-       * @type {Boolean} 
-       * @protected
-       */
-      autoHide : {
-        value : false
-      },
-      /**
-       * \u70b9\u51fb\u83dc\u5355\u65f6\uff0c\u83dc\u5355\u662f\u5426\u9690\u85cf\uff0c\u591a\u9009\u65f6\u4e0d\u9690\u85cf
-       * @type {Boolean} 
-       * @protected
-       */
-      clickHide : {
-        value : false
-      },
-      /**
        * \u4e0a\u4e00\u7ea7\u83dc\u5355
        * @type {BUI.Menu.Menu}
        * @readOnly
        */
       parentMenu : {
 
-      },
-      xview:{
-        value:menuView
       }
     }
     
@@ -21927,8 +21887,7 @@ define('bui/menu/menu',['bui/common'],function(require){
     xclass : 'menu',
     priority : 0
   });
-  
-  Menu.View = menuView;
+
   return Menu;
 });/**
  * @fileOverview \u4e0b\u62c9\u83dc\u5355\uff0c\u4e00\u822c\u7528\u4e8e\u4e0b\u62c9\u663e\u793a\u83dc\u5355
@@ -21942,14 +21901,21 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
     UIBase = BUI.Component.UIBase,
     Menu = require('bui/menu/menu');
 
+  var popMenuView =  BUI.Component.View.extend([UIBase.PositionView],{
+    
+  });
+
    /**
    * @class BUI.Menu.PopMenu
    * \u4e0a\u4e0b\u6587\u83dc\u5355\uff0c\u4e00\u822c\u7528\u4e8e\u5f39\u51fa\u83dc\u5355
-   * xclass:'drop-menu'
+   * xclass:'pop-menu'
    * @extends BUI.Menu.Menu
    * @mixins BUI.Component.UIBase.AutoShow
+   * @mixins BUI.Component.UIBase.Position
+   * @mixins BUI.Component.UIBase.Align
+   * @mixins BUI.Component.UIBase.AutoHide
    */
-  var popMenu =  Menu.extend([UIBase.AutoShow],{
+  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,,UIBase.AutoHide],{
 
   },{
     ATTRS:{
@@ -21980,6 +21946,9 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
       },
       visible : {
         value : false
+      },
+      xview:{
+        value : popMenuView
       }
     }
   },{
