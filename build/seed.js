@@ -5011,7 +5011,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
 
     function getRegion(node) {
         var offset, w, h;
-        if (!$.isWindow(node[0])) {
+        if (node.length && !$.isWindow(node[0])) {
             offset = node.offset();
             w = node.outerWidth();
             h = node.outerHeight();
