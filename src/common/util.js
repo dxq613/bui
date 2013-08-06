@@ -8,10 +8,7 @@ var BUI = BUI || {};
 
 define('bui/util',function(){
   
-    /**
-     * 兼容 jquery 1.6
-     * @ignore
-     */
+    //兼容jquery 1.6以下
     (function($){
       if($.fn){
         $.fn.on = $.fn.on || $.fn.bind;
@@ -32,6 +29,7 @@ define('bui/util',function(){
   {
     /**
      * 版本号
+     * @memberOf BUI
      * @type {Number}
      */
     version:1.0,

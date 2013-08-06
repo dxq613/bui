@@ -1181,7 +1181,8 @@ td.bui-grid-cell-empty {
 input.bui-form-field-error,
 textarea.bui-form-field-error,
 .bui-form-field-error input[type="text"] {
-  border: 1px dotted red;
+  border-style: dotted;
+  border-color: red;
 }
 .x-field-error {
   margin-left: 5px;

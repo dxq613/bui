@@ -24,10 +24,7 @@ var BUI = BUI || {};
 
 define('bui/util',function(){
   
-    /**
-     * 兼容 jquery 1.6
-     * @ignore
-     */
+    //兼容jquery 1.6以下
     (function($){
       if($.fn){
         $.fn.on = $.fn.on || $.fn.bind;
@@ -48,6 +45,7 @@ define('bui/util',function(){
   {
     /**
      * 版本号
+     * @memberOf BUI
      * @type {Number}
      */
     version:1.0,
@@ -609,6 +607,12 @@ define('bui/util',function(){
 });/**
  * @fileOverview 数组帮助类
  * @ignore
+ */
+
+/**
+ * @class BUI
+ * 控件库的基础命名空间
+ * @singleton
  */
 
 define('bui/array',['bui/util'],function (r) {

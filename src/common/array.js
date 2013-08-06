@@ -3,6 +3,12 @@
  * @ignore
  */
 
+/**
+ * @class BUI
+ * 控件库的基础命名空间
+ * @singleton
+ */
+
 define('bui/array',['bui/util'],function (r) {
   
   var BUI = r('bui/util');
