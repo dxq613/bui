@@ -4171,6 +4171,11 @@ define('bui/grid/plugins/editing',function (require) {
       var _self = this;
       _self.set('grid',grid);
       _self.initEditing(grid);
+      
+    },
+    renderUI : function(){
+      var _self = this,
+        grid = _self.get('grid');
       //延迟加载 editor模块
       BUI.use('bui/editor',function(Editor){
         _self.initEditors(Editor);

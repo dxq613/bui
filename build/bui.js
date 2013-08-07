@@ -31271,6 +31271,11 @@ define('bui/grid/plugins/editing',function (require) {
       var _self = this;
       _self.set('grid',grid);
       _self.initEditing(grid);
+      
+    },
+    renderUI : function(){
+      var _self = this,
+        grid = _self.get('grid');
       //\u5ef6\u8fdf\u52a0\u8f7d editor\u6a21\u5757
       BUI.use('bui/editor',function(Editor){
         _self.initEditors(Editor);
