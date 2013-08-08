@@ -673,10 +673,14 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     _getPageParams : function(){
       var _self = this,
         sortInfo = _self.get('sortInfo'),
+        start = _self.get('start'),
+        limit = _self.get('pageSize'),
+        pageIndex = _self.get('pageIndex') || (limit ? start/limit : 0);
+
         params = {
-          start : _self.get('start'),
-          limit : _self.get('pageSize'),
-          pageIndex : _self.get('pageIndex') //一般而言，pageIndex = start/limit
+          start : start,
+          limit : limit,
+          pageIndex : pageIndex //一般而言，pageIndex = start/limit
         };
 
       if(_self.get('remoteSort')){

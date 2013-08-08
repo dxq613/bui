@@ -1655,7 +1655,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
      */
     clearEmptyText : function(){
        var _self = this,
-        emptyEl = _self.get(emptyEl);
+        emptyEl = _self.get('emptyEl');
       if(emptyEl){
         emptyEl.remove();
       }
