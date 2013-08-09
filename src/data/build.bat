@@ -1,6 +1,6 @@
 @echo off
 
-set ANT_BIN=..\..\..\tools\ant\bin\ant.bat
+set ANT_BIN=..\..\tools\ant\bin\ant.bat
 
 if not exist "%ANT_BIN%" goto NO_ANT
 if not exist "build.xml" goto NO_BUILD

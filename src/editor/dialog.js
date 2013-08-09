@@ -45,6 +45,16 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
       }
     },
     /**
+     * 取消编辑
+     */
+    cancel : function(){
+      if(this.onCancel()!== false){
+        this.fire('cancel');
+        this.clearValue();
+        this.close();
+      } 
+    },
+    /**
      * @protected
      * 更新文本
      * @param  {Object} value 编辑器的值

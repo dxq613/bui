@@ -5756,6 +5756,27 @@ define('bui/component/uibase/close',function () {
       closeAction:{
         value:HIDE
       }
+
+      /**
+       * @event closing
+       * \u6b63\u5728\u5173\u95ed\uff0c\u53ef\u4ee5\u901a\u8fc7return false \u963b\u6b62\u5173\u95ed\u4e8b\u4ef6
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy
+       */
+
+      /**
+       * @event closed
+       * \u5df2\u7ecf\u5173\u95ed
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy
+       */
+      
+      /**
+       * @event closeclick
+       * \u89e6\u53d1\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u7684\u4e8b\u4ef6,return false \u963b\u6b62\u5173\u95ed
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.domTarget \u70b9\u51fb\u7684\u5173\u95ed\u6309\u94ae\u8282\u70b9
+       */
   };
 
   var actions = {
@@ -5769,14 +5790,27 @@ define('bui/component/uibase/close',function () {
           if (v && !self.__bindCloseEvent) {
               self.__bindCloseEvent = 1;
               self.get('closeBtn').on('click', function (ev) {
-                  self[actions[self.get('closeAction')] || HIDE]();
-                  ev.preventDefault();
+                if(self.fire('closeclick',{domTarget : ev.target}) !== false){
+                  self.close();
+                }
+                ev.preventDefault();
               });
           }
       },
       __destructor:function () {
           var btn = this.get('closeBtn');
           btn && btn.detach();
+      },
+      /**
+       * \u5173\u95ed\u5f39\u51fa\u6846\uff0c\u5982\u679ccloseAction = 'hide'\u90a3\u4e48\u5c31\u662f\u9690\u85cf\uff0c\u5982\u679c closeAction = 'destroy'\u90a3\u4e48\u5c31\u662f\u91ca\u653e
+       */
+      close : function(){
+        var self = this,
+          action = actions[self.get('closeAction') || HIDE];
+        if(self.fire('closing',{action : action}) !== false){
+          self[action]();
+          self.fire('closed',{action : action});
+        }
       }
   };
 
@@ -6396,8 +6430,12 @@ define('bui/component/uibase/mask',function (require) {
                 _maskExtShow = view._maskExtShow,
                 _maskExtHide = view._maskExtHide;
             if (self.get('mask')) {
-                self.on('show', _maskExtShow, view);
-                self.on('hide', _maskExtHide, view);
+                self.on('show',function(){
+                    view._maskExtShow();
+                });
+                self.on('hide',function(){
+                    view._maskExtHide();
+                });
             }
         }
     };
@@ -13762,6 +13800,23 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       dialog.superclass.show.call(this);
       _self.center();
     },
+    //\u7ed1\u5b9a\u4e8b\u4ef6
+    bindUI : function(){
+      var _self = this;
+      _self.on('closeclick',function(){
+        return _self.onCancel();
+      });
+    },
+    /**
+     * @protected
+     * \u53d6\u6d88
+     */
+    onCancel : function(){
+      var _self = this,
+        cancel = _self.get('cancel');
+      return cancel.call(this);
+    },
+    //\u8bbe\u7f6e\u6309\u94ae
     _uiSetButtons:function(buttons){
       var _self = this,
         footer = _self.get('footer');
@@ -13772,13 +13827,26 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       });
 
     },
+    //\u521b\u5efa\u6309\u94ae
     _createButton : function(conf,parent){
       var _self = this,
         temp = '<button class="'+conf.elCls+'">'+conf.text+'</button>',
         btn = $(temp).appendTo(parent);
       btn.on('click',function(){
-        conf.handler.call(_self);
+        conf.handler.call(_self,_self,this);
       });
+    },
+    destructor : function(){
+      var _self = this,
+        contentId = _self.get('contentId'),
+        body = _self.get('body'),
+        closeAction = _self.get('closeAction');
+      if(closeAction == 'destroy'){
+        _self.hide();
+        if(contentId){
+          body.children().appendTo('#'+contentId);
+        }
+      }
     }
   },{
 
@@ -13843,8 +13911,10 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
           },{
             text:'\u53d6\u6d88',
             elCls : 'button button-primary',
-            handler : function(){
-              this.hide();
+            handler : function(dialog,btn){
+              if(this.onCancel() !== false){
+                this.close();
+              }
             }
           }
         ]
@@ -13861,6 +13931,15 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       * @cfg {Function} success
       */
       success : {
+        value : function(){
+
+        }
+      },
+      /**
+       * \u7528\u6237\u53d6\u6d88\u65f6\u8c03\u7528\uff0c\u5982\u679creturn false\u5219\u963b\u6b62\u7a97\u53e3\u5173\u95ed
+       * @cfg {Function} cancel
+       */
+      cancel : {
         value : function(){
 
         }
@@ -17799,7 +17878,7 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
 
   /**
    * \u8868\u5355\u6587\u672c\u57df\uff0c\u4e0d\u80fd\u7f16\u8f91
-   * @class BUI.Form.Field.PlainField
+   * @class BUI.Form.Field.Plain
    * @extends BUI.Form.Field
    */
   var PlainField = Field.extend({
@@ -26614,7 +26693,7 @@ define('bui/editor/mixin',function (require) {
     cancel : function(){
       this.fire('cancel');
       this.clearValue();
-      this.hide();
+      this.close();
     }
   };
 
@@ -27005,6 +27084,16 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
       }else{
         this.accept();
       }
+    },
+    /**
+     * \u53d6\u6d88\u7f16\u8f91
+     */
+    cancel : function(){
+      if(this.onCancel()!== false){
+        this.fire('cancel');
+        this.clearValue();
+        this.close();
+      } 
     },
     /**
      * @protected
@@ -28747,7 +28836,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       var _self = this,
         bodyEl = _self.get('bodyEl'),
         emptyDataTpl = _self.get('emptyDataTpl'),
-        emptyEl = _self.get(emptyEl);
+        emptyEl = _self.get('emptyEl');
       if(emptyEl){
         emptyEl.remove();
       }

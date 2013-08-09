@@ -292,7 +292,7 @@ define('bui/editor/mixin',function (require) {
     cancel : function(){
       this.fire('cancel');
       this.clearValue();
-      this.hide();
+      this.close();
     }
   };
 

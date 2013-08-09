@@ -1643,7 +1643,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       var _self = this,
         bodyEl = _self.get('bodyEl'),
         emptyDataTpl = _self.get('emptyDataTpl'),
-        emptyEl = _self.get(emptyEl);
+        emptyEl = _self.get('emptyEl');
       if(emptyEl){
         emptyEl.remove();
       }

@@ -4,6 +4,10 @@
     <div id="d1">
       <p>这是第一个弹出框</p>
     </div>
+
+    <div id="d2">
+      <p>这是第二个弹出框</p>
+    </div>
     <button id="btnShow" class="button button-primary">显示</button>
     <button id="btnShow1" class="button button-primary">清除标题</button>
     
