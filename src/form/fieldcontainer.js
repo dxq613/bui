@@ -331,6 +331,22 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
 
           }
         },
+        /**
+         * 默认的加载控件内容的配置,默认值：
+         * <pre>
+         *  {
+         *   property : 'children',
+         *   dataType : 'json'
+         * }
+         * </pre>
+         * @type {Object}
+         */
+        defaultLoaderCfg  : {
+          value : {
+            property : 'children',
+            dataType : 'json'
+          }
+        },
         disabled : {
           sync : false
         },

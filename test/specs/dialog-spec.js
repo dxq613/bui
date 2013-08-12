@@ -103,7 +103,7 @@ BUI.use('bui/overlay/dialog',function (Dialog) {
 });
 
 BUI.use('bui/overlay/dialog',function (Dialog) {
-   var config = {
+  var config = {
       width:500,
       height:300,
       title:'第一个弹出库',
@@ -138,3 +138,31 @@ BUI.use('bui/overlay/dialog',function (Dialog) {
     });
   });
 });
+
+BUI.use(['bui/overlay/dialog','bui/mask'],function (Dialog) {
+  var config = {
+      width:500,
+      height:300,
+      title:'异步弹出库',
+      loader : {
+        url : 'data/text.php',
+        lazyLoad : {
+          event : 'show',
+          repeat : true
+        }/*,
+        loadMask : {
+          msg : '正在加载dialog ,请等待。。。'
+        }*/
+      }
+    },
+    dialog = new Dialog(config);
+  $('#btnAsyn').on('click',function(){
+    dialog.show();
+  });
+  describe('测试加载异步数据',function(){
+    it('显示dialog',function(){
+
+    });
+  });
+});
+

@@ -249,7 +249,7 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       */
       success : {
         value : function(){
-
+          this.close();
         }
       },
       /**
@@ -268,6 +268,32 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
         valueFn : function(){
           return this.get('header');
         }
+      },
+
+      /**
+       * 默认的加载控件内容的配置,默认值：
+       * <pre>
+       *  {
+       *   property : 'bodyContent',
+       *   autoLoad : true
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg  : {
+        valueFn :function(){
+          var _self = this;
+          return {
+            property : 'bodyContent',
+            autoLoad : false,
+            lazyLoad : {
+              event : 'show'
+            },
+            loadMask : {
+              el : _self.get('body')
+            }
+          }
+        } 
       },
       /**
        * 弹出框标题

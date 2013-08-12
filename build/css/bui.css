@@ -1107,7 +1107,7 @@ td.bui-grid-cell-empty {
   _visibility: visible;
 }
 .x-masked-relative {
-  position: relative !important;
+  position: relative;
 }
 .lp-el-mask-msg,
 .bui-ext-mask-msg {

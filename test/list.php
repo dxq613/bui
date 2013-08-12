@@ -57,6 +57,11 @@
         <div id="l5"></div>
       </div>
     </div>
+    <div class="row">
+      <div id="l6" class="span8"></div>
+      <div  id="l7"  class="span8"></div>
+      <div class="span8"></div>
+    </div>
   </div>
     <?php $url = 'bui/list'?>
     <?php include("./templates/script.php"); ?>
@@ -70,4 +75,5 @@
     <script type="text/javascript" src="specs/list-spec.js"></script><!---->
     <script type="text/javascript" src="specs/list-nav-spec.js"></script>
     <script type="text/javascript" src="specs/list-status-spec.js"></script>
+    <script type="text/javascript" src="specs/list-loader-spec.js"></script>
  <?php include("./templates/footer.php"); ?>   

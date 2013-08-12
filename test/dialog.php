@@ -11,6 +11,8 @@
     <button id="btnShow" class="button button-primary">显示</button>
     <button id="btnShow1" class="button button-primary">清除标题</button>
     
+
+    <button id="btnAsyn" class="button button-primary">异步加载dialog</button>
     <?php $url = 'bui/overlay/dialog'?>
     <?php include("./templates/script.php"); ?>
     <script type="text/javascript" src="../src/overlay/overlay.js"></script>

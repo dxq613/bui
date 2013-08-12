@@ -1553,8 +1553,15 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
   return BUI;
 });
 /**
- * @class BUI
- * \u63a7\u4ef6\u5e93\u7684\u57fa\u7840\u547d\u540d\u7a7a\u95f4
+ * @class BUI.Util
+ * \u63a7\u4ef6\u5e93\u7684\u5de5\u5177\u65b9\u6cd5\uff0c\u8fd9\u4e9b\u5de5\u5177\u65b9\u6cd5\u76f4\u63a5\u7ed1\u5b9a\u5230BUI\u5bf9\u8c61\u4e0a
+ * <pre><code>
+ *     BUI.isString(str);
+ *
+ *     BUI.extend(A,B);
+ *
+ *     BUI.mix(A,{a:'a'});
+ * </code></pre>
  * @singleton
  */  
 var BUI = BUI || {};
@@ -1591,7 +1598,7 @@ define('bui/util',function(){
      * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
-    subVersion : 1,
+    subVersion : 2,
 
     /**
      * \u662f\u5426\u4e3a\u51fd\u6570
@@ -2081,7 +2088,7 @@ define('bui/util',function(){
      * @param {HTMLElement} form \u8868\u5355
      * @param {Object} obj  \u952e\u503c\u5bf9
      */
-    setValues : function(form,obj){
+    setFields : function(form,obj){
       for(var name in obj){
         if(obj.hasOwnProperty(name)){
           BUI.FormHelper.setField(form,name,obj[name]);
@@ -8484,6 +8491,22 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      */
     autoInitItems : {
       value : true
+    },
+    /**
+     * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+     * <pre>
+     *  {
+     *   property : 'children',
+     *   dataType : 'json'
+     * }
+     * </pre>
+     * @type {Object}
+     */
+    defaultLoaderCfg  : {
+      value : {
+        property : 'children',
+        dataType : 'json'
+      }
     }
   });
 
@@ -9573,6 +9596,326 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
 
     return View;
 });/**
+ * @fileOverview \u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9
+ * @ignore
+ */
+
+define('bui/component/loader',['bui/util'],function (require) {
+  'use strict';
+  var BUI = require('bui/util'),
+    Base = require('bui/base'),
+    /**
+     * @class BUI.Component.Loader
+     * ** \u63a7\u4ef6\u7684\u9ed8\u8ba4Loader\u5c5e\u6027\u662f\uff1a**
+     * <pre>
+     *   defaultLoader : {
+     *     value : {
+     *       property : 'content',
+     *       autoLoad : true
+     *     }
+     *   }
+     * </pre>
+     * ** \u4e00\u822c\u7684\u63a7\u4ef6\u9ed8\u8ba4\u8bfb\u53d6html\uff0c\u4f5c\u4e3a\u63a7\u4ef6\u7684content\u503c **
+     * <pre>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </pre>
+     *
+     * ** \u53ef\u4ee5\u4fee\u6539Loader\u7684\u9ed8\u8ba4\u5c5e\u6027\uff0c\u52a0\u8f7dchildren **
+     * <pre>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/children.json',
+     *       property : 'children',
+     *       dataType : 'json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </pre>
+     * \u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u7c7b\uff0c\u4e00\u822c\u4e0d\u8fdb\u884c\u5b9e\u4f8b\u5316
+     */
+    Loader = function(config){
+      Loader.superclass.constructor.call(this,config);
+      this._init();
+    };
+
+  Loader.ATTRS = {
+
+    /**
+     * \u52a0\u8f7d\u5185\u5bb9\u7684\u5730\u5740
+     * @cfg {String} url
+     */
+    url : {
+
+    },
+    /**
+     * \u5bf9\u5e94\u7684\u63a7\u4ef6\uff0c\u52a0\u8f7d\u5b8c\u6210\u540e\u8bbe\u7f6e\u5c5e\u6027\u5230\u5bf9\u5e94\u7684\u63a7\u4ef6
+     * @type {BUI.Component.Controller}
+     */
+    target : {
+
+    },
+    /**
+     * @private
+     * \u662f\u5426load \u8fc7
+     */
+    hasLoad : {
+      value : false
+    },
+    /**
+     * \u662f\u5426\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
+     * @cfg {Boolean} [autoLoad = true]
+     */
+    autoLoad : {
+
+    },
+    /**
+     * \u5ef6\u8fdf\u52a0\u8f7d
+     *   - event : \u89e6\u53d1\u52a0\u8f7d\u7684\u4e8b\u4ef6
+     *   - repeat \uff1a\u662f\u5426\u91cd\u590d\u52a0\u8f7d
+     * @property {Object}
+     */
+    lazyLoad: {
+
+    },
+    /**
+     * \u52a0\u8f7d\u8fd4\u56de\u7684\u6570\u636e\u4f5c\u4e3a\u63a7\u4ef6\u7684\u90a3\u4e2a\u5c5e\u6027
+     * @cfg {String} property
+     */
+    property : {
+
+    },
+    /**
+     * \u683c\u5f0f\u5316\u8fd4\u56de\u7684\u6570\u636e
+     * @cfg {Function} renderer
+     */
+    renderer : {
+      value : function(value){
+        return value;
+      }
+    },
+    /**
+     * \u52a0\u8f7d\u6570\u636e\u65f6\u662f\u5426\u663e\u793a\u5c4f\u853d\u5c42\u548c\u52a0\u8f7d\u63d0\u793a {@link BUI.Mask.LoadMask}
+     *   - loadMask : true\u65f6\u4f7f\u7528loadMask \u9ed8\u8ba4\u7684\u914d\u7f6e\u4fe1\u606f
+     *   - loadMask : {msg : '\u6b63\u5728\u52a0\u8f7d\uff0c\u8bf7\u7a0d\u540e\u3002\u3002'} LoadMask\u7684\u914d\u7f6e\u4fe1\u606f
+     * @cfg {Boolean|Object} [loadMask = false]
+     */
+    loadMask : {
+      value : false
+    },
+    /**
+     * ajax \u8bf7\u6c42\u8fd4\u56de\u6570\u636e\u7684\u7c7b\u578b
+     * @cfg {String} [dataType = 'text']
+     */
+    dataType : {
+      value : 'text'
+    },
+    /**
+     * Ajax\u8bf7\u6c42\u7684\u914d\u7f6e\u9879,\u4f1a\u8986\u76d6 url,dataType\u6570\u636e
+     * @cfg {Object} ajaxOptions
+     */
+    ajaxOptions : {
+      value : {
+        method : 'get',
+        cache : false
+      }
+    },
+    /**
+     * \u521d\u59cb\u5316\u7684\u8bf7\u6c42\u53c2\u6570
+     * @cfg {Object} params
+     */
+    params : {
+
+    },
+    /**
+     * \u9644\u52a0\u53c2\u6570\uff0c\u6bcf\u6b21\u8bf7\u6c42\u90fd\u5e26\u7684\u53c2\u6570
+     * @cfg {Object} appendParams
+     */
+    appendParams : {
+
+    },
+    /**
+     * \u6700\u540e\u4e00\u6b21\u8bf7\u6c42\u7684\u53c2\u6570
+     * @readOnly
+     * @type {Object}
+     */
+    lastParams : {
+      value : {}
+    },
+    /**
+     * \u52a0\u8f7d\u6570\u636e\uff0c\u5e76\u6dfb\u52a0\u5c5e\u6027\u5230\u63a7\u4ef6\u540e\u7684\u56de\u8c03\u51fd\u6570
+     *   - data : \u52a0\u8f7d\u7684\u6570\u636e
+     *   - params : \u52a0\u8f7d\u7684\u53c2\u6570
+     * @cfg {Function} callback
+     */
+    callback : {
+
+    },
+    /**
+     * \u5931\u8d25\u7684\u56de\u8c03\u51fd\u6570
+     *   - response : \u8fd4\u56de\u7684\u9519\u8bef\u5bf9\u8c61
+     *   - params : \u52a0\u8f7d\u7684\u53c2\u6570
+     * @cfg {Function} failure
+     */
+    failure : {
+
+    }
+
+  };
+
+  BUI.extend(Loader,Base);
+
+  BUI.augment(Loader,{
+    /**
+     * @protected
+     * \u662f\u5426\u662fLoader
+     * @type {Boolean}
+     */
+    isLoader : true,
+    //\u521d\u59cb\u5316
+    _init : function(){
+      var _self = this,
+        autoLoad = _self.get('autoLoad'),
+        params = _self.get('params');
+
+      _self._initMask();
+      if(autoLoad){
+        _self.load(params);
+      }else{
+        _self._initParams();
+        _self._initLazyLoad();
+      }
+    },
+    //\u521d\u59cb\u5316\u5ef6\u8fdf\u52a0\u8f7d
+    _initLazyLoad : function(){
+      var _self = this,
+        target = _self.get('target'),
+        lazyLoad= _self.get('lazyLoad');
+
+      if(target && lazyLoad && lazyLoad.event){
+        target.on(lazyLoad.event,function(){
+          if(!_self.get('hasLoad') || lazyLoad.repeat){
+            _self.load();
+          }
+        });
+      }
+    },
+    /**
+     * \u521d\u59cb\u5316mask
+     */
+    _initMask : function(){
+      var _self = this,
+        target = _self.get('target'),
+        loadMask = _self.get('loadMask');
+      if(target && loadMask){
+        BUI.use('bui/mask',function(Mask){
+          var cfg = $.isPlainObject(loadMask) ? loadMask : {};
+          loadMask = new Mask.LoadMask(BUI.mix({el : target.get('el')},cfg));
+          _self.set('loadMask',loadMask);
+        });
+      }
+    },
+    //\u521d\u59cb\u5316\u67e5\u8be2\u53c2\u6570
+    _initParams : function(){
+      var _self = this,
+        lastParams = _self.get('lastParams'),
+        params = _self.get('params');
+
+      //\u521d\u59cb\u5316 \u53c2\u6570
+      BUI.mix(lastParams,params);
+    },
+    /**
+     * \u52a0\u8f7d\u5185\u5bb9
+     * @param {Object} params \u52a0\u8f7d\u6570\u636e\u7684\u53c2\u6570
+     */
+    load : function(params){
+      var _self = this,
+        url = _self.get('url'),
+        ajaxOptions = _self.get('ajaxOptions'),
+        lastParams = _self.get('lastParams'),
+        appendParams = _self.get('appendParams');
+
+      BUI.mix(true,lastParams,appendParams,params);
+      params = BUI.cloneObject(lastParams);
+      //\u672a\u63d0\u4f9b\u52a0\u8f7d\u5730\u5740\uff0c\u963b\u6b62\u52a0\u8f7d
+      if(!url){
+        return;
+      }
+
+      _self.onBeforeLoad();
+      _self.set('hasLoad',true);
+      $.ajax(BUI.mix({
+        dataType : _self.get('dataType'),
+        data : params,
+        url : url,
+        success : function(data){
+          _self.onload(data,params);
+        },
+        error : function(jqXHR, textStatus, errorThrown){
+          _self.onException({
+            jqXHR : jqXHR, 
+            textStatus : textStatus, 
+            errorThrown : errorThrown
+          },params);
+        }
+      },ajaxOptions));
+    },
+    /**
+     * @private
+     * \u52a0\u8f7d\u524d
+     */
+    onBeforeLoad : function(){
+      var _self = this,
+        loadMask = _self.get('loadMask');
+      if(loadMask && loadMask.show){
+        loadMask.show();
+      }
+    },
+    /**
+     * @private
+     * \u52a0\u8f7d\u5b8c\u6bd5
+     */
+    onload : function(data,params){
+      var _self = this,
+        loadMask = _self.get('loadMask'),
+        property = _self.get('property'),
+        callback = _self.get('callback'),
+        renderer = _self.get('renderer'),
+        target = _self.get('target');
+      target.set(property,renderer.call(_self,data));
+
+      /**/
+      if(loadMask && loadMask.hide){
+        loadMask.hide();
+      }
+      if(callback){
+        callback.call(this,data,params);
+      }
+    },
+    /**
+     * @private
+     * \u52a0\u8f7d\u51fa\u9519
+     */
+    onException : function(response,params){
+      var _self = this,
+        failure = _self.get('failure');
+      if(failure){
+        failure.call(this,response,params);
+      }
+    }
+
+  });
+
+  return Loader;
+});/**
  * @fileOverview  \u63a7\u4ef6\u53ef\u4ee5\u5b9e\u4f8b\u5316\u7684\u57fa\u7c7b
  * @ignore
  * @author yiminghe@gmail.com
@@ -9586,11 +9929,12 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
  */
 
 
-define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view'],function(require){
-
+define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view','bui/component/loader'],function(require){
+    'use strict';
     var UIBase = require('bui/component/uibase'),
         Manager = require('bui/component/manage'),
         View = require('bui/component/view'),
+        Loader = require('bui/component/loader'),
         wrapBehavior = BUI.wrapBehavior,
         getWrapBehavior = BUI.getWrapBehavior;
 
@@ -9789,7 +10133,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             var self = this;
 
             if(!self.get('id')){
-                self.set('id',self.getNextUniqueId())
+                self.set('id',self.getNextUniqueId());
             }
             Manager.addComponent(self.get('id'),self);
             // initialize view
@@ -9813,13 +10157,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          */
         createDom: function () {
             var self = this,
-                el,
+                //el,
                 view = self.get('view');
             view.create(undefined);
-            el = view.getKeyEventTarget();
-            if (!self.get('allowTextSelection')) {
+            //el = view.getKeyEventTarget();
+            /*if (!self.get('allowTextSelection')) {
                 //el.unselectable(undefined);
-            }
+            }*/
         },
 
         /**
@@ -9828,10 +10172,23 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          *
          */
         renderUI: function () {
-            var self = this, i, children, child;
+            var self = this, 
+                loader = self.get('loader');
             self.get('view').render();
+            self._initChildren();
+            if(loader){
+                self.setInternal('loader',loader);
+            }
+            /**/
+
+        },
+        _initChildren : function(children){
+            var self = this, 
+                i, 
+                children, 
+                child;
             // then render my children
-            children = self.get('children').concat();
+            children = children || self.get('children').concat();
             self.get('children').length = 0;
             for (i = 0; i < children.length; i++) {
                 child = self.addChild(children[i]);
@@ -10017,6 +10374,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     self.set('xy',[-999,-999]);
                 }
             }
+        },
+        //\u8bbe\u7f6echildren\u65f6
+        _uiSetChildren : function(v){
+            var self = this,
+                children = BUI.cloneObject(v);
+            //self.removeChildren(true);
+            self._initChildren(children);
         },
         /**
          * \u4f7f\u63a7\u4ef6\u53ef\u7528
@@ -10930,7 +11294,34 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 value: false,
                 view: 1
             },
-
+            /**
+             * \u4e00\u65e6\u4f7f\u7528loader\u7684\u9ed8\u8ba4\u914d\u7f6e
+             * @protected
+             * @type {Object}
+             */
+            defaultLoaderCfg : {
+                value : {
+                    property : 'content',
+                    autoLoad : true
+                }
+            },
+            /**
+             * \u63a7\u4ef6\u5185\u5bb9\u7684\u52a0\u8f7d\u5668
+             * @type {BUI.Component.Loader}
+             */
+            loader : {
+                getter : function(v){
+                    var _self = this,
+                        defaultCfg;
+                    if(v && !v.isLoader){
+                        v.target = _self;
+                        defaultCfg = _self.get('defaultLoaderCfg')
+                        v = new Loader(BUI.merge(defaultCfg,v));
+                        _self.setInternal('loader',v);
+                    }
+                    return v;
+                }
+            },
             /**
              * 1. Whether allow select this component's text.<br/>
              * 2. Whether not to lose last component's focus if click current one (set false).
@@ -10999,6 +11390,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @type {BUI.Component.Controller[]}
              */
             children: {
+                sync : false,
                 value: []
             },
             /**
@@ -13932,7 +14324,7 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       */
       success : {
         value : function(){
-
+          this.close();
         }
       },
       /**
@@ -13951,6 +14343,32 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
         valueFn : function(){
           return this.get('header');
         }
+      },
+
+      /**
+       * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+       * <pre>
+       *  {
+       *   property : 'bodyContent',
+       *   autoLoad : true
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg  : {
+        valueFn :function(){
+          var _self = this;
+          return {
+            property : 'bodyContent',
+            autoLoad : false,
+            lazyLoad : {
+              event : 'show'
+            },
+            loadMask : {
+              el : _self.get('body')
+            }
+          }
+        } 
       },
       /**
        * \u5f39\u51fa\u6846\u6807\u9898
@@ -14652,6 +15070,22 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     textGetter : {
 
+    },
+    /**
+     * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+     * <pre>
+     *  {
+     *   property : 'items',
+     *   dataType : 'json'
+     * }
+     * </pre>
+     * @type {Object}
+     */
+    defaultLoaderCfg  : {
+      value : {
+        property : 'items',
+        dataType : 'json'
+      }
     },
     events : {
       value : {
@@ -16064,6 +16498,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       }
       /**
        * @event selectedchange
+       * \u9009\u4e2d\u503c\u6539\u53d8\u4e8b\u4ef6
        * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
        * @param {String} text \u9009\u4e2d\u7684\u6587\u672c
        * @param {string} value \u9009\u4e2d\u7684\u503c
@@ -18782,6 +19217,22 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         validators : {
           value : {
 
+          }
+        },
+        /**
+         * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+         * <pre>
+         *  {
+         *   property : 'children',
+         *   dataType : 'json'
+         * }
+         * </pre>
+         * @type {Object}
+         */
+        defaultLoaderCfg  : {
+          value : {
+            property : 'children',
+            dataType : 'json'
           }
         },
         disabled : {
@@ -23375,6 +23826,11 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
       if(panel && _self.get('panelDestroyable')){
         $(panel).remove();
       }
+    },
+    _uiSetPanelContent : function(v){
+      var _self = this,
+        panel = _self.get('panel');
+      $(panel).html(v);
     }
   },{
     ATTRS : 
@@ -23391,6 +23847,43 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
        */
       panel : {
 
+      },
+      /**
+       * panel\u7684\u5185\u5bb9
+       * @property {String}
+       */
+      panelContent : {
+
+      },
+      /**
+       * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+       * <pre>
+       *  {
+       *   property : 'panelContent',
+       *   lazyLoad : {
+       *       event : 'active'
+       *   },
+       *     loadMask : {
+       *       el : _self.get('panel')
+       *   }
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg  : {
+        valueFn :function(){
+          var _self = this;
+          return {
+            property : 'panelContent',
+            autoLoad : false,
+            lazyLoad : {
+              event : 'afterSelectedChange'
+            },
+            loadMask : {
+              el : _self.get('panel')
+            }
+          }
+        } 
       },
       /**
        * \u79fb\u9664\u6807\u7b7e\u9879\u65f6\u662f\u5426\u79fb\u9664\u9762\u677f\uff0c\u9ed8\u8ba4\u4e3a false
@@ -27918,6 +28411,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                     view:true,
                     value:'&#160;'
                 },
+
                 /**
                  * \u5217\u7684\u5bbd\u5ea6,\u53ef\u4ee5\u4f7f\u6570\u5b57\u6216\u8005\u767e\u5206\u6bd4,\u4e0d\u8981\u4f7f\u7528 width : '100'\u6216\u8005width : '100px'
                  * <pre><code>
@@ -27925,7 +28419,6 @@ define('bui/grid/column',['bui/common'],function (require) {
                  *  
                  *  {title : '\u6587\u672c',width:'10%',dataIndex :'a',editor : {xtype : 'text'}}
                  * </code></pre>
-                 * @type {Number|String}
                  * @cfg {Number} [width = 80]
                  */
                 
@@ -27935,7 +28428,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                  *  grid.findColumn(id).set('width',200);
                  * </code></pre>
                  * 
-                 * @type {Object}
+                 * @type {Number}
                  */
                 width:{
                     value:100
@@ -31516,6 +32009,7 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u914d\u7f6e
      * @template
      * @param  {Array} fields \u5b57\u6bb5\u914d\u7f6e
      * @return {Array} \u7f16\u8f91\u5668\u7684\u914d\u7f6e\u9879

@@ -252,6 +252,7 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
+     * 获取编辑器的配置
      * @template
      * @param  {Array} fields 字段配置
      * @return {Array} 编辑器的配置项

@@ -53,6 +53,11 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
       if(panel && _self.get('panelDestroyable')){
         $(panel).remove();
       }
+    },
+    _uiSetPanelContent : function(v){
+      var _self = this,
+        panel = _self.get('panel');
+      $(panel).html(v);
     }
   },{
     ATTRS : 
@@ -69,6 +74,43 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
        */
       panel : {
 
+      },
+      /**
+       * panel的内容
+       * @property {String}
+       */
+      panelContent : {
+
+      },
+      /**
+       * 默认的加载控件内容的配置,默认值：
+       * <pre>
+       *  {
+       *   property : 'panelContent',
+       *   lazyLoad : {
+       *       event : 'active'
+       *   },
+       *     loadMask : {
+       *       el : _self.get('panel')
+       *   }
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg  : {
+        valueFn :function(){
+          var _self = this;
+          return {
+            property : 'panelContent',
+            autoLoad : false,
+            lazyLoad : {
+              event : 'afterSelectedChange'
+            },
+            loadMask : {
+              el : _self.get('panel')
+            }
+          }
+        } 
       },
       /**
        * 移除标签项时是否移除面板，默认为 false

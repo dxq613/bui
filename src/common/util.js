@@ -1,7 +1,14 @@
 
 /**
- * @class BUI
- * 控件库的基础命名空间
+ * @class BUI.Util
+ * 控件库的工具方法，这些工具方法直接绑定到BUI对象上
+ * <pre><code>
+ *     BUI.isString(str);
+ *
+ *     BUI.extend(A,B);
+ *
+ *     BUI.mix(A,{a:'a'});
+ * </code></pre>
  * @singleton
  */  
 var BUI = BUI || {};
@@ -38,7 +45,7 @@ define('bui/util',function(){
      * 子版本号
      * @type {String}
      */
-    subVersion : 1,
+    subVersion : 2,
 
     /**
      * 是否为函数
@@ -528,7 +535,7 @@ define('bui/util',function(){
      * @param {HTMLElement} form 表单
      * @param {Object} obj  键值对
      */
-    setValues : function(form,obj){
+    setFields : function(form,obj){
       for(var name in obj){
         if(obj.hasOwnProperty(name)){
           BUI.FormHelper.setField(form,name,obj[name]);

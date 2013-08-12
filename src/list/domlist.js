@@ -371,6 +371,22 @@ define('bui/list/domlist',['bui/common'],function (require) {
     textGetter : {
 
     },
+    /**
+     * 默认的加载控件内容的配置,默认值：
+     * <pre>
+     *  {
+     *   property : 'items',
+     *   dataType : 'json'
+     * }
+     * </pre>
+     * @type {Object}
+     */
+    defaultLoaderCfg  : {
+      value : {
+        property : 'items',
+        dataType : 'json'
+      }
+    },
     events : {
       value : {
         /**
