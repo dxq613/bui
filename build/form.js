@@ -1738,7 +1738,8 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
     Check : require(BASE + 'checkfield'),
     Radio : require(BASE + 'radiofield'),
     Checkbox : require(BASE + 'checkboxfield'),
-    Plain : require(BASE + 'plainfield')
+    Plain : require(BASE + 'plainfield'),
+    List : require(BASE + 'listfield')
   });
 
   return Field;
@@ -2463,6 +2464,9 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
             field.set('checked',false);
           }
         }else{
+          if(value == null){
+            value = '';
+          }
           field.set('value',value);
         }
       },

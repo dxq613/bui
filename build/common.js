@@ -2887,7 +2887,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   /**
    * 控件库的基类，包括控件的生命周期,下面是基本的扩展类
    * <p>
-   * <img src="../assets/img/class-mixins.jpg"/>
+   * <img src="https://dxq613.github.io/assets/img/class-mixins.jpg"/>
    * </p>
    * @class BUI.Component.UIBase
    * @extends BUI.Base
@@ -3139,10 +3139,21 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      */
     destroy: function () {
         var _self = this;
+        /**
+         * @event beforeDestroy
+         * fired before UIBase 's destroy.
+         * @param e
+         */
+        _self.fire('beforeDestroy');
 
         actionPlugins(_self, _self.get('plugins'), 'destructor');
         destroyHierarchy(_self);
-        _self.fire('destroy');
+         /**
+         * @event afterDestroy
+         * fired before UIBase 's destroy.
+         * @param e
+         */
+        _self.fire('afterDestroy');
         _self.off();
         _self.clearAttrVals();
         _self.destroyed = true;
@@ -8069,17 +8080,19 @@ define('bui/component/loader',['bui/util'],function (require) {
     Base = require('bui/base'),
     /**
      * @class BUI.Component.Loader
+     * @extends BUI.Base
      * ** 控件的默认Loader属性是：**
-     * <pre>
+     * <pre><code>
+     *   
      *   defaultLoader : {
      *     value : {
      *       property : 'content',
      *       autoLoad : true
      *     }
      *   }
-     * </pre>
+     * </code></pre>
      * ** 一般的控件默认读取html，作为控件的content值 **
-     * <pre>
+     * <pre><code>
      *   var control = new BUI.Component.Controller({
      *     render : '#c1',
      *     loader : {
@@ -8088,10 +8101,10 @@ define('bui/component/loader',['bui/util'],function (require) {
      *   });
      *
      *   control.render();
-     * </pre>
+     * </code></pre>
      *
      * ** 可以修改Loader的默认属性，加载children **
-     * <pre>
+     * <pre><code>
      *   var control = new BUI.Component.Controller({
      *     render : '#c1',
      *     loader : {
@@ -8102,7 +8115,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      *   });
      *
      *   control.render();
-     * </pre>
+     * </code></pre>
      * 加载控件内容的类，一般不进行实例化
      */
     Loader = function(config){
@@ -8114,6 +8127,16 @@ define('bui/component/loader',['bui/util'],function (require) {
 
     /**
      * 加载内容的地址
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
      * @cfg {String} url
      */
     url : {
@@ -8121,6 +8144,7 @@ define('bui/component/loader',['bui/util'],function (require) {
     },
     /**
      * 对应的控件，加载完成后设置属性到对应的控件
+     * @readOnly
      * @type {BUI.Component.Controller}
      */
     target : {
@@ -8135,6 +8159,17 @@ define('bui/component/loader',['bui/util'],function (require) {
     },
     /**
      * 是否自动加载数据
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       autoLoad : false
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
      * @cfg {Boolean} [autoLoad = true]
      */
     autoLoad : {
@@ -8142,15 +8177,42 @@ define('bui/component/loader',['bui/util'],function (require) {
     },
     /**
      * 延迟加载
+     * 
      *   - event : 触发加载的事件
      *   - repeat ：是否重复加载
-     * @property {Object}
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       lazyLoad : {
+     *         event : 'show',
+     *         repeat : true
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Object} [lazyLoad = null]
      */
     lazyLoad: {
 
     },
     /**
      * 加载返回的数据作为控件的那个属性
+     * <pre><code>
+     *   var control = new BUI.List.SimpleList({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       dataType : 'json',
+     *       property : 'items'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
      * @cfg {String} property
      */
     property : {
@@ -8167,8 +8229,20 @@ define('bui/component/loader',['bui/util'],function (require) {
     },
     /**
      * 加载数据时是否显示屏蔽层和加载提示 {@link BUI.Mask.LoadMask}
-     *   - loadMask : true时使用loadMask 默认的配置信息
-     *   - loadMask : {msg : '正在加载，请稍后。。'} LoadMask的配置信息
+     * 
+     *  -  loadMask : true时使用loadMask 默认的配置信息
+     *  -  loadMask : {msg : '正在加载，请稍后。。'} LoadMask的配置信息
+     *   <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       loadMask : true
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
      * @cfg {Boolean|Object} [loadMask = false]
      */
     loadMask : {
@@ -8176,6 +8250,18 @@ define('bui/component/loader',['bui/util'],function (require) {
     },
     /**
      * ajax 请求返回数据的类型
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       dataType : 'json',
+     *       property : 'items'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
      * @cfg {String} [dataType = 'text']
      */
     dataType : {
@@ -8193,7 +8279,22 @@ define('bui/component/loader',['bui/util'],function (require) {
     },
     /**
      * 初始化的请求参数
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       params : {
+     *         a : 'a',
+     *         b : 'b'
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
      * @cfg {Object} params
+     * @default null
      */
     params : {
 
@@ -8208,6 +8309,7 @@ define('bui/component/loader',['bui/util'],function (require) {
     /**
      * 最后一次请求的参数
      * @readOnly
+     * @private
      * @type {Object}
      */
     lastParams : {
@@ -8217,6 +8319,20 @@ define('bui/component/loader',['bui/util'],function (require) {
      * 加载数据，并添加属性到控件后的回调函数
      *   - data : 加载的数据
      *   - params : 加载的参数
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       callback : function(text){
+     *         var target = this.get('target');//control
+     *         //TO DO
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
      * @cfg {Function} callback
      */
     callback : {
@@ -8273,6 +8389,7 @@ define('bui/component/loader',['bui/util'],function (require) {
     },
     /**
      * 初始化mask
+     * @private
      */
     _initMask : function(){
       var _self = this,

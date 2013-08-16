@@ -865,6 +865,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @return {Boolean} 是否具有某种状态
      */
     hasStatus : function(item,status,element){
+      if(!item){
+        return false;
+      }
       var _self = this;
       element = element || _self.findElement(item);
       return _self.get('view').hasStatus(status,element);
@@ -886,14 +889,20 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     setItemStatus : function(item,status,value,element){
       var _self = this;
-      element = element || _self.findElement(item);
+      if(item){
+        element = element || _self.findElement(item);
+      }
+      
       if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //禁用后，阻止添加任何状态变化
-        if(status === 'disabled' && value){ //禁用，同时清理其他状态
-          _self.clearItemStatus(item);
+        if(item){
+          if(status === 'disabled' && value){ //禁用，同时清理其他状态
+            _self.clearItemStatus(item);
+          }
+          _self.setStatusValue(item,status,value);
+          _self.get('view').setItemStatusCls(status,element,value);
+          _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
         }
-        _self.setStatusValue(item,status,value);
-        _self.get('view').setItemStatusCls(status,element,value);
-        _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
+        
         if(status === 'selected'){ //处理选中
           _self.afterSelected(item,value,element);
         }

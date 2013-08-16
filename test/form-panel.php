@@ -134,6 +134,15 @@
             </div>
           </div>
         </div>
+        <div class="row">
+          <div class="control-group span15">
+            <label class="control-label">列表</label>
+            <div class="controls control-row-auto bui-form-field-list" data-items="{'1':'1','2':'二'}">
+              <input type="hidden" name="l1" value="1">
+              <ul class="bui-simple-list"></ul>
+            </div>
+          </div>
+        </div>
         <div class="row form-actions actions-bar">
             <div class="span13 offset3 ">
               <button type="submit" class="button button-primary">保存</button>
@@ -160,6 +169,7 @@
     <script type="text/javascript" src="../src/form/field/checkbox.js"></script>
     <script type="text/javascript" src="../src/form/field/radio.js"></script>
     <script type="text/javascript" src="../src/form/field/plain.js"></script>
+    <script type="text/javascript" src="../src/form/field/list.js"></script>
     <script type="text/javascript" src="../src/form/field.js"></script>
     <script type="text/javascript" src="../src/form/row.js"></script>
     <script type="text/javascript" src="../src/form/tips.js"></script>

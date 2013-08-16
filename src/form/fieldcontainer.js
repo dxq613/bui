@@ -214,6 +214,9 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
             field.set('checked',false);
           }
         }else{
+          if(value == null){
+            value = '';
+          }
           field.set('value',value);
         }
       },

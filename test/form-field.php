@@ -42,6 +42,7 @@
     <script type="text/javascript" src="../src/form/field/checkbox.js"></script>
     <script type="text/javascript" src="../src/form/field/radio.js"></script>
     <script type="text/javascript" src="../src/form/field/plain.js"></script>
+    <script type="text/javascript" src="../src/form/field/list.js"></script>
     <script type="text/javascript" src="../src/form/field.js"></script>
 
     <script type="text/javascript" src="specs/form-field-spec.js"></script>

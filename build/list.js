@@ -890,6 +890,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @return {Boolean} 是否具有某种状态
      */
     hasStatus : function(item,status,element){
+      if(!item){
+        return false;
+      }
       var _self = this;
       element = element || _self.findElement(item);
       return _self.get('view').hasStatus(status,element);
@@ -911,14 +914,20 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     setItemStatus : function(item,status,value,element){
       var _self = this;
-      element = element || _self.findElement(item);
+      if(item){
+        element = element || _self.findElement(item);
+      }
+      
       if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //禁用后，阻止添加任何状态变化
-        if(status === 'disabled' && value){ //禁用，同时清理其他状态
-          _self.clearItemStatus(item);
+        if(item){
+          if(status === 'disabled' && value){ //禁用，同时清理其他状态
+            _self.clearItemStatus(item);
+          }
+          _self.setStatusValue(item,status,value);
+          _self.get('view').setItemStatusCls(status,element,value);
+          _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
         }
-        _self.setStatusValue(item,status,value);
-        _self.get('view').setItemStatusCls(status,element,value);
-        _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
+        
         if(status === 'selected'){ //处理选中
           _self.afterSelected(item,value,element);
         }
@@ -986,13 +995,25 @@ define('bui/list/keynav',function () {
      * @protected
      */
     setHighlighted : function(item,element){
+      if(this.hasStatus(item,'hover',element)){
+        return;
+      }
       var _self = this,
         highlightedStatus = _self.get('highlightedStatus'),
-        lightedItem = _self.getHighlighted();
+        lightedElement = _self._getHighLightedElement(),
+        lightedItem = lightedElement ? _self.getItemByElement(lightedElement) : null;
       if(lightedItem !== item){
-        this.setItemStatus(lightedItem,highlightedStatus,false);
+        if(lightedItem){
+          this.setItemStatus(lightedItem,highlightedStatus,false,lightedElement);
+        }
         this.setItemStatus(item,highlightedStatus,true,element);
       }
+    },
+    _getHighLightedElement : function(){
+      var _self = this,
+        highlightedStatus = _self.get('highlightedStatus'),
+        element = _self.get('view').getFirstElementByStatus(highlightedStatus);
+      return element;
     },
     /**
      * 获取高亮的选项

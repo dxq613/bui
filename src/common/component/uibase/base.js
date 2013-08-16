@@ -184,7 +184,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   /**
    * 控件库的基类，包括控件的生命周期,下面是基本的扩展类
    * <p>
-   * <img src="../assets/img/class-mixins.jpg"/>
+   * <img src="https://dxq613.github.io/assets/img/class-mixins.jpg"/>
    * </p>
    * @class BUI.Component.UIBase
    * @extends BUI.Base
@@ -436,10 +436,21 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      */
     destroy: function () {
         var _self = this;
+        /**
+         * @event beforeDestroy
+         * fired before UIBase 's destroy.
+         * @param e
+         */
+        _self.fire('beforeDestroy');
 
         actionPlugins(_self, _self.get('plugins'), 'destructor');
         destroyHierarchy(_self);
-        _self.fire('destroy');
+         /**
+         * @event afterDestroy
+         * fired before UIBase 's destroy.
+         * @param e
+         */
+        _self.fire('afterDestroy');
         _self.off();
         _self.clearAttrVals();
         _self.destroyed = true;

@@ -629,25 +629,47 @@ BUI.use('bui/form/plainfield',function  (PlainField) {
     });
   });
 });
-/**/
-/*
-//多选域
-(function  () {
-  describe('测试选择框的生成',function(){
 
+BUI.use('bui/form/listfield',function(ListField){
+  var field = new ListField({
+    render : '#row',
+    label : '列表',
+    elCls : 'control-group span8',
+    items : {'1' : '1','2':'2'},
+    list : {
+      elCls : 'bui-select-list'
+    },
+    value : '2'
+  });
+  field.render();
+
+  var list = field.get('list');
+  describe('初始化',function(){
+    it('测试列表初始化',function(){
+      expect(!!list).not.toBe(false);
+    });
+    it('测试列表项',function(){
+      expect(list.getItems().length).not.toBe(0);
+    });
+    it('测试默认值',function(){
+      expect(field.getInnerControl().val()).toBe('2');
+      expect(list.getSelectedValue()).toBe('2');
+    })
   });
 
-  describe('测试选择框操作',function(){
-
+  describe('测试操作',function(){
+    it('设置值',function(){
+      var val = '1';
+      field.set('value',val);
+      expect(list.getSelectedValue()).toBe(val);
+      expect(field.getInnerControl().val()).toBe(val);
+    });
+    it('重设记录',function(){
+      var items = [{value : '1',text :'第1项'},{value : '2',text :'第2项'},{value : '3',text :'第3项'}];
+      field.set('items',items);
+      expect(list.getItems().length).toBe(items.length);
+      expect(list.getSelectedValue()).toBe(field.get('value'));
+    });
   });
 
-  describe('测试选择框验证',function(){
-
-  });
-})();
-
-//复选框
-(function  () {
-  // body...
-})();
-*/
+});
