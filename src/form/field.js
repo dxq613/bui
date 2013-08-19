@@ -18,7 +18,8 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
     Check : require(BASE + 'checkfield'),
     Radio : require(BASE + 'radiofield'),
     Checkbox : require(BASE + 'checkboxfield'),
-    Plain : require(BASE + 'plainfield')
+    Plain : require(BASE + 'plainfield'),
+    List : require(BASE + 'listfield')
   });
 
   return Field;

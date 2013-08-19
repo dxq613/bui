@@ -100,6 +100,11 @@ define('bui/grid/plugins/editing',function (require) {
       var _self = this;
       _self.set('grid',grid);
       _self.initEditing(grid);
+      
+    },
+    renderUI : function(){
+      var _self = this,
+        grid = _self.get('grid');
       //延迟加载 editor模块
       BUI.use('bui/editor',function(Editor){
         _self.initEditors(Editor);
@@ -247,6 +252,7 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
+     * 获取编辑器的配置
      * @template
      * @param  {Array} fields 字段配置
      * @return {Array} 编辑器的配置项

@@ -10,6 +10,8 @@
         <div id="c2"></div>
         <h2>复杂suggest</h2>
         <div id="c3"></div>
+        <h2>异步接口</h2>
+        <div id="s5"><input id="v_s5" type="text" name="a" value="3"/></div>
       </div>
        <div class="span8">
         <h2>Select</h2>

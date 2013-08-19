@@ -725,6 +725,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                     view:true,
                     value:'&#160;'
                 },
+
                 /**
                  * 列的宽度,可以使数字或者百分比,不要使用 width : '100'或者width : '100px'
                  * <pre><code>
@@ -732,7 +733,6 @@ define('bui/grid/column',['bui/common'],function (require) {
                  *  
                  *  {title : '文本',width:'10%',dataIndex :'a',editor : {xtype : 'text'}}
                  * </code></pre>
-                 * @type {Number|String}
                  * @cfg {Number} [width = 80]
                  */
                 
@@ -742,7 +742,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                  *  grid.findColumn(id).set('width',200);
                  * </code></pre>
                  * 
-                 * @type {Object}
+                 * @type {Number}
                  */
                 width:{
                     value:100
@@ -1643,7 +1643,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       var _self = this,
         bodyEl = _self.get('bodyEl'),
         emptyDataTpl = _self.get('emptyDataTpl'),
-        emptyEl = _self.get(emptyEl);
+        emptyEl = _self.get('emptyEl');
       if(emptyEl){
         emptyEl.remove();
       }
@@ -1655,7 +1655,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
      */
     clearEmptyText : function(){
        var _self = this,
-        emptyEl = _self.get(emptyEl);
+        emptyEl = _self.get('emptyEl');
       if(emptyEl){
         emptyEl.remove();
       }
@@ -1890,7 +1890,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
             render = _self.get('render'),
             width = _self.get('width');
         if(!width){
-            _self.set('width',$(render).width() - WIDTH_BORDER);
+            _self.set('width',$(render).width());
         }
     },
     /**
@@ -4171,6 +4171,11 @@ define('bui/grid/plugins/editing',function (require) {
       var _self = this;
       _self.set('grid',grid);
       _self.initEditing(grid);
+      
+    },
+    renderUI : function(){
+      var _self = this,
+        grid = _self.get('grid');
       //延迟加载 editor模块
       BUI.use('bui/editor',function(Editor){
         _self.initEditors(Editor);
@@ -4318,6 +4323,7 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
+     * 获取编辑器的配置
      * @template
      * @param  {Array} fields 字段配置
      * @return {Array} 编辑器的配置项

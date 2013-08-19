@@ -2,9 +2,8 @@
 
 BUI.use('bui/select',function (Select) {
 
-  var 
-    valueEl = $('#hide');
-
+  var valueEl = $('#hide');
+    
   var select = new Select.Select({
     render:'#s1',
     valueField:valueEl,
@@ -28,7 +27,10 @@ BUI.use('bui/select',function (Select) {
       var val = picker.get('list').getSelectedValue();
       expect(valueEl.val()).toBe(val.toString());
     });
-	
+	 
+    it('测试自动生成的name',function(){
+
+    });
 
   });
 
@@ -45,6 +47,12 @@ BUI.use('bui/select',function (Select) {
       expect(control.get('items').length).toBe(3);
     });
 
+    it('设置值',function(){
+
+    });
+    it('更改选项，获取值',function(){
+
+    });
 
   });
   
@@ -61,16 +69,82 @@ BUI.use('bui/select',function (Select) {
   });
   select.render();
   
+  describe('测试多选初始化',function(){
+    it('测试初始化,默认值',function(){
+
+    });
+  });
+
+  describe('测试设置值',function(){
+
+    it('修改选项',function(){
+
+    });
+    it('修改值',function(){
+
+    });
+    it('重置选项',function(){
+
+    });
+    it('禁用勾选',function(){
+
+    });
+  });
+});
+/**/
+BUI.use(['bui/select','bui/data'],function(Select,Data){
+  var store = new Data.Store({
+      url : 'data/store.json',
+      autoLoad : true
+    }),
+    select = new Select.Select({
+      render:'#s5',
+      valueField : '#v_s5',
+      store : store
+    });
+  select.render();
+  var list = select.get('picker').get('list');
+  describe('测试初始化',function(){
+    it('测试选项生成',function(){
+      waits(100);
+      runs(function(){
+         expect(list.getCount()).toBe(store.getCount());
+      });
+     
+    });
+    it('测试默认值',function(){
+      expect(list.getSelectedValue()).toBe(select.getSelectedValue());
+      expect(list.getSelectedValue()).toBe($('#v_s5').val());
+    });
+  });
+
+  describe('加载数据',function(){
+    it('测试加载数据',function(){
+
+    });
+  });
 });
 
 BUI.use('bui/select',function (Select) {
-  var select = new Select.Combox({
+  var data = ['选项1','选项2','选项3','选项4'],
+    select = new Select.Combox({
     render:'#c1',
     name:'combox',
-    items:['选项1','选项2','选项3','选项4']
+    items : data
   });
   select.render();
-  
+  var picker = select.get('picker'),
+    list = picker.get('list');
+
+  describe('测试生成',function(){
+
+    it('测试生成项',function(){
+      var items = list.getItems();
+      BUI.each(items,function(item,index){
+        expect(item.text).toBe(data[index])
+      });
+    });
+  });
 });
 
 BUI.use('bui/select',function (Select) {
@@ -111,4 +185,4 @@ BUI.use(['bui/select','bui/picker','bui/grid'],function(Select,Picker,Grid){
   });
   suggest.render();
   
-});
+});/**/

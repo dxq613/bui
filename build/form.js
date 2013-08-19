@@ -832,12 +832,33 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       },
       value : function(el){
         var _self = this,
+          selector = 'select,input,textarea',
           value = _self.get('value');
         if(!value){
-          value = el.val()
+          if(el.is(selector)){
+            value = el.val();
+          }else{
+            value = el.find(selector).val(); 
+          }
+          
         }
         return  value;
+      },
+      name : function(el){
+        var _self = this,
+          selector = 'select,input,textarea',
+          name = _self.get('name');
+        if(!name){
+          if(el.is(selector)){
+            name = el.attr('name');
+          }else{
+            name = el.find(selector).attr('name'); 
+          }
+          
+        }
+        return  name;
       }
+      
     }
   },{
     xclass:'form-field'
@@ -1116,20 +1137,21 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         });
         items = tmp;
       }
+
+      var control = _self.getInnerControl();
+      if(control.is('select')){
+        resetOptions(control,items,_self);
+        _self.setControlValue(_self.get('value'));
+        if(!_self.getControlValue()){
+          _self.setInternal('value','');
+        }
+      }
+
       if(select){
         if(select.set){
           select.set('items',items);
         }else{
           select.items = items;
-        }
-      }else{
-        var control = _self.getInnerControl();
-        if(control.is('select')){
-          resetOptions(control,items,_self);
-        }
-        _self.setControlValue(_self.get('value'));
-        if(!_self.getControlValue()){
-          _self.setInternal('value','');
         }
       }
     },
@@ -1226,32 +1248,6 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
           rst = $(options[0]).text();
         }
         return rst;
-      },
-      name : function(el){
-        var _self = this,
-          name = _self.get('name');
-        if(!name){
-          if(el.is('select')){
-            name = el.attr('name');
-          }else{
-            name = el.find('input').attr('name'); 
-          }
-          
-        }
-        return  name;
-      },
-      value : function(el){
-        var _self = this,
-          value = _self.get('value');
-        if(!value){
-          if(el.is('select')){
-            value = el.val();
-          }else{
-            value = el.find('input').val(); 
-          }
-          
-        }
-        return  value;
       }
     }
   },{
@@ -1677,8 +1673,8 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   /**
-   * 表单隐藏域
-   * @class BUI.Form.Field.PlainField
+   * 表单文本域，不能编辑
+   * @class BUI.Form.Field.Plain
    * @extends BUI.Form.Field
    */
   var PlainField = Field.extend({
@@ -1742,7 +1738,8 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
     Check : require(BASE + 'checkfield'),
     Radio : require(BASE + 'radiofield'),
     Checkbox : require(BASE + 'checkboxfield'),
-    Plain : require(BASE + 'plainfield')
+    Plain : require(BASE + 'plainfield'),
+    List : require(BASE + 'listfield')
   });
 
   return Field;
@@ -2467,6 +2464,9 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
             field.set('checked',false);
           }
         }else{
+          if(value == null){
+            value = '';
+          }
           field.set('value',value);
         }
       },
@@ -2582,6 +2582,22 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         validators : {
           value : {
 
+          }
+        },
+        /**
+         * 默认的加载控件内容的配置,默认值：
+         * <pre>
+         *  {
+         *   property : 'children',
+         *   dataType : 'json'
+         * }
+         * </pre>
+         * @type {Object}
+         */
+        defaultLoaderCfg  : {
+          value : {
+            property : 'children',
+            dataType : 'json'
           }
         },
         disabled : {

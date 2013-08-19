@@ -221,8 +221,12 @@ define('bui/component/uibase/mask',function (require) {
                 _maskExtShow = view._maskExtShow,
                 _maskExtHide = view._maskExtHide;
             if (self.get('mask')) {
-                self.on('show', _maskExtShow, view);
-                self.on('hide', _maskExtHide, view);
+                self.on('show',function(){
+                    view._maskExtShow();
+                });
+                self.on('hide',function(){
+                    view._maskExtHide();
+                });
             }
         }
     };

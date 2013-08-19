@@ -1553,25 +1553,22 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
   return BUI;
 });
 /**
- * \u5b9a\u4e49\u547d\u540d\u7a7a\u95f4
- * <p>
- * <img src="../assets/img/class-bui.jpg"/>
- * </p>
- * @class  BUI
+ * @class BUI.Util
+ * \u63a7\u4ef6\u5e93\u7684\u5de5\u5177\u65b9\u6cd5\uff0c\u8fd9\u4e9b\u5de5\u5177\u65b9\u6cd5\u76f4\u63a5\u7ed1\u5b9a\u5230BUI\u5bf9\u8c61\u4e0a
+ * <pre><code>
+ *     BUI.isString(str);
+ *
+ *     BUI.extend(A,B);
+ *
+ *     BUI.mix(A,{a:'a'});
+ * </code></pre>
  * @singleton
  */  
 var BUI = BUI || {};
 
-/**
- * BUI \u7684\u9759\u6001\u51fd\u6570
- * @ignore
- */
 define('bui/util',function(){
   
-    /**
-     * \u517c\u5bb9 jquery 1.6
-     * @ignore
-     */
+    //\u517c\u5bb9jquery 1.6\u4ee5\u4e0b
     (function($){
       if($.fn){
         $.fn.on = $.fn.on || $.fn.bind;
@@ -1592,6 +1589,7 @@ define('bui/util',function(){
   {
     /**
      * \u7248\u672c\u53f7
+     * @memberOf BUI
      * @type {Number}
      */
     version:1.0,
@@ -1600,7 +1598,7 @@ define('bui/util',function(){
      * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
-    subVersion : 1,
+    subVersion : 2,
 
     /**
      * \u662f\u5426\u4e3a\u51fd\u6570
@@ -2090,7 +2088,7 @@ define('bui/util',function(){
      * @param {HTMLElement} form \u8868\u5355
      * @param {Object} obj  \u952e\u503c\u5bf9
      */
-    setValues : function(form,obj){
+    setFields : function(form,obj){
       for(var name in obj){
         if(obj.hasOwnProperty(name)){
           BUI.FormHelper.setField(form,name,obj[name]);
@@ -2153,6 +2151,12 @@ define('bui/util',function(){
 });/**
  * @fileOverview \u6570\u7ec4\u5e2e\u52a9\u7c7b
  * @ignore
+ */
+
+/**
+ * @class BUI
+ * \u63a7\u4ef6\u5e93\u7684\u57fa\u7840\u547d\u540d\u7a7a\u95f4
+ * @singleton
  */
 
 define('bui/array',['bui/util'],function (r) {
@@ -4420,7 +4424,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   /**
    * \u63a7\u4ef6\u5e93\u7684\u57fa\u7c7b\uff0c\u5305\u62ec\u63a7\u4ef6\u7684\u751f\u547d\u5468\u671f,\u4e0b\u9762\u662f\u57fa\u672c\u7684\u6269\u5c55\u7c7b
    * <p>
-   * <img src="../assets/img/class-mixins.jpg"/>
+   * <img src="https://dxq613.github.io/assets/img/class-mixins.jpg"/>
    * </p>
    * @class BUI.Component.UIBase
    * @extends BUI.Base
@@ -4672,10 +4676,21 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      */
     destroy: function () {
         var _self = this;
+        /**
+         * @event beforeDestroy
+         * fired before UIBase 's destroy.
+         * @param e
+         */
+        _self.fire('beforeDestroy');
 
         actionPlugins(_self, _self.get('plugins'), 'destructor');
         destroyHierarchy(_self);
-        _self.fire('destroy');
+         /**
+         * @event afterDestroy
+         * fired before UIBase 's destroy.
+         * @param e
+         */
+        _self.fire('afterDestroy');
         _self.off();
         _self.clearAttrVals();
         _self.destroyed = true;
@@ -5014,7 +5029,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
 
     function getRegion(node) {
         var offset, w, h;
-        if (!$.isWindow(node[0])) {
+        if (node.length && !$.isWindow(node[0])) {
             offset = node.offset();
             w = node.outerWidth();
             h = node.outerHeight();
@@ -5759,6 +5774,27 @@ define('bui/component/uibase/close',function () {
       closeAction:{
         value:HIDE
       }
+
+      /**
+       * @event closing
+       * \u6b63\u5728\u5173\u95ed\uff0c\u53ef\u4ee5\u901a\u8fc7return false \u963b\u6b62\u5173\u95ed\u4e8b\u4ef6
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy
+       */
+
+      /**
+       * @event closed
+       * \u5df2\u7ecf\u5173\u95ed
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy
+       */
+      
+      /**
+       * @event closeclick
+       * \u89e6\u53d1\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u7684\u4e8b\u4ef6,return false \u963b\u6b62\u5173\u95ed
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.domTarget \u70b9\u51fb\u7684\u5173\u95ed\u6309\u94ae\u8282\u70b9
+       */
   };
 
   var actions = {
@@ -5772,14 +5808,27 @@ define('bui/component/uibase/close',function () {
           if (v && !self.__bindCloseEvent) {
               self.__bindCloseEvent = 1;
               self.get('closeBtn').on('click', function (ev) {
-                  self[actions[self.get('closeAction')] || HIDE]();
-                  ev.preventDefault();
+                if(self.fire('closeclick',{domTarget : ev.target}) !== false){
+                  self.close();
+                }
+                ev.preventDefault();
               });
           }
       },
       __destructor:function () {
           var btn = this.get('closeBtn');
           btn && btn.detach();
+      },
+      /**
+       * \u5173\u95ed\u5f39\u51fa\u6846\uff0c\u5982\u679ccloseAction = 'hide'\u90a3\u4e48\u5c31\u662f\u9690\u85cf\uff0c\u5982\u679c closeAction = 'destroy'\u90a3\u4e48\u5c31\u662f\u91ca\u653e
+       */
+      close : function(){
+        var self = this,
+          action = actions[self.get('closeAction') || HIDE];
+        if(self.fire('closing',{action : action}) !== false){
+          self[action]();
+          self.fire('closed',{action : action});
+        }
       }
   };
 
@@ -6399,8 +6448,12 @@ define('bui/component/uibase/mask',function (require) {
                 _maskExtShow = view._maskExtShow,
                 _maskExtHide = view._maskExtHide;
             if (self.get('mask')) {
-                self.on('show', _maskExtShow, view);
-                self.on('hide', _maskExtHide, view);
+                self.on('show',function(){
+                    view._maskExtShow();
+                });
+                self.on('hide',function(){
+                    view._maskExtHide();
+                });
             }
         }
     };
@@ -8449,6 +8502,22 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      */
     autoInitItems : {
       value : true
+    },
+    /**
+     * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+     * <pre>
+     *  {
+     *   property : 'children',
+     *   dataType : 'json'
+     * }
+     * </pre>
+     * @type {Object}
+     */
+    defaultLoaderCfg  : {
+      value : {
+        property : 'children',
+        dataType : 'json'
+      }
     }
   });
 
@@ -9538,6 +9607,432 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
 
     return View;
 });/**
+ * @fileOverview \u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9
+ * @ignore
+ */
+
+define('bui/component/loader',['bui/util'],function (require) {
+  'use strict';
+  var BUI = require('bui/util'),
+    Base = require('bui/base'),
+    /**
+     * @class BUI.Component.Loader
+     * @extends BUI.Base
+     * ** \u63a7\u4ef6\u7684\u9ed8\u8ba4Loader\u5c5e\u6027\u662f\uff1a**
+     * <pre><code>
+     *   
+     *   defaultLoader : {
+     *     value : {
+     *       property : 'content',
+     *       autoLoad : true
+     *     }
+     *   }
+     * </code></pre>
+     * ** \u4e00\u822c\u7684\u63a7\u4ef6\u9ed8\u8ba4\u8bfb\u53d6html\uff0c\u4f5c\u4e3a\u63a7\u4ef6\u7684content\u503c **
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     *
+     * ** \u53ef\u4ee5\u4fee\u6539Loader\u7684\u9ed8\u8ba4\u5c5e\u6027\uff0c\u52a0\u8f7dchildren **
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/children.json',
+     *       property : 'children',
+     *       dataType : 'json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * \u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u7c7b\uff0c\u4e00\u822c\u4e0d\u8fdb\u884c\u5b9e\u4f8b\u5316
+     */
+    Loader = function(config){
+      Loader.superclass.constructor.call(this,config);
+      this._init();
+    };
+
+  Loader.ATTRS = {
+
+    /**
+     * \u52a0\u8f7d\u5185\u5bb9\u7684\u5730\u5740
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {String} url
+     */
+    url : {
+
+    },
+    /**
+     * \u5bf9\u5e94\u7684\u63a7\u4ef6\uff0c\u52a0\u8f7d\u5b8c\u6210\u540e\u8bbe\u7f6e\u5c5e\u6027\u5230\u5bf9\u5e94\u7684\u63a7\u4ef6
+     * @readOnly
+     * @type {BUI.Component.Controller}
+     */
+    target : {
+
+    },
+    /**
+     * @private
+     * \u662f\u5426load \u8fc7
+     */
+    hasLoad : {
+      value : false
+    },
+    /**
+     * \u662f\u5426\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       autoLoad : false
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Boolean} [autoLoad = true]
+     */
+    autoLoad : {
+
+    },
+    /**
+     * \u5ef6\u8fdf\u52a0\u8f7d
+     * 
+     *   - event : \u89e6\u53d1\u52a0\u8f7d\u7684\u4e8b\u4ef6
+     *   - repeat \uff1a\u662f\u5426\u91cd\u590d\u52a0\u8f7d
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       lazyLoad : {
+     *         event : 'show',
+     *         repeat : true
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Object} [lazyLoad = null]
+     */
+    lazyLoad: {
+
+    },
+    /**
+     * \u52a0\u8f7d\u8fd4\u56de\u7684\u6570\u636e\u4f5c\u4e3a\u63a7\u4ef6\u7684\u90a3\u4e2a\u5c5e\u6027
+     * <pre><code>
+     *   var control = new BUI.List.SimpleList({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       dataType : 'json',
+     *       property : 'items'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {String} property
+     */
+    property : {
+
+    },
+    /**
+     * \u683c\u5f0f\u5316\u8fd4\u56de\u7684\u6570\u636e
+     * @cfg {Function} renderer
+     */
+    renderer : {
+      value : function(value){
+        return value;
+      }
+    },
+    /**
+     * \u52a0\u8f7d\u6570\u636e\u65f6\u662f\u5426\u663e\u793a\u5c4f\u853d\u5c42\u548c\u52a0\u8f7d\u63d0\u793a {@link BUI.Mask.LoadMask}
+     * 
+     *  -  loadMask : true\u65f6\u4f7f\u7528loadMask \u9ed8\u8ba4\u7684\u914d\u7f6e\u4fe1\u606f
+     *  -  loadMask : {msg : '\u6b63\u5728\u52a0\u8f7d\uff0c\u8bf7\u7a0d\u540e\u3002\u3002'} LoadMask\u7684\u914d\u7f6e\u4fe1\u606f
+     *   <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       loadMask : true
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Boolean|Object} [loadMask = false]
+     */
+    loadMask : {
+      value : false
+    },
+    /**
+     * ajax \u8bf7\u6c42\u8fd4\u56de\u6570\u636e\u7684\u7c7b\u578b
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       dataType : 'json',
+     *       property : 'items'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {String} [dataType = 'text']
+     */
+    dataType : {
+      value : 'text'
+    },
+    /**
+     * Ajax\u8bf7\u6c42\u7684\u914d\u7f6e\u9879,\u4f1a\u8986\u76d6 url,dataType\u6570\u636e
+     * @cfg {Object} ajaxOptions
+     */
+    ajaxOptions : {
+      value : {
+        method : 'get',
+        cache : false
+      }
+    },
+    /**
+     * \u521d\u59cb\u5316\u7684\u8bf7\u6c42\u53c2\u6570
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       params : {
+     *         a : 'a',
+     *         b : 'b'
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Object} params
+     * @default null
+     */
+    params : {
+
+    },
+    /**
+     * \u9644\u52a0\u53c2\u6570\uff0c\u6bcf\u6b21\u8bf7\u6c42\u90fd\u5e26\u7684\u53c2\u6570
+     * @cfg {Object} appendParams
+     */
+    appendParams : {
+
+    },
+    /**
+     * \u6700\u540e\u4e00\u6b21\u8bf7\u6c42\u7684\u53c2\u6570
+     * @readOnly
+     * @private
+     * @type {Object}
+     */
+    lastParams : {
+      value : {}
+    },
+    /**
+     * \u52a0\u8f7d\u6570\u636e\uff0c\u5e76\u6dfb\u52a0\u5c5e\u6027\u5230\u63a7\u4ef6\u540e\u7684\u56de\u8c03\u51fd\u6570
+     *   - data : \u52a0\u8f7d\u7684\u6570\u636e
+     *   - params : \u52a0\u8f7d\u7684\u53c2\u6570
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       callback : function(text){
+     *         var target = this.get('target');//control
+     *         //TO DO
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Function} callback
+     */
+    callback : {
+
+    },
+    /**
+     * \u5931\u8d25\u7684\u56de\u8c03\u51fd\u6570
+     *   - response : \u8fd4\u56de\u7684\u9519\u8bef\u5bf9\u8c61
+     *   - params : \u52a0\u8f7d\u7684\u53c2\u6570
+     * @cfg {Function} failure
+     */
+    failure : {
+
+    }
+
+  };
+
+  BUI.extend(Loader,Base);
+
+  BUI.augment(Loader,{
+    /**
+     * @protected
+     * \u662f\u5426\u662fLoader
+     * @type {Boolean}
+     */
+    isLoader : true,
+    //\u521d\u59cb\u5316
+    _init : function(){
+      var _self = this,
+        autoLoad = _self.get('autoLoad'),
+        params = _self.get('params');
+
+      _self._initMask();
+      if(autoLoad){
+        _self.load(params);
+      }else{
+        _self._initParams();
+        _self._initLazyLoad();
+      }
+    },
+    //\u521d\u59cb\u5316\u5ef6\u8fdf\u52a0\u8f7d
+    _initLazyLoad : function(){
+      var _self = this,
+        target = _self.get('target'),
+        lazyLoad= _self.get('lazyLoad');
+
+      if(target && lazyLoad && lazyLoad.event){
+        target.on(lazyLoad.event,function(){
+          if(!_self.get('hasLoad') || lazyLoad.repeat){
+            _self.load();
+          }
+        });
+      }
+    },
+    /**
+     * \u521d\u59cb\u5316mask
+     * @private
+     */
+    _initMask : function(){
+      var _self = this,
+        target = _self.get('target'),
+        loadMask = _self.get('loadMask');
+      if(target && loadMask){
+        BUI.use('bui/mask',function(Mask){
+          var cfg = $.isPlainObject(loadMask) ? loadMask : {};
+          loadMask = new Mask.LoadMask(BUI.mix({el : target.get('el')},cfg));
+          _self.set('loadMask',loadMask);
+        });
+      }
+    },
+    //\u521d\u59cb\u5316\u67e5\u8be2\u53c2\u6570
+    _initParams : function(){
+      var _self = this,
+        lastParams = _self.get('lastParams'),
+        params = _self.get('params');
+
+      //\u521d\u59cb\u5316 \u53c2\u6570
+      BUI.mix(lastParams,params);
+    },
+    /**
+     * \u52a0\u8f7d\u5185\u5bb9
+     * @param {Object} params \u52a0\u8f7d\u6570\u636e\u7684\u53c2\u6570
+     */
+    load : function(params){
+      var _self = this,
+        url = _self.get('url'),
+        ajaxOptions = _self.get('ajaxOptions'),
+        lastParams = _self.get('lastParams'),
+        appendParams = _self.get('appendParams');
+
+      BUI.mix(true,lastParams,appendParams,params);
+      params = BUI.cloneObject(lastParams);
+      //\u672a\u63d0\u4f9b\u52a0\u8f7d\u5730\u5740\uff0c\u963b\u6b62\u52a0\u8f7d
+      if(!url){
+        return;
+      }
+
+      _self.onBeforeLoad();
+      _self.set('hasLoad',true);
+      $.ajax(BUI.mix({
+        dataType : _self.get('dataType'),
+        data : params,
+        url : url,
+        success : function(data){
+          _self.onload(data,params);
+        },
+        error : function(jqXHR, textStatus, errorThrown){
+          _self.onException({
+            jqXHR : jqXHR, 
+            textStatus : textStatus, 
+            errorThrown : errorThrown
+          },params);
+        }
+      },ajaxOptions));
+    },
+    /**
+     * @private
+     * \u52a0\u8f7d\u524d
+     */
+    onBeforeLoad : function(){
+      var _self = this,
+        loadMask = _self.get('loadMask');
+      if(loadMask && loadMask.show){
+        loadMask.show();
+      }
+    },
+    /**
+     * @private
+     * \u52a0\u8f7d\u5b8c\u6bd5
+     */
+    onload : function(data,params){
+      var _self = this,
+        loadMask = _self.get('loadMask'),
+        property = _self.get('property'),
+        callback = _self.get('callback'),
+        renderer = _self.get('renderer'),
+        target = _self.get('target');
+      target.set(property,renderer.call(_self,data));
+
+      /**/
+      if(loadMask && loadMask.hide){
+        loadMask.hide();
+      }
+      if(callback){
+        callback.call(this,data,params);
+      }
+    },
+    /**
+     * @private
+     * \u52a0\u8f7d\u51fa\u9519
+     */
+    onException : function(response,params){
+      var _self = this,
+        failure = _self.get('failure');
+      if(failure){
+        failure.call(this,response,params);
+      }
+    }
+
+  });
+
+  return Loader;
+});/**
  * @fileOverview  \u63a7\u4ef6\u53ef\u4ee5\u5b9e\u4f8b\u5316\u7684\u57fa\u7c7b
  * @ignore
  * @author yiminghe@gmail.com
@@ -9551,11 +10046,12 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
  */
 
 
-define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view'],function(require){
-
+define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view','bui/component/loader'],function(require){
+    'use strict';
     var UIBase = require('bui/component/uibase'),
         Manager = require('bui/component/manage'),
         View = require('bui/component/view'),
+        Loader = require('bui/component/loader'),
         wrapBehavior = BUI.wrapBehavior,
         getWrapBehavior = BUI.getWrapBehavior;
 
@@ -9754,7 +10250,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             var self = this;
 
             if(!self.get('id')){
-                self.set('id',self.getNextUniqueId())
+                self.set('id',self.getNextUniqueId());
             }
             Manager.addComponent(self.get('id'),self);
             // initialize view
@@ -9778,13 +10274,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          */
         createDom: function () {
             var self = this,
-                el,
+                //el,
                 view = self.get('view');
             view.create(undefined);
-            el = view.getKeyEventTarget();
-            if (!self.get('allowTextSelection')) {
+            //el = view.getKeyEventTarget();
+            /*if (!self.get('allowTextSelection')) {
                 //el.unselectable(undefined);
-            }
+            }*/
         },
 
         /**
@@ -9793,10 +10289,23 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          *
          */
         renderUI: function () {
-            var self = this, i, children, child;
+            var self = this, 
+                loader = self.get('loader');
             self.get('view').render();
+            self._initChildren();
+            if(loader){
+                self.setInternal('loader',loader);
+            }
+            /**/
+
+        },
+        _initChildren : function(children){
+            var self = this, 
+                i, 
+                children, 
+                child;
             // then render my children
-            children = self.get('children').concat();
+            children = children || self.get('children').concat();
             self.get('children').length = 0;
             for (i = 0; i < children.length; i++) {
                 child = self.addChild(children[i]);
@@ -9982,6 +10491,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     self.set('xy',[-999,-999]);
                 }
             }
+        },
+        //\u8bbe\u7f6echildren\u65f6
+        _uiSetChildren : function(v){
+            var self = this,
+                children = BUI.cloneObject(v);
+            //self.removeChildren(true);
+            self._initChildren(children);
         },
         /**
          * \u4f7f\u63a7\u4ef6\u53ef\u7528
@@ -10895,7 +11411,34 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 value: false,
                 view: 1
             },
-
+            /**
+             * \u4e00\u65e6\u4f7f\u7528loader\u7684\u9ed8\u8ba4\u914d\u7f6e
+             * @protected
+             * @type {Object}
+             */
+            defaultLoaderCfg : {
+                value : {
+                    property : 'content',
+                    autoLoad : true
+                }
+            },
+            /**
+             * \u63a7\u4ef6\u5185\u5bb9\u7684\u52a0\u8f7d\u5668
+             * @type {BUI.Component.Loader}
+             */
+            loader : {
+                getter : function(v){
+                    var _self = this,
+                        defaultCfg;
+                    if(v && !v.isLoader){
+                        v.target = _self;
+                        defaultCfg = _self.get('defaultLoaderCfg')
+                        v = new Loader(BUI.merge(defaultCfg,v));
+                        _self.setInternal('loader',v);
+                    }
+                    return v;
+                }
+            },
             /**
              * 1. Whether allow select this component's text.<br/>
              * 2. Whether not to lose last component's focus if click current one (set false).
@@ -10964,6 +11507,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @type {BUI.Component.Controller[]}
              */
             children: {
+                sync : false,
                 value: []
             },
             /**
@@ -11513,7 +12057,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       var _self = this,
         arr = ['start','limit','pageIndex'];
 
-      $.each(arr,function(field){
+      BUI.each(arr,function(field){
         var fieldParam = _self.get(field+'Param');
         if(fieldParam !== field){
           params[fieldParam] = params[field];
@@ -13314,10 +13858,14 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     _getPageParams : function(){
       var _self = this,
         sortInfo = _self.get('sortInfo'),
+        start = _self.get('start'),
+        limit = _self.get('pageSize'),
+        pageIndex = _self.get('pageIndex') || (limit ? start/limit : 0);
+
         params = {
-          start : _self.get('start'),
-          limit : _self.get('pageSize'),
-          pageIndex : _self.get('pageIndex') //\u4e00\u822c\u800c\u8a00\uff0cpageIndex = start/limit
+          start : start,
+          limit : limit,
+          pageIndex : pageIndex //\u4e00\u822c\u800c\u8a00\uff0cpageIndex = start/limit
         };
 
       if(_self.get('remoteSort')){
@@ -13761,6 +14309,23 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       dialog.superclass.show.call(this);
       _self.center();
     },
+    //\u7ed1\u5b9a\u4e8b\u4ef6
+    bindUI : function(){
+      var _self = this;
+      _self.on('closeclick',function(){
+        return _self.onCancel();
+      });
+    },
+    /**
+     * @protected
+     * \u53d6\u6d88
+     */
+    onCancel : function(){
+      var _self = this,
+        cancel = _self.get('cancel');
+      return cancel.call(this);
+    },
+    //\u8bbe\u7f6e\u6309\u94ae
     _uiSetButtons:function(buttons){
       var _self = this,
         footer = _self.get('footer');
@@ -13771,13 +14336,26 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       });
 
     },
+    //\u521b\u5efa\u6309\u94ae
     _createButton : function(conf,parent){
       var _self = this,
         temp = '<button class="'+conf.elCls+'">'+conf.text+'</button>',
         btn = $(temp).appendTo(parent);
       btn.on('click',function(){
-        conf.handler.call(_self);
+        conf.handler.call(_self,_self,this);
       });
+    },
+    destructor : function(){
+      var _self = this,
+        contentId = _self.get('contentId'),
+        body = _self.get('body'),
+        closeAction = _self.get('closeAction');
+      if(closeAction == 'destroy'){
+        _self.hide();
+        if(contentId){
+          body.children().appendTo('#'+contentId);
+        }
+      }
     }
   },{
 
@@ -13842,8 +14420,10 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
           },{
             text:'\u53d6\u6d88',
             elCls : 'button button-primary',
-            handler : function(){
-              this.hide();
+            handler : function(dialog,btn){
+              if(this.onCancel() !== false){
+                this.close();
+              }
             }
           }
         ]
@@ -13861,6 +14441,15 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       */
       success : {
         value : function(){
+          this.close();
+        }
+      },
+      /**
+       * \u7528\u6237\u53d6\u6d88\u65f6\u8c03\u7528\uff0c\u5982\u679creturn false\u5219\u963b\u6b62\u7a97\u53e3\u5173\u95ed
+       * @cfg {Function} cancel
+       */
+      cancel : {
+        value : function(){
 
         }
       },
@@ -13871,6 +14460,32 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
         valueFn : function(){
           return this.get('header');
         }
+      },
+
+      /**
+       * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+       * <pre>
+       *  {
+       *   property : 'bodyContent',
+       *   autoLoad : true
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg  : {
+        valueFn :function(){
+          var _self = this;
+          return {
+            property : 'bodyContent',
+            autoLoad : false,
+            lazyLoad : {
+              event : 'show'
+            },
+            loadMask : {
+              el : _self.get('body')
+            }
+          }
+        } 
       },
       /**
        * \u5f39\u51fa\u6846\u6807\u9898
@@ -14573,6 +15188,22 @@ define('bui/list/domlist',['bui/common'],function (require) {
     textGetter : {
 
     },
+    /**
+     * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+     * <pre>
+     *  {
+     *   property : 'items',
+     *   dataType : 'json'
+     * }
+     * </pre>
+     * @type {Object}
+     */
+    defaultLoaderCfg  : {
+      value : {
+        property : 'items',
+        dataType : 'json'
+      }
+    },
     events : {
       value : {
         /**
@@ -14680,13 +15311,13 @@ define('bui/list/domlist',['bui/common'],function (require) {
         });
       }
 
-      itemContainer.delegate('.' + itemCls,'dbclick',function(ev){
+      itemContainer.delegate('.' + itemCls,'dblclick',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
           return;
         }
-        _self.fire('itemdbclick',{item:item,element : itemEl[0],domTarget:ev.target});
+        _self.fire('itemdblclick',{item:item,element : itemEl[0],domTarget:ev.target});
       });
       
       function setItemSelectedStatus(item,itemEl){
@@ -14738,7 +15369,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @return {Number} \u9009\u9879\u6570\u91cf
      */
     getCount : function(){
-      return this.getItems().length;
+      var items = this.getItems();
+      return items ? items.length : 0;
     },
     /**
      * \u66f4\u6539\u72b6\u6001\u503c\u5bf9\u5e94\u7684\u5b57\u6bb5
@@ -15050,6 +15682,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @return {Boolean} \u662f\u5426\u5177\u6709\u67d0\u79cd\u72b6\u6001
      */
     hasStatus : function(item,status,element){
+      if(!item){
+        return false;
+      }
       var _self = this;
       element = element || _self.findElement(item);
       return _self.get('view').hasStatus(status,element);
@@ -15071,14 +15706,20 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     setItemStatus : function(item,status,value,element){
       var _self = this;
-      element = element || _self.findElement(item);
+      if(item){
+        element = element || _self.findElement(item);
+      }
+      
       if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //\u7981\u7528\u540e\uff0c\u963b\u6b62\u6dfb\u52a0\u4efb\u4f55\u72b6\u6001\u53d8\u5316
-        if(status === 'disabled' && value){ //\u7981\u7528\uff0c\u540c\u65f6\u6e05\u7406\u5176\u4ed6\u72b6\u6001
-          _self.clearItemStatus(item);
+        if(item){
+          if(status === 'disabled' && value){ //\u7981\u7528\uff0c\u540c\u65f6\u6e05\u7406\u5176\u4ed6\u72b6\u6001
+            _self.clearItemStatus(item);
+          }
+          _self.setStatusValue(item,status,value);
+          _self.get('view').setItemStatusCls(status,element,value);
+          _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
         }
-        _self.setStatusValue(item,status,value);
-        _self.get('view').setItemStatusCls(status,element,value);
-        _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
+        
         if(status === 'selected'){ //\u5904\u7406\u9009\u4e2d
           _self.afterSelected(item,value,element);
         }
@@ -15146,13 +15787,25 @@ define('bui/list/keynav',function () {
      * @protected
      */
     setHighlighted : function(item,element){
+      if(this.hasStatus(item,'hover',element)){
+        return;
+      }
       var _self = this,
         highlightedStatus = _self.get('highlightedStatus'),
-        lightedItem = _self.getHighlighted();
+        lightedElement = _self._getHighLightedElement(),
+        lightedItem = lightedElement ? _self.getItemByElement(lightedElement) : null;
       if(lightedItem !== item){
-        this.setItemStatus(lightedItem,highlightedStatus,false);
+        if(lightedItem){
+          this.setItemStatus(lightedItem,highlightedStatus,false,lightedElement);
+        }
         this.setItemStatus(item,highlightedStatus,true,element);
       }
+    },
+    _getHighLightedElement : function(){
+      var _self = this,
+        highlightedStatus = _self.get('highlightedStatus'),
+        element = _self.get('view').getFirstElementByStatus(highlightedStatus);
+      return element;
     },
     /**
      * \u83b7\u53d6\u9ad8\u4eae\u7684\u9009\u9879
@@ -15365,7 +16018,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     ATTRS : {
       itemContainer : {
         valueFn : function(){
-          return this.get('el').children(this.get('listSelector'));
+          return this.get('el').find(this.get('listSelector'));
         }
       }
     }
@@ -15983,6 +16636,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       }
       /**
        * @event selectedchange
+       * \u9009\u4e2d\u503c\u6539\u53d8\u4e8b\u4ef6
        * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
        * @param {String} text \u9009\u4e2d\u7684\u6587\u672c
        * @param {string} value \u9009\u4e2d\u7684\u503c
@@ -16050,7 +16704,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
         var _self = this,
           list = _self.get('list'),
           selectedValue = _self.getSelectedValue();
-        if(val !== selectedValue){
+        if(val !== selectedValue && list.getCount()){
           if(list.get('multipleSelect')){
             list.clearSelection();
           }
@@ -16955,12 +17609,33 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       },
       value : function(el){
         var _self = this,
+          selector = 'select,input,textarea',
           value = _self.get('value');
         if(!value){
-          value = el.val()
+          if(el.is(selector)){
+            value = el.val();
+          }else{
+            value = el.find(selector).val(); 
+          }
+          
         }
         return  value;
+      },
+      name : function(el){
+        var _self = this,
+          selector = 'select,input,textarea',
+          name = _self.get('name');
+        if(!name){
+          if(el.is(selector)){
+            name = el.attr('name');
+          }else{
+            name = el.find(selector).attr('name'); 
+          }
+          
+        }
+        return  name;
       }
+      
     }
   },{
     xclass:'form-field'
@@ -17239,20 +17914,21 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         });
         items = tmp;
       }
+
+      var control = _self.getInnerControl();
+      if(control.is('select')){
+        resetOptions(control,items,_self);
+        _self.setControlValue(_self.get('value'));
+        if(!_self.getControlValue()){
+          _self.setInternal('value','');
+        }
+      }
+
       if(select){
         if(select.set){
           select.set('items',items);
         }else{
           select.items = items;
-        }
-      }else{
-        var control = _self.getInnerControl();
-        if(control.is('select')){
-          resetOptions(control,items,_self);
-        }
-        _self.setControlValue(_self.get('value'));
-        if(!_self.getControlValue()){
-          _self.setInternal('value','');
         }
       }
     },
@@ -17349,32 +18025,6 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
           rst = $(options[0]).text();
         }
         return rst;
-      },
-      name : function(el){
-        var _self = this,
-          name = _self.get('name');
-        if(!name){
-          if(el.is('select')){
-            name = el.attr('name');
-          }else{
-            name = el.find('input').attr('name'); 
-          }
-          
-        }
-        return  name;
-      },
-      value : function(el){
-        var _self = this,
-          value = _self.get('value');
-        if(!value){
-          if(el.is('select')){
-            value = el.val();
-          }else{
-            value = el.find('input').val(); 
-          }
-          
-        }
-        return  value;
       }
     }
   },{
@@ -17800,8 +18450,8 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   /**
-   * \u8868\u5355\u9690\u85cf\u57df
-   * @class BUI.Form.Field.PlainField
+   * \u8868\u5355\u6587\u672c\u57df\uff0c\u4e0d\u80fd\u7f16\u8f91
+   * @class BUI.Form.Field.Plain
    * @extends BUI.Form.Field
    */
   var PlainField = Field.extend({
@@ -17865,7 +18515,8 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
     Check : require(BASE + 'checkfield'),
     Radio : require(BASE + 'radiofield'),
     Checkbox : require(BASE + 'checkboxfield'),
-    Plain : require(BASE + 'plainfield')
+    Plain : require(BASE + 'plainfield'),
+    List : require(BASE + 'listfield')
   });
 
   return Field;
@@ -18590,6 +19241,9 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
             field.set('checked',false);
           }
         }else{
+          if(value == null){
+            value = '';
+          }
           field.set('value',value);
         }
       },
@@ -18705,6 +19359,22 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         validators : {
           value : {
 
+          }
+        },
+        /**
+         * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+         * <pre>
+         *  {
+         *   property : 'children',
+         *   dataType : 'json'
+         * }
+         * </pre>
+         * @type {Object}
+         */
+        defaultLoaderCfg  : {
+          value : {
+            property : 'children',
+            dataType : 'json'
           }
         },
         disabled : {
@@ -20393,7 +21063,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
     PREFIX = BUI.prefix;
 
   function formatItems(items){
-
+   
     if($.isPlainObject(items)){
       var tmp = [];
       BUI.each(items,function(v,n){
@@ -20401,7 +21071,15 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       });
       return tmp;
     }
-    return items;
+    var rst = [];
+    BUI.each(items,function(item,index){
+      if(BUI.isString(item)){
+        rst.push({value : item,text:item});
+      }else{
+        rst.push(item);
+      }
+    });
+    return rst;
   }
 
   var Component = BUI.Component,
@@ -20448,16 +21126,18 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
               {
                 xclass : xclass,
                 elCls:PREFIX + 'select-list',
+                store : _self.get('store'),
                 items : formatItems(_self.get('items'))/**/
               }
             ],
             valueField : _self.get('valueField')
           });
           
-          //children.push(picker);
           _self.set('picker',picker);
         }else{
-          picker.set('valueField',_self.get('valueField'));
+          if(_self.get('valueField')){
+            picker.set('valueField',_self.get('valueField'));
+          }
         }
         if(multipleSelect){
           picker.set('hideEvent','');
@@ -20483,11 +21163,16 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       //\u7ed1\u5b9a\u4e8b\u4ef6
       bindUI : function(){
         var _self = this,
-          picker = _self.get('picker');
+          picker = _self.get('picker'),
+          list = picker.get('list'),
+          store = list.get('store');
           
         //\u9009\u9879\u53d1\u751f\u6539\u53d8\u65f6
         picker.on('selectedchange',function(ev){
           _self.fire('change',{text : ev.text,value : ev.value,item : ev.item});
+        });
+        list.on('itemsshow',function(){
+          _self._syncValue();
         });
       },
       /**
@@ -20508,9 +21193,14 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         }
         var _self = this,
           picker = _self.get('picker'),
-          list = picker.get('list'),
-          valueField = _self.get('valueField');
+          list = picker.get('list');
         list.set('items',formatItems(items));
+        _self._syncValue();
+      },
+      _syncValue : function(){
+        var _self = this,
+          picker = _self.get('picker'),
+          valueField = _self.get('valueField');
         if(valueField){
           picker.setSelectedValue($(valueField).val());
         }
@@ -20648,6 +21338,24 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
          * @ignore
          */
         valueField : {
+
+        },
+        /**
+         * \u6570\u636e\u7f13\u51b2\u7c7b
+         * <pre><code>
+         *  var store = new Store({
+         *    url : 'data.json',
+         *    autoLoad : true
+         *  });
+         *  var select = new Select({
+         *    render : '#s',
+         *    store : store//\u8bbe\u7f6e\u4e86store\u540e\uff0c\u4e0d\u8981\u518d\u8bbe\u7f6eitems\uff0c\u4f1a\u8fdb\u884c\u8986\u76d6
+         *  });
+         *  select.render();
+         * </code></pre>
+         * @cfg {BUI.Data.Store} Store
+         */
+        store : {
 
         },
         focusable:{
@@ -21732,28 +22440,14 @@ define('bui/menu/menu',['bui/common'],function(require){
     UIBase = Component.UIBase;
 
   /**
-   * \u83dc\u5355\u7684\u89c6\u56fe\u7c7b
-   * @class BUI.Menu.MenuView
-   * @extends BUI.Component.View
-   * @mixins BUI.Component.UIBase.PositionView
-   * @private
-   */
-  var menuView = Component.View.extend([UIBase.PositionView],{
-    
-  });
-
-  /**
    * \u83dc\u5355
    * xclass:'menu'
    * <img src="../assets/img/class-menu.jpg"/>
    * @class BUI.Menu.Menu
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList
-   * @mixins BUI.Component.UIBase.Position
-   * @mixins BUI.Component.UIBase.Align
-   * @mixins BUI.Component.UIBase.AutoHide
    */
-  var Menu = Component.Controller.extend([UIBase.Position,UIBase.Align,UIBase.ChildList,UIBase.AutoHide],{
+  var Menu = Component.Controller.extend([UIBase.ChildList],{
 	  /**
      * \u7ed1\u5b9a\u4e8b\u4ef6
      * @protected
@@ -21860,31 +22554,12 @@ define('bui/menu/menu',['bui/common'],function(require){
 
       },
       /**
-       * \u70b9\u51fb\u6216\u79fb\u51fa\u83dc\u5355\u5916\u65f6\uff0c\u83dc\u5355\u662f\u5426\u9690\u85cf
-       * @type {Boolean} 
-       * @protected
-       */
-      autoHide : {
-        value : false
-      },
-      /**
-       * \u70b9\u51fb\u83dc\u5355\u65f6\uff0c\u83dc\u5355\u662f\u5426\u9690\u85cf\uff0c\u591a\u9009\u65f6\u4e0d\u9690\u85cf
-       * @type {Boolean} 
-       * @protected
-       */
-      clickHide : {
-        value : false
-      },
-      /**
        * \u4e0a\u4e00\u7ea7\u83dc\u5355
        * @type {BUI.Menu.Menu}
        * @readOnly
        */
       parentMenu : {
 
-      },
-      xview:{
-        value:menuView
       }
     }
     
@@ -21892,8 +22567,7 @@ define('bui/menu/menu',['bui/common'],function(require){
     xclass : 'menu',
     priority : 0
   });
-  
-  Menu.View = menuView;
+
   return Menu;
 });/**
  * @fileOverview \u4e0b\u62c9\u83dc\u5355\uff0c\u4e00\u822c\u7528\u4e8e\u4e0b\u62c9\u663e\u793a\u83dc\u5355
@@ -21907,14 +22581,21 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
     UIBase = BUI.Component.UIBase,
     Menu = require('bui/menu/menu');
 
+  var popMenuView =  BUI.Component.View.extend([UIBase.PositionView],{
+    
+  });
+
    /**
    * @class BUI.Menu.PopMenu
    * \u4e0a\u4e0b\u6587\u83dc\u5355\uff0c\u4e00\u822c\u7528\u4e8e\u5f39\u51fa\u83dc\u5355
-   * xclass:'drop-menu'
+   * xclass:'pop-menu'
    * @extends BUI.Menu.Menu
    * @mixins BUI.Component.UIBase.AutoShow
+   * @mixins BUI.Component.UIBase.Position
+   * @mixins BUI.Component.UIBase.Align
+   * @mixins BUI.Component.UIBase.AutoHide
    */
-  var popMenu =  Menu.extend([UIBase.AutoShow],{
+  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,,UIBase.AutoHide],{
 
   },{
     ATTRS:{
@@ -21945,6 +22626,9 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
       },
       visible : {
         value : false
+      },
+      xview:{
+        value : popMenuView
       }
     }
   },{
@@ -23284,6 +23968,11 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
       if(panel && _self.get('panelDestroyable')){
         $(panel).remove();
       }
+    },
+    _uiSetPanelContent : function(v){
+      var _self = this,
+        panel = _self.get('panel');
+      $(panel).html(v);
     }
   },{
     ATTRS : 
@@ -23300,6 +23989,43 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
        */
       panel : {
 
+      },
+      /**
+       * panel\u7684\u5185\u5bb9
+       * @property {String}
+       */
+      panelContent : {
+
+      },
+      /**
+       * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+       * <pre>
+       *  {
+       *   property : 'panelContent',
+       *   lazyLoad : {
+       *       event : 'active'
+       *   },
+       *     loadMask : {
+       *       el : _self.get('panel')
+       *   }
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg  : {
+        valueFn :function(){
+          var _self = this;
+          return {
+            property : 'panelContent',
+            autoLoad : false,
+            lazyLoad : {
+              event : 'afterSelectedChange'
+            },
+            loadMask : {
+              el : _self.get('panel')
+            }
+          }
+        } 
       },
       /**
        * \u79fb\u9664\u6807\u7b7e\u9879\u65f6\u662f\u5426\u79fb\u9664\u9762\u677f\uff0c\u9ed8\u8ba4\u4e3a false
@@ -26293,6 +27019,814 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
   return datepicker;
   
 });/**
+ * @fileOverview \u7f16\u8f91\u5668\u547d\u540d\u7a7a\u95f4\u5165\u53e3
+ * @ignore
+ */
+
+define('bui/editor',['bui/common','bui/form','bui/editor/editor','bui/editor/record','bui/editor/dialog'],function (require) {
+  var BUI = require('bui/common'),
+    Form = require('bui/form'),
+    Editor = BUI.namespace('Editor');
+
+  BUI.mix(Editor,{
+    Editor : require('bui/editor/editor'),
+    RecordEditor : require('bui/editor/record'),
+    DialogEditor : require('bui/editor/dialog')
+  });
+  return Editor;
+});/**
+ * @fileOverview \u7f16\u8f91\u5668\u6269\u5c55\u7c7b\uff0c\u5f15\u5165\u8fd9\u4e2a\u6269\u5c55\uff0c\u63a7\u4ef6\u53ef\u4ee5\u652f\u6301\u7f16\u8f91\u5668\u529f\u80fd\u3002
+ * @ignore
+ */
+
+define('bui/editor/mixin',function (require) {
+
+  function initEditor (self) {
+   var _self = self,
+      controlCfgField = _self.get('controlCfgField'),
+      control = _self.get(controlCfgField),
+      c = _self.addChild(control);
+    _self.setInternal(controlCfgField,c);
+  }
+
+  /**
+   * @class BUI.Editor.Mixin
+   * \u7f16\u8f91\u5668\u6269\u5c55\u7c7b
+   */
+  var Mixin = function () {
+    initEditor(this);
+  };
+
+  Mixin.ATTRS = {
+    /**
+     * \u63a5\u53d7\u66f4\u6539\u7684\u4e8b\u4ef6
+     * @protected
+     * @type {String}
+     */
+    acceptEvent : {
+      value : 'autohide'
+    },
+    /**
+     * \u5f53\u53d1\u751f\u9519\u8bef\u65f6\u662f\u5426\u963b\u6b62\u7f16\u8f91\u5668\u6d88\u5931
+     * @type {Boolean}
+     */
+    preventHide : {
+      value : true
+    },
+    /**
+     * \u91cd\u7f6e\u6570\u636e\u65f6\u7684\u4e8b\u4ef6
+     * @type {String}
+     */
+    changeSourceEvent : {
+      value : 'show triggerchange'
+    },
+    /**
+     * \u662f\u5426\u5ffd\u7565\u6389\u8f93\u5165\u6846\u4e4b\u7c7b\u7684\u952e\u76d8\u4e8b\u4ef6
+     * @protected
+     * @type {Boolean}
+     */
+    ignoreInputFields: {
+      value :false
+    },
+    /**
+     * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
+     * @protected
+     * @type {String}
+     */
+    innerValueField : {
+
+    },
+    /**
+     * \u7a7a\u503c\u7684\u6570\u636e\uff0c\u6e05\u7a7a\u7f16\u8f91\u5668\u65f6\u4f7f\u7528
+     * @protected
+     * @type {*}
+     */
+    emptyValue : {
+
+    },
+    /**
+     * \u5185\u90e8\u63a7\u4ef6\u914d\u7f6e\u9879\u7684\u5b57\u6bb5
+     * @protected
+     * @type {String}
+     */
+    controlCfgField : {
+
+    },
+    autoUpdate : {
+      value : true
+    },
+    events : {
+      value : {
+        /**
+         * @event
+         * \u63a5\u53d7\u66f4\u6539
+         */
+        accept : false,
+        /**
+         * @event
+         * \u53d6\u6d88\u66f4\u6539
+         */
+        cancel : false
+      }
+    }
+  };
+
+  Mixin.prototype = {
+    //\u7ed1\u5b9a\u4e8b\u4ef6
+    __bindUI : function(){
+      var _self = this,
+      acceptEvent = _self.get('acceptEvent'),
+      changeSourceEvent = _self.get('changeSourceEvent');
+
+      if(acceptEvent){
+        _self.on(acceptEvent,function(){
+          if(_self.accept()){
+            return ;
+          }else if(_self.get('preventHide')){
+            return false;
+          }else{
+            _self.cancel();
+          }
+        });
+      }
+      if(changeSourceEvent){
+        _self.on(changeSourceEvent,function(){
+          _self.setValue(_self.getSourceValue());
+          if(_self.get('visible')){
+            _self.focus();
+          }
+        });
+      }
+    },
+    /**
+     * @protected
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u5185\u90e8\u63a7\u4ef6
+     * @return {BUI.Component.Controller} \u7528\u4e8e\u7f16\u8f91\u6570\u636e\u7684\u5185\u90e8\u6570\u636e
+     */
+    getInnerControl : function(){
+      var _self = this,
+        children = _self.get('children');
+      return children[0];
+    },
+    /**
+     * \u8bbe\u7f6e\u503c\uff0c\u503c\u7684\u7c7b\u578b\u53d6\u51b3\u4e8e\u7f16\u8f91\u5668\u7f16\u8f91\u7684\u6570\u636e
+     * @param {String|Object} value \u7f16\u8f91\u5668\u663e\u793a\u7684\u503c
+     */
+    setValue : function(value){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      _self.set('editValue',value);
+      _self.clearControlValue();
+      innerControl.set(_self.get('innerValueField'),value);
+      if(!value){//\u7f16\u8f91\u7684\u503c\u7b49\u4e8e\u7a7a\uff0c\u5219\u53ef\u80fd\u4e0d\u4f1a\u89e6\u53d1\u9a8c\u8bc1
+        _self.valid();
+      }
+    },
+    /**
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u503c
+     * @return {String|Object} \u7f16\u8f91\u5668\u7684\u503c
+     */
+    getValue :function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      return innerControl.get(_self.get('innerValueField'));
+    },
+    /**
+     * \u7f16\u8f91\u7684\u5185\u5bb9\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
+     * @return {Boolean} \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
+     */
+    isValid : function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      return innerControl.isValid ? innerControl.isValid() : true;
+    },
+    /**
+     * \u9a8c\u8bc1\u5185\u5bb9\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
+     */
+    valid : function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      innerControl.valid && innerControl.valid();
+    },
+    /**
+     * \u83b7\u53d6\u9519\u8bef\u4fe1\u606f
+     * @return {Array} \u9519\u8bef\u4fe1\u606f
+     */
+    getErrors : function(){
+       var _self = this,
+        innerControl = _self.getInnerControl();
+      return innerControl.getErrors ? innerControl.getErrors() : [];
+    },
+    /**
+     * \u7f16\u8f91\u7684\u5185\u5bb9\u662f\u5426\u53d1\u751f\u6539\u53d8
+     * @return {Boolean}
+     */
+    isChange : function(){
+      var _self = this,
+        editValue = _self.get('editValue'),
+        value = _self.getValue();
+      return editValue !== value;
+    },
+    /**
+     * \u6e05\u9664\u7f16\u8f91\u7684\u503c
+     */
+    clearValue : function(){
+      this.clearControlValue();
+      this.clearErrors();
+    },
+    /**
+     * \u6e05\u9664\u7f16\u8f91\u7684\u63a7\u4ef6\u7684\u503c
+     * @protected
+     * @template
+     */
+    clearControlValue : function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      innerControl.set(_self.get('innerValueField'),_self.get('emptyValue'));
+    },
+    /**
+     * \u6e05\u9664\u9519\u8bef
+     */
+    clearErrors : function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      innerControl.clearErrors();
+    },
+    /**
+     * @protected
+     * @template
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u6e90\u6570\u636e
+     */
+    getSourceValue : function(){
+
+    },
+    /**
+     * @protected
+     * @template
+     * \u66f4\u65b0\u7f16\u8f91\u7684\u6e90\u6570\u636e
+     */
+    updateSource : function(){
+
+    },
+    /**
+     * @protected
+     * @override
+     * \u5904\u7406esc\u952e
+     */
+    handleNavEsc : function(){
+      this.cancel();
+    },
+    /**
+     * @protected
+     * @override
+     * \u5904\u7406enter\u952e
+     */
+    handleNavEnter : function(ev){
+      var sender = ev.target;
+      if(sender.tagName === 'TEXTAREA'){ //\u6587\u672c\u8f93\u5165\u6846\uff0c\u4e0d\u786e\u5b9a\u9690\u85cf
+        return;
+      }
+      if(sender.tagName === 'BUTTON'){
+        $(sender).trigger('click');
+      }
+      this.accept();
+    },
+    /**
+     * \u8bbe\u7f6e\u83b7\u53d6\u7126\u70b9
+     */
+    focus : function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      innerControl.focus && innerControl.focus()
+    },
+    /**
+     * \u63a5\u53d7\u7f16\u8f91\u5668\u7684\u7f16\u8f91\u7ed3\u679c
+     * @return {Boolean} \u662f\u5426\u6210\u529f\u63a5\u53d7\u7f16\u8f91
+     */
+    accept : function(){
+      var _self = this,
+        value;
+      _self.valid();
+      if(!_self.isValid()){
+        return false;
+      }
+      value = _self.getValue();
+
+      if(_self.get('autoUpdate')){
+        _self.updateSource(value);
+      }
+      if(_self.fire('beforeaccept',{value :value}) == false){
+        return;
+      }
+      _self.fire('accept',{value :value,editValue : _self.get('editValue')});/**/
+      _self.hide();
+      return true;
+    },
+    /**
+     * \u53d6\u6d88\u7f16\u8f91
+     */
+    cancel : function(){
+      this.fire('cancel');
+      this.clearValue();
+      this.close();
+    }
+  };
+
+  return Mixin;
+});/**
+ * @ignore
+ * @fileOverview \u7f16\u8f91\u5668
+ * @author dxq613@gmail.com
+ */
+
+define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],function (require) {
+  var BUI = require('bui/common'),
+    Overlay = require('bui/overlay').Overlay
+    CLS_TIPS = 'x-editor-tips',
+    Mixin = require('bui/editor/mixin');
+
+  /**
+   * @class BUI.Editor.Editor
+   * @extends BUI.Overlay.Overlay
+   * @mixins BUI.Editor.Mixin
+   * \u7f16\u8f91\u5668
+   * <p>
+   * <img src="../assets/img/class-editor.jpg"/>
+   * </p>
+   */
+  var editor = Overlay.extend([Mixin],{
+    bindUI : function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      _self.on('validchange',function(ev){
+        if(!_self.isValid() && _self.get('visible')){
+          _self._showError(_self.getErrors());
+        }else{
+          _self._hideError();
+        }
+      });
+      _self.on('hide',function(){
+        _self._hideError();
+      });
+
+      _self.on('show',function(){
+        if(!_self.isValid()){
+          _self._showError(_self.getErrors());
+        }
+      });
+    },
+    _initOverlay : function(){
+      var _self = this,
+        overlay = new Overlay({
+          children : [{
+            xclass : 'simple-list',
+            itemTpl : '<li><span class="x-icon x-icon-mini x-icon-error" title="{error}">!</span>&nbsp;<span>{error}</span></li>'
+          }],
+          elCls : CLS_TIPS,
+          autoRender : true
+        });
+      _self.set('overlay',overlay);
+      return overlay;
+    },
+    //\u83b7\u53d6\u663e\u793a\u9519\u8bef\u5217\u8868
+    _getErrorList : function(){
+      var _self = this,
+        overlay = _self.get('overlay');
+      return overlay && overlay.get('children')[0];
+    },
+    _showError : function(errors){
+      var _self = this,
+        overlay = _self.get('overlay') || _self._initOverlay(),
+        list = _self._getErrorList(),
+        align = _self.get('errorAlign'),
+        items = BUI.Array.map(errors,function(text){
+          return {error : text};
+        });
+      list.set('items',items);
+      align.node = _self.get('el');
+      overlay.set('align',align);
+      overlay.show();
+    },
+    //\u9690\u85cf\u9519\u8bef
+    _hideError : function(){
+      var _self = this,
+        overlay = _self.get('overlay');
+      overlay && overlay.hide();
+    },
+    /**
+     * @protected
+     * @override
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u6e90\u6570\u636e
+     * @return {String} \u8fd4\u56de\u9700\u8981\u7f16\u8f91\u7684\u6587\u672c
+     */
+    getSourceValue : function(){
+      var _self = this,
+        trigger = _self.get('curTrigger');
+      return trigger.text();
+    },
+    /**
+     * @protected
+     * \u66f4\u65b0\u6587\u672c
+     * @param  {String} text \u7f16\u8f91\u5668\u7684\u503c
+     */
+    updateSource : function(text){
+      var _self = this,
+        trigger = _self.get('curTrigger');
+      if(trigger && trigger.length){
+        trigger.text(text);
+      }
+    },
+    _uiSetWidth : function(v){
+      var _self = this;
+      if(v != null){
+        var innerControl = _self.getInnerControl();
+        if(innerControl.set){
+          innerControl.set('width',v);
+        }
+      }
+    }
+  },{
+    ATTRS : {
+      /**
+       * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
+       * @protected
+       * @override
+       * @type {String}
+       */
+      innerValueField : {
+        value : 'value'
+      },
+      /**
+       * \u7a7a\u503c\u7684\u6570\u636e\uff0c\u6e05\u7a7a\u7f16\u8f91\u5668\u65f6\u4f7f\u7528
+       * @protected
+       * @type {*}
+       */
+      emptyValue : {
+        value : ''
+      },
+      /**
+       * \u662f\u5426\u81ea\u52a8\u9690\u85cf
+       * @override
+       * @type {Boolean}
+       */
+      autoHide : {
+        value : true
+      },
+      /**
+       * \u5185\u90e8\u63a7\u4ef6\u914d\u7f6e\u9879\u7684\u5b57\u6bb5
+       * @protected
+       * @type {String}
+       */
+      controlCfgField : {
+        value : 'field'
+      },
+      /**
+       * \u9ed8\u8ba4\u7684\u5b57\u6bb5\u57df\u914d\u7f6e\u9879
+       * @type {Object}
+       */
+      defaultChildCfg : {
+        value : {
+          tpl : '',
+          forceFit : true,
+          errorTpl : ''//
+        }
+      },
+      defaultChildClass : {
+        value : 'form-field'
+      },
+      align : {
+        value : {
+          points: ['tl','tl']
+        }
+      },
+      /**
+       * \u9519\u8bef\u4fe1\u606f\u7684\u5bf9\u9f50\u65b9\u5f0f
+       * @type {Object}
+       */
+      errorAlign : {
+        value : {
+          points: ['bl','tl'],
+          offset : [0,10]
+        }
+      },
+      /**
+       * \u663e\u793a\u9519\u8bef\u7684\u5f39\u51fa\u5c42
+       * @type {BUI.Overlay.Overlay}
+       */
+      overlay : {
+
+      },
+      /**
+       * \u7f16\u8f91\u5668\u4e2d\u9ed8\u8ba4\u4f7f\u7528\u6587\u672c\u5b57\u6bb5\u57df\u6765\u7f16\u8f91\u6570\u636e
+       * @type {Array}
+       */
+      field : {
+        value : {}
+      }
+    }
+  },{
+    xclass : 'editor'
+  });
+
+  return editor;
+});/**
+ * @fileOverview \u5bf9\u8c61\u7f16\u8f91\u5668
+ * @ignore
+ */
+
+define('bui/editor/record',['bui/common','bui/editor/editor'],function (require) {
+  var BUI = require('bui/common'),
+    Editor = require('bui/editor/editor');
+
+  /**
+   * @class BUI.Editor.RecordEditor
+   * @extends BUI.Editor.Editor
+   * \u7f16\u8f91\u5668
+   */
+  var editor = Editor.extend({
+    /**
+     * @protected
+     * @override
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u6e90\u6570\u636e
+     * @return {String} \u8fd4\u56de\u9700\u8981\u7f16\u8f91\u7684\u6587\u672c
+     */
+    getSourceValue : function(){
+      return this.get('record');
+    },
+    /**
+     * @protected
+     * \u66f4\u65b0\u6587\u672c
+     * @param  {Object} value \u7f16\u8f91\u5668\u7684\u503c
+     */
+    updateSource : function(value){
+      var _self = this,
+        record = _self.get('record');
+      BUI.mix(record,value);
+    },
+    _uiSetRecord : function(v){
+      this.setValue(v);
+    }
+  },{
+    ATTRS : {
+
+      /**
+       * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
+       * @protected
+       * @override
+       * @type {String}
+       */
+      innerValueField : {
+        value : 'record'
+      },
+      /**
+       * \u63a5\u53d7\u66f4\u6539\u7684\u4e8b\u4ef6
+       * @type {String}
+       */
+      acceptEvent : {
+        value : ''
+      },
+      /**
+       * \u7a7a\u503c\u7684\u6570\u636e\uff0c\u6e05\u7a7a\u7f16\u8f91\u5668\u65f6\u4f7f\u7528
+       * @protected
+       * @type {*}
+       */
+      emptyValue : {
+        value : {}
+      },
+      /**
+       * \u662f\u5426\u81ea\u52a8\u9690\u85cf
+       * @override
+       * @type {Boolean}
+       */
+      autoHide : {
+        value : false
+      },
+      /**
+       * \u7f16\u8f91\u7684\u8bb0\u5f55
+       * @type {Object}
+       */
+      record : {
+        value : {}
+      },
+      /**
+       * \u5185\u90e8\u63a7\u4ef6\u914d\u7f6e\u9879\u7684\u5b57\u6bb5
+       * @protected
+       * @type {String}
+       */
+      controlCfgField : {
+        value : 'form'
+      },
+      /**
+       * \u7f16\u8f91\u5668\u5185\u8868\u5355\u7684\u914d\u7f6e\u9879
+       * @type {Object}
+       */
+      form : {
+        value : {}
+      },
+      /**
+       * \u9519\u8bef\u4fe1\u606f\u7684\u5bf9\u9f50\u65b9\u5f0f
+       * @type {Object}
+       */
+      errorAlign : {
+        value : {
+          points: ['tr','tl'],
+          offset : [10,0]
+        }
+      },
+      /**
+       * \u9ed8\u8ba4\u7684\u5b57\u6bb5\u57df\u914d\u7f6e\u9879
+       * @type {Object}
+       */
+      defaultChildCfg : {
+        valueFn : function(){
+          var _self = this;
+          return {
+            xclass : 'form',
+            errorTpl : '',
+            showError : true,
+            showChildError : true,
+            defaultChildCfg : {
+              elCls : 'bui-inline-block',
+              tpl : '',
+              forceFit : true
+            },
+            buttons : [
+            {
+              btnCls : 'button button-primary',
+              text : '\u786e\u5b9a',
+              handler : function(){
+                _self.accept();
+              }
+            },
+            {
+              btnCls : 'button',
+              text : '\u53d6\u6d88',
+              handler : function(){
+                _self.cancel();
+              }
+            }]
+          }
+        }
+      }
+    }
+  },{
+    xclass : 'record-editor'
+  });
+
+  return editor;
+});/**
+ * @fileOverview \u4f7f\u7528\u5f39\u51fa\u6846\u4f5c\u4e3a\u7f16\u8f91\u5668
+ * @ignore
+ */
+
+define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require) {
+  var Dialog = require('bui/overlay').Dialog,
+    Mixin = require('bui/editor/mixin');
+
+   /**
+   * @class BUI.Editor.DialogEditor
+   * @extends BUI.Overlay.Dialog
+   * @mixins BUI.Editor.Mixin
+   * \u7f16\u8f91\u5668
+   */
+  var editor = Dialog.extend([Mixin],{
+    /**
+     * @protected
+     * @override
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u6e90\u6570\u636e
+     * @return {String} \u8fd4\u56de\u9700\u8981\u7f16\u8f91\u7684\u6587\u672c
+     */
+    getSourceValue : function(){
+      return this.get('record');
+    },
+    /**
+     * @protected
+     * @override
+     * \u5904\u7406enter\u952e
+     */
+    handleNavEnter : function(ev){
+      var _self = this,
+        success = _self.get('success'),
+        sender = ev.target;
+      if(sender.tagName === 'TEXTAREA'){ //\u6587\u672c\u8f93\u5165\u6846\uff0c\u4e0d\u786e\u5b9a\u9690\u85cf
+        return;
+      }
+      if(sender.tagName === 'BUTTON'){
+        $(sender).trigger('click');
+      }
+      if(success){
+        success.call(_self);
+      }else{
+        this.accept();
+      }
+    },
+    /**
+     * \u53d6\u6d88\u7f16\u8f91
+     */
+    cancel : function(){
+      if(this.onCancel()!== false){
+        this.fire('cancel');
+        this.clearValue();
+        this.close();
+      } 
+    },
+    /**
+     * @protected
+     * \u66f4\u65b0\u6587\u672c
+     * @param  {Object} value \u7f16\u8f91\u5668\u7684\u503c
+     */
+    updateSource : function(value){
+      var _self = this,
+        record = _self.get('record');
+      BUI.mix(record,value);
+    },
+    _uiSetRecord : function(v){
+      this.setValue(v);
+    }
+  },{
+    ATTRS : {
+      /**
+       * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
+       * @protected
+       * @override
+       * @type {String}
+       */
+      innerValueField : {
+        value : 'record'
+      },
+      /**
+       * \u63a5\u53d7\u66f4\u6539\u7684\u4e8b\u4ef6
+       * @type {String}
+       */
+      acceptEvent : {
+        value : ''
+      },
+      /**
+       * \u7f16\u8f91\u7684\u8bb0\u5f55
+       * @type {Object}
+       */
+      record : {
+        value : {}
+      },
+      /**
+       * \u7a7a\u503c\u7684\u6570\u636e\uff0c\u6e05\u7a7a\u7f16\u8f91\u5668\u65f6\u4f7f\u7528
+       * @protected
+       * @type {*}
+       */
+      emptyValue : {
+        value : {}
+      },
+      /**
+       * \u5185\u90e8\u63a7\u4ef6\u914d\u7f6e\u9879\u7684\u5b57\u6bb5
+       * @protected
+       * @type {String}
+       */
+      controlCfgField : {
+        value : 'form'
+      },
+      /**
+       * dialog \u7f16\u8f91\u5668\u4e00\u822c\u7531\u6309\u94ae\u89e6\u53d1\uff0c\u5728\u89e6\u53d1\u65f6\u8bbe\u7f6e\u6570\u636e\u6e90
+       * @override
+       * @type {String}
+       */
+      changeSourceEvent : {
+        value : ''
+      },
+      /**
+       * \u9ed8\u8ba4\u7684\u5b57\u6bb5\u57df\u914d\u7f6e\u9879
+       * @type {Object}
+       */
+      defaultChildCfg : {
+        value : {
+          xclass : 'form-horizontal'
+        }
+      },
+      /**
+       * \u8bbe\u7f6e\u53ef\u4ee5\u83b7\u53d6\u4ea4\u5355
+       * @type {Boolean}
+       */
+      focusable : {
+        value : true
+      },
+      success : {
+        value : function () {
+          this.accept();
+        }
+      },
+      /**
+       * \u7f16\u8f91\u5668\u5185\u8868\u5355\u7684\u914d\u7f6e\u9879
+       * @type {Object}
+       */
+      form : {
+        value : {}
+      }
+    }
+  },{
+    xclass : 'dialog-editor'
+  });
+
+  return editor;
+});/**
  * @fileOverview \u8868\u683c\u547d\u540d\u7a7a\u95f4\u5165\u53e3
  * @ignore
  */
@@ -27019,6 +28553,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                     view:true,
                     value:'&#160;'
                 },
+
                 /**
                  * \u5217\u7684\u5bbd\u5ea6,\u53ef\u4ee5\u4f7f\u6570\u5b57\u6216\u8005\u767e\u5206\u6bd4,\u4e0d\u8981\u4f7f\u7528 width : '100'\u6216\u8005width : '100px'
                  * <pre><code>
@@ -27026,7 +28561,6 @@ define('bui/grid/column',['bui/common'],function (require) {
                  *  
                  *  {title : '\u6587\u672c',width:'10%',dataIndex :'a',editor : {xtype : 'text'}}
                  * </code></pre>
-                 * @type {Number|String}
                  * @cfg {Number} [width = 80]
                  */
                 
@@ -27036,7 +28570,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                  *  grid.findColumn(id).set('width',200);
                  * </code></pre>
                  * 
-                 * @type {Object}
+                 * @type {Number}
                  */
                 width:{
                     value:100
@@ -27937,7 +29471,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       var _self = this,
         bodyEl = _self.get('bodyEl'),
         emptyDataTpl = _self.get('emptyDataTpl'),
-        emptyEl = _self.get(emptyEl);
+        emptyEl = _self.get('emptyEl');
       if(emptyEl){
         emptyEl.remove();
       }
@@ -27949,7 +29483,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
      */
     clearEmptyText : function(){
        var _self = this,
-        emptyEl = _self.get(emptyEl);
+        emptyEl = _self.get('emptyEl');
       if(emptyEl){
         emptyEl.remove();
       }
@@ -28184,7 +29718,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
             render = _self.get('render'),
             width = _self.get('width');
         if(!width){
-            _self.set('width',$(render).width() - WIDTH_BORDER);
+            _self.set('width',$(render).width());
         }
     },
     /**
@@ -30465,6 +31999,11 @@ define('bui/grid/plugins/editing',function (require) {
       var _self = this;
       _self.set('grid',grid);
       _self.initEditing(grid);
+      
+    },
+    renderUI : function(){
+      var _self = this,
+        grid = _self.get('grid');
       //\u5ef6\u8fdf\u52a0\u8f7d editor\u6a21\u5757
       BUI.use('bui/editor',function(Editor){
         _self.initEditors(Editor);
@@ -30612,6 +32151,7 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u914d\u7f6e
      * @template
      * @param  {Array} fields \u5b57\u6bb5\u914d\u7f6e
      * @return {Array} \u7f16\u8f91\u5668\u7684\u914d\u7f6e\u9879
@@ -31442,8 +32982,1774 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   });
 
   return Dialog;
+});/**
+ * @fileOverview \u9009\u62e9\u6846\u547d\u540d\u7a7a\u95f4\u5165\u53e3\u6587\u4ef6
+ * @ignore
+ */
+
+define('bui/tree',['bui/common','bui/tree/treemixin','bui/tree/treelist'],function (require) {
+  var BUI = require('bui/common'),
+    Tree = BUI.namespace('Tree');
+
+  BUI.mix(Tree,{
+    TreeList : require('bui/tree/treelist'),
+    Mixin : require('bui/tree/treemixin')
+  });
+  return Tree;
+});/**
+ * @fileOverview \u6811\u5f62\u6269\u5c55\uff0c\u57fa\u4e8elist\u6269\u5c55\uff0c\u53ef\u4ee5\u7ec4\u5408\u51fatree list,tree grid ,tree menu
+ * @ignore
+ */
+
+define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
+
+  //\u5c06id \u8f6c\u6362\u6210node
+  function makeSureNode(self,node){
+    if(BUI.isString(node)){
+      node = self.getItem(node);
+    }
+    return node;
+  }
+
+  var BUI = require('bui/common'),
+    Data = require('bui/data'),
+    EXPAND = 'expanded',
+    LOADING = 'loading',
+    CHECKED = 'checked',
+    PARTIAL_CHECKED = 'partial-checked',
+    MAP_TYPES = {
+      NONE : 'none',
+      ALL : 'all',
+      CUSTOM : 'custom',
+      ONLY_LEAF : 'onlyLeaf'
+    },
+    CLS_ICON = 'x-tree-icon',
+    CLS_ELBOW = 'x-tree-elbow',
+    CLS_SHOW_LINE = 'x-tree-show-line',
+    CLS_ICON_PREFIX = CLS_ELBOW + '-',
+    CLS_ICON_WRAPER = CLS_ICON + '-wraper',
+    CLS_LINE = CLS_ICON_PREFIX + 'line',
+    CLS_END = CLS_ICON_PREFIX + 'end',
+    CLS_EMPTY = CLS_ICON_PREFIX + 'empty',
+    CLS_EXPANDER = CLS_ICON_PREFIX + 'expander',
+    CLS_CHECKBOX = CLS_ICON + '-checkbox',
+    CLS_EXPANDER_END = CLS_EXPANDER + '-end',
+    Mixin = function(){
+
+    };
+
+  /**
+   * @class BUI.Tree.Mixin
+   * \u6811\u63a7\u4ef6\u7684\u6269\u5c55\uff0c\u53ef\u4ee5\u5e94\u7528\u4e8eList,Grid\u7b49\u63a7\u4ef6
+   */
+  Mixin.ATTRS = {
+
+
+    /**
+     * \u6811\u7684\u6570\u636e\u7f13\u51b2\u7c7b\u5bf9\u8c61,\u7528\u4e8e\u64cd\u4f5c\u6570\u636e\u7684\u52a0\u8f7d\u3001\u589e\u5220\u6539
+     * <pre><code>
+     * //\u6570\u636e\u7f13\u51b2\u7c7b
+     * var store = new Data.TreeStore({
+     *     root : {
+     *       id : '0',
+     *      text : '0'
+     *     },
+     *     url : 'data/nodes.php'
+     *   });
+     *   
+     * var tree = new Tree.TreeList({
+     *   render : '#t1',
+     *   showLine : true,
+     *   height:300,
+     *   store : store,
+     *   showRoot : true
+     * });
+     * tree.render();
+     * 
+     * </code></pre>
+     * @cfg {BUI.Data.TreeStore} store
+     */
+    /**
+     * \u6811\u7684\u6570\u636e\u7f13\u51b2\u7c7b\u5bf9\u8c61,\u9ed8\u8ba4\u90fd\u4f1a\u751f\u6210\u5bf9\u5e94\u7684\u7f13\u51b2\u5bf9\u8c61
+     * <pre><code>
+     * var store = tree.get('store');
+     * </code></pre>
+     * @type {BUI.Data.TreeStore}
+     */
+    store : {
+      getter : function(v){
+        if(!v){
+          var _self = this,
+            store = new Data.TreeStore({
+            root : _self.get('root'),
+            data : _self.get('nodes')
+          });
+          _self.setInternal('store',store);
+          return store;
+        }
+        return v;
+      }
+    },
+    /**
+     * \u6811\u7684\u6839\u8282\u70b9
+     * <pre><code>
+     *   //\u5982\u679c\u6570\u636e\u5b58\u5728\u6839\u8282\u70b9\uff0c\u5219\u914d\u7f6e\u6839\u8282\u70b9\uff0c\u4ee5\u4fbf\u4e8e\u663e\u793a
+     *   var tree = new TreeList({
+     *     root : {id: '0',text : '0',children:[{},{}]},
+     *     showRoot : true
+     *   });
+     *   //\u5982\u679c\u914d\u7f6estore\uff0c\u5219\u4e0d\u9700\u8981\u914d\u7f6e\u6b64\u5c5e\u6027
+     *   var store = new Data.TreeStore({
+     *     root : {id: '0',text : '0',children:[{},{}]}
+     *   });
+     *   
+     *   var tree = new TreeList({
+     *     store : store,
+     *     showRoot : true
+     *   });
+     * </code></pre>
+     * @cfg {Object} root
+     */
+    root : {
+
+    },
+    /**
+     * \u5b50\u8282\u70b9\u96c6\u5408
+     * <pre><code>
+     *   //\u5982\u679c\u4e0d\u663e\u793a\u6839\u8282\u70b9\uff0c\u5e76\u4e14\u6570\u636e\u6e90\u4e2d\u4e0d\u5b58\u5728\u6839\u8282\u70b9\uff0c\u53ef\u4ee5\u4ec5\u914d\u7f6e\u6b64\u5c5e\u6027
+     *   var tree = new TreeList({
+     *     nodes:[{},{}]
+     *   });
+     * </code></pre>
+     * @cfg {Array} nodes
+     */
+    nodes : {
+      sync : false
+    },
+    /**
+     * \u653e\u7f6e\u8282\u70b9Icon\u7684\u5bb9\u5668,\u4e3a\u7a7a\u65f6\uff0c\u653e\u7f6e\u5728\u8282\u70b9\u7684\u6700\u524d\u9762
+     * @protected
+     * @type {String}
+     */
+    iconContainer : {
+
+    },
+    /**
+     * \u653e\u7f6eicon\u5916\u5c42\u7684\u6a21\u677f\uff0c\u7a7a\u767dicon\u3001\u53f6\u5b50\u8282\u70b9\u7684icon\u3001\u975e\u53f6\u5b50\u8282\u70b9\u7684Icon
+     * @protected
+     * @type {String}
+     */
+    iconWraperTpl : {
+      value : '<span class="' + CLS_ICON_WRAPER + '">{icons}</span>'
+    },
+    /**
+     * \u662f\u5426\u663e\u793a\u8fde\u63a5\u7ebf
+     * <pre><code>
+     *  var tree = new TreeList({
+     *    nodes : [],
+     *    showLine : true
+     *  });
+     * </code></pre>
+     * @cfg {Boolean} showLine
+     */
+    /**
+     * \u662f\u5426\u663e\u793a\u8fde\u63a5\u7ebf
+     * @type {Boolean} showLine
+     */
+    showLine : {
+      value : false
+    },
+    /**
+     * \u56fe\u6807\u6240\u4f7f\u7528\u7684\u6a21\u677f
+     * @protected
+     * @type {Object}
+     */
+    iconTpl : {
+      value : '<span class="x-tree-icon {cls}"></span>'
+    },
+    /**
+     * \u53f6\u5b50\u8282\u70b9\u5e94\u7528\u7684\u6837\u5f0f
+     * <pre><code>
+     *  var tree = new TreeList({
+     *    nodes : [{},{}],
+     *    leafCls : 'file',
+     *    dirCls : 'folder' 
+     *  });
+     * </code></pre>
+     * @cfg {String} [leafCls = 'x-tree-elbow-leaf']
+     */
+    leafCls : {
+      value : CLS_ICON_PREFIX + 'leaf'
+    },
+
+    /**
+     * \u975e\u53f6\u5b50\u8282\u70b9\u5e94\u7528\u7684\u6837\u5f0f
+     * @cfg {String} [dirCls = 'x-tree-elbow-dir']
+     */
+    dirCls : {
+      value : CLS_ICON_PREFIX + 'dir'
+    },
+    /**
+     * \u52fe\u9009\u7c7b\u578b\uff0c\u76ee\u524d\u63d0\u4f9b\u4e00\u4e0b\u51e0\u79cd\u52fe\u9009\u65b9\u5f0f:
+     * <ol>
+     *  <li>all : \u5168\u90e8\u8282\u70b9\u53ef\u4ee5\u52fe\u9009</li>
+     *  <li>onlyLeaf : \u53ea\u6709\u5b50\u8282\u70b9\u53ef\u4ee5\u52fe\u9009</li>
+     *  <li>custom : \u81ea\u5b9a\u4e49\u52fe\u9009\uff0c\u53ea\u6709\u8282\u70b9\u6570\u636e\u4e0a\u6709checked\u5b57\u6bb5\u624d\u5141\u8bb8\u52fe\u9009</li>
+     *  <li>none : \u5168\u90e8\u8282\u70b9\u4e0d\u53ef\u52fe\u9009</li>
+     * </ol>
+     * @cfg {Object} [checkType = 'custom']
+     */
+    checkType : {
+      value : 'custom'
+    },
+    /**
+     * @private
+     * \u52fe\u9009\u5b57\u6bb5
+     * @type {String}
+     */
+    checkedField : {
+      valueFn : function(){
+        return this.getStatusField('checked');
+      }
+    },
+    /**
+     * \u9009\u9879\u5bf9\u8c61\u4e2d\u5c5e\u6027\u4f1a\u76f4\u63a5\u5f71\u54cd\u76f8\u5e94\u7684\u72b6\u6001,\u9ed8\u8ba4\uff1a
+     * <pre><code>
+     * //\u9ed8\u8ba4\u503c
+     * {
+     *   expanded : 'expanded',
+     *   disabled : 'disabled',
+     *   checked : 'checked'
+     * }
+     * //\u5bf9\u8c61
+     * var node = {id : '1',text : '1',checked : true,expanded : true};
+     * 
+     * //\u5982\u679c\u4f60\u7684\u6570\u636e\u6e90\u4e2d\u7684\u5b57\u6bb5\u540d\u8ddf\u8fd9\u4e9b\u72b6\u6001\u540d\u4e0d\u4e00\u81f4\uff0c\u4f60\u53ef\u4ee5\u81ea\u5df1\u4fee\u6539
+     * var tree = new TreeList({
+     *   nodes : [],
+     *   itemStatusFields : {
+     *     disabled : 'hasDisabled', 
+     *     custom : 'custom'  //\u6dfb\u52a0\u81ea\u5b9a\u4e49\u5c5e\u6027\uff0c\u6b64\u65f6\u8282\u70b9\u751f\u6210\u540e\u4f1a\u81ea\u52a8\u6dfb\u52a0\u5bf9\u5e94\u7684\u6837\u5f0f bui + xclass + 'custom'
+     *   }
+     * });
+     * </code></pre>
+     * @override
+     * @cfg {Object} itemStatusFields
+     */
+    itemStatusFields  : {
+      value : {
+        expanded : 'expanded',
+        disabled : 'disabled',
+        checked : 'checked'
+      }  
+    },
+    /**
+     * \u6587\u4ef6\u5939\u662f\u5426\u53ef\u9009\uff0c\u7528\u4e8e\u9009\u62e9\u8282\u70b9\u65f6\uff0c\u907f\u514d\u9009\u4e2d\u975e\u53f6\u5b50\u8282\u70b9
+     * @cfg {Boolean} [dirSelectable = true]
+     */
+    dirSelectable : {
+      value : true
+    },
+    /**
+     * \u662f\u5426\u663e\u793a\u6839\u8282\u70b9
+     * <pre><code>
+     *
+     *  var tree = new TreeList({
+     *    root : {id : '0',text : '0',childrent : []},
+     *    showRoot : true
+     *  });
+     *   
+     * </code></pre>
+     * @type {Boolean}
+     */
+    showRoot : {
+      value : false
+    },
+    events : {
+      value : {
+        /**
+         * @event
+         * \u5c55\u5f00\u8282\u70b9
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} e.Node \u8282\u70b9
+         * @param {HTMLElement} e.element \u8282\u70b9\u7684DOM
+         */
+        expanded : false,
+        /**
+         * @event
+         * \u6298\u53e0\u8282\u70b9
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} e.Node \u8282\u70b9
+         * @param {HTMLElement} e.element \u8282\u70b9\u7684DOM
+         */
+        collapsed : false,
+        /**
+         * @event
+         * \u52fe\u9009\u6539\u53d8\u4e8b\u4ef6
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} e.Node \u8282\u70b9
+         * @param {Boolean} e.checked \u9009\u4e2d\u72b6\u6001
+         * @param {HTMLElement} e.element \u8282\u70b9\u7684DOM
+         */
+        checkchange : false
+      }
+    },
+    /**
+     * \u5f00\u59cb\u7684\u5c42\u7ea7\uff0c\u5982\u679c\u663e\u793a\u6839\u8282\u70b9\uff0c\u4ece0\u5f00\u59cb\uff0c\u4e0d\u663e\u793a\u6839\u8282\u70b9\u4ece1\u5f00\u59cb
+     * @private
+     * @readOnly
+     * @type {Number}
+     */
+    startLevel : {
+      value : 1
+    }
+  };
+
+  BUI.augment(Mixin,{
+    /**
+     * \u6298\u53e0\u6240\u6709
+     * <pre><code>
+     *  tree.collapseAll();
+     * </code></pre>
+     */
+    collapseAll: function(){
+      var _self = this,
+        elements = _self.get('view').getAllElements();
+
+      BUI.each(elements,function(element){
+        var item = _self.getItemByElement(element);
+        if(item){
+          _self._collapseNode(item,element,true);
+        }
+      });
+    },
+    /**
+     * \u6298\u53e0\u8282\u70b9
+     * <pre><code>
+     *  //\u83b7\u53d6\u8282\u70b9\u540e\uff0c\u6298\u53e0
+     *  var node = tree.findNode('id');
+     *  tree.collapseNode(node);
+     *  //\u76f4\u63a5\u901a\u8fc7id \u6298\u53e0
+     *  tree.collapseNode('id');
+     * </code></pre>
+     * @param {String|Object|BUI.Data.Node} node \u8282\u70b9
+     */
+    collapseNode : function(node){
+      var _self = this,
+        element;
+      if(BUI.isString(node)){
+        node = _self.findNode(node);
+      }
+      element = _self.findElement(node);
+      
+      _self._collapseNode(node,element);
+    },   
+    /*
+     * \u5c55\u5f00\u6240\u6709
+     * <pre><code>
+     *  tree.expandAll();
+     * </code></pre>
+     */
+    expandAll : function(){
+      var _self = this,
+        elements = _self.get('view').getAllElements();
+
+      BUI.each(elements,function(element){
+        var item = _self.getItemByElement(element);
+        _self._expandNode(item,element,true);
+      });
+    },
+    /**
+     * \u5c55\u5f00\u8282\u70b9
+     * <pre><code>
+     *  //\u83b7\u53d6\u8282\u70b9\u540e\u5c55\u5f00
+     *  var node = tree.findNode('id');
+     *  tree.expandNode(node);
+     *  //\u4f7f\u7528store\u65f6\uff0c\u83b7\u53d6\u8282\u70b9\uff0c\u7136\u540e\u5c55\u5f00
+     *  var node = store.findNode('id');
+     *  tree.expandNode(node);
+     *  //\u76f4\u63a5\u4f7f\u7528id \u5c55\u5f00
+     *  tree.expandNode('id');
+     * </code></pre>
+     * ** Notes **
+     * \u7531\u4e8e\u6811\u63a7\u4ef6\u5176\u5b9e\u662f\u4e00\u4e2a\u5217\u8868\uff0c\u6240\u4ee5\u672a\u5c55\u5f00\u8282\u70b9\u7684\u5b50\u8282\u70b9\u5176\u5b9e\u4e0d\u5728\u5217\u8868\u4e2d\uff0c\u6240\u4ee5\u8fd9\u4e9b\u8282\u70b9\u901a\u8fc7tree.getItem('id'),\u6b64\u65f6\u67e5\u627e\u4e0d\u5230\u5bf9\u5e94\u7684\u8282\u70b9
+     * @param  {String|Object|BUI.Data.Node} node \u8282\u70b9\u6216\u8005 \u8282\u70b9id
+     */
+    expandNode : function(node,deep){
+      var _self = this,
+        element;
+      if(BUI.isString(node)){
+        node = _self.findNode(node);
+      }
+
+      if(node.parent && !_self.isExpanded(node.parent)){
+        _self.expandNode(node.parent);
+      }
+
+      element = _self.findElement(node);
+      _self._expandNode(node,element,deep);
+    },
+    /**
+     * \u6cbf\u7740path(id\u7684\u8fde\u63a5\u4e32) \u5c55\u5f00
+     * <pre>
+     *  <code>
+     *    var path = "0,1,12,121"; //\u6cbf\u7740\u6839\u8282\u70b90\uff0c\u6811\u8282\u70b9 1,12\u76f4\u5230121\u7684\u8def\u5f84\u5c55\u5f00
+     *    tree.expandPath(path); //\u5982\u679c\u4e2d\u95f4\u6709\u8282\u70b9\u4e0d\u5b58\u5728\uff0c\u7ec8\u6b62\u5c55\u5f00
+     *  </code>
+     * </pre>
+     * @param  {String} path \u8282\u70b9\u7684path\uff0c\u4ece\u6839\u8282\u70b9\uff0c\u5230\u5f53\u524d\u8282\u70b9\u7684id\u7ec4\u5408
+     */
+    expandPath : function(path,async,startIndex){
+      if(!path){
+        return;
+      }
+      startIndex = startIndex || 0;
+      var _self = this,
+        store = _self.get('store'),
+        preNode,
+        node,
+        i,
+        id,
+        arr = path.split(',');
+
+      preNode = _self.findNode(arr[startIndex]);
+      for(i = startIndex + 1; i < arr.length ; i++){
+        id = arr[i];
+        node = _self.findNode(id,preNode);
+        if(preNode && node){ //\u7236\u5143\u7d20\uff0c\u5b50\u5143\u7d20\u540c\u65f6\u5b58\u5728
+          _self.expandNode(preNode);
+          preNode = node;
+        }else if(preNode && async){
+          store.load({id : preNode.id},function(){ //\u52a0\u8f7d\u5b8c\u6210\u540e
+            node = _self.findNode(id,preNode);
+            if(node){
+              _self.expandPath(path,async,i);
+            }
+          });
+          break;
+        } 
+      }
+    },
+    /**
+     * \u67e5\u627e\u8282\u70b9
+     * <pre><code>
+     *  var node = tree.findNode('1');//\u4ece\u6839\u8282\u70b9\u5f00\u59cb\u67e5\u627e\u8282\u70b9
+     *  
+     *  var subNode = tree.findNode('123',node); //\u4ece\u6307\u5b9a\u8282\u70b9\u5f00\u59cb\u67e5\u627e
+     * </code></pre>
+     * @param  {String} id \u8282\u70b9Id
+     * @param  {BUI.Data.Node} [parent] \u7236\u8282\u70b9
+     * @return {BUI.Data.Node} \u8282\u70b9
+     */
+    findNode : function(id,parent){
+      return this.get('store').findNode(id,parent);
+    },  
+    /**
+     * \u83b7\u53d6\u6240\u6709\u52fe\u9009\u7684\u5b50\u8282\u70b9
+     * <pre><code>
+     *  //\u83b7\u53d6\u6240\u6709\u9009\u4e2d\u7684\u53f6\u5b50\u8282\u70b9
+     *  var nodes = tree.getCheckedLeaf();
+     *  
+     *  //\u83b7\u53d6\u6307\u5b9a\u8282\u70b9\u9009\u4e2d\u7684\u53f6\u5b50\u8282\u70b9
+     *  var node = tree.findNode('1'),
+     *    nodes = tree.getCheckedLeaf(node);
+     *  
+     * </code></pre>
+     * @param {BUI.Data.Node} [parent] \u7236\u8282\u70b9
+     * @return {Array} \u8282\u70b9\u5217\u8868
+     */
+    getCheckedLeaf : function(parent){
+      var _self = this,
+        store = _self.get('store');
+
+      return store.findNodesBy(function(node){
+        return node.leaf && _self.isChecked(node);
+      },parent);
+    },
+    /**
+     * \u83b7\u53d6\u52fe\u9009\u4e2d\u7684\u8282\u70b9\u5217\u8868
+     * <pre><code>
+     *  //\u83b7\u53d6\u6240\u6709\u9009\u4e2d\u8282\u70b9
+     *  var nodes = tree.getCheckedNodes();
+     *  
+     *  //\u83b7\u53d6\u6307\u5b9a\u8282\u70b9\u9009\u4e2d\u7684\u8282\u70b9
+     *  var node = tree.findNode('1'),
+     *    nodes = tree.getCheckedNodes(node);
+     *  
+     * </code></pre>
+     * @param {BUI.Data.Node} [parent] \u7236\u8282\u70b9
+     * @return {Array} \u8282\u70b9\u5217\u8868
+     */
+    getCheckedNodes : function(parent){
+      var _self = this,
+        store = _self.get('store');
+
+      return store.findNodesBy(function(node){
+        return _self.isChecked(node);
+      },parent);
+    },
+    /**
+     * \u8282\u70b9\u662f\u5426\u5c55\u5f00,\u5982\u679c\u8282\u70b9\u662f\u53f6\u5b50\u8282\u70b9\uff0c\u5219\u59cb\u7ec8\u662ffalse
+     * <pre><code>
+     *  tree.isExpanded(node);
+     * </code></pre>
+     * @return {Boolean} \u662f\u5426\u5c55\u5f00
+     */
+    isExpanded : function(node){
+      if(!node || node.leaf){
+        return false;
+      }
+      var _self = this,
+        element;
+      if(_self._isRoot(node) && !_self.get('showRoot')){ //\u6839\u8282\u70b9\uff0c\u5207\u4e0d\u663e\u793a\u6839\u8282\u70b9\u65f6\uff0c\u8ba4\u4e3a\u6839\u8282\u70b9\u65f6\u5c55\u5f00\u7684
+        return true;
+      }
+      if(BUI.isString(node)){
+        item = _self.getItem(node);
+      }
+      element = _self.findElement(node);
+      return this._isExpanded(node,element);
+    },
+    /**
+     * \u8282\u70b9\u662f\u5426\u52fe\u9009
+     * <pre><code>
+     *  tree.isChecked(node);
+     * </code></pre>
+     * @return {Boolean} \u8282\u70b9\u662f\u5426\u52fe\u9009
+     */
+    isChecked : function(node){
+      if(!node){
+        return false;
+      }
+      return  node[this.get('checkedField')];//this.getStatusValue(node,'checked');
+    },
+    /**
+     * \u5207\u6362\u663e\u793a\u9690\u85cf
+     * <pre><code>
+     *  var node = tree.getItem('id');
+     *  tree.collapseNode(node); //\u8282\u70b9\u6536\u7f29
+     *  tree.toggleExpand(node); //\u8282\u70b9\u5c55\u5f00
+     *  tree.toggleExpand(node); //\u8282\u70b9\u6536\u7f29
+     * </code></pre>
+     * @param  {String|Object|BUI.Data.Node} node \u8282\u70b9
+     */
+    toggleExpand : function(node){
+      var _self = this,
+        element;
+      if(BUI.isString(node)){
+        item = _self.getItem(node);
+      }
+      element = _self.findElement(node);
+      _self._toggleExpand(node,element);
+    },
+    /**
+     * \u8bbe\u7f6e\u8282\u70b9\u52fe\u9009\u72b6\u6001
+     * <pre><code>
+     *  var node = tree.findNode('1');
+     *  tree.setNodeChecked(node,true); //\u52fe\u9009
+     *  tree.setNodeChecked(node,false); //\u53d6\u6d88\u52fe\u9009
+     * </code></pre>
+     * @param {String|Object|BUI.Data.Node} node \u8282\u70b9\u6216\u8005\u8282\u70b9id
+     * @param {Boolean} checked \u662f\u5426\u52fe\u9009
+     */
+    setNodeChecked : function(node,checked,deep){
+      deep = deep == null ? true : deep;
+      var _self = this,
+        parent,
+        element;
+      node = makeSureNode(this,node);
+      parent = node.parent;
+      if(!_self.isCheckable(node)){
+        return;
+      }
+
+      if(_self.isChecked(node) !== checked || _self.hasStatus(node,'checked') !== checked){
+
+        element =  _self.findElement(node);
+        if(element){
+          _self.setItemStatus(node,CHECKED,checked,element); //\u8bbe\u7f6e\u9009\u4e2d\u72b6\u6001
+          _self._resetPatialChecked(node,checked,checked,element); //\u8bbe\u7f6e\u90e8\u5206\u52fe\u9009\u72b6\u6001
+        }else if(!_self.isItemDisabled(node)){
+          _self.setStatusValue(node,'checked',checked);
+        }
+        if(parent){ //\u8bbe\u7f6e\u7236\u5143\u7d20\u9009\u4e2d
+          if(_self.isChecked(parent) != checked){
+            _self._resetParentChecked(parent);
+          }else{
+            _self._resetPatialChecked(parent,null,null,null,true);
+          }
+        }
+        _self.fire('checkchange',{node : node,element: element,checked : checked});
+        
+      }
+      if(!node.leaf && deep){ //\u6811\u8282\u70b9\uff0c\u52fe\u9009\u6240\u6709\u5b50\u8282\u70b9
+        BUI.each(node.children,function(subNode){
+          _self.setNodeChecked(subNode,checked,deep);
+        });
+      }
+    },
+
+    //\u521d\u59cb\u5316\u6839\u8282\u70b9
+    _initRoot : function(){
+      var _self = this,
+        store = _self.get('store'),
+        root,
+        showRoot = _self.get('showRoot'),
+        nodes;
+      if(store){
+        root = store.get('root');
+        _self.setInternal('root',root);
+        if(showRoot){
+          nodes = [root];
+        }else{
+          nodes = root.children;
+        }
+        
+        BUI.each(nodes,function(subNode){
+          _self._initChecked(subNode,true);
+        });
+        _self.clearItems();
+        _self.addItems(nodes);
+        //_self.set('nodes',nodes);
+      }
+
+    },
+    //\u521d\u59cb\u5316\u8282\u70b9\u7684\u52fe\u9009
+    _initChecked : function(node,deep){
+      var _self = this,
+        checkType = _self.get('checkType'),
+        checkedField = _self.get('checkedField'),
+        parent; 
+      if(checkType === MAP_TYPES.NONE){ //\u4e0d\u5141\u8bb8\u9009\u4e2d
+        delete node[checkedField];
+        return;
+      }
+
+      if(checkType === MAP_TYPES.ONLY_LEAF){ //\u4ec5\u53f6\u5b50\u8282\u70b9\u53ef\u9009
+        if(node.leaf){
+          node[checkedField] = node[checkedField] || false;
+        }else{
+          delete node[checkedField];
+          if(deep){
+            BUI.each(node.children,function(subNode){
+              _self._initChecked(subNode,deep);
+            });
+          }
+        }
+        return;
+      }
+
+      if(checkType === MAP_TYPES.ALL){ //\u6240\u6709\u5141\u8bb8\u9009\u4e2d
+        node[checkedField] = node[checkedField] || false;
+      }
+
+      if(!node || !_self.isCheckable(node)){ //\u5982\u679c\u4e0d\u53ef\u9009\uff0c\u5219\u4e0d\u5904\u7406\u52fe\u9009
+        return;
+      }
+      parent = node.parent;
+      if(!_self.isChecked(node)){ //\u8282\u70b9\u672a\u88ab\u9009\u62e9\uff0c\u6839\u636e\u7236\u3001\u5b50\u8282\u70b9\u5904\u7406\u52fe\u9009
+        if(parent && _self.isChecked(parent)){ //\u5982\u679c\u7236\u8282\u70b9\u9009\u4e2d\uff0c\u5f53\u524d\u8282\u70b9\u5fc5\u987b\u52fe\u9009
+          _self.setStatusValue(node,'checked',true);
+        }
+        if(_self._isAllChildrenChecked(node)){
+          _self.setStatusValue(node,'checked',true);
+        }
+      }
+      if(deep){
+        BUI.each(node.children,function(subNode){
+          _self._initChecked(subNode,deep);
+        });
+      }
+      
+    },
+    //\u8bbe\u7f6e\u90e8\u5206\u9009\u4e2d\u6548\u679c
+    _resetPatialChecked : function(node,checked,hasChecked,element,upper){
+      if(!node || node.leaf){
+        return true;
+      }
+      var _self = this,
+        hasChecked;
+      checked = checked == null ? _self.isChecked(node) : checked;
+      if(checked){
+        _self.setItemStatus(node,PARTIAL_CHECKED,false,element);
+        return;
+      }
+      hasChecked = hasChecked == null ? _self._hasChildChecked(node) : hasChecked;
+
+      _self.setItemStatus(node,PARTIAL_CHECKED,hasChecked,element);
+      if(upper && node.parent){
+        _self._resetPatialChecked(node.parent,false,hasChecked ? hasChecked : null,null,upper)
+      }
+      
+    },
+    //\u5b50\u8282\u70b9\u53d8\u5316\uff0c\u91cd\u7f6e\u7236\u8282\u70b9\u52fe\u9009
+    _resetParentChecked : function(parentNode){
+      if(!this.isCheckable(parentNode)){
+        return;
+      }
+      var _self = this,
+        allChecked = _self._isAllChildrenChecked(parentNode);
+      _self.setStatusValue(parentNode,'checked',allChecked);
+      _self.setNodeChecked(parentNode,allChecked,false);
+      _self._resetPatialChecked(parentNode,allChecked,null,null);
+    },
+    //\u7ed1\u5b9a\u4e8b\u4ef6
+    __bindUI : function(){
+      var _self = this,
+        el = _self.get('el');
+
+      //\u70b9\u51fb\u9009\u9879
+      _self.on('itemclick',function(ev){
+        var sender = $(ev.domTarget),
+          element = ev.element,
+          node = ev.item;
+        if(sender.hasClass(CLS_EXPANDER)){
+          _self._toggleExpand(node,element); //\u70b9\u51fb\u5c55\u5f00\u6536\u7f29\u8282\u70b9\uff0c\u4e0d\u89e6\u53d1\u9009\u4e2d\u4e8b\u4ef6
+          return false;
+        }else if(sender.hasClass(CLS_CHECKBOX)){
+          var checked = _self.isChecked(node);
+          _self.setNodeChecked(node,!checked);
+        }
+        
+      });
+
+      _self.on('itemdblclick',function(ev){
+        var sender = $(ev.domTarget),
+          element = ev.element,
+          node = ev.item;
+        if(!sender.hasClass(CLS_EXPANDER)){
+          _self._toggleExpand(node,element);
+        }
+      });
+
+      _self.on('beforeselectedchange',function(ev){
+        var dirSelectable = _self.get('dirSelectable'),
+          node = ev.item;
+        if(!dirSelectable && !node.leaf){ //\u5982\u679c\u963b\u6b62\u975e\u53f6\u5b50\u8282\u70b9\u9009\u4e2d
+          return false;
+        }
+      });
+
+      _self.on('itemrendered',function(ev){
+        var node = ev.item,
+          element = ev.domTarget;
+        _self._resetIcons(node,element);
+        if(_self.isCheckable(node)){
+          _self._resetPatialChecked(node,null,null,element);
+        }
+        if(_self._isExpanded(node,element)){
+          _self._showChildren(node);
+        }
+        
+      });
+    },
+    //\u662f\u5426\u6240\u6709\u5b50\u8282\u70b9\u88ab\u9009\u4e2d
+    _isAllChildrenChecked : function(node){
+      if(!node || node.leaf){
+        return false;
+      }
+      var _self = this,
+        children = node.children,
+        rst = true;
+      BUI.each(children,function(subNode){
+        rst = rst && _self.isChecked(subNode);
+        if(!rst){ //\u5b58\u5728\u672a\u9009\u4e2d\u7684\uff0c\u8fd4\u56de
+          return false;
+        }
+      });
+      return rst;
+    },
+    //\u662f\u5426\u6709\u5b50\u8282\u70b9\u9009\u4e2d
+    _hasChildChecked : function(node){
+      if(!node || node.leaf){
+        return false;
+      }
+      var _self = this;
+
+      return _self.getCheckedNodes(node).length != 0;
+    },
+    //\u662f\u5426\u662f\u6839\u8282\u70b9
+    _isRoot : function(node){
+      var _self = this,
+        store = _self.get('store');
+      if(store && store.get('root') == node){
+        return true;
+      }
+      return false;
+    },
+    //\u8bbe\u7f6e\u52a0\u8f7d\u72b6\u6001
+    _setLoadStatus : function(node,element,loading){
+      var _self = this;
+      _self.setItemStatus(node,LOADING,loading,element);
+    },  
+    //\u52a0\u8f7d\u8282\u70b9\u524d
+    _beforeLoadNode : function(node){
+      var _self = this,
+        element;
+      if(BUI.isString(node)){
+        node = _self.findNode(node);
+      }
+      element = _self.findElement(node)
+      if(element){
+        _self._setLoadStatus(node,element,true);
+      }
+      if(node){
+        BUI.each(node.children,function(subNode){
+          _self._removeNode(subNode);
+        });
+        
+      }
+      
+    },
+    /**
+     * @override
+     * @protected
+     * \u52a0\u8f7d\u8282\u70b9\u524d\u89e6\u53d1
+     */
+    onBeforeLoad : function(e){
+      var _self = this,
+        params = e.params,
+        id = params.id,
+        node = _self.findNode(id) || _self.get('root');
+      _self._beforeLoadNode(node);
+    },
+    //\u6dfb\u52a0\u8282\u70b9
+    _addNode : function(node,index){
+      var _self = this,
+        parent = node.parent,
+        scount,//\u5144\u5f1f\u8282\u70b9\u7684\u6570\u91cf
+        prevNode, //\u524d\u4e00\u4e2a\u8282\u70b9
+        nextNode, //\u540e\u4e00\u4e2a\u8282\u70b9\uff0c\u7528\u4e8e\u8ba1\u7b97\u672c\u8282\u70b9\u653e\u7f6e\u7684\u4f4d\u7f6e,\u4e0d\u4e00\u5b9a\u662f\u540c\u7ea7\u8282\u70b9
+        cIndex;//\u8282\u70b9\u63d2\u5165\u7684\u4f4d\u7f6e
+      _self._initChecked(node,true);
+      if(parent){
+        if(_self.isExpanded(parent)){ //\u5c55\u5f00\u7684\u8282\u70b9
+          scount = parent.children.length;
+
+          cIndex = _self._getInsetIndex(node);//\u4e0b\u4e00\u4e2a\u8282\u70b9\u7684\u4f4d\u7f6e
+          _self.addItemAt(node,cIndex);
+          if(index == scount -1 && index > 0){ //\u4f5c\u4e3a\u6700\u540e\u4e00\u4e2a\u8282\u70b9\uff0c\u66f4\u65b0\u524d\u4e00\u4e2a\u5144\u5f1f\u8282\u70b9\u7684\u56fe\u6807
+            prevNode = parent.children[index - 1];
+            _self._updateIcons(prevNode);
+          }
+        }
+        _self._updateIcons(parent); //\u66f4\u65b0\u7236\u8282\u70b9\u7684icon
+      }else{ //\u6ca1\u6709\u7236\u8282\u70b9\uff0c\u5219\u6dfb\u52a0\u5230\u8ddf\u8282\u70b9\u4e0b
+        cIndex = _self._getInsetIndex(node);
+        _self.addItemAt(node,cIndex);
+        prevNode = _self.get('nodes')[index - 1];
+        _self._updateIcons(prevNode);
+      }
+    },
+    //\u83b7\u53d6\u8282\u70b9\u7684\u63d2\u5165\u4f4d\u7f6e
+    _getInsetIndex : function(node){
+      var _self = this,
+        nextNode,
+        rst = null;
+      nextNode = _self._getNextItem(node);
+      if(nextNode){
+        return _self.indexOfItem(nextNode);
+      }
+      return _self.getItemCount();
+    },
+    //\u83b7\u53d6\u663e\u793a\u5728\u5217\u8868\u4e0a\u7684\u4e0b\u4e00\u9879\uff0c\u4e0d\u4ec5\u4ec5\u662f\u540c\u7ea7\u8282\u70b9
+    _getNextItem : function(item){
+      var _self = this,
+        parent = item.parent,
+        slibings,
+        cIndex,
+        rst = null;
+      if(!parent){
+        return null;
+      }
+      slibings = parent.children;
+      cIndex = BUI.Array.indexOf(item,slibings)
+      rst = slibings[cIndex + 1];
+
+      return rst || _self._getNextItem(parent);
+    },
+    /**
+     * @override 
+     * @protected
+     * \u91cd\u5199\u6dfb\u52a0\u8282\u70b9\u65b9\u6cd5
+     */
+    onAdd : function(e){
+      var _self = this,
+        node = e.node,
+        index = e.index;
+      _self._addNode(node,index);
+    },
+    //\u66f4\u65b0\u8282\u70b9
+    _updateNode : function(node){
+      var _self = this;
+      _self.updateItem(node);
+      _self._updateIcons(node);
+    },
+    /**
+     * @override 
+     * @protected
+     * \u91cd\u5199\u66f4\u65b0\u8282\u70b9\u65b9\u6cd5
+     */
+    onUpdate : function(e){
+      var _self = this,
+        node = e.node;
+      _self._updateNode(node);
+    },
+    //\u5220\u9664\u8282\u70b9
+    _removeNode : function(node,index){
+      var _self = this,
+        parent = node.parent,
+        scount,
+        prevNode;
+      _self.collapseNode(node); //\u6536\u7f29\u8282\u70b9\uff0c\u4ee5\u4fbf\u4e8e\u540c\u65f6\u5220\u9664\u5b50\u8282\u70b9
+      if(!parent){
+        return;
+      }
+      _self.removeItem(node);
+      if(_self.isExpanded(parent)){ //\u5982\u679c\u7236\u8282\u70b9\u5c55\u5f00
+        
+        scount = parent.children.length;
+        if(scount == index && index !== 0){ //\u5982\u679c\u5220\u9664\u7684\u662f\u6700\u540e\u4e00\u4e2a\uff0c\u66f4\u65b0\u524d\u4e00\u4e2a\u8282\u70b9\u56fe\u6807
+          prevNode = parent.children[index - 1];
+          _self._updateIcons(prevNode);
+        }
+      }
+      _self._updateIcons(parent);
+      _self._resetParentChecked(parent);
+    },
+    /**
+     * @override 
+     * @protected
+     * \u91cd\u5199\u5220\u9664\u8282\u70b9\u65b9\u6cd5
+     */
+    onRemove : function(e){
+      var _self = this,
+        node = e.node,
+        index = e.index;
+      _self._removeNode(node,index);
+    },
+    //\u52a0\u8f7d\u5b8c\u8282\u70b9
+    _loadNode : function(node){
+      var _self = this;
+      _self.expandNode(node);
+      _self._updateIcons(node);
+      _self.setItemStatus(node,LOADING,false);
+    },
+     /**
+     * @override 
+     * @protected
+     * \u52a0\u8f7d\u8282\u70b9
+     */
+    onLoad : function(e){
+      var _self = this,
+        store = _self.get('store'),
+        root = store.get('root'),
+        node;
+
+      if(!e || e.node == root){ //\u521d\u59cb\u5316\u52a0\u8f7d\u65f6,\u6216\u8005\u52a0\u8f7d\u6839\u8282\u70b9
+        _self._initRoot();
+      }
+      if(e && e.node){
+        _self._loadNode(e.node);
+      } 
+    },
+    _isExpanded : function(node,element){
+      return this.hasStatus(node,EXPAND,element);
+    },
+    //\u83b7\u53d6Icon\u7684\u6a21\u677f
+    _getIconsTpl : function(node){
+      var _self = this,
+        level = node.level,
+        start = _self.get('startLevel'),
+        iconWraperTpl = _self.get('iconWraperTpl'),
+        icons = [],
+        i;
+      for(i = start ; i < level ; i = i + 1){
+        icons.push(_self._getLevelIcon(node,i));
+      }
+      icons.push(_self._getExpandIcon(node));
+      icons.push(_self._getCheckedIcon(node));
+      icons.push(_self._getNodeTypeIcon(node));
+      return BUI.substitute(iconWraperTpl,{icons : icons.join('')});
+    },
+    //\u83b7\u53d6\u52fe\u9009icon
+    _getCheckedIcon : function(node){
+      var _self = this,
+        checkable = _self.isCheckable(node);
+      if(checkable){
+        return _self._getIcon(CLS_CHECKBOX);
+      }
+      return '';
+    },
+    /**
+     * \u662f\u5426\u53ef\u4ee5\u52fe\u9009
+     * @protected
+     * @param  {Object | BUI.Data.Node} node \u8282\u70b9
+     * @return {Boolean}  \u662f\u5426\u53ef\u4ee5\u52fe\u9009
+     */
+    isCheckable : function(node){
+      return node[this.get('checkedField')] != null;
+    },
+    //\u83b7\u53d6\u5c55\u5f00\u6298\u53e0\u7684icon
+    _getExpandIcon : function(node){
+      var _self = this,
+        cls = CLS_EXPANDER; 
+      if(node.leaf){
+        return _self._getLevelIcon(node);
+      }
+      if(_self._isLastNode(node)){
+        cls = cls + ' ' + CLS_EXPANDER_END;
+      }
+      return _self._getIcon(cls);
+    },
+    //\u53f6\u5b50\u8282\u70b9\u548c\u6811\u8282\u70b9\u6709\u4e0d\u540c\u7684icon
+    _getNodeTypeIcon : function(node){
+      var _self = this,
+        cls = node.cls ? node.cls :(node.leaf ? _self.get('leafCls') : _self.get('dirCls'));
+      return _self._getIcon(cls);
+    },
+    //\u83b7\u53d6\u5bf9\u5e94Level\u7684icon
+    _getLevelIcon : function(node,level){
+      var _self = this,
+        showLine = _self.get('showLine'),
+        cls = CLS_EMPTY,
+        levelNode;
+      if(showLine){ //\u5982\u679c\u663e\u793a\u8fde\u63a5\u7ebf
+        if(node.level === level || level == null){ //\u5f53\u524d\u7684\u8fde\u63a5\u7ebf
+          cls = _self._isLastNode(node) ? CLS_END : CLS_ELBOW;
+        }else{ //\u4e0a\u4e00\u7ea7\u7684\u8fde\u63a5\u7ebf
+          levelNode = _self._getParentNode(node,level);
+          cls = _self._isLastNode(levelNode) ? CLS_EMPTY : CLS_LINE;
+        }
+      }
+      return _self._getIcon(cls);
+    },
+    //\u83b7\u53d6\u5bf9\u5e94level\u7684\u7236\u8282\u70b9
+    _getParentNode : function(node,level){
+      var nodeLevel = node.level,
+        parent = node.parent,
+        i = nodeLevel - 1;
+      if(nodeLevel <= level){
+        return null;
+      }
+      while(i > level){
+        parent = parent.parent;
+        i = i - 1;
+      }
+      return parent;
+    },
+    //\u83b7\u53d6icon
+    _getIcon : function(cls){
+       var _self = this,
+        iconTpl = _self.get('iconTpl');
+      return BUI.substitute(iconTpl,{cls : cls});
+    },
+    //\u662f\u5426\u662f\u7236\u8282\u70b9\u7684\u6700\u540e\u4e00\u4e2a\u8282\u70b9
+    _isLastNode : function(node){
+
+      if(!node){
+        return false;
+      }
+      if(node == this.get('root')){
+        return true;
+      }
+
+      var _self = this,
+        parent = node.parent,
+        siblings = parent ? parent.children : _self.get('nodes'),
+        count;
+
+      count = siblings.length;
+      return siblings[count - 1] === node;
+    },
+    //\u521d\u59cb\u5316\u6240\u6709\u8282\u70b9\uff0c\u8bbe\u7f6elevel \u548c leaf
+    _initNodes : function(nodes,level,parent){
+      var _self = this;
+      BUI.each(nodes,function(node){
+        node.level = level;
+        if(node.leaf == null){
+          node.leaf = node.children ? false : true;
+        }
+        if(parent && !node.parent){
+          node.parent = parent;
+        }
+        _self._initChecked(node);
+        if(node.children){
+          _self._initNodes(node.children,level + 1,node);
+        }
+        
+      });
+    },
+    //\u6298\u53e0\u8282\u70b9
+    _collapseNode : function(node,element,deep){
+      var _self = this;
+      if(node.leaf){
+        return;
+      }
+      if(_self.hasStatus(node,EXPAND,element)){
+        _self.setItemStatus(node,EXPAND,false,element);
+        if(deep){
+          _self._collapseChildren(node,deep);
+          _self.removeItems(node.children);
+        }else{
+          _self._hideChildrenNodes(node);
+        }
+        _self.fire('collapsed',{node : node ,element : element});
+        //node[_self.get('expandField')] = false;
+      }
+    },
+    //\u9690\u85cf\u5b57\u8282\u70b9
+    _hideChildrenNodes : function(node){
+      var _self = this,
+        children = node.children;
+      BUI.each(children,function(subNode){
+        _self.removeItem(subNode);
+        _self._hideChildrenNodes(subNode);
+      });
+    },
+    _collapseChildren : function(parentNode,deep){
+      var _self = this,
+        children = parentNode.children;
+      
+      BUI.each(children,function(node){
+        _self.collapseNode(node,deep);
+      });
+    },
+    //\u5c55\u5f00\u9009\u9879
+    _expandNode : function(node,element,deep){
+      var _self = this,
+        store = _self.get('store');
+      if(node.leaf){ //\u5b50\u8282\u70b9\u4e0d\u5c55\u5f00
+        return;
+      }
+      if(!_self.hasStatus(node,EXPAND,element)){
+        if(store && !store.isLoaded(node)){ //\u8282\u70b9\u672a\u52a0\u8f7d\uff0c\u5219\u52a0\u8f7d\u8282\u70b9
+          if(!_self._isLoading(node,element)){
+            store.loadNode(node);
+          }
+        }else if(element){
+          _self.setItemStatus(node,EXPAND,true,element);
+          //_self.addItemsAt(node.children,index + 1);
+          _self._showChildren(node);
+          _self.fire('expanded',{node : node ,element : element});
+        }
+      }
+      BUI.each(node.children,function(subNode){
+        if(deep || _self.isExpanded(subNode)){
+          _self.expandNode(subNode,deep);
+        }
+      });
+      
+    },
+    //\u663e\u793a\u5b50\u8282\u70b9
+    _showChildren : function(node){
+      if(!node || !node.children){
+        return;
+      }
+      var _self = this,
+        index = _self.indexOfItem(node),
+        length = node.children.length,
+        subNode,
+        i;
+      for (i = length - 1; i >= 0; i--) {
+        subNode = node.children[i];
+        if(!_self.getItem(subNode)){
+          _self.addItemAt(subNode,index + 1);
+        }
+      };
+    },
+    _isLoading : function(node,element){
+      var _self = this;
+      return _self.hasStatus(node,LOADING,element);
+    },
+    //\u91cd\u7f6e\u9009\u9879\u7684\u56fe\u6807
+    _resetIcons :function(node,element){
+      var _self = this,
+        iconContainer = _self.get('iconContainer'),
+        containerEl,
+        iconsTpl = _self._getIconsTpl(node);
+      $(element).find('.' + CLS_ICON_WRAPER).remove(); //\u79fb\u9664\u6389\u4ee5\u524d\u7684\u56fe\u6807
+      containerEl = $(element).find('.' + iconContainer);
+      if(iconContainer && containerEl.length){
+        $(iconsTpl).appendTo(containerEl);
+      }else{
+        $(element).prepend($(iconsTpl));
+      }
+    },
+    //\u5207\u6362\u663e\u793a\u9690\u85cf
+    _toggleExpand : function(node,element){
+      var _self = this;
+      if(_self._isExpanded(node,element)){
+        _self._collapseNode(node,element);
+      }else{
+        _self._expandNode(node,element);
+      }
+    }, 
+    //\u66f4\u65b0\u8282\u70b9\u56fe\u6807 
+    _updateIcons : function(node){
+      var _self = this,
+        element = _self.findElement(node);
+      if(element){
+        _self._resetIcons(node,element);
+        if(_self._isExpanded(node,element) && !node.leaf){ //\u5982\u679c\u8282\u70b9\u5c55\u5f00\uff0c\u90a3\u4e48\u66f4\u65b0\u5b50\u8282\u70b9\u7684\u56fe\u6807\u6837\u5f0f
+          BUI.each(node.children,function(subNode){
+            _self._updateIcons(subNode);
+          });
+        }
+      }
+    },
+    //\u8bbe\u7f6e\u663e\u793a\u6839\u8282\u70b9
+    _uiSetShowRoot : function(v){
+      var _self = this,
+        start = this.get('showRoot') ? 0 : 1;
+      _self.set('startLevel',start);
+    },
+    _uiSetNodes : function(v){
+      var _self = this,
+        store = _self.get('store');
+      store.setResult(v);
+    },
+    _uiSetShowLine : function(v){
+      var _self = this,
+        el = _self.get('el');
+      if(v){
+        el.addClass(CLS_SHOW_LINE);
+      }else{
+        el.removeClass(CLS_SHOW_LINE);
+      }
+    }
+  });
+
+  return Mixin;
+})/**
+ * @fileOverview \u6811\u5f62\u5217\u8868
+ * @ignore
+ */
+
+define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
+  var BUI = require('bui/common'),
+    List = require('bui/list'),
+    Mixin = require('bui/tree/treemixin');
+
+  /**
+   * @class BUI.Tree.TreeList
+   * \u6811\u5f62\u5217\u8868\u63a7\u4ef6
+   * ** \u4f60\u53ef\u4ee5\u7b80\u5355\u7684\u4f7f\u7528\u914d\u7f6e\u6570\u636e **
+   * <pre><code>
+   *  BUI.use('bui/tree',function(Tree){
+   *    var tree = new Tree.TreeList({
+   *      render : '#t1',
+   *      nodes : [
+   *        {id : '1',text : '1',children : [{id : '11',text : '11'}]},
+   *        {id : '2',text : '2'}
+   *      ]
+   *    });
+   *    tree.render();
+   *  });
+   * </code></pre>
+   * ** \u4f60\u4e5f\u53ef\u4ee5\u663e\u793a\u6839\u8282\u70b9 ** 
+   * <pre><code>
+   *  BUI.use('bui/tree',function(Tree){
+   *    var tree = new Tree.TreeList({
+   *      render : '#t1',
+   *      root :{
+   *        id : '0',
+   *        text : '0',
+   *        children : [
+   *          {id : '1',text : '1',children : [{id : '11',text : '11'}]},
+   *          {id : '2',text : '2'}
+   *        ]
+   *      },
+   *      showRoot : true
+   *    });
+   *    tree.render();
+   *  });
+   * </code></pre>
+   *
+   * ** \u4f60\u4e5f\u53ef\u4ee5\u5f02\u6b65\u52a0\u8f7d\u6570\u636e ** 
+   * <pre><code>
+   *  BUI.use(['bui/tree','bui/data'],function(Tree,Data){
+   *    var store = new Data.TreeStore({
+   *        root :{
+   *          id : '0',
+   *          text : '0'
+   *        },
+   *        url : 'data/nodes.php'
+   *      }),
+   *      tree = new Tree.TreeList({
+   *        render : '#t1',
+   *        store : store,
+   *        showRoot : true //\u53ef\u4ee5\u4e0d\u914d\u7f6e\uff0c\u5219\u4e0d\u663e\u793a\u6839\u8282\u70b9
+   *      });
+   *    tree.render();
+   *    store.load({id : '0'});//\u52a0\u8f7d\u6839\u8282\u70b9\uff0c\u4e5f\u53ef\u4ee5\u8ba9\u7528\u6237\u70b9\u51fb\u52a0\u8f7d
+   *  });
+   * </code></pre>
+   *
+   * ** \u4f60\u8fd8\u53ef\u4ee5\u66ff\u6362icon ** 
+   * <pre><code>
+   *  BUI.use('bui/tree',function(Tree){
+   *    var tree = new Tree.TreeList({
+   *      render : '#t1',
+   *      dirCls : 'folder', //\u66ff\u6362\u6811\u8282\u70b9\u7684\u6837\u5f0f
+   *      leafCls : 'file', //\u53f6\u5b50\u8282\u70b9\u7684\u6837\u5f0f
+   *      nodes : [ //\u6570\u636e\u4e2d\u5b58\u5728cls \u4f1a\u66ff\u6362\u8282\u70b9\u7684\u56fe\u6807\u6837\u5f0f
+   *        {id : '1',text : '1'cls:'task-folder',children : [{id : '11',text : '11',cls:'task'}]},
+   *        {id : '2',text : '2'}
+   *      ]
+   *    });
+   *    tree.render();
+   *  });
+   * @mixin BUI.Tree.Mixin
+   * @extends BUI.List.SimpleList
+   */
+  var TreeList = List.SimpleList.extend([Mixin],{
+    
+  },{
+    ATTRS : {
+      itemCls : {
+        value : BUI.prefix + 'tree-item'
+      },
+      itemTpl : {
+        value : '<li>{text}</li>'
+      },
+      idField : {
+        value : 'id'
+      }
+    }
+  },{
+    xclass : 'tree-list'
+  });
+
+  return TreeList;
+});
+
+/**
+ * @fileOverview \u63d0\u793a\u7684\u5165\u53e3\u6587\u4ef6
+ * @ignore
+ */
+
+define('bui/tooltip',['bui/common','bui/tooltip/tip','bui/tooltip/tips'],function (require) {
+  var BUI = require('bui/common'),
+    Tooltip = BUI.namespace('Tooltip'),
+    Tip = require('bui/tooltip/tip'),
+    Tips = require('bui/tooltip/tips');
+
+  BUI.mix(Tooltip,{
+    Tip : Tip,
+    Tips : Tips
+  });
+  return Tooltip;
+});/**
+ * @fileOverview \u7b80\u5355\u6613\u7528\u7684\u63d0\u793a\u4fe1\u606f
+ * @ignore
+ */
+
+define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
+  var BUI = require('bui/common'),
+    Overlay = require('bui/overlay'),
+    CLS_ALIGN_PREFIX = 'x-align-',
+    MAP_TYPES = {
+      left : ['cl','cr'], //\u5c45\u5de6
+      right : ['cr','cl'], //\u5c45\u53f3
+      top : ['tc','bc'], //\u5c45\u4e0a
+      bottom : ['bc','tc'], //\u5c45\u4e0b
+      'top-left' : ['tl','bl'],
+      'top-right' : ['tr','br'],
+      'bottom-left' : ['bl','tl'],
+      'bottom-right' : ['br','tr']
+    };
+  //\u83b7\u53d6\u8ddd\u79bb
+  function getOffset(type,offset){
+    if(type === 'left'){
+      return [-1 * offset,-4];
+    }
+    if(type === 'right'){
+      return [offset,-4];
+    }
+    if(type.indexOf('top')){
+      return [0,offset];
+    }
+
+    if(type.indexOf('bottom')){
+      return [0,-1 * offset];
+    }
+  }
+
+  var TipView = Overlay.OverlayView.extend({
+    renderUI : function(){
+
+    },
+    //\u83b7\u53d6\u663e\u793a\u6587\u672c\u7684\u5bb9\u5668
+    _getTitleContainer : function(){
+      return  this.get('el');
+    },
+    //\u8bbe\u7f6e\u6587\u672c
+    _uiSetTitle : function(title){
+      var _self = this,
+        titleTpl = _self.get('titleTpl'),
+        container = _self._getTitleContainer(),
+        titleEl = _self.get('titleEl'),
+        tem;
+      if(titleEl){
+        titleEl.remove();
+      }
+      title = title || '';
+      if(BUI.isString(title)){
+        title = {title : title};
+      }
+      tem = BUI.substitute(titleTpl,title);
+      titleEl = $(tem).appendTo(container);
+      _self.set('titleEl',titleEl);
+    },
+    //\u8bbe\u7f6e\u5bf9\u9f50\u6837\u5f0f
+    _uiSetAlignType : function(type,ev){
+      var _self = this;
+      if(ev && ev.prevVal){
+        _self.get('el').removeClass(CLS_ALIGN_PREFIX + ev.prevVal);
+      }
+      if(type){
+        _self.get('el').addClass(CLS_ALIGN_PREFIX + type);
+      }
+    }
+  },{
+    ATTRS : {
+      title : {},
+      titleEl : {},
+      alignType : {}
+    }
+  },{
+    xclass : 'tooltip-view'
+  });
+  
+  /**
+   * @class BUI.Tooltip.Tip
+   * @extends BUI.Overlay.Overlay
+   * \u7b80\u6613\u7684\u63d0\u793a\u4fe1\u606f
+   * 
+   * ** \u4f60\u53ef\u4ee5\u7b80\u5355\u7684\u4f7f\u7528\u5355\u4e2atip **
+   * <pre><code>
+   * BUI.use('bui/tooltip',function (Tooltip) {
+   *  //\u4e0d\u4f7f\u7528\u6a21\u677f\u7684\uff0c\u5de6\u4fa7\u663e\u793a
+   *   var t1 = new Tooltip.Tip({
+   *     trigger : '#t1',
+   *     alignType : 'left', //\u65b9\u5411
+   *     showArrow : false, //\u4e0d\u663e\u793a\u7bad\u5934
+   *     offset : 5, //\u8ddd\u79bb\u5de6\u8fb9\u7684\u8ddd\u79bb
+   *     title : '\u65e0\u4efb\u4f55\u6837\u5f0f\uff0c<br>\u5de6\u8fb9\u7684\u63d0\u793a\u4fe1\u606f'
+   *   });
+   *   t1.render();
+   *  });
+   * </code></pre>
+   *
+   * ** \u4e5f\u53ef\u4ee5\u914d\u7f6e\u6a21\u677f **
+   * <pre><code>
+   * BUI.use('bui/tooltip',function (Tooltip) {
+   *  //\u4f7f\u7528\u6a21\u677f\u7684\uff0c\u5de6\u4fa7\u663e\u793a
+   *   var t1 = new Tooltip.Tip({
+   *     trigger : '#t1',
+   *     alignType : 'left', //\u65b9\u5411
+   *     titleTpl : '&lt;span class="x-icon x-icon-small x-icon-success"&gt;&lt;i class="icon icon-white icon-question"&gt;&lt;/i&gt;&lt;/span&gt;\
+   *     &lt;div class="tips-content"&gt;{title}&lt;/div&gt;',
+   *     offset : 5, //\u8ddd\u79bb\u5de6\u8fb9\u7684\u8ddd\u79bb
+   *     title : '\u65e0\u4efb\u4f55\u6837\u5f0f\uff0c&lt;br&gt;\u5de6\u8fb9\u7684\u63d0\u793a\u4fe1\u606f'
+   *   });
+   *   t1.render();
+   *  });
+   * </code></pre>
+   */
+  var Tip = Overlay.Overlay.extend({
+    //\u8bbe\u7f6e\u5bf9\u9f50\u65b9\u5f0f
+    _uiSetAlignType : function(type){
+      var _self = this,
+        offset = _self.get('offset'),
+        align = _self.get('align') || {},
+        points = MAP_TYPES[type];
+      if(points){
+        align.points = points;
+        if(offset){
+          align.offset = getOffset(type,offset);
+        }
+        _self.set('align',align);
+      }
+    }
+  },{
+    ATTRS : {
+      //\u4f7f\u7528\u59d4\u6258\u7684\u65b9\u5f0f\u663e\u793a\u63d0\u793a\u4fe1\u606f
+      delegateTigger : {
+        value : true
+      },
+      /**
+       * \u5bf9\u9f50\u7c7b\u578b\uff0c\u5305\u62ec\uff1a top,left,right,bottom\u56db\u79cd\u5e38\u7528\u65b9\u5f0f\uff0c\u5176\u4ed6\u5bf9\u9f50\u65b9\u5f0f\uff0c\u53ef\u4ee5\u4f7f\u7528@see{BUI.Tooltip.Tip#property-align}\u5c5e\u6027
+       * 
+       * @type {String}
+       */
+      alignType : {
+        view : true
+      },
+      /**
+       * \u663e\u793a\u7684\u5185\u5bb9\uff0c\u6587\u672c\u6216\u8005\u952e\u503c\u5bf9
+       * <pre><code>
+       *     var tip =  new Tip({
+       *        title : {a : 'text a',b:'text b'}, //\u5c5e\u6027\u662f\u5bf9\u8c61
+       *        titleTpl : '<p>this is {a},because {b}</p>' // <p>this is text a,because text b</p>
+       *      });
+       * </code></pre>
+       * @cfg {String|Object} title
+       */
+      /**
+       * \u663e\u793a\u7684\u5185\u5bb9
+       * <pre><code>
+       *  //\u8bbe\u7f6e\u6587\u672c
+       *  tip.set('title','new title');
+       *
+       *  //\u8bbe\u7f6e\u5bf9\u8c61
+       *  tip.set('title',{a : 'a',b : 'b'})
+       * </code></pre>
+       * @type {Object}
+       */
+      title : {
+        view : true
+      },
+      /**
+       * \u663e\u793a\u5bf9\u9f50\u7bad\u5934
+       * @override
+       * @default true
+       * @cfg {Boolean} [showArrow = true]
+       */
+      showArrow : {
+        value : true
+      },
+      /**
+       * \u7bad\u5934\u653e\u7f6e\u5728\u7684\u4f4d\u7f6e\uff0c\u662f\u4e00\u4e2a\u9009\u62e9\u5668\uff0c\u4f8b\u5982 .arrow-wraper
+       * <pre><code>
+       *     new Tip({ //\u53ef\u4ee5\u8bbe\u7f6e\u6574\u4e2a\u63a7\u4ef6\u7684\u6a21\u677f
+       *       arrowContainer : '.arrow-wraper',
+       *       tpl : '<div class="arrow-wraper"></div>'
+       *     });
+       *     
+       *     new Tip({ //\u4e5f\u53ef\u4ee5\u8bbe\u7f6etitle\u7684\u6a21\u677f
+       *       arrowContainer : '.arrow-wraper',
+       *       titleTpl : '<div class="arrow-wraper">{title}</div>'
+       *     });
+       * </code></pre>   
+       * @cfg {String} arrowContainer
+       */
+      arrowContainer : {
+        view : true
+      },
+      //\u81ea\u52a8\u663e\u793a
+      autoHide : {
+        value : true
+      },
+      //\u8986\u76d6\u81ea\u52a8\u9690\u85cf\u7c7b\u578b
+      autoHideType : {
+        value : 'leave'
+      },
+      /**
+      * \u663e\u793a\u7684tip \u8ddd\u79bb\u89e6\u53d1\u5668Dom\u7684\u8ddd\u79bb
+      * <pre><code>
+      *  var tip =  new Tip({
+      *    title : {a : 'text a',b:'text b'}, //\u5c5e\u6027\u662f\u5bf9\u8c61
+      *    offset : 10, //\u8ddd\u79bb
+      *    titleTpl : '<p>this is {a},because {b}</p>' // <p>this is text a,because text b</p>
+      *  });
+      * </code></pre>
+      * @cfg {Number} offset
+      */
+      offset : {
+        value : 0
+      },
+      /**
+       * \u89e6\u53d1\u663e\u793atip\u7684\u4e8b\u4ef6\u540d\u79f0\uff0c\u9ed8\u8ba4\u4e3amouseover
+       * @type {String}
+       * @protected
+       */
+      triggerEvent : {
+        value : 'mouseover'
+      },
+      /**
+       * \u663e\u793a\u6587\u672c\u7684\u6a21\u677f
+       * <pre><code>
+       *  var tip =  new Tip({
+       *    title : {a : 'text a',b:'text b'}, //\u5c5e\u6027\u662f\u5bf9\u8c61
+       *    offset : 10, //\u8ddd\u79bb
+       *    titleTpl : '<p>this is {a},because {b}</p>' // <p>this is text a,because text b</p>
+       *  });
+       * </code></pre>
+       * @type {String}
+       */
+      titleTpl : {
+        view : true,
+        value : '<span>{title}</span>'
+      },
+      xview : {
+        value : TipView
+      }
+    }
+  },{
+    xclass : 'tooltip'
+  });
+
+  Tip.View = TipView;
+
+  return Tip;
+});/**
+ * @fileOverview \u6279\u91cf\u663e\u793a\u63d0\u793a\u4fe1\u606f
+ * @ignore
+ */
+
+define('bui/tooltip/tips',['bui/common','bui/tooltip/tip'],function(require) {
+
+  //\u662f\u5426json\u5bf9\u8c61\u6784\u6210\u7684\u5b57\u7b26\u4e32
+  function isObjectString(str){
+    return /^{.*}$/.test(str);
+  }
+
+  var BUI = require('bui/common'),
+    Tip = require('bui/tooltip/tip'),
+    /**
+     * @class BUI.Tooltip.Tips
+     * \u6279\u91cf\u663e\u793a\u63d0\u793a\u4fe1\u606f
+     *  <pre><code>
+     * BUI.use('bui/tooltip',function(){
+     *   var tips = new Tooltip.Tips({
+     *     tip : {
+     *       trigger : '#t1 a', //\u51fa\u73b0\u6b64\u6837\u5f0f\u7684\u5143\u7d20\u663e\u793atip
+     *       alignType : 'top', //\u9ed8\u8ba4\u65b9\u5411
+     *       elCls : 'tips tips-no-icon tip1',
+     *       titleTpl : '&lt;span class="x-icon x-icon-small x-icon-success"&gt;&lt;i class="icon icon-white icon-question"&gt;&lt;/i&gt;&lt;/span&gt;\
+   *           &lt;div class="tips-content"&gt;{title}&lt;/div&gt;',
+     *       offset : 10 //\u8ddd\u79bb\u5de6\u8fb9\u7684\u8ddd\u79bb
+     *     }
+     *   });
+     *   tips.render();
+     * })
+     * 
+     * </code></pre>
+     */
+    Tips = function(config){
+      Tips.superclass.constructor.call(this,config);
+    };
+
+  Tips.ATTRS = {
+
+    /**
+     * \u4f7f\u7528\u7684\u63d0\u793a\u63a7\u4ef6\u6216\u8005\u914d\u7f6e\u4fe1\u606f @see {BUI.Tooltip.Tip}
+     * <pre><code>
+     *    //\u4e0d\u4f7f\u7528\u6a21\u677f\u7684\uff0c\u5de6\u4fa7\u663e\u793a
+     * var tips = new Tooltip.Tips({
+     *   tip : {
+     *     trigger : '#t1 a', //\u51fa\u73b0\u6b64\u6837\u5f0f\u7684\u5143\u7d20\u663e\u793atip
+     *     alignType : 'top', //\u9ed8\u8ba4\u65b9\u5411
+     *     elCls : 'tips tips-no-icon tip1',
+     *     offset : 10 //\u8ddd\u79bb\u5de6\u8fb9\u7684\u8ddd\u79bb
+     *   }
+     * });
+     * tips.render();
+     * </code></pre>
+     * @cfg {BUI.Tooltip.Tip|Object} tip
+     */
+    /**
+     * \u4f7f\u7528\u7684\u63d0\u793a\u63a7\u4ef6 @see {BUI.Tooltip.Tip}
+     * <pre><code>
+     *    var tip = tips.get('tip');
+     * </code></pre>
+     * @type {BUI.Tooltip.Tip}
+     * @readOnly
+     */
+    tip : {
+
+    },
+    /**
+     * \u9ed8\u8ba4\u7684\u5bf9\u9f50\u65b9\u5f0f,\u5982\u679c\u4e0d\u6307\u5b9atip\u7684\u5bf9\u9f50\u65b9\u5f0f\uff0c\u90a3\u4e48\u4f7f\u7528\u6b64\u5c5e\u6027
+     * <pre><code>
+     * //\u4e0d\u4f7f\u7528\u6a21\u677f\u7684\uff0c\u5de6\u4fa7\u663e\u793a
+     * var tips = new Tooltip.Tips({
+     *   tip : {
+     *     trigger : '#t1 a', //\u51fa\u73b0\u6b64\u6837\u5f0f\u7684\u5143\u7d20\u663e\u793atip
+     *     defaultAlignType : 'top', //\u9ed8\u8ba4\u65b9\u5411
+     *     elCls : 'tips tips-no-icon tip1',
+     *     offset : 10 //\u8ddd\u79bb\u5de6\u8fb9\u7684\u8ddd\u79bb
+     *   }
+     * });
+     * tips.render();
+     * </code></pre>
+     * @cfg {Object} defaultAlignType
+     */
+    defaultAlignType : {
+
+    }
+  };
+
+  BUI.extend(Tips,BUI.Base);
+
+  BUI.augment(Tips,{
+    //\u521d\u59cb\u5316
+    _init : function(){
+      this._initDom();
+      this._initEvent();
+    },
+    //\u521d\u59cb\u5316DOM
+    _initDom : function(){
+      var _self = this,
+        tip = _self.get('tip'),
+        defaultAlignType;
+      if(tip && !tip.isController){
+        defaultAlignType = tip.alignType; //\u8bbe\u7f6e\u9ed8\u8ba4\u7684\u5bf9\u9f50\u65b9\u5f0f
+        tip = new Tip(tip);
+        tip.render();
+        _self.set('tip',tip);
+        if(defaultAlignType){
+          _self.set('defaultAlignType',defaultAlignType);
+        }
+      }
+    },
+    //\u521d\u59cb\u5316\u4e8b\u4ef6
+    _initEvent : function(){
+      var _self = this,
+        tip = _self.get('tip');
+      tip.on('triggerchange',function(ev){
+        var curTrigger = ev.curTrigger;
+        _self._replaceTitle(curTrigger);
+        _self._setTitle(curTrigger,tip);
+      });
+    },
+    //\u66ff\u6362\u6389title
+    _replaceTitle : function(triggerEl){
+      var title = triggerEl.attr('title');
+      if(title){
+        triggerEl.attr('data-title',title);
+        triggerEl[0].removeAttribute('title');
+      }
+    },
+    //\u8bbe\u7f6etitle
+    _setTitle : function(triggerEl,tip){
+      var _self = this,
+        title = triggerEl.attr('data-title'),
+        alignType = triggerEl.attr('data-align') || _self.get('defaultAlignType');
+
+      if(isObjectString(title)){
+        title = BUI.JSON.looseParse(title);
+      }
+      tip.set('title',title);
+      if(alignType){
+        tip.set('alignType',alignType);
+      }
+    },
+    /**
+     * \u6e32\u67d3\u63d0\u793a\u4fe1\u606f
+     * @chainable
+     */
+    render : function(){
+      this._init();
+      return this;
+    }
+  });
+
+  return Tips;
 });BUI.use(['bui/common','bui/data','bui/list','bui/picker',
   'bui/menu','bui/toolbar','bui/progressbar','bui/cookie',
   'bui/form','bui/mask','bui/select','bui/tab',
-  'bui/calendar','bui/overlay','bui/grid'
+  'bui/calendar','bui/overlay','bui/editor','bui/grid','bui/tree','bui/tooltip'
 ]);

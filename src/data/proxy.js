@@ -159,7 +159,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       var _self = this,
         arr = ['start','limit','pageIndex'];
 
-      $.each(arr,function(field){
+      BUI.each(arr,function(field){
         var fieldParam = _self.get(field+'Param');
         if(fieldParam !== field){
           params[fieldParam] = params[field];

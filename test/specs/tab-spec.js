@@ -1,5 +1,5 @@
 
-
+/**/
 BUI.use('bui/tab',function (Tab){
   
   var CLS_ITEM_TITLE = 'tab-item-title',
@@ -48,7 +48,7 @@ BUI.use('bui/tab',function (Tab){
     })
   });
   
-});/**/
+});
 
 BUI.use('bui/tab/navtab',function(NavTab){
 
@@ -152,10 +152,6 @@ BUI.use('bui/tab',function(Tab){
     it('初始化',function(){
       expect(el.find('.bui-tab-item').length).toBe(tab.getItemCount());
     });
-    /*it('默认选中不起作用',function(){
-      expect(tab.getSelected()).toBe(undefined);
-    });
-*/
     it('设置，取消选中',function(){
       tab.setSelected(tab.getItemAt(0));
       expect(tab.getSelected()).not.toBe(undefined);
@@ -191,8 +187,8 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel){
       selectedEvent: 'mouseenter',
       children:[
         {text:'标签一',value:'1'},
-        {text:'标签二',value:'2'},
-        {text:'标签三',value:'3'}
+        {text:'标签二',value:'2',panelContent :'<p>自定义内容</p>'},
+        {text:'标签三',value:'3',loader : {url : 'data/text.php'}}
       ]
     });
   describe('测试标签选中跟面板显示',function(){

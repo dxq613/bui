@@ -1,24 +1,21 @@
 
 /**
- * 定义命名空间
- * <p>
- * <img src="../assets/img/class-bui.jpg"/>
- * </p>
- * @class  BUI
+ * @class BUI.Util
+ * 控件库的工具方法，这些工具方法直接绑定到BUI对象上
+ * <pre><code>
+ *     BUI.isString(str);
+ *
+ *     BUI.extend(A,B);
+ *
+ *     BUI.mix(A,{a:'a'});
+ * </code></pre>
  * @singleton
  */  
 var BUI = BUI || {};
 
-/**
- * BUI 的静态函数
- * @ignore
- */
 define('bui/util',function(){
   
-    /**
-     * 兼容 jquery 1.6
-     * @ignore
-     */
+    //兼容jquery 1.6以下
     (function($){
       if($.fn){
         $.fn.on = $.fn.on || $.fn.bind;
@@ -39,6 +36,7 @@ define('bui/util',function(){
   {
     /**
      * 版本号
+     * @memberOf BUI
      * @type {Number}
      */
     version:1.0,
@@ -47,7 +45,7 @@ define('bui/util',function(){
      * 子版本号
      * @type {String}
      */
-    subVersion : 1,
+    subVersion : 2,
 
     /**
      * 是否为函数
@@ -537,7 +535,7 @@ define('bui/util',function(){
      * @param {HTMLElement} form 表单
      * @param {Object} obj  键值对
      */
-    setValues : function(form,obj){
+    setFields : function(form,obj){
       for(var name in obj){
         if(obj.hasOwnProperty(name)){
           BUI.FormHelper.setField(form,name,obj[name]);

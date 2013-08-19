@@ -51,7 +51,10 @@
 			<path path="${des.dir}/toolbar.js"/>	
 			<path path="${des.dir}/progressbar.js"/>	
 			<path path="${des.dir}/calendar.js"/>
+      <path path="${des.dir}/editor.js"/>
 			<path path="${des.dir}/grid.js"/>
+      <path path="${des.dir}/tree.js"/>
+	  <path path="${des.dir}/tooltip.js"/>
 			<path path="${build.dir}/src/all.js"/>
 		</concat>
   </target>

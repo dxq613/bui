@@ -353,7 +353,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       var _self = this,
         arr = ['start','limit','pageIndex'];
 
-      $.each(arr,function(field){
+      BUI.each(arr,function(field){
         var fieldParam = _self.get(field+'Param');
         if(fieldParam !== field){
           params[fieldParam] = params[field];
@@ -2154,10 +2154,14 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     _getPageParams : function(){
       var _self = this,
         sortInfo = _self.get('sortInfo'),
+        start = _self.get('start'),
+        limit = _self.get('pageSize'),
+        pageIndex = _self.get('pageIndex') || (limit ? start/limit : 0);
+
         params = {
-          start : _self.get('start'),
-          limit : _self.get('pageSize'),
-          pageIndex : _self.get('pageIndex') //一般而言，pageIndex = start/limit
+          start : start,
+          limit : limit,
+          pageIndex : pageIndex //一般而言，pageIndex = start/limit
         };
 
       if(_self.get('remoteSort')){

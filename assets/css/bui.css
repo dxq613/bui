@@ -1107,7 +1107,7 @@ td.bui-grid-cell-empty {
   _visibility: visible;
 }
 .x-masked-relative {
-  position: relative !important;
+  position: relative;
 }
 .lp-el-mask-msg,
 .bui-ext-mask-msg {
@@ -1182,6 +1182,9 @@ input.bui-form-field-error,
 textarea.bui-form-field-error,
 .bui-form-field-error input[type="text"] {
   border: 1px dotted red;
+}
+.bui-form-field-error .bui-select input[type="text"] {
+  border-right: none;
 }
 .x-field-error {
   margin-left: 5px;
@@ -1546,6 +1549,7 @@ input.x-datepicker-time {
 }
 .bui-tree-item {
   height: 20px;
+  cursor: pointer;
 }
 .bui-tree-item-hover {
   background-color: #dee5ff;

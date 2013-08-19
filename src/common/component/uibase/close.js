@@ -122,6 +122,27 @@ define('bui/component/uibase/close',function () {
       closeAction:{
         value:HIDE
       }
+
+      /**
+       * @event closing
+       * 正在关闭，可以通过return false 阻止关闭事件
+       * @param {Object} e 关闭事件
+       * @param {String} e.action 关闭执行的行为，hide,destroy
+       */
+
+      /**
+       * @event closed
+       * 已经关闭
+       * @param {Object} e 关闭事件
+       * @param {String} e.action 关闭执行的行为，hide,destroy
+       */
+      
+      /**
+       * @event closeclick
+       * 触发点击关闭按钮的事件,return false 阻止关闭
+       * @param {Object} e 关闭事件
+       * @param {String} e.domTarget 点击的关闭按钮节点
+       */
   };
 
   var actions = {
@@ -135,14 +156,27 @@ define('bui/component/uibase/close',function () {
           if (v && !self.__bindCloseEvent) {
               self.__bindCloseEvent = 1;
               self.get('closeBtn').on('click', function (ev) {
-                  self[actions[self.get('closeAction')] || HIDE]();
-                  ev.preventDefault();
+                if(self.fire('closeclick',{domTarget : ev.target}) !== false){
+                  self.close();
+                }
+                ev.preventDefault();
               });
           }
       },
       __destructor:function () {
           var btn = this.get('closeBtn');
           btn && btn.detach();
+      },
+      /**
+       * 关闭弹出框，如果closeAction = 'hide'那么就是隐藏，如果 closeAction = 'destroy'那么就是释放
+       */
+      close : function(){
+        var self = this,
+          action = actions[self.get('closeAction') || HIDE];
+        if(self.fire('closing',{action : action}) !== false){
+          self[action]();
+          self.fire('closed',{action : action});
+        }
       }
   };
 

@@ -12,11 +12,12 @@
  */
 
 
-define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view'],function(require){
-
+define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view','bui/component/loader'],function(require){
+    'use strict';
     var UIBase = require('bui/component/uibase'),
         Manager = require('bui/component/manage'),
         View = require('bui/component/view'),
+        Loader = require('bui/component/loader'),
         wrapBehavior = BUI.wrapBehavior,
         getWrapBehavior = BUI.getWrapBehavior;
 
@@ -215,7 +216,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             var self = this;
 
             if(!self.get('id')){
-                self.set('id',self.getNextUniqueId())
+                self.set('id',self.getNextUniqueId());
             }
             Manager.addComponent(self.get('id'),self);
             // initialize view
@@ -239,13 +240,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          */
         createDom: function () {
             var self = this,
-                el,
+                //el,
                 view = self.get('view');
             view.create(undefined);
-            el = view.getKeyEventTarget();
-            if (!self.get('allowTextSelection')) {
+            //el = view.getKeyEventTarget();
+            /*if (!self.get('allowTextSelection')) {
                 //el.unselectable(undefined);
-            }
+            }*/
         },
 
         /**
@@ -254,10 +255,23 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          *
          */
         renderUI: function () {
-            var self = this, i, children, child;
+            var self = this, 
+                loader = self.get('loader');
             self.get('view').render();
+            self._initChildren();
+            if(loader){
+                self.setInternal('loader',loader);
+            }
+            /**/
+
+        },
+        _initChildren : function(children){
+            var self = this, 
+                i, 
+                children, 
+                child;
             // then render my children
-            children = self.get('children').concat();
+            children = children || self.get('children').concat();
             self.get('children').length = 0;
             for (i = 0; i < children.length; i++) {
                 child = self.addChild(children[i]);
@@ -443,6 +457,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     self.set('xy',[-999,-999]);
                 }
             }
+        },
+        //设置children时
+        _uiSetChildren : function(v){
+            var self = this,
+                children = BUI.cloneObject(v);
+            //self.removeChildren(true);
+            self._initChildren(children);
         },
         /**
          * 使控件可用
@@ -1356,7 +1377,34 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 value: false,
                 view: 1
             },
-
+            /**
+             * 一旦使用loader的默认配置
+             * @protected
+             * @type {Object}
+             */
+            defaultLoaderCfg : {
+                value : {
+                    property : 'content',
+                    autoLoad : true
+                }
+            },
+            /**
+             * 控件内容的加载器
+             * @type {BUI.Component.Loader}
+             */
+            loader : {
+                getter : function(v){
+                    var _self = this,
+                        defaultCfg;
+                    if(v && !v.isLoader){
+                        v.target = _self;
+                        defaultCfg = _self.get('defaultLoaderCfg')
+                        v = new Loader(BUI.merge(defaultCfg,v));
+                        _self.setInternal('loader',v);
+                    }
+                    return v;
+                }
+            },
             /**
              * 1. Whether allow select this component's text.<br/>
              * 2. Whether not to lose last component's focus if click current one (set false).
@@ -1425,6 +1473,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @type {BUI.Component.Controller[]}
              */
             children: {
+                sync : false,
                 value: []
             },
             /**

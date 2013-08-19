@@ -360,6 +360,23 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       dialog.superclass.show.call(this);
       _self.center();
     },
+    //绑定事件
+    bindUI : function(){
+      var _self = this;
+      _self.on('closeclick',function(){
+        return _self.onCancel();
+      });
+    },
+    /**
+     * @protected
+     * 取消
+     */
+    onCancel : function(){
+      var _self = this,
+        cancel = _self.get('cancel');
+      return cancel.call(this);
+    },
+    //设置按钮
     _uiSetButtons:function(buttons){
       var _self = this,
         footer = _self.get('footer');
@@ -370,13 +387,26 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       });
 
     },
+    //创建按钮
     _createButton : function(conf,parent){
       var _self = this,
         temp = '<button class="'+conf.elCls+'">'+conf.text+'</button>',
         btn = $(temp).appendTo(parent);
       btn.on('click',function(){
-        conf.handler.call(_self);
+        conf.handler.call(_self,_self,this);
       });
+    },
+    destructor : function(){
+      var _self = this,
+        contentId = _self.get('contentId'),
+        body = _self.get('body'),
+        closeAction = _self.get('closeAction');
+      if(closeAction == 'destroy'){
+        _self.hide();
+        if(contentId){
+          body.children().appendTo('#'+contentId);
+        }
+      }
     }
   },{
 
@@ -441,8 +471,10 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
           },{
             text:'取消',
             elCls : 'button button-primary',
-            handler : function(){
-              this.hide();
+            handler : function(dialog,btn){
+              if(this.onCancel() !== false){
+                this.close();
+              }
             }
           }
         ]
@@ -460,6 +492,15 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       */
       success : {
         value : function(){
+          this.close();
+        }
+      },
+      /**
+       * 用户取消时调用，如果return false则阻止窗口关闭
+       * @cfg {Function} cancel
+       */
+      cancel : {
+        value : function(){
 
         }
       },
@@ -470,6 +511,32 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
         valueFn : function(){
           return this.get('header');
         }
+      },
+
+      /**
+       * 默认的加载控件内容的配置,默认值：
+       * <pre>
+       *  {
+       *   property : 'bodyContent',
+       *   autoLoad : true
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg  : {
+        valueFn :function(){
+          var _self = this;
+          return {
+            property : 'bodyContent',
+            autoLoad : false,
+            lazyLoad : {
+              event : 'show'
+            },
+            loadMask : {
+              el : _self.get('body')
+            }
+          }
+        } 
       },
       /**
        * 弹出框标题

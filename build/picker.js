@@ -247,6 +247,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       }
       /**
        * @event selectedchange
+       * 选中值改变事件
        * @param {Object} e 事件对象
        * @param {String} text 选中的文本
        * @param {string} value 选中的值
@@ -314,7 +315,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
         var _self = this,
           list = _self.get('list'),
           selectedValue = _self.getSelectedValue();
-        if(val !== selectedValue){
+        if(val !== selectedValue && list.getCount()){
           if(list.get('multipleSelect')){
             list.clearSelection();
           }

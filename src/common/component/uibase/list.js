@@ -436,6 +436,22 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      */
     autoInitItems : {
       value : true
+    },
+    /**
+     * 默认的加载控件内容的配置,默认值：
+     * <pre>
+     *  {
+     *   property : 'children',
+     *   dataType : 'json'
+     * }
+     * </pre>
+     * @type {Object}
+     */
+    defaultLoaderCfg  : {
+      value : {
+        property : 'children',
+        dataType : 'json'
+      }
     }
   });
 

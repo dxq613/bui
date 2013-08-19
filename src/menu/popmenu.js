@@ -10,14 +10,21 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
     UIBase = BUI.Component.UIBase,
     Menu = require('bui/menu/menu');
 
+  var popMenuView =  BUI.Component.View.extend([UIBase.PositionView],{
+    
+  });
+
    /**
    * @class BUI.Menu.PopMenu
    * 上下文菜单，一般用于弹出菜单
-   * xclass:'drop-menu'
+   * xclass:'pop-menu'
    * @extends BUI.Menu.Menu
    * @mixins BUI.Component.UIBase.AutoShow
+   * @mixins BUI.Component.UIBase.Position
+   * @mixins BUI.Component.UIBase.Align
+   * @mixins BUI.Component.UIBase.AutoHide
    */
-  var popMenu =  Menu.extend([UIBase.AutoShow],{
+  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,,UIBase.AutoHide],{
 
   },{
     ATTRS:{
@@ -48,6 +55,9 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
       },
       visible : {
         value : false
+      },
+      xview:{
+        value : popMenuView
       }
     }
   },{

@@ -308,7 +308,7 @@ define('bui/editor/mixin',function (require) {
     cancel : function(){
       this.fire('cancel');
       this.clearValue();
-      this.hide();
+      this.close();
     }
   };
 
@@ -699,6 +699,16 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
       }else{
         this.accept();
       }
+    },
+    /**
+     * 取消编辑
+     */
+    cancel : function(){
+      if(this.onCancel()!== false){
+        this.fire('cancel');
+        this.clearValue();
+        this.close();
+      } 
     },
     /**
      * @protected

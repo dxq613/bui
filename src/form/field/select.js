@@ -77,20 +77,21 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         });
         items = tmp;
       }
+
+      var control = _self.getInnerControl();
+      if(control.is('select')){
+        resetOptions(control,items,_self);
+        _self.setControlValue(_self.get('value'));
+        if(!_self.getControlValue()){
+          _self.setInternal('value','');
+        }
+      }
+
       if(select){
         if(select.set){
           select.set('items',items);
         }else{
           select.items = items;
-        }
-      }else{
-        var control = _self.getInnerControl();
-        if(control.is('select')){
-          resetOptions(control,items,_self);
-        }
-        _self.setControlValue(_self.get('value'));
-        if(!_self.getControlValue()){
-          _self.setInternal('value','');
         }
       }
     },
@@ -187,32 +188,6 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
           rst = $(options[0]).text();
         }
         return rst;
-      },
-      name : function(el){
-        var _self = this,
-          name = _self.get('name');
-        if(!name){
-          if(el.is('select')){
-            name = el.attr('name');
-          }else{
-            name = el.find('input').attr('name'); 
-          }
-          
-        }
-        return  name;
-      },
-      value : function(el){
-        var _self = this,
-          value = _self.get('value');
-        if(!value){
-          if(el.is('select')){
-            value = el.val();
-          }else{
-            value = el.find('input').val(); 
-          }
-          
-        }
-        return  value;
       }
     }
   },{

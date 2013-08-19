@@ -31,13 +31,25 @@ define('bui/list/keynav',function () {
      * @protected
      */
     setHighlighted : function(item,element){
+      if(this.hasStatus(item,'hover',element)){
+        return;
+      }
       var _self = this,
         highlightedStatus = _self.get('highlightedStatus'),
-        lightedItem = _self.getHighlighted();
+        lightedElement = _self._getHighLightedElement(),
+        lightedItem = lightedElement ? _self.getItemByElement(lightedElement) : null;
       if(lightedItem !== item){
-        this.setItemStatus(lightedItem,highlightedStatus,false);
+        if(lightedItem){
+          this.setItemStatus(lightedItem,highlightedStatus,false,lightedElement);
+        }
         this.setItemStatus(item,highlightedStatus,true,element);
       }
+    },
+    _getHighLightedElement : function(){
+      var _self = this,
+        highlightedStatus = _self.get('highlightedStatus'),
+        element = _self.get('view').getFirstElementByStatus(highlightedStatus);
+      return element;
     },
     /**
      * 获取高亮的选项

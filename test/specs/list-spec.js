@@ -294,6 +294,7 @@ BUI.use('bui/list',function (List) {
   var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}]
     list = new List.SimpleList({
       elCls:'bui-select-list',
+      tpl : '<div class="panel"><h2 class="panel-header">列表</h2><ul></ul></div>',
       items : items,
       render : '#list3',
       idField:'value'
@@ -365,12 +366,12 @@ BUI.use('bui/list',function (List) {
       var item = list.getFirstItem(),
         callback = jasmine.createSpy(),
         element = list.findElement(item);
-      list.on('itemdbclick',callback);
-      $(element).trigger('dbclick');
+      list.on('itemdblclick',callback);
+      $(element).trigger('dblclick');
       waits(100);
       runs(function(){
         expect(callback).toHaveBeenCalled();
-        list.off('itemdbclick',callback);
+        list.off('itemdblclick',callback);
       });
     });
   });

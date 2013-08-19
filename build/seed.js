@@ -1553,25 +1553,22 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
   return BUI;
 });
 /**
- * 定义命名空间
- * <p>
- * <img src="../assets/img/class-bui.jpg"/>
- * </p>
- * @class  BUI
+ * @class BUI.Util
+ * 控件库的工具方法，这些工具方法直接绑定到BUI对象上
+ * <pre><code>
+ *     BUI.isString(str);
+ *
+ *     BUI.extend(A,B);
+ *
+ *     BUI.mix(A,{a:'a'});
+ * </code></pre>
  * @singleton
  */  
 var BUI = BUI || {};
 
-/**
- * BUI 的静态函数
- * @ignore
- */
 define('bui/util',function(){
   
-    /**
-     * 兼容 jquery 1.6
-     * @ignore
-     */
+    //兼容jquery 1.6以下
     (function($){
       if($.fn){
         $.fn.on = $.fn.on || $.fn.bind;
@@ -1592,6 +1589,7 @@ define('bui/util',function(){
   {
     /**
      * 版本号
+     * @memberOf BUI
      * @type {Number}
      */
     version:1.0,
@@ -1600,7 +1598,7 @@ define('bui/util',function(){
      * 子版本号
      * @type {String}
      */
-    subVersion : 1,
+    subVersion : 2,
 
     /**
      * 是否为函数
@@ -2090,7 +2088,7 @@ define('bui/util',function(){
      * @param {HTMLElement} form 表单
      * @param {Object} obj  键值对
      */
-    setValues : function(form,obj){
+    setFields : function(form,obj){
       for(var name in obj){
         if(obj.hasOwnProperty(name)){
           BUI.FormHelper.setField(form,name,obj[name]);
@@ -2153,6 +2151,12 @@ define('bui/util',function(){
 });/**
  * @fileOverview 数组帮助类
  * @ignore
+ */
+
+/**
+ * @class BUI
+ * 控件库的基础命名空间
+ * @singleton
  */
 
 define('bui/array',['bui/util'],function (r) {
@@ -4420,7 +4424,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   /**
    * 控件库的基类，包括控件的生命周期,下面是基本的扩展类
    * <p>
-   * <img src="../assets/img/class-mixins.jpg"/>
+   * <img src="https://dxq613.github.io/assets/img/class-mixins.jpg"/>
    * </p>
    * @class BUI.Component.UIBase
    * @extends BUI.Base
@@ -4672,10 +4676,21 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      */
     destroy: function () {
         var _self = this;
+        /**
+         * @event beforeDestroy
+         * fired before UIBase 's destroy.
+         * @param e
+         */
+        _self.fire('beforeDestroy');
 
         actionPlugins(_self, _self.get('plugins'), 'destructor');
         destroyHierarchy(_self);
-        _self.fire('destroy');
+         /**
+         * @event afterDestroy
+         * fired before UIBase 's destroy.
+         * @param e
+         */
+        _self.fire('afterDestroy');
         _self.off();
         _self.clearAttrVals();
         _self.destroyed = true;
@@ -5014,7 +5029,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
 
     function getRegion(node) {
         var offset, w, h;
-        if (!$.isWindow(node[0])) {
+        if (node.length && !$.isWindow(node[0])) {
             offset = node.offset();
             w = node.outerWidth();
             h = node.outerHeight();
@@ -5759,6 +5774,27 @@ define('bui/component/uibase/close',function () {
       closeAction:{
         value:HIDE
       }
+
+      /**
+       * @event closing
+       * 正在关闭，可以通过return false 阻止关闭事件
+       * @param {Object} e 关闭事件
+       * @param {String} e.action 关闭执行的行为，hide,destroy
+       */
+
+      /**
+       * @event closed
+       * 已经关闭
+       * @param {Object} e 关闭事件
+       * @param {String} e.action 关闭执行的行为，hide,destroy
+       */
+      
+      /**
+       * @event closeclick
+       * 触发点击关闭按钮的事件,return false 阻止关闭
+       * @param {Object} e 关闭事件
+       * @param {String} e.domTarget 点击的关闭按钮节点
+       */
   };
 
   var actions = {
@@ -5772,14 +5808,27 @@ define('bui/component/uibase/close',function () {
           if (v && !self.__bindCloseEvent) {
               self.__bindCloseEvent = 1;
               self.get('closeBtn').on('click', function (ev) {
-                  self[actions[self.get('closeAction')] || HIDE]();
-                  ev.preventDefault();
+                if(self.fire('closeclick',{domTarget : ev.target}) !== false){
+                  self.close();
+                }
+                ev.preventDefault();
               });
           }
       },
       __destructor:function () {
           var btn = this.get('closeBtn');
           btn && btn.detach();
+      },
+      /**
+       * 关闭弹出框，如果closeAction = 'hide'那么就是隐藏，如果 closeAction = 'destroy'那么就是释放
+       */
+      close : function(){
+        var self = this,
+          action = actions[self.get('closeAction') || HIDE];
+        if(self.fire('closing',{action : action}) !== false){
+          self[action]();
+          self.fire('closed',{action : action});
+        }
       }
   };
 
@@ -6399,8 +6448,12 @@ define('bui/component/uibase/mask',function (require) {
                 _maskExtShow = view._maskExtShow,
                 _maskExtHide = view._maskExtHide;
             if (self.get('mask')) {
-                self.on('show', _maskExtShow, view);
-                self.on('hide', _maskExtHide, view);
+                self.on('show',function(){
+                    view._maskExtShow();
+                });
+                self.on('hide',function(){
+                    view._maskExtHide();
+                });
             }
         }
     };
@@ -8449,6 +8502,22 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      */
     autoInitItems : {
       value : true
+    },
+    /**
+     * 默认的加载控件内容的配置,默认值：
+     * <pre>
+     *  {
+     *   property : 'children',
+     *   dataType : 'json'
+     * }
+     * </pre>
+     * @type {Object}
+     */
+    defaultLoaderCfg  : {
+      value : {
+        property : 'children',
+        dataType : 'json'
+      }
     }
   });
 
@@ -9538,6 +9607,432 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
 
     return View;
 });/**
+ * @fileOverview 加载控件内容
+ * @ignore
+ */
+
+define('bui/component/loader',['bui/util'],function (require) {
+  'use strict';
+  var BUI = require('bui/util'),
+    Base = require('bui/base'),
+    /**
+     * @class BUI.Component.Loader
+     * @extends BUI.Base
+     * ** 控件的默认Loader属性是：**
+     * <pre><code>
+     *   
+     *   defaultLoader : {
+     *     value : {
+     *       property : 'content',
+     *       autoLoad : true
+     *     }
+     *   }
+     * </code></pre>
+     * ** 一般的控件默认读取html，作为控件的content值 **
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     *
+     * ** 可以修改Loader的默认属性，加载children **
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/children.json',
+     *       property : 'children',
+     *       dataType : 'json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * 加载控件内容的类，一般不进行实例化
+     */
+    Loader = function(config){
+      Loader.superclass.constructor.call(this,config);
+      this._init();
+    };
+
+  Loader.ATTRS = {
+
+    /**
+     * 加载内容的地址
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {String} url
+     */
+    url : {
+
+    },
+    /**
+     * 对应的控件，加载完成后设置属性到对应的控件
+     * @readOnly
+     * @type {BUI.Component.Controller}
+     */
+    target : {
+
+    },
+    /**
+     * @private
+     * 是否load 过
+     */
+    hasLoad : {
+      value : false
+    },
+    /**
+     * 是否自动加载数据
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       autoLoad : false
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Boolean} [autoLoad = true]
+     */
+    autoLoad : {
+
+    },
+    /**
+     * 延迟加载
+     * 
+     *   - event : 触发加载的事件
+     *   - repeat ：是否重复加载
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       lazyLoad : {
+     *         event : 'show',
+     *         repeat : true
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Object} [lazyLoad = null]
+     */
+    lazyLoad: {
+
+    },
+    /**
+     * 加载返回的数据作为控件的那个属性
+     * <pre><code>
+     *   var control = new BUI.List.SimpleList({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       dataType : 'json',
+     *       property : 'items'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {String} property
+     */
+    property : {
+
+    },
+    /**
+     * 格式化返回的数据
+     * @cfg {Function} renderer
+     */
+    renderer : {
+      value : function(value){
+        return value;
+      }
+    },
+    /**
+     * 加载数据时是否显示屏蔽层和加载提示 {@link BUI.Mask.LoadMask}
+     * 
+     *  -  loadMask : true时使用loadMask 默认的配置信息
+     *  -  loadMask : {msg : '正在加载，请稍后。。'} LoadMask的配置信息
+     *   <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       loadMask : true
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Boolean|Object} [loadMask = false]
+     */
+    loadMask : {
+      value : false
+    },
+    /**
+     * ajax 请求返回数据的类型
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       dataType : 'json',
+     *       property : 'items'
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {String} [dataType = 'text']
+     */
+    dataType : {
+      value : 'text'
+    },
+    /**
+     * Ajax请求的配置项,会覆盖 url,dataType数据
+     * @cfg {Object} ajaxOptions
+     */
+    ajaxOptions : {
+      value : {
+        method : 'get',
+        cache : false
+      }
+    },
+    /**
+     * 初始化的请求参数
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       params : {
+     *         a : 'a',
+     *         b : 'b'
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Object} params
+     * @default null
+     */
+    params : {
+
+    },
+    /**
+     * 附加参数，每次请求都带的参数
+     * @cfg {Object} appendParams
+     */
+    appendParams : {
+
+    },
+    /**
+     * 最后一次请求的参数
+     * @readOnly
+     * @private
+     * @type {Object}
+     */
+    lastParams : {
+      value : {}
+    },
+    /**
+     * 加载数据，并添加属性到控件后的回调函数
+     *   - data : 加载的数据
+     *   - params : 加载的参数
+     * <pre><code>
+     *   var control = new BUI.Component.Controller({
+     *     render : '#c1',
+     *     loader : {
+     *       url : 'data/text.json',
+     *       callback : function(text){
+     *         var target = this.get('target');//control
+     *         //TO DO
+     *       }
+     *     }
+     *   });
+     *
+     *   control.render();
+     * </code></pre>
+     * @cfg {Function} callback
+     */
+    callback : {
+
+    },
+    /**
+     * 失败的回调函数
+     *   - response : 返回的错误对象
+     *   - params : 加载的参数
+     * @cfg {Function} failure
+     */
+    failure : {
+
+    }
+
+  };
+
+  BUI.extend(Loader,Base);
+
+  BUI.augment(Loader,{
+    /**
+     * @protected
+     * 是否是Loader
+     * @type {Boolean}
+     */
+    isLoader : true,
+    //初始化
+    _init : function(){
+      var _self = this,
+        autoLoad = _self.get('autoLoad'),
+        params = _self.get('params');
+
+      _self._initMask();
+      if(autoLoad){
+        _self.load(params);
+      }else{
+        _self._initParams();
+        _self._initLazyLoad();
+      }
+    },
+    //初始化延迟加载
+    _initLazyLoad : function(){
+      var _self = this,
+        target = _self.get('target'),
+        lazyLoad= _self.get('lazyLoad');
+
+      if(target && lazyLoad && lazyLoad.event){
+        target.on(lazyLoad.event,function(){
+          if(!_self.get('hasLoad') || lazyLoad.repeat){
+            _self.load();
+          }
+        });
+      }
+    },
+    /**
+     * 初始化mask
+     * @private
+     */
+    _initMask : function(){
+      var _self = this,
+        target = _self.get('target'),
+        loadMask = _self.get('loadMask');
+      if(target && loadMask){
+        BUI.use('bui/mask',function(Mask){
+          var cfg = $.isPlainObject(loadMask) ? loadMask : {};
+          loadMask = new Mask.LoadMask(BUI.mix({el : target.get('el')},cfg));
+          _self.set('loadMask',loadMask);
+        });
+      }
+    },
+    //初始化查询参数
+    _initParams : function(){
+      var _self = this,
+        lastParams = _self.get('lastParams'),
+        params = _self.get('params');
+
+      //初始化 参数
+      BUI.mix(lastParams,params);
+    },
+    /**
+     * 加载内容
+     * @param {Object} params 加载数据的参数
+     */
+    load : function(params){
+      var _self = this,
+        url = _self.get('url'),
+        ajaxOptions = _self.get('ajaxOptions'),
+        lastParams = _self.get('lastParams'),
+        appendParams = _self.get('appendParams');
+
+      BUI.mix(true,lastParams,appendParams,params);
+      params = BUI.cloneObject(lastParams);
+      //未提供加载地址，阻止加载
+      if(!url){
+        return;
+      }
+
+      _self.onBeforeLoad();
+      _self.set('hasLoad',true);
+      $.ajax(BUI.mix({
+        dataType : _self.get('dataType'),
+        data : params,
+        url : url,
+        success : function(data){
+          _self.onload(data,params);
+        },
+        error : function(jqXHR, textStatus, errorThrown){
+          _self.onException({
+            jqXHR : jqXHR, 
+            textStatus : textStatus, 
+            errorThrown : errorThrown
+          },params);
+        }
+      },ajaxOptions));
+    },
+    /**
+     * @private
+     * 加载前
+     */
+    onBeforeLoad : function(){
+      var _self = this,
+        loadMask = _self.get('loadMask');
+      if(loadMask && loadMask.show){
+        loadMask.show();
+      }
+    },
+    /**
+     * @private
+     * 加载完毕
+     */
+    onload : function(data,params){
+      var _self = this,
+        loadMask = _self.get('loadMask'),
+        property = _self.get('property'),
+        callback = _self.get('callback'),
+        renderer = _self.get('renderer'),
+        target = _self.get('target');
+      target.set(property,renderer.call(_self,data));
+
+      /**/
+      if(loadMask && loadMask.hide){
+        loadMask.hide();
+      }
+      if(callback){
+        callback.call(this,data,params);
+      }
+    },
+    /**
+     * @private
+     * 加载出错
+     */
+    onException : function(response,params){
+      var _self = this,
+        failure = _self.get('failure');
+      if(failure){
+        failure.call(this,response,params);
+      }
+    }
+
+  });
+
+  return Loader;
+});/**
  * @fileOverview  控件可以实例化的基类
  * @ignore
  * @author yiminghe@gmail.com
@@ -9551,11 +10046,12 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
  */
 
 
-define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view'],function(require){
-
+define('bui/component/controller',['bui/component/uibase','bui/component/manage','bui/component/view','bui/component/loader'],function(require){
+    'use strict';
     var UIBase = require('bui/component/uibase'),
         Manager = require('bui/component/manage'),
         View = require('bui/component/view'),
+        Loader = require('bui/component/loader'),
         wrapBehavior = BUI.wrapBehavior,
         getWrapBehavior = BUI.getWrapBehavior;
 
@@ -9754,7 +10250,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             var self = this;
 
             if(!self.get('id')){
-                self.set('id',self.getNextUniqueId())
+                self.set('id',self.getNextUniqueId());
             }
             Manager.addComponent(self.get('id'),self);
             // initialize view
@@ -9778,13 +10274,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          */
         createDom: function () {
             var self = this,
-                el,
+                //el,
                 view = self.get('view');
             view.create(undefined);
-            el = view.getKeyEventTarget();
-            if (!self.get('allowTextSelection')) {
+            //el = view.getKeyEventTarget();
+            /*if (!self.get('allowTextSelection')) {
                 //el.unselectable(undefined);
-            }
+            }*/
         },
 
         /**
@@ -9793,10 +10289,23 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          *
          */
         renderUI: function () {
-            var self = this, i, children, child;
+            var self = this, 
+                loader = self.get('loader');
             self.get('view').render();
+            self._initChildren();
+            if(loader){
+                self.setInternal('loader',loader);
+            }
+            /**/
+
+        },
+        _initChildren : function(children){
+            var self = this, 
+                i, 
+                children, 
+                child;
             // then render my children
-            children = self.get('children').concat();
+            children = children || self.get('children').concat();
             self.get('children').length = 0;
             for (i = 0; i < children.length; i++) {
                 child = self.addChild(children[i]);
@@ -9982,6 +10491,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     self.set('xy',[-999,-999]);
                 }
             }
+        },
+        //设置children时
+        _uiSetChildren : function(v){
+            var self = this,
+                children = BUI.cloneObject(v);
+            //self.removeChildren(true);
+            self._initChildren(children);
         },
         /**
          * 使控件可用
@@ -10895,7 +11411,34 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 value: false,
                 view: 1
             },
-
+            /**
+             * 一旦使用loader的默认配置
+             * @protected
+             * @type {Object}
+             */
+            defaultLoaderCfg : {
+                value : {
+                    property : 'content',
+                    autoLoad : true
+                }
+            },
+            /**
+             * 控件内容的加载器
+             * @type {BUI.Component.Loader}
+             */
+            loader : {
+                getter : function(v){
+                    var _self = this,
+                        defaultCfg;
+                    if(v && !v.isLoader){
+                        v.target = _self;
+                        defaultCfg = _self.get('defaultLoaderCfg')
+                        v = new Loader(BUI.merge(defaultCfg,v));
+                        _self.setInternal('loader',v);
+                    }
+                    return v;
+                }
+            },
             /**
              * 1. Whether allow select this component's text.<br/>
              * 2. Whether not to lose last component's focus if click current one (set false).
@@ -10964,6 +11507,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @type {BUI.Component.Controller[]}
              */
             children: {
+                sync : false,
                 value: []
             },
             /**

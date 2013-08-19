@@ -33,7 +33,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     ATTRS : {
       itemContainer : {
         valueFn : function(){
-          return this.get('el').children(this.get('listSelector'));
+          return this.get('el').find(this.get('listSelector'));
         }
       }
     }

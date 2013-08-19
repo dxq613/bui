@@ -396,6 +396,22 @@ define('bui/list/domlist',['bui/common'],function (require) {
     textGetter : {
 
     },
+    /**
+     * 默认的加载控件内容的配置,默认值：
+     * <pre>
+     *  {
+     *   property : 'items',
+     *   dataType : 'json'
+     * }
+     * </pre>
+     * @type {Object}
+     */
+    defaultLoaderCfg  : {
+      value : {
+        property : 'items',
+        dataType : 'json'
+      }
+    },
     events : {
       value : {
         /**
@@ -503,13 +519,13 @@ define('bui/list/domlist',['bui/common'],function (require) {
         });
       }
 
-      itemContainer.delegate('.' + itemCls,'dbclick',function(ev){
+      itemContainer.delegate('.' + itemCls,'dblclick',function(ev){
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
           return;
         }
-        _self.fire('itemdbclick',{item:item,element : itemEl[0],domTarget:ev.target});
+        _self.fire('itemdblclick',{item:item,element : itemEl[0],domTarget:ev.target});
       });
       
       function setItemSelectedStatus(item,itemEl){
@@ -561,7 +577,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @return {Number} 选项数量
      */
     getCount : function(){
-      return this.getItems().length;
+      var items = this.getItems();
+      return items ? items.length : 0;
     },
     /**
      * 更改状态值对应的字段
@@ -873,6 +890,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @return {Boolean} 是否具有某种状态
      */
     hasStatus : function(item,status,element){
+      if(!item){
+        return false;
+      }
       var _self = this;
       element = element || _self.findElement(item);
       return _self.get('view').hasStatus(status,element);
@@ -894,14 +914,20 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     setItemStatus : function(item,status,value,element){
       var _self = this;
-      element = element || _self.findElement(item);
+      if(item){
+        element = element || _self.findElement(item);
+      }
+      
       if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //禁用后，阻止添加任何状态变化
-        if(status === 'disabled' && value){ //禁用，同时清理其他状态
-          _self.clearItemStatus(item);
+        if(item){
+          if(status === 'disabled' && value){ //禁用，同时清理其他状态
+            _self.clearItemStatus(item);
+          }
+          _self.setStatusValue(item,status,value);
+          _self.get('view').setItemStatusCls(status,element,value);
+          _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
         }
-        _self.setStatusValue(item,status,value);
-        _self.get('view').setItemStatusCls(status,element,value);
-        _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
+        
         if(status === 'selected'){ //处理选中
           _self.afterSelected(item,value,element);
         }
@@ -969,13 +995,25 @@ define('bui/list/keynav',function () {
      * @protected
      */
     setHighlighted : function(item,element){
+      if(this.hasStatus(item,'hover',element)){
+        return;
+      }
       var _self = this,
         highlightedStatus = _self.get('highlightedStatus'),
-        lightedItem = _self.getHighlighted();
+        lightedElement = _self._getHighLightedElement(),
+        lightedItem = lightedElement ? _self.getItemByElement(lightedElement) : null;
       if(lightedItem !== item){
-        this.setItemStatus(lightedItem,highlightedStatus,false);
+        if(lightedItem){
+          this.setItemStatus(lightedItem,highlightedStatus,false,lightedElement);
+        }
         this.setItemStatus(item,highlightedStatus,true,element);
       }
+    },
+    _getHighLightedElement : function(){
+      var _self = this,
+        highlightedStatus = _self.get('highlightedStatus'),
+        element = _self.get('view').getFirstElementByStatus(highlightedStatus);
+      return element;
     },
     /**
      * 获取高亮的选项
@@ -1188,7 +1226,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     ATTRS : {
       itemContainer : {
         valueFn : function(){
-          return this.get('el').children(this.get('listSelector'));
+          return this.get('el').find(this.get('listSelector'));
         }
       }
     }
