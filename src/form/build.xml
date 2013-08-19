@@ -33,6 +33,7 @@
             <path path="field/checkbox.js"/>
 			<path path="field/radio.js"/>
 			<path path="field/plain.js"/>
+			<path path="field/list.js"/>
 			<path path="field.js"/>
             <path path="valid.js"/>
 			<path path="groupvalid.js"/>

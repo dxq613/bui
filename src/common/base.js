@@ -310,7 +310,7 @@ define('bui/base',['bui/observable'],function(require){
             delete _self.getAttrVals()[name];
         }
 
-        return self;
+        return _self;
     },
     /**
      * 设置属性值，会触发before+Name+Change,和 after+Name+Change事件
@@ -342,7 +342,7 @@ define('bui/base',['bui/observable'],function(require){
                         setInternal(_self, name, all[name], opts);
                     }
                 }
-                return self;
+                return _self;
             }
             return setInternal(_self, name, value, opts);
     },
