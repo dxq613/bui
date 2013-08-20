@@ -2358,7 +2358,7 @@ define('bui/base',['bui/observable'],function(require){
             delete _self.getAttrVals()[name];
         }
 
-        return self;
+        return _self;
     },
     /**
      * 设置属性值，会触发before+Name+Change,和 after+Name+Change事件
@@ -2390,7 +2390,7 @@ define('bui/base',['bui/observable'],function(require){
                         setInternal(_self, name, all[name], opts);
                     }
                 }
-                return self;
+                return _self;
             }
             return setInternal(_self, name, value, opts);
     },
@@ -3882,7 +3882,7 @@ define('bui/component/uibase/autoshow',function () {
 
       //触发隐藏
       function tiggerHide (ev){
-        var toElement = ev.toElement;
+        var toElement = ev.toElement || ev.relatedTarget;
         if(!toElement || !_self.containsElement(toElement)){ //mouseleave时，如果移动到当前控件上，取消消失
           _self.hide();
         }
@@ -4055,7 +4055,7 @@ define('bui/component/uibase/autohide',function () {
      */
     handleMoveOuter : function (ev) {
       var _self = this,
-        target = ev.toElement;
+        target = ev.toElement || ev.relatedTarget;
       if(!_self.containsElement(target) && !isExcept(_self,target)){
         if(_self.fire('autohide') !== false){
           _self.hide();
@@ -4081,11 +4081,11 @@ define('bui/component/uibase/autohide',function () {
         trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
-        $(document).on('mousedown',wrapBehavior(this,'handleDocumentClick'));
+        $(document).on('mousedown',wrapBehavior(_self,'handleDocumentClick'));
       }else{
-        _self.get('el').on('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        _self.get('el').on('mouseleave',wrapBehavior(_self,'handleMoveOuter'));
         if(trigger){
-          $(trigger).on('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+          $(trigger).on('mouseleave',wrapBehavior(_self,'handleMoveOuter'))
         }
       }
 
@@ -4096,11 +4096,11 @@ define('bui/component/uibase/autohide',function () {
         trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
-        $(document).off('mousedown',getWrapBehavior(this,'handleDocumentClick'));
+        $(document).off('mousedown',getWrapBehavior(_self,'handleDocumentClick'));
       }else{
-        _self.get('el').off('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        _self.get('el').off('mouseleave',getWrapBehavior(_self,'handleMoveOuter'));
         if(trigger){
-          $(trigger).off('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+          $(trigger).off('mouseleave',getWrapBehavior(_self,'handleMoveOuter'))
         }
       }
     }
@@ -9188,7 +9188,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          * @protected
          * @return {Number} 附加宽度
          */
-        getAppendHeigtht : function(){
+        getAppendHeight : function(){
             var el = this.get('el');
             return el.outerHeight() - el.height();
         },
@@ -9455,7 +9455,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 i,
                 view,
                 children = self.get('children');
-            id = self.get(id);
+            id = self.get('id');
             for (i = 0; i < children.length; i++) {
                 children[i].destroy && children[i].destroy();
             }

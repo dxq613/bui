@@ -137,7 +137,7 @@ define('bui/component/uibase/autohide',function () {
      */
     handleMoveOuter : function (ev) {
       var _self = this,
-        target = ev.toElement;
+        target = ev.toElement || ev.relatedTarget;
       if(!_self.containsElement(target) && !isExcept(_self,target)){
         if(_self.fire('autohide') !== false){
           _self.hide();
@@ -163,11 +163,11 @@ define('bui/component/uibase/autohide',function () {
         trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
-        $(document).on('mousedown',wrapBehavior(this,'handleDocumentClick'));
+        $(document).on('mousedown',wrapBehavior(_self,'handleDocumentClick'));
       }else{
-        _self.get('el').on('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        _self.get('el').on('mouseleave',wrapBehavior(_self,'handleMoveOuter'));
         if(trigger){
-          $(trigger).on('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+          $(trigger).on('mouseleave',wrapBehavior(_self,'handleMoveOuter'))
         }
       }
 
@@ -178,11 +178,11 @@ define('bui/component/uibase/autohide',function () {
         trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
-        $(document).off('mousedown',getWrapBehavior(this,'handleDocumentClick'));
+        $(document).off('mousedown',getWrapBehavior(_self,'handleDocumentClick'));
       }else{
-        _self.get('el').off('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        _self.get('el').off('mouseleave',getWrapBehavior(_self,'handleMoveOuter'));
         if(trigger){
-          $(trigger).off('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+          $(trigger).off('mouseleave',getWrapBehavior(_self,'handleMoveOuter'))
         }
       }
     }

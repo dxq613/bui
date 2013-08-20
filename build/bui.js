@@ -3895,7 +3895,7 @@ define('bui/base',['bui/observable'],function(require){
             delete _self.getAttrVals()[name];
         }
 
-        return self;
+        return _self;
     },
     /**
      * \u8bbe\u7f6e\u5c5e\u6027\u503c\uff0c\u4f1a\u89e6\u53d1before+Name+Change,\u548c after+Name+Change\u4e8b\u4ef6
@@ -3927,7 +3927,7 @@ define('bui/base',['bui/observable'],function(require){
                         setInternal(_self, name, all[name], opts);
                     }
                 }
-                return self;
+                return _self;
             }
             return setInternal(_self, name, value, opts);
     },
@@ -5419,7 +5419,7 @@ define('bui/component/uibase/autoshow',function () {
 
       //\u89e6\u53d1\u9690\u85cf
       function tiggerHide (ev){
-        var toElement = ev.toElement;
+        var toElement = ev.toElement || ev.relatedTarget;
         if(!toElement || !_self.containsElement(toElement)){ //mouseleave\u65f6\uff0c\u5982\u679c\u79fb\u52a8\u5230\u5f53\u524d\u63a7\u4ef6\u4e0a\uff0c\u53d6\u6d88\u6d88\u5931
           _self.hide();
         }
@@ -5592,7 +5592,7 @@ define('bui/component/uibase/autohide',function () {
      */
     handleMoveOuter : function (ev) {
       var _self = this,
-        target = ev.toElement;
+        target = ev.toElement || ev.relatedTarget;
       if(!_self.containsElement(target) && !isExcept(_self,target)){
         if(_self.fire('autohide') !== false){
           _self.hide();
@@ -5618,11 +5618,11 @@ define('bui/component/uibase/autohide',function () {
         trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
-        $(document).on('mousedown',wrapBehavior(this,'handleDocumentClick'));
+        $(document).on('mousedown',wrapBehavior(_self,'handleDocumentClick'));
       }else{
-        _self.get('el').on('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        _self.get('el').on('mouseleave',wrapBehavior(_self,'handleMoveOuter'));
         if(trigger){
-          $(trigger).on('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+          $(trigger).on('mouseleave',wrapBehavior(_self,'handleMoveOuter'))
         }
       }
 
@@ -5633,11 +5633,11 @@ define('bui/component/uibase/autohide',function () {
         trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
-        $(document).off('mousedown',getWrapBehavior(this,'handleDocumentClick'));
+        $(document).off('mousedown',getWrapBehavior(_self,'handleDocumentClick'));
       }else{
-        _self.get('el').off('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        _self.get('el').off('mouseleave',getWrapBehavior(_self,'handleMoveOuter'));
         if(trigger){
-          $(trigger).off('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+          $(trigger).off('mouseleave',getWrapBehavior(_self,'handleMoveOuter'))
         }
       }
     }
@@ -10725,7 +10725,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          * @protected
          * @return {Number} \u9644\u52a0\u5bbd\u5ea6
          */
-        getAppendHeigtht : function(){
+        getAppendHeight : function(){
             var el = this.get('el');
             return el.outerHeight() - el.height();
         },
@@ -10992,7 +10992,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 i,
                 view,
                 children = self.get('children');
-            id = self.get(id);
+            id = self.get('id');
             for (i = 0; i < children.length; i++) {
                 children[i].destroy && children[i].destroy();
             }
@@ -14562,9 +14562,9 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
    *       },'error');
    *       
    *    //\u590d\u6742\u7684\u63d0\u793a\u4fe1\u606f
-   *    var msg = '<h2>\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u4e0a\u4f2010M\u4ee5\u5185\u7684\u6587\u4ef6</h2>'+
-   *       '<p class="auxiliary-text">\u5982\u8fde\u7eed\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u53ca\u65f6\u8054\u7cfb\u5ba2\u670d\u70ed\u7ebf\uff1a0511-23883767834</p>'+
-   *       '<p><a href="#">\u8fd4\u56delist\u9875\u9762</a> <a href="#">\u67e5\u770b\u8be6\u60c5</a></p>';
+   *    var msg = '&lt;h2&gt;\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u4e0a\u4f2010M\u4ee5\u5185\u7684\u6587\u4ef6&lt;/h2&gt;'+
+   *       '&lt;p class="auxiliary-text"&gt;\u5982\u8fde\u7eed\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u53ca\u65f6\u8054\u7cfb\u5ba2\u670d\u70ed\u7ebf\uff1a0511-23883767834&lt;/p&gt;'+
+   *       '&lt;p&gt;&lt;a href="#"&gt;\u8fd4\u56delist\u9875\u9762&lt;/a&gt; &lt;a href="#"&gt;\u67e5\u770b\u8be6\u60c5&lt;/a&gt;&lt;/p&gt;';
    *     BUI.Message.Alert(msg,'error');
    *    //\u786e\u8ba4\u4fe1\u606f
    *    BUI.Message.Confirm('\u786e\u8ba4\u8981\u66f4\u6539\u4e48\uff1f',function(){
@@ -18495,6 +18495,139 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   return PlainField;
+});/**
+ * @fileOverview \u8868\u5355\u4e2d\u7684\u5217\u8868\uff0c\u6bcf\u4e2a\u5217\u8868\u540e\u6709\u4e2a\u9690\u85cf\u57df\u7528\u6765\u5b58\u50a8\u6570\u636e
+ * @ignore
+ */
+
+define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],function (require) {
+  var BUI = require('bui/common'),
+    List = require('bui/list'),
+    Field = require('bui/form/basefield');
+
+  /**
+   * @class BUI.Form.Field.List
+   * \u8868\u5355\u4e2d\u7684\u5217\u8868
+   * @extends BUI.Form.Field
+   */
+  var List = Field.extend({
+
+    initializer : function(){
+      var _self = this;
+      //if(!_self.get('srcNode')){
+        _self._initList();
+      //}
+    },
+    _getList : function(){
+      var _self = this,
+        children = _self.get('children');
+      return children[0];
+    },
+    bindUI : function(){
+      var _self = this,
+        list = _self._getList();
+      if(list){
+        list.on('selectedchange',function(){
+          var value = _self._getListValue(list);
+          _self.set('value',value);
+        });
+      }
+    },
+    //\u83b7\u53d6\u5217\u8868\u503c
+    _getListValue : function(list){
+      var _self = this;
+      list = list || _self._getList();
+      return list.getSelectionValues().join(',');
+    },
+    /**
+     * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
+     * @protected
+     * @param {*} value \u5b57\u6bb5\u503c
+     */
+    setControlValue : function(value){
+      var _self = this,
+        innerControl = _self.getInnerControl(),
+        list = _self._getList();
+      innerControl.val(value);
+      if(_self._getListValue(list) !== value && list.getCount()){
+        if(list.get('multipleSelect')){
+          list.clearSelection();
+        }
+        list.setSelectionByField(value.split(','));
+      }
+    },
+    //\u540c\u6b65\u6570\u636e
+    syncUI : function(){
+       this.set('list',this._getList());
+    },
+    //\u521d\u59cb\u5316\u5217\u8868
+    _initList : function(){
+      var _self = this,
+        children = _self.get('children'),
+        list = _self.get('list') || {};
+      if(children[0]){
+        return;
+      }
+      if($.isPlainObject(list)){
+        list.xclass = list.xclass || 'simple-list';
+      }
+      children.push(list);
+    },
+    /**
+     * \u8bbe\u7f6e\u9009\u9879
+     * @param {Array} items \u9009\u9879\u8bb0\u5f55
+     */
+    setItems : function(items){
+      var _self = this,
+        value = _self.get('value'),
+        list = _self._getList();
+      list.set('items',items);
+      list.setSelectionByField(value.split(','));
+    },
+    //\u8bbe\u7f6e\u9009\u9879\u96c6\u5408
+    _uiSetItems : function(v){
+      if(v){
+        this.setItems(v);
+      }
+    }
+  },{
+    ATTRS : {
+      /**
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
+       * @type {String}
+       */
+      controlTpl : {
+        value : '<input type="hidden"/>'
+      },
+      /**
+       * \u9009\u9879
+       * @type {Array}
+       */
+      items : {
+        setter : function(v){
+          if($.isPlainObject(v)){
+            var rst = [];
+            BUI.each(v,function(v,k){
+              rst.push({value : k,text :v});
+            });
+            v = rst;
+          }
+          return v;
+        }
+      },
+      /**
+       * \u5217\u8868
+       * @type {BUI.List.SimpleList}
+       */
+      list : {
+
+      }
+    }
+  },{
+    xclass : 'form-field-list'
+  });
+
+  return List;
 });/**
  * @fileOverview \u8868\u5355\u57df\u7684\u5165\u53e3\u6587\u4ef6
  * @ignore
