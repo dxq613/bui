@@ -2079,7 +2079,14 @@ define('bui/util',function(){
         result = {};
       BUI.each(array,function(item){
         var name = item.name;
-        result[item.name] = item.value;
+        if(!result[name]){ //\u5982\u679c\u662f\u5355\u4e2a\u503c\uff0c\u76f4\u63a5\u8d4b\u503c
+          result[name] = item.value;  
+        }else{ //\u591a\u503c\u4f7f\u7528\u6570\u7ec4
+          if(!BUI.isArray(result[name])){
+            result[name] = [result[name]];
+          }
+          result[name].push(item.value);
+        }
       });
       return result;
     },
