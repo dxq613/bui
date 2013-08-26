@@ -95,9 +95,12 @@
 
 	<target name="copy"  depends="native2ascii">
 	    <copy todir="${des.dir}/css">
-          <fileset dir="${base.dir}/assets/css"  includes="*.css">
+          <fileset dir="${base.dir}/assets/css"  includes="*.*">
           </fileset>
       </copy>
-	  
+	    <copy todir="${des.dir}/img">
+          <fileset dir="${base.dir}/assets/img"  includes="*.*">
+          </fileset>
+      </copy>
   </target>
 </project>
