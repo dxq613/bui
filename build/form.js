@@ -837,6 +837,9 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         if(!value){
           if(el.is(selector)){
             value = el.val();
+            if(!value && el.is('select')){
+              value = el.attr('value');
+            }
           }else{
             value = el.find(selector).val(); 
           }

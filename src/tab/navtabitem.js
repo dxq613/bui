@@ -9,6 +9,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     Component =  BUI.Component,
     CLS_ITEM_TITLE = 'tab-item-title',
     CLS_ITEM_CLOSE = 'tab-item-close',
+    CLS_ITEM_INNER = 'tab-item-inner',
     CLS_NAV_ACTIVED = 'tab-nav-actived',
     CLS_CONTENT = 'tab-content';
 
@@ -334,7 +335,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       },
       tpl : {
         view:true,
-        value :'<span class="' + CLS_ITEM_TITLE + '"></span><s class="' + CLS_ITEM_CLOSE + '"></s>'
+        value :'<s class="l"></s><div class="' + CLS_ITEM_INNER + '">{icon}<span class="' + CLS_ITEM_TITLE + '"></span><s class="' + CLS_ITEM_CLOSE + '"></s></div><s class="r"></s>'
       },
       xview:{
         value : navTabItemView

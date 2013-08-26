@@ -18,6 +18,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
   }
 
   AbstractStore.ATTRS = {
+
     /**
     * 创建对象时是否自动加载
     * <pre><code>
@@ -30,6 +31,13 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     */
     autoLoad: {
       value :false 
+    },
+    /**
+     * 是否服务器端过滤数据，如果设置此属性，当调用filter()函数时发送请求
+     * @type {Object}
+     */
+    remoteFilter: {
+        value : false
     },
     /**
      * 上次查询的参数
@@ -325,6 +333,14 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       },_self);
     },
     /**
+     * 触发过滤
+     * @protected
+     */
+    onFiltered : function(data,filter){
+      var _self = this;
+      _self.fire('filtered',{data : data,filter : filter});
+    },
+    /**
      * 加载完数据
      * @protected
      * @template
@@ -337,6 +353,56 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       if(processResult){
         _self.afterProcessLoad(data,params);
       }
+    },
+    /**
+     * 过滤数据，此函数的执行同属性 remoteFilter关联密切
+     *
+     *  - remoteFilter == true时：此函数只接受字符串类型的过滤参数，将{filter : filterStr}参数传输到服务器端
+     *  - remoteFilter == false时：此函数接受比对函数，只有当函数返回true时生效
+     *  
+     * @param {Function|String} fn 过滤函数
+     * @return {Array} 过滤结果
+     */
+    filter : function(filter){
+        var _self = this,
+            remoteFilter = _self.get('remoteFilter'),
+            result;
+
+        if(remoteFilter){
+            _self.load({filter : filter});
+        }else{
+            _self.set('filter',filter);
+            result = _self._filterLocal(filter);
+            _self.onFiltered(result,filter);
+        }
+    },
+    /**
+     * @protected
+     * 过滤缓存的数据
+     * @param  {Function} fn 过滤函数
+     * @return {Array} 过滤结果
+     */
+    _filterLocal : function(fn){
+        
+    },
+    _clearLocalFilter : function(){
+        this._filterLocal(function(){
+            return true;
+        });
+    },
+    /**
+     * 清理过滤
+     */
+    clearFilter : function(){
+        var _self = this,
+            remoteFilter = _self.get('remoteFilter'),
+            result;
+
+        if(remoteFilter){
+            _self.load({filter : ''});
+        }else{
+            _self._clearLocalFilter();
+        }
     },
     /**
      * @private

@@ -458,6 +458,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }
       return;
     },
+
     /**
      * 获取缓存的记录数
      * <pre><code>
@@ -662,6 +663,27 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       _self.get('newRecords').splice(0);
       _self.get('modifiedRecords').splice(0);
       _self.get('deletedRecords').splice(0);
+    },
+    /**
+     * @protected
+     * 过滤缓存的数据
+     * @param  {Function} fn 过滤函数
+     * @return {Array} 过滤结果
+     */
+    _filterLocal : function(fn,data){
+
+      var _self = this,
+        rst = [];
+      data = data || _self.getResult();
+      if(!fn){ //没有过滤器时直接返回
+        return data;
+      }
+      BUI.each(data,function(record){
+        if(fn(record)){
+          rst.push(record);
+        }
+      });
+      return rst;
     },
     //获取默认的匹配函数
     _getDefaultMatch :function(){

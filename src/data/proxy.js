@@ -107,6 +107,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'pageIndex'
     },
     /**
+     * 传递到后台，分页开始的页码，默认从0开始
+     * @type {Number}
+     */
+    pageStart : {
+      value : 0
+    },
+    /**
     * 加载数据时，返回的格式,目前只支持"json、jsonp"格式<br>
     * @cfg {String} [dataType='json']
     */
@@ -157,8 +164,11 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.augment(ajaxProxy,{
     _processParams : function(params){
       var _self = this,
+        pageStart = _self.get('pageStart'),
         arr = ['start','limit','pageIndex'];
-
+      if(params.pageIndex != null){
+        params.pageIndex = params.pageIndex + pageStart;
+      }
       BUI.each(arr,function(field){
         var fieldParam = _self.get(field+'Param');
         if(fieldParam !== field){

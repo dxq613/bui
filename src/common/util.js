@@ -578,9 +578,15 @@ define('bui/util',function(){
           if(field.type === 'checkbox'){
             if(field.value === value || BUI.Array.indexOf(field.value,value) !== -1){
               $(field).attr('checked',true);
+            }else{
+              $(field).attr('checked',false);  
             }
-          }else if(field.type === 'radio' && field.value === value){
-            $(field).attr('checked',true);
+          }else if(field.type === 'radio'){
+            if(field.value === value){
+              $(field).attr('checked',true);
+            }else{
+              $(field).attr('checked',false); 
+            }    
           }else{
             $(field).val(value);
           }

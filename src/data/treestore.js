@@ -490,8 +490,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean} 
      */
     hasData : function(){
-      return true;
-      //return this.get('root').children && this.get('root').children.length !== 0;
+      //return true;
+      return this.get('root').children && this.get('root').children.length !== 0;
     },
     /**
      * 是否已经加载过，叶子节点或者存在字节点的节点

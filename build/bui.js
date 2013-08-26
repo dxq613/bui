@@ -2131,9 +2131,15 @@ define('bui/util',function(){
           if(field.type === 'checkbox'){
             if(field.value === value || BUI.Array.indexOf(field.value,value) !== -1){
               $(field).attr('checked',true);
+            }else{
+              $(field).attr('checked',false);  
             }
-          }else if(field.type === 'radio' && field.value === value){
-            $(field).attr('checked',true);
+          }else if(field.type === 'radio'){
+            if(field.value === value){
+              $(field).attr('checked',true);
+            }else{
+              $(field).attr('checked',false); 
+            }    
           }else{
             $(field).val(value);
           }
@@ -12012,6 +12018,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'pageIndex'
     },
     /**
+     * \u4f20\u9012\u5230\u540e\u53f0\uff0c\u5206\u9875\u5f00\u59cb\u7684\u9875\u7801\uff0c\u9ed8\u8ba4\u4ece0\u5f00\u59cb
+     * @type {Number}
+     */
+    pageStart : {
+      value : 0
+    },
+    /**
     * \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u7684\u683c\u5f0f,\u76ee\u524d\u53ea\u652f\u6301"json\u3001jsonp"\u683c\u5f0f<br>
     * @cfg {String} [dataType='json']
     */
@@ -12062,8 +12075,11 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.augment(ajaxProxy,{
     _processParams : function(params){
       var _self = this,
+        pageStart = _self.get('pageStart'),
         arr = ['start','limit','pageIndex'];
-
+      if(params.pageIndex != null){
+        params.pageIndex = params.pageIndex + pageStart;
+      }
       BUI.each(arr,function(field){
         var fieldParam = _self.get(field+'Param');
         if(fieldParam !== field){
@@ -12175,6 +12191,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
   }
 
   AbstractStore.ATTRS = {
+
     /**
     * \u521b\u5efa\u5bf9\u8c61\u65f6\u662f\u5426\u81ea\u52a8\u52a0\u8f7d
     * <pre><code>
@@ -12187,6 +12204,13 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     */
     autoLoad: {
       value :false 
+    },
+    /**
+     * \u662f\u5426\u670d\u52a1\u5668\u7aef\u8fc7\u6ee4\u6570\u636e\uff0c\u5982\u679c\u8bbe\u7f6e\u6b64\u5c5e\u6027\uff0c\u5f53\u8c03\u7528filter()\u51fd\u6570\u65f6\u53d1\u9001\u8bf7\u6c42
+     * @type {Object}
+     */
+    remoteFilter: {
+        value : false
     },
     /**
      * \u4e0a\u6b21\u67e5\u8be2\u7684\u53c2\u6570
@@ -12482,6 +12506,14 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       },_self);
     },
     /**
+     * \u89e6\u53d1\u8fc7\u6ee4
+     * @protected
+     */
+    onFiltered : function(data,filter){
+      var _self = this;
+      _self.fire('filtered',{data : data,filter : filter});
+    },
+    /**
      * \u52a0\u8f7d\u5b8c\u6570\u636e
      * @protected
      * @template
@@ -12494,6 +12526,56 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       if(processResult){
         _self.afterProcessLoad(data,params);
       }
+    },
+    /**
+     * \u8fc7\u6ee4\u6570\u636e\uff0c\u6b64\u51fd\u6570\u7684\u6267\u884c\u540c\u5c5e\u6027 remoteFilter\u5173\u8054\u5bc6\u5207
+     *
+     *  - remoteFilter == true\u65f6\uff1a\u6b64\u51fd\u6570\u53ea\u63a5\u53d7\u5b57\u7b26\u4e32\u7c7b\u578b\u7684\u8fc7\u6ee4\u53c2\u6570\uff0c\u5c06{filter : filterStr}\u53c2\u6570\u4f20\u8f93\u5230\u670d\u52a1\u5668\u7aef
+     *  - remoteFilter == false\u65f6\uff1a\u6b64\u51fd\u6570\u63a5\u53d7\u6bd4\u5bf9\u51fd\u6570\uff0c\u53ea\u6709\u5f53\u51fd\u6570\u8fd4\u56detrue\u65f6\u751f\u6548
+     *  
+     * @param {Function|String} fn \u8fc7\u6ee4\u51fd\u6570
+     * @return {Array} \u8fc7\u6ee4\u7ed3\u679c
+     */
+    filter : function(filter){
+        var _self = this,
+            remoteFilter = _self.get('remoteFilter'),
+            result;
+
+        if(remoteFilter){
+            _self.load({filter : filter});
+        }else{
+            _self.set('filter',filter);
+            result = _self._filterLocal(filter);
+            _self.onFiltered(result,filter);
+        }
+    },
+    /**
+     * @protected
+     * \u8fc7\u6ee4\u7f13\u5b58\u7684\u6570\u636e
+     * @param  {Function} fn \u8fc7\u6ee4\u51fd\u6570
+     * @return {Array} \u8fc7\u6ee4\u7ed3\u679c
+     */
+    _filterLocal : function(fn){
+        
+    },
+    _clearLocalFilter : function(){
+        this._filterLocal(function(){
+            return true;
+        });
+    },
+    /**
+     * \u6e05\u7406\u8fc7\u6ee4
+     */
+    clearFilter : function(){
+        var _self = this,
+            remoteFilter = _self.get('remoteFilter'),
+            result;
+
+        if(remoteFilter){
+            _self.load({filter : ''});
+        }else{
+            _self._clearLocalFilter();
+        }
     },
     /**
      * @private
@@ -13141,8 +13223,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean} 
      */
     hasData : function(){
-      return true;
-      //return this.get('root').children && this.get('root').children.length !== 0;
+      //return true;
+      return this.get('root').children && this.get('root').children.length !== 0;
     },
     /**
      * \u662f\u5426\u5df2\u7ecf\u52a0\u8f7d\u8fc7\uff0c\u53f6\u5b50\u8282\u70b9\u6216\u8005\u5b58\u5728\u5b57\u8282\u70b9\u7684\u8282\u70b9
@@ -13650,6 +13732,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }
       return;
     },
+
     /**
      * \u83b7\u53d6\u7f13\u5b58\u7684\u8bb0\u5f55\u6570
      * <pre><code>
@@ -13854,6 +13937,27 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       _self.get('newRecords').splice(0);
       _self.get('modifiedRecords').splice(0);
       _self.get('deletedRecords').splice(0);
+    },
+    /**
+     * @protected
+     * \u8fc7\u6ee4\u7f13\u5b58\u7684\u6570\u636e
+     * @param  {Function} fn \u8fc7\u6ee4\u51fd\u6570
+     * @return {Array} \u8fc7\u6ee4\u7ed3\u679c
+     */
+    _filterLocal : function(fn,data){
+
+      var _self = this,
+        rst = [];
+      data = data || _self.getResult();
+      if(!fn){ //\u6ca1\u6709\u8fc7\u6ee4\u5668\u65f6\u76f4\u63a5\u8fd4\u56de
+        return data;
+      }
+      BUI.each(data,function(record){
+        if(fn(record)){
+          rst.push(record);
+        }
+      });
+      return rst;
     },
     //\u83b7\u53d6\u9ed8\u8ba4\u7684\u5339\u914d\u51fd\u6570
     _getDefaultMatch :function(){
@@ -17621,6 +17725,9 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         if(!value){
           if(el.is(selector)){
             value = el.val();
+            if(!value && el.is('select')){
+              value = el.attr('value');
+            }
           }else{
             value = el.find(selector).val(); 
           }
@@ -23058,6 +23165,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     Component =  BUI.Component,
     CLS_ITEM_TITLE = 'tab-item-title',
     CLS_ITEM_CLOSE = 'tab-item-close',
+    CLS_ITEM_INNER = 'tab-item-inner',
     CLS_NAV_ACTIVED = 'tab-nav-actived',
     CLS_CONTENT = 'tab-content';
 
@@ -23383,7 +23491,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       },
       tpl : {
         view:true,
-        value :'<span class="' + CLS_ITEM_TITLE + '"></span><s class="' + CLS_ITEM_CLOSE + '"></s>'
+        value :'<s class="l"></s><div class="' + CLS_ITEM_INNER + '">{icon}<span class="' + CLS_ITEM_TITLE + '"></span><s class="' + CLS_ITEM_CLOSE + '"></s></div><s class="r"></s>'
       },
       xview:{
         value : navTabItemView
@@ -23409,6 +23517,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     CLS_NAV_LIST = 'tab-nav-list',
     CLS_ARROW_LEFT = 'arrow-left',
     CLS_ARROW_RIGHT = 'arrow-right',
+    CLS_FORCE_FIT = BUI.prefix + 'tab-force',
     ID_CLOSE = 'm_close',
     ITEM_WIDTH = 140;
 
@@ -23422,10 +23531,8 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     renderUI : function(){
       var _self = this,
         el = _self.get('el'),
-        //tpl = _self.get('tpl'),
         listEl = null;
 
-      //$(tpl).appendTo(el);
       listEl = el.find('.' + CLS_NAV_LIST);
       _self.setInternal('listEl',listEl);
     },
@@ -23445,9 +23552,21 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         containerEl.height(v - barEl.height());
       }
       el.height(v);
+    },
+    //\u8bbe\u7f6e\u81ea\u52a8\u9002\u5e94\u5bbd\u5ea6
+    _uiSetForceFit : function(v){
+      var _self = this,
+        el = _self.get('el');
+      if(v){
+        el.addClass(CLS_FORCE_FIT);
+      }else{
+        el.removeClass(CLS_FORCE_FIT);
+      }
     }
   },{
-
+    ATTRS : {
+      forceFit : {}
+    }
   },{
     xclass : 'nav-tab-view',
     priority:0
@@ -23471,6 +23590,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       addTab:function(config,reload){
         var _self = this,
           id = config.id || BUI.guid('tab-item'),
+          forceFit = _self.get('forceFit'),
           item = _self.getItemById(id);
 
         if(item){
@@ -23493,6 +23613,9 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           },config);
 
           item = _self.addChild(config);
+          if(forceFit){
+            _self.forceFit();
+          }
           item.show();
           _self._resetItemList();
         }
@@ -23507,9 +23630,17 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       //\u7ed1\u5b9a\u4e8b\u4ef6
       bindUI: function(){
-        var _self = this;
-
-        _self._bindScrollEvent();
+        var _self = this,
+          forceFit = _self.get('forceFit');
+        if(!forceFit){
+          _self._bindScrollEvent();
+          _self.on('afterVisibleChange',function(ev){
+            var item = ev.target;
+            if(item.get('actived')){
+              _self._scrollToItem(item);
+            }
+          });
+        }
 
         //\u76d1\u542c\u70b9\u51fb\u6807\u7b7e
         _self.on('click',function(ev){
@@ -23530,12 +23661,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           _self._showMenu(ev.target,ev.position);
         });
 
-        _self.on('afterVisibleChange',function(ev){
-          var item = ev.target;
-          if(item.get('actived')){
-            _self._scrollToItem(item);
-          }
-        });
+        
       },
       //\u7ed1\u5b9a\u6eda\u52a8\u4e8b\u4ef6
       _bindScrollEvent : function(){
@@ -23683,7 +23809,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         var _self = this,
           index = _self._getIndex(item),
           activedItem = _self.getActivedItem(),
-          preItem = _self._getItemByIndex(index -1),
+          preItem = _self.get('preItem') || _self._getItemByIndex(index -1),
           nextItem = _self._getItemByIndex(index + 1);
 
         item.hide(function(){
@@ -23698,7 +23824,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           }else{//\u5220\u9664\u6807\u7b7e\u9879\u65f6\uff0c\u53ef\u80fd\u4f1a\u5f15\u8d77\u6eda\u52a8\u6309\u94ae\u72b6\u6001\u7684\u6539\u53d8
             _self._scrollToItem(activedItem);;
           }
-          
+          _self.forceFit();
         });
         
       },
@@ -23733,16 +23859,51 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       //\u91cd\u65b0\u8ba1\u7b97\u6807\u7b7e\u9879\u5bb9\u5668\u7684\u5bbd\u5ea6\u4f4d\u7f6e
       _resetItemList : function(){
+        if(this.get('forceFit')){
+          return;
+        }
         var _self = this,
+          container = _self.getContentElement();
+
+        container.width(_self._getTotalWidth());
+
+      },
+      //\u83b7\u53d6\u9009\u9879\u7684\u603b\u5bbd\u5ea6\uff0c\u4ee5\u9ed8\u8ba4\u5bbd\u5ea6\u4e3a\u57fa\u6570
+      _getTotalWidth : function(){
+        var _self = this,
+          children = _self.get('children');
+
+        return children.length * _self.get('itemWidth');
+      },
+      _getForceItemWidth : function(){
+        var _self = this,
+          width =  _self.getContentElement().width(),
           children = _self.get('children'),
-          container = _self.getContentElement(),
-          totalWidth = children.length * ITEM_WIDTH;
-
-        container.width(totalWidth);
-
+          totalWidth = _self._getTotalWidth(),
+          itemWidth = _self.get(itemWidth);
+        if(totalWidth > width){
+          itemWidth = width/children.length;
+        }
+        return itemWidth;
+      },
+      forceFit : function(){
+        var _self = this;
+        _self._forceItemWidth(_self._getForceItemWidth());
+      },
+      //\u8bbe\u7f6e\u5e73\u5747\u5bbd\u5ea6
+      _forceItemWidth : function(width){
+        width = width || this.get('itemWidth');
+        var _self = this,
+          children = _self.get('children');
+        BUI.each(children,function(item){
+          item.set('width',width);
+        });
       },
       //\u4f7f\u6307\u5b9a\u6807\u7b7e\u9879\u5728\u7528\u6237\u53ef\u89c6\u533a\u57df\u5185
       _scrollToItem : function(item){
+        if(this.get('forceFit')){ //\u81ea\u9002\u5e94\u540e\uff0c\u4e0d\u8fdb\u884c\u6eda\u52a8
+          return;
+        }
         var _self = this,
           container = _self.getContentElement(),
           containerPosition = container.position(),
@@ -23787,7 +23948,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           wraperWidth = container.parent().width(),
           containerPosition = containerPosition || container.position(),
           offsetLeft = _self._getDistanceToBegin(item,containerPosition),
-          disWidth = offsetLeft + ITEM_WIDTH - wraperWidth; 
+          disWidth = offsetLeft + _self.get('itemWidth') - wraperWidth; 
         return disWidth;
       },
       //\u83b7\u53d6\u6700\u540e\u4e00\u4e2a\u6807\u7b7e\u9879\u79bb\u53f3\u8fb9\u7684\u95f4\u8ddd
@@ -23814,7 +23975,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           disWidth = _self._getLastDistance(container,position),
           toLeft;
         if(disWidth > 0 ){
-          toLeft = disWidth > ITEM_WIDTH ? ITEM_WIDTH : disWidth;
+          toLeft = disWidth > _self.get('itemWidth') ? _self.get('itemWidth') : disWidth;
           _self._scrollTo(container,position.left - toLeft);
         }
 
@@ -23826,7 +23987,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           position = container.position(),
           toRight;
         if(position.left < 0){
-          toRight = position.left + ITEM_WIDTH;
+          toRight = position.left + _self.get('itemWidth');
           toRight = toRight < 0 ? toRight : 0;
           _self._scrollTo(container,toRight);
         }
@@ -23864,6 +24025,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         if(preActivedItem){
           preActivedItem.set('actived',false);
         }
+        _self.set('preItem',preActivedItem);
         if(item){
           if(!item.get('actived')){
             item.set('actived',true);
@@ -23896,6 +24058,21 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
          */
         menu : {
 
+        },
+        /**
+         * \u8bbe\u7f6e\u6b64\u53c2\u6570\u65f6\uff0c\u6807\u7b7e\u9009\u9879\u7684\u5bbd\u5ea6\u4f1a\u8fdb\u884c\u81ea\u9002\u5e94
+         * @cfg {Boolean} forceFit
+         */
+        forceFit : {
+          view : true,
+          value : false
+        },
+        /**
+         * \u6807\u7b7e\u7684\u9ed8\u8ba4\u5bbd\u5ea6,140px\uff0c\u8bbe\u7f6eforceFit:true\u540e\uff0c\u6b64\u5bbd\u5ea6\u4e3a\u6700\u5bbd\u5bbd\u5ea6
+         * @type {Number}
+         */
+        itemWidth : {
+          value : ITEM_WIDTH
         },
         /**
          * \u6e32\u67d3\u6807\u7b7e\u7684\u6a21\u7248
@@ -34075,6 +34252,14 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       _self._updateIcons(node);
       _self.setItemStatus(node,LOADING,false);
     },
+    __syncUI : function(){
+      var _self = this,
+        store = _self.get('store'),
+        showRoot = _self.get('showRoot');
+      if(showRoot && !store.hasData()){ //\u6811\u8282\u70b9\u6ca1\u6709\u6570\u636e\uff0c\u4f46\u662f\u9700\u8981\u663e\u793a\u6839\u8282\u70b9\u65f6
+        _self._initRoot();
+      }
+    },
      /**
      * @override 
      * @protected
@@ -34269,7 +34454,6 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           }
         }else if(element){
           _self.setItemStatus(node,EXPAND,true,element);
-          //_self.addItemsAt(node.children,index + 1);
           _self._showChildren(node);
           _self.fire('expanded',{node : node ,element : element});
         }
