@@ -58,6 +58,9 @@
       <div class="span8" id="t6">
         <h2>自定义图标</h2>
       </div>
+      <div class="span8" id="t7">
+        <h2>使用 pid</h2>
+      </div>
     </div>
 
   </div>

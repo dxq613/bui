@@ -319,7 +319,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         proxy = _self.get('proxy'),
         lastParams = _self.get('lastParams');
 
-      BUI.mix(true,lastParams,_self.getAppendParams(),params);
+      BUI.mix(lastParams,_self.getAppendParams(),params);
 
       _self.fire('beforeload',{params:lastParams});
 

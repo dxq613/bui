@@ -12130,6 +12130,15 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   var memeryProxy = function(config){
     memeryProxy.superclass.constructor.call(this,config);
   };
+  memeryProxy.ATTRS = {
+    /**
+     * \u5339\u914d\u7684\u5b57\u6bb5\u540d
+     * @type {Array}
+     */
+    matchFields : {
+      value : []
+    }
+  };
 
   BUI.extend(memeryProxy,proxy);
 
@@ -12150,6 +12159,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = _self.get('data'),
         rows = []; 
 
+      data = _self._getMatches(params);
       _self.sortData(sortField,sortDirection); 
 
       if(limit){//\u5206\u9875\u65f6
@@ -12160,6 +12170,32 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         callback(rows);
       }
       
+    },
+    //\u83b7\u53d6\u5339\u914d\u51fd\u6570
+    _getMatchFn : function(params, matchFields){
+      var _self = this;
+      return function(obj){
+        var result = true;
+        BUI.each(matchFields,function(field){
+          if(params[field] != null && !(params[field] === obj[field])){
+            result = false;
+            return false;
+          }
+        });
+        return result;
+      }
+    },
+    //\u83b7\u53d6\u5339\u914d\u7684\u503c
+    _getMatches : function(params){
+      var _self = this,
+        matchFields = _self.get('matchFields'),
+        matchFn,
+        data = _self.get('data') || [];
+      if(params && matchFields.length){
+        matchFn = _self._getMatchFn(params,matchFields);
+        data = BUI.Array.filter(data,matchFn);
+      }
+      return data;
     }
 
   });
@@ -12492,7 +12528,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         proxy = _self.get('proxy'),
         lastParams = _self.get('lastParams');
 
-      BUI.mix(true,lastParams,_self.getAppendParams(),params);
+      BUI.mix(lastParams,_self.getAppendParams(),params);
 
       _self.fire('beforeload',{params:lastParams});
 
@@ -12829,6 +12865,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
 
     },
     /**
+     * \u6807\u793a\u7236\u5143\u7d20id\u7684\u5b57\u6bb5\u540d\u79f0
+     * @type {String}
+     */
+    pidField : {
+      
+    },
+    /**
      * \u8fd4\u56de\u6570\u636e\u6807\u793a\u6570\u636e\u7684\u5b57\u6bb5</br>
      * \u5f02\u6b65\u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u6570\u636e\u53ef\u4ee5\u4f7f\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
      * - \u5982\u679c\u8fd4\u56de\u7684\u662f\u5bf9\u8c61,\u53ef\u4ee5\u9644\u52a0\u5176\u4ed6\u4fe1\u606f,\u90a3\u4e48\u53d6\u5bf9\u8c61\u5bf9\u5e94\u7684\u5b57\u6bb5 {nodes : [],hasError:false}
@@ -12913,11 +12956,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     _initData : function(){
       var _self = this,
         autoLoad = _self.get('autoLoad'),
+        pidField = _self.get('pidField'),
+        proxy = _self.get('proxy'),
         root = _self.get('root');
 
+      //\u6dfb\u52a0\u9ed8\u8ba4\u7684\u5339\u914d\u7236\u5143\u7d20\u7684\u5b57\u6bb5
+      if(!proxy.get('url') && pidField){
+        proxy.get('matchFields').push(pidField);
+      }
+      
       if(autoLoad && !root.children){
-        params = root.id ? {id : root.id}: {};
-        _self.load(params);
+        //params = root.id ? {id : root.id}: {};
+        _self.loadNode(root);
       }
     },
     /**
@@ -13207,7 +13257,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      */
     afterProcessLoad : function(data,params){
       var _self = this,
-        id = params.id,
+        pidField = _self.get('pidField'),
+        id = params.id || params[pidField],
         dataProperty = _self.get('dataProperty'),
         node = _self.findNode(id) || _self.get('root');//\u5982\u679c\u627e\u4e0d\u5230\u7236\u5143\u7d20\uff0c\u5219\u653e\u7f6e\u5728\u8ddf\u8282\u70b9
 
@@ -13232,9 +13283,14 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean}  \u662f\u5426\u52a0\u8f7d\u8fc7
      */
     isLoaded : function(node){
-      if(!this.get('url')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e,\u9ed8\u8ba4\u5df2\u7ecf\u52a0\u8f7d
+      var root = this.get('root');
+      if(node == root && !root.children){
+        return false;
+      }
+      if(!this.get('url') && !this.get('pidField')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e,\u9ed8\u8ba4\u5df2\u7ecf\u52a0\u8f7d
         return true;
       }
+      
       return node.leaf || (node.children && node.children.length);
     },
     /**
@@ -13247,7 +13303,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(_self.isLoaded(node)){
         return ;
       }
-      if(!_self.get('url')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
+      if(!_self.get('url') && _self.get('data')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
+        var pidField = _self.get('pidField'),
+          params = {id : node.id};
+        if(pidField){
+          params[pidField] = node.id;
+        }
+        _self.load(params);
         return;
       }else{
         _self.load({id:node.id,path : ''});
@@ -14119,7 +14181,10 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    *     var overlay = new Overlay.Overlay({
    *       trigger : '#btn',
    *       content : '\u8fd9\u662f\u5185\u5bb9',
-   *       elCls : '\u5916\u5c42\u5e94\u7528\u7684\u6837\u5f0f',
+   *       align : {
+   *         points : ['bl','tl']
+   *       }, //\u5bf9\u9f50\u65b9\u5f0f
+   *       elCls : 'custom-cls', //\u81ea\u5b9a\u4e49\u6837\u5f0f
    *       autoHide : true //\u70b9\u51fboverlay\u5916\u9762\uff0coverlay \u4f1a\u81ea\u52a8\u9690\u85cf
    *     });
    *

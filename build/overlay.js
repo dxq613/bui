@@ -59,7 +59,10 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    *     var overlay = new Overlay.Overlay({
    *       trigger : '#btn',
    *       content : '这是内容',
-   *       elCls : '外层应用的样式',
+   *       align : {
+   *         points : ['bl','tl']
+   *       }, //对齐方式
+   *       elCls : 'custom-cls', //自定义样式
    *       autoHide : true //点击overlay外面，overlay 会自动隐藏
    *     });
    *

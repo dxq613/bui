@@ -219,6 +219,15 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   var memeryProxy = function(config){
     memeryProxy.superclass.constructor.call(this,config);
   };
+  memeryProxy.ATTRS = {
+    /**
+     * 匹配的字段名
+     * @type {Array}
+     */
+    matchFields : {
+      value : []
+    }
+  };
 
   BUI.extend(memeryProxy,proxy);
 
@@ -239,6 +248,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = _self.get('data'),
         rows = []; 
 
+      data = _self._getMatches(params);
       _self.sortData(sortField,sortDirection); 
 
       if(limit){//分页时
@@ -249,6 +259,32 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         callback(rows);
       }
       
+    },
+    //获取匹配函数
+    _getMatchFn : function(params, matchFields){
+      var _self = this;
+      return function(obj){
+        var result = true;
+        BUI.each(matchFields,function(field){
+          if(params[field] != null && !(params[field] === obj[field])){
+            result = false;
+            return false;
+          }
+        });
+        return result;
+      }
+    },
+    //获取匹配的值
+    _getMatches : function(params){
+      var _self = this,
+        matchFields = _self.get('matchFields'),
+        matchFn,
+        data = _self.get('data') || [];
+      if(params && matchFields.length){
+        matchFn = _self._getMatchFn(params,matchFields);
+        data = BUI.Array.filter(data,matchFn);
+      }
+      return data;
     }
 
   });

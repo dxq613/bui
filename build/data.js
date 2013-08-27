@@ -413,6 +413,15 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   var memeryProxy = function(config){
     memeryProxy.superclass.constructor.call(this,config);
   };
+  memeryProxy.ATTRS = {
+    /**
+     * 匹配的字段名
+     * @type {Array}
+     */
+    matchFields : {
+      value : []
+    }
+  };
 
   BUI.extend(memeryProxy,proxy);
 
@@ -433,6 +442,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = _self.get('data'),
         rows = []; 
 
+      data = _self._getMatches(params);
       _self.sortData(sortField,sortDirection); 
 
       if(limit){//分页时
@@ -443,6 +453,32 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         callback(rows);
       }
       
+    },
+    //获取匹配函数
+    _getMatchFn : function(params, matchFields){
+      var _self = this;
+      return function(obj){
+        var result = true;
+        BUI.each(matchFields,function(field){
+          if(params[field] != null && !(params[field] === obj[field])){
+            result = false;
+            return false;
+          }
+        });
+        return result;
+      }
+    },
+    //获取匹配的值
+    _getMatches : function(params){
+      var _self = this,
+        matchFields = _self.get('matchFields'),
+        matchFn,
+        data = _self.get('data') || [];
+      if(params && matchFields.length){
+        matchFn = _self._getMatchFn(params,matchFields);
+        data = BUI.Array.filter(data,matchFn);
+      }
+      return data;
     }
 
   });
@@ -775,7 +811,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         proxy = _self.get('proxy'),
         lastParams = _self.get('lastParams');
 
-      BUI.mix(true,lastParams,_self.getAppendParams(),params);
+      BUI.mix(lastParams,_self.getAppendParams(),params);
 
       _self.fire('beforeload',{params:lastParams});
 
@@ -1112,6 +1148,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
 
     },
     /**
+     * 标示父元素id的字段名称
+     * @type {String}
+     */
+    pidField : {
+      
+    },
+    /**
      * 返回数据标示数据的字段</br>
      * 异步加载数据时，返回数据可以使数组或者对象
      * - 如果返回的是对象,可以附加其他信息,那么取对象对应的字段 {nodes : [],hasError:false}
@@ -1196,11 +1239,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     _initData : function(){
       var _self = this,
         autoLoad = _self.get('autoLoad'),
+        pidField = _self.get('pidField'),
+        proxy = _self.get('proxy'),
         root = _self.get('root');
 
+      //添加默认的匹配父元素的字段
+      if(!proxy.get('url') && pidField){
+        proxy.get('matchFields').push(pidField);
+      }
+      
       if(autoLoad && !root.children){
-        params = root.id ? {id : root.id}: {};
-        _self.load(params);
+        //params = root.id ? {id : root.id}: {};
+        _self.loadNode(root);
       }
     },
     /**
@@ -1490,7 +1540,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      */
     afterProcessLoad : function(data,params){
       var _self = this,
-        id = params.id,
+        pidField = _self.get('pidField'),
+        id = params.id || params[pidField],
         dataProperty = _self.get('dataProperty'),
         node = _self.findNode(id) || _self.get('root');//如果找不到父元素，则放置在跟节点
 
@@ -1515,9 +1566,14 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean}  是否加载过
      */
     isLoaded : function(node){
-      if(!this.get('url')){ //如果不从远程加载数据,默认已经加载
+      var root = this.get('root');
+      if(node == root && !root.children){
+        return false;
+      }
+      if(!this.get('url') && !this.get('pidField')){ //如果不从远程加载数据,默认已经加载
         return true;
       }
+      
       return node.leaf || (node.children && node.children.length);
     },
     /**
@@ -1530,7 +1586,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(_self.isLoaded(node)){
         return ;
       }
-      if(!_self.get('url')){ //如果不从远程加载数据，不是根节点的话，取消加载
+      if(!_self.get('url') && _self.get('data')){ //如果不从远程加载数据，不是根节点的话，取消加载
+        var pidField = _self.get('pidField'),
+          params = {id : node.id};
+        if(pidField){
+          params[pidField] = node.id;
+        }
+        _self.load(params);
         return;
       }else{
         _self.load({id:node.id,path : ''});

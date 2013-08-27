@@ -168,7 +168,7 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
         expect(el.find('li')).not.toBe(0);
       });
     });
-    /**/
+
     it('展开未加载的节点',function(){
       var node = store.findNode('1'),
         element = tree.findElement(node);
@@ -212,3 +212,49 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   });
 
 });
+
+BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
+  var data = [
+      {pid : '1',id : '11',text : '11',leaf : false},
+      {pid : '1',id : '12',text : '12'},
+      {pid : '11',id : '112',text : '112'},
+      {pid : '11',id : '111',text : '111'},
+      {pid : '1',id : '13',text : '13',leaf : false},
+      {pid : '13',id : '131',text : '131',leaf : false},
+      {pid : '131',id : '1311',text : '1311'},
+      {pid : '13',id : '132',text : '132'},
+      {pid : '131',id : '1312',text : '1312'}
+    ],
+    store = new Data.TreeStore({
+      pidField : 'pid',
+      root : {
+        id : '1',
+        text : '1',
+        expanded : true
+      },
+      data : data
+    });
+    
+  var tree = new TreeList({
+    render : '#t7',
+    showLine : true,
+    store : store,
+    showRoot : true
+  });
+  tree.render();
+  var el = tree.get('el');
+
+  describe('测试缓存级联数据',function(){
+    it('初始化',function(){
+      expect(store.get('root').children.length).toBe(3);
+    });
+    it('展开节点',function(){
+      var node = store.findNode('13');
+      expect(node.children.length).toBe(0);
+      tree.expandNode(node);
+      expect(node.children.length).not.toBe(0);
+    });
+  });
+
+});
+
