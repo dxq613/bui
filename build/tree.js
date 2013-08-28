@@ -951,6 +951,14 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       _self._updateIcons(node);
       _self.setItemStatus(node,LOADING,false);
     },
+    __syncUI : function(){
+      var _self = this,
+        store = _self.get('store'),
+        showRoot = _self.get('showRoot');
+      if(showRoot && !store.hasData()){ //树节点没有数据，但是需要显示根节点时
+        _self._initRoot();
+      }
+    },
      /**
      * @override 
      * @protected
@@ -1145,7 +1153,6 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           }
         }else if(element){
           _self.setItemStatus(node,EXPAND,true,element);
-          //_self.addItemsAt(node.children,index + 1);
           _self._showChildren(node);
           _self.fire('expanded',{node : node ,element : element});
         }

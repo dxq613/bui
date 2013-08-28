@@ -59,7 +59,10 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    *     var overlay = new Overlay.Overlay({
    *       trigger : '#btn',
    *       content : '这是内容',
-   *       elCls : '外层应用的样式',
+   *       align : {
+   *         points : ['bl','tl']
+   *       }, //对齐方式
+   *       elCls : 'custom-cls', //自定义样式
    *       autoHide : true //点击overlay外面，overlay 会自动隐藏
    *     });
    *
@@ -613,9 +616,9 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
    *       },'error');
    *       
    *    //复杂的提示信息
-   *    var msg = '<h2>上传失败，请上传10M以内的文件</h2>'+
-   *       '<p class="auxiliary-text">如连续上传失败，请及时联系客服热线：0511-23883767834</p>'+
-   *       '<p><a href="#">返回list页面</a> <a href="#">查看详情</a></p>';
+   *    var msg = '&lt;h2&gt;上传失败，请上传10M以内的文件&lt;/h2&gt;'+
+   *       '&lt;p class="auxiliary-text"&gt;如连续上传失败，请及时联系客服热线：0511-23883767834&lt;/p&gt;'+
+   *       '&lt;p&gt;&lt;a href="#"&gt;返回list页面&lt;/a&gt; &lt;a href="#"&gt;查看详情&lt;/a&gt;&lt;/p&gt;';
    *     BUI.Message.Alert(msg,'error');
    *    //确认信息
    *    BUI.Message.Confirm('确认要更改么？',function(){

@@ -107,6 +107,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'pageIndex'
     },
     /**
+     * 传递到后台，分页开始的页码，默认从0开始
+     * @type {Number}
+     */
+    pageStart : {
+      value : 0
+    },
+    /**
     * 加载数据时，返回的格式,目前只支持"json、jsonp"格式<br>
     * @cfg {String} [dataType='json']
     */
@@ -157,8 +164,11 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.augment(ajaxProxy,{
     _processParams : function(params){
       var _self = this,
+        pageStart = _self.get('pageStart'),
         arr = ['start','limit','pageIndex'];
-
+      if(params.pageIndex != null){
+        params.pageIndex = params.pageIndex + pageStart;
+      }
       BUI.each(arr,function(field){
         var fieldParam = _self.get(field+'Param');
         if(fieldParam !== field){
@@ -209,6 +219,15 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   var memeryProxy = function(config){
     memeryProxy.superclass.constructor.call(this,config);
   };
+  memeryProxy.ATTRS = {
+    /**
+     * 匹配的字段名
+     * @type {Array}
+     */
+    matchFields : {
+      value : []
+    }
+  };
 
   BUI.extend(memeryProxy,proxy);
 
@@ -229,6 +248,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = _self.get('data'),
         rows = []; 
 
+      data = _self._getMatches(params);
       _self.sortData(sortField,sortDirection); 
 
       if(limit){//分页时
@@ -239,6 +259,32 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         callback(rows);
       }
       
+    },
+    //获取匹配函数
+    _getMatchFn : function(params, matchFields){
+      var _self = this;
+      return function(obj){
+        var result = true;
+        BUI.each(matchFields,function(field){
+          if(params[field] != null && !(params[field] === obj[field])){
+            result = false;
+            return false;
+          }
+        });
+        return result;
+      }
+    },
+    //获取匹配的值
+    _getMatches : function(params){
+      var _self = this,
+        matchFields = _self.get('matchFields'),
+        matchFn,
+        data = _self.get('data') || [];
+      if(params && matchFields.length){
+        matchFn = _self._getMatchFn(params,matchFields);
+        data = BUI.Array.filter(data,matchFn);
+      }
+      return data;
     }
 
   });

@@ -301,6 +301,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'pageIndex'
     },
     /**
+     * 传递到后台，分页开始的页码，默认从0开始
+     * @type {Number}
+     */
+    pageStart : {
+      value : 0
+    },
+    /**
     * 加载数据时，返回的格式,目前只支持"json、jsonp"格式<br>
     * @cfg {String} [dataType='json']
     */
@@ -351,8 +358,11 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.augment(ajaxProxy,{
     _processParams : function(params){
       var _self = this,
+        pageStart = _self.get('pageStart'),
         arr = ['start','limit','pageIndex'];
-
+      if(params.pageIndex != null){
+        params.pageIndex = params.pageIndex + pageStart;
+      }
       BUI.each(arr,function(field){
         var fieldParam = _self.get(field+'Param');
         if(fieldParam !== field){
@@ -403,6 +413,15 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   var memeryProxy = function(config){
     memeryProxy.superclass.constructor.call(this,config);
   };
+  memeryProxy.ATTRS = {
+    /**
+     * 匹配的字段名
+     * @type {Array}
+     */
+    matchFields : {
+      value : []
+    }
+  };
 
   BUI.extend(memeryProxy,proxy);
 
@@ -423,6 +442,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = _self.get('data'),
         rows = []; 
 
+      data = _self._getMatches(params);
       _self.sortData(sortField,sortDirection); 
 
       if(limit){//分页时
@@ -433,6 +453,32 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         callback(rows);
       }
       
+    },
+    //获取匹配函数
+    _getMatchFn : function(params, matchFields){
+      var _self = this;
+      return function(obj){
+        var result = true;
+        BUI.each(matchFields,function(field){
+          if(params[field] != null && !(params[field] === obj[field])){
+            result = false;
+            return false;
+          }
+        });
+        return result;
+      }
+    },
+    //获取匹配的值
+    _getMatches : function(params){
+      var _self = this,
+        matchFields = _self.get('matchFields'),
+        matchFn,
+        data = _self.get('data') || [];
+      if(params && matchFields.length){
+        matchFn = _self._getMatchFn(params,matchFields);
+        data = BUI.Array.filter(data,matchFn);
+      }
+      return data;
     }
 
   });
@@ -464,6 +510,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
   }
 
   AbstractStore.ATTRS = {
+
     /**
     * 创建对象时是否自动加载
     * <pre><code>
@@ -476,6 +523,13 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     */
     autoLoad: {
       value :false 
+    },
+    /**
+     * 是否服务器端过滤数据，如果设置此属性，当调用filter()函数时发送请求
+     * @type {Object}
+     */
+    remoteFilter: {
+        value : false
     },
     /**
      * 上次查询的参数
@@ -757,7 +811,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         proxy = _self.get('proxy'),
         lastParams = _self.get('lastParams');
 
-      BUI.mix(true,lastParams,_self.getAppendParams(),params);
+      BUI.mix(lastParams,_self.getAppendParams(),params);
 
       _self.fire('beforeload',{params:lastParams});
 
@@ -769,6 +823,14 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
           callback(data,params);
         }
       },_self);
+    },
+    /**
+     * 触发过滤
+     * @protected
+     */
+    onFiltered : function(data,filter){
+      var _self = this;
+      _self.fire('filtered',{data : data,filter : filter});
     },
     /**
      * 加载完数据
@@ -783,6 +845,56 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       if(processResult){
         _self.afterProcessLoad(data,params);
       }
+    },
+    /**
+     * 过滤数据，此函数的执行同属性 remoteFilter关联密切
+     *
+     *  - remoteFilter == true时：此函数只接受字符串类型的过滤参数，将{filter : filterStr}参数传输到服务器端
+     *  - remoteFilter == false时：此函数接受比对函数，只有当函数返回true时生效
+     *  
+     * @param {Function|String} fn 过滤函数
+     * @return {Array} 过滤结果
+     */
+    filter : function(filter){
+        var _self = this,
+            remoteFilter = _self.get('remoteFilter'),
+            result;
+
+        if(remoteFilter){
+            _self.load({filter : filter});
+        }else{
+            _self.set('filter',filter);
+            result = _self._filterLocal(filter);
+            _self.onFiltered(result,filter);
+        }
+    },
+    /**
+     * @protected
+     * 过滤缓存的数据
+     * @param  {Function} fn 过滤函数
+     * @return {Array} 过滤结果
+     */
+    _filterLocal : function(fn){
+        
+    },
+    _clearLocalFilter : function(){
+        this._filterLocal(function(){
+            return true;
+        });
+    },
+    /**
+     * 清理过滤
+     */
+    clearFilter : function(){
+        var _self = this,
+            remoteFilter = _self.get('remoteFilter'),
+            result;
+
+        if(remoteFilter){
+            _self.load({filter : ''});
+        }else{
+            _self._clearLocalFilter();
+        }
     },
     /**
      * @private
@@ -1036,6 +1148,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
 
     },
     /**
+     * 标示父元素id的字段名称
+     * @type {String}
+     */
+    pidField : {
+      
+    },
+    /**
      * 返回数据标示数据的字段</br>
      * 异步加载数据时，返回数据可以使数组或者对象
      * - 如果返回的是对象,可以附加其他信息,那么取对象对应的字段 {nodes : [],hasError:false}
@@ -1120,11 +1239,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     _initData : function(){
       var _self = this,
         autoLoad = _self.get('autoLoad'),
+        pidField = _self.get('pidField'),
+        proxy = _self.get('proxy'),
         root = _self.get('root');
 
+      //添加默认的匹配父元素的字段
+      if(!proxy.get('url') && pidField){
+        proxy.get('matchFields').push(pidField);
+      }
+      
       if(autoLoad && !root.children){
-        params = root.id ? {id : root.id}: {};
-        _self.load(params);
+        //params = root.id ? {id : root.id}: {};
+        _self.loadNode(root);
       }
     },
     /**
@@ -1414,7 +1540,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      */
     afterProcessLoad : function(data,params){
       var _self = this,
-        id = params.id,
+        pidField = _self.get('pidField'),
+        id = params.id || params[pidField],
         dataProperty = _self.get('dataProperty'),
         node = _self.findNode(id) || _self.get('root');//如果找不到父元素，则放置在跟节点
 
@@ -1430,8 +1557,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean} 
      */
     hasData : function(){
-      return true;
-      //return this.get('root').children && this.get('root').children.length !== 0;
+      //return true;
+      return this.get('root').children && this.get('root').children.length !== 0;
     },
     /**
      * 是否已经加载过，叶子节点或者存在字节点的节点
@@ -1439,9 +1566,14 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean}  是否加载过
      */
     isLoaded : function(node){
-      if(!this.get('url')){ //如果不从远程加载数据,默认已经加载
+      var root = this.get('root');
+      if(node == root && !root.children){
+        return false;
+      }
+      if(!this.get('url') && !this.get('pidField')){ //如果不从远程加载数据,默认已经加载
         return true;
       }
+      
       return node.leaf || (node.children && node.children.length);
     },
     /**
@@ -1454,7 +1586,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(_self.isLoaded(node)){
         return ;
       }
-      if(!_self.get('url')){ //如果不从远程加载数据，不是根节点的话，取消加载
+      if(!_self.get('url') && _self.get('data')){ //如果不从远程加载数据，不是根节点的话，取消加载
+        var pidField = _self.get('pidField'),
+          params = {id : node.id};
+        if(pidField){
+          params[pidField] = node.id;
+        }
+        _self.load(params);
         return;
       }else{
         _self.load({id:node.id,path : ''});
@@ -1939,6 +2077,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }
       return;
     },
+
     /**
      * 获取缓存的记录数
      * <pre><code>
@@ -2143,6 +2282,27 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       _self.get('newRecords').splice(0);
       _self.get('modifiedRecords').splice(0);
       _self.get('deletedRecords').splice(0);
+    },
+    /**
+     * @protected
+     * 过滤缓存的数据
+     * @param  {Function} fn 过滤函数
+     * @return {Array} 过滤结果
+     */
+    _filterLocal : function(fn,data){
+
+      var _self = this,
+        rst = [];
+      data = data || _self.getResult();
+      if(!fn){ //没有过滤器时直接返回
+        return data;
+      }
+      BUI.each(data,function(record){
+        if(fn(record)){
+          rst.push(record);
+        }
+      });
+      return rst;
     },
     //获取默认的匹配函数
     _getDefaultMatch :function(){

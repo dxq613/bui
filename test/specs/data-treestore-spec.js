@@ -1,3 +1,4 @@
+/**/
 BUI.use('bui/data',function (Data) {
   var TStore = Data.TreeStore;
   var data = [
@@ -53,7 +54,6 @@ BUI.use('bui/data',function (Data) {
       });
     });
   });
-  /**/
   describe('查找节点',function(){
 
     var store = new TStore({
@@ -110,7 +110,7 @@ BUI.use('bui/data',function (Data) {
   });
 
   describe('加载数据',function(){
-     var store = new TStore({
+    var store = new TStore({
       root : {
         id : '0',
         text : '根节点',
@@ -128,6 +128,48 @@ BUI.use('bui/data',function (Data) {
       runs(function(){
         expect(node.children.length).not.toBe(0);
       });
+    });
+  });
+});
+
+
+BUI.use('bui/data',function(Data){
+  var TStore = Data.TreeStore,
+    data = [
+      {pid : '1',id : '11',text : '11',leaf : false},
+      {pid : '1',id : '12',text : '12'},
+      {pid : '11',id : '112',text : '112'},
+      {pid : '11',id : '111',text : '111'},
+      {pid : '1',id : '13',text : '13',leaf : false},
+      {pid : '13',id : '131',text : '131',leaf : false},
+      {pid : '131',id : '1311',text : '1311'},
+      {pid : '13',id : '132',text : '132'},
+      {pid : '131',id : '1312',text : '1312'}
+    ],
+    store = new TStore({
+      data : data,
+      root : {
+        id : '1',
+        text : '1'
+      },
+      pidField : 'pid'
+    });
+  describe('设置数据,获取子节点',function(){
+    it('proxy的匹配字段',function(){
+      var proxy = store.get('proxy');
+      expect(proxy.get('matchFields').length).toBe(1);
+      expect(proxy.get('matchFields')[0]).toBe('pid');
+    });
+    it('默认加载的子节点',function(){
+      var root = store.get('root');
+      expect(root.children.length).toBe(3);
+    });
+    it('加载子节点',function(){
+      var node = store.findNode('13');
+      expect(node).not.toBe(null);
+      expect(node.children.length).toBe(0);
+      store.loadNode(node);
+      expect(node.children.length).toBe(2);
     });
   });
 });

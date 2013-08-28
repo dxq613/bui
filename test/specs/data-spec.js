@@ -2,6 +2,7 @@
 function contains(record,array){
   return $.inArray(record,array) !== -1;
 }
+/*
 BUI.use('bui/data',function (Data) {
   var Store = Data.Store;
   describe("测试未分页本地数据",function(){
@@ -363,4 +364,23 @@ BUI.use('bui/data',function (Data) {
     });
   });
 
+});
+*/
+BUI.use('bui/data',function(Data){
+  describe('修改传递到后台的参数',function(){
+    var store = new Data.Store({
+      url : 'data/store.json',
+      pageSize:10,
+      proxy : {
+        limitParam : 'l',
+        pageIndexParam : 'p',
+        startParam : 's',
+        pageStart : 1
+      }
+    });
+
+    it('测试加载',function(){
+      store.load();
+    });
+  });
 });

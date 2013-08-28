@@ -691,7 +691,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          * @protected
          * @return {Number} 附加宽度
          */
-        getAppendHeigtht : function(){
+        getAppendHeight : function(){
             var el = this.get('el');
             return el.outerHeight() - el.height();
         },
@@ -958,7 +958,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 i,
                 view,
                 children = self.get('children');
-            id = self.get(id);
+            id = self.get('id');
             for (i = 0; i < children.length; i++) {
                 children[i].destroy && children[i].destroy();
             }

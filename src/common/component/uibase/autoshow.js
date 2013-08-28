@@ -191,7 +191,7 @@ define('bui/component/uibase/autoshow',function () {
 
       //触发隐藏
       function tiggerHide (ev){
-        var toElement = ev.toElement;
+        var toElement = ev.toElement || ev.relatedTarget;
         if(!toElement || !_self.containsElement(toElement)){ //mouseleave时，如果移动到当前控件上，取消消失
           _self.hide();
         }

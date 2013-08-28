@@ -1,5 +1,5 @@
 
-/**/
+
 BUI.use('bui/tab',function (Tab){
   
   var CLS_ITEM_TITLE = 'tab-item-title',
@@ -49,13 +49,14 @@ BUI.use('bui/tab',function (Tab){
   });
   
 });
-
-BUI.use('bui/tab/navtab',function(NavTab){
+/**/
+BUI.use('bui/tab',function(Tab){
 
   var CLS_NAV_LIST = 'tab-nav-list';
-  var tab = new NavTab({
+  var tab = new Tab.NavTab({
     render:'#t2',
 	  height:500,
+    forceFit : true,
     children : [
       {
         title : '测试标签',

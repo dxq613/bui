@@ -2079,7 +2079,14 @@ define('bui/util',function(){
         result = {};
       BUI.each(array,function(item){
         var name = item.name;
-        result[item.name] = item.value;
+        if(!result[name]){ //\u5982\u679c\u662f\u5355\u4e2a\u503c\uff0c\u76f4\u63a5\u8d4b\u503c
+          result[name] = item.value;  
+        }else{ //\u591a\u503c\u4f7f\u7528\u6570\u7ec4
+          if(!BUI.isArray(result[name])){
+            result[name] = [result[name]];
+          }
+          result[name].push(item.value);
+        }
       });
       return result;
     },
@@ -2124,9 +2131,15 @@ define('bui/util',function(){
           if(field.type === 'checkbox'){
             if(field.value === value || BUI.Array.indexOf(field.value,value) !== -1){
               $(field).attr('checked',true);
+            }else{
+              $(field).attr('checked',false);  
             }
-          }else if(field.type === 'radio' && field.value === value){
-            $(field).attr('checked',true);
+          }else if(field.type === 'radio'){
+            if(field.value === value){
+              $(field).attr('checked',true);
+            }else{
+              $(field).attr('checked',false); 
+            }    
           }else{
             $(field).val(value);
           }
@@ -3895,7 +3908,7 @@ define('bui/base',['bui/observable'],function(require){
             delete _self.getAttrVals()[name];
         }
 
-        return self;
+        return _self;
     },
     /**
      * \u8bbe\u7f6e\u5c5e\u6027\u503c\uff0c\u4f1a\u89e6\u53d1before+Name+Change,\u548c after+Name+Change\u4e8b\u4ef6
@@ -3927,7 +3940,7 @@ define('bui/base',['bui/observable'],function(require){
                         setInternal(_self, name, all[name], opts);
                     }
                 }
-                return self;
+                return _self;
             }
             return setInternal(_self, name, value, opts);
     },
@@ -5419,7 +5432,7 @@ define('bui/component/uibase/autoshow',function () {
 
       //\u89e6\u53d1\u9690\u85cf
       function tiggerHide (ev){
-        var toElement = ev.toElement;
+        var toElement = ev.toElement || ev.relatedTarget;
         if(!toElement || !_self.containsElement(toElement)){ //mouseleave\u65f6\uff0c\u5982\u679c\u79fb\u52a8\u5230\u5f53\u524d\u63a7\u4ef6\u4e0a\uff0c\u53d6\u6d88\u6d88\u5931
           _self.hide();
         }
@@ -5592,7 +5605,7 @@ define('bui/component/uibase/autohide',function () {
      */
     handleMoveOuter : function (ev) {
       var _self = this,
-        target = ev.toElement;
+        target = ev.toElement || ev.relatedTarget;
       if(!_self.containsElement(target) && !isExcept(_self,target)){
         if(_self.fire('autohide') !== false){
           _self.hide();
@@ -5618,11 +5631,11 @@ define('bui/component/uibase/autohide',function () {
         trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
-        $(document).on('mousedown',wrapBehavior(this,'handleDocumentClick'));
+        $(document).on('mousedown',wrapBehavior(_self,'handleDocumentClick'));
       }else{
-        _self.get('el').on('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        _self.get('el').on('mouseleave',wrapBehavior(_self,'handleMoveOuter'));
         if(trigger){
-          $(trigger).on('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+          $(trigger).on('mouseleave',wrapBehavior(_self,'handleMoveOuter'))
         }
       }
 
@@ -5633,11 +5646,11 @@ define('bui/component/uibase/autohide',function () {
         trigger = _self.get('curTrigger'),
         autoHideType = _self.get('autoHideType');
       if(autoHideType === 'click'){
-        $(document).off('mousedown',getWrapBehavior(this,'handleDocumentClick'));
+        $(document).off('mousedown',getWrapBehavior(_self,'handleDocumentClick'));
       }else{
-        _self.get('el').off('mouseleave',wrapBehavior(this,'handleMoveOuter'));
+        _self.get('el').off('mouseleave',getWrapBehavior(_self,'handleMoveOuter'));
         if(trigger){
-          $(trigger).off('mouseleave',wrapBehavior(this,'handleMoveOuter'))
+          $(trigger).off('mouseleave',getWrapBehavior(_self,'handleMoveOuter'))
         }
       }
     }
@@ -10725,7 +10738,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
          * @protected
          * @return {Number} \u9644\u52a0\u5bbd\u5ea6
          */
-        getAppendHeigtht : function(){
+        getAppendHeight : function(){
             var el = this.get('el');
             return el.outerHeight() - el.height();
         },
@@ -10992,7 +11005,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 i,
                 view,
                 children = self.get('children');
-            id = self.get(id);
+            id = self.get('id');
             for (i = 0; i < children.length; i++) {
                 children[i].destroy && children[i].destroy();
             }
@@ -12005,6 +12018,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'pageIndex'
     },
     /**
+     * \u4f20\u9012\u5230\u540e\u53f0\uff0c\u5206\u9875\u5f00\u59cb\u7684\u9875\u7801\uff0c\u9ed8\u8ba4\u4ece0\u5f00\u59cb
+     * @type {Number}
+     */
+    pageStart : {
+      value : 0
+    },
+    /**
     * \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u7684\u683c\u5f0f,\u76ee\u524d\u53ea\u652f\u6301"json\u3001jsonp"\u683c\u5f0f<br>
     * @cfg {String} [dataType='json']
     */
@@ -12055,8 +12075,11 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.augment(ajaxProxy,{
     _processParams : function(params){
       var _self = this,
+        pageStart = _self.get('pageStart'),
         arr = ['start','limit','pageIndex'];
-
+      if(params.pageIndex != null){
+        params.pageIndex = params.pageIndex + pageStart;
+      }
       BUI.each(arr,function(field){
         var fieldParam = _self.get(field+'Param');
         if(fieldParam !== field){
@@ -12107,6 +12130,15 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   var memeryProxy = function(config){
     memeryProxy.superclass.constructor.call(this,config);
   };
+  memeryProxy.ATTRS = {
+    /**
+     * \u5339\u914d\u7684\u5b57\u6bb5\u540d
+     * @type {Array}
+     */
+    matchFields : {
+      value : []
+    }
+  };
 
   BUI.extend(memeryProxy,proxy);
 
@@ -12127,6 +12159,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = _self.get('data'),
         rows = []; 
 
+      data = _self._getMatches(params);
       _self.sortData(sortField,sortDirection); 
 
       if(limit){//\u5206\u9875\u65f6
@@ -12137,6 +12170,32 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         callback(rows);
       }
       
+    },
+    //\u83b7\u53d6\u5339\u914d\u51fd\u6570
+    _getMatchFn : function(params, matchFields){
+      var _self = this;
+      return function(obj){
+        var result = true;
+        BUI.each(matchFields,function(field){
+          if(params[field] != null && !(params[field] === obj[field])){
+            result = false;
+            return false;
+          }
+        });
+        return result;
+      }
+    },
+    //\u83b7\u53d6\u5339\u914d\u7684\u503c
+    _getMatches : function(params){
+      var _self = this,
+        matchFields = _self.get('matchFields'),
+        matchFn,
+        data = _self.get('data') || [];
+      if(params && matchFields.length){
+        matchFn = _self._getMatchFn(params,matchFields);
+        data = BUI.Array.filter(data,matchFn);
+      }
+      return data;
     }
 
   });
@@ -12168,6 +12227,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
   }
 
   AbstractStore.ATTRS = {
+
     /**
     * \u521b\u5efa\u5bf9\u8c61\u65f6\u662f\u5426\u81ea\u52a8\u52a0\u8f7d
     * <pre><code>
@@ -12180,6 +12240,13 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     */
     autoLoad: {
       value :false 
+    },
+    /**
+     * \u662f\u5426\u670d\u52a1\u5668\u7aef\u8fc7\u6ee4\u6570\u636e\uff0c\u5982\u679c\u8bbe\u7f6e\u6b64\u5c5e\u6027\uff0c\u5f53\u8c03\u7528filter()\u51fd\u6570\u65f6\u53d1\u9001\u8bf7\u6c42
+     * @type {Object}
+     */
+    remoteFilter: {
+        value : false
     },
     /**
      * \u4e0a\u6b21\u67e5\u8be2\u7684\u53c2\u6570
@@ -12461,7 +12528,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         proxy = _self.get('proxy'),
         lastParams = _self.get('lastParams');
 
-      BUI.mix(true,lastParams,_self.getAppendParams(),params);
+      BUI.mix(lastParams,_self.getAppendParams(),params);
 
       _self.fire('beforeload',{params:lastParams});
 
@@ -12473,6 +12540,14 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
           callback(data,params);
         }
       },_self);
+    },
+    /**
+     * \u89e6\u53d1\u8fc7\u6ee4
+     * @protected
+     */
+    onFiltered : function(data,filter){
+      var _self = this;
+      _self.fire('filtered',{data : data,filter : filter});
     },
     /**
      * \u52a0\u8f7d\u5b8c\u6570\u636e
@@ -12487,6 +12562,56 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       if(processResult){
         _self.afterProcessLoad(data,params);
       }
+    },
+    /**
+     * \u8fc7\u6ee4\u6570\u636e\uff0c\u6b64\u51fd\u6570\u7684\u6267\u884c\u540c\u5c5e\u6027 remoteFilter\u5173\u8054\u5bc6\u5207
+     *
+     *  - remoteFilter == true\u65f6\uff1a\u6b64\u51fd\u6570\u53ea\u63a5\u53d7\u5b57\u7b26\u4e32\u7c7b\u578b\u7684\u8fc7\u6ee4\u53c2\u6570\uff0c\u5c06{filter : filterStr}\u53c2\u6570\u4f20\u8f93\u5230\u670d\u52a1\u5668\u7aef
+     *  - remoteFilter == false\u65f6\uff1a\u6b64\u51fd\u6570\u63a5\u53d7\u6bd4\u5bf9\u51fd\u6570\uff0c\u53ea\u6709\u5f53\u51fd\u6570\u8fd4\u56detrue\u65f6\u751f\u6548
+     *  
+     * @param {Function|String} fn \u8fc7\u6ee4\u51fd\u6570
+     * @return {Array} \u8fc7\u6ee4\u7ed3\u679c
+     */
+    filter : function(filter){
+        var _self = this,
+            remoteFilter = _self.get('remoteFilter'),
+            result;
+
+        if(remoteFilter){
+            _self.load({filter : filter});
+        }else{
+            _self.set('filter',filter);
+            result = _self._filterLocal(filter);
+            _self.onFiltered(result,filter);
+        }
+    },
+    /**
+     * @protected
+     * \u8fc7\u6ee4\u7f13\u5b58\u7684\u6570\u636e
+     * @param  {Function} fn \u8fc7\u6ee4\u51fd\u6570
+     * @return {Array} \u8fc7\u6ee4\u7ed3\u679c
+     */
+    _filterLocal : function(fn){
+        
+    },
+    _clearLocalFilter : function(){
+        this._filterLocal(function(){
+            return true;
+        });
+    },
+    /**
+     * \u6e05\u7406\u8fc7\u6ee4
+     */
+    clearFilter : function(){
+        var _self = this,
+            remoteFilter = _self.get('remoteFilter'),
+            result;
+
+        if(remoteFilter){
+            _self.load({filter : ''});
+        }else{
+            _self._clearLocalFilter();
+        }
     },
     /**
      * @private
@@ -12740,6 +12865,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
 
     },
     /**
+     * \u6807\u793a\u7236\u5143\u7d20id\u7684\u5b57\u6bb5\u540d\u79f0
+     * @type {String}
+     */
+    pidField : {
+      
+    },
+    /**
      * \u8fd4\u56de\u6570\u636e\u6807\u793a\u6570\u636e\u7684\u5b57\u6bb5</br>
      * \u5f02\u6b65\u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u6570\u636e\u53ef\u4ee5\u4f7f\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
      * - \u5982\u679c\u8fd4\u56de\u7684\u662f\u5bf9\u8c61,\u53ef\u4ee5\u9644\u52a0\u5176\u4ed6\u4fe1\u606f,\u90a3\u4e48\u53d6\u5bf9\u8c61\u5bf9\u5e94\u7684\u5b57\u6bb5 {nodes : [],hasError:false}
@@ -12824,11 +12956,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     _initData : function(){
       var _self = this,
         autoLoad = _self.get('autoLoad'),
+        pidField = _self.get('pidField'),
+        proxy = _self.get('proxy'),
         root = _self.get('root');
 
+      //\u6dfb\u52a0\u9ed8\u8ba4\u7684\u5339\u914d\u7236\u5143\u7d20\u7684\u5b57\u6bb5
+      if(!proxy.get('url') && pidField){
+        proxy.get('matchFields').push(pidField);
+      }
+      
       if(autoLoad && !root.children){
-        params = root.id ? {id : root.id}: {};
-        _self.load(params);
+        //params = root.id ? {id : root.id}: {};
+        _self.loadNode(root);
       }
     },
     /**
@@ -13118,7 +13257,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      */
     afterProcessLoad : function(data,params){
       var _self = this,
-        id = params.id,
+        pidField = _self.get('pidField'),
+        id = params.id || params[pidField],
         dataProperty = _self.get('dataProperty'),
         node = _self.findNode(id) || _self.get('root');//\u5982\u679c\u627e\u4e0d\u5230\u7236\u5143\u7d20\uff0c\u5219\u653e\u7f6e\u5728\u8ddf\u8282\u70b9
 
@@ -13134,8 +13274,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean} 
      */
     hasData : function(){
-      return true;
-      //return this.get('root').children && this.get('root').children.length !== 0;
+      //return true;
+      return this.get('root').children && this.get('root').children.length !== 0;
     },
     /**
      * \u662f\u5426\u5df2\u7ecf\u52a0\u8f7d\u8fc7\uff0c\u53f6\u5b50\u8282\u70b9\u6216\u8005\u5b58\u5728\u5b57\u8282\u70b9\u7684\u8282\u70b9
@@ -13143,9 +13283,14 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean}  \u662f\u5426\u52a0\u8f7d\u8fc7
      */
     isLoaded : function(node){
-      if(!this.get('url')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e,\u9ed8\u8ba4\u5df2\u7ecf\u52a0\u8f7d
+      var root = this.get('root');
+      if(node == root && !root.children){
+        return false;
+      }
+      if(!this.get('url') && !this.get('pidField')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e,\u9ed8\u8ba4\u5df2\u7ecf\u52a0\u8f7d
         return true;
       }
+      
       return node.leaf || (node.children && node.children.length);
     },
     /**
@@ -13158,7 +13303,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(_self.isLoaded(node)){
         return ;
       }
-      if(!_self.get('url')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
+      if(!_self.get('url') && _self.get('data')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
+        var pidField = _self.get('pidField'),
+          params = {id : node.id};
+        if(pidField){
+          params[pidField] = node.id;
+        }
+        _self.load(params);
         return;
       }else{
         _self.load({id:node.id,path : ''});
@@ -13643,6 +13794,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }
       return;
     },
+
     /**
      * \u83b7\u53d6\u7f13\u5b58\u7684\u8bb0\u5f55\u6570
      * <pre><code>
@@ -13848,6 +14000,27 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       _self.get('modifiedRecords').splice(0);
       _self.get('deletedRecords').splice(0);
     },
+    /**
+     * @protected
+     * \u8fc7\u6ee4\u7f13\u5b58\u7684\u6570\u636e
+     * @param  {Function} fn \u8fc7\u6ee4\u51fd\u6570
+     * @return {Array} \u8fc7\u6ee4\u7ed3\u679c
+     */
+    _filterLocal : function(fn,data){
+
+      var _self = this,
+        rst = [];
+      data = data || _self.getResult();
+      if(!fn){ //\u6ca1\u6709\u8fc7\u6ee4\u5668\u65f6\u76f4\u63a5\u8fd4\u56de
+        return data;
+      }
+      BUI.each(data,function(record){
+        if(fn(record)){
+          rst.push(record);
+        }
+      });
+      return rst;
+    },
     //\u83b7\u53d6\u9ed8\u8ba4\u7684\u5339\u914d\u51fd\u6570
     _getDefaultMatch :function(){
 
@@ -14008,7 +14181,10 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    *     var overlay = new Overlay.Overlay({
    *       trigger : '#btn',
    *       content : '\u8fd9\u662f\u5185\u5bb9',
-   *       elCls : '\u5916\u5c42\u5e94\u7528\u7684\u6837\u5f0f',
+   *       align : {
+   *         points : ['bl','tl']
+   *       }, //\u5bf9\u9f50\u65b9\u5f0f
+   *       elCls : 'custom-cls', //\u81ea\u5b9a\u4e49\u6837\u5f0f
    *       autoHide : true //\u70b9\u51fboverlay\u5916\u9762\uff0coverlay \u4f1a\u81ea\u52a8\u9690\u85cf
    *     });
    *
@@ -14562,9 +14738,9 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
    *       },'error');
    *       
    *    //\u590d\u6742\u7684\u63d0\u793a\u4fe1\u606f
-   *    var msg = '<h2>\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u4e0a\u4f2010M\u4ee5\u5185\u7684\u6587\u4ef6</h2>'+
-   *       '<p class="auxiliary-text">\u5982\u8fde\u7eed\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u53ca\u65f6\u8054\u7cfb\u5ba2\u670d\u70ed\u7ebf\uff1a0511-23883767834</p>'+
-   *       '<p><a href="#">\u8fd4\u56delist\u9875\u9762</a> <a href="#">\u67e5\u770b\u8be6\u60c5</a></p>';
+   *    var msg = '&lt;h2&gt;\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u4e0a\u4f2010M\u4ee5\u5185\u7684\u6587\u4ef6&lt;/h2&gt;'+
+   *       '&lt;p class="auxiliary-text"&gt;\u5982\u8fde\u7eed\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u53ca\u65f6\u8054\u7cfb\u5ba2\u670d\u70ed\u7ebf\uff1a0511-23883767834&lt;/p&gt;'+
+   *       '&lt;p&gt;&lt;a href="#"&gt;\u8fd4\u56delist\u9875\u9762&lt;/a&gt; &lt;a href="#"&gt;\u67e5\u770b\u8be6\u60c5&lt;/a&gt;&lt;/p&gt;';
    *     BUI.Message.Alert(msg,'error');
    *    //\u786e\u8ba4\u4fe1\u606f
    *    BUI.Message.Confirm('\u786e\u8ba4\u8981\u66f4\u6539\u4e48\uff1f',function(){
@@ -17614,6 +17790,9 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         if(!value){
           if(el.is(selector)){
             value = el.val();
+            if(!value && el.is('select')){
+              value = el.attr('value');
+            }
           }else{
             value = el.find(selector).val(); 
           }
@@ -18495,6 +18674,139 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   return PlainField;
+});/**
+ * @fileOverview \u8868\u5355\u4e2d\u7684\u5217\u8868\uff0c\u6bcf\u4e2a\u5217\u8868\u540e\u6709\u4e2a\u9690\u85cf\u57df\u7528\u6765\u5b58\u50a8\u6570\u636e
+ * @ignore
+ */
+
+define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],function (require) {
+  var BUI = require('bui/common'),
+    List = require('bui/list'),
+    Field = require('bui/form/basefield');
+
+  /**
+   * @class BUI.Form.Field.List
+   * \u8868\u5355\u4e2d\u7684\u5217\u8868
+   * @extends BUI.Form.Field
+   */
+  var List = Field.extend({
+
+    initializer : function(){
+      var _self = this;
+      //if(!_self.get('srcNode')){
+        _self._initList();
+      //}
+    },
+    _getList : function(){
+      var _self = this,
+        children = _self.get('children');
+      return children[0];
+    },
+    bindUI : function(){
+      var _self = this,
+        list = _self._getList();
+      if(list){
+        list.on('selectedchange',function(){
+          var value = _self._getListValue(list);
+          _self.set('value',value);
+        });
+      }
+    },
+    //\u83b7\u53d6\u5217\u8868\u503c
+    _getListValue : function(list){
+      var _self = this;
+      list = list || _self._getList();
+      return list.getSelectionValues().join(',');
+    },
+    /**
+     * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
+     * @protected
+     * @param {*} value \u5b57\u6bb5\u503c
+     */
+    setControlValue : function(value){
+      var _self = this,
+        innerControl = _self.getInnerControl(),
+        list = _self._getList();
+      innerControl.val(value);
+      if(_self._getListValue(list) !== value && list.getCount()){
+        if(list.get('multipleSelect')){
+          list.clearSelection();
+        }
+        list.setSelectionByField(value.split(','));
+      }
+    },
+    //\u540c\u6b65\u6570\u636e
+    syncUI : function(){
+       this.set('list',this._getList());
+    },
+    //\u521d\u59cb\u5316\u5217\u8868
+    _initList : function(){
+      var _self = this,
+        children = _self.get('children'),
+        list = _self.get('list') || {};
+      if(children[0]){
+        return;
+      }
+      if($.isPlainObject(list)){
+        list.xclass = list.xclass || 'simple-list';
+      }
+      children.push(list);
+    },
+    /**
+     * \u8bbe\u7f6e\u9009\u9879
+     * @param {Array} items \u9009\u9879\u8bb0\u5f55
+     */
+    setItems : function(items){
+      var _self = this,
+        value = _self.get('value'),
+        list = _self._getList();
+      list.set('items',items);
+      list.setSelectionByField(value.split(','));
+    },
+    //\u8bbe\u7f6e\u9009\u9879\u96c6\u5408
+    _uiSetItems : function(v){
+      if(v){
+        this.setItems(v);
+      }
+    }
+  },{
+    ATTRS : {
+      /**
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
+       * @type {String}
+       */
+      controlTpl : {
+        value : '<input type="hidden"/>'
+      },
+      /**
+       * \u9009\u9879
+       * @type {Array}
+       */
+      items : {
+        setter : function(v){
+          if($.isPlainObject(v)){
+            var rst = [];
+            BUI.each(v,function(v,k){
+              rst.push({value : k,text :v});
+            });
+            v = rst;
+          }
+          return v;
+        }
+      },
+      /**
+       * \u5217\u8868
+       * @type {BUI.List.SimpleList}
+       */
+      list : {
+
+      }
+    }
+  },{
+    xclass : 'form-field-list'
+  });
+
+  return List;
 });/**
  * @fileOverview \u8868\u5355\u57df\u7684\u5165\u53e3\u6587\u4ef6
  * @ignore
@@ -22918,6 +23230,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     Component =  BUI.Component,
     CLS_ITEM_TITLE = 'tab-item-title',
     CLS_ITEM_CLOSE = 'tab-item-close',
+    CLS_ITEM_INNER = 'tab-item-inner',
     CLS_NAV_ACTIVED = 'tab-nav-actived',
     CLS_CONTENT = 'tab-content';
 
@@ -23243,7 +23556,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       },
       tpl : {
         view:true,
-        value :'<span class="' + CLS_ITEM_TITLE + '"></span><s class="' + CLS_ITEM_CLOSE + '"></s>'
+        value :'<s class="l"></s><div class="' + CLS_ITEM_INNER + '">{icon}<span class="' + CLS_ITEM_TITLE + '"></span><s class="' + CLS_ITEM_CLOSE + '"></s></div><s class="r"></s>'
       },
       xview:{
         value : navTabItemView
@@ -23269,6 +23582,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     CLS_NAV_LIST = 'tab-nav-list',
     CLS_ARROW_LEFT = 'arrow-left',
     CLS_ARROW_RIGHT = 'arrow-right',
+    CLS_FORCE_FIT = BUI.prefix + 'tab-force',
     ID_CLOSE = 'm_close',
     ITEM_WIDTH = 140;
 
@@ -23282,10 +23596,8 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     renderUI : function(){
       var _self = this,
         el = _self.get('el'),
-        //tpl = _self.get('tpl'),
         listEl = null;
 
-      //$(tpl).appendTo(el);
       listEl = el.find('.' + CLS_NAV_LIST);
       _self.setInternal('listEl',listEl);
     },
@@ -23305,9 +23617,21 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         containerEl.height(v - barEl.height());
       }
       el.height(v);
+    },
+    //\u8bbe\u7f6e\u81ea\u52a8\u9002\u5e94\u5bbd\u5ea6
+    _uiSetForceFit : function(v){
+      var _self = this,
+        el = _self.get('el');
+      if(v){
+        el.addClass(CLS_FORCE_FIT);
+      }else{
+        el.removeClass(CLS_FORCE_FIT);
+      }
     }
   },{
-
+    ATTRS : {
+      forceFit : {}
+    }
   },{
     xclass : 'nav-tab-view',
     priority:0
@@ -23331,6 +23655,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       addTab:function(config,reload){
         var _self = this,
           id = config.id || BUI.guid('tab-item'),
+          forceFit = _self.get('forceFit'),
           item = _self.getItemById(id);
 
         if(item){
@@ -23353,6 +23678,9 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           },config);
 
           item = _self.addChild(config);
+          if(forceFit){
+            _self.forceFit();
+          }
           item.show();
           _self._resetItemList();
         }
@@ -23367,9 +23695,17 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       //\u7ed1\u5b9a\u4e8b\u4ef6
       bindUI: function(){
-        var _self = this;
-
-        _self._bindScrollEvent();
+        var _self = this,
+          forceFit = _self.get('forceFit');
+        if(!forceFit){
+          _self._bindScrollEvent();
+          _self.on('afterVisibleChange',function(ev){
+            var item = ev.target;
+            if(item.get('actived')){
+              _self._scrollToItem(item);
+            }
+          });
+        }
 
         //\u76d1\u542c\u70b9\u51fb\u6807\u7b7e
         _self.on('click',function(ev){
@@ -23390,12 +23726,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           _self._showMenu(ev.target,ev.position);
         });
 
-        _self.on('afterVisibleChange',function(ev){
-          var item = ev.target;
-          if(item.get('actived')){
-            _self._scrollToItem(item);
-          }
-        });
+        
       },
       //\u7ed1\u5b9a\u6eda\u52a8\u4e8b\u4ef6
       _bindScrollEvent : function(){
@@ -23543,7 +23874,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         var _self = this,
           index = _self._getIndex(item),
           activedItem = _self.getActivedItem(),
-          preItem = _self._getItemByIndex(index -1),
+          preItem = _self.get('preItem') || _self._getItemByIndex(index -1),
           nextItem = _self._getItemByIndex(index + 1);
 
         item.hide(function(){
@@ -23558,7 +23889,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           }else{//\u5220\u9664\u6807\u7b7e\u9879\u65f6\uff0c\u53ef\u80fd\u4f1a\u5f15\u8d77\u6eda\u52a8\u6309\u94ae\u72b6\u6001\u7684\u6539\u53d8
             _self._scrollToItem(activedItem);;
           }
-          
+          _self.forceFit();
         });
         
       },
@@ -23593,16 +23924,51 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       //\u91cd\u65b0\u8ba1\u7b97\u6807\u7b7e\u9879\u5bb9\u5668\u7684\u5bbd\u5ea6\u4f4d\u7f6e
       _resetItemList : function(){
+        if(this.get('forceFit')){
+          return;
+        }
         var _self = this,
+          container = _self.getContentElement();
+
+        container.width(_self._getTotalWidth());
+
+      },
+      //\u83b7\u53d6\u9009\u9879\u7684\u603b\u5bbd\u5ea6\uff0c\u4ee5\u9ed8\u8ba4\u5bbd\u5ea6\u4e3a\u57fa\u6570
+      _getTotalWidth : function(){
+        var _self = this,
+          children = _self.get('children');
+
+        return children.length * _self.get('itemWidth');
+      },
+      _getForceItemWidth : function(){
+        var _self = this,
+          width =  _self.getContentElement().width(),
           children = _self.get('children'),
-          container = _self.getContentElement(),
-          totalWidth = children.length * ITEM_WIDTH;
-
-        container.width(totalWidth);
-
+          totalWidth = _self._getTotalWidth(),
+          itemWidth = _self.get(itemWidth);
+        if(totalWidth > width){
+          itemWidth = width/children.length;
+        }
+        return itemWidth;
+      },
+      forceFit : function(){
+        var _self = this;
+        _self._forceItemWidth(_self._getForceItemWidth());
+      },
+      //\u8bbe\u7f6e\u5e73\u5747\u5bbd\u5ea6
+      _forceItemWidth : function(width){
+        width = width || this.get('itemWidth');
+        var _self = this,
+          children = _self.get('children');
+        BUI.each(children,function(item){
+          item.set('width',width);
+        });
       },
       //\u4f7f\u6307\u5b9a\u6807\u7b7e\u9879\u5728\u7528\u6237\u53ef\u89c6\u533a\u57df\u5185
       _scrollToItem : function(item){
+        if(this.get('forceFit')){ //\u81ea\u9002\u5e94\u540e\uff0c\u4e0d\u8fdb\u884c\u6eda\u52a8
+          return;
+        }
         var _self = this,
           container = _self.getContentElement(),
           containerPosition = container.position(),
@@ -23647,7 +24013,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           wraperWidth = container.parent().width(),
           containerPosition = containerPosition || container.position(),
           offsetLeft = _self._getDistanceToBegin(item,containerPosition),
-          disWidth = offsetLeft + ITEM_WIDTH - wraperWidth; 
+          disWidth = offsetLeft + _self.get('itemWidth') - wraperWidth; 
         return disWidth;
       },
       //\u83b7\u53d6\u6700\u540e\u4e00\u4e2a\u6807\u7b7e\u9879\u79bb\u53f3\u8fb9\u7684\u95f4\u8ddd
@@ -23674,7 +24040,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           disWidth = _self._getLastDistance(container,position),
           toLeft;
         if(disWidth > 0 ){
-          toLeft = disWidth > ITEM_WIDTH ? ITEM_WIDTH : disWidth;
+          toLeft = disWidth > _self.get('itemWidth') ? _self.get('itemWidth') : disWidth;
           _self._scrollTo(container,position.left - toLeft);
         }
 
@@ -23686,7 +24052,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           position = container.position(),
           toRight;
         if(position.left < 0){
-          toRight = position.left + ITEM_WIDTH;
+          toRight = position.left + _self.get('itemWidth');
           toRight = toRight < 0 ? toRight : 0;
           _self._scrollTo(container,toRight);
         }
@@ -23724,6 +24090,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         if(preActivedItem){
           preActivedItem.set('actived',false);
         }
+        _self.set('preItem',preActivedItem);
         if(item){
           if(!item.get('actived')){
             item.set('actived',true);
@@ -23756,6 +24123,21 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
          */
         menu : {
 
+        },
+        /**
+         * \u8bbe\u7f6e\u6b64\u53c2\u6570\u65f6\uff0c\u6807\u7b7e\u9009\u9879\u7684\u5bbd\u5ea6\u4f1a\u8fdb\u884c\u81ea\u9002\u5e94
+         * @cfg {Boolean} forceFit
+         */
+        forceFit : {
+          view : true,
+          value : false
+        },
+        /**
+         * \u6807\u7b7e\u7684\u9ed8\u8ba4\u5bbd\u5ea6,140px\uff0c\u8bbe\u7f6eforceFit:true\u540e\uff0c\u6b64\u5bbd\u5ea6\u4e3a\u6700\u5bbd\u5bbd\u5ea6
+         * @type {Number}
+         */
+        itemWidth : {
+          value : ITEM_WIDTH
         },
         /**
          * \u6e32\u67d3\u6807\u7b7e\u7684\u6a21\u7248
@@ -33935,6 +34317,14 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       _self._updateIcons(node);
       _self.setItemStatus(node,LOADING,false);
     },
+    __syncUI : function(){
+      var _self = this,
+        store = _self.get('store'),
+        showRoot = _self.get('showRoot');
+      if(showRoot && !store.hasData()){ //\u6811\u8282\u70b9\u6ca1\u6709\u6570\u636e\uff0c\u4f46\u662f\u9700\u8981\u663e\u793a\u6839\u8282\u70b9\u65f6
+        _self._initRoot();
+      }
+    },
      /**
      * @override 
      * @protected
@@ -34129,7 +34519,6 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           }
         }else if(element){
           _self.setItemStatus(node,EXPAND,true,element);
-          //_self.addItemsAt(node.children,index + 1);
           _self._showChildren(node);
           _self.fire('expanded',{node : node ,element : element});
         }

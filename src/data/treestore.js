@@ -96,6 +96,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
 
     },
     /**
+     * 标示父元素id的字段名称
+     * @type {String}
+     */
+    pidField : {
+      
+    },
+    /**
      * 返回数据标示数据的字段</br>
      * 异步加载数据时，返回数据可以使数组或者对象
      * - 如果返回的是对象,可以附加其他信息,那么取对象对应的字段 {nodes : [],hasError:false}
@@ -180,11 +187,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     _initData : function(){
       var _self = this,
         autoLoad = _self.get('autoLoad'),
+        pidField = _self.get('pidField'),
+        proxy = _self.get('proxy'),
         root = _self.get('root');
 
+      //添加默认的匹配父元素的字段
+      if(!proxy.get('url') && pidField){
+        proxy.get('matchFields').push(pidField);
+      }
+      
       if(autoLoad && !root.children){
-        params = root.id ? {id : root.id}: {};
-        _self.load(params);
+        //params = root.id ? {id : root.id}: {};
+        _self.loadNode(root);
       }
     },
     /**
@@ -474,7 +488,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      */
     afterProcessLoad : function(data,params){
       var _self = this,
-        id = params.id,
+        pidField = _self.get('pidField'),
+        id = params.id || params[pidField],
         dataProperty = _self.get('dataProperty'),
         node = _self.findNode(id) || _self.get('root');//如果找不到父元素，则放置在跟节点
 
@@ -490,8 +505,8 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean} 
      */
     hasData : function(){
-      return true;
-      //return this.get('root').children && this.get('root').children.length !== 0;
+      //return true;
+      return this.get('root').children && this.get('root').children.length !== 0;
     },
     /**
      * 是否已经加载过，叶子节点或者存在字节点的节点
@@ -499,9 +514,14 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {Boolean}  是否加载过
      */
     isLoaded : function(node){
-      if(!this.get('url')){ //如果不从远程加载数据,默认已经加载
+      var root = this.get('root');
+      if(node == root && !root.children){
+        return false;
+      }
+      if(!this.get('url') && !this.get('pidField')){ //如果不从远程加载数据,默认已经加载
         return true;
       }
+      
       return node.leaf || (node.children && node.children.length);
     },
     /**
@@ -514,7 +534,13 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(_self.isLoaded(node)){
         return ;
       }
-      if(!_self.get('url')){ //如果不从远程加载数据，不是根节点的话，取消加载
+      if(!_self.get('url') && _self.get('data')){ //如果不从远程加载数据，不是根节点的话，取消加载
+        var pidField = _self.get('pidField'),
+          params = {id : node.id};
+        if(pidField){
+          params[pidField] = node.id;
+        }
+        _self.load(params);
         return;
       }else{
         _self.load({id:node.id,path : ''});

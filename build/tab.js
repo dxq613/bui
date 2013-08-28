@@ -28,6 +28,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     Component =  BUI.Component,
     CLS_ITEM_TITLE = 'tab-item-title',
     CLS_ITEM_CLOSE = 'tab-item-close',
+    CLS_ITEM_INNER = 'tab-item-inner',
     CLS_NAV_ACTIVED = 'tab-nav-actived',
     CLS_CONTENT = 'tab-content';
 
@@ -353,7 +354,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       },
       tpl : {
         view:true,
-        value :'<span class="' + CLS_ITEM_TITLE + '"></span><s class="' + CLS_ITEM_CLOSE + '"></s>'
+        value :'<s class="l"></s><div class="' + CLS_ITEM_INNER + '">{icon}<span class="' + CLS_ITEM_TITLE + '"></span><s class="' + CLS_ITEM_CLOSE + '"></s></div><s class="r"></s>'
       },
       xview:{
         value : navTabItemView
@@ -379,6 +380,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     CLS_NAV_LIST = 'tab-nav-list',
     CLS_ARROW_LEFT = 'arrow-left',
     CLS_ARROW_RIGHT = 'arrow-right',
+    CLS_FORCE_FIT = BUI.prefix + 'tab-force',
     ID_CLOSE = 'm_close',
     ITEM_WIDTH = 140;
 
@@ -392,10 +394,8 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     renderUI : function(){
       var _self = this,
         el = _self.get('el'),
-        //tpl = _self.get('tpl'),
         listEl = null;
 
-      //$(tpl).appendTo(el);
       listEl = el.find('.' + CLS_NAV_LIST);
       _self.setInternal('listEl',listEl);
     },
@@ -415,9 +415,21 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         containerEl.height(v - barEl.height());
       }
       el.height(v);
+    },
+    //设置自动适应宽度
+    _uiSetForceFit : function(v){
+      var _self = this,
+        el = _self.get('el');
+      if(v){
+        el.addClass(CLS_FORCE_FIT);
+      }else{
+        el.removeClass(CLS_FORCE_FIT);
+      }
     }
   },{
-
+    ATTRS : {
+      forceFit : {}
+    }
   },{
     xclass : 'nav-tab-view',
     priority:0
@@ -441,6 +453,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       addTab:function(config,reload){
         var _self = this,
           id = config.id || BUI.guid('tab-item'),
+          forceFit = _self.get('forceFit'),
           item = _self.getItemById(id);
 
         if(item){
@@ -463,6 +476,9 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           },config);
 
           item = _self.addChild(config);
+          if(forceFit){
+            _self.forceFit();
+          }
           item.show();
           _self._resetItemList();
         }
@@ -477,9 +493,17 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       //绑定事件
       bindUI: function(){
-        var _self = this;
-
-        _self._bindScrollEvent();
+        var _self = this,
+          forceFit = _self.get('forceFit');
+        if(!forceFit){
+          _self._bindScrollEvent();
+          _self.on('afterVisibleChange',function(ev){
+            var item = ev.target;
+            if(item.get('actived')){
+              _self._scrollToItem(item);
+            }
+          });
+        }
 
         //监听点击标签
         _self.on('click',function(ev){
@@ -500,12 +524,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           _self._showMenu(ev.target,ev.position);
         });
 
-        _self.on('afterVisibleChange',function(ev){
-          var item = ev.target;
-          if(item.get('actived')){
-            _self._scrollToItem(item);
-          }
-        });
+        
       },
       //绑定滚动事件
       _bindScrollEvent : function(){
@@ -653,7 +672,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         var _self = this,
           index = _self._getIndex(item),
           activedItem = _self.getActivedItem(),
-          preItem = _self._getItemByIndex(index -1),
+          preItem = _self.get('preItem') || _self._getItemByIndex(index -1),
           nextItem = _self._getItemByIndex(index + 1);
 
         item.hide(function(){
@@ -668,7 +687,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           }else{//删除标签项时，可能会引起滚动按钮状态的改变
             _self._scrollToItem(activedItem);;
           }
-          
+          _self.forceFit();
         });
         
       },
@@ -703,16 +722,51 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       //重新计算标签项容器的宽度位置
       _resetItemList : function(){
+        if(this.get('forceFit')){
+          return;
+        }
         var _self = this,
+          container = _self.getContentElement();
+
+        container.width(_self._getTotalWidth());
+
+      },
+      //获取选项的总宽度，以默认宽度为基数
+      _getTotalWidth : function(){
+        var _self = this,
+          children = _self.get('children');
+
+        return children.length * _self.get('itemWidth');
+      },
+      _getForceItemWidth : function(){
+        var _self = this,
+          width =  _self.getContentElement().width(),
           children = _self.get('children'),
-          container = _self.getContentElement(),
-          totalWidth = children.length * ITEM_WIDTH;
-
-        container.width(totalWidth);
-
+          totalWidth = _self._getTotalWidth(),
+          itemWidth = _self.get(itemWidth);
+        if(totalWidth > width){
+          itemWidth = width/children.length;
+        }
+        return itemWidth;
+      },
+      forceFit : function(){
+        var _self = this;
+        _self._forceItemWidth(_self._getForceItemWidth());
+      },
+      //设置平均宽度
+      _forceItemWidth : function(width){
+        width = width || this.get('itemWidth');
+        var _self = this,
+          children = _self.get('children');
+        BUI.each(children,function(item){
+          item.set('width',width);
+        });
       },
       //使指定标签项在用户可视区域内
       _scrollToItem : function(item){
+        if(this.get('forceFit')){ //自适应后，不进行滚动
+          return;
+        }
         var _self = this,
           container = _self.getContentElement(),
           containerPosition = container.position(),
@@ -757,7 +811,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           wraperWidth = container.parent().width(),
           containerPosition = containerPosition || container.position(),
           offsetLeft = _self._getDistanceToBegin(item,containerPosition),
-          disWidth = offsetLeft + ITEM_WIDTH - wraperWidth; 
+          disWidth = offsetLeft + _self.get('itemWidth') - wraperWidth; 
         return disWidth;
       },
       //获取最后一个标签项离右边的间距
@@ -784,7 +838,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           disWidth = _self._getLastDistance(container,position),
           toLeft;
         if(disWidth > 0 ){
-          toLeft = disWidth > ITEM_WIDTH ? ITEM_WIDTH : disWidth;
+          toLeft = disWidth > _self.get('itemWidth') ? _self.get('itemWidth') : disWidth;
           _self._scrollTo(container,position.left - toLeft);
         }
 
@@ -796,7 +850,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           position = container.position(),
           toRight;
         if(position.left < 0){
-          toRight = position.left + ITEM_WIDTH;
+          toRight = position.left + _self.get('itemWidth');
           toRight = toRight < 0 ? toRight : 0;
           _self._scrollTo(container,toRight);
         }
@@ -834,6 +888,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         if(preActivedItem){
           preActivedItem.set('actived',false);
         }
+        _self.set('preItem',preActivedItem);
         if(item){
           if(!item.get('actived')){
             item.set('actived',true);
@@ -866,6 +921,21 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
          */
         menu : {
 
+        },
+        /**
+         * 设置此参数时，标签选项的宽度会进行自适应
+         * @cfg {Boolean} forceFit
+         */
+        forceFit : {
+          view : true,
+          value : false
+        },
+        /**
+         * 标签的默认宽度,140px，设置forceFit:true后，此宽度为最宽宽度
+         * @type {Number}
+         */
+        itemWidth : {
+          value : ITEM_WIDTH
         },
         /**
          * 渲染标签的模版

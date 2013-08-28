@@ -172,7 +172,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
     });
 
   });
-
+/**/
 });
 
 BUI.use('bui/tree/treelist',function (TreeList) {

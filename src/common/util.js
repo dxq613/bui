@@ -526,7 +526,14 @@ define('bui/util',function(){
         result = {};
       BUI.each(array,function(item){
         var name = item.name;
-        result[item.name] = item.value;
+        if(!result[name]){ //如果是单个值，直接赋值
+          result[name] = item.value;  
+        }else{ //多值使用数组
+          if(!BUI.isArray(result[name])){
+            result[name] = [result[name]];
+          }
+          result[name].push(item.value);
+        }
       });
       return result;
     },
@@ -571,9 +578,15 @@ define('bui/util',function(){
           if(field.type === 'checkbox'){
             if(field.value === value || BUI.Array.indexOf(field.value,value) !== -1){
               $(field).attr('checked',true);
+            }else{
+              $(field).attr('checked',false);  
             }
-          }else if(field.type === 'radio' && field.value === value){
-            $(field).attr('checked',true);
+          }else if(field.type === 'radio'){
+            if(field.value === value){
+              $(field).attr('checked',true);
+            }else{
+              $(field).attr('checked',false); 
+            }    
           }else{
             $(field).val(value);
           }
