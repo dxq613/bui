@@ -219,6 +219,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       value : 'custom'
     },
     /**
+     * 是否只允许一个节点展开
+     * @type {Boolean}
+     */
+    accordion : {
+      value : false
+    },
+    /**
      * @private
      * 勾选字段
      * @type {String}
@@ -309,6 +316,20 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
          */
         checkchange : false
       }
+    },
+    /**
+     * 节点展开的事件
+     * @type {String}
+     */
+    expandEvent : {
+      value : 'itemdblclick'
+    },
+    /**
+     * 节点收缩的事件
+     * @type {String}
+     */
+    collapseEvent : {
+      value : 'itemdblclick'
     },
     /**
      * 开始的层级，如果显示根节点，从0开始，不显示根节点从1开始
@@ -728,16 +749,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         }
         
       });
-
-      _self.on('itemdblclick',function(ev){
-        var sender = $(ev.domTarget),
-          element = ev.element,
-          node = ev.item;
-        if(!sender.hasClass(CLS_EXPANDER)){
-          _self._toggleExpand(node,element);
-        }
-      });
-
+      
       _self.on('beforeselectedchange',function(ev){
         var dirSelectable = _self.get('dirSelectable'),
           node = ev.item;
@@ -758,6 +770,36 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         }
         
       });
+      _self._initExpandEvent();
+    },
+    //初始化展开收缩事件
+    _initExpandEvent : function(){
+      var _self = this,
+        el = _self.get('el'),
+        expandEvent = _self.get('expandEvent'),
+        collapseEvent = _self.get('collapseEvent');
+
+      function createCallback(methodName){
+        return function(ev){
+          var sender = $(ev.domTarget),
+            element = ev.element,
+            node = ev.item;
+          if(!sender.hasClass(CLS_EXPANDER)){
+            _self[methodName](node,element);
+          }
+        }
+      }
+      if(expandEvent == collapseEvent){
+        _self.on(expandEvent,createCallback('_toggleExpand'));
+      }else{
+        if(expandEvent){
+          _self.on(expandEvent,createCallback('_expandNode'));
+        }
+        if(collapseEvent){
+          _self.on(collapseEvent,createCallback('_collapseNode'));
+        }
+      }
+      
     },
     //是否所有子节点被选中
     _isAllChildrenChecked : function(node){
@@ -1142,11 +1184,20 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     //展开选项
     _expandNode : function(node,element,deep){
       var _self = this,
+        accordion = _self.get('accordion'),
         store = _self.get('store');
       if(node.leaf){ //子节点不展开
         return;
       }
       if(!_self.hasStatus(node,EXPAND,element)){
+        if(accordion && node.parent){
+          var slibings = node.parent.children;
+          BUI.each(slibings,function(sNode){
+            if(sNode != node){
+              _self.collapseNode(sNode);
+            }
+          });
+        }
         if(store && !store.isLoaded(node)){ //节点未加载，则加载节点
           if(!_self._isLoading(node,element)){
             store.loadNode(node);
@@ -1156,6 +1207,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           _self._showChildren(node);
           _self.fire('expanded',{node : node ,element : element});
         }
+
       }
       BUI.each(node.children,function(subNode){
         if(deep || _self.isExpanded(subNode)){

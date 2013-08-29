@@ -454,6 +454,15 @@ define('bui/list/domlist',['bui/common'],function (require) {
         */
         'itemsclear' : false,
         /**
+         * 双击是触发
+        * @event
+        * @param {Object} e 事件对象
+        * @param {Object} e.item DOM对应的选项
+        * @param {HTMLElement} e.element 选项的DOM对象
+        * @param {HTMLElement} e.domTarget 点击的元素
+        */
+        'itemdblclick' : false,
+        /**
         * 清空所有Dom前触发
         * @event
         */
@@ -1472,7 +1481,7 @@ define('bui/list/listbox',['bui/list/simplelist'],function (require) {
        * @type {String}
        */
       itemTpl : {
-        value : '<li><span class="checkbox"><input type="checkbox" />{text}</span></li>'
+        value : '<li><span class="x-checkbox"></span>{text}</li>'
       },
       /**
        * 选项模板

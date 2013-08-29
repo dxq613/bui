@@ -2627,7 +2627,13 @@ define('bui/component/manage',function(require){
         removeComponent:function (id) {
             delete componentInstances[id];
         },
-
+        /**
+         * 遍历所有的控件
+         * @param  {Function} fn 遍历函数
+         */
+        eachComponent : function(fn){
+            BUI.each(componentInstances,fn);
+        },
         /**
          * 根据Id获取控件
          * @param  {String} id 编号

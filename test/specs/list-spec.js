@@ -1,4 +1,5 @@
 
+/**/
 BUI.use('bui/list',function (List) {
 
   var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}],
@@ -392,6 +393,7 @@ BUI.use(['bui/list','bui/data'],function (List,Data) {
     list = new List.SimpleList({
       elCls:'bui-select-list',
       render : '#list3',
+      itemTpl : '<li><span class="x-radio"></span>{text}</li>',
       idField:'value',
       store:store
     });
@@ -422,11 +424,8 @@ BUI.use(['bui/list','bui/data'],function (List,Data) {
 
     
   });
-
-  
-
 });
-/**/
+
 
 
 BUI.use('bui/list',function (List) {
@@ -549,7 +548,7 @@ BUI.use('bui/list',function (List) {
   });
 
 });
-
+/*
 BUI.use('bui/list',function(List){
   describe('list srcNode',function(){
     var node = $('<section><ul><li class="item item-active" data-id="1">1</li><li  class="item" data-id="2">2</li><li  class="item" data-id="3">3</li><li class="item" data-id="4">4</li></ul></section>').appendTo('.container'),
@@ -574,4 +573,6 @@ BUI.use('bui/list',function(List){
     });
   });
 });
+
+*/
 

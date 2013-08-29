@@ -32,7 +32,7 @@ define('bui/list/listbox',['bui/list/simplelist'],function (require) {
        * @type {String}
        */
       itemTpl : {
-        value : '<li><span class="checkbox"><input type="checkbox" />{text}</span></li>'
+        value : '<li><span class="x-checkbox"></span>{text}</li>'
       },
       /**
        * 选项模板
