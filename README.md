@@ -5,6 +5,7 @@ bui
 - [文档库地址](http://www.builive.com/)
 - [应用代码](https://github.com/dxq613/bui-default)
 - [API代码](https://github.com/dxq613/bui-docs)
+- [License](https://github.com/dxq613/bui/wiki/License)
 - [提交代码流程](CONTRIBUTING.md)
 
 ## 文件结构
