@@ -20340,7 +20340,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         ajaxParams = BUI.merge(true,{ //\u5408\u5e76\u8bf7\u6c42\u53c2\u6570
           url : action,
           method : method,
-          dataTye : 'json',
+          dataType : 'json',
           data : data
         },options);
 

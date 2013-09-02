@@ -3337,7 +3337,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         ajaxParams = BUI.merge(true,{ //合并请求参数
           url : action,
           method : method,
-          dataTye : 'json',
+          dataType : 'json',
           data : data
         },options);
 
