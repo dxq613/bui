@@ -125,6 +125,16 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
       list : {
 
       }
+    },
+    PARSER : {
+      list : function(el){
+        var listEl = el.find('.bui-simple-list');
+        if(listEl){
+          return {
+            srcNode : listEl
+          };
+        }
+      }
     }
   },{
     xclass : 'form-field-list'

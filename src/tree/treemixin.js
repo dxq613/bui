@@ -12,6 +12,12 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     }
     return node;
   }
+  //动画执行
+  function animateFn(fn,timeout,count){
+    setTimeout(function(){
+      fn();
+    }, timeout/count);
+  }
 
   var BUI = require('bui/common'),
     Data = require('bui/data'),
@@ -162,6 +168,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       value : false
     },
     /**
+     * 是否显示图标，包括节点展开折叠的图标，标示层级关系的空白图标
+     * @type {Boolean}
+     */
+    showIcons : {
+      value : true
+    },
+    /**
      * 图标所使用的模板
      * @protected
      * @type {Object}
@@ -309,6 +322,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     expandEvent : {
       value : 'itemdblclick'
+    },
+    /**
+     * 展开收缩时是否使用动画
+     * @type {Boolean}
+     */
+    expandAnimate : {
+      value : false 
     },
     /**
      * 节点收缩的事件
@@ -510,6 +530,16 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       return store.findNodesBy(function(node){
         return _self.isChecked(node);
       },parent);
+    },
+    //节点是否可以被选中
+    isItemSelectable : function(item){
+      var _self = this,
+        dirSelectable = _self.get('dirSelectable'),
+        node = item;
+      if(node && !dirSelectable && !node.leaf){ //如果阻止非叶子节点选中
+        return false;
+      }
+      return true;
     },
     /**
      * 节点是否展开,如果节点是叶子节点，则始终是false
@@ -736,14 +766,10 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         
       });
       
-      _self.on('beforeselectedchange',function(ev){
-        var dirSelectable = _self.get('dirSelectable'),
-          node = ev.item;
-        if(!dirSelectable && !node.leaf){ //如果阻止非叶子节点选中
-          return false;
-        }
+      /*_self.on('beforeselectedchange',function(ev){
+        
       });
-
+      */
       _self.on('itemrendered',function(ev){
         var node = ev.item,
           element = ev.domTarget;
@@ -1147,18 +1173,38 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           _self._hideChildrenNodes(node);
         }
         _self.fire('collapsed',{node : node ,element : element});
-        //node[_self.get('expandField')] = false;
       }
     },
-    //隐藏字节点
+    //隐藏子节点
     _hideChildrenNodes : function(node){
       var _self = this,
-        children = node.children;
+        children = node.children,
+        elements = [];
       BUI.each(children,function(subNode){
-        _self.removeItem(subNode);
+        //_self.removeItem(subNode);
+        var element = _self.findElement(subNode);
+        if(element){
+          elements.push(element);
+        }
         _self._hideChildrenNodes(subNode);
       });
-    },
+      if(_self.get('expandAnimate')){
+        $(elements).slideUp(function(){
+          _self.removeItems(children);
+        });
+      }else{
+        _self.removeItems(children);
+      }
+      
+    }/*,
+    _slideUpNodes : function(elements,callback){
+      var wrapEl = $('<div></div>').insertBefore(elements[0]);
+      $(elements).appendTo(wrapEl);
+      wrapEl.slideUp(function(){
+        callback();
+        wrapEl.remove();
+      });
+    }*/,
     _collapseChildren : function(parentNode,deep){
       var _self = this,
         children = parentNode.children;
@@ -1211,20 +1257,40 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         index = _self.indexOfItem(node),
         length = node.children.length,
         subNode,
-        i;
+        i = length - 1,
+        elements = [];
       for (i = length - 1; i >= 0; i--) {
         subNode = node.children[i];
         if(!_self.getItem(subNode)){
-          _self.addItemAt(subNode,index + 1);
+          if(_self.get('expandAnimate')){
+            el = _self._addNodeAt(subNode,index + 1);
+            el.hide();
+            el.slideDown();
+          }else{
+            _self.addItemAt(subNode,index + 1);
+          } 
         }
       };
     },
+    _addNodeAt : function(item,index){
+       var _self = this,
+        items = _self.get('items');
+      if(index === undefined) {
+          index = items.length;
+      }
+      items.splice(index, 0, item);
+      return _self.addItemToView(item,index);
+    },
+    //_showNode
     _isLoading : function(node,element){
       var _self = this;
       return _self.hasStatus(node,LOADING,element);
     },
     //重置选项的图标
     _resetIcons :function(node,element){
+      if(!this.get('showIcons')){ //如果不显示图标，则不重置
+        return;
+      }
       var _self = this,
         iconContainer = _self.get('iconContainer'),
         containerEl,

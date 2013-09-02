@@ -11,7 +11,7 @@
 
 .bui-side-menu{
 
-  .bui-menu-title,.bui-menu-title s,.menu-second a,.menu-second em{
+  .bui-menu-title,.bui-menu-title s,.menu-leaf a,.menu-leaf em{
     background:url("@{menuPath}") -9999px -9999px no-repeat;
   }
   height: 100%;
@@ -22,6 +22,7 @@
 
   a{
     color: @menuColor;
+	cursor: pointer;
     outline:none;
   }
 
@@ -42,19 +43,10 @@
     }
   }
 
-
-  .menu-second{
-    padding-top:1px;
+  .menu-leaf{
     outline:0;
-
-
-    .bui-menu{
-      margin-top:5px;
-    }
-    .bui-menu-item{
-      outline:0;
-      line-height:20px;
-      a{
+    line-height:20px;
+    a{
         height: 20px;
         text-indent: 24px;
         overflow: hidden;
@@ -68,18 +60,26 @@
           overflow: hidden;
           height: 19px;
           line-height: 22px;
-          cursor: pointer;
+          
           _line-height: 20px;
         }
       }
-    }
+  }
 
-    .bui-menu-item-selected a{
+  .bui-menu-item-selected a{
       color: @white;
       background-position: 0 -130px;
       em{
         background-position: right -100px;
       }
+    }
+
+  .menu-second{
+    padding-top:1px;
+    outline:0;
+	cursor:pointer;
+    .bui-menu{
+      margin-top:5px;
     }
   }
 

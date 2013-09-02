@@ -128,7 +128,11 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @protected
      */
     getItemContainer : function  () {
-      return this.get('itemContainer') || this.get('el');
+      var container = this.get('itemContainer');
+      if(container.length){
+        return container;
+      }
+      return this.get('el');
     },
     /**
      * 获取记录的模板,itemTpl 和 数据item 合并产生的模板
@@ -479,6 +483,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
         itemCls = _self.get('itemCls'),
         dataField = _self.get('dataField'),
         elements = el.find('.' + itemCls);
+      if(!elements.length){
+        elements = el.children();
+        elements.addClass(itemCls);
+      }
       BUI.each(elements,function(element){
         var item = parseItem(element,_self);
         rst.push(item);
@@ -513,7 +521,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
           return;
         }
         var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target});
-        if(rst !== false && selectedEvent == 'click'){
+        if(rst !== false && selectedEvent == 'click' && _self.isItemSelectable(item)){
           setItemSelectedStatus(item,itemEl); 
         }
       });
@@ -524,7 +532,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
           if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
             return;
           }
-          setItemSelectedStatus(item,itemEl); 
+          if(_self.isItemSelectable(item)){
+            setItemSelectedStatus(item,itemEl); 
+          }
+          
         });
       }
 
@@ -565,7 +576,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       var _self = this,
         itemStatusFields = _self.get('itemStatusFields');
       BUI.each(itemStatusFields,function(v,k){
-        _self.get('view').setItemStatusCls(k,element,item[v]);
+        if(item[v] != null){
+          _self.get('view').setItemStatusCls(k,element,item[v]);
+        }
       });
     },
     /**
@@ -676,6 +689,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       var _self = this,
         element = _self.get('view').addItem(item,index);
       _self.fire('itemrendered',{item:item,domTarget : $(element)[0],element : element});
+      return element;
     },
     /**
      * 更新列表项

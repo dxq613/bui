@@ -88,7 +88,7 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],functi
         value : BUI.prefix + 'tree-item'
       },
       itemTpl : {
-        value : '<li>{text}</li>'
+        value : '<li class="{cls}">{text}</li>'
       },
       idField : {
         value : 'id'

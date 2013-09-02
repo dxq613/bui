@@ -274,9 +274,15 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
        * 默认的加载控件内容的配置,默认值：
        * <pre>
        *  {
-       *   property : 'bodyContent',
-       *   autoLoad : true
-       * }
+       *    property : 'bodyContent',
+       *    autoLoad : false,
+       *    lazyLoad : {
+       *      event : 'show'
+       *    },
+       *    loadMask : {
+       *      el : _self.get('body')
+       *    }
+       *  }
        * </pre>
        * @type {Object}
        */

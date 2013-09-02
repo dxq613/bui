@@ -228,7 +228,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     getDecorateElments : function(){
       var _self = this,
         el = _self.get('el'),
-        contentContainer = _self.get('contentContainer');
+        contentContainer = _self.get('childContainer');
       if(contentContainer){
         return el.find(contentContainer).children();
       }else{

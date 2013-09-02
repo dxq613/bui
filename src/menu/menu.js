@@ -110,6 +110,14 @@ define('bui/menu/menu',['bui/common'],function(require){
         value:'id'
       },
       /**
+       * @protected
+       * 是否根据DOM生成子控件
+       * @type {Boolean}
+       */
+      isDecorateChild : {
+        value : true
+      },
+      /**
        * 子类的默认类名，即类的 xclass
        * @type {String}
        * @default 'menu-item'

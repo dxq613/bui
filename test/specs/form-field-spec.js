@@ -1,4 +1,4 @@
-/**/
+
 //文本域
 BUI.use('bui/form/textfield',function  (TextField) {
   var tpl = ' <label class="control-label">{label}</label>\
@@ -218,8 +218,8 @@ BUI.use('bui/form/textfield',function  (TextField) {
   });
 
 });
-
 /**/
+
 //数字域
 BUI.use('bui/form/numberfield',function  (NumberField) {
   var tpl = ' <label class="control-label">{label}</label>\
@@ -499,8 +499,8 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
     });
   });
 
-});
-/**/
+});/**/
+
 //多选框
 BUI.use('bui/form/selectfield',function  (SelectField) {
 
@@ -629,47 +629,113 @@ BUI.use('bui/form/plainfield',function  (PlainField) {
     });
   });
 });
-
+/**/
 BUI.use('bui/form/listfield',function(ListField){
-  var field = new ListField({
-    render : '#row',
-    label : '列表',
-    elCls : 'control-group span8',
-    items : {'1' : '1','2':'2'},
-    list : {
-      elCls : 'bui-select-list'
-    },
-    value : '2'
-  });
-  field.render();
 
-  var list = field.get('list');
-  describe('初始化',function(){
-    it('测试列表初始化',function(){
-      expect(!!list).not.toBe(false);
+  describe('测试JS创建列表字段',function(){
+    var field = new ListField({
+      render : '#row',
+      label : '列表',
+      elCls : 'control-group span8',
+      items : {'1' : '1','2':'2'},
+      list : {
+        elCls : 'bui-select-list'
+      },
+      value : '2'
     });
-    it('测试列表项',function(){
+    field.render();
+
+    var list = field.get('list');
+    describe('初始化',function(){
+      it('测试列表初始化',function(){
+        expect(!!list).not.toBe(false);
+      });
+      it('测试列表项',function(){
+        expect(list.getItems().length).not.toBe(0);
+      });
+      it('测试默认值',function(){
+        expect(field.getInnerControl().val()).toBe('2');
+        expect(list.getSelectedValue()).toBe('2');
+      })
+    });
+
+    describe('测试操作',function(){
+      it('设置值',function(){
+        var val = '1';
+        field.set('value',val);
+        expect(list.getSelectedValue()).toBe(val);
+        expect(field.getInnerControl().val()).toBe(val);
+      });
+      it('重设记录',function(){
+        var items = [{value : '1',text :'第1项'},{value : '2',text :'第2项'},{value : '3',text :'第3项'}];
+        field.set('items',items);
+        expect(list.getItems().length).toBe(items.length);
+        expect(list.getSelectedValue()).toBe(field.get('value'));
+      });
+    });
+  });
+  /**/  
+  describe('测试srcNode 创建列表字段',function(){
+    var field = new ListField({
+      srcNode : '#lf'
+    });
+    field.render(),
+    list = field.get('list');
+    it('初始化',function(){
+
+      expect(!!list).toBe(true);
+      expect(list.getItems().length).not.toBe(0);
+
+    });
+    it('选项生成',function(){
+      expect(list.get('el').find('.bui-list-item').length).not.toBe(0);
+    });
+  });
+
+  
+
+});
+
+BUI.use('bui/form/checklistfield',function(ListField){
+  describe('测试srcNode 创建列表字段',function(){
+    var field = new ListField({
+        render : '#row',
+        label : '可勾选列表',
+        elCls : 'control-group span8',
+        items : {'1' : '1','2':'2'},
+        value : '2'
+      });
+      field.render(),
+      list = field.get('list');
+
+    it('初始化',function(){
+      expect(!!list).toBe(true);
       expect(list.getItems().length).not.toBe(0);
     });
-    it('测试默认值',function(){
-      expect(field.getInnerControl().val()).toBe('2');
-      expect(list.getSelectedValue()).toBe('2');
-    })
-  });
-
-  describe('测试操作',function(){
-    it('设置值',function(){
-      var val = '1';
-      field.set('value',val);
-      expect(list.getSelectedValue()).toBe(val);
-      expect(field.getInnerControl().val()).toBe(val);
-    });
-    it('重设记录',function(){
-      var items = [{value : '1',text :'第1项'},{value : '2',text :'第2项'},{value : '3',text :'第3项'}];
-      field.set('items',items);
-      expect(list.getItems().length).toBe(items.length);
-      expect(list.getSelectedValue()).toBe(field.get('value'));
+    it('选项生成',function(){
+      expect(list.get('el').find('.bui-list-item').length).not.toBe(0);
     });
   });
+});
 
+BUI.use('bui/form/radiolistfield',function(ListField){
+  describe('测试srcNode 创建列表字段',function(){
+    var field = new ListField({
+        render : '#row',
+        label : '可勾选列表',
+        elCls : 'control-group span8',
+        items : {'1' : '1','2':'2'},
+        value : '2'
+      });
+      field.render(),
+      list = field.get('list');
+
+    it('初始化',function(){
+      expect(!!list).toBe(true);
+      expect(list.getItems().length).not.toBe(0);
+    });
+    it('选项生成',function(){
+      expect(list.get('el').find('.bui-list-item').length).not.toBe(0);
+    });
+  });
 });

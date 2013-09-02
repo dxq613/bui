@@ -7,6 +7,11 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
   
   var BUI = require('bui/common'),
     Bar = require('bui/toolbar').Bar,
+    TYPE_SUBMIT = {
+      NORMAL : 'normal',
+      AJAX : 'ajax',
+      IFRAME : 'iframe'
+    },
     FieldContainer = require('bui/form/fieldcontainer'),
     Component = BUI.Component;
 
@@ -42,6 +47,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         buttonBar = new Bar(cfg);
         _self.set('buttonBar',buttonBar);
       }
+      _self._initSubmitMask();
     },
     bindUI : function(){
       var _self = this,
@@ -52,6 +58,11 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         if(!_self.isValid() || _self.onBeforeSubmit() === false){
           ev.preventDefault();
         }
+        if(_self.isValid() && _self.get('submitType') === TYPE_SUBMIT.AJAX){
+          ev.preventDefault();
+          _self.ajaxSubmit();
+        }
+
       });
     },
     /**
@@ -74,15 +85,66 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
      * 表单提交，如果未通过验证，则阻止提交
      */
     submit : function(options){
-      var _self = this;
+      var _self = this,
+        submitType = _self.get('submitType');
       _self.valid();
       if(_self.isValid()){
         if(_self.onBeforeSubmit() == false){
           return;
         }
-        if(!options){
+        if(submitType === TYPE_SUBMIT.NORMAL){
           _self.get('el')[0].submit();
+        }else if(submitType === TYPE_SUBMIT.AJAX){
+          _self.ajaxSubmit(options);
         }
+      }
+    },
+    /**
+     * 异步提交表单
+     */
+    ajaxSubmit : function(options){
+      var _self = this,
+        method = _self.get('method'),
+        action = _self.get('action'),
+        callback = _self.get('callback'),
+        submitMask = _self.get('submitMask'),
+        data = _self.serializeToObject(), //获取表单数据
+        success,
+        ajaxParams = BUI.merge(true,{ //合并请求参数
+          url : action,
+          method : method,
+          dataTye : 'json',
+          data : data
+        },options);
+
+      if(options && options.success){
+        success = options.success;
+      }
+      ajaxParams.success = function(data){ //封装success方法
+        if(submitMask && submitMask.hide){
+          submitMask.hide();
+        }
+        if(success){
+          success(data);
+          callback && callback.call(_self,data);
+        }
+      } 
+      if(submitMask && submitMask.show){
+        submitMask.show();
+      }
+      $.ajax(ajaxParams); 
+    },
+    //获取提交的屏蔽层
+    _initSubmitMask : function(){
+      var _self = this,
+        submitType = _self.get('submitType'),
+        submitMask = _self.get('submitMask');
+      if(submitType === TYPE_SUBMIT.AJAX && submitMask){
+        BUI.use('bui/mask',function(Mask){
+          var cfg = $.isPlainObject(submitMask) ? submitMask : {};
+          submitMask = new Mask.LoadMask(BUI.mix({el : _self.get('el')},cfg));
+          _self.set('submitMask',submitMask);
+        });
       }
     },
     /**
@@ -130,9 +192,13 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
      */
     destructor : function(){
       var _self = this,
-        buttonBar = _self.get('buttonBar');
+        buttonBar = _self.get('buttonBar'),
+        submitMask = _self.get('submitMask');
       if(buttonBar && buttonBar.destroy){
         buttonBar.destroy();
+      }
+      if(submitMask && submitMask.destroy){
+        submitMask.destroy();
       }
     },
     //设置表单的初始数据
@@ -171,6 +237,51 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       method : {
         view : true,
         value : 'get'
+      },
+      /**
+       * 默认的loader配置
+       * <pre>
+       * {
+       *   autoLoad : true,
+       *   property : 'record',
+       *   dataType : 'json'
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg : {
+        value : {
+          autoLoad : true,
+          property : 'record',
+          dataType : 'json'
+        }
+      },
+      /**
+       * 异步提交表单时的屏蔽
+       * @type {BUI.Mask.LoadMask|Object}
+       */
+      submitMask : {
+        value : {
+          msg : '正在提交。。。'
+        }
+      },
+      /**
+       * 提交表单的方式
+       *
+       *  - normal 普通方式，直接提交表单
+       *  - ajax 异步提交方式，在submit指定参数
+       *  - iframe 使用iframe提交,开发中。。。
+       * @cfg {String} [submitType='normal']
+       */
+      submitType : {
+        value : 'normal'
+      },
+      /**
+       * 表单提交成功后的回调函数，普通提交方式 submitType = 'normal'，不会调用
+       * @type {Object}
+       */
+      callback : {
+
       },
       decorateCfgFields : {
         value : {

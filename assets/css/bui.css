@@ -43,12 +43,13 @@
 }
 .bui-side-menu .bui-menu-title,
 .bui-side-menu .bui-menu-title s,
-.bui-side-menu .menu-second a,
-.bui-side-menu .menu-second em {
+.bui-side-menu .menu-leaf a,
+.bui-side-menu .menu-leaf em {
   background: url("../img/menu-500-188.png") -9999px -9999px no-repeat;
 }
 .bui-side-menu a {
   color: #5c637b;
+  cursor: pointer;
   outline: none;
 }
 .bui-side-menu a:hover {
@@ -64,25 +65,18 @@
 .bui-side-menu .bui-menu-item-collapsed .bui-menu-title s {
   background-position: 0 -30px;
 }
-.bui-side-menu .menu-second {
-  padding-top: 1px;
-  outline: 0;
-}
-.bui-side-menu .menu-second .bui-menu {
-  margin-top: 5px;
-}
-.bui-side-menu .menu-second .bui-menu-item {
+.bui-side-menu .menu-leaf {
   outline: 0;
   line-height: 20px;
 }
-.bui-side-menu .menu-second .bui-menu-item a {
+.bui-side-menu .menu-leaf a {
   height: 20px;
   text-indent: 24px;
   overflow: hidden;
   margin-bottom: 5px;
   display: block;
 }
-.bui-side-menu .menu-second .bui-menu-item a em {
+.bui-side-menu .menu-leaf a em {
   display: block;
   margin: 0 1px;
   font-style: normal;
@@ -90,15 +84,22 @@
   overflow: hidden;
   height: 19px;
   line-height: 22px;
-  cursor: pointer;
   _line-height: 20px;
 }
-.bui-side-menu .menu-second .bui-menu-item-selected a {
+.bui-side-menu .bui-menu-item-selected a {
   color: #ffffff;
   background-position: 0 -130px;
 }
-.bui-side-menu .menu-second .bui-menu-item-selected a em {
+.bui-side-menu .bui-menu-item-selected a em {
   background-position: right -100px;
+}
+.bui-side-menu .menu-second {
+  padding-top: 1px;
+  outline: 0;
+  cursor: pointer;
+}
+.bui-side-menu .menu-second .bui-menu {
+  margin-top: 5px;
 }
 .bui-side-menu .bui-menu-title-text {
   float: left;
@@ -1281,6 +1282,15 @@ textarea.bui-form-field-error,
 .bui-form-field-disabled.calendar {
   background-color: #ebebe4;
 }
+.bui-form-feild-checklist .bui-list-item,
+.bui-form-feild-radiolist .bui-list-item {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+
+  *zoom: 1;
+  margin-right: 10px;
+}
 .bui-form-tip-container {
   position: relative;
 }
@@ -1645,7 +1655,7 @@ input.x-datepicker-time {
 .bui-tree-item-disabled {
   color: #cccccc;
 }
-.x-tree-icon {
+.bui-tree-list .x-tree-icon {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
@@ -1655,63 +1665,63 @@ input.x-datepicker-time {
   height: 20px;
   width: 16px;
 }
-.x-tree-elbow-expander,
-.x-tree-elbow-dir,
-.x-tree-elbow-leaf,
-.x-tree-elbow-line,
-.x-tree-elbow,
-.x-tree-elbow-expander-end,
-.x-tree-elbow-end {
+.bui-tree-list .x-tree-elbow-expander,
+.bui-tree-list .x-tree-elbow-dir,
+.bui-tree-list .x-tree-elbow-leaf,
+.bui-tree-list .x-tree-elbow-line,
+.bui-tree-list .x-tree-elbow,
+.bui-tree-list .x-tree-elbow-expander-end,
+.bui-tree-list .x-tree-elbow-end {
   background: url("../img/tree_icon-80-100.gif") no-repeat -999px -999px transparent;
 }
-.x-tree-icon-checkbox {
+.bui-tree-list .x-tree-icon-checkbox {
   background: url("../img/check_icon-100-100.gif") no-repeat 0px 0px transparent;
 }
-.x-tree-elbow-expander {
+.bui-tree-list .x-tree-elbow-expander {
   background-position: 0 0;
 }
-.bui-tree-item-expanded .x-tree-elbow-expander {
+.bui-tree-list .bui-tree-item-expanded .x-tree-elbow-expander {
   background-position: -16px 0;
 }
-.x-tree-elbow-expander:hover {
+.bui-tree-list .x-tree-elbow-expander:hover {
   background-position: -32px 0;
 }
-.bui-tree-item-expanded .x-tree-elbow-expander:hover {
+.bui-tree-list .bui-tree-item-expanded .x-tree-elbow-expander:hover {
   background-position: -48px 0;
 }
-.x-tree-elbow-dir,
-.x-tree-elbow-leaf {
+.bui-tree-list .x-tree-elbow-dir,
+.bui-tree-list .x-tree-elbow-leaf {
   margin: 2px 3px 0 0;
 }
-.x-tree-elbow-dir {
+.bui-tree-list .x-tree-elbow-dir {
   background-position: 0 -80px;
 }
-.bui-tree-item-expanded .x-tree-elbow-dir {
+.bui-tree-list .bui-tree-item-expanded .x-tree-elbow-dir {
   background-position: -20px -80px;
 }
-.x-tree-elbow-leaf {
+.bui-tree-list .x-tree-elbow-leaf {
   background-position: -40px -80px;
 }
-.x-tree-show-line .x-tree-elbow {
+.bui-tree-list .x-tree-show-line .x-tree-elbow {
   background-position: 0 -20px;
 }
-.x-tree-show-line .x-tree-elbow-end {
+.bui-tree-list .x-tree-show-line .x-tree-elbow-end {
   background-position: -20px -20px;
 }
-.x-tree-show-line .x-tree-elbow-line {
+.bui-tree-list .x-tree-show-line .x-tree-elbow-line {
   background-position: -40px -20px;
 }
-.x-tree-show-line .x-tree-elbow-expander,
-.x-tree-show-line .x-tree-elbow-expander:hover {
+.bui-tree-list .x-tree-show-line .x-tree-elbow-expander,
+.bui-tree-list .x-tree-show-line .x-tree-elbow-expander:hover {
   background-position: -60px -40px;
 }
-.x-tree-show-line .x-tree-elbow-expander-end {
+.bui-tree-list .x-tree-show-line .x-tree-elbow-expander-end {
   background-position: -20px -40px;
 }
-.x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander {
+.bui-tree-list .x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander {
   background-position: -40px -40px;
 }
-.x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander-end {
+.bui-tree-list .x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander-end {
   background-position: 0px -40px;
 }
 .bui-tree-list .bui-tree-item-loading .x-tree-elbow-expander {

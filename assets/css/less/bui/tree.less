@@ -22,79 +22,81 @@
 .bui-tree-item-disabled{
   color: @disabledColor;
 }
-
-.x-tree-icon{
-  .inline-block();
-  vertical-align: top;
-  height: 20px;
-  width: 16px;
-}
-
-.x-tree-elbow-expander,.x-tree-elbow-dir,.x-tree-elbow-leaf,
-.x-tree-elbow-line,.x-tree-elbow,.x-tree-elbow-expander-end,.x-tree-elbow-end{
-  background: url("@{treeIconPath}") no-repeat -999px -999px transparent;
-}
-
-.x-tree-icon-checkbox{
-  background: url("@{checkIconPath}") no-repeat 0px 0px transparent;
-}
-.x-tree-elbow-expander{
-  background-position:  0 0;
-}
-
-//展开
-.bui-tree-item-expanded .x-tree-elbow-expander{
-  background-position:  -16px 0;
-}
-.x-tree-elbow-expander:hover{
-  background-position:  -32px 0;
-}
-.bui-tree-item-expanded .x-tree-elbow-expander:hover{
-  background-position:  -48px 0;
-}
-
-//类型
-.x-tree-elbow-dir,.x-tree-elbow-leaf{
-  margin: 2px 3px 0 0;
-}
-
-.x-tree-elbow-dir{
-  background-position: 0 -80px;
-}
-
-
-
-.bui-tree-item-expanded .x-tree-elbow-dir{
-  background-position: -20px -80px;
-}
-.x-tree-elbow-leaf{
-  background-position: -40px -80px;
-}
-
-.x-tree-show-line {
-  .x-tree-elbow{
-    background-position: 0 -20px;
-  }
-  .x-tree-elbow-end{
-    background-position: -20px -20px;
+.bui-tree-list{
+  .x-tree-icon{
+    .inline-block();
+    vertical-align: top;
+    height: 20px;
+    width: 16px;
   }
 
-  .x-tree-elbow-line{
-    background-position: -40px -20px;
+  .x-tree-elbow-expander,.x-tree-elbow-dir,.x-tree-elbow-leaf,
+  .x-tree-elbow-line,.x-tree-elbow,.x-tree-elbow-expander-end,.x-tree-elbow-end{
+    background: url("@{treeIconPath}") no-repeat -999px -999px transparent;
   }
-  .x-tree-elbow-expander,.x-tree-elbow-expander:hover{
-    background-position: -60px -40px;
+
+  .x-tree-icon-checkbox{
+    background: url("@{checkIconPath}") no-repeat 0px 0px transparent;
   }
-  .x-tree-elbow-expander-end{
-    background-position: -20px -40px;
+  .x-tree-elbow-expander{
+    background-position:  0 0;
   }
+
+  //展开
   .bui-tree-item-expanded .x-tree-elbow-expander{
-    background-position: -40px -40px;
+    background-position:  -16px 0;
+  }
+  .x-tree-elbow-expander:hover{
+    background-position:  -32px 0;
+  }
+  .bui-tree-item-expanded .x-tree-elbow-expander:hover{
+    background-position:  -48px 0;
   }
 
-  .bui-tree-item-expanded .x-tree-elbow-expander-end{
-    background-position: 0px -40px;
+  //类型
+  .x-tree-elbow-dir,.x-tree-elbow-leaf{
+    margin: 2px 3px 0 0;
   }
+
+  .x-tree-elbow-dir{
+    background-position: 0 -80px;
+  }
+
+
+
+  .bui-tree-item-expanded .x-tree-elbow-dir{
+    background-position: -20px -80px;
+  }
+  .x-tree-elbow-leaf{
+    background-position: -40px -80px;
+  }
+
+  .x-tree-show-line {
+    .x-tree-elbow{
+      background-position: 0 -20px;
+    }
+    .x-tree-elbow-end{
+      background-position: -20px -20px;
+    }
+
+    .x-tree-elbow-line{
+      background-position: -40px -20px;
+    }
+    .x-tree-elbow-expander,.x-tree-elbow-expander:hover{
+      background-position: -60px -40px;
+    }
+    .x-tree-elbow-expander-end{
+      background-position: -20px -40px;
+    }
+    .bui-tree-item-expanded .x-tree-elbow-expander{
+      background-position: -40px -40px;
+    }
+
+    .bui-tree-item-expanded .x-tree-elbow-expander-end{
+      background-position: 0px -40px;
+    }
+  }
+
 }
 
 .bui-tree-list .bui-tree-item-loading .x-tree-elbow-expander{

@@ -448,7 +448,7 @@ BUI.use('bui/list',function (List) {
   function testSelected(item,selected){
     var el = $(list.findElement(item));
     expect(el.hasClass('bui-list-item-selected')).toBe(selected);
-    expect(!!el.find('input').attr('checked')).toBe(selected);
+    //expect(!!el.find('input').attr('checked')).toBe(selected);
   }
   describe('测试listBox 生成',function(){
     it('测试容器生成',function(){
@@ -466,10 +466,7 @@ BUI.use('bui/list',function (List) {
         el = $(list.findElement(item));
       expect(item).not.toBe(null);
       expect(el.length).not.toBe(0);
-      expect(el.find('input').length).not.toBe(0);
-    });
-    it('测试禁止选中项生成',function(){
-
+      //expect(el.find('input').length).not.toBe(0);
     });
   });
 
@@ -529,21 +526,6 @@ BUI.use('bui/list',function (List) {
           testSelected(item,false);
         });
       });
-    });
-
-
-    it('测试点击checkbox',function(){
-      var item = list.getItem(2),
-          el = $(list.findElement(item)),
-          checkbox = el.find('input');
-
-      jasmine.simulate(checkbox[0],'click');
-      waits(1000);
-      runs(function(){
-        testSelected(item,true);
-       
-      });
-
     });
   });
 
