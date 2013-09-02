@@ -126,8 +126,8 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         }
         if(success){
           success(data);
-          callback && callback.call(_self,data);
         }
+        callback && callback.call(_self,data);
       } 
       if(submitMask && submitMask.show){
         submitMask.show();

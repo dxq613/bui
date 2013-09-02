@@ -17,7 +17,12 @@ define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (r
 
   },{
     ATTRS : {
-      list : {
+      /**
+       * @protected
+       * 默认的列表配置
+       * @type {Object}
+       */
+      defaultListCfg : {
         value : {
           itemTpl : '<li><span class="x-radio"></span>{text}</li>',
           allowTextSelection : false
@@ -25,7 +30,7 @@ define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (r
       }
     }
   },{
-    xclass : 'form-feild-checklist'
+    xclass : 'form-field-radiolist'
   });
 
   return RadioList;

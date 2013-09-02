@@ -1282,8 +1282,8 @@ textarea.bui-form-field-error,
 .bui-form-field-disabled.calendar {
   background-color: #ebebe4;
 }
-.bui-form-feild-checklist .bui-list-item,
-.bui-form-feild-radiolist .bui-list-item {
+.bui-form-field-checklist .bui-list-item,
+.bui-form-field-radiolist .bui-list-item {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */

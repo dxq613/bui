@@ -18734,6 +18734,17 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
     List = require('bui/list'),
     Field = require('bui/form/basefield');
 
+  function parseItems(items){
+    var rst = items;
+    if($.isPlainObject(items)){
+      rst = [];
+      BUI.each(items,function(v,k){
+        rst.push({text : v,value : k});
+      });
+    }
+    return rst;
+  }
+
   /**
    * @class BUI.Form.Field.List
    * \u8868\u5355\u4e2d\u7684\u5217\u8868
@@ -18792,13 +18803,14 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
     //\u521d\u59cb\u5316\u5217\u8868
     _initList : function(){
       var _self = this,
+        defaultListCfg = _self.get('defaultListCfg'),
         children = _self.get('children'),
         list = _self.get('list') || {};
       if(children[0]){
         return;
       }
       if($.isPlainObject(list)){
-        list.xclass = list.xclass || 'simple-list';
+        BUI.mix(list,defaultListCfg);
       }
       children.push(list);
     },
@@ -18810,7 +18822,7 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
       var _self = this,
         value = _self.get('value'),
         list = _self._getList();
-      list.set('items',items);
+      list.set('items',parseItems(items));
       list.setSelectionByField(value.split(','));
     },
     //\u8bbe\u7f6e\u9009\u9879\u96c6\u5408
@@ -18827,6 +18839,16 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
        */
       controlTpl : {
         value : '<input type="hidden"/>'
+      },
+      /**
+       * @protected
+       * \u9ed8\u8ba4\u7684\u5217\u8868\u914d\u7f6e
+       * @type {Object}
+       */
+      defaultListCfg : {
+        value : {
+          xclass : 'simple-list'
+        }
       },
       /**
        * \u9009\u9879
@@ -18855,7 +18877,7 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
     PARSER : {
       list : function(el){
         var listEl = el.find('.bui-simple-list');
-        if(listEl){
+        if(listEl.length){
           return {
             srcNode : listEl
           };
@@ -18886,7 +18908,12 @@ define('bui/form/checklistfield',['bui/common','bui/form/listfield'],function (r
 
   },{
     ATTRS : {
-      list : {
+      /**
+       * @protected
+       * \u9ed8\u8ba4\u7684\u5217\u8868\u914d\u7f6e
+       * @type {Object}
+       */
+      defaultListCfg : {
         value : {
           itemTpl : '<li><span class="x-checkbox"></span>{text}</li>',
           multipleSelect : true,
@@ -18895,7 +18922,7 @@ define('bui/form/checklistfield',['bui/common','bui/form/listfield'],function (r
       }
     }
   },{
-    xclass : 'form-feild-checklist'
+    xclass : 'form-field-checklist'
   });
 
   return CheckList;
@@ -18919,7 +18946,12 @@ define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (r
 
   },{
     ATTRS : {
-      list : {
+      /**
+       * @protected
+       * \u9ed8\u8ba4\u7684\u5217\u8868\u914d\u7f6e
+       * @type {Object}
+       */
+      defaultListCfg : {
         value : {
           itemTpl : '<li><span class="x-radio"></span>{text}</li>',
           allowTextSelection : false
@@ -18927,7 +18959,7 @@ define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (r
       }
     }
   },{
-    xclass : 'form-feild-checklist'
+    xclass : 'form-field-radiolist'
   });
 
   return RadioList;
@@ -20321,8 +20353,8 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         }
         if(success){
           success(data);
-          callback && callback.call(_self,data);
         }
+        callback && callback.call(_self,data);
       } 
       if(submitMask && submitMask.show){
         submitMask.show();

@@ -17,7 +17,12 @@ define('bui/form/checklistfield',['bui/common','bui/form/listfield'],function (r
 
   },{
     ATTRS : {
-      list : {
+      /**
+       * @protected
+       * 默认的列表配置
+       * @type {Object}
+       */
+      defaultListCfg : {
         value : {
           itemTpl : '<li><span class="x-checkbox"></span>{text}</li>',
           multipleSelect : true,
@@ -26,7 +31,7 @@ define('bui/form/checklistfield',['bui/common','bui/form/listfield'],function (r
       }
     }
   },{
-    xclass : 'form-feild-checklist'
+    xclass : 'form-field-checklist'
   });
 
   return CheckList;
