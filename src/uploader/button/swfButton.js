@@ -2,8 +2,13 @@
  * @fileoverview flash上传按钮
  * @author: 紫英(橘子)<daxingplay@gmail.com>, 剑平（明河）<minghe36@126.com>
  **/
-define('gallery/uploader/1.4/button/swfButton', function (require) {
-    var EMPTY = '', $ = Node.all,
+define('bui/uploader/button/swfButton', function (require) {
+
+    var BUI = require('bui/common'),
+        ButtonBase = require('bui/uploader/button/base'),
+        SwfUploader = require('bui/uploader/type/flash');
+
+    var EMPTY = '',
         SWF_WRAPPER_ID_PREVFIX = 'swf-uploader-wrapper-';
 
     /**
@@ -12,14 +17,13 @@ define('gallery/uploader/1.4/button/swfButton', function (require) {
      * @constructor
      * @extends Base
      */
-    function SwfButton(target, config) {
-        var self = this;
-        config = S.merge({target:$(target)}, config);
+    function SwfButton(config) {
+        var _self = this;
         //调用父类构造函数
-        SwfButton.superclass.constructor.call(self, config);
+        SwfButton.superclass.constructor.call(_self, config);
     }
 
-    S.mix(SwfButton, /** @lends SwfButton*/{
+    BUI.mix(SwfButton, /** @lends SwfButton*/{
         /**
          * 支持的事件
          */
@@ -40,19 +44,21 @@ define('gallery/uploader/1.4/button/swfButton', function (require) {
             CLICK:'click'
         }
     });
-    S.extend(SwfButton, Base, /** @lends SwfButton.prototype*/{
+    BUI.extend(SwfButton, ButtonBase, /** @lends SwfButton.prototype*/{
         /**
          *  运行，会实例化AJBrige的Uploader，存储为swfUploader属性
          */
         render:function () {
             var self = this,
-                $target = self.get('target'),
                 swfUploader,
                 multiple = self.get('multiple'),
-                fileFilters = self.get('fileFilters') ;
-            $target.css('position', 'relative');
+                fileFilters = self.get('filter') ;
+
+
             self.set('swfWrapper',self._createSwfWrapper());
+
             self._setFlashSizeConfig();
+
             swfUploader = self._initSwfUploader();
             //SWF 内容准备就绪
             swfUploader.on('contentReady', function(ev){
@@ -74,14 +80,14 @@ define('gallery/uploader/1.4/button/swfButton', function (require) {
          */
         _createSwfWrapper:function () {
             var self = this,
-                target = self.get('target'),
+                render = self.get('render'),
                 tpl = self.get('tpl'),
                 //容器id
-                id = self.get('swfWrapperId') != EMPTY && self.get('swfWrapperId') || SWF_WRAPPER_ID_PREVFIX + S.guid(),
+                id = self.get('swfWrapperId') != EMPTY && self.get('swfWrapperId') || SWF_WRAPPER_ID_PREVFIX + BUI.guid(),
                 //容器html
-                html = S.substitute(tpl, {id:id});
+                html = BUI.substitute(tpl, {id:id});
             self.set('swfWrapperId', id);
-            return $(html).appendTo(target);
+            return $(html).appendTo(render);
         },
         /**
          * 初始化ajbridge的uploader
@@ -91,14 +97,14 @@ define('gallery/uploader/1.4/button/swfButton', function (require) {
             var self = this, flash = self.get('flash'),
                 id = self.get('swfWrapperId'),
                 swfUploader;
-            S.mix(flash,{id:'swfUploader'+S.guid()});
-            try {
+            BUI.mix(flash,{id:'swfUploader' + BUI.guid()});
+            //try {
                 //实例化AJBridge.Uploader
                 swfUploader = new SwfUploader(id, flash);
                 self.set('swfUploader', swfUploader);
-            } catch (err) {
+            // } catch (err) {
 
-            }
+            // }
             return swfUploader;
         },
         /**
@@ -120,15 +126,17 @@ define('gallery/uploader/1.4/button/swfButton', function (require) {
          * 设置flash配置参数
          */
         _setFlashSizeConfig:function () {
-            var self = this, flash = self.get('flash'),
-                target = self.get('target'),
+            var self = this,
+                flash = self.get('flash'),
+                render = self.get('render'),
                 size = self.get('size');
-            if(!S.isEmptyObject(size)){
-                S.mix(flash.attrs, size);
+
+            if(size){
+                BUI.mix(flash.attrs, size);
             }else{
-                S.mix(flash.attrs, {
-                    width:target.innerWidth(),
-                    height:target.innerHeight()
+                BUI.mix(flash.attrs, {
+                    width:render.innerWidth(),
+                    height:render.innerHeight()
                 });
             }
             self.set('flash', flash);

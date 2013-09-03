@@ -16,7 +16,6 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       el.delegate('.del', 'click', function (ev) {
         var itemContainer = $(ev.target).parent();
         _self.removeItem(_self.getItemByElement(itemContainer));
-        console.log(_self.getItems());
       });
     },
     /**

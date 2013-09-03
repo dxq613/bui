@@ -7,7 +7,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
     queueTarget: '#J_UploaderQueue',
     url: 'upload/upload.php',
     buttonCls: 'defaultTheme-button',
-    multiple: true//,
+    multiple: true,
+    type: 'flash'
     // text: '上传'
   });
   uploader.render();

@@ -99,7 +99,7 @@ define('bui/uploader/button/htmlButton', function(require) {
       }
     },
     /**
-     * 是否开启多选支持，多选目前有兼容性问题，建议禁用
+     * 是否开启多选支持
      * @type Boolean
      * @default true
      */
@@ -107,6 +107,18 @@ define('bui/uploader/button/htmlButton', function(require) {
       value : true,
       setter : function(v){
         this._setMultiple(v);
+        return v;
+      }
+    },
+    /**
+     * 文件过滤
+     * @type Array
+     * @default []
+     */
+    filter : {
+      value : [],
+      setter : function(v){
+        this._setFilter(v);
         return v;
       }
     },
@@ -238,10 +250,23 @@ define('bui/uploader/button/htmlButton', function(require) {
         fileInput = _self.get('fileInput');
 
       if(!fileInput || !fileInput.length){
-        return false
+        return false;
       };
       multiple && fileInput.attr('multiple', 'multiple') || fileInput.removeAttr('multiple');
       return multiple;
+    },
+    /**
+     * 设置上传文件的类型
+     * @param {[type]} filter 可上传文件的类型
+     */
+    _setFilter: function(filter){
+      var _self = this,
+        fileInput = _self.get('fileInput');
+      if(!fileInput || !fileInput.length){
+        return false;
+      };
+      filter && fileInput
+      return filter;
     }
   });
 

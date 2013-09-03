@@ -177,7 +177,6 @@ define('bui/uploader/uploader', function (require) {
         button = _self.get('button'),
         queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
-
       button.on('change', function(ev) {
         queue.addItems(ev.files);
       });
@@ -194,15 +193,6 @@ define('bui/uploader/uploader', function (require) {
           //如果文件被置为等等状态，则要进行重新上传
         }
       });
-
-      // queue.on('itemupdated', function(ev){
-      //   var item = ev.item,
-      //     element = ev.domTarget,
-      //     url = item.url;
-      //   if (url) {
-      //     $(element).attr('data-url', url);
-      //   }
-      // });
     },
     /**
      * 

@@ -132,13 +132,13 @@ define('bui/uploader/type/flash', function (require) {
          */
         isHasCrossdomain:function(){
             var domain = location.hostname;
-             BUI.io({
+             $.ajax({
                  url:'http://' + domain + '/crossdomain.xml',
                  dataType:"xml",
                  error:function(){
                      BUI.log('缺少crossdomain.xml文件或该文件不合法！');
                  }
-             })
+             });
         }
     }, {ATTRS:/** @lends FlashType*/{
         /**
