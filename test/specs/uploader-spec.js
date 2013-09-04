@@ -1,4 +1,5 @@
 
+
 BUI.use(['bui/uploader'], function (Uploader) {
 
   
@@ -20,3 +21,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
     });
   });
 });
+
+
+$(document).on('click', function(ev){
+  console.log(ev.target);
+})

@@ -108,7 +108,7 @@ define('bui/uploader/uploader', function (require) {
         multiple = _self.get('multiple'),
         filter = _self.get('filter'),
         button = new ButtonClass({
-          //name: name,
+          uploader: _self,
           multiple: multiple,
           filter: filter
         });
@@ -156,6 +156,7 @@ define('bui/uploader/uploader', function (require) {
         type = _self.get('type'),
         UploaderType = _self._getUploaderType(type),
         uploaderType = new UploaderType({
+          uploader: _self,
           action: _self.get('url'),
           data: _self.get('data')
         });
