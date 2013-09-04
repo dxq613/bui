@@ -97,6 +97,20 @@ define('bui/uploader/uploader', function (require) {
       return uploaderType;
     },
     /**
+     * 获取用户的配置信息
+     */
+    _getUserConfig: function(keys){
+      var userConfig = this.get('userConfig'),
+        config = {};
+      BUI.each(keys, function(key){
+        var value = userConfig[key];
+        if(value !== undefined){
+          config[key] = value;
+        }
+      });
+      return config;
+    },
+    /**
      * 初始化Button
      * @return {[type]} [description]
      */
@@ -104,14 +118,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         type = _self.get('type'),
         ButtonClass = _self._getButtonClass(type),
-        name = _self.get('name'),
-        multiple = _self.get('multiple'),
-        filter = _self.get('filter'),
-        button = new ButtonClass({
-          uploader: _self,
-          multiple: multiple,
-          filter: filter
-        });
+        button = new ButtonClass(_self._getUserConfig(['name', 'multiple', 'filter']));
       _self.set('button', button);
     },
     /**
@@ -170,6 +177,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         buttonEl = _self.get('view').get('el').find('.' + CLS_UPLOADER_BUTTON),
         button = _self.get('button');
+
       button.set('render', buttonEl);
       button.render();
     },
@@ -179,6 +187,7 @@ define('bui/uploader/uploader', function (require) {
         queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
       button.on('change', function(ev) {
+        // console.log(ev);
         queue.addItems(ev.files);
       });
     },

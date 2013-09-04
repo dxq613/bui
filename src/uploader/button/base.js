@@ -4,200 +4,123 @@
  **/
 define('bui/uploader/button/base', function(require) {
 
-  var PREFIX = BUI.prefix,
-    CLS_UPLOADER = PREFIX + 'uploader',
-    CLS_UPLOADER_BUTTON = CLS_UPLOADER + '-button',
-    CLS_UPLOADER_BUTTON_TEXT = CLS_UPLOADER_BUTTON + '-text';
+  var BUI = require('bui/common');
 
   /**
-   * 获取文件名称（从表单域的值中提取）
+   * 获取文件名称
    * @param {String} path 文件路径
    * @return {String}
    */
   function getFileName (path) {
     return path.replace(/.*(\/|\\)/, "");
   }
+
   /**
-   * @name Base
-   * @class 文件上传按钮，ajax和iframe上传方式使用
-   * @constructor
-   * @extends BUI.Base
-   * @param {Object} config 配置对象
-   * @param {String} config.name  *，隐藏的表单上传域的name值
-   * @param {Boolean} config.disabled 是否禁用按钮
-   * @param {Boolean} config.multiple 是否开启多选支持
+   * 获取文件扩展名
+   * @param {String} filename 文件名
+   * @return {String}
    */
-  function Base(config) {
-    var _self = this;
-    //超类初始化
-    Base.superclass.constructor.call(_self, config);
+  function getFileExtName(filename){
+    var result = /\.[^\.]+/.exec(filename) || [];
+    return result.join('');
   }
 
-  Base.ATTRS = /** @lends Base.prototype */{
+  /**
+   * 转换文件大小字节数
+   * @param {Number} bytes 文件大小字节数
+   * @return {String} 文件大小
+   */
+  function convertByteSize(bytes) {
+    var i = -1;
+    do {
+      bytes = bytes / 1024;
+      i++;
+    } while (bytes > 99);
+    return Math.max(bytes, 0.1).toFixed(1) + ['KB', 'MB', 'GB', 'TB', 'PB', 'EB'][i];
+  }
+
+  function getFileId (file) {
+    return file.id || BUI.guid('bui-uploader-file');
+  }
+
+  function baseView() {
+  }
+
+  baseView.ATTRS = /** @lends Base.prototype */{
+  }
+
+  baseView.prototype = {
+
+  }
+
+
+  function base(){
+
+  }
+
+  base.ATTRS = {
     /**
-     * 按钮渲染的容器
-     * @type Node
-     * @default null
+     * 是否可用,false为可用
+     * @type Boolean
+     * @default false
      */
-    render: {
-    },
-    /**
-     * 文件上传域容器
-     * @type KISSY.Node
-     * @default ""
-     */
-    el: {
-    },
-    buttonCls: {
-    },
-    textCls: {
-      setter: function(v){
-        this._setTextCls(v);
+    disabled : {
+      value : false,
+      setter : function(v) {
+        this.setDisabled(v);
         return v;
       }
     },
-    text: {
-      value: '上传文件',
-      setter: function(v){
-        this._setText(v);
+    /**
+     * 是否开启多选支持
+     * @type Boolean
+     * @default true
+     */
+    multiple : {
+      value : true,
+      setter : function(v){
+        this.setMultiple(v);
         return v;
       }
     },
-    tpl:{
-    },
     /**
-     * 隐藏的表单上传域的name值
-     * @type String
-     * @default "fileInput"
+     * 文件过滤
+     * @type Array
+     * @default []
      */
-    name: {
-      value : 'fileInput'
-    },
-    filter: {
-    },
-    /**
-     * 按钮当前的状态
-     * @type Object
-     * @default  { disabled : 'disabled' }
-     */
-    status : {
-      value : {
-        disabled : 'disabled',
-        multiple: 'multiple'
+    filter : {
+      value : [],
+      setter : function(v){
+        this.setFilter(v);
+        return v;
       }
     },
-    /**
-     * 按钮当前的状态对应的class
-     * @type Object
-     * @default  { disabled : 'disabled' }
-     */
-    statusCls : {
-      value : {
-        disabled : 'disabled',
-        multiple: 'multiple'
-      }
+  };
+
+  base.prototype = {
+    //设置文件的扩展信息
+    getExtFileData: function(file){
+      var filename = getFileName(file.name),
+        textSize = convertByteSize(file.size),
+        extName = getFileExtName(file.name);
+      BUI.mix(file, {
+        name: filename,
+        textSize: textSize,
+        ext: extName,
+        id: getFileId(file)
+      });
+      return file;
     },
-    /**
-     * 事件
-     * @type {Object}
-     */
-    events : {
-      'beforeshow': 'beforeshow',
-      'aftershow': 'aftershow',
-      'beforehide': 'beforehide',
-      'afterhide': 'afterhide',
-      'beforerender' : 'beforerender',
-      'afterrender' : 'afterrender',
-      'change' : 'change'
+    setMultiple: function(){
+    },
+    setDisabled: function(){
+    },
+    setFilter: function(){
     }
   }
 
-  BUI.extend(Base, BUI.Base);
+  base.View = baseView
 
-  BUI.augment(Base, /** @lends Base.prototype*/{
-    /**
-     * 运行
-     * @return {Button} Button的实例
-     */
-    render : function() {
-    },
-    /**
-     * 显示按钮
-     */
-    show : function() {
-      var _self = this,
-        el = _self.get('el');
-      _self.fire('beforeshow');
-      el.show();
-      _self.fire('aftershow');
-    },
-    /**
-     * 隐藏按钮
-     * @return {Button} Button的实例
-     */
-    hide : function() {
-      var _self = this,
-        el = _self.get('el');
-      _self.fire('beforeshow');
-      el.hide();
-      _self.fire('afterhide');
-    },
-    /**
-     * 重置按钮
-     * @return {Button} Button的实例
-     */
-    reset : function() {
-      var _self = this,
-        el = _self.get('el');
-      //移除表单上传域容器
-      $(el).remove();
-      _self.set('el', null);
-      _self.set('fileInput', null);
-      //重新创建表单上传域
-      _self._createInput();
-      return _self;
-    },
-    /**
-     * 创建隐藏的表单上传域
-     * @return {HTMLElement} 文件上传域容器
-     */
-    _createInput : function() {
-      
-    },
-    _setButtonCls: function(v){
-      var _self = this,
-        buttonCls = _self.get('buttonCls'),
-        el = _self.get('el');
-      buttonEl.addClass(buttonCls);
-    },
-    _setText: function(v) {
-      var _self = this,
-        textEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON_TEXT);
-      textEl.text(v);
-    },
-    _setTextCls: function(v){
-      var _self = this,
-        textEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON_TEXT);
-      textEl.addClass(v);
-    },
-    /**
-     * 设置按钮的状态
-     * @param {String} name 状态的名称
-     * @param {String} value 状态对应的值
-     */
-    _setStatus: function(name, value){
-      var _self = this;
-    },
-    /**
-     * 获取按钮的状态
-     * @param {String} name 状态的名称
-     * @return {String} value 状态对应的值
-     */
-    _getStatus: function(name){
-      return '';
-    }
-  });
-
-  return Base;
+  return base;
 
 });

@@ -7,8 +7,14 @@
 
   <div class="container">
     <div class="row">
-      <div class="span24" id="J_Uploader"></div>
-      <div class="span24" id="J_UploaderQueue"></div>
+      <div class="span12">
+        <div id="J_Uploader"></div>
+        <div id="J_UploaderQueue"></div>
+      </div>
+      <div class="span12">
+        <div id="J_UploaderFlash"></div>
+        <div id="J_UploaderQueueFlash"></div>
+      </div>
     </div>
   </div>
   
@@ -28,7 +34,7 @@
     <!-- // <script src="../src/uploader/type/iframe.js"></script> -->
     <script src="../src/uploader/type/flash.js"></script>
     <script src="../src/uploader/type/flash.js"></script>
-    <script src="../src/uploader/plugins/ajbridge/ajbridge.js"></script>
+    <script src="../src/uploader/button/ajbridge.js"></script>
 
     <script type="text/javascript" src="specs/uploader-spec.js"></script>
 

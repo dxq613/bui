@@ -4,162 +4,32 @@
  **/
 define('bui/uploader/button/htmlButton', function(require) {
 
-  var ButtonBase = require('bui/uploader/button/base'),
+  var BUI = require('bui/common'),
+    Component = BUI.Component,
+    ButtonBase = require('bui/uploader/button/base'),
     UA = BUI.UA;
 
-  /**
-   * 获取文件名称（从表单域的值中提取）
-   * @param {String} path 文件路径
-   * @return {String}
-   */
-  function getFileName (path) {
-    return path.replace(/.*(\/|\\)/, "");
-  }
+  
+
+  var HtmlButtonView = Component.View.extend({
+
+  },{
+    ATTRS: {
+    }
+  });
 
   /**
-   * 转换文件大小字节数
-   * @param {Number} bytes 文件大小字节数
-   * @return {String} 文件大小
-   */
-  function convertByteSize(bytes) {
-    var i = -1;
-    do {
-      bytes = bytes / 1024;
-      i++;
-    } while (bytes > 99);
-    return Math.max(bytes, 0.1).toFixed(1) + ['kB', 'MB', 'GB', 'TB', 'PB', 'EB'][i];
-  }
-
-  function getFileId () {
-    return BUI.guid('bui-uploader-file');
-  }
-  /**
-   * @name Button
+   * @name HtmlButton
    * @class 文件上传按钮，ajax和iframe上传方式使用
    * @constructor
    */
-  function Button(config) {
-    var _self = this;
-    Button.superclass.constructor.call(_self, config);
-  }
-
-  Button.ATTRS = /** @lends Button.prototype */{
-    /**
-     * 按钮渲染的容器
-     * @type Node
-     * @default null
-     */
-    render: {
-    },
-    /**
-     * 对应的表单上传域
-     * @type KISSY.Node
-     * @default ""
-     */
-    fileInput: {
-    },
-    /**
-     * 文件上传域容器
-     * @type KISSY.Node
-     * @default ""
-     */
-    el: {
-    },
-    /**
-     * 隐藏的表单上传域的模板
-     * @type String
-     */
-    tpl : {
-      value : '<div class="file-input-wrapper" style="overflow: hidden;"><input type="file" name="{name}" hidefocus="true" class="file-input" /></div>'
-    },
-    /**
-     * 隐藏的表单上传域的name值
-     * @type String
-     * @default "Filedata"
-     */
-    name : {
-      value : 'Filedata',
-      setter : function(v) {
-        if (this.get('fileInput')) {
-          $(this.get('fileInput')).attr('name', v);
-        }
-        return v;
-      }
-    },
-    /**
-     * 是否可用,false为可用
-     * @type Boolean
-     * @default false
-     */
-    disabled : {
-      value : false,
-      setter : function(v) {
-        this._setDisabled(v);
-        return v;
-      }
-    },
-    /**
-     * 是否开启多选支持
-     * @type Boolean
-     * @default true
-     */
-    multiple : {
-      value : true,
-      setter : function(v){
-        this._setMultiple(v);
-        return v;
-      }
-    },
-    /**
-     * 文件过滤
-     * @type Array
-     * @default []
-     */
-    filter : {
-      value : [],
-      setter : function(v){
-        this._setFilter(v);
-        return v;
-      }
-    },
-    /**
-     * 样式
-     * @type Object
-     * @default  { disabled : 'uploader-button-disabled' }
-     */
-    cls : {
-      value : {
-        disabled : 'uploader-button-disabled'
-      }
-    },
-    /**
-     * 事件
-     * @type {Object}
-     */
-    events : {
-      'beforeshow': 'beforeshow',
-      'aftershow': 'aftershow',
-      'beforehide': 'beforehide',
-      'afterhide': 'afterhide',
-      'beforerender' : 'beforerender',
-      'afterrender' : 'afterrender',
-      'change' : 'change'
-    }
-  };
-
-
-  BUI.extend(Button, ButtonBase, /** @lends Button.prototype*/{
-    /**
-     * 运行
-     * @return {Button} Button的实例
-     */
-    render : function() {
+  var HtmlButton = Component.Controller.extend([ButtonBase], {
+    renderUI: function(){
       var _self = this;
-
-      _self.fire('beforerender');
       _self._createInput();
-      _self.fire('afterrender');
-      return _self;
+    },
+    bindUI: function(){
+
     },
     /**
      * 创建隐藏的表单上传域
@@ -167,32 +37,31 @@ define('bui/uploader/button/htmlButton', function(require) {
      */
     _createInput: function() {
       var _self = this,
-        render = _self.get('render'),
+        el = _self.get('el'),
+        inputTpl = _self.get('inputTpl'),
         name = _self.get('name'),
-        tpl = _self.get('tpl'),
-        multiple = _self.get('multiple'),
-        html,
-        inputContainer,
         fileInput;
 
-      html = BUI.substitute(tpl, {
-        'name': name
+      inputTpl = BUI.substitute(inputTpl, {
+        name: name
       });
-      inputContainer = $(html);
-      //向body添加表单文件上传域
-      $(inputContainer).appendTo(render);
-      fileInput = $(inputContainer).children('input');
+
+      fileInput = $(inputTpl);
+      fileInput.appendTo(el);
+
       //TODO:IE6下只有通过脚本和内联样式才能控制按钮大小
       if(UA.ie == 6){
         fileInput.css('fontSize','400px');
       }
       _self._bindChangeHandler(fileInput);
-      _self.set('fileInput', fileInput);
-      _self.set('el', inputContainer);
 
-      multiple && _self._setMultiple(multiple);
-      return inputContainer;
+      _self.set('fileInput', fileInput);
+
+      _self.setMultiple(_self.get('multiple'));
+      _self.setFilter(_self.get('filter'));
+      //_self._setDisabled(_self.get('disabled'));
     },
+
     _bindChangeHandler: function(fileInput) {
       var _self = this;
       //上传框的值改变后触发
@@ -204,10 +73,10 @@ define('bui/uploader/button/htmlButton', function(require) {
         //IE取不到files
         if(oFiles){
           BUI.each(oFiles, function(v){
-            files.push(_self._getFileExtData({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput[0]}));
+            files.push(_self.getExtFileData({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput[0]}));
           });
         }else{
-          files.push(_self._getFileExtData({'name': getFileName(value), input: fileInput[0]}));
+          files.push(_self.getExtFileData({'name': value, input: fileInput[0]}));
         }
         _self.fire('change', {
           files: files,
@@ -216,25 +85,12 @@ define('bui/uploader/button/htmlButton', function(require) {
         _self.reset();
       });
     },
-    //设置文件的扩展信息
-    _getFileExtData: function(file){
-      var textSize;
-      if (file.size) {
-        textSize = convertByteSize(file.size);
-      }
-      BUI.mix(file, {
-        waiting: true,
-        textSize: textSize,
-        id: getFileId()
-      });
-      return file;
-    },
     reset: function () {
       var _self = this,
-        el = _self.get('el');
+        fileInput = _self.get('fileInput');
+
       //移除表单上传域容器
-      $(el).remove();
-      _self.set('el', null);
+      fileInput.remove();
       _self.set('fileInput', null);
       //重新创建表单上传域
       _self._createInput();
@@ -245,21 +101,26 @@ define('bui/uploader/button/htmlButton', function(require) {
      * @param {Boolean} multiple 是否禁用
      * @return {Boolean}
      */
-    _setMultiple : function(multiple){
+    setMultiple : function(multiple){
       var _self = this,
         fileInput = _self.get('fileInput');
 
       if(!fileInput || !fileInput.length){
         return false;
       };
-      multiple && fileInput.attr('multiple', 'multiple') || fileInput.removeAttr('multiple');
+      if(multiple){
+        fileInput.attr('multiple', 'multiple');
+      }
+      else{
+        fileInput.removeAttr('multiple');
+      }
       return multiple;
     },
     /**
      * 设置上传文件的类型
      * @param {[type]} filter 可上传文件的类型
      */
-    _setFilter: function(filter){
+    setFilter: function(filter){
       var _self = this,
         fileInput = _self.get('fileInput');
       if(!fileInput || !fileInput.length){
@@ -268,8 +129,45 @@ define('bui/uploader/button/htmlButton', function(require) {
       filter && fileInput
       return filter;
     }
+  },{
+    ATTRS: {
+      elCls: {
+        value: 'file-input-wrapper'
+      },
+      /**
+       * 隐藏的表单上传域的模板
+       * @type String
+       */
+      inputTpl: {
+        view: true,
+        value: '<input type="file" name="{name}" hidefocus="true" class="file-input" />'
+      },
+      /**
+       * 对应的表单上传域
+       * @type KISSY.Node
+       * @default ""
+       */
+      fileInput: {
+      },
+      /**
+       * 隐藏的表单上传域的name值
+       * @type String
+       * @default "Filedata"
+       */
+      name : {
+        view: true,
+        value : 'Filedata',
+        setter : function(v) {
+            v && this.get('fileInput') && $(this.get('fileInput')).attr('name', v);
+          return v;
+        }
+      },
+      xview: {
+        value: HtmlButtonView
+      }
+    }
   });
 
-  return Button;
+  return HtmlButton;
 
 });
