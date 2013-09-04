@@ -7,7 +7,8 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
   'use strict';
 
   var BUI = require('bui/common'),
-    ListPicker = require('bui/picker').ListPicker;
+    ListPicker = require('bui/picker').ListPicker,
+    Tree = require('bui/tree');
 
   /**
    * @class BUI.Extensions.TreePicker
@@ -82,11 +83,6 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
         nodes = BUI.Array.filter(nodes,filter);
       }
       return nodes;
-    },
-    _uiSetSelectStatus : function(v){
-      if(v === 'checked'){
-        this.setInternal('hideEvent',null);
-      }
     }
   },{
     ATTRS : {
@@ -108,6 +104,14 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
       changeEvent : {
         getter : function(){
           return this.get('selectStatus') + 'change';
+        }
+      },
+      hideEvent : {
+        getter : function(v){
+          if(this.get('selectStatus') === 'checked'){
+            return null;
+          }
+          return v;
         }
       },
       /**
