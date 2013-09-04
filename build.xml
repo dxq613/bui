@@ -12,13 +12,17 @@
     </target>
 	<target name="prepare">
         <delete>
-            <fileset dir="${des.dir}" includes="**/*-min.js,*.js"/>
+            <fileset dir="${des.dir}" includes="**/*-min.js,**/*.js"/>
 			
         </delete>
 		<copy todir="${des.dir}">
 			<fileset dir="${base.dir}/src/common/"  includes="adapter.js">
         </fileset>
 	  </copy>
+    <copy todir="${des.dir}/extensions">
+          <fileset dir="${base.dir}/src/extensions"  includes="*.js">
+          </fileset>
+    </copy>
     </target>
 
 	 <target name="build-all">
@@ -84,12 +88,12 @@
     <target name="native2ascii" depends="compress.js">
         <mkdir dir="${build.dir}/tmp"/>
         <move todir="${build.dir}/tmp">
-            <fileset dir="${des.dir}" includes="*-min.js, bui.js"/>
+            <fileset dir="${des.dir}" includes="**/*-min.js, bui.js"/>
         </move>
         <native2ascii encoding="${charset}"
                       src="${build.dir}/tmp"
                       dest="${des.dir}"
-                      includes="*.js"/>
+                      includes="**/*.js"/>
         <delete dir="${build.dir}/tmp"/>
     </target>
 

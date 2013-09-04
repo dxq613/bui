@@ -1655,7 +1655,8 @@ input.x-datepicker-time {
 .bui-tree-item-disabled {
   color: #cccccc;
 }
-.bui-tree-list .x-tree-icon {
+.bui-tree-list .x-tree-icon,
+.bui-tree-grid .x-tree-icon {
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */
@@ -1666,65 +1667,61 @@ input.x-datepicker-time {
   width: 16px;
 }
 .bui-tree-list .x-tree-elbow-expander,
+.bui-tree-grid .x-tree-elbow-expander,
 .bui-tree-list .x-tree-elbow-dir,
+.bui-tree-grid .x-tree-elbow-dir,
 .bui-tree-list .x-tree-elbow-leaf,
+.bui-tree-grid .x-tree-elbow-leaf,
 .bui-tree-list .x-tree-elbow-line,
+.bui-tree-grid .x-tree-elbow-line,
 .bui-tree-list .x-tree-elbow,
+.bui-tree-grid .x-tree-elbow,
 .bui-tree-list .x-tree-elbow-expander-end,
-.bui-tree-list .x-tree-elbow-end {
+.bui-tree-grid .x-tree-elbow-expander-end,
+.bui-tree-list .x-tree-elbow-end,
+.bui-tree-grid .x-tree-elbow-end {
   background: url("../img/tree_icon-80-100.gif") no-repeat -999px -999px transparent;
 }
-.bui-tree-list .x-tree-icon-checkbox {
+.bui-tree-list .x-tree-icon-checkbox,
+.bui-tree-grid .x-tree-icon-checkbox {
   background: url("../img/check_icon-100-100.gif") no-repeat 0px 0px transparent;
 }
-.bui-tree-list .x-tree-elbow-expander {
+.bui-tree-list .x-tree-elbow-expander,
+.bui-tree-grid .x-tree-elbow-expander {
   background-position: 0 0;
 }
-.bui-tree-list .bui-tree-item-expanded .x-tree-elbow-expander {
-  background-position: -16px 0;
-}
-.bui-tree-list .x-tree-elbow-expander:hover {
+.bui-tree-list .x-tree-elbow-expander:hover,
+.bui-tree-grid .x-tree-elbow-expander:hover {
   background-position: -32px 0;
 }
-.bui-tree-list .bui-tree-item-expanded .x-tree-elbow-expander:hover {
-  background-position: -48px 0;
-}
 .bui-tree-list .x-tree-elbow-dir,
-.bui-tree-list .x-tree-elbow-leaf {
+.bui-tree-grid .x-tree-elbow-dir,
+.bui-tree-list .x-tree-elbow-leaf,
+.bui-tree-grid .x-tree-elbow-leaf {
   margin: 2px 3px 0 0;
 }
-.bui-tree-list .x-tree-elbow-dir {
+.bui-tree-list .x-tree-elbow-dir,
+.bui-tree-grid .x-tree-elbow-dir {
   background-position: 0 -80px;
 }
-.bui-tree-list .bui-tree-item-expanded .x-tree-elbow-dir {
-  background-position: -20px -80px;
-}
-.bui-tree-list .x-tree-elbow-leaf {
+.bui-tree-list .x-tree-elbow-leaf,
+.bui-tree-grid .x-tree-elbow-leaf {
   background-position: -40px -80px;
 }
-.bui-tree-list .x-tree-show-line .x-tree-elbow {
-  background-position: 0 -20px;
+.bui-tree-item-expanded .x-tree-elbow-expander,
+.bui-grid-row-expanded .x-tree-elbow-expander {
+  background-position: -16px 0;
 }
-.bui-tree-list .x-tree-show-line .x-tree-elbow-end {
-  background-position: -20px -20px;
+.bui-tree-item-expanded .x-tree-elbow-expander:hover,
+.bui-grid-row-expanded .x-tree-elbow-expander:hover {
+  background-position: -48px 0;
 }
-.bui-tree-list .x-tree-show-line .x-tree-elbow-line {
-  background-position: -40px -20px;
+.bui-tree-item-expanded .x-tree-elbow-dir,
+.bui-grid-row-expanded .x-tree-elbow-dir {
+  background-position: -20px -80px;
 }
-.bui-tree-list .x-tree-show-line .x-tree-elbow-expander,
-.bui-tree-list .x-tree-show-line .x-tree-elbow-expander:hover {
-  background-position: -60px -40px;
-}
-.bui-tree-list .x-tree-show-line .x-tree-elbow-expander-end {
-  background-position: -20px -40px;
-}
-.bui-tree-list .x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander {
-  background-position: -40px -40px;
-}
-.bui-tree-list .x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander-end {
-  background-position: 0px -40px;
-}
-.bui-tree-list .bui-tree-item-loading .x-tree-elbow-expander {
+.bui-tree-item-loading .x-tree-elbow-expander,
+.bui-grid-row-loading .x-tree-elbow-expander {
   background: url("../img/load-16-16.gif") no-repeat 0 0 transparent;
 }
 .bui-tree-item-checked {
@@ -1733,23 +1730,60 @@ input.x-datepicker-time {
 .x-tree-icon-checkbox:hover {
   background-position: -16px 0px;
 }
-.bui-tree-item-checked .x-tree-icon-checkbox {
+.bui-tree-item-checked .x-tree-icon-checkbox,
+.bui-grid-row-checked .x-tree-icon-checkbox {
   background-position: 0 -20px;
 }
-.bui-tree-item-checked .x-tree-icon-checkbox:hover {
+.bui-tree-item-checked .x-tree-icon-checkbox:hover,
+.bui-grid-row-checked .x-tree-icon-checkbox:hover {
   background-position: -16px -20px;
 }
-.bui-tree-item-partial-checked .x-tree-icon-checkbox {
+.bui-tree-item-partial-checked .x-tree-icon-checkbox,
+.bui-grid-row-partial-checked .x-tree-icon-checkbox {
   background-position: 0 -40px;
 }
-.bui-tree-item-partial-checked .x-tree-icon-checkbox:hover {
+.bui-tree-item-partial-checked .x-tree-icon-checkbox:hover,
+.bui-grid-row-partial-checked .x-tree-icon-checkbox:hover {
   background-position: -16px -40px;
 }
-.bui-tree-item-disabled .x-tree-icon-checkbox {
+.bui-tree-item-disabled .x-tree-icon-checkbox,
+.bui-grid-row-disabled .x-tree-icon-checkbox {
   background-position: -48px 0;
 }
-.bui-tree-item-checked.bui-tree-item-disabled .x-tree-icon-checkbox {
+.bui-tree-item-checked.bui-tree-item-disabled .x-tree-icon-checkbox,
+.bui-grid-row-checked.bui-grid-row-disabled .x-tree-icon-checkbox {
   background-position: -48px -20px;
+}
+.x-tree-show-line .x-tree-elbow {
+  background-position: 0 -20px;
+}
+.x-tree-show-line .x-tree-elbow-end {
+  background-position: -20px -20px;
+}
+.x-tree-show-line .x-tree-elbow-line {
+  background-position: -40px -20px;
+}
+.x-tree-show-line .x-tree-elbow-expander,
+.x-tree-show-line .x-tree-elbow-expander:hover {
+  background-position: -60px -40px;
+}
+.x-tree-show-line .x-tree-elbow-expander-end {
+  background-position: -20px -40px;
+}
+.x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander,
+.x-tree-show-line .bui-grid-row-expanded .x-tree-elbow-expander {
+  background-position: -40px -40px;
+}
+.x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander-end,
+.x-tree-show-line .bui-grid-row-expanded .x-tree-elbow-expander-end {
+  background-position: 0px -40px;
+}
+.bui-tree-grid .bui-grid-table .bui-grid-cell-text {
+  display: inline-block;
+  *display: inline;
+  /* IE7 inline-block hack */
+
+  *zoom: 1;
 }
 .x-align-arrow,
 .x-align-arrow-inner {
