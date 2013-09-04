@@ -53,7 +53,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
 
         innerControl.on(_self.get('changeEvent'),function(e){
           var curTrigger = _self.get('curTrigger'),
-            textField = _self.get('textField') || curTrigger,
+            textField = _self.get('textField') || curTrigger || trigger,
             valueField = _self.get('valueField'),
             selValue = _self.getSelectedValue(),
             isChange = false;

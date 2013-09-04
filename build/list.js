@@ -916,7 +916,11 @@ define('bui/list/domlist',['bui/common'],function (require) {
       if(!item){
         return false;
       }
-      var _self = this;
+      var _self = this,
+        field = _self.getStatusField(status);
+      /*if(field){
+        return _self.getStatusValue(item,status);
+      }*/
       element = element || _self.findElement(item);
       return _self.get('view').hasStatus(status,element);
     },

@@ -8,7 +8,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
   //将id 转换成node
   function makeSureNode(self,node){
     if(BUI.isString(node)){
-      node = self.getItem(node);
+      node = self.findNode(node);
     }
     return node;
   }
@@ -313,7 +313,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
          * @param {Boolean} e.checked 选中状态
          * @param {HTMLElement} e.element 节点的DOM
          */
-        checkchange : false
+        checkedchange : false
       }
     },
     /**
@@ -607,10 +607,16 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     setNodeChecked : function(node,checked,deep){
       deep = deep == null ? true : deep;
+      if(!node){
+        return;
+      }
       var _self = this,
         parent,
         element;
       node = makeSureNode(this,node);
+      if(!node){
+        return;
+      }
       parent = node.parent;
       if(!_self.isCheckable(node)){
         return;
@@ -632,7 +638,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
             _self._resetPatialChecked(parent,null,null,null,true);
           }
         }
-        _self.fire('checkchange',{node : node,element: element,checked : checked});
+        _self.fire('checkedchange',{node : node,element: element,checked : checked});
         
       }
       if(!node.leaf && deep){ //树节点，勾选所有子节点
@@ -642,6 +648,23 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
     },
 
+    /**
+     * 设置节点勾选状态
+     * @param {String|Object|BUI.Data.Node} node 节点或者节点id
+     */
+    setChecked : function(node){
+      this.setNodeChecked(node,true);
+    },
+    /**
+     * 清除所有的勾选
+     */
+    clearAllChecked : function(){
+      var _self = this,
+        nodes = _self.getCheckedNodes();
+      BUI.each(nodes,function(node){
+        _self.setNodeChecked(node,false);
+      });
+    },
     //初始化根节点
     _initRoot : function(){
       var _self = this,
@@ -1185,11 +1208,12 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         var element = _self.findElement(subNode);
         if(element){
           elements.push(element);
+          _self._hideChildrenNodes(subNode);
         }
-        _self._hideChildrenNodes(subNode);
       });
       if(_self.get('expandAnimate')){
-        $(elements).slideUp(function(){
+        elements = $(elements);
+        elements.animate({height : 0},function(){
           _self.removeItems(children);
         });
       }else{
@@ -1296,9 +1320,9 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         containerEl,
         iconsTpl = _self._getIconsTpl(node);
       $(element).find('.' + CLS_ICON_WRAPER).remove(); //移除掉以前的图标
-      containerEl = $(element).find('.' + iconContainer);
+      containerEl = $(element).find(iconContainer).first();
       if(iconContainer && containerEl.length){
-        $(iconsTpl).appendTo(containerEl);
+        $(iconsTpl).prependTo(containerEl);
       }else{
         $(element).prepend($(iconsTpl));
       }
