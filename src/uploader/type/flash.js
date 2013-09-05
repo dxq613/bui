@@ -19,7 +19,6 @@ define('bui/uploader/type/flash', function (require) {
         //调用父类构造函数
         FlashType.superclass.constructor.call(self, config);
         self.isHasCrossdomain();
-        self._init();
     }
 
     BUI.mix(FlashType, /** @lends FlashType.prototype*/{
@@ -38,94 +37,77 @@ define('bui/uploader/type/flash', function (require) {
         /**
          * 初始化
          */
-        _init:function () {
-            var self = this, swfUploader = self.get('swfUploader');
+        _initSwfUploader:function () {
+            var _self = this, swfUploader = _self.get('swfUploader');
             if(!swfUploader){
                 BUI.log(LOG_PREFIX + 'swfUploader对象为空！');
                 return false;
             }
             //SWF 内容准备就绪
             swfUploader.on('contentReady', function(ev){
-                self.fire(FlashType.event.SWF_READY);
-            }, self);
+                _self.fire(FlashType.event.SWF_READY);
+            });
             //监听开始上传事件
-            swfUploader.on('uploadStart', self._uploadStartHandler, self);
+            swfUploader.on('uploadStart', function(ev){
+                var file = _self.get('file');
+                _self.fire(UploadType.event.START, {file: file});
+            });
             //监听文件正在上传事件
-            swfUploader.on('uploadProgress', self._uploadProgressHandler, self);
+            swfUploader.on('uploadProgress', function(ev){
+                BUI.mix(ev, {
+                    //已经读取的文件字节数
+                    loaded:ev.bytesLoaded,
+                    //文件总共字节数
+                    total : ev.bytesTotal
+                });
+                BUI.log(LOG_PREFIX + '已经上传字节数为：' + ev.bytesLoaded);
+                _self.fire(FlashType.event.PROGRESS, { 'loaded':ev.loaded, 'total':ev.total });
+            });
             //监听文件上传完成事件
-            swfUploader.on('uploadCompleteData',self._uploadCompleteDataHandler,self);
+            swfUploader.on('uploadCompleteData', function(ev){
+                var result = _self._processResponse(ev.data);
+                _self.fire(FlashType.event.SUCCESS, {result : result});
+                _self.set('file', null);
+            });
             //监听文件失败事件
-            swfUploader.on('uploadError',self._uploadErrorHandler,self);
+            swfUploader.on('uploadError',function(){
+                _self.set('file', file);
+                _self.fire(FlashType.event.ERROR, {msg : ev.msg});
+            });
         },
         /**
          * 上传文件
          * @param {String} id 文件id
          * @return {FlashType}
          */
-        upload:function (id) {
-            var self = this, swfUploader = self.get('swfUploader'),
-                action = self.get('action'), method = 'POST',
-                data = self.get('data'),
-                name = self.get('fileDataName');
-            if(!name) name = 'Filedata';
-            self.set('uploadingId',id);
-            BUI.mix(data,{"type":"flash"});
-            swfUploader.upload(id, action, method, data,name);
-            return self;
+        upload:function (file) {
+            var _self = this,
+                swfUploader = _self.get('swfUploader'),
+                action = _self.get('action'),
+                method = 'POST',
+                data = _self.get('data'),
+                name = _self.get('fileDataName');
+            if(!file){
+                return;
+            }
+            _self.set('file', file);
+            swfUploader.upload(file.id, action, method, data, name);
+            return _self;
         },
         /**
          * 停止上传文件
          * @return {FlashType}
          */
-        stop:function () {
-            var self = this, swfUploader = self.get('swfUploader'),
-                uploadingId = self.get('uploadingId');
-            if(uploadingId != EMPTY){
-                swfUploader.cancel(uploadingId);
-                self.fire(FlashType.event.STOP, {id : uploadingId});
+        cancel: function () {
+            var _self = this,
+                swfUploader = _self.get('swfUploader'),
+                file = _self.get('file');
+            if(file){
+                swfUploader.cancel(file.id);
+                _self.fire(FlashType.event.CANCEL, {file: file});
+                _self.set('file', null);
             }
-            return self;
-        },
-        /**
-         * 开始上传事件监听器
-         * @param {Object} ev ev.file：文件数据
-         */
-        _uploadStartHandler : function(ev){
-            var self = this;
-            self.fire(FlashType.event.START, {'file' : ev.file });
-        },
-        /**
-         * 上传中事件监听器
-         * @param {Object} ev
-         */
-        _uploadProgressHandler:function (ev) {
-            var self = this;
-            BUI.mix(ev, {
-                //已经读取的文件字节数
-                loaded:ev.bytesLoaded,
-                //文件总共字节数
-                total : ev.bytesTotal
-            });
-            BUI.log(LOG_PREFIX + '已经上传字节数为：' + ev.bytesLoaded);
-            self.fire(FlashType.event.PROGRESS, { 'loaded':ev.loaded, 'total':ev.total });
-        },
-        /**
-         * 上传完成后事件监听器
-         * @param {Object} ev
-         */
-        _uploadCompleteDataHandler : function(ev){
-            var self = this;
-            var result = self._processResponse(ev.data);
-            self.set('uploadingId',EMPTY);
-            self.fire(FlashType.event.SUCCESS, {result : result});
-        },
-        /**
-         *文件上传失败后事件监听器
-         */
-        _uploadErrorHandler : function(ev){
-            var self = this;
-            self.set('uploadingId',EMPTY);
-            self.fire(FlashType.event.ERROR, {msg : ev.msg});
+            return _self;
         },
         /**
          * 应用是否有flash跨域策略文件
@@ -141,32 +123,46 @@ define('bui/uploader/type/flash', function (require) {
              });
         }
     }, {ATTRS:/** @lends FlashType*/{
+        uploader: {
+            setter: function(v){
+                var _self = this;
+                if(v){
+                    var swfButton = v.get('button');
+                    swfButton.on('swfReady', function(ev){
+                        _self.set('swfUploader', ev.swfUploader);
+                        _self._initSwfUploader();
+                    });
+                }
+            }
+        },
         /**
          * 服务器端路径，留意flash必须是绝对路径
          */
         action:{
-            value:EMPTY,
-            getter:function(v){
-                var reg = /^http/;
-                //不是绝对路径拼接成绝对路径
-                if(!reg.test(v)){
-                     var href = location.href,uris = href.split('/'),newUris;
-                    newUris  = BUI.filter(uris,function(item,i){
-                        return i < uris.length - 1;
-                    });
-                    v = newUris.join('/') + '/' + v;
-                }
-                return v;
-            }
+            // getter:function(v){
+            //     var reg = /^http/;
+            //     //不是绝对路径拼接成绝对路径
+            //     if(!reg.test(v)){
+            //          var href = location.href,uris = href.split('/'),newUris;
+            //         newUris  = BUI.filter(uris,function(item,i){
+            //             return i < uris.length - 1;
+            //         });
+            //         v = newUris.join('/') + '/' + v;
+            //     }
+            //     return v;
+            // }
+        },
+        fileDataName: {
+            value: 'Filedata'
         },
         /**
          * ajbridge的uploader组件的实例，必须参数
          */
-        swfUploader:{value:EMPTY},
+        swfUploader:{},
         /**
          * 正在上传的文件id
          */
-        uploadingId : {value : EMPTY}
+        uploadingId : {}
     }});
     return FlashType;
 });

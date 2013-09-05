@@ -6,9 +6,9 @@ BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
     queueTarget: '#J_UploaderQueue',
-    url: 'upload/upload.php',
+    action: 'upload/upload.php',
     buttonCls: 'defaultTheme-button',
-    multiple: false//,
+    multiple: true//,
     //type: 'flash'
     // text: '上传'
   });
@@ -19,9 +19,11 @@ BUI.use(['bui/uploader'], function (Uploader) {
   new Uploader.Uploader({
     render: '#J_UploaderFlash',
     queueTarget: '#J_UploaderQueueFlash',
-    url: 'upload/upload.php',
+    action: 'http://local.dev/git/bui/test/upload/upload.php',
     buttonCls: 'defaultTheme-button',
-    multiple: false,
+    multiple: true,
+    //filter: [{desc:"JPG,JPEG,PNG,GIF,BMP", ext:"*.jpg;*.jpeg;*.png;*.gif;*.bmp"}],
+    filter: [{ext:".jpg,.jpeg,.png,.gif,.bmp"}],
     type: 'flash'
     // text: '上传'
   }).render();

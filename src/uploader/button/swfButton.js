@@ -30,6 +30,7 @@ define('bui/uploader/button/swfButton', function (require) {
         swfUploader = _self.get('swfUploader');
 
       swfUploader.on('contentReady', function(ev){
+        _self.fire('swfReady', {swfUploader: swfUploader});
         swfUploader.on('fileSelect', function(ev){
           var fileList = ev.fileList,
             files = [];
@@ -39,8 +40,8 @@ define('bui/uploader/button/swfButton', function (require) {
           _self.fire('change', {files: files});
         });
 
-        _self._setMultiple(_self.get('multiple'));
-        _self._setFilter(_self.get('filter'));
+        _self.setMultiple(_self.get('multiple'));
+        _self.setFilter(_self.get('filter'));
       });
     },
     _initSwfUploader: function(){
@@ -61,7 +62,9 @@ define('bui/uploader/button/swfButton', function (require) {
       swfUploader && swfUploader.multifile(v);
     },
     setFilter: function(v){
-
+      var _self = this,
+        swfUploader = _self.get('swfUploader');
+      swfUploader && swfUploader.filter(v);
     }
   },{
     ATTRS: {

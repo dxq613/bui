@@ -101,7 +101,7 @@ define('bui/uploader/button/base', function(require) {
     //设置文件的扩展信息
     getExtFileData: function(file){
       var filename = getFileName(file.name),
-        textSize = convertByteSize(file.size),
+        textSize = convertByteSize(file.size || 0),
         extName = getFileExtName(file.name);
       BUI.mix(file, {
         name: filename,

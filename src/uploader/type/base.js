@@ -16,6 +16,12 @@ define('bui/uploader/type/base',function(require) {
 
   UploadType.ATTRS = {
     /**
+     * 当前处理的文件
+     * @type {Object}
+     */
+    file: {
+    },
+    /**
      * 服务器端路径
      * @type String
      * @default ""
@@ -42,7 +48,7 @@ define('bui/uploader/type/base',function(require) {
       //开始上传后触发
       START : 'start',
       //停止上传后触发
-      STOP : 'stop',
+      CANCEL : 'cancel',
       //成功请求
       SUCCESS : 'success',
       //上传失败后触发

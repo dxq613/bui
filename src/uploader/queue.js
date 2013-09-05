@@ -13,27 +13,47 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
     bindUI: function () {
       var _self = this,
         el = _self.get('el');
+
       el.delegate('.del', 'click', function (ev) {
         var itemContainer = $(ev.target).parent();
         _self.removeItem(_self.getItemByElement(itemContainer));
       });
     },
     /**
+     * 由于一个文件只能处理一种状态，所以在更新状态前要把所有的文件状态去掉
+     * @param  {[type]} item    [description]
+     * @param  {[type]} status  [description]
+     * @param  {[type]} element [description]
+     * @return {[type]}         [description]
+     */
+    updateFileStatus: function(item, status, element){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields');
+      element = element || _self.findElement(item);
+        
+      BUI.each(itemStatusFields, function(v,k){
+        _self.setItemStatus(item,k,false,element);
+      });
+
+      _self.setItemStatus(item,status,true,element);
+      _self.updateItem(item);
+    }
+    /**
      * 移除所有的状态
      * @param  {[type]} item [description]
      * @return {[type]}      [description]
      */
-    clearItemStatus: function(item){
-      var _self = this,
-        itemStatusFields = _self.get('itemStatusFields');
+    // clearItemStatus: function(item){
+    //   var _self = this,
+    //     itemStatusFields = _self.get('itemStatusFields');
         
-      BUI.each(itemStatusFields, function(v, k){
-        _self.setItemStatus(item, k, false);
-      });
-    },
-    progressItem: function (item) {
-      Queue.superclass.updateItem.call(this, item);
-    }
+    //   BUI.each(itemStatusFields, function(v, k){
+    //     _self.setItemStatus(item, k, false);
+    //   });
+    // },
+    // progressItem: function (item) {
+    //   Queue.superclass.updateItem.call(this, item);
+    // }
     //,
     /**
      * 设置item的状态
@@ -57,7 +77,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       },
       itemStatusFields: {
         value: {
-          waiting: 'waiting',
+          wait: 'wait',
           start: 'start',
           progress: 'progress',
           success: 'success',

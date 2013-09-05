@@ -90,8 +90,10 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
 
   // 为静态方法动态注册
   // 注意，只有在 S.ready() 后进行 AJBridge 注册才有效。
-  AJBridge.augment(AJBridge, ['activate', 'getReady','getCoreVersion']);
   AJBridge.augment(AJBridge, [
+    'activate',
+    'getReady',
+    'getCoreVersion',
     'setFileFilters',
     'filter',
     'setAllowMultipleFiles',
