@@ -5704,7 +5704,7 @@ define('bui/component/uibase/close',function () {
             '">\u5173\u95ed<' + '/span>' +
             '<' + '/a>'
     },
-    closable:{
+    closeable:{
         value:true
     },
     closeBtn:{
@@ -5712,7 +5712,7 @@ define('bui/component/uibase/close',function () {
   };
 
   CloseView.prototype = {
-      _uiSetClosable:function (v) {
+      _uiSetCloseable:function (v) {
           var self = this,
               btn = self.get('closeBtn');
           if (v) {
@@ -5744,7 +5744,7 @@ define('bui/component/uibase/close',function () {
       * <pre><code>
       *   var overlay = new Overlay({
       *     closeTpl : '<a href="#" title="close">x</a>',
-      *     closable : true,
+      *     closeable : true,
       *     trigger : '#t1'
       *   });
       *   overlay.render();
@@ -5761,13 +5761,13 @@ define('bui/component/uibase/close',function () {
       },
       /**
        * \u662f\u5426\u51fa\u73b0\u5173\u95ed\u6309\u94ae
-       * @cfg {Boolean} [closable = false]
+       * @cfg {Boolean} [closeable = false]
        */
       /**
        * \u662f\u5426\u51fa\u73b0\u5173\u95ed\u6309\u94ae
        * @type {Boolean}
        */
-      closable:{
+      closeable:{
           view:1
       },
 
@@ -5822,7 +5822,7 @@ define('bui/component/uibase/close',function () {
   };
 
   Close.prototype = {
-      _uiSetClosable:function (v) {
+      _uiSetCloseable:function (v) {
           var self = this;
           if (v && !self.__bindCloseEvent) {
               self.__bindCloseEvent = 1;
@@ -14211,7 +14211,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    *
    *     overlay.render();
    *   });
-   * <code><pre>
+   * </code></pre>
    *
    * 
    * @class BUI.Overlay.Overlay
@@ -14240,19 +14240,18 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
         effect = effectCfg.effect,
         duration = effectCfg.duration;
 
-  	  if(visibleMode === 'visibility'){
-    		overlay.superclass.show.call(_self);
-    		if(effectCfg.callback){
-              effectCfg.callback.call(_self);
-        }
-    		return;
-  	  }
+  	  
       //\u5982\u679c\u8fd8\u672a\u6e32\u67d3\uff0c\u5219\u5148\u6e32\u67d3\u63a7\u4ef6
       if(!_self.get('rendered')){
         _self.set('visible',true);
         _self.render();
         _self.set('visible',false);
         el = _self.get('el');
+      }
+
+      if(visibleMode === 'visibility'){
+        _self.set('visible',true);
+        el.css({display : 'none'});
       }
       
       switch(effect){
@@ -14271,7 +14270,11 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
       }
 
       function callback(){
-        _self.set('visible',true);
+        if(visibleMode === 'visibility'){
+          el.css({display : 'block'});
+        }else{
+          _self.set('visible',true);
+        }
         if(effectCfg.callback){
           effectCfg.callback.call(_self);
         }
@@ -14284,10 +14287,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
         el = _self.get('el'),
         effect = effectCfg.effect,
         duration = effectCfg.duration;
-  	  if(_self.get('visibleMode') === 'visibility'){
-  		  callback();
-  		  return;
-  	  }
+  	  
       switch(effect){
         case 'linear':
           el.hide(duration,callback);
@@ -14303,6 +14303,9 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
         break;
       }
       function callback(){
+        if(_self.get('visibleMode') === 'visibility'){
+          el.css({display : 'block'});
+        }
         _self.set('visible',false);
         if(effectCfg.callback){
           effectCfg.callback.call(_self);
@@ -14338,13 +14341,12 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
        * @type {Boolean}
        * @protected
        */
-      closable:{
+      closeable:{
           value:false
       },
       /**
        * \u662f\u5426\u663e\u793a\u6307\u5411\u7bad\u5934\uff0c\u8ddfalign\u5c5e\u6027\u7684points\u76f8\u5173
-       * @type {Boolean}
-       * @protected
+       * @cfg {Boolean} [showArrow = false]
        */
       showArrow : {
         value : false
@@ -14356,16 +14358,14 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
        *       tpl : '<div class="arrow-wraper"></div>'
        *     });
        *     
-       * @type {String}
-       * @protected
+       * @cfg {String} arrowContainer
        */
       arrowContainer : {
         view : true
       },
       /**
        * \u6307\u5411\u7bad\u5934\u7684\u6a21\u677f
-       * @type {Object}
-       * @protected
+       * @cfg {Object} arrowTpl
        */
       arrowTpl : {
         value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'
@@ -14717,7 +14717,7 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       footerContent:{
 
       },
-      closable:{
+      closeable:{
         value : true
       },
       xview:{

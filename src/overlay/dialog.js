@@ -328,7 +328,7 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       footerContent:{
 
       },
-      closable:{
+      closeable:{
         value : true
       },
       xview:{

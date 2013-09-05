@@ -33,7 +33,7 @@ define('bui/component/uibase/close',function () {
             '">关闭<' + '/span>' +
             '<' + '/a>'
     },
-    closable:{
+    closeable:{
         value:true
     },
     closeBtn:{
@@ -41,7 +41,7 @@ define('bui/component/uibase/close',function () {
   };
 
   CloseView.prototype = {
-      _uiSetClosable:function (v) {
+      _uiSetCloseable:function (v) {
           var self = this,
               btn = self.get('closeBtn');
           if (v) {
@@ -73,7 +73,7 @@ define('bui/component/uibase/close',function () {
       * <pre><code>
       *   var overlay = new Overlay({
       *     closeTpl : '<a href="#" title="close">x</a>',
-      *     closable : true,
+      *     closeable : true,
       *     trigger : '#t1'
       *   });
       *   overlay.render();
@@ -90,13 +90,13 @@ define('bui/component/uibase/close',function () {
       },
       /**
        * 是否出现关闭按钮
-       * @cfg {Boolean} [closable = false]
+       * @cfg {Boolean} [closeable = false]
        */
       /**
        * 是否出现关闭按钮
        * @type {Boolean}
        */
-      closable:{
+      closeable:{
           view:1
       },
 
@@ -151,7 +151,7 @@ define('bui/component/uibase/close',function () {
   };
 
   Close.prototype = {
-      _uiSetClosable:function (v) {
+      _uiSetCloseable:function (v) {
           var self = this;
           if (v && !self.__bindCloseEvent) {
               self.__bindCloseEvent = 1;
