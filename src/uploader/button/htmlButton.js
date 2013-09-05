@@ -2,6 +2,8 @@
  * @fileoverview 文件上传按钮,使用input[type=file]
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
+
+
 define('bui/uploader/button/htmlButton', function(require) {
 
   var BUI = require('bui/common'),
