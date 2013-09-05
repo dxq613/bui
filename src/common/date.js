@@ -114,28 +114,27 @@ define('bui/date', function () {
 					}
 				}
 			}
-            else if (token=="MMM" || token=="NNN"){
-				month=0;
-				var names = (token=="MMM"?(Date.monthNames.concat(Date.monthAbbreviations)):Date.monthAbbreviations);
-				for (var i=0; i<names.length; i++) {
-					var month_name=names[i];
-					if (val.substring(i_val,i_val+month_name.length).toLowerCase()==month_name.toLowerCase()) {
-						month=(i%12)+1;
+            else if (token=="MMM"||token=="NNN"){
+			month=0;
+			for (var i=0; i<MONTH_NAMES.length; i++) {
+				var month_name=MONTH_NAMES[i];
+				if (val.substring(i_val,i_val+month_name.length).toLowerCase()==month_name.toLowerCase()) {
+					if (token=="MMM"||(token=="NNN"&&i>11)) {
+						month=i+1;
+						if (month>12) { month -= 12; }
 						i_val += month_name.length;
 						break;
+						}
 					}
 				}
-				if ((month < 1)||(month>12)){
-					return null;
-				}
+				if ((month < 1)||(month>12)){return 0;}
 			}
             else if (token == "EE" || token == "E") {
-                var names = (token=="EE"?Date.dayNames:Date.dayAbbreviations);
-				for (var i=0; i<names.length; i++) {
-					var day_name=names[i];
-					if (val.substring(i_val,i_val+day_name.length).toLowerCase()==day_name.toLowerCase()) {
-						i_val += day_name.length;
-						break;
+                for (var i=0; i<DAY_NAMES.length; i++) {
+				var day_name=DAY_NAMES[i];
+				if (val.substring(i_val,i_val+day_name.length).toLowerCase()==day_name.toLowerCase()) {
+					i_val += day_name.length;
+					break;
 					}
 				}
             }
