@@ -68,7 +68,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
    *
    *     overlay.render();
    *   });
-   * <code><pre>
+   * </code></pre>
    *
    * 
    * @class BUI.Overlay.Overlay
@@ -97,19 +97,18 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
         effect = effectCfg.effect,
         duration = effectCfg.duration;
 
-  	  if(visibleMode === 'visibility'){
-    		overlay.superclass.show.call(_self);
-    		if(effectCfg.callback){
-              effectCfg.callback.call(_self);
-        }
-    		return;
-  	  }
+  	  
       //如果还未渲染，则先渲染控件
       if(!_self.get('rendered')){
         _self.set('visible',true);
         _self.render();
         _self.set('visible',false);
         el = _self.get('el');
+      }
+
+      if(visibleMode === 'visibility'){
+        _self.set('visible',true);
+        el.css({display : 'none'});
       }
       
       switch(effect){
@@ -128,7 +127,11 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
       }
 
       function callback(){
-        _self.set('visible',true);
+        if(visibleMode === 'visibility'){
+          el.css({display : 'block'});
+        }else{
+          _self.set('visible',true);
+        }
         if(effectCfg.callback){
           effectCfg.callback.call(_self);
         }
@@ -141,10 +144,7 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
         el = _self.get('el'),
         effect = effectCfg.effect,
         duration = effectCfg.duration;
-  	  if(_self.get('visibleMode') === 'visibility'){
-  		  callback();
-  		  return;
-  	  }
+  	  
       switch(effect){
         case 'linear':
           el.hide(duration,callback);
@@ -160,6 +160,9 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
         break;
       }
       function callback(){
+        if(_self.get('visibleMode') === 'visibility'){
+          el.css({display : 'block'});
+        }
         _self.set('visible',false);
         if(effectCfg.callback){
           effectCfg.callback.call(_self);
@@ -195,13 +198,12 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
        * @type {Boolean}
        * @protected
        */
-      closable:{
+      closeable:{
           value:false
       },
       /**
        * 是否显示指向箭头，跟align属性的points相关
-       * @type {Boolean}
-       * @protected
+       * @cfg {Boolean} [showArrow = false]
        */
       showArrow : {
         value : false
@@ -213,16 +215,14 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
        *       tpl : '<div class="arrow-wraper"></div>'
        *     });
        *     
-       * @type {String}
-       * @protected
+       * @cfg {String} arrowContainer
        */
       arrowContainer : {
         view : true
       },
       /**
        * 指向箭头的模板
-       * @type {Object}
-       * @protected
+       * @cfg {Object} arrowTpl
        */
       arrowTpl : {
         value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'
@@ -574,7 +574,7 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       footerContent:{
 
       },
-      closable:{
+      closeable:{
         value : true
       },
       xview:{
