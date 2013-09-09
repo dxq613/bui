@@ -21,9 +21,29 @@ define('bui/date', function () {
 
     var dateRegex = /^(?:(?!0000)[0-9]{4}([-/.]+)(?:(?:0?[1-9]|1[0-2])\1(?:0?[1-9]|1[0-9]|2[0-8])|(?:0?[13-9]|1[0-2])\1(?:29|30)|(?:0?[13578]|1[02])\1(?:31))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)([-/.]?)0?2\2(?:29))(\s+([01]|([01][0-9]|2[0-3])):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9]))?$/;
 
+    var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+
+    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
     function dateParse(val, format) {
+		if(val instanceof Date){
+			return val;
+		}
+		if (typeof(format)=="undefined" || format==null || format=="") {
+			var generalFormats=new Array('y-m-d','yyyy-mm-dd','yyyy-mm-dd HH:MM:ss','H:M:s');
+			var checkList=new Array(generalFormats);
+			for (var i=0; i<checkList.length; i++) {
+				var l=checkList[i];
+				for (var j=0; j<l.length; j++) {
+					var d=dateParse(val,l[j]);
+					if (d!=null) { 
+						return d; 
+					}
+				}
+			}
+			return null;
+		};
         val = val + "";
-        format = format == null || format === "" ? "yyyy-MM-dd" : format;
         var i_val = 0;
         var i_format = 0;
         var c = "";
@@ -38,206 +58,179 @@ define('bui/date', function () {
         var mm = now.getMinutes();
         var ss = now.getSeconds();
         var ampm = "";
-        var MONTH_NAMES = new Array('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-            'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
-        var DAY_NAMES = new Array('Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',
-            'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
-            '星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六');
-        var _getInt = function (str, i, minlength, maxlength) {
-                for (var x = maxlength; x >= minlength; x--) {
-                    var token = str.substring(i, i + x);
-                    if (token.length < minlength) {
-                        return null;
-                    }
-                    if (_isInteger(token)) {
-                        return token;
-                    }
-                }
-                return null;
-            },
-            _isInteger = function (val) {
-                var digits = "1234567890";
-                for (var i = 0; i < val.length; i++) {
-                    if (digits.indexOf(val.charAt(i)) == -1) {
-                        return false;
-                    }
-                }
-                return true;
-            };
+        var MONTH_NAMES = monthNames;
+        var DAY_NAMES = dayNames;
+        this.isInteger = function(val) {
+			return BUI.isNumber(val);
+		};
+		this.getInt = function(str,i,minlength,maxlength) {
+			for (var x=maxlength; x>=minlength; x--) {
+				var token=str.substring(i,i+x);
+				if (token.length < minlength) { 
+					return null; 
+				}
+				if (this.isInteger(token)) { 
+					return token; 
+				}
+			}
+		return null;
+		};
 
         while (i_format < format.length) {
-            // Get next token from format string
             c = format.charAt(i_format);
             token = "";
             while ((format.charAt(i_format) == c) && (i_format < format.length)) {
                 token += format.charAt(i_format++);
             }
-            // Extract contents of value based on format token
-            if (token == "yyyy" || token == "yy" || token == "y") {
-                if (token == "yyyy") {
-                    x = 4;
-                    y = 4;
-                }
-                if (token == "yy") {
-                    x = 2;
-                    y = 2;
-                }
-                if (token == "y") {
-                    x = 2;
-                    y = 4;
-                }
-                year = _getInt(val, i_val, x, y);
-                if (year == null) {
-                    return 0;
-                }
-                i_val += year.length;
-                if (year.length == 2) {
-                    if (year > 70) {
-                        year = 1900 + (year - 0);
-                    }
-                    else {
-                        year = 2000 + (year - 0);
-                    }
-                }
-            }
-            else if (token == "MMM" || token == "NNN") {
-                month = 0;
-                for (var i = 0; i < MONTH_NAMES.length; i++) {
-                    var month_name = MONTH_NAMES[i];
-                    if (val.substring(i_val, i_val + month_name.length).toLowerCase() == month_name.toLowerCase()) {
-                        if (token == "MMM" || (token == "NNN" && i > 11)) {
-                            month = i + 1;
-                            if (month > 12) {
-                                month -= 12;
-                            }
+            if (token=="yyyy" || token=="yy" || token=="y") {
+				if (token=="yyyy") { 
+					x=4;y=4; 
+				}
+				if (token=="yy") { 
+					x=2;y=2; 
+				}
+				if (token=="y") { 
+					x=2;y=4; 
+				}
+				year=this.getInt(val,i_val,x,y);
+				if (year==null) { 
+					return null; 
+				}
+				i_val += year.length;
+				if (year.length==2) {
+                    year = year>70?1900+(year-0):2000+(year-0);
+				}
+			}
+            else if (token=="mmm"||token=="mmmm"){
+			    month=0;
+                for (var i=0; i<MONTH_NAMES.length; i++) {
+                    var month_name=MONTH_NAMES[i];
+                    if (val.substring(i_val,i_val+month_name.length).toLowerCase()==month_name.toLowerCase()) {
+                        if (token=="mmm"||(token=="mmmm"&&i>11)) {
+                            month=i+1;
+                            if (month>12) { month -= 12; }
                             i_val += month_name.length;
                             break;
+                            }
                         }
                     }
-                }
-                if ((month < 1) || (month > 12)) {
-                    return 0;
-                }
+                    if ((month < 1)||(month>12)){return 0;}
+			}
+            else if (token == "ddd" || token == "dddd" || token =="w") {
+                for (var i=0; i<DAY_NAMES.length; i++) {
+				var day_name=DAY_NAMES[i];
+				if (val.substring(i_val,i_val+day_name.length).toLowerCase()==day_name.toLowerCase()) {
+					i_val += day_name.length;
+					break;
+					}
+				}
             }
-            else if (token == "EE" || token == "E") {
-                for (var i = 0; i < DAY_NAMES.length; i++) {
-                    var day_name = DAY_NAMES[i];
-                    if (val.substring(i_val, i_val + day_name.length).toLowerCase() == day_name.toLowerCase()) {
-                        i_val += day_name.length;
-                        break;
-                    }
-                }
-            }
-            else if (token == "MM" || token == "M") {
-                month = _getInt(val, i_val, token.length, 2);
-                if (month == null || (month < 1) || (month > 12)) {
-                    return 0;
-                }
-                i_val += month.length;
-            }
-            else if (token == "dd" || token == "d") {
-                date = _getInt(val, i_val, token.length, 2);
-                if (date == null || (date < 1) || (date > 31)) {
-                    return 0;
-                }
-                i_val += date.length;
-            }
-            else if (token == "hh" || token == "h") {
-                hh = _getInt(val, i_val, token.length, 2);
-                if (hh == null || (hh < 1) || (hh > 12)) {
-                    return 0;
-                }
-                i_val += hh.length;
-            }
-            else if (token == "HH" || token == "H") {
-                hh = _getInt(val, i_val, token.length, 2);
-                if (hh == null || (hh < 0) || (hh > 23)) {
-                    return 0;
-                }
-                i_val += hh.length;
-            }
-            else if (token == "KK" || token == "K") {
-                hh = _getInt(val, i_val, token.length, 2);
-                if (hh == null || (hh < 0) || (hh > 11)) {
-                    return 0;
-                }
-                i_val += hh.length;
-            }
-            else if (token == "kk" || token == "k") {
-                hh = _getInt(val, i_val, token.length, 2);
-                if (hh == null || (hh < 1) || (hh > 24)) {
-                    return 0;
-                }
-                i_val += hh.length;
-                hh--;
-            }
-            else if (token == "mm" || token == "m") {
-                mm = _getInt(val, i_val, token.length, 2);
-                if (mm == null || (mm < 0) || (mm > 59)) {
-                    return 0;
-                }
-                i_val += mm.length;
-            }
-            else if (token == "ss" || token == "s") {
-                ss = _getInt(val, i_val, token.length, 2);
-                if (ss == null || (ss < 0) || (ss > 59)) {
-                    return 0;
-                }
-                i_val += ss.length;
-            }
-            else if (token == "a") {
-                if (val.substring(i_val, i_val + 2).toLowerCase() == "am") {
-                    ampm = "AM";
-                }
-                else if (val.substring(i_val, i_val + 2).toLowerCase() == "pm") {
-                    ampm = "PM";
-                }
-                else {
-                    return 0;
-                }
-                i_val += 2;
-            }
-            else {
-                if (val.substring(i_val, i_val + token.length) != token) {
-                    return 0;
-                }
-                else {
-                    i_val += token.length;
-                }
-            }
-        }
-        // If there are any trailing characters left in the value, it doesn't match
-        if (i_val != val.length) {
-            return 0;
-        }
-        // Is date valid for month?
-        if (month == 2) {
-            // Check for leap year
-            if (( (year % 4 == 0) && (year % 100 != 0) ) || (year % 400 == 0)) { // leap year
-                if (date > 29) {
-                    return 0;
-                }
-            }
-            else {
-                if (date > 28) {
-                    return 0;
-                }
-            }
-        }
-        if ((month == 4) || (month == 6) || (month == 9) || (month == 11)) {
-            if (date > 30) {
-                return 0;
-            }
-        }
-        // Correct hours value
-        if (hh < 12 && ampm == "PM") {
-            hh = hh - 0 + 12;
-        }
-        else if (hh > 11 && ampm == "AM") {
-            hh -= 12;
-        }
-        var newdate = new Date(year, month - 1, date, hh, mm, ss);
-        return newdate;
+            else if (token=="mm"||token=="m") {
+				month=this.getInt(val,i_val,token.length,2);
+				if(month==null||(month<1)||(month>12)){
+					return null;
+				}
+				i_val+=month.length;
+			}
+			else if (token=="dd"||token=="d") {
+				date=this.getInt(val,i_val,token.length,2);
+				if(date==null||(date<1)||(date>31)){
+					return null;
+				}
+				i_val+=date.length;
+			}
+			else if (token=="hh"||token=="h") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<1)||(hh>12)){
+					return null;
+				}
+				i_val+=hh.length;
+			}
+			else if (token=="HH"||token=="H") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<0)||(hh>23)){
+					return null;
+				}
+				i_val+=hh.length;
+			}
+			else if (token=="KK"||token=="K") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<0)||(hh>11)){
+					return null;
+				}
+				i_val+=hh.length;
+				hh++;
+			}
+			else if (token=="kk"||token=="k") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<1)||(hh>24)){
+					return null;
+				}
+				i_val+=hh.length;
+				hh--;
+			}
+			else if (token=="MM"||token=="M") {
+				mm=this.getInt(val,i_val,token.length,2);
+				if(mm==null||(mm<0)||(mm>59)){
+					return null;
+				}
+				i_val+=mm.length;
+			}
+			else if (token=="ss"||token=="s") {
+				ss=this.getInt(val,i_val,token.length,2);
+				if(ss==null||(ss<0)||(ss>59)){
+					return null;
+				}
+				i_val+=ss.length;
+			}
+			else if (token=="t"||token=="tt"||token=="T"||token=="TT") {
+				if (val.substring(i_val,i_val+token.length).toLowerCase()=="am") {
+					ampm="AM";
+				}
+				else if (val.substring(i_val,i_val+token.length).toLowerCase()=="pm") {
+					ampm="PM";
+				}
+				else {
+					return null;
+				}
+				i_val+=2;
+			}
+			else {
+				if (val.substring(i_val,i_val+token.length)!=token) {
+					return null;
+				}
+				else {
+					i_val+=token.length;
+				}
+			}
+		}
+		if (i_val != val.length) { 
+			return null; 
+		}
+		if (month==2) {
+			if ( ( (year%4==0)&&(year%100 != 0) ) || (year%400==0) ) { // leap year
+				if (date > 29){ 
+					return null; 
+				}
+			}
+			else { 
+				if (date > 28) { 
+					return null; 
+				} 
+			}
+		}
+		if ((month==4)||(month==6)||(month==9)||(month==11)) {
+			if (date > 30) { 
+				return null; 
+			}
+		}
+		if (hh<12 && ampm=="PM") {
+			hh=hh-0+12; 
+		}
+		else if (hh>11 && ampm=="AM") { 
+			hh-=12; 
+		}
+		return new Date(year,month-1,date,hh,mm,ss);
     }
 
     function DateAdd(strInterval, NumDay, dtDate) {
@@ -287,40 +280,33 @@ define('bui/date', function () {
             },
         // Some common format strings
             masks = {
-                'default': 'ddd MMM dd yyyy HH:mm:ss',
-                shortDate: 'm/d/yy',
+                'default':'ddd mmm dd yyyy HH:MM:ss',
+                shortDate:'m/d/yy',
                 //mediumDate:     'mmm d, yyyy',
-                longDate: 'MMMM d, yyyy',
-                fullDate: 'dddd, MMMM d, yyyy',
-                shortTime: 'h:mm TT',
+                longDate:'mmmm d, yyyy',
+                fullDate:'dddd, mmmm d, yyyy',
+                shortTime:'h:MM TT',
                 //mediumTime:     'h:MM:ss TT',
-                longTime: 'h:mm:ss TT Z',
-                isoDate: 'yyyy-MM-dd',
-                isoTime: 'HH:mm:ss',
-                isoDateTime: "yyyy-MM-dd'T'HH:mm:ss",
-                isoUTCDateTime: "UTC:yyyy-MM-dd'T'HH:mm:ss'Z'",
+                longTime:'h:MM:ss TT Z',
+                isoDate:'yyyy-mm-dd',
+                isoTime:'HH:MM:ss',
+                isoDateTime:"yyyy-mm-dd'T'HH:MM:ss",
+                isoUTCDateTime:"UTC:yyyy-mm-dd'T'HH:MM:ss'Z'",
 
                 //added by jayli
-                localShortDate: 'yy年MM月dd日',
-                localShortDateTime: 'yy年MM月dd日 hh:mm:ss TT',
-                localLongDate: 'yyyy年MM月dd日',
-                localLongDateTime: 'yyyy年MM月dd日 hh:mm:ss TT',
-                localFullDate: 'yyyy年MM月dd日 w',
-                localFullDateTime: 'yyyy年MM月dd日 w hh:mm:ss TT'
+                localShortDate:'yy年mm月dd日',
+                localShortDateTime:'yy年mm月dd日 hh:MM:ss TT',
+                localLongDate:'yyyy年mm月dd日',
+                localLongDateTime:'yyyy年mm月dd日 hh:MM:ss TT',
+                localFullDate:'yyyy年mm月dd日 w',
+                localFullDateTime:'yyyy年mm月dd日 w hh:MM:ss TT'
 
             },
 
         // Internationalization strings
             i18n = {
-                dayNames: [
-                    'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',
-                    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
-                    '星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'
-                ],
-                monthNames: [
-                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-                    'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
-                ]
+                dayNames:dayNames,
+                monthNames: monthNames
             };
 
         // Regexes and supporting functions are cached through closure
@@ -349,42 +335,42 @@ define('bui/date', function () {
             var _ = utc ? 'getUTC' : 'get',
                 d = date[_ + 'Date'](),
                 D = date[_ + 'Day'](),
-                M = date[_ + 'Month'](),
+                m = date[_ + 'Month'](),
                 y = date[_ + 'FullYear'](),
                 H = date[_ + 'Hours'](),
-                m = date[_ + 'Minutes'](),
+                M = date[_ + 'Minutes'](),
                 s = date[_ + 'Seconds'](),
                 L = date[_ + 'Milliseconds'](),
                 o = utc ? 0 : date.getTimezoneOffset(),
                 flags = {
-                    d: d,
-                    dd: pad(d, undefined),
-                    ddd: i18n.dayNames[D],
-                    dddd: i18n.dayNames[D + 7],
-                    w: i18n.dayNames[D + 14],
-                    m: m,
-                    mm: pad(m, undefined),
-                    yy: String(y).slice(2),
-                    yyyy: y,
-                    h: H % 12 || 12,
-                    hh: pad(H % 12 || 12, undefined),
-                    H: H,
-                    HH: pad(H, undefined),
-                    M: M + 1,
-                    MM: pad(M + 1, undefined),
-                    MMM: i18n.monthNames[M],
-                    MMMM: i18n.monthNames[M + 12],
-                    s: s,
-                    ss: pad(s, undefined),
-                    l: pad(L, 3),
-                    L: pad(L > 99 ? Math.round(L / 10) : L, undefined),
-                    t: H < 12 ? 'a' : 'p',
-                    tt: H < 12 ? 'am' : 'pm',
-                    T: H < 12 ? 'A' : 'P',
-                    TT: H < 12 ? 'AM' : 'PM',
-                    Z: utc ? 'UTC' : (String(date).match(timezone) || ['']).pop().replace(timezoneClip, ''),
-                    o: (o > 0 ? '-' : '+') + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
-                    S: ['th', 'st', 'nd', 'rd'][d % 10 > 3 ? 0 : (d % 100 - d % 10 !== 10) * d % 10]
+                    d:d,
+                    dd:pad(d, undefined),
+                    ddd:i18n.dayNames[D],
+                    dddd:i18n.dayNames[D + 7],
+                    w:i18n.dayNames[D + 14],
+                    m:m + 1,
+                    mm:pad(m + 1, undefined),
+                    mmm:i18n.monthNames[m],
+                    mmmm:i18n.monthNames[m + 12],
+                    yy:String(y).slice(2),
+                    yyyy:y,
+                    h:H % 12 || 12,
+                    hh:pad(H % 12 || 12, undefined),
+                    H:H,
+                    HH:pad(H, undefined),
+                    M:M,
+                    MM:pad(M, undefined),
+                    s:s,
+                    ss:pad(s, undefined),
+                    l:pad(L, 3),
+                    L:pad(L > 99 ? Math.round(L / 10) : L, undefined),
+                    t:H < 12 ? 'a' : 'p',
+                    tt:H < 12 ? 'am' : 'pm',
+                    T:H < 12 ? 'A' : 'P',
+                    TT:H < 12 ? 'AM' : 'PM',
+                    Z:utc ? 'UTC' : (String(date).match(timezone) || ['']).pop().replace(timezoneClip, ''),
+                    o:(o > 0 ? '-' : '+') + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
+                    S:['th', 'st', 'nd', 'rd'][d % 10 > 3 ? 0 : (d % 100 - d % 10 !== 10) * d % 10]
                 };
 
             return mask.replace(token, function ($0) {
