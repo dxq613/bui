@@ -21,17 +21,12 @@ define('bui/date', function () {
 
     var dateRegex = /^(?:(?!0000)[0-9]{4}([-/.]+)(?:(?:0?[1-9]|1[0-2])\1(?:0?[1-9]|1[0-9]|2[0-8])|(?:0?[13-9]|1[0-2])\1(?:29|30)|(?:0?[13578]|1[02])\1(?:31))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)([-/.]?)0?2\2(?:29))(\s+([01]|([01][0-9]|2[0-3])):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9]))?$/;
 
-    var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat','Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-
-    var monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
     function dateParse(val, format) {
 		if(val instanceof Date){
 			return val;
 		}
 		if (typeof(format)=="undefined" || format==null || format=="") {
-			var generalFormats=new Array('y-m-d','yyyy-mm-dd','yyyy-mm-dd HH:MM:ss','H:M:s');
-			var checkList=new Array(generalFormats);
+			var checkList=new Array('y-m-d','yyyy-mm-dd','yyyy-mm-dd HH:MM:ss','H:M:s');
 			for (var i=0; i<checkList.length; i++) {
 				var l=checkList[i];
 				for (var j=0; j<l.length; j++) {
@@ -48,7 +43,6 @@ define('bui/date', function () {
         var i_format = 0;
         var c = "";
         var token = "";
-        var token2 = "";
         var x, y;
         var now = new Date();
         var year = now.getYear();
@@ -57,11 +51,8 @@ define('bui/date', function () {
         var hh = now.getHours();
         var mm = now.getMinutes();
         var ss = now.getSeconds();
-        var ampm = "";
-        var MONTH_NAMES = monthNames;
-        var DAY_NAMES = dayNames;
         this.isInteger = function(val) {
-			return BUI.isNumber(val);
+            return /^\d*$/.test(val);
 		};
 		this.getInt = function(str,i,minlength,maxlength) {
 			for (var x=maxlength; x>=minlength; x--) {
@@ -101,30 +92,6 @@ define('bui/date', function () {
                     year = year>70?1900+(year-0):2000+(year-0);
 				}
 			}
-            else if (token=="mmm"||token=="mmmm"){
-			    month=0;
-                for (var i=0; i<MONTH_NAMES.length; i++) {
-                    var month_name=MONTH_NAMES[i];
-                    if (val.substring(i_val,i_val+month_name.length).toLowerCase()==month_name.toLowerCase()) {
-                        if (token=="mmm"||(token=="mmmm"&&i>11)) {
-                            month=i+1;
-                            if (month>12) { month -= 12; }
-                            i_val += month_name.length;
-                            break;
-                            }
-                        }
-                    }
-                    if ((month < 1)||(month>12)){return 0;}
-			}
-            else if (token == "ddd" || token == "dddd" || token =="w") {
-                for (var i=0; i<DAY_NAMES.length; i++) {
-				var day_name=DAY_NAMES[i];
-				if (val.substring(i_val,i_val+day_name.length).toLowerCase()==day_name.toLowerCase()) {
-					i_val += day_name.length;
-					break;
-					}
-				}
-            }
             else if (token=="mm"||token=="m") {
 				month=this.getInt(val,i_val,token.length,2);
 				if(month==null||(month<1)||(month>12)){
@@ -153,22 +120,6 @@ define('bui/date', function () {
 				}
 				i_val+=hh.length;
 			}
-			else if (token=="KK"||token=="K") {
-				hh=this.getInt(val,i_val,token.length,2);
-				if(hh==null||(hh<0)||(hh>11)){
-					return null;
-				}
-				i_val+=hh.length;
-				hh++;
-			}
-			else if (token=="kk"||token=="k") {
-				hh=this.getInt(val,i_val,token.length,2);
-				if(hh==null||(hh<1)||(hh>24)){
-					return null;
-				}
-				i_val+=hh.length;
-				hh--;
-			}
 			else if (token=="MM"||token=="M") {
 				mm=this.getInt(val,i_val,token.length,2);
 				if(mm==null||(mm<0)||(mm>59)){
@@ -182,18 +133,6 @@ define('bui/date', function () {
 					return null;
 				}
 				i_val+=ss.length;
-			}
-			else if (token=="t"||token=="tt"||token=="T"||token=="TT") {
-				if (val.substring(i_val,i_val+token.length).toLowerCase()=="am") {
-					ampm="AM";
-				}
-				else if (val.substring(i_val,i_val+token.length).toLowerCase()=="pm") {
-					ampm="PM";
-				}
-				else {
-					return null;
-				}
-				i_val+=2;
 			}
 			else {
 				if (val.substring(i_val,i_val+token.length)!=token) {
@@ -223,12 +162,6 @@ define('bui/date', function () {
 			if (date > 30) { 
 				return null; 
 			}
-		}
-		if (hh<12 && ampm=="PM") {
-			hh=hh-0+12; 
-		}
-		else if (hh>11 && ampm=="AM") { 
-			hh-=12; 
 		}
 		return new Date(year,month-1,date,hh,mm,ss);
     }
@@ -278,7 +211,7 @@ define('bui/date', function () {
                 }
                 return val;
             },
-        // Some common format strings
+            // Some common format strings
             masks = {
                 'default':'ddd mmm dd yyyy HH:MM:ss',
                 shortDate:'m/d/yy',
@@ -303,10 +236,17 @@ define('bui/date', function () {
 
             },
 
-        // Internationalization strings
+            // Internationalization strings
             i18n = {
-                dayNames:dayNames,
-                monthNames: monthNames
+                dayNames:[
+                    'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',
+                    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
+                    '星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'
+                ],
+                monthNames:[
+                    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+                    'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
+                ]
             };
 
         // Regexes and supporting functions are cached through closure
