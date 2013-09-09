@@ -39,9 +39,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 	
 	  if (!_self.get('dateMask')) {
         if (_self.get('showTime')) {
-            _self.set('dateMask', 'yyyy-MM-dd HH:mm:ss');
+            _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
         } else {
-            _self.set('dateMask', 'yyyy-MM-dd');
+            _self.set('dateMask', 'yyyy-mm-dd');
         }
        }	
       children.push(calendar);
