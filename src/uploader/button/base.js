@@ -20,6 +20,10 @@ define('bui/uploader/button/filter', function(require){
     // {type: "audio/x-mpeg"},
     // {type: "audio/x-pn/},realaudio"
     // {type: "audio/x-waw"},
+    // image: {
+    //   type: "image/*",
+    //   ext: '.gif,.jpg,.png,.bmp'
+    // },
     gif: {
       type: "image/gif",
       ext: '.gif'
@@ -35,7 +39,7 @@ define('bui/uploader/button/filter', function(require){
     },
     //{type: "image/x-photo-cd"},
     png: {
-      type: "image/x-png",
+      type: "image/png",
       ext: '.png'
     }
     // {type: "image/x-portablebitmap"},
@@ -71,10 +75,10 @@ define('bui/uploader/button/filter', function(require){
     },
     getTypeByExt: function(ext){
       var type = [];
-      if(BUI.isString(ext){
+      if(BUI.isString(ext)){
         ext = ext.split(',');
-      });
-      if(BUI.isArray(ext){
+      };
+      if(BUI.isArray(ext)){
         BUI.each(ext, function(e){
           BUI.each(filter, function(item, desc){
             if(BUI.Array.indexOf(e, item.ext.split(',')) > -1){
@@ -82,7 +86,7 @@ define('bui/uploader/button/filter', function(require){
             }
           });
         });
-      });
+      };
       return type.join(',');
     }
   }
@@ -95,7 +99,13 @@ define('bui/uploader/button/filter', function(require){
 
 define('bui/uploader/button/base', function(require) {
 
-  var BUI = require('bui/common');
+  var BUI = require('bui/common'),
+    Component = BUI.Component,
+    Filter = require('bui/uploader/button/filter'),
+    PREFIX = BUI.prefix,
+    CLS_UPLOADER = PREFIX + 'uploader',
+    CLS_UPLOADER_BUTTON = CLS_UPLOADER + '-button',
+    CLS_UPLOADER_BUTTON_TEXT = CLS_UPLOADER_BUTTON + '-text';
 
   /**
    * 获取文件名称
@@ -134,14 +144,40 @@ define('bui/uploader/button/base', function(require) {
     return file.id || BUI.guid('bui-uploader-file');
   }
 
+
   function baseView() {
   }
 
   baseView.ATTRS = /** @lends Base.prototype */{
+    buttonCls:{
+      view: true
+    },
+    textCls: {
+      view: true
+    },
+    text: {
+      view: true,
+      value: '上传文件'
+    },
+    tpl: {
+      view: true,
+      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '  {buttonCls}"><span class="' + CLS_UPLOADER_BUTTON_TEXT + ' {textCls}">{text}</span></a>'
+    }
   }
 
   baseView.prototype = {
-
+    _uiSetButtonCls: function (v) {
+      var _self = this,
+        buttonCls = _self.get('buttonCls'),
+        buttonEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON);
+      buttonEl.addClass(buttonCls);
+    },
+    _uiSetText: function (v) {
+      var _self = this,
+        text = _self.get('text'),
+        textEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON_TEXT);
+      textEl.text(text);
+    }
   }
 
 
@@ -206,7 +242,31 @@ define('bui/uploader/button/base', function(require) {
     },
     setDisabled: function(){
     },
-    setFilter: function(){
+    getFilter: function(v){
+      if(v){
+        var desc = [],
+          ext = [],
+          type = [];
+        if(v.desc){
+          desc.push(v.desc);
+          ext.push(Filter.getExtByDesc(v.desc));
+          type.push(Filter.getTypeByDesc(v.desc));
+        }
+        if(v.ext){
+          ext.push(v.ext);
+          type.push(Filter.getTypeByExt(v.ext));
+        }
+        if(v.type){
+
+        }
+        return {
+          desc: desc.join(','),
+          ext: ext.join(','),
+          type: type.join(',')
+        }
+      }
+    },
+    setFilter: function(v){
     }
   }
 

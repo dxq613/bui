@@ -5,6 +5,7 @@
 define('bui/uploader/uploader', function (require) {
 
   var BUI = require('bui/common'),
+    Component = BUI.Component,
     HtmlButton = require('bui/uploader/button/htmlButton'),
     SwfButton = require('bui/uploader/button/swfButton'),
     Queue = require('bui/uploader/queue'),
@@ -13,12 +14,6 @@ define('bui/uploader/uploader', function (require) {
     Iframe = require('bui/uploader/type/iframe');
 
 
-  var Component = BUI.Component,
-    PREFIX = BUI.prefix,
-    CLS_UPLOADER = PREFIX + 'uploader',
-    CLS_UPLOADER_BUTTON = CLS_UPLOADER + '-button',
-    CLS_UPLOADER_BUTTON_TEXT = CLS_UPLOADER_BUTTON + '-text';
-
   var win = window;
 
   /**
@@ -26,19 +21,7 @@ define('bui/uploader/uploader', function (require) {
    * @type {[type]}
    */
   var UploaderView = Component.View.extend({
-    _uiSetButtonCls: function (v) {
-      var _self = this,
-        buttonCls = _self.get('buttonCls'),
-        buttonEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON);
-      buttonEl.addClass(buttonCls);
-    },
-    _uiSetText: function (v) {
-      var _self = this,
-        text = _self.get('text'),
-        textEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON_TEXT);
-      textEl.text(text);
-    }
-  }, {
+    }, {
     ATTRS: {
          
     }
@@ -118,7 +101,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         type = _self.get('type'),
         ButtonClass = _self._getButtonClass(type),
-        button = new ButtonClass(_self._getUserConfig(['name', 'multiple', 'filter']));
+        button = new ButtonClass(_self._getUserConfig(['text', 'buttonCls', 'name', 'multiple', 'filter']));
       _self.set('button', button);
     },
     /**
@@ -170,10 +153,10 @@ define('bui/uploader/uploader', function (require) {
      */
     _renderButton: function(){
       var _self = this,
-        buttonEl = _self.get('view').get('el').find('.' + CLS_UPLOADER_BUTTON),
+        el = _self.get('view').get('el'),
         button = _self.get('button');
 
-      button.set('render', buttonEl);
+      button.set('render', el);
       button.render();
     },
     _bindButton: function () {
@@ -325,20 +308,6 @@ define('bui/uploader/uploader', function (require) {
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{
-      buttonCls: {
-        view: true
-      },
-      textCls: {
-        view: true
-      },
-      text: {
-        view: true,
-        value: '上传文件'
-      },
-      tpl: {
-        view: true,
-        value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '  {buttonCls}"><span class="' + CLS_UPLOADER_BUTTON_TEXT + ' {textCls}">{text}</span></a>'
-      },
       /**
        * 上传的类型，有ajax,flash,iframe四种
        * @type {String}

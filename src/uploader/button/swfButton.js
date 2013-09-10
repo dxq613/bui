@@ -12,7 +12,7 @@ define('bui/uploader/button/swfButton', function (require) {
 
   var SWF_WRAPPER_ID_PREVFIX = 'bui-swf-uploader-wrapper-';
 
-  var SwfButtonView = Component.View.extend({
+  var SwfButtonView = Component.View.extend([ButtonBase.View], {
   },{
     ATTRS: {
     }
@@ -20,8 +20,7 @@ define('bui/uploader/button/swfButton', function (require) {
 
   var SwfButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
-      var _self = this,
-        el = _self.get('el');
+      var _self = this;
 
       _self._initSwfUploader();
     },
@@ -46,12 +45,13 @@ define('bui/uploader/button/swfButton', function (require) {
     },
     _initSwfUploader: function(){
       var _self = this,
-        el = _self.get('el'),
+        buttonEl = _self.get('el').find('.bui-uploader-button'),
         flashCfg = _self.get('flash'),
+        swfTpl = _self.get('swfTpl'),
         swfUploader;
 
       BUI.mix(flashCfg, {
-        render: el
+        render: $(swfTpl).appendTo(buttonEl)
       });
       swfUploader = new SWF(flashCfg);
       _self.set('swfUploader', swfUploader);
@@ -63,8 +63,11 @@ define('bui/uploader/button/swfButton', function (require) {
     },
     setFilter: function(v){
       var _self = this,
-        swfUploader = _self.get('swfUploader');
-      swfUploader && swfUploader.filter(v);
+        swfUploader = _self.get('swfUploader'),
+        filter = _self.getFilter(v);
+      //flash里需要一个数组
+      swfUploader && swfUploader.filter([v]);
+      return v;
     }
   },{
     ATTRS: {
@@ -87,17 +90,9 @@ define('bui/uploader/button/swfButton', function (require) {
           }
         }
       },
-      /**
-       * flash容器模板
-       * @type String
-       */
-      tpl:{
+      swfTpl:{
         view: true,
-        value:''
-      },
-      elCls: {
-        view: true,
-        value: 'uploader-button-swf'
+        value: '<div class="uploader-button-swf"></div>'
       },
       xview: {
         value: SwfButtonView

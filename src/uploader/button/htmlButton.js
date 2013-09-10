@@ -13,7 +13,7 @@ define('bui/uploader/button/htmlButton', function(require) {
 
   
 
-  var HtmlButtonView = Component.View.extend({
+  var HtmlButtonView = Component.View.extend([ButtonBase.View], {
 
   },{
     ATTRS: {
@@ -39,7 +39,7 @@ define('bui/uploader/button/htmlButton', function(require) {
      */
     _createInput: function() {
       var _self = this,
-        el = _self.get('el'),
+        buttonEl = _self.get('el').find('.bui-uploader-button'),
         inputTpl = _self.get('inputTpl'),
         name = _self.get('name'),
         fileInput;
@@ -48,8 +48,9 @@ define('bui/uploader/button/htmlButton', function(require) {
         name: name
       });
 
-      fileInput = $(inputTpl);
-      fileInput.appendTo(el);
+      buttonEl.append(inputTpl);
+
+      fileInput = buttonEl.find('input');
 
       //TODO:IE6下只有通过脚本和内联样式才能控制按钮大小
       if(UA.ie == 6){
@@ -122,27 +123,26 @@ define('bui/uploader/button/htmlButton', function(require) {
      * 设置上传文件的类型
      * @param {[type]} filter 可上传文件的类型
      */
-    setFilter: function(filter){
+    setFilter: function(v){
       var _self = this,
-        fileInput = _self.get('fileInput');
+        fileInput = _self.get('fileInput'),
+        filter = _self.getFilter(v);
       if(!fileInput || !fileInput.length){
         return false;
       };
-      filter && fileInput
+      //accept是html5的属性，所以ie8以下是不支持的
+      filter.type && fileInput.attr('accept', filter.type);
       return filter;
     }
   },{
     ATTRS: {
-      elCls: {
-        value: 'file-input-wrapper'
-      },
       /**
        * 隐藏的表单上传域的模板
        * @type String
        */
       inputTpl: {
         view: true,
-        value: '<input type="file" name="{name}" hidefocus="true" class="file-input" />'
+        value: '<div class="file-input-wrapper"><input type="file" name="{name}" hidefocus="true" class="file-input" /></div>'
       },
       /**
        * 对应的表单上传域

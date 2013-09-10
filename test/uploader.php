@@ -4,8 +4,15 @@
 <link rel="stylesheet" href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css"/>
 <link rel="stylesheet" href="../src/uploader/css/style.css"/>
 
-
   <div class="container">
+    <div class="row">
+      <div class="span12">
+        <div id="J_HtmlButton"></div>
+      </div>
+      <div class="span12">
+        <div id="J_SwfButton"></div>
+      </div>
+    </div>
     <div class="row">
       <div class="span12">
         <div id="J_Uploader"></div>
