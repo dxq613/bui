@@ -71,8 +71,8 @@
     <script type="text/javascript" src="../src/grid/plugins/base.js"></script>
   
     <script type="text/javascript" src="specs/plugin-editor-spec.js"></script> 
-    <script type="text/javascript" src="specs/plugin-editor-record-spec.js"></script> 
+    <!--<script type="text/javascript" src="specs/plugin-editor-record-spec.js"></script> 
       
     <script type="text/javascript" src="specs/plugin-editor-dialog-spec.js"></script> 
-    <!---->
+    -->
 <?php include("./templates/footer.php"); ?>       

@@ -38,6 +38,14 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins','bui/grid/format'],functi
       },
       dataIndex : 'd',
       renderer : Format.enumRenderer(enumObj)
+    },{
+      title : 'checkbox',
+      dataIndex : 'e',
+      editor : {
+        xtype : 'checkbox',
+        //tpl : '<label><span class="checkbox"></span>{label}</label>',
+        value : '1'
+      }
     }],
     data = [{a:'123'},{a:0,b:'edd',c:1362625302818},{a:'123'},{a:'1333',c:'eee',d:2},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'}];
   
@@ -49,7 +57,7 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins','bui/grid/format'],functi
     grid = new Grid({
     render:'#J_Grid',
     columns : columns,
-    width:800,
+    width:1000,
     height:250,
     forceFit : true,
     store : store,

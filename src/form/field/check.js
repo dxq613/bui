@@ -43,6 +43,10 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     _uiSetValue : function(v){
 
     },
+    //覆盖不设置宽度
+    _uiSetWidth : function(v){
+
+    },
     //设置是否勾选
     _uiSetChecked : function(v){
       var _self = this;

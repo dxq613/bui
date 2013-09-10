@@ -354,11 +354,10 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         controlContainer = _self.get('controlContainer');
       if(controlContainer){
         if(BUI.isString(controlContainer)){
-          return el.find(controlContainer);
+          controlContainer = el.find(controlContainer);
         }
-        return controlContainer;
       }
-      return el;
+      return (controlContainer && controlContainer.length) ? controlContainer : el;
     },
     /**
      * 获取显示加载状态的容器
@@ -1479,6 +1478,10 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     },
     //覆盖 设置值的方法
     _uiSetValue : function(v){
+
+    },
+    //覆盖不设置宽度
+    _uiSetWidth : function(v){
 
     },
     //设置是否勾选
@@ -3336,7 +3339,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         success,
         ajaxParams = BUI.merge(true,{ //合并请求参数
           url : action,
-          method : method,
+          type : method,
           dataType : 'json',
           data : data
         },options);

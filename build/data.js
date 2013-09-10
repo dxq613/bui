@@ -1001,7 +1001,7 @@ define('bui/data/node',['bui/common'],function (require) {
      * 是否叶子节点
      * @type {Boolean}
      */
-    leaf : false,
+    leaf : null,
     /**
      * 显示节点时显示的文本
      * @type {Object}
@@ -1129,10 +1129,10 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      *   //例如原始数据为 {name : '123',value : '文本123',isLeaf: false,nodes : []}
      *   var store = new TreeStore({
      *     map : {
-     *       id : 'name',
-     *       text : 'value',
-     *       leaf : 'isLeaf',
-     *       children : 'nodes'
+     *       'name' : 'id',
+     *       'value' : 'text',
+     *       'isLeaf' : 'leaf' ,
+     *       'nodes' : 'children'
      *     }
      *   });
      *   //映射后，记录会变成  {id : '123',text : '文本123',leaf: false,children : []};
@@ -1305,16 +1305,21 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       var _self = this,
         map = _self.get('map'),
         nodes = parent.children,
-        nodeChildren = node.children || [];
+        nodeChildren;
+
+      if(!node.isNode){
+        node = new Node(node,map);
+      }
+
+      nodeChildren = node.children || []
+
       if(nodeChildren.length == 0 && node.leaf == null){
         node.leaf = true;
       }
       if(parent){
         parent.leaf = false;
       }
-      if(!node.isNode){
-        node = new Node(node,map);
-      }
+      
       node.parent = parent;
       node.level = parent.level + 1;
       node.path = parent.path.concat(node.id);

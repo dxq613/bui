@@ -12867,10 +12867,10 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      *   //\u4f8b\u5982\u539f\u59cb\u6570\u636e\u4e3a {name : '123',value : '\u6587\u672c123',isLeaf: false,nodes : []}
      *   var store = new TreeStore({
      *     map : {
-     *       id : 'name',
-     *       text : 'value',
-     *       leaf : 'isLeaf',
-     *       children : 'nodes'
+     *       'name' : 'id',
+     *       'value' : 'text',
+     *       'isLeaf' : 'leaf' ,
+     *       'nodes' : 'children'
      *     }
      *   });
      *   //\u6620\u5c04\u540e\uff0c\u8bb0\u5f55\u4f1a\u53d8\u6210  {id : '123',text : '\u6587\u672c123',leaf: false,children : []};
@@ -13043,16 +13043,21 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       var _self = this,
         map = _self.get('map'),
         nodes = parent.children,
-        nodeChildren = node.children || [];
+        nodeChildren;
+
+      if(!node.isNode){
+        node = new Node(node,map);
+      }
+
+      nodeChildren = node.children || []
+
       if(nodeChildren.length == 0 && node.leaf == null){
         node.leaf = true;
       }
       if(parent){
         parent.leaf = false;
       }
-      if(!node.isNode){
-        node = new Node(node,map);
-      }
+      
       node.parent = parent;
       node.level = parent.level + 1;
       node.path = parent.path.concat(node.id);
@@ -17358,11 +17363,10 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         controlContainer = _self.get('controlContainer');
       if(controlContainer){
         if(BUI.isString(controlContainer)){
-          return el.find(controlContainer);
+          controlContainer = el.find(controlContainer);
         }
-        return controlContainer;
       }
-      return el;
+      return (controlContainer && controlContainer.length) ? controlContainer : el;
     },
     /**
      * \u83b7\u53d6\u663e\u793a\u52a0\u8f7d\u72b6\u6001\u7684\u5bb9\u5668
@@ -20340,7 +20344,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         success,
         ajaxParams = BUI.merge(true,{ //\u5408\u5e76\u8bf7\u6c42\u53c2\u6570
           url : action,
-          method : method,
+          type : method,
           dataType : 'json',
           data : data
         },options);

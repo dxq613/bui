@@ -40,7 +40,7 @@ define('bui/data/node',['bui/common'],function (require) {
      * 是否叶子节点
      * @type {Boolean}
      */
-    leaf : false,
+    leaf : null,
     /**
      * 显示节点时显示的文本
      * @type {Object}

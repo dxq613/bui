@@ -1,4 +1,4 @@
-
+/*
 //文本域
 BUI.use('bui/form/textfield',function  (TextField) {
   var tpl = ' <label class="control-label">{label}</label>\
@@ -218,7 +218,6 @@ BUI.use('bui/form/textfield',function  (TextField) {
   });
 
 });
-/**/
 
 //数字域
 BUI.use('bui/form/numberfield',function  (NumberField) {
@@ -499,7 +498,7 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
     });
   });
 
-});/**/
+});
 
 //多选框
 BUI.use('bui/form/selectfield',function  (SelectField) {
@@ -629,7 +628,7 @@ BUI.use('bui/form/plainfield',function  (PlainField) {
     });
   });
 });
-/**/
+
 BUI.use('bui/form/listfield',function(ListField){
 
   describe('测试JS创建列表字段',function(){
@@ -674,7 +673,6 @@ BUI.use('bui/form/listfield',function(ListField){
       });
     });
   });
-  /**/  
   describe('测试srcNode 创建列表字段',function(){
     var field = new ListField({
       srcNode : '#lf'
@@ -691,9 +689,6 @@ BUI.use('bui/form/listfield',function(ListField){
       expect(list.get('el').find('.bui-list-item').length).not.toBe(0);
     });
   });
-
-  
-
 });
 
 BUI.use('bui/form/checklistfield',function(ListField){
@@ -736,6 +731,27 @@ BUI.use('bui/form/radiolistfield',function(ListField){
     });
     it('选项生成',function(){
       expect(list.get('el').find('.bui-list-item').length).not.toBe(0);
+    });
+  });
+});
+
+*/
+
+BUI.use('bui/form/checkboxfield',function(CheckBox){
+  var checkbox = new CheckBox({
+    render : '#row',
+    label : '勾选',
+    value : 'a',
+    checked : true
+  });
+
+  checkbox.render();
+  var el = checkbox.get('el');
+  describe('生成checkbox',function(){
+    it('测试初始化',function(){
+      expect(el.length).toBe(1);
+      expect(el.find('input').length).toBe(1);
+      expect(el.find('input').attr('checked')).toBe('checked');
     });
   });
 });

@@ -75,11 +75,10 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         controlContainer = _self.get('controlContainer');
       if(controlContainer){
         if(BUI.isString(controlContainer)){
-          return el.find(controlContainer);
+          controlContainer = el.find(controlContainer);
         }
-        return controlContainer;
       }
-      return el;
+      return (controlContainer && controlContainer.length) ? controlContainer : el;
     },
     /**
      * 获取显示加载状态的容器
