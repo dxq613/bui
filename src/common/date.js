@@ -28,13 +28,10 @@ define('bui/date', function () {
 		if (typeof(format)=="undefined" || format==null || format=="") {
 			var checkList=new Array('y-m-d','yyyy-mm-dd','yyyy-mm-dd HH:MM:ss','H:M:s');
 			for (var i=0; i<checkList.length; i++) {
-				var l=checkList[i];
-				for (var j=0; j<l.length; j++) {
-					var d=dateParse(val,l[j]);
+					var d=dateParse(val,checkList[i]);
 					if (d!=null) { 
 						return d; 
 					}
-				}
 			}
 			return null;
 		};
