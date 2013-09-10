@@ -4631,7 +4631,11 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
         bodyNode = grid.get('el').find('.' + CLS_BODY),
         rst = [];
       BUI.each(fields,function(field){
-         rst.push({field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false});
+        var cfg = {field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false};
+        if(field.xtype === 'checkbox'){
+          cfg.innerValueField = 'checked';
+        }
+        rst.push(cfg);
       });
 
       return rst;
@@ -4825,6 +4829,9 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     getFieldConfig : function(column){
       var editor = column.get('editor');
       if(editor){
+        if(editor.xtype === 'checkbox'){
+          editor.innerValueField = 'checked';
+        }
         return editor;
       }
       var cfg = {xtype : 'plain'};

@@ -3263,75 +3263,184 @@ define('bui/keycode',function () {
  * - \u7b80\u5355\u7684\u672c\u5730\u5316\uff0c\u5bf9w\uff08\u661f\u671fx\uff09\u7684\u652f\u6301
  * 
  */
-define('bui/date',function () {
+define('bui/date', function () {
 
     var dateRegex = /^(?:(?!0000)[0-9]{4}([-/.]+)(?:(?:0?[1-9]|1[0-2])\1(?:0?[1-9]|1[0-9]|2[0-8])|(?:0?[13-9]|1[0-2])\1(?:29|30)|(?:0?[13578]|1[02])\1(?:31))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)([-/.]?)0?2\2(?:29))(\s+([01]|([01][0-9]|2[0-3])):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9]))?$/;
-    function dateParse(data, s) {
 
-        var date = null;
-        s = s || '-';
-        //Convert to date
-        if (!(date instanceof Date)) {
-            if(BUI.isString(data)){
-                date = new Date(data.replace(/-/g,'/'));
-            }else{
-                date = new Date(data);
+    function dateParse(val, format) {
+		if(val instanceof Date){
+			return val;
+		}
+		if (typeof(format)=="undefined" || format==null || format=="") {
+			var checkList=new Array('y-m-d','yyyy-mm-dd','yyyy-mm-dd HH:MM:ss','H:M:s');
+			for (var i=0; i<checkList.length; i++) {
+					var d=dateParse(val,checkList[i]);
+					if (d!=null) { 
+						return d; 
+					}
+			}
+			return null;
+		};
+        val = val + "";
+        var i_val = 0;
+        var i_format = 0;
+        var c = "";
+        var token = "";
+        var x, y;
+        var now = new Date();
+        var year = now.getYear();
+        var month = now.getMonth() + 1;
+        var date = 1;
+        var hh = now.getHours();
+        var mm = now.getMinutes();
+        var ss = now.getSeconds();
+        this.isInteger = function(val) {
+            return /^\d*$/.test(val);
+		};
+		this.getInt = function(str,i,minlength,maxlength) {
+			for (var x=maxlength; x>=minlength; x--) {
+				var token=str.substring(i,i+x);
+				if (token.length < minlength) { 
+					return null; 
+				}
+				if (this.isInteger(token)) { 
+					return token; 
+				}
+			}
+		return null;
+		};
+
+        while (i_format < format.length) {
+            c = format.charAt(i_format);
+            token = "";
+            while ((format.charAt(i_format) == c) && (i_format < format.length)) {
+                token += format.charAt(i_format++);
             }
-            
-        }
-        else {
-            return date;
-        }
-
-        // Validate
-        if (date instanceof Date && (date != 'Invalid Date') && !isNaN(date)) {
-            return date;
-        }
-        else {
-            var arr = data.toString().split(s);
-            if (arr.length == 3) {
-                date = new Date(arr[0], (parseInt(arr[1], 10) - 1), arr[2]);
-                if (date instanceof Date && (date != 'Invalid Date') && !isNaN(date)) {
-                    return date;
-                }
-            }
-        }
-        return null;
-
+            if (token=="yyyy" || token=="yy" || token=="y") {
+				if (token=="yyyy") { 
+					x=4;y=4; 
+				}
+				if (token=="yy") { 
+					x=2;y=2; 
+				}
+				if (token=="y") { 
+					x=2;y=4; 
+				}
+				year=this.getInt(val,i_val,x,y);
+				if (year==null) { 
+					return null; 
+				}
+				i_val += year.length;
+				if (year.length==2) {
+                    year = year>70?1900+(year-0):2000+(year-0);
+				}
+			}
+            else if (token=="mm"||token=="m") {
+				month=this.getInt(val,i_val,token.length,2);
+				if(month==null||(month<1)||(month>12)){
+					return null;
+				}
+				i_val+=month.length;
+			}
+			else if (token=="dd"||token=="d") {
+				date=this.getInt(val,i_val,token.length,2);
+				if(date==null||(date<1)||(date>31)){
+					return null;
+				}
+				i_val+=date.length;
+			}
+			else if (token=="hh"||token=="h") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<1)||(hh>12)){
+					return null;
+				}
+				i_val+=hh.length;
+			}
+			else if (token=="HH"||token=="H") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<0)||(hh>23)){
+					return null;
+				}
+				i_val+=hh.length;
+			}
+			else if (token=="MM"||token=="M") {
+				mm=this.getInt(val,i_val,token.length,2);
+				if(mm==null||(mm<0)||(mm>59)){
+					return null;
+				}
+				i_val+=mm.length;
+			}
+			else if (token=="ss"||token=="s") {
+				ss=this.getInt(val,i_val,token.length,2);
+				if(ss==null||(ss<0)||(ss>59)){
+					return null;
+				}
+				i_val+=ss.length;
+			}
+			else {
+				if (val.substring(i_val,i_val+token.length)!=token) {
+					return null;
+				}
+				else {
+					i_val+=token.length;
+				}
+			}
+		}
+		if (i_val != val.length) { 
+			return null; 
+		}
+		if (month==2) {
+			if ( ( (year%4==0)&&(year%100 != 0) ) || (year%400==0) ) { // leap year
+				if (date > 29){ 
+					return null; 
+				}
+			}
+			else { 
+				if (date > 28) { 
+					return null; 
+				} 
+			}
+		}
+		if ((month==4)||(month==6)||(month==9)||(month==11)) {
+			if (date > 30) { 
+				return null; 
+			}
+		}
+		return new Date(year,month-1,date,hh,mm,ss);
     }
 
-    function   DateAdd(strInterval,   NumDay,   dtDate)   {   
-        var   dtTmp   =   new   Date(dtDate);   
-        if   (isNaN(dtTmp)){
-            dtTmp   =   new   Date(); 
-        }     
-        switch   (strInterval)   {   
-           case   's':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (1000   *   parseInt(NumDay))); 
-             break; 
-           case   'n':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (60000   *   parseInt(NumDay))); 
-             break; 
-           case   'h':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (3600000   *   parseInt(NumDay)));
-             break;
-           case   'd':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (86400000   *   parseInt(NumDay)));
-             break;
-           case   'w':
-             dtTmp =   new   Date(dtTmp.getTime()   +   ((86400000   *   7)   *   parseInt(NumDay))); 
-             break;
-           case   'm':
-             dtTmp =   new   Date(dtTmp.getFullYear(),   (dtTmp.getMonth())+parseInt(NumDay),   dtTmp.getDate(),   dtTmp.getHours(),   dtTmp.getMinutes(),   dtTmp.getSeconds());
-             break;   
-           case   'y':
-             //alert(dtTmp.getFullYear());
-             dtTmp =   new   Date(dtTmp.getFullYear()+parseInt(NumDay),   dtTmp.getMonth(),   dtTmp.getDate(),   dtTmp.getHours(),   dtTmp.getMinutes(),   dtTmp.getSeconds());
-             //alert(dtTmp);
-             break;
+    function DateAdd(strInterval, NumDay, dtDate) {
+        var dtTmp = new Date(dtDate);
+        if (isNaN(dtTmp)) {
+            dtTmp = new Date();
+        }
+        switch (strInterval) {
+            case   's':
+                dtTmp = new Date(dtTmp.getTime() + (1000 * parseInt(NumDay)));
+                break;
+            case   'n':
+                dtTmp = new Date(dtTmp.getTime() + (60000 * parseInt(NumDay)));
+                break;
+            case   'h':
+                dtTmp = new Date(dtTmp.getTime() + (3600000 * parseInt(NumDay)));
+                break;
+            case   'd':
+                dtTmp = new Date(dtTmp.getTime() + (86400000 * parseInt(NumDay)));
+                break;
+            case   'w':
+                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * parseInt(NumDay)));
+                break;
+            case   'm':
+                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + parseInt(NumDay), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                break;
+            case   'y':
+                //alert(dtTmp.getFullYear());
+                dtTmp = new Date(dtTmp.getFullYear() + parseInt(NumDay), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                //alert(dtTmp);
+                break;
         }
         return dtTmp;
-    }   
+    }
 
     var dateFormat = function () {
         var token = /w{1}|d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
@@ -3453,10 +3562,10 @@ define('bui/date',function () {
         };
     }();
 
-	/**
-	* \u65e5\u671f\u7684\u5de5\u5177\u65b9\u6cd5
-	* @class BUI.Date
-	*/
+    /**
+     * \u65e5\u671f\u7684\u5de5\u5177\u65b9\u6cd5
+     * @class BUI.Date
+     */
     var DateUtil = {
         /**
          * \u65e5\u671f\u52a0\u6cd5
@@ -3464,64 +3573,64 @@ define('bui/date',function () {
          * @param {Number} Num         \u6570\u91cf\uff0c\u5982\u679c\u4e3a\u8d1f\u6570\uff0c\u5219\u4e3a\u51cf\u6cd5
          * @param {Date} dtDate      \u8d77\u59cb\u65e5\u671f\uff0c\u9ed8\u8ba4\u4e3a\u6b64\u65f6
          */
-        add : function(strInterval,Num,dtDate){
-            return DateAdd(strInterval,Num,dtDate);
+        add: function (strInterval, Num, dtDate) {
+            return DateAdd(strInterval, Num, dtDate);
         },
         /**
          * \u5c0f\u65f6\u7684\u52a0\u6cd5
          * @param {Number} hours \u5c0f\u65f6
          * @param {Date} date \u8d77\u59cb\u65e5\u671f
          */
-        addHour : function(hours,date){
-            return DateAdd('h',hours,date);
+        addHour: function (hours, date) {
+            return DateAdd('h', hours, date);
         },
-         /**
+        /**
          * \u5206\u7684\u52a0\u6cd5
          * @param {Number} minutes \u5206
          * @param {Date} date \u8d77\u59cb\u65e5\u671f
          */
-        addMinute : function(minutes,date){
-            return DateAdd('n',minutes,date);
+        addMinute: function (minutes, date) {
+            return DateAdd('n', minutes, date);
         },
-         /**
+        /**
          * \u79d2\u7684\u52a0\u6cd5
          * @param {Number} seconds \u79d2
          * @param {Date} date \u8d77\u59cb\u65e5\u671f
          */
-        addSecond : function(seconds,date){
-            return DateAdd('s',seconds,date);
+        addSecond: function (seconds, date) {
+            return DateAdd('s', seconds, date);
         },
         /**
          * \u5929\u7684\u52a0\u6cd5
          * @param {Number} days \u5929\u6570
          * @param {Date} date \u8d77\u59cb\u65e5\u671f
          */
-        addDay : function(days,date){ 
-            return DateAdd('d',days,date);
+        addDay: function (days, date) {
+            return DateAdd('d', days, date);
         },
         /**
          * \u589e\u52a0\u5468
          * @param {Number} weeks \u5468\u6570
          * @param {Date} date  \u8d77\u59cb\u65e5\u671f
          */
-        addWeek : function(weeks,date){
-            return DateAdd('w',weeks,date);
+        addWeek: function (weeks, date) {
+            return DateAdd('w', weeks, date);
         },
         /**
          * \u589e\u52a0\u6708
          * @param {Number} months \u6708\u6570
          * @param {Date} date  \u8d77\u59cb\u65e5\u671f
          */
-        addMonths : function(months,date){
-            return DateAdd('m',months,date);
+        addMonths: function (months, date) {
+            return DateAdd('m', months, date);
         },
         /**
          * \u589e\u52a0\u5e74
          * @param {Number} years \u5e74\u6570
          * @param {Date} date  \u8d77\u59cb\u65e5\u671f
          */
-        addYear : function(years,date){
-            return DateAdd('y',years,date);
+        addYear: function (years, date) {
+            return DateAdd('y', years, date);
         },
         /**
          * \u65e5\u671f\u662f\u5426\u76f8\u7b49\uff0c\u5ffd\u7565\u65f6\u95f4
@@ -3529,7 +3638,7 @@ define('bui/date',function () {
          * @param  {Date}  d2 \u65e5\u671f\u5bf9\u8c61
          * @return {Boolean}    \u662f\u5426\u76f8\u7b49
          */
-        isDateEquals : function(d1,d2){
+        isDateEquals: function (d1, d2) {
 
             return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
         },
@@ -3539,14 +3648,14 @@ define('bui/date',function () {
          * @param  {Date}  d2 \u65e5\u671f\u5bf9\u8c61
          * @return {Boolean}    \u662f\u5426\u76f8\u7b49
          */
-        isEquals : function (d1,d2) {
-            if(d1 == d2){
+        isEquals: function (d1, d2) {
+            if (d1 == d2) {
                 return true;
             }
-            if(!d1 || !d2){
+            if (!d1 || !d2) {
                 return false;
             }
-            if(!d1.getTime || !d2.getTime){
+            if (!d1.getTime || !d2.getTime) {
                 return false;
             }
             return d1.getTime() == d2.getTime();
@@ -3556,7 +3665,7 @@ define('bui/date',function () {
          * @param {String} str \u5b57\u7b26\u4e32
          * @return \u5b57\u7b26\u4e32\u662f\u5426\u80fd\u8f6c\u6362\u6210\u65e5\u671f
          */
-        isDateString : function(str){
+        isDateString: function (str) {
             return dateRegex.test(str);
         },
         /**
@@ -3566,32 +3675,32 @@ define('bui/date',function () {
          * @param  {Date} utc  \u662f\u5426utc\u65f6\u95f4
          * @return {String}      \u65e5\u671f\u7684\u5b57\u7b26\u4e32
          */
-        format:function (date, mask, utc) {
+        format: function (date, mask, utc) {
             return dateFormat(date, mask, utc);
         },
         /**
          * \u8f6c\u6362\u6210\u65e5\u671f
          * @param  {String|Date} date \u5b57\u7b26\u4e32\u6216\u8005\u65e5\u671f
-         * @param  {String} s    \u65f6\u95f4\u7684\u5206\u5272\u7b26\uff0c\u5982 2001-01-01\u4e2d\u7684 '-'
+         * @param  {String} dateMask  \u65e5\u671f\u7684\u683c\u5f0f,\u5982:yyyy-MM-dd
          * @return {Date}      \u65e5\u671f\u5bf9\u8c61
          */
-        parse:function (date, s) {
+        parse: function (date, s) {
             return dateParse(date, s);
         },
         /**
          * \u5f53\u524d\u5929
          * @return {Date} \u5f53\u524d\u5929 00:00:00
          */
-        today : function(){
+        today: function () {
             var now = new Date();
-            return new Date(now.getFullYear(),now.getMonth(),now.getDate());
+            return new Date(now.getFullYear(), now.getMonth(), now.getDate());
         },
         /**
          * \u8fd4\u56de\u5f53\u524d\u65e5\u671f
          * @return {Date} \u65e5\u671f\u7684 00:00:00
          */
-        getDate : function(date){
-            return new Date(date.getFullYear(),date.getMonth(),date.getDate());
+        getDate: function (date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
         }
     };
 
@@ -12739,7 +12848,7 @@ define('bui/data/node',['bui/common'],function (require) {
      * \u662f\u5426\u53f6\u5b50\u8282\u70b9
      * @type {Boolean}
      */
-    leaf : false,
+    leaf : null,
     /**
      * \u663e\u793a\u8282\u70b9\u65f6\u663e\u793a\u7684\u6587\u672c
      * @type {Object}
@@ -18487,6 +18596,10 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     },
     //\u8986\u76d6 \u8bbe\u7f6e\u503c\u7684\u65b9\u6cd5
     _uiSetValue : function(v){
+
+    },
+    //\u8986\u76d6\u4e0d\u8bbe\u7f6e\u5bbd\u5ea6
+    _uiSetWidth : function(v){
 
     },
     //\u8bbe\u7f6e\u662f\u5426\u52fe\u9009
@@ -27548,7 +27661,14 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         calendar = new Calendar({
           showTime : _self.get('showTime')
         });
-
+	
+	  if (!_self.get('dateMask')) {
+        if (_self.get('showTime')) {
+            _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
+        } else {
+            _self.set('dateMask', 'yyyy-mm-dd');
+        }
+       }	
       children.push(calendar);
       _self.set('calendar',calendar);
     },
@@ -27563,7 +27683,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     setSelectedValue : function(val){
       var _self = this,
         calendar = this.get('calendar'),
-        date = DateUtil.parse(val);
+        date = DateUtil.parse(val,_self.get("dateMask"));
       date = date || new Date(new Date().setSeconds(0));
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
@@ -27597,10 +27717,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       return DateUtil.format(this.getSelectedValue(),this._getFormatType());
     },
     _getFormatType : function(){
-      if(this.get('showTime')){
-        return 'yyyy-mm-dd HH:MM:ss';
-      }
-      return 'yyyy-mm-dd';
+      return this.get('dateMask');
     },
     //\u8bbe\u7f6e\u6700\u5927\u503c
     _uiSetMaxDate : function(v){
@@ -27662,6 +27779,16 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        * @type {Date}
        */
       minDate : {
+
+      },
+	  /**
+       * \u8fd4\u56de\u65e5\u671f\u683c\u5f0f\uff0c\u5982\u679c\u4e0d\u8bbe\u7f6e\u9ed8\u8ba4\u4e3a yyyy-MM-dd\uff0c\u65f6\u95f4\u9009\u62e9\u4e3atrue\u65f6\u4e3a yyyy-MM-dd HH:mm:ss
+       * <pre><code>
+       *   calendar.set('dateMask','yyyy-MM-dd');
+       * </code></pre>
+       * @type {String}
+      */
+      dateMask: {
 
       },
       changeEvent:{
@@ -33125,7 +33252,11 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
         bodyNode = grid.get('el').find('.' + CLS_BODY),
         rst = [];
       BUI.each(fields,function(field){
-         rst.push({field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false});
+        var cfg = {field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false};
+        if(field.xtype === 'checkbox'){
+          cfg.innerValueField = 'checked';
+        }
+        rst.push(cfg);
       });
 
       return rst;
@@ -33319,6 +33450,9 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     getFieldConfig : function(column){
       var editor = column.get('editor');
       if(editor){
+        if(editor.xtype === 'checkbox'){
+          editor.innerValueField = 'checked';
+        }
         return editor;
       }
       var cfg = {xtype : 'plain'};

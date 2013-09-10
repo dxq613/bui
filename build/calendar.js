@@ -1385,7 +1385,14 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         calendar = new Calendar({
           showTime : _self.get('showTime')
         });
-
+	
+	  if (!_self.get('dateMask')) {
+        if (_self.get('showTime')) {
+            _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
+        } else {
+            _self.set('dateMask', 'yyyy-mm-dd');
+        }
+       }	
       children.push(calendar);
       _self.set('calendar',calendar);
     },
@@ -1400,7 +1407,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     setSelectedValue : function(val){
       var _self = this,
         calendar = this.get('calendar'),
-        date = DateUtil.parse(val);
+        date = DateUtil.parse(val,_self.get("dateMask"));
       date = date || new Date(new Date().setSeconds(0));
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
@@ -1434,10 +1441,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       return DateUtil.format(this.getSelectedValue(),this._getFormatType());
     },
     _getFormatType : function(){
-      if(this.get('showTime')){
-        return 'yyyy-mm-dd HH:MM:ss';
-      }
-      return 'yyyy-mm-dd';
+      return this.get('dateMask');
     },
     //设置最大值
     _uiSetMaxDate : function(v){
@@ -1499,6 +1503,16 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        * @type {Date}
        */
       minDate : {
+
+      },
+	  /**
+       * 返回日期格式，如果不设置默认为 yyyy-MM-dd，时间选择为true时为 yyyy-MM-dd HH:mm:ss
+       * <pre><code>
+       *   calendar.set('dateMask','yyyy-MM-dd');
+       * </code></pre>
+       * @type {String}
+      */
+      dateMask: {
 
       },
       changeEvent:{

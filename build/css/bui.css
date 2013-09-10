@@ -1634,6 +1634,13 @@ input.x-datepicker-time {
   padding: 1px 4px;
   border: 1px solid #c3c3d6;
 }
+.bui-editor .bui-form-check-field {
+  background-color: #ffffff;
+  text-align: center;
+}
+.bui-editor .bui-form-check-field input {
+  vertical-align: middle;
+}
 .bui-tree-list {
   border: 1px solid #c3c3d6;
   overflow: auto;

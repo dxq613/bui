@@ -1726,75 +1726,184 @@ define('bui/keycode',function () {
  * - 简单的本地化，对w（星期x）的支持
  * 
  */
-define('bui/date',function () {
+define('bui/date', function () {
 
     var dateRegex = /^(?:(?!0000)[0-9]{4}([-/.]+)(?:(?:0?[1-9]|1[0-2])\1(?:0?[1-9]|1[0-9]|2[0-8])|(?:0?[13-9]|1[0-2])\1(?:29|30)|(?:0?[13578]|1[02])\1(?:31))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)([-/.]?)0?2\2(?:29))(\s+([01]|([01][0-9]|2[0-3])):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9]))?$/;
-    function dateParse(data, s) {
 
-        var date = null;
-        s = s || '-';
-        //Convert to date
-        if (!(date instanceof Date)) {
-            if(BUI.isString(data)){
-                date = new Date(data.replace(/-/g,'/'));
-            }else{
-                date = new Date(data);
+    function dateParse(val, format) {
+		if(val instanceof Date){
+			return val;
+		}
+		if (typeof(format)=="undefined" || format==null || format=="") {
+			var checkList=new Array('y-m-d','yyyy-mm-dd','yyyy-mm-dd HH:MM:ss','H:M:s');
+			for (var i=0; i<checkList.length; i++) {
+					var d=dateParse(val,checkList[i]);
+					if (d!=null) { 
+						return d; 
+					}
+			}
+			return null;
+		};
+        val = val + "";
+        var i_val = 0;
+        var i_format = 0;
+        var c = "";
+        var token = "";
+        var x, y;
+        var now = new Date();
+        var year = now.getYear();
+        var month = now.getMonth() + 1;
+        var date = 1;
+        var hh = now.getHours();
+        var mm = now.getMinutes();
+        var ss = now.getSeconds();
+        this.isInteger = function(val) {
+            return /^\d*$/.test(val);
+		};
+		this.getInt = function(str,i,minlength,maxlength) {
+			for (var x=maxlength; x>=minlength; x--) {
+				var token=str.substring(i,i+x);
+				if (token.length < minlength) { 
+					return null; 
+				}
+				if (this.isInteger(token)) { 
+					return token; 
+				}
+			}
+		return null;
+		};
+
+        while (i_format < format.length) {
+            c = format.charAt(i_format);
+            token = "";
+            while ((format.charAt(i_format) == c) && (i_format < format.length)) {
+                token += format.charAt(i_format++);
             }
-            
-        }
-        else {
-            return date;
-        }
-
-        // Validate
-        if (date instanceof Date && (date != 'Invalid Date') && !isNaN(date)) {
-            return date;
-        }
-        else {
-            var arr = data.toString().split(s);
-            if (arr.length == 3) {
-                date = new Date(arr[0], (parseInt(arr[1], 10) - 1), arr[2]);
-                if (date instanceof Date && (date != 'Invalid Date') && !isNaN(date)) {
-                    return date;
-                }
-            }
-        }
-        return null;
-
+            if (token=="yyyy" || token=="yy" || token=="y") {
+				if (token=="yyyy") { 
+					x=4;y=4; 
+				}
+				if (token=="yy") { 
+					x=2;y=2; 
+				}
+				if (token=="y") { 
+					x=2;y=4; 
+				}
+				year=this.getInt(val,i_val,x,y);
+				if (year==null) { 
+					return null; 
+				}
+				i_val += year.length;
+				if (year.length==2) {
+                    year = year>70?1900+(year-0):2000+(year-0);
+				}
+			}
+            else if (token=="mm"||token=="m") {
+				month=this.getInt(val,i_val,token.length,2);
+				if(month==null||(month<1)||(month>12)){
+					return null;
+				}
+				i_val+=month.length;
+			}
+			else if (token=="dd"||token=="d") {
+				date=this.getInt(val,i_val,token.length,2);
+				if(date==null||(date<1)||(date>31)){
+					return null;
+				}
+				i_val+=date.length;
+			}
+			else if (token=="hh"||token=="h") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<1)||(hh>12)){
+					return null;
+				}
+				i_val+=hh.length;
+			}
+			else if (token=="HH"||token=="H") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<0)||(hh>23)){
+					return null;
+				}
+				i_val+=hh.length;
+			}
+			else if (token=="MM"||token=="M") {
+				mm=this.getInt(val,i_val,token.length,2);
+				if(mm==null||(mm<0)||(mm>59)){
+					return null;
+				}
+				i_val+=mm.length;
+			}
+			else if (token=="ss"||token=="s") {
+				ss=this.getInt(val,i_val,token.length,2);
+				if(ss==null||(ss<0)||(ss>59)){
+					return null;
+				}
+				i_val+=ss.length;
+			}
+			else {
+				if (val.substring(i_val,i_val+token.length)!=token) {
+					return null;
+				}
+				else {
+					i_val+=token.length;
+				}
+			}
+		}
+		if (i_val != val.length) { 
+			return null; 
+		}
+		if (month==2) {
+			if ( ( (year%4==0)&&(year%100 != 0) ) || (year%400==0) ) { // leap year
+				if (date > 29){ 
+					return null; 
+				}
+			}
+			else { 
+				if (date > 28) { 
+					return null; 
+				} 
+			}
+		}
+		if ((month==4)||(month==6)||(month==9)||(month==11)) {
+			if (date > 30) { 
+				return null; 
+			}
+		}
+		return new Date(year,month-1,date,hh,mm,ss);
     }
 
-    function   DateAdd(strInterval,   NumDay,   dtDate)   {   
-        var   dtTmp   =   new   Date(dtDate);   
-        if   (isNaN(dtTmp)){
-            dtTmp   =   new   Date(); 
-        }     
-        switch   (strInterval)   {   
-           case   's':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (1000   *   parseInt(NumDay))); 
-             break; 
-           case   'n':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (60000   *   parseInt(NumDay))); 
-             break; 
-           case   'h':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (3600000   *   parseInt(NumDay)));
-             break;
-           case   'd':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (86400000   *   parseInt(NumDay)));
-             break;
-           case   'w':
-             dtTmp =   new   Date(dtTmp.getTime()   +   ((86400000   *   7)   *   parseInt(NumDay))); 
-             break;
-           case   'm':
-             dtTmp =   new   Date(dtTmp.getFullYear(),   (dtTmp.getMonth())+parseInt(NumDay),   dtTmp.getDate(),   dtTmp.getHours(),   dtTmp.getMinutes(),   dtTmp.getSeconds());
-             break;   
-           case   'y':
-             //alert(dtTmp.getFullYear());
-             dtTmp =   new   Date(dtTmp.getFullYear()+parseInt(NumDay),   dtTmp.getMonth(),   dtTmp.getDate(),   dtTmp.getHours(),   dtTmp.getMinutes(),   dtTmp.getSeconds());
-             //alert(dtTmp);
-             break;
+    function DateAdd(strInterval, NumDay, dtDate) {
+        var dtTmp = new Date(dtDate);
+        if (isNaN(dtTmp)) {
+            dtTmp = new Date();
+        }
+        switch (strInterval) {
+            case   's':
+                dtTmp = new Date(dtTmp.getTime() + (1000 * parseInt(NumDay)));
+                break;
+            case   'n':
+                dtTmp = new Date(dtTmp.getTime() + (60000 * parseInt(NumDay)));
+                break;
+            case   'h':
+                dtTmp = new Date(dtTmp.getTime() + (3600000 * parseInt(NumDay)));
+                break;
+            case   'd':
+                dtTmp = new Date(dtTmp.getTime() + (86400000 * parseInt(NumDay)));
+                break;
+            case   'w':
+                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * parseInt(NumDay)));
+                break;
+            case   'm':
+                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + parseInt(NumDay), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                break;
+            case   'y':
+                //alert(dtTmp.getFullYear());
+                dtTmp = new Date(dtTmp.getFullYear() + parseInt(NumDay), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                //alert(dtTmp);
+                break;
         }
         return dtTmp;
-    }   
+    }
 
     var dateFormat = function () {
         var token = /w{1}|d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
@@ -1916,10 +2025,10 @@ define('bui/date',function () {
         };
     }();
 
-	/**
-	* 日期的工具方法
-	* @class BUI.Date
-	*/
+    /**
+     * 日期的工具方法
+     * @class BUI.Date
+     */
     var DateUtil = {
         /**
          * 日期加法
@@ -1927,64 +2036,64 @@ define('bui/date',function () {
          * @param {Number} Num         数量，如果为负数，则为减法
          * @param {Date} dtDate      起始日期，默认为此时
          */
-        add : function(strInterval,Num,dtDate){
-            return DateAdd(strInterval,Num,dtDate);
+        add: function (strInterval, Num, dtDate) {
+            return DateAdd(strInterval, Num, dtDate);
         },
         /**
          * 小时的加法
          * @param {Number} hours 小时
          * @param {Date} date 起始日期
          */
-        addHour : function(hours,date){
-            return DateAdd('h',hours,date);
+        addHour: function (hours, date) {
+            return DateAdd('h', hours, date);
         },
-         /**
+        /**
          * 分的加法
          * @param {Number} minutes 分
          * @param {Date} date 起始日期
          */
-        addMinute : function(minutes,date){
-            return DateAdd('n',minutes,date);
+        addMinute: function (minutes, date) {
+            return DateAdd('n', minutes, date);
         },
-         /**
+        /**
          * 秒的加法
          * @param {Number} seconds 秒
          * @param {Date} date 起始日期
          */
-        addSecond : function(seconds,date){
-            return DateAdd('s',seconds,date);
+        addSecond: function (seconds, date) {
+            return DateAdd('s', seconds, date);
         },
         /**
          * 天的加法
          * @param {Number} days 天数
          * @param {Date} date 起始日期
          */
-        addDay : function(days,date){ 
-            return DateAdd('d',days,date);
+        addDay: function (days, date) {
+            return DateAdd('d', days, date);
         },
         /**
          * 增加周
          * @param {Number} weeks 周数
          * @param {Date} date  起始日期
          */
-        addWeek : function(weeks,date){
-            return DateAdd('w',weeks,date);
+        addWeek: function (weeks, date) {
+            return DateAdd('w', weeks, date);
         },
         /**
          * 增加月
          * @param {Number} months 月数
          * @param {Date} date  起始日期
          */
-        addMonths : function(months,date){
-            return DateAdd('m',months,date);
+        addMonths: function (months, date) {
+            return DateAdd('m', months, date);
         },
         /**
          * 增加年
          * @param {Number} years 年数
          * @param {Date} date  起始日期
          */
-        addYear : function(years,date){
-            return DateAdd('y',years,date);
+        addYear: function (years, date) {
+            return DateAdd('y', years, date);
         },
         /**
          * 日期是否相等，忽略时间
@@ -1992,7 +2101,7 @@ define('bui/date',function () {
          * @param  {Date}  d2 日期对象
          * @return {Boolean}    是否相等
          */
-        isDateEquals : function(d1,d2){
+        isDateEquals: function (d1, d2) {
 
             return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
         },
@@ -2002,14 +2111,14 @@ define('bui/date',function () {
          * @param  {Date}  d2 日期对象
          * @return {Boolean}    是否相等
          */
-        isEquals : function (d1,d2) {
-            if(d1 == d2){
+        isEquals: function (d1, d2) {
+            if (d1 == d2) {
                 return true;
             }
-            if(!d1 || !d2){
+            if (!d1 || !d2) {
                 return false;
             }
-            if(!d1.getTime || !d2.getTime){
+            if (!d1.getTime || !d2.getTime) {
                 return false;
             }
             return d1.getTime() == d2.getTime();
@@ -2019,7 +2128,7 @@ define('bui/date',function () {
          * @param {String} str 字符串
          * @return 字符串是否能转换成日期
          */
-        isDateString : function(str){
+        isDateString: function (str) {
             return dateRegex.test(str);
         },
         /**
@@ -2029,32 +2138,32 @@ define('bui/date',function () {
          * @param  {Date} utc  是否utc时间
          * @return {String}      日期的字符串
          */
-        format:function (date, mask, utc) {
+        format: function (date, mask, utc) {
             return dateFormat(date, mask, utc);
         },
         /**
          * 转换成日期
          * @param  {String|Date} date 字符串或者日期
-         * @param  {String} s    时间的分割符，如 2001-01-01中的 '-'
+         * @param  {String} dateMask  日期的格式,如:yyyy-MM-dd
          * @return {Date}      日期对象
          */
-        parse:function (date, s) {
+        parse: function (date, s) {
             return dateParse(date, s);
         },
         /**
          * 当前天
          * @return {Date} 当前天 00:00:00
          */
-        today : function(){
+        today: function () {
             var now = new Date();
-            return new Date(now.getFullYear(),now.getMonth(),now.getDate());
+            return new Date(now.getFullYear(), now.getMonth(), now.getDate());
         },
         /**
          * 返回当前日期
          * @return {Date} 日期的 00:00:00
          */
-        getDate : function(date){
-            return new Date(date.getFullYear(),date.getMonth(),date.getDate());
+        getDate: function (date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
         }
     };
 
