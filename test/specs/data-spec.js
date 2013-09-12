@@ -2,7 +2,7 @@
 function contains(record,array){
   return $.inArray(record,array) !== -1;
 }
-/*
+
 BUI.use('bui/data',function (Data) {
   var Store = Data.Store;
   describe("测试未分页本地数据",function(){
@@ -365,7 +365,7 @@ BUI.use('bui/data',function (Data) {
   });
 
 });
-*/
+/**/
 BUI.use('bui/data',function(Data){
   describe('修改传递到后台的参数',function(){
     var store = new Data.Store({

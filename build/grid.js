@@ -2873,7 +2873,7 @@ define('bui/grid/format',function (require) {
  */
 ;(function(){
 var BASE = 'bui/grid/plugins/';
-define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
+define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
 	var BUI = r('bui/common'),
 		Selection = r(BASE + 'selection'),
 
@@ -2886,6 +2886,7 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 			CellEditing : r(BASE + 'cellediting'),
 			RowEditing : r(BASE + 'rowediting'),
 			DialogEditing : r(BASE + 'dialogediting'),
+			AutoFit : r(BASE + 'autofit'),
 			GridMenu : r(BASE + 'menu'),
 			Summary : r(BASE + 'summary')
 		});
@@ -2894,6 +2895,56 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 });
 })();
 /**
+ * @fileOverview 自动适应表格宽度的扩展
+ * @ignore
+ */
+
+define('bui/grid/plugins/autofit',['bui/common'],function (require) {
+  var BUI = require('bui/common');
+
+  /**
+   * 表格自适应宽度
+   * @class BUI.Grid.Plugins.AutoFit
+   */
+  var AutoFit = function(){
+
+  };
+
+  BUI.extend(AutoFit,BUI.Base);
+
+  AutoFit.ATTRS = {
+
+  };
+
+  BUI.augment(AutoFit,{
+    bindUI : function(grid){
+      var _self = this,
+        handler;
+      $(window).on('resize',function(){
+
+        function autoFit(){
+          clearTimeout(handler);
+          handler = setTimeout(function(){
+            _self._autoFit(grid);
+          },100);
+        }
+        autoFit();
+      });
+    },
+    _autoFit : function(grid){
+      var render = grid.get('render'),
+          width;
+        grid.set('visible',false);
+        width = $(render).width();
+
+        grid.set('visible',true);
+        grid.set('width',width);
+    }
+
+  });
+
+  return AutoFit;
+});/**
  * @fileOverview Grid 菜单
  * @ignore
  */
@@ -3907,8 +3958,8 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       var _self = this,
         store = grid.get('store');
       if(store){
-        store.on('beforeProcessLoad',function(data){
-          _self._processSummary(data);
+        store.on('beforeprocessload',function(ev){
+          _self._processSummary(ev.data);
         });
         store.on('add',function(){
           _self.resetPageSummary();

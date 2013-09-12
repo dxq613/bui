@@ -165,8 +165,8 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       var _self = this,
         store = grid.get('store');
       if(store){
-        store.on('beforeProcessLoad',function(data){
-          _self._processSummary(data);
+        store.on('beforeprocessload',function(ev){
+          _self._processSummary(ev.data);
         });
         store.on('add',function(){
           _self.resetPageSummary();

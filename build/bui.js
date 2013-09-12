@@ -12486,12 +12486,11 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
 
         /**  
         * \u53d1\u751f\u5728\uff0cbeforeload\u548cload\u4e2d\u95f4\uff0c\u6570\u636e\u5df2\u7ecf\u83b7\u53d6\u5b8c\u6210\uff0c\u4f46\u662f\u8fd8\u672a\u89e6\u53d1load\u4e8b\u4ef6\uff0c\u7528\u4e8e\u83b7\u53d6\u8fd4\u56de\u7684\u539f\u59cb\u6570\u636e
-        * @name BUI.Data.Store#beforeProcessLoad
         * @event  
         * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
         * @param {Object} e.data \u4ece\u670d\u52a1\u5668\u7aef\u8fd4\u56de\u7684\u6570\u636e
         */
-        'beforeProcessLoad',
+        'beforeprocessload',
         
         /**  
         * \u5f53\u6dfb\u52a0\u6570\u636e\u65f6\u89e6\u53d1\u8be5\u4e8b\u4ef6
@@ -12750,6 +12749,9 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     processLoad : function(data,params){
       var _self = this,
         hasErrorField = _self.get('hasErrorProperty');
+
+      _self.fire('beforeprocessload',{data : data});
+    
       //\u83b7\u53d6\u7684\u539f\u59cb\u6570\u636e
       _self.fire('beforeProcessLoad',data);
 
@@ -13005,7 +13007,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * \u8fd4\u56de\u6570\u636e\u6807\u793a\u6570\u636e\u7684\u5b57\u6bb5</br>
      * \u5f02\u6b65\u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u6570\u636e\u53ef\u4ee5\u4f7f\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
      * - \u5982\u679c\u8fd4\u56de\u7684\u662f\u5bf9\u8c61,\u53ef\u4ee5\u9644\u52a0\u5176\u4ed6\u4fe1\u606f,\u90a3\u4e48\u53d6\u5bf9\u8c61\u5bf9\u5e94\u7684\u5b57\u6bb5 {nodes : [],hasError:false}
-     * - \u5982\u4f55\u83b7\u53d6\u9644\u52a0\u4fe1\u606f\u53c2\u770b @see {BUI.Data.AbstractStore-event-beforeProcessLoad}
+     * - \u5982\u4f55\u83b7\u53d6\u9644\u52a0\u4fe1\u606f\u53c2\u770b @see {BUI.Data.AbstractStore-event-beforeprocessload}
      * <pre><code>
      *  //\u8fd4\u56de\u6570\u636e\u4e3a\u6570\u7ec4 [{},{}]\uff0c\u4f1a\u76f4\u63a5\u9644\u52a0\u5230\u52a0\u8f7d\u7684\u8282\u70b9\u540e\u9762
      *  
@@ -13402,6 +13404,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       }else{
         _self.setChildren(node,data[dataProperty]);
       }
+      node.loaded = true; //\u6807\u8bc6\u5df2\u7ecf\u52a0\u8f7d\u8fc7
       _self.fire('load',{node : node,params : params});
     },
     /**
@@ -13426,29 +13429,33 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return true;
       }
       
-      return node.leaf || (node.children && node.children.length);
+      return node.loaded || node.leaf || (node.children && node.children.length);
     },
     /**
      * \u52a0\u8f7d\u8282\u70b9\u7684\u5b50\u8282\u70b9
      * @param  {BUI.Data.Node} node \u8282\u70b9
      */
     loadNode : function(node){
-      var _self = this;
+      var _self = this,
+        pidField = _self.get('pidField'),
+        params;
       //\u5982\u679c\u5df2\u7ecf\u52a0\u8f7d\u8fc7\uff0c\u6216\u8005\u8282\u70b9\u662f\u53f6\u5b50\u8282\u70b9
       if(_self.isLoaded(node)){
         return ;
       }
-      if(!_self.get('url') && _self.get('data')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
-        var pidField = _self.get('pidField'),
-          params = {id : node.id};
-        if(pidField){
-          params[pidField] = node.id;
-        }
+      params = {id : node.id};
+      if(pidField){
+        params[pidField] = node.id;
+      }
+      _self.load(params);
+
+      /*if(!_self.get('url') && _self.get('data')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
+        
         _self.load(params);
         return;
       }else{
         _self.load({id:node.id,path : ''});
-      }
+      }*/
       
     },
     /**
@@ -27782,9 +27789,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
       },
 	  /**
-       * \u8fd4\u56de\u65e5\u671f\u683c\u5f0f\uff0c\u5982\u679c\u4e0d\u8bbe\u7f6e\u9ed8\u8ba4\u4e3a yyyy-MM-dd\uff0c\u65f6\u95f4\u9009\u62e9\u4e3atrue\u65f6\u4e3a yyyy-MM-dd HH:mm:ss
+       * \u8fd4\u56de\u65e5\u671f\u683c\u5f0f\uff0c\u5982\u679c\u4e0d\u8bbe\u7f6e\u9ed8\u8ba4\u4e3a yyyy-mm-dd\uff0c\u65f6\u95f4\u9009\u62e9\u4e3atrue\u65f6\u4e3a yyyy-mm-dd HH:MM:ss
        * <pre><code>
-       *   calendar.set('dateMask','yyyy-MM-dd');
+       *   calendar.set('dateMask','yyyy-mm-dd');
        * </code></pre>
        * @type {String}
       */
@@ -31494,7 +31501,7 @@ define('bui/grid/format',function (require) {
  */
 ;(function(){
 var BASE = 'bui/grid/plugins/';
-define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
+define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
 	var BUI = r('bui/common'),
 		Selection = r(BASE + 'selection'),
 
@@ -31507,6 +31514,7 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 			CellEditing : r(BASE + 'cellediting'),
 			RowEditing : r(BASE + 'rowediting'),
 			DialogEditing : r(BASE + 'dialogediting'),
+			AutoFit : r(BASE + 'autofit'),
 			GridMenu : r(BASE + 'menu'),
 			Summary : r(BASE + 'summary')
 		});
@@ -31515,6 +31523,56 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 });
 })();
 /**
+ * @fileOverview \u81ea\u52a8\u9002\u5e94\u8868\u683c\u5bbd\u5ea6\u7684\u6269\u5c55
+ * @ignore
+ */
+
+define('bui/grid/plugins/autofit',['bui/common'],function (require) {
+  var BUI = require('bui/common');
+
+  /**
+   * \u8868\u683c\u81ea\u9002\u5e94\u5bbd\u5ea6
+   * @class BUI.Grid.Plugins.AutoFit
+   */
+  var AutoFit = function(){
+
+  };
+
+  BUI.extend(AutoFit,BUI.Base);
+
+  AutoFit.ATTRS = {
+
+  };
+
+  BUI.augment(AutoFit,{
+    bindUI : function(grid){
+      var _self = this,
+        handler;
+      $(window).on('resize',function(){
+
+        function autoFit(){
+          clearTimeout(handler);
+          handler = setTimeout(function(){
+            _self._autoFit(grid);
+          },100);
+        }
+        autoFit();
+      });
+    },
+    _autoFit : function(grid){
+      var render = grid.get('render'),
+          width;
+        grid.set('visible',false);
+        width = $(render).width();
+
+        grid.set('visible',true);
+        grid.set('width',width);
+    }
+
+  });
+
+  return AutoFit;
+});/**
  * @fileOverview Grid \u83dc\u5355
  * @ignore
  */
@@ -32528,8 +32586,8 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       var _self = this,
         store = grid.get('store');
       if(store){
-        store.on('beforeProcessLoad',function(data){
-          _self._processSummary(data);
+        store.on('beforeprocessload',function(ev){
+          _self._processSummary(ev.data);
         });
         store.on('add',function(){
           _self.resetPageSummary();

@@ -73,9 +73,6 @@
     background-position: -20px -80px;
 }
 
-.bui-tree-item-loading .x-tree-elbow-expander,.bui-grid-row-loading .x-tree-elbow-expander{
-  background: url("@{loadPath}") no-repeat 0 0 transparent;
-}
 
 .bui-tree-item-checked{
   font-style: italic;
@@ -132,6 +129,11 @@
   .bui-tree-item-expanded .x-tree-elbow-expander-end,.bui-grid-row-expanded .x-tree-elbow-expander-end{
     background-position: 0px -40px;
   }
+}
+
+
+.bui-tree-list .bui-tree-item-loading .x-tree-elbow-expander,.bui-grid .bui-grid-row-loading .x-tree-elbow-expander{
+  background: url("@{loadPath}") no-repeat 0 0 transparent;
 }
 
 .bui-tree-grid .bui-grid-table .bui-grid-cell-text{

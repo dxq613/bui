@@ -1727,10 +1727,6 @@ input.x-datepicker-time {
 .bui-grid-row-expanded .x-tree-elbow-dir {
   background-position: -20px -80px;
 }
-.bui-tree-item-loading .x-tree-elbow-expander,
-.bui-grid-row-loading .x-tree-elbow-expander {
-  background: url("../img/load-16-16.gif") no-repeat 0 0 transparent;
-}
 .bui-tree-item-checked {
   font-style: italic;
 }
@@ -1784,6 +1780,10 @@ input.x-datepicker-time {
 .x-tree-show-line .bui-tree-item-expanded .x-tree-elbow-expander-end,
 .x-tree-show-line .bui-grid-row-expanded .x-tree-elbow-expander-end {
   background-position: 0px -40px;
+}
+.bui-tree-list .bui-tree-item-loading .x-tree-elbow-expander,
+.bui-grid .bui-grid-row-loading .x-tree-elbow-expander {
+  background: url("../img/load-16-16.gif") no-repeat 0 0 transparent;
 }
 .bui-tree-grid .bui-grid-table .bui-grid-cell-text {
   display: inline-block;

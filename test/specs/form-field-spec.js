@@ -1,4 +1,4 @@
-/*
+
 //文本域
 BUI.use('bui/form/textfield',function  (TextField) {
   var tpl = ' <label class="control-label">{label}</label>\
@@ -735,7 +735,7 @@ BUI.use('bui/form/radiolistfield',function(ListField){
   });
 });
 
-*/
+/**/
 
 BUI.use('bui/form/checkboxfield',function(CheckBox){
   var checkbox = new CheckBox({

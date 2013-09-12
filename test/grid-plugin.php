@@ -17,7 +17,9 @@
     <h2>本页汇总</h2>
     <div id="J_Grid6"></div>
  </div>
-
+<div id="J_Auto">
+    
+</div>
     <?php $url = 'bui/grid/grid,bui/grid/plugins'?>
     <?php include("./templates/script.php"); ?>
     <script type="text/javascript" src="../src/grid/column.js"></script>
@@ -32,6 +34,7 @@
     <script type="text/javascript" src="../src/grid/plugins/rowediting.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/dialog.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/cellediting.js"></script>
+    <script type="text/javascript" src="../src/grid/plugins/autofit.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/base.js"></script>
     
     <script type="text/javascript" src="specs/plugin-check-spec.js"></script>
@@ -39,5 +42,5 @@
     <script type="text/javascript" src="specs/plugin-cascade-spec.js"></script>
 	  <script type="text/javascript" src="specs/plugin-menu-spec.js"></script>  
     <script type="text/javascript" src="specs/plugin-summary-spec.js"></script> <!--  -->
-
+    <script type="text/javascript" src="specs/plugin-auto-spec.js"></script>
 <?php include("./templates/footer.php"); ?>       

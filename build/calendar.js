@@ -1506,9 +1506,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
       },
 	  /**
-       * 返回日期格式，如果不设置默认为 yyyy-MM-dd，时间选择为true时为 yyyy-MM-dd HH:mm:ss
+       * 返回日期格式，如果不设置默认为 yyyy-mm-dd，时间选择为true时为 yyyy-mm-dd HH:MM:ss
        * <pre><code>
-       *   calendar.set('dateMask','yyyy-MM-dd');
+       *   calendar.set('dateMask','yyyy-mm-dd');
        * </code></pre>
        * @type {String}
       */

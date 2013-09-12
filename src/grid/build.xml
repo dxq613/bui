@@ -27,6 +27,7 @@
 			<path path="grid.js"/>
 			<path path="util.js"/>
 			  <path path="plugins/base.js"/>
+			  <path path="plugins/autofit.js"/>
 			  <path path="plugins/gridmenu.js"/>
 			  <path path="plugins/cascade.js"/>
 			  <path path="plugins/selection.js"/>
