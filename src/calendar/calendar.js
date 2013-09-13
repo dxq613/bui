@@ -143,17 +143,13 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     _initTimePicker : function(){
       var _self = this,
         lockTime = _self.get('lockTime'),
-        _timePickerEnum={hour:CLS_PICKER_HOUR,minute:CLS_PICKER_MINUTE,second:CLS_PICKER_SECOND},
-        _trigger='.' +CLS_PICKER_TIME;
+        _timePickerEnum={hour:CLS_PICKER_HOUR,minute:CLS_PICKER_MINUTE,second:CLS_PICKER_SECOND};
       if(lockTime){
-          _trigger = "."+CLS_PICKER_HOUR+",."+CLS_PICKER_MINUTE+",."+CLS_PICKER_SECOND+",";
           for(var key in lockTime){
               var noCls = _timePickerEnum[key.toLowerCase()];
               _self.set(key,lockTime[key]);
-              _self.get('el').find("."+noCls).css("background-color","#efefef").attr("disabled","disabled");
-             _trigger= _trigger.replace("."+noCls+",","");
+              _self.get('el').find("."+noCls).attr("disabled","");
           }
-          _trigger = _trigger.replace(/,$/,"");
       }
       var  picker = new Picker({
           elCls : CLS_TIME_PICKER,
@@ -166,7 +162,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
             points:['bl','bl'],
             offset:[0,-30]
           },
-          trigger : _self.get('el').find(_trigger)
+          trigger : _self.get('el').find('.' +CLS_PICKER_TIME)
         });
       picker.render();
       _self._initTimePickerEvent(picker);
