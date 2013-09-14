@@ -149,20 +149,6 @@ define('bui/uploader/button/base', function(require) {
   }
 
   baseView.ATTRS = /** @lends Base.prototype */{
-    buttonCls:{
-      view: true
-    },
-    textCls: {
-      view: true
-    },
-    text: {
-      view: true,
-      value: '上传文件'
-    },
-    tpl: {
-      view: true,
-      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '  {buttonCls}"><span class="' + CLS_UPLOADER_BUTTON_TEXT + ' {textCls}">{text}</span></a>'
-    }
   }
 
   baseView.prototype = {
@@ -186,6 +172,23 @@ define('bui/uploader/button/base', function(require) {
   }
 
   base.ATTRS = {
+    elCls: {
+      value: CLS_UPLOADER_BUTTON
+    },
+    buttonCls:{
+      view: true
+    },
+    textCls: {
+      view: true
+    },
+    text: {
+      view: true,
+      value: '上传文件'
+    },
+    tpl: {
+      view: true,
+      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '  {buttonCls}"><span class="' + CLS_UPLOADER_BUTTON_TEXT + ' {textCls}">{text}</span></a>'
+    },
     /**
      * 是否可用,false为可用
      * @type Boolean

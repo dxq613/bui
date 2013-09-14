@@ -1,37 +1,9 @@
-/*--------- 默认模板，目前应用于淘宝退款页 BY 明河 ---------*/
-.clearfix:before, .clearfix:after {
-    content: "";
-    display: table;
-}
+/* 清除浮动 */
+.clearfix:after { content: '\20'; display: block; height: 0; clear: both; }
+.clearfix { *zoom: 1; }
 
-.clearfix:after {
-    clear: both;
-}
-
-.clearfix {
-    zoom: 1;
-    clear: both\9;
-}
-
-.f-r {
-    float: right;
-}
-
-.f-l {
-    float: left;
-}
-
-.defaultTheme-queue a {
-    color: #3366CC;
-    text-decoration: none;
-}
-
-.defaultTheme-queue a:hover {
-    color: #FF6600;
-    text-decoration: underline;
-}
-
-.defaultTheme-button {
+/**按钮样式**/
+.bui-uploader-button-wrap {
     border: 1px solid #C4DAED;
     font-size: 12px;
     text-align: center;
@@ -47,11 +19,11 @@
     background: -moz-linear-gradient(top, #FDFEFE, #DFE7EF);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FDFEFE', endColorstr = '#DFE7EF');
 }
-.defaultTheme-button:link,.defaultTheme-button:visited{
+.bui-uploader-button-wrap:link,.bui-uploader-button-wrap:visited{
     color:#404040;
 }
 
-.defaultTheme-button-hover, .defaultTheme-button:hover {
+.bui-uploader-button-wrap-hover, .bui-uploader-button-wrap:hover {
     text-decoration: none;
     color: black;
     background: -webkit-gradient(linear, left top, left bottom, from(#DFE7EF), to(#FDFEFE));
@@ -59,7 +31,7 @@
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#DFE7EF', endColorstr = '#FDFEFE');
 }
 
-.defaultTheme-button:active {
+.bui-uploader-button-wrap:active {
     background: #DFE7EF;
     filter: none;
 }
@@ -74,7 +46,7 @@
 .uploader-button-disabled .file-input-wrapper .file-input {
     display: none;
 }
-.defaultTheme-button .file-input-wrapper .file-input {
+.bui-uploader-button-wrap .file-input-wrapper .file-input {
     background: none repeat scroll 0 0 transparent;
     border: medium none;
     cursor: pointer;
@@ -86,7 +58,7 @@
     font-size: 100px;
     left: 0;
 }
-.defaultTheme-button .file-input-wrapper {
+.bui-uploader-button-wrap .file-input-wrapper {
     display: block;
     height: 26px;
     width: 110px;
@@ -98,6 +70,36 @@
     padding: 0;
     z-index: 300;
 }
+
+.bui-uploader-button .uploader-button-swf{
+  display: block;
+  width: 110px;
+  height: 26px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2000;
+  overflow: hidden;
+}
+/**按钮样式end**/
+
+
+
+
+
+
+
+.defaultTheme-queue a {
+    color: #3366CC;
+    text-decoration: none;
+}
+
+.defaultTheme-queue a:hover {
+    color: #FF6600;
+    text-decoration: underline;
+}
+
+
 
 
 .defaultTheme-queue {

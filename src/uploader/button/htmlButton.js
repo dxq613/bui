@@ -39,7 +39,7 @@ define('bui/uploader/button/htmlButton', function(require) {
      */
     _createInput: function() {
       var _self = this,
-        buttonEl = _self.get('el').find('.bui-uploader-button'),
+        buttonEl = _self.get('el').find('.bui-uploader-button-wrap'),
         inputTpl = _self.get('inputTpl'),
         name = _self.get('name'),
         fileInput;
@@ -93,7 +93,7 @@ define('bui/uploader/button/htmlButton', function(require) {
         fileInput = _self.get('fileInput');
 
       //移除表单上传域容器
-      fileInput.remove();
+      fileInput.parent().remove();
       _self.set('fileInput', null);
       //重新创建表单上传域
       _self._createInput();

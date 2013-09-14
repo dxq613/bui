@@ -45,7 +45,7 @@ define('bui/uploader/button/swfButton', function (require) {
     },
     _initSwfUploader: function(){
       var _self = this,
-        buttonEl = _self.get('el').find('.bui-uploader-button'),
+        buttonEl = _self.get('el').find('.bui-uploader-button-wrap'),
         flashCfg = _self.get('flash'),
         swfTpl = _self.get('swfTpl'),
         swfUploader;
