@@ -42,6 +42,10 @@
         <div class="well">
           <input type="text" id="dt1" class="calendar-time"/><br>
         </div>
+        <h2>时间锁定</h2>
+        <div class="well">
+          <input type="text" id="lt1" class="calendar-time"/><br>
+        </div>
       </div>
 <div class="bui-bar bui-clear x-monthpicker-footer bui-bar-hover" role="toolbar" id="bar6" style="" aria-pressed="false"><button type="button" class="button button-small button-primary">确定</button></div>
 </div>

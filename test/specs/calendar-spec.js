@@ -365,6 +365,33 @@ BUI.use('bui/calendar/datepicker',function(DatePicker){
   });
 });
 
+BUI.use('bui/calendar/datepicker',function(DatePicker){
+  var lockTime ={minute:55,second:44};
+  var datepicker = new DatePicker({
+    trigger:'#lt1',
+    showTime : true,
+    lockTime : lockTime
+  });
+  datepicker.render();
+  var calendar = datepicker.get('calendar'),
+    dtInput = $('#lt1'),
+    el = calendar.get('el');
+    describe("测试锁定时间",function(){
+        it('点击显示日期控件',function(){
+            dtInput.trigger('click');
+            waits(100);
+            runs(function(){
+                expect(datepicker.get('visible')).toBe(true);
+            });
+        });
+        it("测试锁定时间",function(){
+            expect(el.find('.x-datepicker-time').length).not.toBe(0);
+            expect(calendar.get('minute')).toBe(lockTime.minute);
+            expect(calendar.get('second')).toBe(lockTime.second);
+        });
+    });
+});
+
 BUI.use('bui/calendar/monthpicker',function(MonthPicker){
 
   var year = 2001,
