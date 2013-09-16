@@ -34,7 +34,8 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this,
         children = _self.get('children'),
         calendar = new Calendar({
-          showTime : _self.get('showTime')
+          showTime : _self.get('showTime'),
+          lockTime : _self.get('lockTime')
         });
 	
 	  if (!_self.get('dateMask')) {
@@ -62,9 +63,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       date = date || new Date(new Date().setSeconds(0));
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
-        calendar.set('hour',date.getHours());
-        calendar.set('minute',date.getMinutes());
-        calendar.set('second',date.getSeconds());
+          var lockTime = this.get("lockTime"),
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:date.getHours(),
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:date.getMinutes(),
+              second = lockTime&&lockTime['second']?lockTime['second']:date.getSeconds();
+        calendar.set('hour',hour);
+        calendar.set('minute',minute);
+        calendar.set('second',second);
       }
     },
     /**
@@ -125,6 +130,19 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        */
       showTime : {
         value:false
+      },
+       /**
+       * 锁定时间选择
+       *<pre><code>
+       *  var calendar = new Calendar.Calendar({
+       *  render:'#calendar',
+       *  lockTime : {hour:00,minute:30} //表示锁定时为00,分为30分,秒无锁用户可选择
+       * });
+       * </code></pre>
+       *
+       * @type {Object}
+       */
+      lockTime :{
       },
       /**
        * 最大日期
