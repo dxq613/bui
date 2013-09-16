@@ -8414,7 +8414,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      */
     ajaxOptions : {
       value : {
-        method : 'get',
+        type : 'get',
         cache : false
       }
     },

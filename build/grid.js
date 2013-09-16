@@ -2905,9 +2905,10 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
   /**
    * 表格自适应宽度
    * @class BUI.Grid.Plugins.AutoFit
+   * @extends BUI.Base
    */
-  var AutoFit = function(){
-
+  var AutoFit = function(cfg){
+    AutoFit.superclass.constructor.call(this,cfg);
   };
 
   BUI.extend(AutoFit,BUI.Base);
@@ -2917,13 +2918,14 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
   };
 
   BUI.augment(AutoFit,{
+    //绑定事件
     bindUI : function(grid){
       var _self = this,
         handler;
       $(window).on('resize',function(){
 
         function autoFit(){
-          clearTimeout(handler);
+          clearTimeout(handler); //防止resize短时间内反复调用
           handler = setTimeout(function(){
             _self._autoFit(grid);
           },100);
@@ -2931,6 +2933,7 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
         autoFit();
       });
     },
+    //自适应宽度
     _autoFit : function(grid){
       var render = grid.get('render'),
           width;

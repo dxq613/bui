@@ -906,7 +906,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
  */
 
 define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
-  
+
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
     CLS_PICKER_TIME = 'x-datepicker-time',
@@ -987,7 +987,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         panel = new Panel(),
         footer = _self.get('footer') || _self._createFooter(),
         monthPicker = _self.get('monthPicker') || _self._createMonthPicker();
-        
+
 
       //添加头
       children.push(header);
@@ -1000,7 +1000,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       _self.set('panel',panel);
       _self.set('footer',footer);
       _self.set('monthPicker',monthPicker);
-
     },
     renderUI : function(){
       var _self = this,
@@ -1030,7 +1029,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       }else{
         _self._initTimePickerEvent();
       }
-    
+
       header.on('monthchange',function(e){
         _self._setYearMonth(e.year,e.month);
       });
@@ -1044,7 +1043,16 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     },
     _initTimePicker : function(){
       var _self = this,
-        picker = new Picker({
+        lockTime = _self.get('lockTime'),
+        _timePickerEnum={hour:CLS_PICKER_HOUR,minute:CLS_PICKER_MINUTE,second:CLS_PICKER_SECOND};
+      if(lockTime){
+          for(var key in lockTime){
+              var noCls = _timePickerEnum[key.toLowerCase()];
+              _self.set(key,lockTime[key]);
+              _self.get('el').find("."+noCls).attr("disabled","");
+          }
+      }
+      var  picker = new Picker({
           elCls : CLS_TIME_PICKER,
           children:[{
             itemTpl : '<li><a href="#">{text}</a></li>'
@@ -1055,7 +1063,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
             points:['bl','bl'],
             offset:[0,-30]
           },
-          trigger : _self.get('el').find('.' + CLS_PICKER_TIME)
+          trigger : _self.get('el').find('.' +CLS_PICKER_TIME)
         });
       picker.render();
       _self._initTimePickerEvent(picker);
@@ -1137,10 +1145,10 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           text:'确定',
           btnCls: 'button button-small button-primary',
           listeners:{
-            click:function(){            
+            click:function(){
               _self.fire('accept');
             }
-          }  
+          }
         });
       }else{
         items.push({
@@ -1153,10 +1161,10 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
               _self.set('selectedDate',day);
               _self.fire('accept');
             }
-          }  
+          }
         });
       }
-      
+
       return new Toolbar.Bar({
           elCls : PREFIX + 'calendar-footer',
           children:items
@@ -1193,7 +1201,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     }
 
   },{
-    ATTRS : 
+    ATTRS :
     /**
      * @lends BUI.Calendar.Calendar#
      * @ignore
@@ -1288,11 +1296,24 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * 是否选择时间,此选项决定是否可以选择时间
-       * 
+       *
        * @cfg {Boolean} showTime
        */
       showTime : {
         value : false
+      },
+      /**
+      * 锁定时间选择
+      *<pre><code>
+      *  var calendar = new Calendar.Calendar({
+      *  render:'#calendar',
+      *  lockTime : {hour:00,minute:30} //表示锁定时为00,分为30分,秒无锁用户可选择
+      * });
+      * </code></pre>
+       *
+       * @type {Object}
+      */
+      lockTime :{
       },
       timeTpl : {
         value : '<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_HOUR + '" />:<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_MINUTE + '" />:<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_SECOND + '" />'
@@ -1324,7 +1345,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
        */
       hour : {
         value : new Date().getHours()
-  
       },
       /**
        * 分,默认为当前分
@@ -1383,7 +1403,8 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this,
         children = _self.get('children'),
         calendar = new Calendar({
-          showTime : _self.get('showTime')
+          showTime : _self.get('showTime'),
+          lockTime : _self.get('lockTime')
         });
 	
 	  if (!_self.get('dateMask')) {
@@ -1411,9 +1432,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       date = date || new Date(new Date().setSeconds(0));
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
-        calendar.set('hour',date.getHours());
-        calendar.set('minute',date.getMinutes());
-        calendar.set('second',date.getSeconds());
+          var lockTime = this.get("lockTime"),
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:date.getHours(),
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:date.getMinutes(),
+              second = lockTime&&lockTime['second']?lockTime['second']:date.getSeconds();
+        calendar.set('hour',hour);
+        calendar.set('minute',minute);
+        calendar.set('second',second);
       }
     },
     /**
@@ -1474,6 +1499,19 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        */
       showTime : {
         value:false
+      },
+       /**
+       * 锁定时间选择
+       *<pre><code>
+       *  var calendar = new Calendar.Calendar({
+       *  render:'#calendar',
+       *  lockTime : {hour:00,minute:30} //表示锁定时为00,分为30分,秒无锁用户可选择
+       * });
+       * </code></pre>
+       *
+       * @type {Object}
+       */
+      lockTime :{
       },
       /**
        * 最大日期

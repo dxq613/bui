@@ -3,6 +3,10 @@ BUI.use('bui/chart/shape/svgparser',function (Parser) {
     container = $('#s1');
 
   describe('创建图形',function(){
+    it('测试parser',function(){
+      expect(new Parser()).toBe(parser);
+      expect(new Parser()).toBe(new Parser());
+    });
     it('创建圆',function(){
        /* var start = performance.now();
       for (var i = 1000 - 1; i >= 0; i--) {
@@ -17,10 +21,9 @@ BUI.use('bui/chart/shape/svgparser',function (Parser) {
     */
       var n = Math.random(),
           m = Math.random();
-      var circle = parser.create('circle',{id:'c1',cx:(n * 1000),cy:(m * 1000),r:20,stroke:'red',strokeWidth:2},container);
+      var circle = parser.create('circle',{id:'c1',cx:(n * 100),cy:(m * 100),r:20,stroke:'red',strokeWidth:2},container);
       expect(circle.attr('stroke')).toBe('red');
       expect(circle.attr('stroke-Width')).toBe('2');
-      //circle.attr('stroke','red');
     });
     it('创建方块',function(){
       var rect = parser.create('rect',{id:'r1',x:'40',y:'40',width:'30',height:'30'},container);

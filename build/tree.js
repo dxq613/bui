@@ -1038,6 +1038,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     //加载完节点
     _loadNode : function(node){
       var _self = this;
+      _self._initChecked(node,true);
       _self.expandNode(node);
       _self._updateIcons(node);
       _self.setItemStatus(node,LOADING,false);

@@ -9951,7 +9951,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      */
     ajaxOptions : {
       value : {
-        method : 'get',
+        type : 'get',
         cache : false
       }
     },
@@ -15828,6 +15828,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     setItems : function(items){
       var _self = this;
+      if(items != _self.getItems()){
+        _self.setInternal('items',items);
+      }
       //\u6e05\u7406\u5b50\u63a7\u4ef6
       _self.clearControl();
       _self.fire('beforeitemsshow');
@@ -27189,7 +27192,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
  */
 
 define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
-  
+
   var BUI = require('bui/common'),
     PREFIX = BUI.prefix,
     CLS_PICKER_TIME = 'x-datepicker-time',
@@ -27270,7 +27273,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         panel = new Panel(),
         footer = _self.get('footer') || _self._createFooter(),
         monthPicker = _self.get('monthPicker') || _self._createMonthPicker();
-        
+
 
       //\u6dfb\u52a0\u5934
       children.push(header);
@@ -27283,7 +27286,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       _self.set('panel',panel);
       _self.set('footer',footer);
       _self.set('monthPicker',monthPicker);
-
     },
     renderUI : function(){
       var _self = this,
@@ -27313,7 +27315,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       }else{
         _self._initTimePickerEvent();
       }
-    
+
       header.on('monthchange',function(e){
         _self._setYearMonth(e.year,e.month);
       });
@@ -27327,7 +27329,16 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     },
     _initTimePicker : function(){
       var _self = this,
-        picker = new Picker({
+        lockTime = _self.get('lockTime'),
+        _timePickerEnum={hour:CLS_PICKER_HOUR,minute:CLS_PICKER_MINUTE,second:CLS_PICKER_SECOND};
+      if(lockTime){
+          for(var key in lockTime){
+              var noCls = _timePickerEnum[key.toLowerCase()];
+              _self.set(key,lockTime[key]);
+              _self.get('el').find("."+noCls).attr("disabled","");
+          }
+      }
+      var  picker = new Picker({
           elCls : CLS_TIME_PICKER,
           children:[{
             itemTpl : '<li><a href="#">{text}</a></li>'
@@ -27338,7 +27349,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
             points:['bl','bl'],
             offset:[0,-30]
           },
-          trigger : _self.get('el').find('.' + CLS_PICKER_TIME)
+          trigger : _self.get('el').find('.' +CLS_PICKER_TIME)
         });
       picker.render();
       _self._initTimePickerEvent(picker);
@@ -27420,10 +27431,10 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           text:'\u786e\u5b9a',
           btnCls: 'button button-small button-primary',
           listeners:{
-            click:function(){            
+            click:function(){
               _self.fire('accept');
             }
-          }  
+          }
         });
       }else{
         items.push({
@@ -27436,10 +27447,10 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
               _self.set('selectedDate',day);
               _self.fire('accept');
             }
-          }  
+          }
         });
       }
-      
+
       return new Toolbar.Bar({
           elCls : PREFIX + 'calendar-footer',
           children:items
@@ -27476,7 +27487,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     }
 
   },{
-    ATTRS : 
+    ATTRS :
     /**
      * @lends BUI.Calendar.Calendar#
      * @ignore
@@ -27571,11 +27582,24 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
       /**
        * \u662f\u5426\u9009\u62e9\u65f6\u95f4,\u6b64\u9009\u9879\u51b3\u5b9a\u662f\u5426\u53ef\u4ee5\u9009\u62e9\u65f6\u95f4
-       * 
+       *
        * @cfg {Boolean} showTime
        */
       showTime : {
         value : false
+      },
+      /**
+      * \u9501\u5b9a\u65f6\u95f4\u9009\u62e9
+      *<pre><code>
+      *  var calendar = new Calendar.Calendar({
+      *  render:'#calendar',
+      *  lockTime : {hour:00,minute:30} //\u8868\u793a\u9501\u5b9a\u65f6\u4e3a00,\u5206\u4e3a30\u5206,\u79d2\u65e0\u9501\u7528\u6237\u53ef\u9009\u62e9
+      * });
+      * </code></pre>
+       *
+       * @type {Object}
+      */
+      lockTime :{
       },
       timeTpl : {
         value : '<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_HOUR + '" />:<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_MINUTE + '" />:<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_SECOND + '" />'
@@ -27607,7 +27631,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
        */
       hour : {
         value : new Date().getHours()
-  
       },
       /**
        * \u5206,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u5206
@@ -27666,7 +27689,8 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this,
         children = _self.get('children'),
         calendar = new Calendar({
-          showTime : _self.get('showTime')
+          showTime : _self.get('showTime'),
+          lockTime : _self.get('lockTime')
         });
 	
 	  if (!_self.get('dateMask')) {
@@ -27694,9 +27718,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       date = date || new Date(new Date().setSeconds(0));
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
-        calendar.set('hour',date.getHours());
-        calendar.set('minute',date.getMinutes());
-        calendar.set('second',date.getSeconds());
+          var lockTime = this.get("lockTime"),
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:date.getHours(),
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:date.getMinutes(),
+              second = lockTime&&lockTime['second']?lockTime['second']:date.getSeconds();
+        calendar.set('hour',hour);
+        calendar.set('minute',minute);
+        calendar.set('second',second);
       }
     },
     /**
@@ -27757,6 +27785,19 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        */
       showTime : {
         value:false
+      },
+       /**
+       * \u9501\u5b9a\u65f6\u95f4\u9009\u62e9
+       *<pre><code>
+       *  var calendar = new Calendar.Calendar({
+       *  render:'#calendar',
+       *  lockTime : {hour:00,minute:30} //\u8868\u793a\u9501\u5b9a\u65f6\u4e3a00,\u5206\u4e3a30\u5206,\u79d2\u65e0\u9501\u7528\u6237\u53ef\u9009\u62e9
+       * });
+       * </code></pre>
+       *
+       * @type {Object}
+       */
+      lockTime :{
       },
       /**
        * \u6700\u5927\u65e5\u671f
@@ -31533,9 +31574,10 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
   /**
    * \u8868\u683c\u81ea\u9002\u5e94\u5bbd\u5ea6
    * @class BUI.Grid.Plugins.AutoFit
+   * @extends BUI.Base
    */
-  var AutoFit = function(){
-
+  var AutoFit = function(cfg){
+    AutoFit.superclass.constructor.call(this,cfg);
   };
 
   BUI.extend(AutoFit,BUI.Base);
@@ -31545,13 +31587,14 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
   };
 
   BUI.augment(AutoFit,{
+    //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(grid){
       var _self = this,
         handler;
       $(window).on('resize',function(){
 
         function autoFit(){
-          clearTimeout(handler);
+          clearTimeout(handler); //\u9632\u6b62resize\u77ed\u65f6\u95f4\u5185\u53cd\u590d\u8c03\u7528
           handler = setTimeout(function(){
             _self._autoFit(grid);
           },100);
@@ -31559,6 +31602,7 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
         autoFit();
       });
     },
+    //\u81ea\u9002\u5e94\u5bbd\u5ea6
     _autoFit : function(grid){
       var render = grid.get('render'),
           width;
@@ -34880,6 +34924,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     //\u52a0\u8f7d\u5b8c\u8282\u70b9
     _loadNode : function(node){
       var _self = this;
+      _self._initChecked(node,true);
       _self.expandNode(node);
       _self._updateIcons(node);
       _self.setItemStatus(node,LOADING,false);

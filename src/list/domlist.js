@@ -687,6 +687,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     setItems : function(items){
       var _self = this;
+      if(items != _self.getItems()){
+        _self.setInternal('items',items);
+      }
       //清理子控件
       _self.clearControl();
       _self.fire('beforeitemsshow');

@@ -98,6 +98,12 @@ BUI.use('bui/list',function (List) {
       expect(el.find('.bui-list-item').length).toBe(items1.length);
       expect(list.getSelection().length).toBe(0);
     });
+
+    it('测试更改列表',function(){
+      list.setItems(BUI.cloneObject(items));
+      expect(list.getItems().length).toBe(items.length);
+      list.setItems(items1);
+    });
     it('添加列表项',function(){
       var item = {text:'添加项',value:'new'}
       list.addItem(item);
@@ -215,6 +221,8 @@ BUI.use('bui/list',function (List) {
       expect(el.find('.bui-list-item').length).toBe(items1.length);
       expect(list.getSelection().length).toBe(0);
     });
+
+
     it('添加列表项',function(){
       var count = list.get('children').length,
         item = {text:'添加项',value:'new'}
