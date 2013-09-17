@@ -635,6 +635,7 @@
 }
 .bui-message {
   padding-bottom: 10px;
+  z-index: 1300;
 }
 .bui-message .bui-stdmod-body {
   padding: 0 35px 20px;
@@ -1605,6 +1606,9 @@ input.x-datepicker-time {
   border: 1px solid #e5a098;
   background-color: #ffffff;
   padding: 4px;
+}
+.bui-editor {
+  z-index: 1080;
 }
 .bui-record-editor {
   padding: 3px 0 3px 3px;

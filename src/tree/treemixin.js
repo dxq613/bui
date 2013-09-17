@@ -727,7 +727,8 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         if(parent && _self.isChecked(parent)){ //如果父节点选中，当前节点必须勾选
           _self.setStatusValue(node,'checked',true);
         }
-        if(_self._isAllChildrenChecked(node)){
+        //节点为非叶子节点，同时叶子节点不为空时根据叶子节点控制
+        if(node.children && node.children.length && _self._isAllChildrenChecked(node)){
           _self.setStatusValue(node,'checked',true);
         }
       }

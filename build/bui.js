@@ -1531,7 +1531,7 @@ BUI.setDebug = function (debug) {
   }else{
     seajs.config({
       map : [
-        ['.js', '-min.js']
+        [/.js$/, '-min.js']
       ]
     });
   }
@@ -34627,7 +34627,8 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         if(parent && _self.isChecked(parent)){ //\u5982\u679c\u7236\u8282\u70b9\u9009\u4e2d\uff0c\u5f53\u524d\u8282\u70b9\u5fc5\u987b\u52fe\u9009
           _self.setStatusValue(node,'checked',true);
         }
-        if(_self._isAllChildrenChecked(node)){
+        //\u8282\u70b9\u4e3a\u975e\u53f6\u5b50\u8282\u70b9\uff0c\u540c\u65f6\u53f6\u5b50\u8282\u70b9\u4e0d\u4e3a\u7a7a\u65f6\u6839\u636e\u53f6\u5b50\u8282\u70b9\u63a7\u5236
+        if(node.children && node.children.length && _self._isAllChildrenChecked(node)){
           _self.setStatusValue(node,'checked',true);
         }
       }
