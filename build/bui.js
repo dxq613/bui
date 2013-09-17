@@ -1506,7 +1506,7 @@ seajs._config = {
 var loaderPath = seajs.pluginSDK.util.loaderDir;
 seajs.config({
   map : [
-    ['.js', '-min.js']
+    [/.js$/, '-min.js']
   ],
   alias : {
     'bui' : loaderPath
