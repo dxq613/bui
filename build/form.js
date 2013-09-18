@@ -2163,6 +2163,19 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
   };
 
   Valid.prototype = {
+
+    __bindUI : function(){
+      var _self = this;
+      //监听是否禁用
+      _self.on('afterDisabledChange',function(ev){
+        var disabled = ev.newVal;
+        if(disabled){
+          _self.clearErrors(false);
+        }else{
+          _self.valid();
+        }
+      });
+    },
     /**
      * 是否通过验证
      * @template
@@ -2250,13 +2263,16 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * 清除错误
      */
-    clearErrors : function(){
+    clearErrors : function(deep){
+      deep = deep == null ? true : deep;
       var _self = this,
         children = _self.get('children');
-
-      BUI.each(children,function(item){
-        item.clearErrors && item.clearErrors();
-      });
+      if(deep){
+        BUI.each(children,function(item){
+          item.clearErrors && item.clearErrors();
+        });
+      }
+      
       _self.set('error',null);
       _self.get('view').clearErrors();
     },
@@ -2410,6 +2426,9 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
      * 是否通过验证
      */
     isValid : function(){
+      if(this.get('disabled')){ //如果被禁用，则不进行验证，并且认为true
+        return true;
+      }
       var _self = this,
         isValid = _self.isChildrenValid();
       return isValid && _self.isSelfValid();
@@ -2420,9 +2439,13 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
     valid : function(){
       var _self = this,
         children = _self.get('children');
-
+      if(_self.get('disabled')){ //禁用时不进行验证
+        return;
+      }
       BUI.each(children,function(item){
-        item.valid();
+        if(!item.get('disabled')){
+          item.valid();
+        }
       });
     },
     /**
@@ -2436,7 +2459,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         isValid = true;
 
       BUI.each(children,function(item){
-        if(!item.isValid()){
+        if(!item.get('disabled') && !item.isValid()){
           isValid = false;
           return false;
         }

@@ -19294,6 +19294,19 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
   };
 
   Valid.prototype = {
+
+    __bindUI : function(){
+      var _self = this;
+      //\u76d1\u542c\u662f\u5426\u7981\u7528
+      _self.on('afterDisabledChange',function(ev){
+        var disabled = ev.newVal;
+        if(disabled){
+          _self.clearErrors(false);
+        }else{
+          _self.valid();
+        }
+      });
+    },
     /**
      * \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      * @template
@@ -19381,13 +19394,16 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * \u6e05\u9664\u9519\u8bef
      */
-    clearErrors : function(){
+    clearErrors : function(deep){
+      deep = deep == null ? true : deep;
       var _self = this,
         children = _self.get('children');
-
-      BUI.each(children,function(item){
-        item.clearErrors && item.clearErrors();
-      });
+      if(deep){
+        BUI.each(children,function(item){
+          item.clearErrors && item.clearErrors();
+        });
+      }
+      
       _self.set('error',null);
       _self.get('view').clearErrors();
     },
@@ -19541,6 +19557,9 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
      * \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     isValid : function(){
+      if(this.get('disabled')){ //\u5982\u679c\u88ab\u7981\u7528\uff0c\u5219\u4e0d\u8fdb\u884c\u9a8c\u8bc1\uff0c\u5e76\u4e14\u8ba4\u4e3atrue
+        return true;
+      }
       var _self = this,
         isValid = _self.isChildrenValid();
       return isValid && _self.isSelfValid();
@@ -19551,9 +19570,13 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
     valid : function(){
       var _self = this,
         children = _self.get('children');
-
+      if(_self.get('disabled')){ //\u7981\u7528\u65f6\u4e0d\u8fdb\u884c\u9a8c\u8bc1
+        return;
+      }
       BUI.each(children,function(item){
-        item.valid();
+        if(!item.get('disabled')){
+          item.valid();
+        }
       });
     },
     /**
@@ -19567,7 +19590,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         isValid = true;
 
       BUI.each(children,function(item){
-        if(!item.isValid()){
+        if(!item.get('disabled') && !item.isValid()){
           isValid = false;
           return false;
         }

@@ -48,6 +48,17 @@ BUI.use('bui/form/textfield',function  (TextField) {
       }
     });
 
+    it('验证不通过时,禁用字段',function(){
+      textField.disable();
+      expect(textField.get('error')).toBe(null);
+    });
+
+    it('验证不通过时,恢复禁用字段',function(){
+      textField.enable();
+      expect(textField.get('error')).toBe('error');
+    });
+
+
     it('测试Tip提示',function(){
       var tip = textField.get('tip');
       expect(tip.get('visible')).toBe(false);
@@ -58,6 +69,8 @@ BUI.use('bui/form/textfield',function  (TextField) {
       var tip = textField.get('tip');
       expect(tip.get('visible')).toBe(true);
     });
+
+/**/
   }); 
 });
 
@@ -735,7 +748,7 @@ BUI.use('bui/form/radiolistfield',function(ListField){
   });
 });
 
-/**/
+
 
 BUI.use('bui/form/checkboxfield',function(CheckBox){
   var checkbox = new CheckBox({
@@ -755,3 +768,4 @@ BUI.use('bui/form/checkboxfield',function(CheckBox){
     });
   });
 });
+/**/

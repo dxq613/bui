@@ -166,6 +166,19 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
   };
 
   Valid.prototype = {
+
+    __bindUI : function(){
+      var _self = this;
+      //监听是否禁用
+      _self.on('afterDisabledChange',function(ev){
+        var disabled = ev.newVal;
+        if(disabled){
+          _self.clearErrors(false);
+        }else{
+          _self.valid();
+        }
+      });
+    },
     /**
      * 是否通过验证
      * @template
@@ -253,13 +266,16 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * 清除错误
      */
-    clearErrors : function(){
+    clearErrors : function(deep){
+      deep = deep == null ? true : deep;
       var _self = this,
         children = _self.get('children');
-
-      BUI.each(children,function(item){
-        item.clearErrors && item.clearErrors();
-      });
+      if(deep){
+        BUI.each(children,function(item){
+          item.clearErrors && item.clearErrors();
+        });
+      }
+      
       _self.set('error',null);
       _self.get('view').clearErrors();
     },

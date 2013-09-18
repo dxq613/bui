@@ -84,6 +84,9 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
      * 是否通过验证
      */
     isValid : function(){
+      if(this.get('disabled')){ //如果被禁用，则不进行验证，并且认为true
+        return true;
+      }
       var _self = this,
         isValid = _self.isChildrenValid();
       return isValid && _self.isSelfValid();
@@ -94,9 +97,13 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
     valid : function(){
       var _self = this,
         children = _self.get('children');
-
+      if(_self.get('disabled')){ //禁用时不进行验证
+        return;
+      }
       BUI.each(children,function(item){
-        item.valid();
+        if(!item.get('disabled')){
+          item.valid();
+        }
       });
     },
     /**
@@ -110,7 +117,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         isValid = true;
 
       BUI.each(children,function(item){
-        if(!item.isValid()){
+        if(!item.get('disabled') && !item.isValid()){
           isValid = false;
           return false;
         }
