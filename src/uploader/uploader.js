@@ -10,8 +10,8 @@ define('bui/uploader/uploader', function (require) {
     SwfButton = require('bui/uploader/button/swfButton'),
     Queue = require('bui/uploader/queue'),
     Ajax = require('bui/uploader/type/ajax'),
-    Flash = require('bui/uploader/type/flash'),
-    Iframe = require('bui/uploader/type/iframe');
+    Flash = require('bui/uploader/type/flash');//,
+    // Iframe = require('bui/uploader/type/iframe');
 
 
   var win = window;
@@ -248,7 +248,11 @@ define('bui/uploader/uploader', function (require) {
       });
 
       uploaderType.on('error', function(ev){
-        _self.fire('error');
+        var curUploadItem = _self.get('curUploadItem');
+        //设置对列中完成的文件
+        queue.updateFileStatus(curUploadItem, 'error');
+        _self.set('curUploadItem', null);
+        _self.fire('error', {item: curUploadItem});
       });
     },
     /**

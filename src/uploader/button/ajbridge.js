@@ -82,7 +82,6 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
     },
     destroy: function(){
       AJBridge.superclass.destroy.call(this);
-      
       var id = this.get('id');
       instances[id] && delete instances[id];
     }

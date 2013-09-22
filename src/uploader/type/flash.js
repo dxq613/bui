@@ -3,7 +3,7 @@
  * @author 剑平（明河）<minghe36@126.com>
  **/
 define('bui/uploader/type/flash', function (require) {
-    var EMPTY = '', LOG_PREFIX = '[uploader-FlashType]:';
+    var LOG_PREFIX = '[uploader-FlashType]:';
 
     var UploadType = require('bui/uploader/type/base');
 
@@ -66,7 +66,12 @@ define('bui/uploader/type/flash', function (require) {
             //监听文件上传完成事件
             swfUploader.on('uploadCompleteData', function(ev){
                 var result = _self._processResponse(ev.data);
-                _self.fire(FlashType.event.SUCCESS, {result : result});
+                if(result && result.status === 1){
+                    _self.fire(FlashType.event.SUCCESS, {result: result});
+                }
+                else{
+                    _self.fire(FlashType.event.ERROR, {result: result});
+                }
                 _self.set('file', null);
             });
             //监听文件失败事件
@@ -139,18 +144,18 @@ define('bui/uploader/type/flash', function (require) {
          * 服务器端路径，留意flash必须是绝对路径
          */
         action:{
-            // getter:function(v){
-            //     var reg = /^http/;
-            //     //不是绝对路径拼接成绝对路径
-            //     if(!reg.test(v)){
-            //          var href = location.href,uris = href.split('/'),newUris;
-            //         newUris  = BUI.filter(uris,function(item,i){
-            //             return i < uris.length - 1;
-            //         });
-            //         v = newUris.join('/') + '/' + v;
-            //     }
-            //     return v;
-            // }
+            getter:function(v){
+                var reg = /^http/;
+                //不是绝对路径拼接成绝对路径
+                if(!reg.test(v)){
+                     var href = location.href,uris = href.split('/'),newUris;
+                    newUris  = BUI.Array.filter(uris,function(item,i){
+                        return i < uris.length - 1;
+                    });
+                    v = newUris.join('/') + '/' + v;
+                }
+                return v;
+            }
         },
         fileDataName: {
             value: 'Filedata'

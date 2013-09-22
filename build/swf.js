@@ -180,13 +180,16 @@ define('bui/swf', function (require) {
             swliveconnect: EMPTY,
             seamlesstabbing: EMPTY
         };
-    var SWF;
+    var SWF = function(config){
+        SWF.superclass.constructor.call(this, config);
+        this.initializer();
+    }
     /**
      * insert a new swf into container
      * @class KISSY.SWF
      * @extends KISSY.Base
      */
-    return SWF = BUI.extend(BUI.Base, {
+    BUI.extend(SWF, BUI.Base, {
         initializer: function () {
             var self = this;
             var expressInstall = self.get('expressInstall'),
@@ -286,7 +289,7 @@ define('bui/swf', function (require) {
          * @param func {String} the name of the function to call
          * @param args {Array} the set of arguments to pass to the function.
          */
-        'callSWF': function (func, args) {
+        callSWF: function (func, args) {
             var swf = this.get('el'),
                 ret,
                 params;
@@ -690,6 +693,9 @@ define('bui/swf', function (require) {
     function stringAttr(key, value) {
         return SPACE + key + EQUAL + DOUBLE_QUOTE + value + DOUBLE_QUOTE;
     }
+
+
+    return SWF;
 });
 
 /**

@@ -1,67 +1,32 @@
-
 <!doctype html>
 <html>
 <head>
-    <meta charset="utf-8"/>
-    <title>使用js传参方式上传文件</title>
-    <script src="http://a.tbcdn.cn/s/kissy/1.3.0/kissy-min.js" charset="utf-8"></script>
-
+  <meta charset="utf-8"/>
+  <title>使用js传参方式上传文件</title>
+  <script type="text/javascript" src="../../jquery-1.8.1.min.js"></script>
+  <script type="text/javascript" src="../../../build/loader.js"></script>
 </head>
 <body>
 <h2>使用js传参方式上传文件</h2>
-
-<div class="grid">
-    <input type="file" class="g-u" id="J_UploaderBtn" value="上传文件" name="Filedata" >
-    <input type="hidden" id="J_Urls" name="urls" value="" />
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <div id="J_Uploader"></div>
+      <div id="J_UploaderQueue"></div>
+    </div>
+  </div>
 </div>
-<ul id="J_UploaderQueue">
-
-</ul>
 <script>
-    var S = KISSY;
-    // if (S.Config.debug) {
-    //     var srcPath = "../../../../";
-    //     S.config({
-    //         packages:[
-    //             {
-    //                 name:"gallery",
-    //                 path:srcPath,
-    //                 charset:"utf-8"
-    //             }
-    //         ]
-    //     });
-    // }
-    S.use('gallery/uploader/1.4/index,gallery/uploader/1.4/themes/default/index,gallery/uploader/1.4/themes/default/style.css', function (S, Uploader,DefaultTheme) {
-        //上传组件插件
-        var plugins = 'gallery/uploader/1.4/plugins/auth/auth,' +
-                'gallery/uploader/1.4/plugins/urlsInput/urlsInput,' +
-                'gallery/uploader/1.4/plugins/proBars/proBars';
-
-        S.use(plugins,function(S,Auth,UrlsInput,ProBars){
-            var uploader = new Uploader('#J_UploaderBtn',{
-                //处理上传的服务器端脚本路径
-                action:"upload.php",
-                multiple: 'multiple'
-            });
-            //使用主题
-            uploader.theme(new DefaultTheme({
-                queueTarget:'#J_UploaderQueue'
-            }))
-                    //验证插件
-            uploader.plug(new Auth({
-                        //最多上传个数
-                        max:3,
-                        //图片最大允许大小
-                        maxSize:100,
-                        allowExts:"png"
-                    }))
-                     //url保存插件
-                    .plug(new UrlsInput({target:'#J_Urls'}))
-                    //进度条集合
-                    .plug(new ProBars())
-            ;
-        });
-    })
+  BUI.setDebug(true);
+  BUI.use(['bui/uploader'], function(Uploader){
+    var uploader = new Uploader.Uploader({
+    render: '#J_Uploader',
+    // queueTarget: '#J_UploaderQueue',
+    action: '../../../test/upload/uploader.php',
+    filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+  });
+  uploader.render();
+  });
 </script>
 </body>
 </html>

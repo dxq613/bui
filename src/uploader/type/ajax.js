@@ -83,7 +83,12 @@ define('bui/uploader/type/ajax',function(require) {
             });
             xhr.onload = function(ev){
                 var result = self._processResponse(xhr.responseText);
-                self.fire(AjaxType.event.SUCCESS, {result : result, file: file});
+                if(result && result.status === 1){
+                    self.fire(AjaxType.event.SUCCESS, {result : result, file: file});
+                }
+                else{
+                    self.fire(AjaxType.event.ERROR, {result : result, file: file});
+                }
             };
             xhr.open("POST", action, true);
             data.append("type", "ajax");

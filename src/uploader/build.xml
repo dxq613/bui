@@ -20,7 +20,16 @@
 	<!-- 合并js --> 
 	<target name="combine.js" depends="prepare">
         <concat destfile="${des.dir}/uploader.js" encoding="${charset}" outputencoding="${charset}">
-			<path path="uploader.js"/>
+            <path path="button/ajbridge.js"/>
+            <path path="button/base.js"/>
+            <path path="button/htmlButton.js"/>
+            <path path="button/swfButton.js"/>
+            <path path="type/base.js"/>
+            <path path="type/ajax.js"/>
+            <path path="type/flash.js"/>
+            <path path="queue.js"/>
+            <path path="uploader.js"/>
+			<path path="base.js"/>
 		</concat>
     </target>
 
