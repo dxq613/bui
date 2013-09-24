@@ -1,7 +1,7 @@
 define('bui/slider',['bui/slider/slider'],function (require) {
   var Slider = BUI.namespace('Slider');
 
-  BUI.mixin(Slider,{
+  BUI.mix(Slider,{
     Slider : require('bui/slider/slider')
   });
 

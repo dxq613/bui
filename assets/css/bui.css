@@ -2011,8 +2011,6 @@ input.x-datepicker-time {
 }
 .bui-slider .x-slider-back {
   position: absolute;
-  height: 100%;
-  width: 100%;
   background-color: #eeeeee;
 }
 .x-slider-handle {
@@ -2056,6 +2054,9 @@ input.x-datepicker-time {
   top: -3px;
   margin-left: -9px;
 }
+.x-slider-horizontal .x-slider-back {
+  height: 100%;
+}
 .x-slider-vertical {
   width: 10px;
 }
@@ -2063,6 +2064,9 @@ input.x-datepicker-time {
   left: -3px;
   margin-left: 0;
   margin-bottom: -10px;
+}
+.x-slider-vertical .x-slider-back {
+  width: 100%;
 }
 .pull-right {
   float: right;
