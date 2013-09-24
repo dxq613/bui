@@ -23806,7 +23806,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     handleDblClick:function(ev){
       var _self = this;
 
-      if(_self.fire('closing')!== false){
+      if(_self.get('closeable') && _self.fire('closing')!== false){
         _self.close();
       }
       _self.fire('dblclick',{domTarget : ev.target,domEvent : ev});
@@ -30177,7 +30177,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
 
       $.each(columns, function (index,column) {
         var dataIndex = column.get('dataIndex');
-        cellsTpl.push(_self._getCellTpl(column, dataIndex, record));
+        cellsTpl.push(_self._getCellTpl(column, dataIndex, record,index));
       });
 
       if(_self.get('useEmptyCell')){
@@ -30325,7 +30325,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         BUI.each(columns,function(column){
           var cellEl = _self.findCell(column.get('id'),$(element)),
             innerEl = cellEl.find('.' + CLS_GRID_CELL_INNER),
-            textTpl = _self._getCellText(column,record);
+            textTpl = _self._getCellText(column,record,index);
           innerEl.html(textTpl);
         });
         return element;
@@ -30394,28 +30394,28 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       return this.get('columns');
     },
     //get cell text by record and column
-    _getCellText:function (column, record) {
+    _getCellText:function (column, record,index) {
         var _self = this,
           dataIndex = column.get('dataIndex'),
           textTpl = column.get('cellTpl') || _self.get('cellTextTpl'),
-          text = _self._getCellInnerText(column,dataIndex, record);
+          text = _self._getCellInnerText(column,dataIndex, record,index);
         return BUI.substitute(textTpl,{text:text, tips:_self._getTips(column, dataIndex, record)});
     },
-    _getCellInnerText : function(column,dataIndex, record){
+    _getCellInnerText : function(column,dataIndex, record,index){
       //renderer \u65f6\u53d1\u751f\u9519\u8bef\u53ef\u80fd\u6027\u5f88\u9ad8
       try{
         var _self = this,
           renderer = column.get('renderer'),
-          text = renderer ? renderer(record[dataIndex], record) : record[dataIndex];
+          text = renderer ? renderer(record[dataIndex], record,index) : record[dataIndex];
         return text == null ? '' : text;
       }catch(ex){
         throw 'column:' + column.get('title') +' fomat error!';
       }
     },
     //get cell template by config and record
-    _getCellTpl:function (column, dataIndex, record) {
+    _getCellTpl:function (column, dataIndex, record,index) {
       var _self = this,
-        cellText = _self._getCellText(column, record),
+        cellText = _self._getCellText(column, record,index),
         cellTpl = _self.get('cellTpl');
       return BUI.substitute(cellTpl,{
         elCls : column.get('elCls'),
