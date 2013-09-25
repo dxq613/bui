@@ -12,8 +12,9 @@ define('bui/slider',['bui/slider/slider'],function (require) {
  */
 
 define('bui/slider/slider',['bui/common'],function (require) {
-  
-  var BUI = require('bui/common'),
+  'use strict';
+  var doc = document,
+    BUI = require('bui/common'),
     CLS_HANDLE = 'x-slider-handle',
     CLS_VERTICLE = 'x-slider-vertical',
     CLS_HORI = 'x-slider-horizontal',
@@ -59,29 +60,39 @@ define('bui/slider/slider',['bui/common'],function (require) {
         backCss = {},
         handleCss = {};
 
+       /**
+       * @private
+       * 垂直时使用bottom
+       */
+      function getPos(pos){
+        return pos + '%';
+      }
+
       if(backEl){
         backCss[rangeAttr] = range + '%';
         backCss[posAttr] = start + '%';//getPos(start);
         backEl[method](backCss);
       }
       
-      if(handleCount == 1){
+      if(handleCount === 1){
         handleCss[posAttr] = getPos(end);
         handleEl[method](handleCss);
-      }else if(handleCount == 2){
+      }else if(handleCount === 2){
+
         handleCss[posAttr] = getPos(start);
-        $(handleEl[0])[method](handleCss);
+        if(handleEl[0].style[posAttr] !== handleCss[posAttr]){
+          $(handleEl[0])[method](handleCss);
+          //$(handleEl[0]).focus();
+        }
+       
         handleCss[posAttr] = getPos(end);
-        $(handleEl[1])[method](handleCss);
+        if(handleEl[1].style[posAttr] !== handleCss[posAttr]){
+          $(handleEl[1])[method](handleCss);
+          //$(handleEl[1]).focus();
+        }
       }
 
-      /**
-       * @private
-       * 垂直时使用bottom
-       */
-      function getPos(pos){
-        return pos + '%'
-      }
+     
     },
     //设置背景色
     _uiSetBackTpl : function(v){
@@ -112,6 +123,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         el = _self.get('el'),
         handleEl = $(tpl).appendTo(el);
       handleEl.addClass(CLS_HANDLE);
+      handleEl.attr('tabindex','0');
       if(cls){
         handleEl.addClass(cls);
       }
@@ -135,7 +147,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
      * @param  {Number|Array} v 滑动到位置，传入数组标示指定滑块的上下范围
      */
     slideTo : function(v){
-      this.set('value',value);
+      this.set('value',v);
     },
     //绑定事件
     bindUI : function(){
@@ -146,19 +158,15 @@ define('bui/slider/slider',['bui/common'],function (require) {
       });
       el.on('mousedown',function(ev){
         var sender = $(ev.target),
-          offset = el.offset(),
-          value;
+          offset = el.offset();
         if(sender.hasClass('x-slider-handle')){
-          ev.preventDefault();
+          //ev.preventDefault();
           _self._handleDrag(ev);
         }else{
           offset = {
             left : ev.pageX - offset.left,
             top : ev.pageY - offset.top
           };
-          /*value = _self._formatValue(offset);
-          _self.set('value',value);
-          */
          _self._slideByOffset(offset,true);
         }
       });
@@ -168,7 +176,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
       var _self = this,
         curVal = _self.get('value'),
         value = _self._formatValue(offset);
-      if(curVal == value || (BUI.isArray(value) && BUI.Array.equals(value,curVal))){ //当前值如果等于变化值，不处理
+      if(curVal === value || (BUI.isArray(value) && BUI.Array.equals(value,curVal))){ //当前值如果等于变化值，不处理
         return;
       }
       if(anim){
@@ -186,7 +194,6 @@ define('bui/slider/slider',['bui/common'],function (require) {
         handleEl = $(ev.target),
         pos = handleEl.position();
       if(ev.which == 1){
-        
         _self.set('draging',{
             elX: pos.left,
             elY: isVertical ?(pos.top + handleEl.height()) : (pos.top),
@@ -195,6 +202,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         });
         registEvent();
       }
+
       /**
        * @private
        */
@@ -207,12 +215,26 @@ define('bui/slider/slider',['bui/common'],function (require) {
             curOffset = {};
           curOffset.left = draging.elX + (endX - draging.startX);
           curOffset.top = draging.elY + (endY - draging.startY);
-          /*var value = _self._formatValue(curOffset);
-          _self.setInternal('value',value);
-          _self._setValue(value,false);*/
           _self._slideByOffset(curOffset,false);
         }
       }
+
+      /**
+       * @private
+       */
+      function registEvent(){
+          $(doc).on('mousemove',mouseMove);
+          $(doc).on('mouseup',mouseUp);
+      }
+      /**
+       * @private
+       */
+      function unregistEvent(){
+          $(doc).off('mousemove',mouseMove);
+          $(doc).off('mouseup',mouseUp);
+      }
+
+      
       /**
        * @private
        */
@@ -222,20 +244,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
           unregistEvent();
         }
       }
-      /**
-       * @private
-       */
-      function registEvent(){
-          $(document).on('mousemove',mouseMove);
-          $(document).on('mouseup',mouseUp);
-      }
-      /**
-       * @private
-       */
-      function unregistEvent(){
-          $(document).off('mousemove',mouseMove);
-          $(document).off('mouseup',mouseUp);
-      }
+      
     },
     _getCalcValue : function(offset){
       var _self = this,
@@ -265,16 +274,13 @@ define('bui/slider/slider',['bui/common'],function (require) {
     },
     _formatValue : function(offset){
       var _self = this,
-        el = _self.get('el'),
         curVal = _self.get('value'),
         calValue = _self._getCalcValue(offset);
       if(BUI.isNumber(curVal)){
         return calValue;
-      }else if(BUI.isArray(curVal)){
+      }
+      if(BUI.isArray(curVal)){
 
-        /*if(curVal[0] > calValue){
-          return [calValue,curVal[1]];
-        }*/
         var disStart = Math.abs(curVal[0] - calValue),
           disEnd = Math.abs(curVal[1] - calValue);
         if(disStart < disEnd){ //距离开始小于结束，则滑动开始

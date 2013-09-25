@@ -19,7 +19,7 @@ BUI.use('bui/slider/slider',function (Slider) {
       expect(el.find('.x-slider-back').length).not.toBe(0);
     });
     it('测试初始值',function(){
-      waits(200);
+      waits(400);
       runs(function(){
         expect(el.find('.x-slider-back')[0].style.width).toBe('30%');
         expect(el.find('.x-slider-handle')[0].style.left).toBe('30%');
@@ -91,7 +91,7 @@ BUI.use('bui/slider/slider',function (Slider) {
       expect(el.hasClass('x-slider-vertical')).toBe(true);
     });
     it('测试初始值',function(){
-      waits(200);
+      waits(400);
       runs(function(){
         expect(el.find('.x-slider-back')[0].style.height).toBe('30%');
         expect(el.find('.x-slider-handle')[0].style.bottom).toBe('30%');
@@ -118,7 +118,7 @@ BUI.use('bui/slider/slider',function (Slider) {
       expect(el.find('.x-slider-handle').length).toBe(2);
     });
     it('测试初始值',function(){
-      waits(200);
+      waits(400);
       runs(function(){
         expect(el.find('.x-slider-handle')[0].style.left).toBe('30%');
         expect(el.find('.x-slider-handle')[1].style.left).toBe('50%');
@@ -161,7 +161,7 @@ BUI.use('bui/slider/slider',function (Slider) {
       expect(el.find('.x-slider-handle').length).toBe(2);
     });
     it('测试初始值',function(){
-      waits(200);
+      waits(400);
       runs(function(){
         expect(el.find('.x-slider-handle')[0].style.bottom).toBe('30%');
         expect(el.find('.x-slider-handle')[1].style.bottom).toBe('50%');
@@ -174,7 +174,7 @@ BUI.use('bui/slider/slider',function (Slider) {
   describe('操作',function(){
     it('更改范围',function(){
       slider.set('value',[20,60]);
-      waits(400);
+      waits(800);
       runs(function(){
         expect(el.find('.x-slider-handle')[0].style.bottom).toBe('20%');
         expect(el.find('.x-slider-handle')[1].style.bottom).toBe('60%');

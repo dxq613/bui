@@ -3294,9 +3294,9 @@ define('bui/date', function () {
         var year = now.getYear();
         var month = now.getMonth() + 1;
         var date = 1;
-        var hh = now.getHours();
-        var mm = now.getMinutes();
-        var ss = now.getSeconds();
+        var hh = 00;
+        var mm = 00;
+        var ss = 00;
         this.isInteger = function(val) {
             return /^\d*$/.test(val);
 		};
