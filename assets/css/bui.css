@@ -2015,6 +2015,7 @@ input.x-datepicker-time {
 }
 .x-slider-handle {
   z-index: 1;
+  cursor: pointer;
   display: inline-block;
   *display: inline;
   /* IE7 inline-block hack */

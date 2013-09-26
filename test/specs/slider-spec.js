@@ -3,6 +3,7 @@ BUI.use('bui/slider/slider',function (Slider) {
   var slider = new Slider({
     render : '#s1',
     elCls : 'progress',
+    
     backTpl : '<div class="bar"></div>',
     value : 30
   });
@@ -77,6 +78,7 @@ BUI.use('bui/slider/slider',function (Slider) {
   var slider = new Slider({
     render : '#s2',
     isVertical : true,
+    //duration : 4000,
     height:200,
     step:10,
     value : 30

@@ -54,6 +54,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         handleEl = _self.get('handleEl'),
         handleCount = handleEl.length,
         range = end - start,
+        duration = anim ? _self.get('duration') : null,
         rangeAttr = isVertical ? 'height' : 'width',
         posAttr = isVertical ? 'bottom' : 'left',
         method = anim ? 'animate' : 'css',
@@ -71,23 +72,23 @@ define('bui/slider/slider',['bui/common'],function (require) {
       if(backEl){
         backCss[rangeAttr] = range + '%';
         backCss[posAttr] = start + '%';//getPos(start);
-        backEl[method](backCss);
+        backEl[method](backCss,duration);
       }
       
       if(handleCount === 1){
         handleCss[posAttr] = getPos(end);
-        handleEl[method](handleCss);
+        handleEl[method](handleCss,duration);
       }else if(handleCount === 2){
 
         handleCss[posAttr] = getPos(start);
         if(handleEl[0].style[posAttr] !== handleCss[posAttr]){
-          $(handleEl[0])[method](handleCss);
+          $(handleEl[0])[method](handleCss,duration);
           //$(handleEl[0]).focus();
         }
        
         handleCss[posAttr] = getPos(end);
         if(handleEl[1].style[posAttr] !== handleCss[posAttr]){
-          $(handleEl[1])[method](handleCss);
+          $(handleEl[1])[method](handleCss,duration);
           //$(handleEl[1]).focus();
         }
       }
@@ -330,6 +331,14 @@ define('bui/slider/slider',['bui/common'],function (require) {
         value : 0
       },
       /**
+       * 滑动动画的执行间隔
+       * @type {Object}
+       */
+      duration : {
+        view : true,
+        value : 400
+      },
+      /**
        * 最大值
        * @cfg {Number}
        */
@@ -356,7 +365,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
        */
       handleTpl : {
         view :true,
-        value : '<a href="#"></a>'
+        value : '<span></span>'
       },
       /**
        * 是否垂直
