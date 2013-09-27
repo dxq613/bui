@@ -15,7 +15,7 @@ define('bui/slider/keynav',['bui/common'],function (require) {
     };
 
   /**
-   * @class BUI.List.KeyNav
+   * @class BUI.Slider.KeyNav
    * 列表导航扩展类
    */
   var  KeyNav = function(){};

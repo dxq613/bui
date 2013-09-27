@@ -484,8 +484,8 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
     renderUI : function(){
       var _self = this,
         picker = _self.get('picker');
-
-      picker.get('getFunction',getFunction);
+      picker.set('autoFocused',false);
+      picker.set('getFunction',getFunction);
     },
     _uiSetItems : function(v){
       var _self = this;

@@ -129,6 +129,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       var _self = this,
         validEvent = _self.get('validEvent'),
         changeEvent = _self.get('changeEvent'),
+        firstValidEvent = _self.get('firstValidEvent'),
         innerControl = _self.getInnerControl();
 
       //选择框只使用 select事件
@@ -140,13 +141,16 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         var value = _self.getControlValue(innerControl);
         _self.validControl(value);
       });
-      //未发生验证时，首次获取焦点，进行验证
-      innerControl.on('focus',function(){
-        if(!_self.get('hasValid')){
-          var value = _self.getControlValue(innerControl);
-          _self.validControl(value);
-        }
-      });
+      if(firstValidEvent){
+        //未发生验证时，首次获取焦点/丢失焦点/点击，进行验证
+        innerControl.on(firstValidEvent,function(){
+          if(!_self.get('hasValid')){
+            var value = _self.getControlValue(innerControl);
+            _self.validControl(value);
+          }
+        });
+      }
+      
 
       //本来是监听控件的change事件，但是，如果控件还未触发change,但是通过get('value')来取值，则会出现错误，
       //所以当通过验证时，即触发改变事件
@@ -223,7 +227,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     getRemoteParams : function  () {
       var _self = this,
         rst = {};
-      rst[_self.get('name')] = _self.get('value');
+      rst[_self.get('name')] = _self.getControlValue();
       return rst;
     },
     /**
@@ -444,6 +448,12 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
        */
       changeEvent : {
         value : 'valid'
+      },
+      /**
+       * 未发生验证时，首次获取/丢失焦点，进行验证
+       */
+      firstValidEvent : {
+        value : 'blur'
       },
       /**
        * 表单元素或者控件触发此事件时，触发验证

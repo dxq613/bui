@@ -136,6 +136,12 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
 
       },
       /**
+       * 选择器获取焦点时，默认选中内部控件
+       */
+      focus : function(){
+        this.get('innerControl').focus();
+      },
+      /**
        * @protected
        * 发生改变
        */
@@ -143,6 +149,14 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         var _self = this,
           curTrigger = _self.get('curTrigger');
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
+      },
+      /**
+       * 处理 esc 键
+       * @protected
+       * @param  {jQuery.Event} ev 事件对象
+       */
+      handleNavEsc : function (ev) {
+        this.hide();
       },
       _uiSetValueField : function(v){
         var _self = this;

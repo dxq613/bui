@@ -73,7 +73,7 @@
           <div class="control-group span8">
             <label class="control-label"><s>*</s>供应商编码：</label>
             <div class="controls">
-              <input name="id"  type="text" data-rules="{required:true,length:5}" class="input-normal control-text">
+              <input name="a"  type="text" data-rules="{required:true,minlength:5}" data-remote='data/remote.php' class="input-normal control-text">
             </div>
           </div>
           <div class="control-group span8">

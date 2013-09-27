@@ -63,7 +63,12 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
      */
     _handleKeyDown : function(ev){
       var _self = this,
+        ignoreInputFields = _self.get('ignoreInputFields'),
         code = ev.which;
+      if(ignoreInputFields && $(ev.target).is('input,select,textarea')){
+        return;
+      }
+      ev.preventDefault();
       switch(code){
         case KeyCode.UP :
           _self.handleNavUp(ev);

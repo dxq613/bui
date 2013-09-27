@@ -55,6 +55,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
 
        /**
        * @private
+       * @ignore
        * 垂直时使用bottom
        */
       function getPos(pos){

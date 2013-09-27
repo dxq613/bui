@@ -408,6 +408,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       var _self = this,
         validEvent = _self.get('validEvent'),
         changeEvent = _self.get('changeEvent'),
+        firstValidEvent = _self.get('firstValidEvent'),
         innerControl = _self.getInnerControl();
 
       //选择框只使用 select事件
@@ -419,13 +420,16 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         var value = _self.getControlValue(innerControl);
         _self.validControl(value);
       });
-      //未发生验证时，首次获取焦点，进行验证
-      innerControl.on('focus',function(){
-        if(!_self.get('hasValid')){
-          var value = _self.getControlValue(innerControl);
-          _self.validControl(value);
-        }
-      });
+      if(firstValidEvent){
+        //未发生验证时，首次获取焦点/丢失焦点/点击，进行验证
+        innerControl.on(firstValidEvent,function(){
+          if(!_self.get('hasValid')){
+            var value = _self.getControlValue(innerControl);
+            _self.validControl(value);
+          }
+        });
+      }
+      
 
       //本来是监听控件的change事件，但是，如果控件还未触发change,但是通过get('value')来取值，则会出现错误，
       //所以当通过验证时，即触发改变事件
@@ -502,7 +506,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     getRemoteParams : function  () {
       var _self = this,
         rst = {};
-      rst[_self.get('name')] = _self.get('value');
+      rst[_self.get('name')] = _self.getControlValue();
       return rst;
     },
     /**
@@ -723,6 +727,12 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
        */
       changeEvent : {
         value : 'valid'
+      },
+      /**
+       * 未发生验证时，首次获取/丢失焦点，进行验证
+       */
+      firstValidEvent : {
+        value : 'blur'
       },
       /**
        * 表单元素或者控件触发此事件时，触发验证
@@ -4480,6 +4490,16 @@ define('bui/form/remote',['bui/common'],function(require) {
       value : 500
     },
     /**
+     * @private
+     * 缓存验证结果，如果验证过对应的值，则直接返回
+     * @type {Object}
+     */
+    cacheMap : {
+      value : {
+
+      }
+    },
+    /**
      * 加载的模板
      * @type {String}
      */
@@ -4555,10 +4575,11 @@ define('bui/form/remote',['bui/common'],function(require) {
     __bindUI : function(){
       var _self = this;
 
-      _self.on('change',function (ev) {
+      _self.on('valid',function (ev) {
         if(_self.get('remote') && _self.isValid()){
-          var data = _self.getRemoteParams();
-          _self._startRemote(data);
+          var value = _self.getControlValue(),
+            data = _self.getRemoteParams();
+          _self._startRemote(data,value);
         }
       });
 
@@ -4570,47 +4591,66 @@ define('bui/form/remote',['bui/common'],function(require) {
 
     },
     //开始异步请求
-    _startRemote : function(data){
+    _startRemote : function(data,value){
       var _self = this,
         remoteHandler = _self.get('remoteHandler'),
+        cacheMap = _self.get('cacheMap'),
         remoteDaly = _self.get('remoteDaly');
       if(remoteHandler){
         //如果前面已经发送过异步请求，取消掉
         _self._cancelRemote(remoteHandler);
       }
+      if(cacheMap[value] != null){
+        _self._validResult(_self._getCallback(),cacheMap[value]);
+        return;
+      }
       //使用闭包进行异步请求
       function dalayFunc(){
-        _self._remoteValid(data,remoteHandler);
+        _self._remoteValid(data,remoteHandler,value);
         _self.set('isLoading',true);
       }
       remoteHandler = setTimeout(dalayFunc,remoteDaly);
       _self.setInternal('remoteHandler',remoteHandler);
       
     },
-    //异步请求
-    _remoteValid : function(data,remoteHandler){
+    _validResult : function(callback,data){
+      var _self = this,
+        error = callback(data);
+      _self.onRemoteComplete(error,data);
+    },
+    onRemoteComplete : function(error,data,remoteHandler){
+      var _self = this;
+      //确认当前返回的错误是当前请求的结果，防止覆盖后面的请求
+      if(remoteHandler == _self.get('remoteHandler')){
+          _self.fire('remotecomplete',{error : error,data : data});
+          _self.set('isLoading',false);
+          _self.setInternal('remoteHandler',null);
+      } 
+    },
+    _getOptions : function(data){
       var _self = this,
         remote = _self.get('remote'),
         defaultRemote = _self.get('defaultRemote'),
         options = BUI.merge(defaultRemote,remote,{data : data});
-
-      function complete (error,data) {
-        //确认当前返回的错误是当前请求的结果，防止覆盖后面的请求
-        if(remoteHandler == _self.get('remoteHandler')){
-          _self.fire('remotecomplete',{error : error,data : data});
-          _self.set('isLoading',false);
-          _self.setInternal('remoteHandler',null);
-        } 
-      }
-
+      return options;
+    },
+    _getCallback : function(){
+      return this._getOptions().callback;
+    },
+    //异步请求
+    _remoteValid : function(data,remoteHandler,value){
+      var _self = this,
+        cacheMap = _self.get('cacheMap'),
+        options = _self._getOptions(data);
       options.success = function (data) {
         var callback = options.callback,
           error = callback(data);
-        complete(error,data);
+        cacheMap[value] = data; //缓存异步结果
+        _self.onRemoteComplete(error,data,remoteHandler);
       };
 
       options.error = function (jqXHR, textStatus,errorThrown){
-        complete(errorThrown);
+        _self.onRemoteComplete(errorThrown,null,remoteHandler);
       };
 
       _self.fire('remotestart',{data : data});

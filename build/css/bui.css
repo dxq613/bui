@@ -813,6 +813,9 @@
 .bui-grid-button-bar .button-small [class^="icon-"] {
   margin: -2px 2px 0 -5px;
 }
+.bui-simple-list-focused {
+  outline: none;
+}
 .bui-grid-table .sort-asc .bui-grid-sort-icon,
 .bui-grid-table .sort-desc .bui-grid-sort-icon,
 .bui-grid-table .bui-grid-hd-menu-trigger,
