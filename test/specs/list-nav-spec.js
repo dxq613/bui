@@ -264,6 +264,39 @@ BUI.use('bui/list/simplelist',function (List) {
         });
       });
     });
-/**/
+
   });
+});
+
+
+BUI.use('bui/list/simplelist',function (List) {
+
+  var KeyCode = BUI.KeyCode,
+    items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},
+    {text:'选项11',value:'a11'},{text:'选项12',value:'a2'},{text:'选项13',value:'a3'},{text:'选项14',value:'a4'},
+    {text:'选项111',value:'a111'},{text:'选项121',value:'a21'},{text:'选项131',value:'a31'},{text:'选项15',value:'a5'}];
+
+  var list = new List({
+    render : '#l8',
+    height:150,
+    elCls:'bui-select-list',
+    items : items
+  });
+  list.render();
+
+  describe('键盘操作，阻止默认窗口滚动',function(){
+
+    it('向上',function(){
+
+    });
+
+    it('向下',function(){
+
+    });
+  });
+
+  describe('键盘操作,列表滚动条',function(){
+
+  });
+
 });

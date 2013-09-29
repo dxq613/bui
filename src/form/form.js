@@ -57,6 +57,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         _self.valid();
         if(!_self.isValid() || _self.onBeforeSubmit() === false){
           ev.preventDefault();
+          return;
         }
         if(_self.isValid() && _self.get('submitType') === TYPE_SUBMIT.AJAX){
           ev.preventDefault();

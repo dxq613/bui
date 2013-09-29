@@ -162,7 +162,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         var sender = $(ev.target),
           offset = el.offset();
         if(sender.hasClass('x-slider-handle')){
-          //ev.preventDefault();
+          ev.preventDefault();
           _self._handleDrag(ev);
         }else{
           offset = {
