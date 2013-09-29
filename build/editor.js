@@ -66,7 +66,7 @@ define('bui/editor/mixin',function (require) {
      * @type {Boolean}
      */
     ignoreInputFields: {
-      value :false
+      value :true
     },
     /**
      * 内部控件的代表Value的字段
@@ -91,6 +91,9 @@ define('bui/editor/mixin',function (require) {
      */
     controlCfgField : {
 
+    },
+    focusable : {
+      value : true
     },
     autoUpdate : {
       value : true

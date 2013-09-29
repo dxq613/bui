@@ -16607,13 +16607,6 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
         view : true,
         value : '<li role="option" class="' + CLS_ITEM + '">{text}</li>'
       },
-      /**
-       * \u662f\u5426\u53ef\u4ee5\u83b7\u53d6\u7126\u70b9\uff0c\u6b64\u5c5e\u6027\u8bbe\u7f6e\u4e3atrue\u4f1a\u89e6\u53d1\u952e\u76d8\u4e8b\u4ef6
-       * @type {Boolean}
-       */
-      focusable : {
-        value : true
-      },
       tpl : {
         value:'<ul></ul>'
       },
@@ -28049,7 +28042,7 @@ define('bui/editor/mixin',function (require) {
      * @type {Boolean}
      */
     ignoreInputFields: {
-      value :false
+      value :true
     },
     /**
      * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
@@ -28074,6 +28067,9 @@ define('bui/editor/mixin',function (require) {
      */
     controlCfgField : {
 
+    },
+    focusable : {
+      value : true
     },
     autoUpdate : {
       value : true
