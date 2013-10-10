@@ -2260,14 +2260,15 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     * </code></pre>
     * @param {Object} obj 修改的记录
     * @param {Boolean} [isMatch = false] 是否需要进行匹配，检测指定的记录是否在集合中
+    * @param {Function} [match = matchFunction] 匹配函数
     */
-    update : function(obj,isMatch){
+    update : function(obj,isMatch,match){
       var record = obj,
         _self = this,
         match = null,
         index = null;
       if(isMatch){
-        match = _self._getDefaultMatch();
+        match = match || _self._getDefaultMatch();
         index = _self.findIndexBy(obj,match);
         if(index >=0){
           record = _self.getResult()[index];

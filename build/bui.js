@@ -6290,18 +6290,22 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       if(ignoreInputFields && $(ev.target).is('input,select,textarea')){
         return;
       }
-      ev.preventDefault();
+      
       switch(code){
         case KeyCode.UP :
+          ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
+          ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
+          ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
+          ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 
@@ -14139,14 +14143,15 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     * </code></pre>
     * @param {Object} obj \u4fee\u6539\u7684\u8bb0\u5f55
     * @param {Boolean} [isMatch = false] \u662f\u5426\u9700\u8981\u8fdb\u884c\u5339\u914d\uff0c\u68c0\u6d4b\u6307\u5b9a\u7684\u8bb0\u5f55\u662f\u5426\u5728\u96c6\u5408\u4e2d
+    * @param {Function} [match = matchFunction] \u5339\u914d\u51fd\u6570
     */
-    update : function(obj,isMatch){
+    update : function(obj,isMatch,match){
       var record = obj,
         _self = this,
         match = null,
         index = null;
       if(isMatch){
-        match = _self._getDefaultMatch();
+        match = match || _self._getDefaultMatch();
         index = _self.findIndexBy(obj,match);
         if(index >=0){
           record = _self.getResult()[index];

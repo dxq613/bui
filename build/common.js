@@ -4753,18 +4753,22 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       if(ignoreInputFields && $(ev.target).is('input,select,textarea')){
         return;
       }
-      ev.preventDefault();
+      
       switch(code){
         case KeyCode.UP :
+          ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
+          ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
+          ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
+          ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 
