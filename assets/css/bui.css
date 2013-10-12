@@ -1904,7 +1904,7 @@ input.x-datepicker-time {
   border-bottom-color: #ffffe5;
 }
 /**按钮样式**/
-.bui-uploader-button-wrap {
+.defaultTheme-button .bui-uploader-button-wrap {
   border: 1px solid #C4DAED;
   font-size: 12px;
   text-align: center;
@@ -1921,34 +1921,34 @@ input.x-datepicker-time {
   background: -moz-linear-gradient(top, #fdfefe, #dfe7ef);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FDFEFE', endColorstr='#DFE7EF');
 }
-.bui-uploader-button-wrap:link,
-.bui-uploader-button-wrap:visited {
+.defaultTheme-button .bui-uploader-button-wrap:link,
+.defaultTheme-button .bui-uploader-button-wrap:visited {
   color: #404040;
 }
-.bui-uploader-button-wrap-hover,
-.bui-uploader-button-wrap:hover {
+.defaultTheme-button .bui-uploader-button-wrap-hover,
+.defaultTheme-button .bui-uploader-button-wrap:hover {
   text-decoration: none;
   color: black;
   background: -webkit-gradient(linear, left top, left bottom, from(#dfe7ef), to(#fdfefe));
   background: -moz-linear-gradient(top, #dfe7ef, #fdfefe);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#DFE7EF', endColorstr='#FDFEFE');
 }
-.bui-uploader-button-wrap:active {
+.defaultTheme-button .bui-uploader-button-wrap:active {
   background: #DFE7EF;
   filter: none;
 }
-.uploader-button-disabled,
-.uploader-button-disabled:hover {
+.defaultTheme-button .uploader-button-disabled,
+.defaultTheme-button .uploader-button-disabled:hover {
   border: 1px solid #BFBFBF;
   color: #404040;
   background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e5e5e5));
   background: -moz-linear-gradient(top, #fafafa, #e5e5e5);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
 }
-.uploader-button-disabled .file-input-wrapper .file-input {
+.defaultTheme-button .uploader-button-disabled .file-input-wrapper .file-input {
   display: none;
 }
-.bui-uploader-button-wrap .file-input-wrapper .file-input {
+.defaultTheme-button .bui-uploader-button-wrap .file-input-wrapper .file-input {
   background: none repeat scroll 0 0 transparent;
   border: medium none;
   cursor: pointer;
@@ -1960,7 +1960,7 @@ input.x-datepicker-time {
   font-size: 100px;
   left: 0;
 }
-.bui-uploader-button-wrap .file-input-wrapper {
+.defaultTheme-button .bui-uploader-button-wrap .file-input-wrapper {
   display: block;
   height: 26px;
   width: 110px;
@@ -1972,7 +1972,7 @@ input.x-datepicker-time {
   padding: 0;
   z-index: 300;
 }
-.bui-uploader-button .uploader-button-swf {
+.defaultTheme-button .bui-uploader-button .uploader-button-swf {
   display: block;
   width: 110px;
   height: 26px;

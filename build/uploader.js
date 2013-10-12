@@ -273,16 +273,11 @@ define('bui/uploader/button/base', function(require) {
   }
 
   baseView.prototype = {
-    _uiSetButtonCls: function (v) {
-      var _self = this,
-        buttonCls = _self.get('buttonCls'),
-        buttonEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON);
-      buttonEl.addClass(buttonCls);
-    },
     _uiSetText: function (v) {
       var _self = this,
         text = _self.get('text'),
-        textEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON_TEXT);
+        textCls = _self.get('textCls'),
+        textEl = _self.get('el').find('.' + textCls);
       textEl.text(text);
     }
   }
@@ -293,13 +288,12 @@ define('bui/uploader/button/base', function(require) {
   }
 
   base.ATTRS = {
-    elCls: {
-      value: CLS_UPLOADER_BUTTON
-    },
-    buttonCls:{
+    buttonCls: {
+      value: CLS_UPLOADER_BUTTON + '-wrap',
       view: true
     },
     textCls: {
+      value: CLS_UPLOADER_BUTTON_TEXT,
       view: true
     },
     text: {
@@ -308,7 +302,7 @@ define('bui/uploader/button/base', function(require) {
     },
     tpl: {
       view: true,
-      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '  {buttonCls}"><span class="' + CLS_UPLOADER_BUTTON_TEXT + ' {textCls}">{text}</span></a>'
+      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '"><span class="' + CLS_UPLOADER_BUTTON_TEXT + '">{text}</span></a>'
     },
     /**
      * 是否可用,false为可用
@@ -440,7 +434,8 @@ define('bui/uploader/button/htmlButton', function(require) {
      */
     _createInput: function() {
       var _self = this,
-        buttonEl = _self.get('el').find('.bui-uploader-button-wrap'),
+        buttonCls = _self.get('buttonCls'),
+        buttonEl = _self.get('el').find('.' + buttonCls),
         inputTpl = _self.get('inputTpl'),
         name = _self.get('name'),
         fileInput;
@@ -569,6 +564,8 @@ define('bui/uploader/button/htmlButton', function(require) {
         value: HtmlButtonView
       }
     }
+  }, {
+    xclass: 'uploader-htmlButton'
   });
 
   return HtmlButton;
@@ -621,7 +618,8 @@ define('bui/uploader/button/swfButton', function (require) {
     },
     _initSwfUploader: function(){
       var _self = this,
-        buttonEl = _self.get('el').find('.bui-uploader-button-wrap'),
+        buttonCls = _self.get('buttonCls'),
+        buttonEl = _self.get('el').find('.' + buttonCls),
         flashCfg = _self.get('flash'),
         swfTpl = _self.get('swfTpl'),
         swfUploader;
@@ -651,7 +649,7 @@ define('bui/uploader/button/swfButton', function (require) {
       },
       flash:{
         value:{
-          src:'http://a.tbcdn.cn/s/kissy/gallery/uploader/1.4/plugins/ajbridge/uploader.swf',
+          src:'http://g.tbcdn.cn/fi/bui/uploader/uploader.swf',
           params:{
             allowscriptaccess: 'always',
             bgcolor:"#fff",
@@ -674,6 +672,8 @@ define('bui/uploader/button/swfButton', function (require) {
         value: SwfButtonView
       }
     }
+  }, {
+    xclass: 'uploader-swfButton'
   });
 
   return SwfButton;
@@ -1191,9 +1191,6 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
     }
   }, {
     ATTRS: {
-      itemCls: {
-        value: CLS_QUEUE
-      },
       itemTpl: {
         value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
       },
@@ -1230,7 +1227,16 @@ define('bui/uploader/theme', function (require) {
     HtmlButton = require('bui/uploader/button/htmlButton'),
     SwfButton = require('bui/uploader/button/swfButton');
 
-  var themes = {};
+  var themes = {
+    'default': {
+      button: {
+        elCls: 'defaultTheme-button'
+      },
+      queue: {
+        elCls: 'defaultTheme-queue'
+      }
+    }
+  };
 
   var Theme = {
     /**
@@ -1521,9 +1527,14 @@ define('bui/uploader/uploader', function (require) {
       return true;
     },
     renderUI: function(){
-      var _self = this;
-      _self.get('button').render();
-      _self.get('queue').render();
+      var _self = this,
+        el = _self.get('el'),
+        button = _self.get('button'),
+        queue = _self.get('queue');
+      button.set('render', el);
+      queue.set('render', el);
+      button.render();
+      queue.render();
     },
     bindUI: function () {
       var _self = this;
@@ -1581,6 +1592,7 @@ define('bui/uploader/uploader', function (require) {
       type: {
       },
       theme: {
+        value: 'default'
       },
       /**
        * 当前上传的状
