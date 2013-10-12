@@ -8,7 +8,8 @@ define('bui/uploader', function (require) {
     Uploader = BUI.namespace('Uploader');
 
   BUI.mix(Uploader, {
-    Uploader: require('bui/uploader/uploader')
+    Uploader: require('bui/uploader/uploader'),
+    Queue: require('bui/uploader/queue')
   });
 
   return Uploader;

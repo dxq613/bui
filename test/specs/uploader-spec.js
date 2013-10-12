@@ -73,7 +73,7 @@ BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
     // queueTarget: '#J_UploaderQueue',
-    action: 'upload/upload.php',
+    url: 'upload/upload.php',
     filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
   });
   uploader.render();

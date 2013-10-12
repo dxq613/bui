@@ -673,3 +673,15 @@ BUI.use('bui/form/listfield',function(ListField){
   });
 
 });
+
+/**上传组件**/
+BUI.use('bui/form/uploaderfield',function(UploaderField){
+  var field = new UploaderField({
+    render : '#upload',
+    label: '文件上传字段',
+    uploader: {
+    }
+  });
+  field.render();
+
+});

@@ -66,6 +66,7 @@ define('bui/uploader/type/flash', function (require) {
             //监听文件上传完成事件
             swfUploader.on('uploadCompleteData', function(ev){
                 var result = _self._processResponse(ev.data);
+                _self.fire('complete', {result: result});
                 if(result && result.status === 1){
                     _self.fire(FlashType.event.SUCCESS, {result: result});
                 }
@@ -88,7 +89,7 @@ define('bui/uploader/type/flash', function (require) {
         upload:function (file) {
             var _self = this,
                 swfUploader = _self.get('swfUploader'),
-                action = _self.get('action'),
+                url = _self.get('url'),
                 method = 'POST',
                 data = _self.get('data'),
                 name = _self.get('fileDataName');
@@ -96,7 +97,7 @@ define('bui/uploader/type/flash', function (require) {
                 return;
             }
             _self.set('file', file);
-            swfUploader.upload(file.id, action, method, data, name);
+            swfUploader.upload(file.id, url, method, data, name);
             return _self;
         },
         /**
@@ -143,7 +144,7 @@ define('bui/uploader/type/flash', function (require) {
         /**
          * 服务器端路径，留意flash必须是绝对路径
          */
-        action:{
+        url:{
             getter:function(v){
                 var reg = /^http/;
                 //不是绝对路径拼接成绝对路径

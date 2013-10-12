@@ -26,7 +26,7 @@ define('bui/uploader/type/base',function(require) {
      * @type String
      * @default ""
      */
-    action: {
+    url: {
     },
     /**
      * 传送给服务器端的参数集合（会被转成hidden元素post到服务器端）

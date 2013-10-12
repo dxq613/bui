@@ -23,6 +23,10 @@
           </select>
         </div>
       </div>
+
+      <div id="upload">
+        <input type="file">
+      </div>
     </form>
   </div>
     <?php $url = 'bui/form/field'?>
@@ -43,6 +47,7 @@
     <script type="text/javascript" src="../src/form/field/radio.js"></script>
     <script type="text/javascript" src="../src/form/field/plain.js"></script>
     <script type="text/javascript" src="../src/form/field/list.js"></script>
+    <script type="text/javascript" src="../src/form/field/uploader.js"></script>
     <script type="text/javascript" src="../src/form/field.js"></script>
 
     <script type="text/javascript" src="specs/form-field-spec.js"></script>

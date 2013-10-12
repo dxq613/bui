@@ -4,7 +4,8 @@
  **/
 define('bui/uploader/queue', ['bui/list'], function (require) {
 
-  var SimpleList = require('bui/list/simplelist');
+  var BUI = require('bui/common'),
+    SimpleList = require('bui/list/simplelist');
 
   var CLS_QUEUE = BUI.prefix + 'queue',
     CLS_QUEUE_ITEM = CLS_QUEUE + '-item';
@@ -12,9 +13,10 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   var Queue = SimpleList.extend({
     bindUI: function () {
       var _self = this,
-        el = _self.get('el');
+        el = _self.get('el'),
+        delCls = _self.get('delCls');
 
-      el.delegate('.del', 'click', function (ev) {
+      el.delegate('.' + delCls, 'click', function (ev) {
         var itemContainer = $(ev.target).parent();
         _self.removeItem(_self.getItemByElement(itemContainer));
       });
@@ -38,42 +40,19 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       _self.setItemStatus(item,status,true,element);
       _self.updateItem(item);
     }
-    /**
-     * 移除所有的状态
-     * @param  {[type]} item [description]
-     * @return {[type]}      [description]
-     */
-    // clearItemStatus: function(item){
-    //   var _self = this,
-    //     itemStatusFields = _self.get('itemStatusFields');
-        
-    //   BUI.each(itemStatusFields, function(v, k){
-    //     _self.setItemStatus(item, k, false);
-    //   });
-    // },
-    // progressItem: function (item) {
-    //   Queue.superclass.updateItem.call(this, item);
-    // }
-    //,
-    /**
-     * 设置item的状态
-     * @return {[type]} [description]
-     */
-    // setItemStatus : function(item, status, value, element){
-    //   var _self = this;
-    //   _self.clearItemStatus(item);
-    //   Queue.superclass.setItemStatus.call(_self, item, status, value, element);
-    // }
   }, {
     ATTRS: {
       itemCls: {
         value: CLS_QUEUE
       },
       itemTpl: {
-        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="del">删除</div></li>'
+        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
       },
       itemCls: {
         value: CLS_QUEUE_ITEM
+      },
+      delCls: {
+        value: CLS_QUEUE_ITEM + '-del'
       },
       itemStatusFields: {
         value: {
@@ -89,6 +68,30 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   }, { 
     xclass: 'queue'
   });
+
+  
+  var themes = {};
+  var Theme = function(){
+  }
+
+  Theme.prototype = {
+    createQueue: function(themeName, config){
+      var _self = this,
+        theme = _self.getTheme(themeName) || {},
+        queue;
+      theme = BUI.mix(theme, config);
+      queue = new Queue(theme);
+      return queue;
+    },
+    addTheme: function(name, config){
+      themes[name] = config;
+    },
+    getTheme: function(name){
+      return themes[name];
+    }
+  };
+
+  Queue.Theme = new Theme();
 
   return Queue;
 

@@ -111,9 +111,10 @@ define('bui/uploader/uploader', function (require) {
     _initQueue: function(){
       var _self = this,
         queue = _self.get('queue'),
-        render = _self.get('render');
+        render = _self.get('render'),
+        theme = _self.get('theme');
       if (!queue) {
-        queue = new Queue(_self._getUserConfig(['render']));
+        queue = Queue.Theme.createQueue(theme, _self._getUserConfig(['render']));
         _self.set('queue', queue);
       };
     },
@@ -143,7 +144,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         type = _self.get('type'),
         UploaderType = _self._getUploaderType(type),
-        uploaderType = new UploaderType(_self._getUserConfig(['action', 'data']));
+        uploaderType = new UploaderType(_self._getUserConfig(['url', 'data']));
         uploaderType.set('uploader', _self);
       _self.set('uploaderType', uploaderType);
     },
@@ -227,6 +228,10 @@ define('bui/uploader/uploader', function (require) {
         _self.set('curUploadItem', null);
         _self.fire('cancel', {curUploadItem: curUploadItem});
       });
+
+      uploaderType.on('complete', function(ev){
+        _self.fire('complete');
+      })
 
       uploaderType.on('success', function(ev){
         var result = ev.result;
@@ -328,6 +333,8 @@ define('bui/uploader/uploader', function (require) {
        * @type {String}
        */
       type: {
+      },
+      theme: {
       },
       /**
        * 当前上传的状

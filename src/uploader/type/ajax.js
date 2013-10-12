@@ -73,7 +73,7 @@ define('bui/uploader/type/ajax',function(require) {
         send : function() {
             var self = this,
                 //服务器端处理文件上传的路径
-                action = self.get('action'),
+                url = self.get('url'),
                 data = self.get('formData'),
                 file = self.get('file');
             var xhr = new XMLHttpRequest();
@@ -83,6 +83,7 @@ define('bui/uploader/type/ajax',function(require) {
             });
             xhr.onload = function(ev){
                 var result = self._processResponse(xhr.responseText);
+                self.fire('complete', {result: result, file: file});
                 if(result && result.status === 1){
                     self.fire(AjaxType.event.SUCCESS, {result : result, file: file});
                 }
@@ -90,7 +91,7 @@ define('bui/uploader/type/ajax',function(require) {
                     self.fire(AjaxType.event.ERROR, {result : result, file: file});
                 }
             };
-            xhr.open("POST", action, true);
+            xhr.open("POST", url, true);
             data.append("type", "ajax");
             xhr.send(data);
             // 重置FormData
