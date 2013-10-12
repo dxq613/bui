@@ -18808,6 +18808,75 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
 
   return List;
 });/**
+ * @fileOverview \u6a21\u62df\u9009\u62e9\u6846\u5728\u8868\u5355\u4e2d
+ * @ignore
+ */
+
+define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (require) {
+
+  var BUI = require('bui/common'),
+    JSON = BUI.JSON,
+    Field = require('bui/form/basefield');
+
+  /**
+   * \u8868\u5355\u4e0a\u4f20\u57df
+   * @class BUI.Form.Field.Upload
+   * @extends BUI.Form.Field
+   */
+  var uploaderField = Field.extend({
+    //\u751f\u6210upload
+    renderUI : function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      if(_self.get('srcNode') && innerControl.get(0).type === 'file'){ //\u5982\u679c\u4f7f\u7528\u73b0\u6709DOM\u751f\u6210\uff0c\u4e0d\u4f7f\u7528\u4e0a\u4f20\u7ec4\u4ef6
+        return;
+      }
+      _self._initUpload();
+    },
+    _initUpload: function(){
+      var _self = this,
+        children = _self.get('children'),
+        uploader = _self.get('uploader') || {};
+
+      BUI.use('bui/uploader', function(Uploader){
+        uploader.render = _self.getControlContainer();
+        uploader.autoRender = true;
+        uploader = new Uploader.Uploader(uploader);
+        _self.set('uploader', uploader);
+        _self.set('isCreate',true);
+        _self.get('children').push(uploader);
+        uploader.get('uploaderType').on('success', function(ev){
+          var items = uploader.get('queue').getItems();
+          _self.setControlValue(items);
+        });
+      });
+    },
+    setControlValue: function(items){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      innerControl.val(JSON.stringify(items));
+    }
+  },{
+    ATTRS : {
+      /**
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
+       * @type {String}
+       */
+      controlTpl : {
+        value : '<input type="hidden"/>'
+      },
+      uploader: {
+      },
+      value:{
+        value: []
+      }
+    }
+  },{
+    xclass : 'form-field-uploader'
+  });
+
+  return uploaderField;
+});/**
  * @fileOverview \u8868\u5355\u57df\u7684\u5165\u53e3\u6587\u4ef6
  * @ignore
  */
@@ -18828,7 +18897,8 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
     Radio : require(BASE + 'radiofield'),
     Checkbox : require(BASE + 'checkboxfield'),
     Plain : require(BASE + 'plainfield'),
-    List : require(BASE + 'listfield')
+    List : require(BASE + 'listfield'),
+    Uploader : require(BASE + 'uploaderfield')
   });
 
   return Field;

@@ -705,7 +705,7 @@ define('bui/uploader/type/base',function(require) {
      * @type String
      * @default ""
      */
-    action: {
+    url: {
     },
     /**
      * 传送给服务器端的参数集合（会被转成hidden元素post到服务器端）
@@ -895,7 +895,7 @@ define('bui/uploader/type/ajax',function(require) {
         send : function() {
             var self = this,
                 //服务器端处理文件上传的路径
-                action = self.get('action'),
+                url = self.get('url'),
                 data = self.get('formData'),
                 file = self.get('file');
             var xhr = new XMLHttpRequest();
@@ -905,6 +905,7 @@ define('bui/uploader/type/ajax',function(require) {
             });
             xhr.onload = function(ev){
                 var result = self._processResponse(xhr.responseText);
+                self.fire('complete', {result: result, file: file});
                 if(result && result.status === 1){
                     self.fire(AjaxType.event.SUCCESS, {result : result, file: file});
                 }
@@ -912,7 +913,7 @@ define('bui/uploader/type/ajax',function(require) {
                     self.fire(AjaxType.event.ERROR, {result : result, file: file});
                 }
             };
-            xhr.open("POST", action, true);
+            xhr.open("POST", url, true);
             data.append("type", "ajax");
             xhr.send(data);
             // 重置FormData
@@ -1041,6 +1042,7 @@ define('bui/uploader/type/flash', function (require) {
             //监听文件上传完成事件
             swfUploader.on('uploadCompleteData', function(ev){
                 var result = _self._processResponse(ev.data);
+                _self.fire('complete', {result: result});
                 if(result && result.status === 1){
                     _self.fire(FlashType.event.SUCCESS, {result: result});
                 }
@@ -1063,7 +1065,7 @@ define('bui/uploader/type/flash', function (require) {
         upload:function (file) {
             var _self = this,
                 swfUploader = _self.get('swfUploader'),
-                action = _self.get('action'),
+                url = _self.get('url'),
                 method = 'POST',
                 data = _self.get('data'),
                 name = _self.get('fileDataName');
@@ -1071,7 +1073,7 @@ define('bui/uploader/type/flash', function (require) {
                 return;
             }
             _self.set('file', file);
-            swfUploader.upload(file.id, action, method, data, name);
+            swfUploader.upload(file.id, url, method, data, name);
             return _self;
         },
         /**
@@ -1118,7 +1120,7 @@ define('bui/uploader/type/flash', function (require) {
         /**
          * 服务器端路径，留意flash必须是绝对路径
          */
-        action:{
+        url:{
             getter:function(v){
                 var reg = /^http/;
                 //不是绝对路径拼接成绝对路径
@@ -1151,7 +1153,8 @@ define('bui/uploader/type/flash', function (require) {
  **/
 define('bui/uploader/queue', ['bui/list'], function (require) {
 
-  var SimpleList = require('bui/list/simplelist');
+  var BUI = require('bui/common'),
+    SimpleList = require('bui/list/simplelist');
 
   var CLS_QUEUE = BUI.prefix + 'queue',
     CLS_QUEUE_ITEM = CLS_QUEUE + '-item';
@@ -1159,9 +1162,10 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   var Queue = SimpleList.extend({
     bindUI: function () {
       var _self = this,
-        el = _self.get('el');
+        el = _self.get('el'),
+        delCls = _self.get('delCls');
 
-      el.delegate('.del', 'click', function (ev) {
+      el.delegate('.' + delCls, 'click', function (ev) {
         var itemContainer = $(ev.target).parent();
         _self.removeItem(_self.getItemByElement(itemContainer));
       });
@@ -1185,42 +1189,19 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       _self.setItemStatus(item,status,true,element);
       _self.updateItem(item);
     }
-    /**
-     * 移除所有的状态
-     * @param  {[type]} item [description]
-     * @return {[type]}      [description]
-     */
-    // clearItemStatus: function(item){
-    //   var _self = this,
-    //     itemStatusFields = _self.get('itemStatusFields');
-        
-    //   BUI.each(itemStatusFields, function(v, k){
-    //     _self.setItemStatus(item, k, false);
-    //   });
-    // },
-    // progressItem: function (item) {
-    //   Queue.superclass.updateItem.call(this, item);
-    // }
-    //,
-    /**
-     * 设置item的状态
-     * @return {[type]} [description]
-     */
-    // setItemStatus : function(item, status, value, element){
-    //   var _self = this;
-    //   _self.clearItemStatus(item);
-    //   Queue.superclass.setItemStatus.call(_self, item, status, value, element);
-    // }
   }, {
     ATTRS: {
       itemCls: {
         value: CLS_QUEUE
       },
       itemTpl: {
-        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="del">删除</div></li>'
+        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
       },
       itemCls: {
         value: CLS_QUEUE_ITEM
+      },
+      delCls: {
+        value: CLS_QUEUE_ITEM + '-del'
       },
       itemStatusFields: {
         value: {
@@ -1236,6 +1217,30 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   }, { 
     xclass: 'queue'
   });
+
+  
+  var themes = {};
+  var Theme = function(){
+  }
+
+  Theme.prototype = {
+    createQueue: function(themeName, config){
+      var _self = this,
+        theme = _self.getTheme(themeName) || {},
+        queue;
+      theme = BUI.mix(theme, config);
+      queue = new Queue(theme);
+      return queue;
+    },
+    addTheme: function(name, config){
+      themes[name] = config;
+    },
+    getTheme: function(name){
+      return themes[name];
+    }
+  };
+
+  Queue.Theme = new Theme();
 
   return Queue;
 
@@ -1352,9 +1357,10 @@ define('bui/uploader/uploader', function (require) {
     _initQueue: function(){
       var _self = this,
         queue = _self.get('queue'),
-        render = _self.get('render');
+        render = _self.get('render'),
+        theme = _self.get('theme');
       if (!queue) {
-        queue = new Queue(_self._getUserConfig(['render']));
+        queue = Queue.Theme.createQueue(theme, _self._getUserConfig(['render']));
         _self.set('queue', queue);
       };
     },
@@ -1384,7 +1390,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         type = _self.get('type'),
         UploaderType = _self._getUploaderType(type),
-        uploaderType = new UploaderType(_self._getUserConfig(['action', 'data']));
+        uploaderType = new UploaderType(_self._getUserConfig(['url', 'data']));
         uploaderType.set('uploader', _self);
       _self.set('uploaderType', uploaderType);
     },
@@ -1468,6 +1474,10 @@ define('bui/uploader/uploader', function (require) {
         _self.set('curUploadItem', null);
         _self.fire('cancel', {curUploadItem: curUploadItem});
       });
+
+      uploaderType.on('complete', function(ev){
+        _self.fire('complete');
+      })
 
       uploaderType.on('success', function(ev){
         var result = ev.result;
@@ -1570,6 +1580,8 @@ define('bui/uploader/uploader', function (require) {
        */
       type: {
       },
+      theme: {
+      },
       /**
        * 当前上传的状
        * @type {Object}
@@ -1596,7 +1608,8 @@ define('bui/uploader', function (require) {
     Uploader = BUI.namespace('Uploader');
 
   BUI.mix(Uploader, {
-    Uploader: require('bui/uploader/uploader')
+    Uploader: require('bui/uploader/uploader'),
+    Queue: require('bui/uploader/queue')
   });
 
   return Uploader;
