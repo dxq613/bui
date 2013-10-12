@@ -107,6 +107,13 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         var  timepicker = _self.get('timepicker') || _self._initTimePicker();
         children.push(timepicker);
         _self.set('timepicker',timepicker);
+      }else{
+        var footer = _self.get("footer"),
+        panelView = _self.get("panel").get("view"),
+        now = today();
+        if (panelView._isInRange(now)) {
+          footer.getItem("todayBtn").disable();
+        }
       }
     },
     //绑定事件
