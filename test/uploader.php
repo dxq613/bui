@@ -2,7 +2,7 @@
 <?php include("./templates/header.php"); ?>
 
 <link rel="stylesheet" href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css"/>
-<link rel="stylesheet" href="../src/uploader/css/style.css"/>
+<link rel="stylesheet" href="http://g.tbcdn.cn/fi/bui/css/bui-min.css"/>
 
   <div class="container">
     <div class="row">
@@ -33,6 +33,7 @@
     <script src="../src/uploader/base.js"></script>
     <script src="../src/uploader/uploader.js"></script>
     <script src="../src/uploader/queue.js"></script>
+    <script src="../src/uploader/theme.js"></script>
     <script src="../src/uploader/button/base.js"></script>
     <script src="../src/uploader/button/htmlButton.js"></script>
     <script src="../src/uploader/button/swfButton.js"></script>

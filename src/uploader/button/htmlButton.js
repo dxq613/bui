@@ -39,7 +39,8 @@ define('bui/uploader/button/htmlButton', function(require) {
      */
     _createInput: function() {
       var _self = this,
-        buttonEl = _self.get('el').find('.bui-uploader-button-wrap'),
+        buttonCls = _self.get('buttonCls'),
+        buttonEl = _self.get('el').find('.' + buttonCls),
         inputTpl = _self.get('inputTpl'),
         name = _self.get('name'),
         fileInput;
@@ -168,6 +169,8 @@ define('bui/uploader/button/htmlButton', function(require) {
         value: HtmlButtonView
       }
     }
+  }, {
+    xclass: 'uploader-htmlButton'
   });
 
   return HtmlButton;

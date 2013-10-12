@@ -9,7 +9,8 @@ define('bui/uploader', function (require) {
 
   BUI.mix(Uploader, {
     Uploader: require('bui/uploader/uploader'),
-    Queue: require('bui/uploader/queue')
+    Queue: require('bui/uploader/queue'),
+    Theme: require('bui/uploader/theme')
   });
 
   return Uploader;

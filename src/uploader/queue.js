@@ -42,9 +42,6 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
     }
   }, {
     ATTRS: {
-      itemCls: {
-        value: CLS_QUEUE
-      },
       itemTpl: {
         value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
       },
@@ -68,31 +65,6 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   }, { 
     xclass: 'queue'
   });
-
-  
-  var themes = {};
-  var Theme = function(){
-  }
-
-  Theme.prototype = {
-    createQueue: function(themeName, config){
-      var _self = this,
-        theme = _self.getTheme(themeName) || {},
-        queue;
-      theme = BUI.mix(theme, config);
-      queue = new Queue(theme);
-      return queue;
-    },
-    addTheme: function(name, config){
-      themes[name] = config;
-    },
-    getTheme: function(name){
-      return themes[name];
-    }
-  };
-
-  Queue.Theme = new Theme();
-
   return Queue;
 
 });

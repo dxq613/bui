@@ -45,7 +45,8 @@ define('bui/uploader/button/swfButton', function (require) {
     },
     _initSwfUploader: function(){
       var _self = this,
-        buttonEl = _self.get('el').find('.bui-uploader-button-wrap'),
+        buttonCls = _self.get('buttonCls'),
+        buttonEl = _self.get('el').find('.' + buttonCls),
         flashCfg = _self.get('flash'),
         swfTpl = _self.get('swfTpl'),
         swfUploader;
@@ -75,7 +76,7 @@ define('bui/uploader/button/swfButton', function (require) {
       },
       flash:{
         value:{
-          src:'http://a.tbcdn.cn/s/kissy/gallery/uploader/1.4/plugins/ajbridge/uploader.swf',
+          src:'http://g.tbcdn.cn/fi/bui/uploader/uploader.swf',
           params:{
             allowscriptaccess: 'always',
             bgcolor:"#fff",
@@ -98,6 +99,8 @@ define('bui/uploader/button/swfButton', function (require) {
         value: SwfButtonView
       }
     }
+  }, {
+    xclass: 'uploader-swfButton'
   });
 
   return SwfButton;

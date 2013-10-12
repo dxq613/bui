@@ -152,16 +152,11 @@ define('bui/uploader/button/base', function(require) {
   }
 
   baseView.prototype = {
-    _uiSetButtonCls: function (v) {
-      var _self = this,
-        buttonCls = _self.get('buttonCls'),
-        buttonEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON);
-      buttonEl.addClass(buttonCls);
-    },
     _uiSetText: function (v) {
       var _self = this,
         text = _self.get('text'),
-        textEl = _self.get('el').find('.' + CLS_UPLOADER_BUTTON_TEXT);
+        textCls = _self.get('textCls'),
+        textEl = _self.get('el').find('.' + textCls);
       textEl.text(text);
     }
   }
@@ -172,13 +167,12 @@ define('bui/uploader/button/base', function(require) {
   }
 
   base.ATTRS = {
-    elCls: {
-      value: CLS_UPLOADER_BUTTON
-    },
-    buttonCls:{
+    buttonCls: {
+      value: CLS_UPLOADER_BUTTON + '-wrap',
       view: true
     },
     textCls: {
+      value: CLS_UPLOADER_BUTTON_TEXT,
       view: true
     },
     text: {
@@ -187,7 +181,7 @@ define('bui/uploader/button/base', function(require) {
     },
     tpl: {
       view: true,
-      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '  {buttonCls}"><span class="' + CLS_UPLOADER_BUTTON_TEXT + ' {textCls}">{text}</span></a>'
+      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '"><span class="' + CLS_UPLOADER_BUTTON_TEXT + '">{text}</span></a>'
     },
     /**
      * 是否可用,false为可用

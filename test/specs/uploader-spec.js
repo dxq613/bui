@@ -24,7 +24,6 @@ BUI.use(['bui/uploader/button/htmlButton', 'bui/uploader/button/swfButton'], fun
   var htmlButton = new HtmlButton({
       name: 'filedata',
       text: '请选择',
-      buttonCls: 'button-cls',
       render: "#J_HtmlButton",
       filter: {desc: 'png'}
     }),
@@ -41,9 +40,6 @@ BUI.use(['bui/uploader/button/htmlButton', 'bui/uploader/button/swfButton'], fun
     it('测试input是否生成功能', function(){
       expect(el.find('input').length).not.toBe(0);
     });
-    it('测试buttonCls设置是否正确', function(){
-      expect(el.find('.button-cls').length).not.toBe(0);
-    })
     it('测试name是否设置正确', function(){
       expect(el.find('input').attr('name')).toBe(htmlButton.get('name'));
     });

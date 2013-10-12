@@ -1217,20 +1217,51 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   }, { 
     xclass: 'queue'
   });
+  return Queue;
 
-  
+});/**
+ * @fileoverview 文件上传主题的处理
+ * @author 索丘 <zengyue.yezy@alibaba-inc.com>
+ **/
+define('bui/uploader/theme', function (require) {
+
+  var BUI = require('bui/common'),
+    Queue = require('bui/uploader/queue'),
+    HtmlButton = require('bui/uploader/button/htmlButton'),
+    SwfButton = require('bui/uploader/button/swfButton');
+
   var themes = {};
-  var Theme = function(){
-  }
 
-  Theme.prototype = {
+  var Theme = {
+    /**
+     * 根据上传的类型获取实例化button的类
+     * @private
+     * @param  {String} type 上传的类型
+     * @return {Class}
+     */
+    _getButtonClass: function(type) {
+      var _self = this;
+      if(type === 'ajax' || type === 'iframe'){
+        return HtmlButton;
+      }
+      else{
+        return SwfButton;
+      }
+    },
+    createButton: function(themeName, config, type){
+      var _self = this,
+        theme = _self.getTheme(themeName) || {},
+        buttonCfg = theme.button || {},
+        buttonClass = _self._getButtonClass(theme.type || type);
+      buttonCfg = BUI.mix(buttonCfg, config);
+      return new buttonClass(buttonCfg);
+    },
     createQueue: function(themeName, config){
       var _self = this,
         theme = _self.getTheme(themeName) || {},
-        queue;
-      theme = BUI.mix(theme, config);
-      queue = new Queue(theme);
-      return queue;
+        queueCfg = theme.queue || {};
+      queueCfg = BUI.mix(queueCfg, config);
+      return new Queue(queueCfg);
     },
     addTheme: function(name, config){
       themes[name] = config;
@@ -1240,9 +1271,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
     }
   };
 
-  Queue.Theme = new Theme();
-
-  return Queue;
+  return Theme;
 
 });/**
  * @fileoverview 异步文件上传组件
@@ -1252,9 +1281,7 @@ define('bui/uploader/uploader', function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
-    HtmlButton = require('bui/uploader/button/htmlButton'),
-    SwfButton = require('bui/uploader/button/swfButton'),
-    Queue = require('bui/uploader/queue'),
+    Theme = require('bui/uploader/theme'),
     Ajax = require('bui/uploader/type/ajax'),
     Flash = require('bui/uploader/type/flash');//,
     // Iframe = require('bui/uploader/type/iframe');
@@ -1286,22 +1313,7 @@ define('bui/uploader/uploader', function (require) {
       //初始化进行上传的类
       _self._initUploaderType();
     },
-    /**
-     * 根据上传的类型获取实例化button的类
-     * @private
-     * @param  {String} type 上传的类型
-     * @return {Class}
-     */
-    _getButtonClass: function(type) {
-      var _self = this,
-        types = _self.get('types');
-      if(type === types.AJAX || type === types.IFRAME){
-        return HtmlButton;
-      }
-      else{
-        return SwfButton;
-      }
-    },
+    
     /**
      * 获取上传的类
      * @return {[type]} [description]
@@ -1345,9 +1357,10 @@ define('bui/uploader/uploader', function (require) {
      */
     _initButton: function(){
       var _self = this,
+        theme = _self.get('theme'),
         type = _self.get('type'),
-        ButtonClass = _self._getButtonClass(type),
-        button = new ButtonClass(_self._getUserConfig(['text', 'buttonCls', 'name', 'multiple', 'filter']));
+        config = _self._getUserConfig(['render', 'text', 'buttonCls', 'name', 'multiple', 'filter']),
+        button = Theme.createButton(theme, config, type);
       _self.set('button', button);
     },
     /**
@@ -1357,10 +1370,9 @@ define('bui/uploader/uploader', function (require) {
     _initQueue: function(){
       var _self = this,
         queue = _self.get('queue'),
-        render = _self.get('render'),
         theme = _self.get('theme');
       if (!queue) {
-        queue = Queue.Theme.createQueue(theme, _self._getUserConfig(['render']));
+        queue = Theme.createQueue(theme, _self._getUserConfig(['render']));
         _self.set('queue', queue);
       };
     },
@@ -1393,18 +1405,6 @@ define('bui/uploader/uploader', function (require) {
         uploaderType = new UploaderType(_self._getUserConfig(['url', 'data']));
         uploaderType.set('uploader', _self);
       _self.set('uploaderType', uploaderType);
-    },
-    /**
-     * 渲染button, ajax和iframe用原生的input[type=file], flash的需要加载flash组件
-     * @private
-     */
-    _renderButton: function(){
-      var _self = this,
-        el = _self.get('view').get('el'),
-        button = _self.get('button');
-
-      button.set('render', el);
-      button.render();
     },
     _bindButton: function () {
       var _self = this,
@@ -1522,7 +1522,7 @@ define('bui/uploader/uploader', function (require) {
     },
     renderUI: function(){
       var _self = this;
-      _self._renderButton();
+      _self.get('button').render();
       _self.get('queue').render();
     },
     bindUI: function () {
@@ -1609,7 +1609,8 @@ define('bui/uploader', function (require) {
 
   BUI.mix(Uploader, {
     Uploader: require('bui/uploader/uploader'),
-    Queue: require('bui/uploader/queue')
+    Queue: require('bui/uploader/queue'),
+    Theme: require('bui/uploader/theme')
   });
 
   return Uploader;
