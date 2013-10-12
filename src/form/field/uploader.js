@@ -57,6 +57,9 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         value : '<input type="hidden"/>'
       },
       uploader: {
+      },
+      value:{
+        value: []
       }
     }
   },{
