@@ -6535,7 +6535,6 @@ define('bui/component/uibase/selection',function () {
          *   list.setSelected(item);
          * </code></pre>
          * @param {Object} item 记录或者子控件
-         * @param {BUI.Component.Controller|Object} element 子控件或者DOM结构
          */
         setSelected: function(item){
             var _self = this,

@@ -8072,7 +8072,6 @@ define('bui/component/uibase/selection',function () {
          *   list.setSelected(item);
          * </code></pre>
          * @param {Object} item \u8bb0\u5f55\u6216\u8005\u5b50\u63a7\u4ef6
-         * @param {BUI.Component.Controller|Object} element \u5b50\u63a7\u4ef6\u6216\u8005DOM\u7ed3\u6784
          */
         setSelected: function(item){
             var _self = this,
@@ -30272,7 +30271,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         cellsTpl = [],
         rowEl;
 
-      $.each(columns, function (index,column) {
+      BUI.each(columns, function (column) {
         var dataIndex = column.get('dataIndex');
         cellsTpl.push(_self._getCellTpl(column, dataIndex, record,index));
       });
@@ -30958,14 +30957,6 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
 
       _self.on('itemsshow',function(){
         _self.fire('aftershow');
-
-        if(_self.get('emptyDataTpl')){
-          if(store && store.getCount() == 0){
-            _self.get('view').showEmptyText();
-          }else{
-            _self.get('view').clearEmptyText();
-          }
-        }
       });
 
       _self.on('itemsclear',function(){
@@ -31077,7 +31068,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
               pageSize : store.pageSize
             };
             if(bar.pagingBar !== true){
-              pagingBarCfg = S.merge(pagingBarCfg, bar.pagingBar);
+              pagingBarCfg = BUI.merge(pagingBarCfg, bar.pagingBar);
             }
             bar.children.push(pagingBarCfg);
           }
@@ -31136,6 +31127,22 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         header.setTableWidth();
       }
       
+    },
+    /**
+     * \u52a0\u8f7d\u6570\u636e
+     * @protected
+     */
+    onLoad : function(){
+      var _self = this,
+        store = _self.get('store');
+      grid.superclass.onLoad.call(this);
+      if(_self.get('emptyDataTpl')){ //\u521d\u59cb\u5316\u7684\u65f6\u5019\u4e0d\u663e\u793a\u7a7a\u767d\u6570\u636e\u7684\u6587\u672c
+        if(store && store.getCount() == 0){
+          _self.get('view').showEmptyText();
+        }else{
+          _self.get('view').clearEmptyText();
+        }
+      }
     }
   },{
     ATTRS : {
@@ -31665,7 +31672,8 @@ define('bui/grid/format',function (require) {
  */
 ;(function(){
 var BASE = 'bui/grid/plugins/';
-define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
+define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',
+	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber'],function (r) {
 	var BUI = r('bui/common'),
 		Selection = r(BASE + 'selection'),
 
@@ -31680,7 +31688,8 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 			DialogEditing : r(BASE + 'dialogediting'),
 			AutoFit : r(BASE + 'autofit'),
 			GridMenu : r(BASE + 'menu'),
-			Summary : r(BASE + 'summary')
+			Summary : r(BASE + 'summary'),
+			RowNumber : r(BASE + 'rownumber')
 		});
 		
 	return Plugins;
@@ -34007,6 +34016,55 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   });
 
   return Dialog;
+});define('bui/grid/plugins/rownumber',function (require) {
+
+  var CLS_NUMBER = 'x-grid-rownumber';
+  function RowNumber(config){
+    RowNumber.superclass.constructor.call(this, config);
+  }
+
+  BUI.extend(RowNumber,BUI.Base);
+
+  RowNumber.ATTRS = 
+  /**
+   * @lends BUI.Grid.Plugins.CheckSelection.prototype
+   * @ignore
+   */ 
+  {
+    /**
+    * column's width which contains the checkbox
+    */
+    width : {
+      value : 40
+    },
+    /**
+    * @private
+    */
+    column : {
+      
+    }
+  };
+
+  BUI.augment(RowNumber, 
+  {
+    createDom : function(grid){
+      var _self = this;
+      var cfg = {
+            title : '',
+            width : _self.get('width'),
+            fixed : true,
+            resizable:false,
+            sortable : false,
+            renderer : function(value,obj,index){return index + 1;},
+            elCls : CLS_NUMBER
+        },
+        column = grid.addColumn(cfg,0);
+      _self.set('column',column);
+    }
+  });
+  
+  return RowNumber;
+  
 });/**
  * @fileOverview \u9009\u62e9\u6846\u547d\u540d\u7a7a\u95f4\u5165\u53e3\u6587\u4ef6
  * @ignore

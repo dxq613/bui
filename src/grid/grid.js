@@ -84,7 +84,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         cellsTpl = [],
         rowEl;
 
-      $.each(columns, function (index,column) {
+      BUI.each(columns, function (column) {
         var dataIndex = column.get('dataIndex');
         cellsTpl.push(_self._getCellTpl(column, dataIndex, record,index));
       });
@@ -770,14 +770,6 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
 
       _self.on('itemsshow',function(){
         _self.fire('aftershow');
-
-        if(_self.get('emptyDataTpl')){
-          if(store && store.getCount() == 0){
-            _self.get('view').showEmptyText();
-          }else{
-            _self.get('view').clearEmptyText();
-          }
-        }
       });
 
       _self.on('itemsclear',function(){
@@ -889,7 +881,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
               pageSize : store.pageSize
             };
             if(bar.pagingBar !== true){
-              pagingBarCfg = S.merge(pagingBarCfg, bar.pagingBar);
+              pagingBarCfg = BUI.merge(pagingBarCfg, bar.pagingBar);
             }
             bar.children.push(pagingBarCfg);
           }
@@ -948,6 +940,22 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         header.setTableWidth();
       }
       
+    },
+    /**
+     * 加载数据
+     * @protected
+     */
+    onLoad : function(){
+      var _self = this,
+        store = _self.get('store');
+      grid.superclass.onLoad.call(this);
+      if(_self.get('emptyDataTpl')){ //初始化的时候不显示空白数据的文本
+        if(store && store.getCount() == 0){
+          _self.get('view').showEmptyText();
+        }else{
+          _self.get('view').clearEmptyText();
+        }
+      }
     }
   },{
     ATTRS : {

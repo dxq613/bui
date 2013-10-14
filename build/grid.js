@@ -1480,7 +1480,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         cellsTpl = [],
         rowEl;
 
-      $.each(columns, function (index,column) {
+      BUI.each(columns, function (column) {
         var dataIndex = column.get('dataIndex');
         cellsTpl.push(_self._getCellTpl(column, dataIndex, record,index));
       });
@@ -2166,14 +2166,6 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
 
       _self.on('itemsshow',function(){
         _self.fire('aftershow');
-
-        if(_self.get('emptyDataTpl')){
-          if(store && store.getCount() == 0){
-            _self.get('view').showEmptyText();
-          }else{
-            _self.get('view').clearEmptyText();
-          }
-        }
       });
 
       _self.on('itemsclear',function(){
@@ -2285,7 +2277,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
               pageSize : store.pageSize
             };
             if(bar.pagingBar !== true){
-              pagingBarCfg = S.merge(pagingBarCfg, bar.pagingBar);
+              pagingBarCfg = BUI.merge(pagingBarCfg, bar.pagingBar);
             }
             bar.children.push(pagingBarCfg);
           }
@@ -2344,6 +2336,22 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         header.setTableWidth();
       }
       
+    },
+    /**
+     * 加载数据
+     * @protected
+     */
+    onLoad : function(){
+      var _self = this,
+        store = _self.get('store');
+      grid.superclass.onLoad.call(this);
+      if(_self.get('emptyDataTpl')){ //初始化的时候不显示空白数据的文本
+        if(store && store.getCount() == 0){
+          _self.get('view').showEmptyText();
+        }else{
+          _self.get('view').clearEmptyText();
+        }
+      }
     }
   },{
     ATTRS : {
@@ -2873,7 +2881,8 @@ define('bui/grid/format',function (require) {
  */
 ;(function(){
 var BASE = 'bui/grid/plugins/';
-define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
+define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',
+	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber'],function (r) {
 	var BUI = r('bui/common'),
 		Selection = r(BASE + 'selection'),
 
@@ -2888,7 +2897,8 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 			DialogEditing : r(BASE + 'dialogediting'),
 			AutoFit : r(BASE + 'autofit'),
 			GridMenu : r(BASE + 'menu'),
-			Summary : r(BASE + 'summary')
+			Summary : r(BASE + 'summary'),
+			RowNumber : r(BASE + 'rownumber')
 		});
 		
 	return Plugins;
@@ -5215,4 +5225,53 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   });
 
   return Dialog;
+});define('bui/grid/plugins/rownumber',function (require) {
+
+  var CLS_NUMBER = 'x-grid-rownumber';
+  function RowNumber(config){
+    RowNumber.superclass.constructor.call(this, config);
+  }
+
+  BUI.extend(RowNumber,BUI.Base);
+
+  RowNumber.ATTRS = 
+  /**
+   * @lends BUI.Grid.Plugins.CheckSelection.prototype
+   * @ignore
+   */ 
+  {
+    /**
+    * column's width which contains the checkbox
+    */
+    width : {
+      value : 40
+    },
+    /**
+    * @private
+    */
+    column : {
+      
+    }
+  };
+
+  BUI.augment(RowNumber, 
+  {
+    createDom : function(grid){
+      var _self = this;
+      var cfg = {
+            title : '',
+            width : _self.get('width'),
+            fixed : true,
+            resizable:false,
+            sortable : false,
+            renderer : function(value,obj,index){return index + 1;},
+            elCls : CLS_NUMBER
+        },
+        column = grid.addColumn(cfg,0);
+      _self.set('column',column);
+    }
+  });
+  
+  return RowNumber;
+  
 });

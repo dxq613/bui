@@ -1176,6 +1176,18 @@ td.bui-grid-cell-empty {
 .bui-grid-summary-row:first-child td {
   border-top: 1px solid #c5c5c5;
 }
+td.x-grid-rownumber {
+  background-color: #e4e4e4;
+  background-image: -moz-linear-gradient(left, #ffffff, #e4e4e4);
+  background-image: -ms-linear-gradient(left, #ffffff, #e4e4e4);
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#ffffff), to(#e4e4e4));
+  background-image: -webkit-linear-gradient(left, #ffffff, #e4e4e4);
+  background-image: -o-linear-gradient(left, #ffffff, #e4e4e4);
+  background-image: linear-gradient(left, #ffffff, #e4e4e4);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#e4e4e4', GradientType=1);
+  text-align: center;
+}
 /*Mask*/
 .lp-ext-mask,
 .lp-el-mask,
