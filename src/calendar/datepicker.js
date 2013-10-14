@@ -35,7 +35,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         children = _self.get('children'),
         calendar = new Calendar({
           showTime : _self.get('showTime'),
-          lockTime : _self.get('lockTime')
+          lockTime : _self.get('lockTime'),
+          minDate: _self.get('minDate'),
+          maxDate: _self.get('maxDate')
         });
 	
 	  if (!_self.get('dateMask')) {
