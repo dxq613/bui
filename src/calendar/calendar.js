@@ -107,13 +107,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         var  timepicker = _self.get('timepicker') || _self._initTimePicker();
         children.push(timepicker);
         _self.set('timepicker',timepicker);
-      }else{
-        var footer = _self.get("footer"),
-        panelView = _self.get("panel").get("view"),
-        now = today();
-        if (panelView._isInRange(now)) {
-          footer.getItem("todayBtn").disable();
-        }
       }
     },
     //绑定事件
@@ -261,6 +254,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           xclass:'bar-item-button',
           text:'今天',
           btnCls: 'button button-small',
+		  id:'todayBtn',
           listeners:{
             click:function(){
               var day = today();
@@ -275,6 +269,17 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           elCls : PREFIX + 'calendar-footer',
           children:items
         });
+    },
+	//更新今天按钮的状态
+    _updateTodayBtnAble: function () {
+            var _self = this;
+            if (!_self.get('showTime')) {
+                var footer = _self.get("footer"),
+                    panelView = _self.get("panel").get("view"),
+                    now = today(),
+                    btn = footer.getItem("todayBtn");
+                panelView._isInRange(now) ? btn.enable() : btn.disable();
+            }
     },
     //设置所选日期
     _uiSetSelectedDate : function(v){
@@ -299,11 +304,13 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     _uiSetMaxDate : function(v){
       var _self = this;
       _self.get('panel').set('maxDate',v);
+	  _self._updateTodayBtnAble();
     },
     //设置最小值
     _uiSetMinDate : function(v){
       var _self = this;
       _self.get('panel').set('minDate',v);
+	  _self._updateTodayBtnAble();
     }
 
   },{
