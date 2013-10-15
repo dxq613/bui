@@ -221,7 +221,8 @@ define('bui/uploader/uploader', function (require) {
           curUploadItem = _self.get('curUploadItem');
 
         BUI.mix(curUploadItem, {
-          url: result.url
+          url: result.url,
+          result: result
         });
         //设置对列中完成的文件
         queue.updateFileStatus(curUploadItem, 'success');
