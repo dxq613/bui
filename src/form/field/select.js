@@ -110,6 +110,21 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       }
     },
     /**
+     * 获取选中的文本
+     * @return {String} 选中的文本
+     */
+    getSelectedText : function(){
+      var _self = this,
+        select = _self.get('select'),
+        innerControl = _self.getInnerControl();
+      if(innerControl.is('select')){
+        var dom = innerControl[0];
+        return dom.options[dom.selectedIndex].text;
+      }else{
+        return select.getSelectedText();
+      }
+    },
+    /**
      * 获取tip显示对应的元素
      * @protected
      * @override

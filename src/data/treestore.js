@@ -244,7 +244,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       var _self = this;
 
       node = _self._add(node,parent,index);
-      _self.fire('add',{node : node,index : index});
+      _self.fire('add',{node : node,record : node,index : index});
       return node;
     },
     //
@@ -296,9 +296,25 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(parent.children.length === 0){
         parent.leaf = true;
       }
-      this.fire('remove',{node : node , index : index});
+      this.fire('remove',{node : node ,record : node , index : index});
       node.parent = null;
       return node;
+    },
+    /**
+    * 设置记录的值 ，触发 update 事件
+    * <pre><code>
+    *  store.setValue(obj,'value','new value');
+    * </code></pre>
+    * @param {Object} obj 修改的记录
+    * @param {String} field 修改的字段名
+    * @param {Object} value 修改的值
+    */
+    setValue : function(node,field,value){
+      var 
+        _self = this;
+        node[field] = value;
+
+      _self.fire('update',{node:node,record : node,field:field,value:value});
     },
     /**
      * 更新节点
@@ -310,7 +326,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {BUI.Data.Node} 更新节点
      */
     update : function(node){
-      this.fire('update',{node : node});
+      this.fire('update',{node : node,record : node});
     },
     /**
      * 返回缓存的数据，根节点的直接子节点集合

@@ -1,13 +1,14 @@
-BUI.use('bui/extensions/treegrid',function (TreeGrid) {
+BUI.use(['bui/extensions/treegrid','bui/grid'],function (TreeGrid,Grid) {
 
   var grid = new TreeGrid({
     render : '#t1',
     showLine : true,
     columns : [
-      {title : '名称',dataIndex : 'text'},
+      {title : '名称',dataIndex : 'text',editor : {xtype:'text'}},
       {title : '表头1',dataIndex : 'a'},
       {title : '表头2',dataIndex : 'b'}
     ],
+    plugins : [Grid.Plugins.CellEditing],
     nodes : [
       {text : '1',id : '1',a:'a1',b:'b1',children: [{text : '11',id : '11',a:'a11',b:'b11'}]},
       {text : '2',id : '2',a:'a2',b:'b2',expanded : true,children : [

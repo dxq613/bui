@@ -13180,7 +13180,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       var _self = this;
 
       node = _self._add(node,parent,index);
-      _self.fire('add',{node : node,index : index});
+      _self.fire('add',{node : node,record : node,index : index});
       return node;
     },
     //
@@ -13232,9 +13232,25 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(parent.children.length === 0){
         parent.leaf = true;
       }
-      this.fire('remove',{node : node , index : index});
+      this.fire('remove',{node : node ,record : node , index : index});
       node.parent = null;
       return node;
+    },
+    /**
+    * \u8bbe\u7f6e\u8bb0\u5f55\u7684\u503c \uff0c\u89e6\u53d1 update \u4e8b\u4ef6
+    * <pre><code>
+    *  store.setValue(obj,'value','new value');
+    * </code></pre>
+    * @param {Object} obj \u4fee\u6539\u7684\u8bb0\u5f55
+    * @param {String} field \u4fee\u6539\u7684\u5b57\u6bb5\u540d
+    * @param {Object} value \u4fee\u6539\u7684\u503c
+    */
+    setValue : function(node,field,value){
+      var 
+        _self = this;
+        node[field] = value;
+
+      _self.fire('update',{node:node,record : node,field:field,value:value});
     },
     /**
      * \u66f4\u65b0\u8282\u70b9
@@ -13246,7 +13262,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {BUI.Data.Node} \u66f4\u65b0\u8282\u70b9
      */
     update : function(node){
-      this.fire('update',{node : node});
+      this.fire('update',{node : node,record : node});
     },
     /**
      * \u8fd4\u56de\u7f13\u5b58\u7684\u6570\u636e\uff0c\u6839\u8282\u70b9\u7684\u76f4\u63a5\u5b50\u8282\u70b9\u96c6\u5408
@@ -18362,6 +18378,21 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       innerControl.val(value);
       if(select && select.set &&  select.getSelectedValue() !== value){
         select.setSelectedValue(value);
+      }
+    },
+    /**
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u6587\u672c
+     * @return {String} \u9009\u4e2d\u7684\u6587\u672c
+     */
+    getSelectedText : function(){
+      var _self = this,
+        select = _self.get('select'),
+        innerControl = _self.getInnerControl();
+      if(innerControl.is('select')){
+        var dom = innerControl[0];
+        return dom.options[dom.selectedIndex].text;
+      }else{
+        return select.getSelectedText();
       }
     },
     /**

@@ -1863,6 +1863,14 @@ table {
 .table-striped tbody tr:nth-child(odd) th {
   background-color: #f2f2f2;
 }
+.table-bordered.table-striped tbody tr:nth-child(odd) td,
+.table-bordered.table-striped tbody tr:nth-child(odd) th {
+  background-color: #ffffff;
+}
+.table-bordered.table-striped tbody tr:nth-child(even) td,
+.table-bordered.table-striped tbody tr:nth-child(even) th {
+  background-color: #f2f2f2;
+}
 .table tbody tr:hover td,
 .table tbody tr:hover th {
   background-color: #f0f0f0;

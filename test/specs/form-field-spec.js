@@ -484,6 +484,11 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
     it('测试初始化值',function(){
       expect(selectField.get('value')).toBe(select.getSelectedValue());
     });
+
+
+    it('获取文本',function(){
+      expect(selectField.getSelectedText()).toBe(select.getSelectedText());
+    });
     
   });
 
@@ -497,6 +502,7 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
       selectField.set('value',val);
       expect(select.getSelectedValue()).toBe(val);
     });
+
 
     it('更改选择框值',function(){
       var val =  select.getSelectedValue();
@@ -584,6 +590,10 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
       var value = select.get('el').attr('value');
       expect(select.get('value')).toBe(value);
     });
+
+    it('测试选中的文本',function(){
+      expect(select.getSelectedText()).toBe('选项三');
+    });
   });
 
   describe('测试操作',function() {
@@ -594,6 +604,9 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
           {text:'选项3',value:'3'}];
       select.setItems(items);
       expect(el.val()).toBe(select.get('value'));
+    });
+    it('测试选中的文本',function(){
+      expect(select.getSelectedText()).toBe('选项3');
     });
   });
 });
