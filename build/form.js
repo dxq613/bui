@@ -2081,7 +2081,7 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
     Checkbox : require(BASE + 'checkboxfield'),
     Plain : require(BASE + 'plainfield'),
     List : require(BASE + 'listfield'),
-    Uploader : require(BASE + 'uploaderfield')
+    Uploader : require(BASE + 'uploaderfield'),
     CheckList : require(BASE + 'checklistfield'),
     RadioList : require(BASE + 'radiolistfield')
   });
