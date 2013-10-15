@@ -320,5 +320,62 @@ BUI.use('bui/tree/treelist',function (TreeList) {
   });
 });
 
+BUI.use('bui/tree/treelist',function (TreeList) {
+  var nodes = [
+      {text : '1',id : '1',leaf : false,children : [{text : '11',id : '11'},{text : '12',id : '12'}]},
+      {text : '2',id : '2',children : [
+          {text : '21',id : '21',children : [{text : '211',id : '211'},{text : '212',id : '212'}]},
+          {text : '22',id : '22'}
+      ]},
+      {text : '3',id : '3',children : [
+        {id : '31',text : '31',children : [{text : '311',id : '311'},{text : '312',id : '312'}]},
+        {id : '32',text : '32',children : [{text : '321',id : '321'},{text : '322',id : '322'}]}
+      ]},
+      {text : '4',id : '4'}
+    ];
+  var tree = new TreeList({
+    render : '#t8',
+    showLine : true,
+    expandEvent : 'itemclick',
+    collapseEvent : null,
+    accordion : true,
+    nodes : nodes
+  });
+  tree.render();
+  var el = tree.get('el');
+
+  describe('测试手风琴式展开',function(){
+    it('测试展开节点',function(){
+      tree.expandNode('2');
+      tree.expandNode('3');
+      expect(tree.findNode('2').expanded).toBe(false);
+      expect(tree.findNode('3').expanded).toBe(true);
+    });
+    it('测试展开兄弟节点',function(){
+      tree.expandNode('31');
+      tree.expandNode('32');
+      expect(tree.findNode('31').expanded).toBe(false);
+      expect(tree.findNode('32').expanded).toBe(true);
+    });
+    it('测试展开其他层级节点',function(){
+      tree.expandNode('21');
+      expect(tree.findNode('3').expanded).toBe(false);
+      expect(tree.findNode('21').expanded).toBe(true);
+      expect(tree.findNode('2').expanded).toBe(true);
+    });
+    it('触发展开事件',function(){
+      var node = tree.findNode('3'),
+        element = tree.findElement(node);
+      $(element).trigger('click');
+      waits(100);
+      runs(function(){
+        expect(tree.findNode('2').expanded).toBe(false);
+        expect(tree.findNode('3').expanded).toBe(true);
+      });
+    });/**/
+  });
+});
+
+
 
 /**/

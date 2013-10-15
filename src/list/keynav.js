@@ -167,6 +167,7 @@ define('bui/list/keynav',function () {
      * @param  {jQuery.Event} ev 事件对象
      */
     handleNavUp : function (ev) {
+
       var _self = this,
         upperItem = _self._getUpperItem();
       _self.setHighlighted(upperItem);
@@ -177,6 +178,7 @@ define('bui/list/keynav',function () {
      * @param  {jQuery.Event} ev 事件对象
      */
     handleNavDown : function (ev) {
+      
       this.setHighlighted(this._getDownItem());
     },
     /**
@@ -203,9 +205,12 @@ define('bui/list/keynav',function () {
      */
     handleNavEnter : function (ev) {
       var _self = this,
-        current = _self._getCurrentItem();
+        current = _self._getCurrentItem(),
+        element;
       if(current){
-        _self.setSelected(current);
+        element = _self.findElement(current);
+        //_self.setSelected(current);
+        $(element).trigger('click');
       }
     },
     /**

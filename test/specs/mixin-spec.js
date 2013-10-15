@@ -130,7 +130,7 @@ BUI.use('bui/overlay',function(Overlay){
       node:'#t1',
       points: ['cc','cc']
     },
-    visibleMode:'display',
+    //visibleMode:'display',
     effect:{
       effect:'linear',
       duration:2000

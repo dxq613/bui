@@ -1,10 +1,14 @@
 .x-editor-tips{
+
   .border-radius(@radius);
   border : 1px solid @errorBorder;
   background-color:@white;
   padding: 4px;
 }
 
+.bui-editor{
+  z-index: @zindexEditor;
+}
 
 .bui-record-editor{
   padding: 3px 0 3px 3px;
@@ -37,4 +41,13 @@
     border: 1px solid @borderColor;
   }
   
+}
+
+.bui-editor .bui-form-check-field{
+  background-color: @white;
+  text-align: center;
+}
+
+.bui-editor .bui-form-check-field input{
+  vertical-align:middle;
 }

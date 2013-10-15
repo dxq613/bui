@@ -3,9 +3,20 @@
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  **/
 define('bui/uploader/type/ajax',function(require) {
-    var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:';
+    var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:',
+        win = window,
+        doc = document;
 
     var UploadType = require('bui/uploader/type/base');
+
+    function isSubDomain(hostname){
+        return win.location.host === doc.domain;
+    }
+
+    function endsWith (str, suffix) {
+        var ind = str.length - suffix.length;
+        return ind >= 0 && str.indexOf(suffix, ind) == ind;
+    }
 
     /**
      * @name AjaxType
@@ -83,14 +94,18 @@ define('bui/uploader/type/ajax',function(require) {
             });
             xhr.onload = function(ev){
                 var result = self._processResponse(xhr.responseText);
-                self.fire('complete', {result: result, file: file});
                 if(result && result.status === 1){
                     self.fire(AjaxType.event.SUCCESS, {result : result, file: file});
                 }
                 else{
                     self.fire(AjaxType.event.ERROR, {result : result, file: file});
                 }
+                self.fire('complete', {result: result, file: file});
             };
+            xhr.onerror = function(ev){
+                self.fire(AjaxType.event.ERROR, {file: file});
+                self.fire('complete', {file: file});
+            }
             xhr.open("POST", url, true);
             data.append("type", "ajax");
             xhr.send(data);
@@ -148,6 +163,11 @@ define('bui/uploader/type/ajax',function(require) {
         data: {
         },
         xhr: {
+        },
+        subDomain: {
+            value: {
+                proxy: '/sub_domain_proxy.html'
+            }
         }
     }
     });

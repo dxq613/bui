@@ -30,7 +30,7 @@
             <label><input id="chk" name="c1" type="checkbox" value="0"/>显示</label> 
           </div>
           <div id="g1" class="bui-form-group" data-depends="{'#chk:checked':['show'],'#chk:unchecked':['hide'],'#r1:checked':['enable'],'#r2:checked':['clearFields','disable']}">
-            <div class="bui-form-field" data-tip="{text:'请输入'}" data-rules="{required:true,max : 100}" name="a">
+            <div class="bui-form-field" data-tip="{text:'请输入'}" data-rules="{required:true,regexp : /^\d+$/}" name="a">
               <label>文本1：</label><input type="text">
             </div>
             <div>
@@ -73,7 +73,7 @@
           <div class="control-group span8">
             <label class="control-label"><s>*</s>供应商编码：</label>
             <div class="controls">
-              <input name="id"  type="text" data-rules="{required:true,length:5}" class="input-normal control-text">
+              <input name="a"  type="text" data-rules="{required:true,minlength:5}" data-remote='data/remote.php' class="input-normal control-text">
             </div>
           </div>
           <div class="control-group span8">

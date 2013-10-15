@@ -484,6 +484,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             return this;
         },
         /**
+         * 控件获取焦点
+         */
+        focus : function(){
+            if(this.get('focusable')){
+                this.set('focused',true);
+            }
+        },
+        /**
          * 子组件将要渲染到的节点，在 render 类上覆盖对应方法
          * @protected
          * @ignore

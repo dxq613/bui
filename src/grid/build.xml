@@ -27,6 +27,7 @@
 			<path path="grid.js"/>
 			<path path="util.js"/>
 			  <path path="plugins/base.js"/>
+			  <path path="plugins/autofit.js"/>
 			  <path path="plugins/gridmenu.js"/>
 			  <path path="plugins/cascade.js"/>
 			  <path path="plugins/selection.js"/>
@@ -35,6 +36,7 @@
 			  <path path="plugins/cellediting.js"/>
 			  <path path="plugins/rowediting.js"/>
 			  <path path="plugins/dialog.js"/>
+			  <path path="plugins/rownumber.js"/>
 		</concat>
   </target>
 

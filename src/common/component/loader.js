@@ -202,7 +202,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      */
     ajaxOptions : {
       value : {
-        method : 'get',
+        type : 'get',
         cache : false
       }
     },
@@ -352,8 +352,10 @@ define('bui/component/loader',['bui/util'],function (require) {
         lastParams = _self.get('lastParams'),
         appendParams = _self.get('appendParams');
 
-      BUI.mix(true,lastParams,appendParams,params);
-      params = BUI.cloneObject(lastParams);
+      //BUI.mix(true,lastParams,appendParams,params);
+      params = params || lastParams;
+      params = BUI.merge(appendParams,params); //BUI.cloneObject(lastParams);
+      _self.set('lastParams',params);
       //未提供加载地址，阻止加载
       if(!url){
         return;

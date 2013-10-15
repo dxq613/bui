@@ -40,7 +40,7 @@ BUI.use('bui/form/basefield',function  (Field) {
 
     describe('修改值，测试异步验证',function () {
 
-      it('清空数据',function () {
+      it('清空数据,不进行验证',function () {
         textField.set('value','');
         waits(600);
         runs(function () {
@@ -84,6 +84,13 @@ BUI.use('bui/form/basefield',function  (Field) {
             expect(textField.get('isLoading')).toBe(false);
           });
         });
+      });
+
+      it('测试缓存',function(){
+        textField.set('value','12345678910');
+        expect(!!textField.get('error')).not.toBe(false);
+        expect(textField.get('isLoading')).toBe(false);
+
       });
     });
   }); 

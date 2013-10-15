@@ -60,7 +60,7 @@
     <div class="row">
       <div id="l6" class="span8"></div>
       <div  id="l7"  class="span8"></div>
-      <div class="span8"></div>
+      <div id="l8" class="span8"></div>
     </div>
   </div>
     <?php $url = 'bui/list'?>

@@ -255,12 +255,14 @@ define('bui/component/uibase/selection',function () {
          *   list.setSelected(item);
          * </code></pre>
          * @param {Object} item 记录或者子控件
-         * @param {BUI.Component.Controller|Object} element 子控件或者DOM结构
          */
         setSelected: function(item){
             var _self = this,
                 multipleSelect = _self.get('multipleSelect');
-                
+
+            if(!_self.isItemSelectable(item)){
+                return;
+            }    
             if(!multipleSelect){
                 var selectedItem = _self.getSelected();
                 if(item != selectedItem){
@@ -282,6 +284,15 @@ define('bui/component/uibase/selection',function () {
 
         },
         /**
+         * 选项是否可以选中
+         * @protected
+         * @param {*} item 选项
+         * @return {Boolean} 选项是否可以选中
+         */
+        isItemSelectable : function(item){
+          return true;
+        },
+        /**
          * 设置选项的选中状态
          * @param {*} item 选项
          * @param {Boolean} selected 选中或者取消选中
@@ -290,6 +301,7 @@ define('bui/component/uibase/selection',function () {
         setItemSelected : function(item,selected){
             var _self = this,
                 isSelected;
+            
             //当前状态等于要设置的状态时，不触发改变事件
             if(item){
                 isSelected =  _self.isItemSelected(item);
@@ -297,7 +309,7 @@ define('bui/component/uibase/selection',function () {
                     return;
                 }
             }
-            if(_self.fire('beforeselectedchange') !== false){
+            if(_self.fire('beforeselectedchange',{item : item,selected : selected}) !== false){
                 _self.setItemSelectedStatus(item,selected);
             }
         },

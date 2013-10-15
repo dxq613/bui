@@ -34,9 +34,19 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this,
         children = _self.get('children'),
         calendar = new Calendar({
-          showTime : _self.get('showTime')
+          showTime : _self.get('showTime'),
+          lockTime : _self.get('lockTime'),
+          minDate: _self.get('minDate'),
+          maxDate: _self.get('maxDate')
         });
-
+	
+	  if (!_self.get('dateMask')) {
+        if (_self.get('showTime')) {
+            _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
+        } else {
+            _self.set('dateMask', 'yyyy-mm-dd');
+        }
+       }	
       children.push(calendar);
       _self.set('calendar',calendar);
     },
@@ -51,13 +61,17 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     setSelectedValue : function(val){
       var _self = this,
         calendar = this.get('calendar'),
-        date = DateUtil.parse(val);
+        date = DateUtil.parse(val,_self.get("dateMask"));
       date = date || new Date(new Date().setSeconds(0));
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
-        calendar.set('hour',date.getHours());
-        calendar.set('minute',date.getMinutes());
-        calendar.set('second',date.getSeconds());
+          var lockTime = this.get("lockTime"),
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:date.getHours(),
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:date.getMinutes(),
+              second = lockTime&&lockTime['second']?lockTime['second']:date.getSeconds();
+        calendar.set('hour',hour);
+        calendar.set('minute',minute);
+        calendar.set('second',second);
       }
     },
     /**
@@ -85,10 +99,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       return DateUtil.format(this.getSelectedValue(),this._getFormatType());
     },
     _getFormatType : function(){
-      if(this.get('showTime')){
-        return 'yyyy-mm-dd HH:MM:ss';
-      }
-      return 'yyyy-mm-dd';
+      return this.get('dateMask');
     },
     //设置最大值
     _uiSetMaxDate : function(v){
@@ -122,6 +133,19 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       showTime : {
         value:false
       },
+       /**
+       * 锁定时间选择
+       *<pre><code>
+       *  var calendar = new Calendar.Calendar({
+       *  render:'#calendar',
+       *  lockTime : {hour:00,minute:30} //表示锁定时为00,分为30分,秒无锁用户可选择
+       * });
+       * </code></pre>
+       *
+       * @type {Object}
+       */
+      lockTime :{
+      },
       /**
        * 最大日期
        * <pre><code>
@@ -150,6 +174,16 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        * @type {Date}
        */
       minDate : {
+
+      },
+	  /**
+       * 返回日期格式，如果不设置默认为 yyyy-mm-dd，时间选择为true时为 yyyy-mm-dd HH:MM:ss
+       * <pre><code>
+       *   calendar.set('dateMask','yyyy-mm-dd');
+       * </code></pre>
+       * @type {String}
+      */
+      dateMask: {
 
       },
       changeEvent:{

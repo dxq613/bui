@@ -10,7 +10,6 @@ define('bui/uploader/button/swfButton', function (require) {
     SwfUploader = require('bui/uploader/type/flash'),
     SWF = require('bui/uploader/button/swfButton/ajbridge');
 
-  var SWF_WRAPPER_ID_PREVFIX = 'bui-swf-uploader-wrapper-';
 
   var SwfButtonView = Component.View.extend([ButtonBase.View], {
   },{
@@ -76,7 +75,7 @@ define('bui/uploader/button/swfButton', function (require) {
       },
       flash:{
         value:{
-          src:'http://g.tbcdn.cn/fi/bui/uploader/uploader.swf',
+          src:seajs.pluginSDK.config.base + 'uploader/uploader.swf',
           params:{
             allowscriptaccess: 'always',
             bgcolor:"#fff",

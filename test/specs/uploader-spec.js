@@ -28,6 +28,7 @@ BUI.use(['bui/uploader/button/htmlButton', 'bui/uploader/button/swfButton'], fun
       filter: {desc: 'png'}
     }),
     swfButton = new SwfButton({
+      elCls: 'defaultTheme-button',
       render: '#J_SwfButton',
       text: '请选择'
     });

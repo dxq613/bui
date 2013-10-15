@@ -5,7 +5,8 @@
  */
 ;(function(){
 var BASE = 'bui/grid/plugins/';
-define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'dialogediting',BASE + 'menu',BASE + 'summary'],function (r) {
+define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',
+	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber'],function (r) {
 	var BUI = r('bui/common'),
 		Selection = r(BASE + 'selection'),
 
@@ -18,8 +19,10 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 			CellEditing : r(BASE + 'cellediting'),
 			RowEditing : r(BASE + 'rowediting'),
 			DialogEditing : r(BASE + 'dialogediting'),
+			AutoFit : r(BASE + 'autofit'),
 			GridMenu : r(BASE + 'menu'),
-			Summary : r(BASE + 'summary')
+			Summary : r(BASE + 'summary'),
+			RowNumber : r(BASE + 'rownumber')
 		});
 		
 	return Plugins;

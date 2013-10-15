@@ -1,4 +1,5 @@
 
+/**/
 BUI.use('bui/list',function (List) {
 
   var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}],
@@ -96,6 +97,12 @@ BUI.use('bui/list',function (List) {
       list.set('items',items1);
       expect(el.find('.bui-list-item').length).toBe(items1.length);
       expect(list.getSelection().length).toBe(0);
+    });
+
+    it('测试更改列表',function(){
+      list.setItems(BUI.cloneObject(items));
+      expect(list.getItems().length).toBe(items.length);
+      list.setItems(items1);
     });
     it('添加列表项',function(){
       var item = {text:'添加项',value:'new'}
@@ -214,6 +221,8 @@ BUI.use('bui/list',function (List) {
       expect(el.find('.bui-list-item').length).toBe(items1.length);
       expect(list.getSelection().length).toBe(0);
     });
+
+
     it('添加列表项',function(){
       var count = list.get('children').length,
         item = {text:'添加项',value:'new'}
@@ -392,6 +401,7 @@ BUI.use(['bui/list','bui/data'],function (List,Data) {
     list = new List.SimpleList({
       elCls:'bui-select-list',
       render : '#list3',
+      itemTpl : '<li><span class="x-radio"></span>{text}</li>',
       idField:'value',
       store:store
     });
@@ -422,11 +432,8 @@ BUI.use(['bui/list','bui/data'],function (List,Data) {
 
     
   });
-
-  
-
 });
-/**/
+
 
 
 BUI.use('bui/list',function (List) {
@@ -449,7 +456,7 @@ BUI.use('bui/list',function (List) {
   function testSelected(item,selected){
     var el = $(list.findElement(item));
     expect(el.hasClass('bui-list-item-selected')).toBe(selected);
-    expect(!!el.find('input').attr('checked')).toBe(selected);
+    //expect(!!el.find('input').attr('checked')).toBe(selected);
   }
   describe('测试listBox 生成',function(){
     it('测试容器生成',function(){
@@ -467,10 +474,7 @@ BUI.use('bui/list',function (List) {
         el = $(list.findElement(item));
       expect(item).not.toBe(null);
       expect(el.length).not.toBe(0);
-      expect(el.find('input').length).not.toBe(0);
-    });
-    it('测试禁止选中项生成',function(){
-
+      //expect(el.find('input').length).not.toBe(0);
     });
   });
 
@@ -531,25 +535,10 @@ BUI.use('bui/list',function (List) {
         });
       });
     });
-
-
-    it('测试点击checkbox',function(){
-      var item = list.getItem(2),
-          el = $(list.findElement(item)),
-          checkbox = el.find('input');
-
-      jasmine.simulate(checkbox[0],'click');
-      waits(1000);
-      runs(function(){
-        testSelected(item,true);
-       
-      });
-
-    });
   });
 
 });
-
+/*
 BUI.use('bui/list',function(List){
   describe('list srcNode',function(){
     var node = $('<section><ul><li class="item item-active" data-id="1">1</li><li  class="item" data-id="2">2</li><li  class="item" data-id="3">3</li><li class="item" data-id="4">4</li></ul></section>').appendTo('.container'),
@@ -574,4 +563,6 @@ BUI.use('bui/list',function(List){
     });
   });
 });
+
+*/
 

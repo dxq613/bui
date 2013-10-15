@@ -1506,7 +1506,7 @@ seajs._config = {
 var loaderPath = seajs.pluginSDK.util.loaderDir;
 seajs.config({
   map : [
-    ['.js', '-min.js']
+    [/.js$/, '-min.js']
   ],
   alias : {
     'bui' : loaderPath
@@ -1531,7 +1531,7 @@ BUI.setDebug = function (debug) {
   }else{
     seajs.config({
       map : [
-        ['.js', '-min.js']
+        [/.js$/, '-min.js']
       ]
     });
   }
@@ -2126,28 +2126,31 @@ define('bui/util',function(){
     */
     setField:function(form,fieldName,value){
       var fields = form.elements[fieldName];
-      if(BUI.isArray(fields)){
+      if(BUI.isArray(fields) || (fields && fields.length)){
         BUI.each(fields,function(field){
-          if(field.type === 'checkbox'){
-            if(field.value === value || BUI.Array.indexOf(field.value,value) !== -1){
+          formHelper._setFieldValue(field,value);
+        });
+      }else{
+        formHelper._setFieldValue(fields,value);
+      }
+    },
+    //设置字段的值
+    _setFieldValue : function(field,value){
+        if(field.type === 'checkbox'){
+            if(field.value == value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
               $(field).attr('checked',true);
             }else{
               $(field).attr('checked',false);  
             }
-          }else if(field.type === 'radio'){
-            if(field.value === value){
+        }else if(field.type === 'radio'){
+            if(field.value == value){
               $(field).attr('checked',true);
             }else{
               $(field).attr('checked',false); 
             }    
-          }else{
+        }else{
             $(field).val(value);
-          }
-        
-        });
-      }else{
-        $(fields).val(value);
-      }
+        }
     },
     /**
      * 获取表单字段值
@@ -3263,75 +3266,184 @@ define('bui/keycode',function () {
  * - 简单的本地化，对w（星期x）的支持
  * 
  */
-define('bui/date',function () {
+define('bui/date', function () {
 
     var dateRegex = /^(?:(?!0000)[0-9]{4}([-/.]+)(?:(?:0?[1-9]|1[0-2])\1(?:0?[1-9]|1[0-9]|2[0-8])|(?:0?[13-9]|1[0-2])\1(?:29|30)|(?:0?[13578]|1[02])\1(?:31))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)([-/.]?)0?2\2(?:29))(\s+([01]|([01][0-9]|2[0-3])):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9]))?$/;
-    function dateParse(data, s) {
 
-        var date = null;
-        s = s || '-';
-        //Convert to date
-        if (!(date instanceof Date)) {
-            if(BUI.isString(data)){
-                date = new Date(data.replace(/-/g,'/'));
-            }else{
-                date = new Date(data);
+    function dateParse(val, format) {
+		if(val instanceof Date){
+			return val;
+		}
+		if (typeof(format)=="undefined" || format==null || format=="") {
+			var checkList=new Array('y-m-d','yyyy-mm-dd','yyyy-mm-dd HH:MM:ss','H:M:s');
+			for (var i=0; i<checkList.length; i++) {
+					var d=dateParse(val,checkList[i]);
+					if (d!=null) { 
+						return d; 
+					}
+			}
+			return null;
+		};
+        val = val + "";
+        var i_val = 0;
+        var i_format = 0;
+        var c = "";
+        var token = "";
+        var x, y;
+        var now = new Date();
+        var year = now.getYear();
+        var month = now.getMonth() + 1;
+        var date = 1;
+        var hh = 00;
+        var mm = 00;
+        var ss = 00;
+        this.isInteger = function(val) {
+            return /^\d*$/.test(val);
+		};
+		this.getInt = function(str,i,minlength,maxlength) {
+			for (var x=maxlength; x>=minlength; x--) {
+				var token=str.substring(i,i+x);
+				if (token.length < minlength) { 
+					return null; 
+				}
+				if (this.isInteger(token)) { 
+					return token; 
+				}
+			}
+		return null;
+		};
+
+        while (i_format < format.length) {
+            c = format.charAt(i_format);
+            token = "";
+            while ((format.charAt(i_format) == c) && (i_format < format.length)) {
+                token += format.charAt(i_format++);
             }
-            
-        }
-        else {
-            return date;
-        }
-
-        // Validate
-        if (date instanceof Date && (date != 'Invalid Date') && !isNaN(date)) {
-            return date;
-        }
-        else {
-            var arr = data.toString().split(s);
-            if (arr.length == 3) {
-                date = new Date(arr[0], (parseInt(arr[1], 10) - 1), arr[2]);
-                if (date instanceof Date && (date != 'Invalid Date') && !isNaN(date)) {
-                    return date;
-                }
-            }
-        }
-        return null;
-
+            if (token=="yyyy" || token=="yy" || token=="y") {
+				if (token=="yyyy") { 
+					x=4;y=4; 
+				}
+				if (token=="yy") { 
+					x=2;y=2; 
+				}
+				if (token=="y") { 
+					x=2;y=4; 
+				}
+				year=this.getInt(val,i_val,x,y);
+				if (year==null) { 
+					return null; 
+				}
+				i_val += year.length;
+				if (year.length==2) {
+                    year = year>70?1900+(year-0):2000+(year-0);
+				}
+			}
+            else if (token=="mm"||token=="m") {
+				month=this.getInt(val,i_val,token.length,2);
+				if(month==null||(month<1)||(month>12)){
+					return null;
+				}
+				i_val+=month.length;
+			}
+			else if (token=="dd"||token=="d") {
+				date=this.getInt(val,i_val,token.length,2);
+				if(date==null||(date<1)||(date>31)){
+					return null;
+				}
+				i_val+=date.length;
+			}
+			else if (token=="hh"||token=="h") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<1)||(hh>12)){
+					return null;
+				}
+				i_val+=hh.length;
+			}
+			else if (token=="HH"||token=="H") {
+				hh=this.getInt(val,i_val,token.length,2);
+				if(hh==null||(hh<0)||(hh>23)){
+					return null;
+				}
+				i_val+=hh.length;
+			}
+			else if (token=="MM"||token=="M") {
+				mm=this.getInt(val,i_val,token.length,2);
+				if(mm==null||(mm<0)||(mm>59)){
+					return null;
+				}
+				i_val+=mm.length;
+			}
+			else if (token=="ss"||token=="s") {
+				ss=this.getInt(val,i_val,token.length,2);
+				if(ss==null||(ss<0)||(ss>59)){
+					return null;
+				}
+				i_val+=ss.length;
+			}
+			else {
+				if (val.substring(i_val,i_val+token.length)!=token) {
+					return null;
+				}
+				else {
+					i_val+=token.length;
+				}
+			}
+		}
+		if (i_val != val.length) { 
+			return null; 
+		}
+		if (month==2) {
+			if ( ( (year%4==0)&&(year%100 != 0) ) || (year%400==0) ) { // leap year
+				if (date > 29){ 
+					return null; 
+				}
+			}
+			else { 
+				if (date > 28) { 
+					return null; 
+				} 
+			}
+		}
+		if ((month==4)||(month==6)||(month==9)||(month==11)) {
+			if (date > 30) { 
+				return null; 
+			}
+		}
+		return new Date(year,month-1,date,hh,mm,ss);
     }
 
-    function   DateAdd(strInterval,   NumDay,   dtDate)   {   
-        var   dtTmp   =   new   Date(dtDate);   
-        if   (isNaN(dtTmp)){
-            dtTmp   =   new   Date(); 
-        }     
-        switch   (strInterval)   {   
-           case   's':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (1000   *   parseInt(NumDay))); 
-             break; 
-           case   'n':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (60000   *   parseInt(NumDay))); 
-             break; 
-           case   'h':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (3600000   *   parseInt(NumDay)));
-             break;
-           case   'd':
-             dtTmp =   new   Date(dtTmp.getTime()   +   (86400000   *   parseInt(NumDay)));
-             break;
-           case   'w':
-             dtTmp =   new   Date(dtTmp.getTime()   +   ((86400000   *   7)   *   parseInt(NumDay))); 
-             break;
-           case   'm':
-             dtTmp =   new   Date(dtTmp.getFullYear(),   (dtTmp.getMonth())+parseInt(NumDay),   dtTmp.getDate(),   dtTmp.getHours(),   dtTmp.getMinutes(),   dtTmp.getSeconds());
-             break;   
-           case   'y':
-             //alert(dtTmp.getFullYear());
-             dtTmp =   new   Date(dtTmp.getFullYear()+parseInt(NumDay),   dtTmp.getMonth(),   dtTmp.getDate(),   dtTmp.getHours(),   dtTmp.getMinutes(),   dtTmp.getSeconds());
-             //alert(dtTmp);
-             break;
+    function DateAdd(strInterval, NumDay, dtDate) {
+        var dtTmp = new Date(dtDate);
+        if (isNaN(dtTmp)) {
+            dtTmp = new Date();
+        }
+        switch (strInterval) {
+            case   's':
+                dtTmp = new Date(dtTmp.getTime() + (1000 * parseInt(NumDay)));
+                break;
+            case   'n':
+                dtTmp = new Date(dtTmp.getTime() + (60000 * parseInt(NumDay)));
+                break;
+            case   'h':
+                dtTmp = new Date(dtTmp.getTime() + (3600000 * parseInt(NumDay)));
+                break;
+            case   'd':
+                dtTmp = new Date(dtTmp.getTime() + (86400000 * parseInt(NumDay)));
+                break;
+            case   'w':
+                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * parseInt(NumDay)));
+                break;
+            case   'm':
+                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + parseInt(NumDay), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                break;
+            case   'y':
+                //alert(dtTmp.getFullYear());
+                dtTmp = new Date(dtTmp.getFullYear() + parseInt(NumDay), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                //alert(dtTmp);
+                break;
         }
         return dtTmp;
-    }   
+    }
 
     var dateFormat = function () {
         var token = /w{1}|d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloSZ]|"[^"]*"|'[^']*'/g,
@@ -3453,10 +3565,10 @@ define('bui/date',function () {
         };
     }();
 
-	/**
-	* 日期的工具方法
-	* @class BUI.Date
-	*/
+    /**
+     * 日期的工具方法
+     * @class BUI.Date
+     */
     var DateUtil = {
         /**
          * 日期加法
@@ -3464,64 +3576,64 @@ define('bui/date',function () {
          * @param {Number} Num         数量，如果为负数，则为减法
          * @param {Date} dtDate      起始日期，默认为此时
          */
-        add : function(strInterval,Num,dtDate){
-            return DateAdd(strInterval,Num,dtDate);
+        add: function (strInterval, Num, dtDate) {
+            return DateAdd(strInterval, Num, dtDate);
         },
         /**
          * 小时的加法
          * @param {Number} hours 小时
          * @param {Date} date 起始日期
          */
-        addHour : function(hours,date){
-            return DateAdd('h',hours,date);
+        addHour: function (hours, date) {
+            return DateAdd('h', hours, date);
         },
-         /**
+        /**
          * 分的加法
          * @param {Number} minutes 分
          * @param {Date} date 起始日期
          */
-        addMinute : function(minutes,date){
-            return DateAdd('n',minutes,date);
+        addMinute: function (minutes, date) {
+            return DateAdd('n', minutes, date);
         },
-         /**
+        /**
          * 秒的加法
          * @param {Number} seconds 秒
          * @param {Date} date 起始日期
          */
-        addSecond : function(seconds,date){
-            return DateAdd('s',seconds,date);
+        addSecond: function (seconds, date) {
+            return DateAdd('s', seconds, date);
         },
         /**
          * 天的加法
          * @param {Number} days 天数
          * @param {Date} date 起始日期
          */
-        addDay : function(days,date){ 
-            return DateAdd('d',days,date);
+        addDay: function (days, date) {
+            return DateAdd('d', days, date);
         },
         /**
          * 增加周
          * @param {Number} weeks 周数
          * @param {Date} date  起始日期
          */
-        addWeek : function(weeks,date){
-            return DateAdd('w',weeks,date);
+        addWeek: function (weeks, date) {
+            return DateAdd('w', weeks, date);
         },
         /**
          * 增加月
          * @param {Number} months 月数
          * @param {Date} date  起始日期
          */
-        addMonths : function(months,date){
-            return DateAdd('m',months,date);
+        addMonths: function (months, date) {
+            return DateAdd('m', months, date);
         },
         /**
          * 增加年
          * @param {Number} years 年数
          * @param {Date} date  起始日期
          */
-        addYear : function(years,date){
-            return DateAdd('y',years,date);
+        addYear: function (years, date) {
+            return DateAdd('y', years, date);
         },
         /**
          * 日期是否相等，忽略时间
@@ -3529,7 +3641,7 @@ define('bui/date',function () {
          * @param  {Date}  d2 日期对象
          * @return {Boolean}    是否相等
          */
-        isDateEquals : function(d1,d2){
+        isDateEquals: function (d1, d2) {
 
             return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
         },
@@ -3539,14 +3651,14 @@ define('bui/date',function () {
          * @param  {Date}  d2 日期对象
          * @return {Boolean}    是否相等
          */
-        isEquals : function (d1,d2) {
-            if(d1 == d2){
+        isEquals: function (d1, d2) {
+            if (d1 == d2) {
                 return true;
             }
-            if(!d1 || !d2){
+            if (!d1 || !d2) {
                 return false;
             }
-            if(!d1.getTime || !d2.getTime){
+            if (!d1.getTime || !d2.getTime) {
                 return false;
             }
             return d1.getTime() == d2.getTime();
@@ -3556,7 +3668,7 @@ define('bui/date',function () {
          * @param {String} str 字符串
          * @return 字符串是否能转换成日期
          */
-        isDateString : function(str){
+        isDateString: function (str) {
             return dateRegex.test(str);
         },
         /**
@@ -3566,32 +3678,32 @@ define('bui/date',function () {
          * @param  {Date} utc  是否utc时间
          * @return {String}      日期的字符串
          */
-        format:function (date, mask, utc) {
+        format: function (date, mask, utc) {
             return dateFormat(date, mask, utc);
         },
         /**
          * 转换成日期
          * @param  {String|Date} date 字符串或者日期
-         * @param  {String} s    时间的分割符，如 2001-01-01中的 '-'
+         * @param  {String} dateMask  日期的格式,如:yyyy-MM-dd
          * @return {Date}      日期对象
          */
-        parse:function (date, s) {
+        parse: function (date, s) {
             return dateParse(date, s);
         },
         /**
          * 当前天
          * @return {Date} 当前天 00:00:00
          */
-        today : function(){
+        today: function () {
             var now = new Date();
-            return new Date(now.getFullYear(),now.getMonth(),now.getDate());
+            return new Date(now.getFullYear(), now.getMonth(), now.getDate());
         },
         /**
          * 返回当前日期
          * @return {Date} 日期的 00:00:00
          */
-        getDate : function(date){
-            return new Date(date.getFullYear(),date.getMonth(),date.getDate());
+        getDate: function (date) {
+            return new Date(date.getFullYear(), date.getMonth(), date.getDate());
         }
     };
 
@@ -4164,7 +4276,13 @@ define('bui/component/manage',function(require){
         removeComponent:function (id) {
             delete componentInstances[id];
         },
-
+        /**
+         * 遍历所有的控件
+         * @param  {Function} fn 遍历函数
+         */
+        eachComponent : function(fn){
+            BUI.each(componentInstances,fn);
+        },
         /**
          * 根据Id获取控件
          * @param  {String} id 编号
@@ -5310,6 +5428,13 @@ define('bui/component/uibase/autoshow',function () {
       value : true
     },
     /**
+     * 显示时是否默认获取焦点
+     * @type {Boolean}
+     */
+    autoFocused : {
+      value : true
+    },
+    /**
      * 控件显示时由此trigger触发，当配置项 trigger 选择器代表多个DOM 对象时，
      * 控件可由多个DOM对象触发显示。
      * <pre><code>
@@ -5427,6 +5552,15 @@ define('bui/component/uibase/autoshow',function () {
         }
         _self.set('align',align);
         _self.show();
+        /*if(_self.get('autoFocused')){
+          try{ //元素隐藏的时候，ie下经常会报错
+            _self.focus();
+          }catch(ev){
+            BUI.log(ev);
+          }
+        }*/
+        
+        
         triggerCallback && triggerCallback(ev);
       }
 
@@ -5698,7 +5832,7 @@ define('bui/component/uibase/close',function () {
             '">关闭<' + '/span>' +
             '<' + '/a>'
     },
-    closable:{
+    closeable:{
         value:true
     },
     closeBtn:{
@@ -5706,7 +5840,7 @@ define('bui/component/uibase/close',function () {
   };
 
   CloseView.prototype = {
-      _uiSetClosable:function (v) {
+      _uiSetCloseable:function (v) {
           var self = this,
               btn = self.get('closeBtn');
           if (v) {
@@ -5738,7 +5872,7 @@ define('bui/component/uibase/close',function () {
       * <pre><code>
       *   var overlay = new Overlay({
       *     closeTpl : '<a href="#" title="close">x</a>',
-      *     closable : true,
+      *     closeable : true,
       *     trigger : '#t1'
       *   });
       *   overlay.render();
@@ -5755,13 +5889,13 @@ define('bui/component/uibase/close',function () {
       },
       /**
        * 是否出现关闭按钮
-       * @cfg {Boolean} [closable = false]
+       * @cfg {Boolean} [closeable = false]
        */
       /**
        * 是否出现关闭按钮
        * @type {Boolean}
        */
-      closable:{
+      closeable:{
           view:1
       },
 
@@ -5816,7 +5950,7 @@ define('bui/component/uibase/close',function () {
   };
 
   Close.prototype = {
-      _uiSetClosable:function (v) {
+      _uiSetCloseable:function (v) {
           var self = this;
           if (v && !self.__bindCloseEvent) {
               self.__bindCloseEvent = 1;
@@ -6151,18 +6285,27 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
      */
     _handleKeyDown : function(ev){
       var _self = this,
+        ignoreInputFields = _self.get('ignoreInputFields'),
         code = ev.which;
+      if(ignoreInputFields && $(ev.target).is('input,select,textarea')){
+        return;
+      }
+      
       switch(code){
         case KeyCode.UP :
+          ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
+          ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
+          ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
+          ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 
@@ -7330,7 +7473,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     getDecorateElments : function(){
       var _self = this,
         el = _self.get('el'),
-        contentContainer = _self.get('contentContainer');
+        contentContainer = _self.get('childContainer');
       if(contentContainer){
         return el.find(contentContainer).children();
       }else{
@@ -7929,12 +8072,14 @@ define('bui/component/uibase/selection',function () {
          *   list.setSelected(item);
          * </code></pre>
          * @param {Object} item 记录或者子控件
-         * @param {BUI.Component.Controller|Object} element 子控件或者DOM结构
          */
         setSelected: function(item){
             var _self = this,
                 multipleSelect = _self.get('multipleSelect');
-                
+
+            if(!_self.isItemSelectable(item)){
+                return;
+            }    
             if(!multipleSelect){
                 var selectedItem = _self.getSelected();
                 if(item != selectedItem){
@@ -7956,6 +8101,15 @@ define('bui/component/uibase/selection',function () {
 
         },
         /**
+         * 选项是否可以选中
+         * @protected
+         * @param {*} item 选项
+         * @return {Boolean} 选项是否可以选中
+         */
+        isItemSelectable : function(item){
+          return true;
+        },
+        /**
          * 设置选项的选中状态
          * @param {*} item 选项
          * @param {Boolean} selected 选中或者取消选中
@@ -7964,6 +8118,7 @@ define('bui/component/uibase/selection',function () {
         setItemSelected : function(item,selected){
             var _self = this,
                 isSelected;
+            
             //当前状态等于要设置的状态时，不触发改变事件
             if(item){
                 isSelected =  _self.isItemSelected(item);
@@ -7971,7 +8126,7 @@ define('bui/component/uibase/selection',function () {
                     return;
                 }
             }
-            if(_self.fire('beforeselectedchange') !== false){
+            if(_self.fire('beforeselectedchange',{item : item,selected : selected}) !== false){
                 _self.setItemSelectedStatus(item,selected);
             }
         },
@@ -9823,7 +9978,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      */
     ajaxOptions : {
       value : {
-        method : 'get',
+        type : 'get',
         cache : false
       }
     },
@@ -9973,8 +10128,10 @@ define('bui/component/loader',['bui/util'],function (require) {
         lastParams = _self.get('lastParams'),
         appendParams = _self.get('appendParams');
 
-      BUI.mix(true,lastParams,appendParams,params);
-      params = BUI.cloneObject(lastParams);
+      //BUI.mix(true,lastParams,appendParams,params);
+      params = params || lastParams;
+      params = BUI.merge(appendParams,params); //BUI.cloneObject(lastParams);
+      _self.set('lastParams',params);
       //未提供加载地址，阻止加载
       if(!url){
         return;
@@ -10529,6 +10686,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         disable : function(){
             this.set('disabled',true);
             return this;
+        },
+        /**
+         * 控件获取焦点
+         */
+        focus : function(){
+            if(this.get('focusable')){
+                this.set('focused',true);
+            }
         },
         /**
          * 子组件将要渲染到的节点，在 render 类上覆盖对应方法

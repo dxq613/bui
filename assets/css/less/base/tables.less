@@ -52,7 +52,7 @@ table {
   }
 }
 
-//��ͷ�б߿�
+//表头有边框
 .table-head-bordered{
     thead tr {
     vertical-align: bottom;
@@ -180,6 +180,22 @@ table {
   tbody {
     tr:nth-child(odd) td,
     tr:nth-child(odd) th {
+      background-color: @tableBackgroundAccent;
+    }
+  }
+}
+
+.table-bordered.table-striped{
+  tbody {
+    tr:nth-child(odd) td,
+    tr:nth-child(odd) th {
+      background-color: @white;
+    }
+  }
+
+  tbody {
+    tr:nth-child(even) td,
+    tr:nth-child(even) th {
       background-color: @tableBackgroundAccent;
     }
   }

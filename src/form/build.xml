@@ -35,6 +35,8 @@
 			<path path="field/plain.js"/>
             <path path="field/list.js"/>
 			<path path="field/uploader.js"/>
+			<path path="field/checklist.js"/>
+			<path path="field/radiolist.js"/>
 			<path path="field.js"/>
             <path path="valid.js"/>
 			<path path="groupvalid.js"/>

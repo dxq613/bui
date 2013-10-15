@@ -95,6 +95,9 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     getFieldConfig : function(column){
       var editor = column.get('editor');
       if(editor){
+        if(editor.xtype === 'checkbox'){
+          editor.innerValueField = 'checked';
+        }
         return editor;
       }
       var cfg = {xtype : 'plain'};

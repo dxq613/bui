@@ -171,7 +171,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     handleDblClick:function(ev){
       var _self = this;
 
-      if(_self.fire('closing')!== false){
+      if(_self.get('closeable') && _self.fire('closing')!== false){
         _self.close();
       }
       _self.fire('dblclick',{domTarget : ev.target,domEvent : ev});

@@ -66,13 +66,13 @@ define('bui/uploader/type/flash', function (require) {
             //监听文件上传完成事件
             swfUploader.on('uploadCompleteData', function(ev){
                 var result = _self._processResponse(ev.data);
-                _self.fire('complete', {result: result});
                 if(result && result.status === 1){
                     _self.fire(FlashType.event.SUCCESS, {result: result});
                 }
                 else{
                     _self.fire(FlashType.event.ERROR, {result: result});
                 }
+                _self.fire('complete', {result: result});
                 _self.set('file', null);
             });
             //监听文件失败事件

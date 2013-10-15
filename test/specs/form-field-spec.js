@@ -1,4 +1,4 @@
-/**/
+
 //文本域
 BUI.use('bui/form/textfield',function  (TextField) {
   var tpl = ' <label class="control-label">{label}</label>\
@@ -48,6 +48,17 @@ BUI.use('bui/form/textfield',function  (TextField) {
       }
     });
 
+    it('验证不通过时,禁用字段',function(){
+      textField.disable();
+      expect(textField.get('error')).toBe(null);
+    });
+
+    it('验证不通过时,恢复禁用字段',function(){
+      textField.enable();
+      expect(textField.get('error')).toBe('error');
+    });
+
+
     it('测试Tip提示',function(){
       var tip = textField.get('tip');
       expect(tip.get('visible')).toBe(false);
@@ -58,6 +69,8 @@ BUI.use('bui/form/textfield',function  (TextField) {
       var tip = textField.get('tip');
       expect(tip.get('visible')).toBe(true);
     });
+
+/**/
   }); 
 });
 
@@ -219,7 +232,6 @@ BUI.use('bui/form/textfield',function  (TextField) {
 
 });
 
-/**/
 //数字域
 BUI.use('bui/form/numberfield',function  (NumberField) {
   var tpl = ' <label class="control-label">{label}</label>\
@@ -472,6 +484,11 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
     it('测试初始化值',function(){
       expect(selectField.get('value')).toBe(select.getSelectedValue());
     });
+
+
+    it('获取文本',function(){
+      expect(selectField.getSelectedText()).toBe(select.getSelectedText());
+    });
     
   });
 
@@ -485,6 +502,7 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
       selectField.set('value',val);
       expect(select.getSelectedValue()).toBe(val);
     });
+
 
     it('更改选择框值',function(){
       var val =  select.getSelectedValue();
@@ -500,7 +518,7 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
   });
 
 });
-/**/
+
 //多选框
 BUI.use('bui/form/selectfield',function  (SelectField) {
 
@@ -572,6 +590,10 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
       var value = select.get('el').attr('value');
       expect(select.get('value')).toBe(value);
     });
+
+    it('测试选中的文本',function(){
+      expect(select.getSelectedText()).toBe('选项三');
+    });
   });
 
   describe('测试操作',function() {
@@ -582,6 +604,9 @@ BUI.use('bui/form/selectfield',function  (SelectField) {
           {text:'选项3',value:'3'}];
       select.setItems(items);
       expect(el.val()).toBe(select.get('value'));
+    });
+    it('测试选中的文本',function(){
+      expect(select.getSelectedText()).toBe('选项3');
     });
   });
 });
@@ -631,48 +656,131 @@ BUI.use('bui/form/plainfield',function  (PlainField) {
 });
 
 BUI.use('bui/form/listfield',function(ListField){
-  var field = new ListField({
-    render : '#row',
-    label : '列表',
-    elCls : 'control-group span8',
-    items : {'1' : '1','2':'2'},
-    list : {
-      elCls : 'bui-select-list'
-    },
-    value : '2'
-  });
-  field.render();
 
-  var list = field.get('list');
-  describe('初始化',function(){
-    it('测试列表初始化',function(){
-      expect(!!list).not.toBe(false);
+  describe('测试JS创建列表字段',function(){
+    var field = new ListField({
+      render : '#row',
+      label : '列表',
+      elCls : 'control-group span8',
+      items : {'1' : '1','2':'2'},
+      list : {
+        elCls : 'bui-select-list'
+      },
+      value : '2'
     });
-    it('测试列表项',function(){
+    field.render();
+
+    var list = field.get('list');
+    describe('初始化',function(){
+      it('测试列表初始化',function(){
+        expect(!!list).not.toBe(false);
+      });
+      it('测试列表项',function(){
+        expect(list.getItems().length).not.toBe(0);
+      });
+      it('测试默认值',function(){
+        expect(field.getInnerControl().val()).toBe('2');
+        expect(list.getSelectedValue()).toBe('2');
+      })
+    });
+
+    describe('测试操作',function(){
+      it('设置值',function(){
+        var val = '1';
+        field.set('value',val);
+        expect(list.getSelectedValue()).toBe(val);
+        expect(field.getInnerControl().val()).toBe(val);
+      });
+      it('重设记录',function(){
+        var items = [{value : '1',text :'第1项'},{value : '2',text :'第2项'},{value : '3',text :'第3项'}];
+        field.set('items',items);
+        expect(list.getItems().length).toBe(items.length);
+        expect(list.getSelectedValue()).toBe(field.get('value'));
+      });
+    });
+  });
+  describe('测试srcNode 创建列表字段',function(){
+    var field = new ListField({
+      srcNode : '#lf'
+    });
+    field.render(),
+    list = field.get('list');
+    it('初始化',function(){
+
+      expect(!!list).toBe(true);
+      expect(list.getItems().length).not.toBe(0);
+
+    });
+    it('选项生成',function(){
+      expect(list.get('el').find('.bui-list-item').length).not.toBe(0);
+    });
+  });
+});
+
+BUI.use('bui/form/checklistfield',function(ListField){
+  describe('测试srcNode 创建列表字段',function(){
+    var field = new ListField({
+        render : '#row',
+        label : '可勾选列表',
+        elCls : 'control-group span8',
+        items : {'1' : '1','2':'2'},
+        value : '2'
+      });
+      field.render(),
+      list = field.get('list');
+
+    it('初始化',function(){
+      expect(!!list).toBe(true);
       expect(list.getItems().length).not.toBe(0);
     });
-    it('测试默认值',function(){
-      expect(field.getInnerControl().val()).toBe('2');
-      expect(list.getSelectedValue()).toBe('2');
-    })
-  });
-
-  describe('测试操作',function(){
-    it('设置值',function(){
-      var val = '1';
-      field.set('value',val);
-      expect(list.getSelectedValue()).toBe(val);
-      expect(field.getInnerControl().val()).toBe(val);
-    });
-    it('重设记录',function(){
-      var items = [{value : '1',text :'第1项'},{value : '2',text :'第2项'},{value : '3',text :'第3项'}];
-      field.set('items',items);
-      expect(list.getItems().length).toBe(items.length);
-      expect(list.getSelectedValue()).toBe(field.get('value'));
+    it('选项生成',function(){
+      expect(list.get('el').find('.bui-list-item').length).not.toBe(0);
     });
   });
-
 });
+
+BUI.use('bui/form/radiolistfield',function(ListField){
+  describe('测试srcNode 创建列表字段',function(){
+    var field = new ListField({
+        render : '#row',
+        label : '可勾选列表',
+        elCls : 'control-group span8',
+        items : {'1' : '1','2':'2'},
+        value : '2'
+      });
+      field.render(),
+      list = field.get('list');
+
+    it('初始化',function(){
+      expect(!!list).toBe(true);
+      expect(list.getItems().length).not.toBe(0);
+    });
+    it('选项生成',function(){
+      expect(list.get('el').find('.bui-list-item').length).not.toBe(0);
+    });
+  });
+});
+
+
+
+BUI.use('bui/form/checkboxfield',function(CheckBox){
+  var checkbox = new CheckBox({
+    render : '#row',
+    label : '勾选',
+    value : 'a',
+    checked : true
+  });
+  checkbox.render();
+  var el = checkbox.get('el');
+  describe('生成checkbox',function(){
+    it('测试初始化',function(){
+      expect(el.length).toBe(1);
+      expect(el.find('input').length).toBe(1);
+      expect(el.find('input').attr('checked')).toBe('checked');
+    });
+  });
+});
+/**/
 
 /**上传组件**/
 BUI.use('bui/form/uploaderfield',function(UploaderField){

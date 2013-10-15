@@ -573,28 +573,31 @@ define('bui/util',function(){
     */
     setField:function(form,fieldName,value){
       var fields = form.elements[fieldName];
-      if(BUI.isArray(fields)){
+      if(BUI.isArray(fields) || (fields && fields.length)){
         BUI.each(fields,function(field){
-          if(field.type === 'checkbox'){
-            if(field.value === value || BUI.Array.indexOf(field.value,value) !== -1){
+          formHelper._setFieldValue(field,value);
+        });
+      }else{
+        formHelper._setFieldValue(fields,value);
+      }
+    },
+    //设置字段的值
+    _setFieldValue : function(field,value){
+        if(field.type === 'checkbox'){
+            if(field.value == value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
               $(field).attr('checked',true);
             }else{
               $(field).attr('checked',false);  
             }
-          }else if(field.type === 'radio'){
-            if(field.value === value){
+        }else if(field.type === 'radio'){
+            if(field.value == value){
               $(field).attr('checked',true);
             }else{
               $(field).attr('checked',false); 
             }    
-          }else{
+        }else{
             $(field).val(value);
-          }
-        
-        });
-      }else{
-        $(fields).val(value);
-      }
+        }
     },
     /**
      * 获取表单字段值

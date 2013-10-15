@@ -61,3 +61,41 @@
     vertical-align:middle;
   }
 }
+
+/** list-checkbox **/
+.x-checkbox{
+  background: url("@{checkIconPath}") no-repeat 0px 0px transparent;
+}
+
+.x-radio{
+  background: url("@{radioIconPath}") no-repeat 0 0 transparent;
+}
+
+.x-checkbox,.x-radio{
+  width: 13px;
+  height: 20px;
+  *height: 17px;
+  vertical-align: top;
+  *vertical-align: baseline;
+  margin-right: 5px;
+  .inline-block();
+}
+
+.x-checkbox:hover,.x-radio:hover,.bui-list-item-hover .x-checkbox,.bui-list-item-hover .x-radio{
+  background-position: -16px 0px;
+}
+
+.bui-list-item-selected .x-checkbox,.bui-list-item-selected .x-radio,.checked .x-checkbox{
+  background-position: 0 -20px;
+}
+
+.bui-list-item-disabled .x-checkbox,.bui-list-item-disabled .x-radio{
+  background-position: -48px 0px;
+}
+
+.bui-list-item-selected.bui-list-item-disabled{
+
+  .x-checkbox, .x-radio{
+    background-position: -48px -20px;
+  }
+}

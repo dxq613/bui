@@ -8,9 +8,15 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
   //将id 转换成node
   function makeSureNode(self,node){
     if(BUI.isString(node)){
-      node = self.getItem(node);
+      node = self.findNode(node);
     }
     return node;
+  }
+  //动画执行
+  function animateFn(fn,timeout,count){
+    setTimeout(function(){
+      fn();
+    }, timeout/count);
   }
 
   var BUI = require('bui/common'),
@@ -162,6 +168,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       value : false
     },
     /**
+     * 是否显示图标，包括节点展开折叠的图标，标示层级关系的空白图标
+     * @type {Boolean}
+     */
+    showIcons : {
+      value : true
+    },
+    /**
      * 图标所使用的模板
      * @protected
      * @type {Object}
@@ -203,6 +216,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     checkType : {
       value : 'custom'
+    },
+    /**
+     * 是否只允许一个节点展开
+     * @type {Boolean}
+     */
+    accordion : {
+      value : false
     },
     /**
      * @private
@@ -293,8 +313,29 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
          * @param {Boolean} e.checked 选中状态
          * @param {HTMLElement} e.element 节点的DOM
          */
-        checkchange : false
+        checkedchange : false
       }
+    },
+    /**
+     * 节点展开的事件
+     * @type {String}
+     */
+    expandEvent : {
+      value : 'itemdblclick'
+    },
+    /**
+     * 展开收缩时是否使用动画
+     * @type {Boolean}
+     */
+    expandAnimate : {
+      value : false 
+    },
+    /**
+     * 节点收缩的事件
+     * @type {String}
+     */
+    collapseEvent : {
+      value : 'itemdblclick'
     },
     /**
      * 开始的层级，如果显示根节点，从0开始，不显示根节点从1开始
@@ -490,6 +531,16 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         return _self.isChecked(node);
       },parent);
     },
+    //节点是否可以被选中
+    isItemSelectable : function(item){
+      var _self = this,
+        dirSelectable = _self.get('dirSelectable'),
+        node = item;
+      if(node && !dirSelectable && !node.leaf){ //如果阻止非叶子节点选中
+        return false;
+      }
+      return true;
+    },
     /**
      * 节点是否展开,如果节点是叶子节点，则始终是false
      * <pre><code>
@@ -556,10 +607,16 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     setNodeChecked : function(node,checked,deep){
       deep = deep == null ? true : deep;
+      if(!node){
+        return;
+      }
       var _self = this,
         parent,
         element;
       node = makeSureNode(this,node);
+      if(!node){
+        return;
+      }
       parent = node.parent;
       if(!_self.isCheckable(node)){
         return;
@@ -581,7 +638,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
             _self._resetPatialChecked(parent,null,null,null,true);
           }
         }
-        _self.fire('checkchange',{node : node,element: element,checked : checked});
+        _self.fire('checkedchange',{node : node,element: element,checked : checked});
         
       }
       if(!node.leaf && deep){ //树节点，勾选所有子节点
@@ -591,6 +648,23 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
     },
 
+    /**
+     * 设置节点勾选状态
+     * @param {String|Object|BUI.Data.Node} node 节点或者节点id
+     */
+    setChecked : function(node){
+      this.setNodeChecked(node,true);
+    },
+    /**
+     * 清除所有的勾选
+     */
+    clearAllChecked : function(){
+      var _self = this,
+        nodes = _self.getCheckedNodes();
+      BUI.each(nodes,function(node){
+        _self.setNodeChecked(node,false);
+      });
+    },
     //初始化根节点
     _initRoot : function(){
       var _self = this,
@@ -653,7 +727,8 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         if(parent && _self.isChecked(parent)){ //如果父节点选中，当前节点必须勾选
           _self.setStatusValue(node,'checked',true);
         }
-        if(_self._isAllChildrenChecked(node)){
+        //节点为非叶子节点，同时叶子节点不为空时根据叶子节点控制
+        if(node.children && node.children.length && _self._isAllChildrenChecked(node)){
           _self.setStatusValue(node,'checked',true);
         }
       }
@@ -714,24 +789,11 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         }
         
       });
-
-      _self.on('itemdblclick',function(ev){
-        var sender = $(ev.domTarget),
-          element = ev.element,
-          node = ev.item;
-        if(!sender.hasClass(CLS_EXPANDER)){
-          _self._toggleExpand(node,element);
-        }
+      
+      /*_self.on('beforeselectedchange',function(ev){
+        
       });
-
-      _self.on('beforeselectedchange',function(ev){
-        var dirSelectable = _self.get('dirSelectable'),
-          node = ev.item;
-        if(!dirSelectable && !node.leaf){ //如果阻止非叶子节点选中
-          return false;
-        }
-      });
-
+      */
       _self.on('itemrendered',function(ev){
         var node = ev.item,
           element = ev.domTarget;
@@ -744,6 +806,36 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         }
         
       });
+      _self._initExpandEvent();
+    },
+    //初始化展开收缩事件
+    _initExpandEvent : function(){
+      var _self = this,
+        el = _self.get('el'),
+        expandEvent = _self.get('expandEvent'),
+        collapseEvent = _self.get('collapseEvent');
+
+      function createCallback(methodName){
+        return function(ev){
+          var sender = $(ev.domTarget),
+            element = ev.element,
+            node = ev.item;
+          if(!sender.hasClass(CLS_EXPANDER)){
+            _self[methodName](node,element);
+          }
+        }
+      }
+      if(expandEvent == collapseEvent){
+        _self.on(expandEvent,createCallback('_toggleExpand'));
+      }else{
+        if(expandEvent){
+          _self.on(expandEvent,createCallback('_expandNode'));
+        }
+        if(collapseEvent){
+          _self.on(collapseEvent,createCallback('_collapseNode'));
+        }
+      }
+      
     },
     //是否所有子节点被选中
     _isAllChildrenChecked : function(node){
@@ -933,6 +1025,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     //加载完节点
     _loadNode : function(node){
       var _self = this;
+      _self._initChecked(node,true);
       _self.expandNode(node);
       _self._updateIcons(node);
       _self.setItemStatus(node,LOADING,false);
@@ -1105,18 +1198,39 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           _self._hideChildrenNodes(node);
         }
         _self.fire('collapsed',{node : node ,element : element});
-        //node[_self.get('expandField')] = false;
       }
     },
-    //隐藏字节点
+    //隐藏子节点
     _hideChildrenNodes : function(node){
       var _self = this,
-        children = node.children;
+        children = node.children,
+        elements = [];
       BUI.each(children,function(subNode){
-        _self.removeItem(subNode);
-        _self._hideChildrenNodes(subNode);
+        //_self.removeItem(subNode);
+        var element = _self.findElement(subNode);
+        if(element){
+          elements.push(element);
+          _self._hideChildrenNodes(subNode);
+        }
       });
-    },
+      if(_self.get('expandAnimate')){
+        elements = $(elements);
+        elements.animate({height : 0},function(){
+          _self.removeItems(children);
+        });
+      }else{
+        _self.removeItems(children);
+      }
+      
+    }/*,
+    _slideUpNodes : function(elements,callback){
+      var wrapEl = $('<div></div>').insertBefore(elements[0]);
+      $(elements).appendTo(wrapEl);
+      wrapEl.slideUp(function(){
+        callback();
+        wrapEl.remove();
+      });
+    }*/,
     _collapseChildren : function(parentNode,deep){
       var _self = this,
         children = parentNode.children;
@@ -1128,11 +1242,20 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     //展开选项
     _expandNode : function(node,element,deep){
       var _self = this,
+        accordion = _self.get('accordion'),
         store = _self.get('store');
       if(node.leaf){ //子节点不展开
         return;
       }
       if(!_self.hasStatus(node,EXPAND,element)){
+        if(accordion && node.parent){
+          var slibings = node.parent.children;
+          BUI.each(slibings,function(sNode){
+            if(sNode != node){
+              _self.collapseNode(sNode);
+            }
+          });
+        }
         if(store && !store.isLoaded(node)){ //节点未加载，则加载节点
           if(!_self._isLoading(node,element)){
             store.loadNode(node);
@@ -1142,6 +1265,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           _self._showChildren(node);
           _self.fire('expanded',{node : node ,element : element});
         }
+
       }
       BUI.each(node.children,function(subNode){
         if(deep || _self.isExpanded(subNode)){
@@ -1159,28 +1283,48 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         index = _self.indexOfItem(node),
         length = node.children.length,
         subNode,
-        i;
+        i = length - 1,
+        elements = [];
       for (i = length - 1; i >= 0; i--) {
         subNode = node.children[i];
         if(!_self.getItem(subNode)){
-          _self.addItemAt(subNode,index + 1);
+          if(_self.get('expandAnimate')){
+            el = _self._addNodeAt(subNode,index + 1);
+            el.hide();
+            el.slideDown();
+          }else{
+            _self.addItemAt(subNode,index + 1);
+          } 
         }
       };
     },
+    _addNodeAt : function(item,index){
+       var _self = this,
+        items = _self.get('items');
+      if(index === undefined) {
+          index = items.length;
+      }
+      items.splice(index, 0, item);
+      return _self.addItemToView(item,index);
+    },
+    //_showNode
     _isLoading : function(node,element){
       var _self = this;
       return _self.hasStatus(node,LOADING,element);
     },
     //重置选项的图标
     _resetIcons :function(node,element){
+      if(!this.get('showIcons')){ //如果不显示图标，则不重置
+        return;
+      }
       var _self = this,
         iconContainer = _self.get('iconContainer'),
         containerEl,
         iconsTpl = _self._getIconsTpl(node);
       $(element).find('.' + CLS_ICON_WRAPER).remove(); //移除掉以前的图标
-      containerEl = $(element).find('.' + iconContainer);
+      containerEl = $(element).find(iconContainer).first();
       if(iconContainer && containerEl.length){
-        $(iconsTpl).appendTo(containerEl);
+        $(iconsTpl).prependTo(containerEl);
       }else{
         $(element).prepend($(iconsTpl));
       }

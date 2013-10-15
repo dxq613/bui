@@ -103,7 +103,11 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * @protected
      */
     getItemContainer : function  () {
-      return this.get('itemContainer') || this.get('el');
+      var container = this.get('itemContainer');
+      if(container.length){
+        return container;
+      }
+      return this.get('el');
     },
     /**
      * 获取记录的模板,itemTpl 和 数据item 合并产生的模板
@@ -429,6 +433,15 @@ define('bui/list/domlist',['bui/common'],function (require) {
         */
         'itemsclear' : false,
         /**
+         * 双击是触发
+        * @event
+        * @param {Object} e 事件对象
+        * @param {Object} e.item DOM对应的选项
+        * @param {HTMLElement} e.element 选项的DOM对象
+        * @param {HTMLElement} e.domTarget 点击的元素
+        */
+        'itemdblclick' : false,
+        /**
         * 清空所有Dom前触发
         * @event
         */
@@ -445,6 +458,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
         itemCls = _self.get('itemCls'),
         dataField = _self.get('dataField'),
         elements = el.find('.' + itemCls);
+      if(!elements.length){
+        elements = el.children();
+        elements.addClass(itemCls);
+      }
       BUI.each(elements,function(element){
         var item = parseItem(element,_self);
         rst.push(item);
@@ -479,7 +496,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
           return;
         }
         var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target});
-        if(rst !== false && selectedEvent == 'click'){
+        if(rst !== false && selectedEvent == 'click' && _self.isItemSelectable(item)){
           setItemSelectedStatus(item,itemEl); 
         }
       });
@@ -490,7 +507,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
           if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
             return;
           }
-          setItemSelectedStatus(item,itemEl); 
+          if(_self.isItemSelectable(item)){
+            setItemSelectedStatus(item,itemEl); 
+          }
+          
         });
       }
 
@@ -531,7 +551,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       var _self = this,
         itemStatusFields = _self.get('itemStatusFields');
       BUI.each(itemStatusFields,function(v,k){
-        _self.get('view').setItemStatusCls(k,element,item[v]);
+        if(item[v] != null){
+          _self.get('view').setItemStatusCls(k,element,item[v]);
+        }
       });
     },
     /**
@@ -642,6 +664,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       var _self = this,
         element = _self.get('view').addItem(item,index);
       _self.fire('itemrendered',{item:item,domTarget : $(element)[0],element : element});
+      return element;
     },
     /**
      * 更新列表项
@@ -664,6 +687,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     setItems : function(items){
       var _self = this;
+      if(items != _self.getItems()){
+        _self.setInternal('items',items);
+      }
       //清理子控件
       _self.clearControl();
       _self.fire('beforeitemsshow');
@@ -868,7 +894,11 @@ define('bui/list/domlist',['bui/common'],function (require) {
       if(!item){
         return false;
       }
-      var _self = this;
+      var _self = this,
+        field = _self.getStatusField(status);
+      /*if(field){
+        return _self.getStatusValue(item,status);
+      }*/
       element = element || _self.findElement(item);
       return _self.get('view').hasStatus(status,element);
     },

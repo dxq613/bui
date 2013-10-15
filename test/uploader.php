@@ -32,6 +32,7 @@
 
     <script src="../src/uploader/base.js"></script>
     <script src="../src/uploader/uploader.js"></script>
+    <script src="../src/uploader/factory.js"></script>
     <script src="../src/uploader/queue.js"></script>
     <script src="../src/uploader/theme.js"></script>
     <script src="../src/uploader/button/base.js"></script>

@@ -69,7 +69,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
 
         innerControl.on(_self.get('changeEvent'),function(e){
           var curTrigger = _self.get('curTrigger'),
-            textField = _self.get('textField') || curTrigger,
+            textField = _self.get('textField') || curTrigger || trigger,
             valueField = _self.get('valueField'),
             selValue = _self.getSelectedValue(),
             isChange = false;
@@ -136,6 +136,12 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
 
       },
       /**
+       * 选择器获取焦点时，默认选中内部控件
+       */
+      focus : function(){
+        this.get('innerControl').focus();
+      },
+      /**
        * @protected
        * 发生改变
        */
@@ -143,6 +149,14 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         var _self = this,
           curTrigger = _self.get('curTrigger');
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
+      },
+      /**
+       * 处理 esc 键
+       * @protected
+       * @param  {jQuery.Event} ev 事件对象
+       */
+      handleNavEsc : function (ev) {
+        this.hide();
       },
       _uiSetValueField : function(v){
         var _self = this;
@@ -307,7 +321,6 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       /**
        * 设置选中的值
        * @override
-       * @protected
        * @param {String} val 设置值
        */
       setSelectedValue : function(val){
@@ -333,7 +346,6 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       },
       /**
        * 获取选中的值，多选状态下，值以','分割
-       * @protected
        * @return {String} 选中的值
        */
       getSelectedValue : function(){
@@ -341,7 +353,6 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       },
       /**
        * 获取选中项的文本，多选状态下，文本以','分割
-       * @protected
        * @return {String} 选中的文本
        */
       getSelectedText : function(){

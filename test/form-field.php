@@ -13,14 +13,29 @@
         
       </div>
       <div class="row">
-        <label class="control-label">选择框</label>
-        <div class="controls">
-          <select id="s1" name="sel" value="3">
-            <option value="">请选择</option>
-            <option value="1">选项一</option>
-            <option value="2">选项二</option>
-            <option value="3">选项三</option>
-          </select>
+        <div class="span8">
+          <label class="control-label">选择框</label>
+          <div class="controls">
+            <select id="s1" name="sel" value="3">
+              <option value="">请选择</option>
+              <option value="1">选项一</option>
+              <option value="2">选项二</option>
+              <option value="3">选项三</option>
+            </select>
+          </div>
+        </div> 
+        <div class="span8">
+          <label class="control-label">选择框</label>
+          <div id="lf" class="controls control-row-auto">
+            <ul class="bui-simple-list">
+              <li data-value="1">选项一</li>
+              <li data-value="2">选项二</li>
+              <li data-value="3">选项三</li>
+              <li data-value="4">选项四</li>
+            </ul>
+            <input type="hidden" name="list"> 
+          </div>
+          
         </div>
       </div>
 
@@ -48,6 +63,8 @@
     <script type="text/javascript" src="../src/form/field/plain.js"></script>
     <script type="text/javascript" src="../src/form/field/list.js"></script>
     <script type="text/javascript" src="../src/form/field/uploader.js"></script>
+    <script type="text/javascript" src="../src/form/field/checklist.js"></script>
+    <script type="text/javascript" src="../src/form/field/radiolist.js"></script>
     <script type="text/javascript" src="../src/form/field.js"></script>
 
     <script type="text/javascript" src="specs/form-field-spec.js"></script>

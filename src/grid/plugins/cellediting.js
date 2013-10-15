@@ -41,7 +41,11 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
         bodyNode = grid.get('el').find('.' + CLS_BODY),
         rst = [];
       BUI.each(fields,function(field){
-         rst.push({field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false});
+        var cfg = {field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false};
+        if(field.xtype === 'checkbox'){
+          cfg.innerValueField = 'checked';
+        }
+        rst.push(cfg);
       });
 
       return rst;

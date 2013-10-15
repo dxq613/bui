@@ -77,10 +77,10 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      *   //例如原始数据为 {name : '123',value : '文本123',isLeaf: false,nodes : []}
      *   var store = new TreeStore({
      *     map : {
-     *       id : 'name',
-     *       text : 'value',
-     *       leaf : 'isLeaf',
-     *       children : 'nodes'
+     *       'name' : 'id',
+     *       'value' : 'text',
+     *       'isLeaf' : 'leaf' ,
+     *       'nodes' : 'children'
      *     }
      *   });
      *   //映射后，记录会变成  {id : '123',text : '文本123',leaf: false,children : []};
@@ -106,7 +106,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * 返回数据标示数据的字段</br>
      * 异步加载数据时，返回数据可以使数组或者对象
      * - 如果返回的是对象,可以附加其他信息,那么取对象对应的字段 {nodes : [],hasError:false}
-     * - 如何获取附加信息参看 @see {BUI.Data.AbstractStore-event-beforeProcessLoad}
+     * - 如何获取附加信息参看 @see {BUI.Data.AbstractStore-event-beforeprocessload}
      * <pre><code>
      *  //返回数据为数组 [{},{}]，会直接附加到加载的节点后面
      *  
@@ -244,7 +244,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       var _self = this;
 
       node = _self._add(node,parent,index);
-      _self.fire('add',{node : node,index : index});
+      _self.fire('add',{node : node,record : node,index : index});
       return node;
     },
     //
@@ -253,16 +253,21 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       var _self = this,
         map = _self.get('map'),
         nodes = parent.children,
-        nodeChildren = node.children || [];
+        nodeChildren;
+
+      if(!node.isNode){
+        node = new Node(node,map);
+      }
+
+      nodeChildren = node.children || []
+
       if(nodeChildren.length == 0 && node.leaf == null){
         node.leaf = true;
       }
       if(parent){
         parent.leaf = false;
       }
-      if(!node.isNode){
-        node = new Node(node,map);
-      }
+      
       node.parent = parent;
       node.level = parent.level + 1;
       node.path = parent.path.concat(node.id);
@@ -291,9 +296,25 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(parent.children.length === 0){
         parent.leaf = true;
       }
-      this.fire('remove',{node : node , index : index});
+      this.fire('remove',{node : node ,record : node , index : index});
       node.parent = null;
       return node;
+    },
+    /**
+    * 设置记录的值 ，触发 update 事件
+    * <pre><code>
+    *  store.setValue(obj,'value','new value');
+    * </code></pre>
+    * @param {Object} obj 修改的记录
+    * @param {String} field 修改的字段名
+    * @param {Object} value 修改的值
+    */
+    setValue : function(node,field,value){
+      var 
+        _self = this;
+        node[field] = value;
+
+      _self.fire('update',{node:node,record : node,field:field,value:value});
     },
     /**
      * 更新节点
@@ -305,7 +326,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {BUI.Data.Node} 更新节点
      */
     update : function(node){
-      this.fire('update',{node : node});
+      this.fire('update',{node : node,record : node});
     },
     /**
      * 返回缓存的数据，根节点的直接子节点集合
@@ -498,6 +519,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       }else{
         _self.setChildren(node,data[dataProperty]);
       }
+      node.loaded = true; //标识已经加载过
       _self.fire('load',{node : node,params : params});
     },
     /**
@@ -522,29 +544,33 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return true;
       }
       
-      return node.leaf || (node.children && node.children.length);
+      return node.loaded || node.leaf || (node.children && node.children.length);
     },
     /**
      * 加载节点的子节点
      * @param  {BUI.Data.Node} node 节点
      */
     loadNode : function(node){
-      var _self = this;
+      var _self = this,
+        pidField = _self.get('pidField'),
+        params;
       //如果已经加载过，或者节点是叶子节点
       if(_self.isLoaded(node)){
         return ;
       }
-      if(!_self.get('url') && _self.get('data')){ //如果不从远程加载数据，不是根节点的话，取消加载
-        var pidField = _self.get('pidField'),
-          params = {id : node.id};
-        if(pidField){
-          params[pidField] = node.id;
-        }
+      params = {id : node.id};
+      if(pidField){
+        params[pidField] = node.id;
+      }
+      _self.load(params);
+
+      /*if(!_self.get('url') && _self.get('data')){ //如果不从远程加载数据，不是根节点的话，取消加载
+        
         _self.load(params);
         return;
       }else{
         _self.load({id:node.id,path : ''});
-      }
+      }*/
       
     },
     /**

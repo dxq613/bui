@@ -147,12 +147,11 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
 
         /**  
         * 发生在，beforeload和load中间，数据已经获取完成，但是还未触发load事件，用于获取返回的原始数据
-        * @name BUI.Data.Store#beforeProcessLoad
         * @event  
         * @param {jQuery.Event} e  事件对象
         * @param {Object} e.data 从服务器端返回的数据
         */
-        'beforeProcessLoad',
+        'beforeprocessload',
         
         /**  
         * 当添加数据时触发该事件
@@ -411,6 +410,9 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     processLoad : function(data,params){
       var _self = this,
         hasErrorField = _self.get('hasErrorProperty');
+
+      _self.fire('beforeprocessload',{data : data});
+    
       //获取的原始数据
       _self.fire('beforeProcessLoad',data);
 
