@@ -44,8 +44,12 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
     },
     setControlValue: function(items){
       var _self = this,
-        innerControl = _self.getInnerControl();
-      innerControl.val(JSON.stringify(items));
+        innerControl = _self.getInnerControl(),
+        resutl = [];
+      BUI.each(items, function(item){
+        resutl.push[item.resutl];
+      })
+      innerControl.val(JSON.stringify(resutl));
     }
   },{
     ATTRS : {
