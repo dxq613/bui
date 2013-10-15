@@ -1256,7 +1256,6 @@ define('bui/uploader/theme', function (require) {
   };
 
   Theme.addTheme('default', {
-    url: 'dfdf',
     button: {
       elCls: 'defaultTheme-button'
     },
