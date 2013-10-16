@@ -339,7 +339,7 @@ define('bui/uploader/button/base', function(require) {
         this.setFilter(v);
         return v;
       }
-    },
+    }
   };
 
   base.prototype = {
@@ -767,13 +767,11 @@ define('bui/uploader/type/base',function(require) {
      * 类似{name: 'test.jpg', size: 1024, textSize: '1K', input: {}, file: File}
      */
     upload: function(File) {
-
     },
     /** 
      * 停止上传
      */
-    stop: function(){
-        
+    cancel: function(){
     },
     /**
      * 处理服务器端返回的结果集
@@ -781,16 +779,15 @@ define('bui/uploader/type/base',function(require) {
      */
     _processResponse: function(responseText){
       var _self = this,
-        result = {};
+        file = _self.get('file'),
+        result;
       //格式化成json数据
       if(BUI.isString(responseText)){
         try{
           result = BUI.JSON.parse(responseText);
           // result = _self._fromUnicode(result);
         }catch(e){
-          var msg = responseText + '，返回结果集responseText格式不合法！';
-          BUI.log(msg);
-          _self.fire('error',{status:-1, result:{msg:msg}});
+          result = responseText;
         }
       }else if(BUI.isObject(responseText)){
         result = _self._fromUnicode(responseText);
@@ -815,6 +812,8 @@ define('bui/uploader/type/base',function(require) {
             });
         }
         return data;
+    },
+    clear: function(){
     }
   });
 
@@ -888,13 +887,11 @@ define('bui/uploader/type/ajax',function(require) {
             var self = this,
                 xhr = self.get('xhr'),
                 file = self.get('file');
-            if (!BUI.isObject(xhr)) {
-                BUI.log(LOG_PREFIX + 'cancel()，io值错误！');
-                return false;
-            }
             //中止ajax请求，会触发error事件
-            xhr.abort();
-            self.fire(AjaxType.event.CANCEL, {file: file});
+            if(xhr){
+                xhr.abort();
+                self.fire(AjaxType.event.CANCEL, {file: file});
+            }
             self.set('file', null);
             return self;
         },
@@ -915,17 +912,10 @@ define('bui/uploader/type/ajax',function(require) {
             });
             xhr.onload = function(ev){
                 var result = self._processResponse(xhr.responseText);
-                if(result && result.status === 1){
-                    self.fire(AjaxType.event.SUCCESS, {result : result, file: file});
-                }
-                else{
-                    self.fire(AjaxType.event.ERROR, {result : result, file: file});
-                }
                 self.fire('complete', {result: result, file: file});
             };
             xhr.onerror = function(ev){
                 self.fire(AjaxType.event.ERROR, {file: file});
-                self.fire('complete', {file: file});
             }
             xhr.open("POST", url, true);
             data.append("type", "ajax");
@@ -934,6 +924,8 @@ define('bui/uploader/type/ajax',function(require) {
             self._setFormData();
             self.set('xhr',xhr);
             return self;
+        },
+        clear: function(){
         },
         /**
          * 设置FormData数据
@@ -984,12 +976,12 @@ define('bui/uploader/type/ajax',function(require) {
         data: {
         },
         xhr: {
-        },
-        subDomain: {
-            value: {
-                proxy: '/sub_domain_proxy.html'
-            }
-        }
+        }//,
+        // subDomain: {
+        //     value: {
+        //         proxy: '/sub_domain_proxy.html'
+        //     }
+        // }
     }
     });
     return AjaxType;
@@ -1010,10 +1002,10 @@ define('bui/uploader/type/flash', function (require) {
      * @requires Node
      */
     function FlashType(config) {
-        var self = this;
+        var _self = this;
         //调用父类构造函数
-        FlashType.superclass.constructor.call(self, config);
-        self.isHasCrossdomain();
+        FlashType.superclass.constructor.call(_self, config);
+        _self.isHasCrossdomain();
     }
 
     BUI.mix(FlashType, /** @lends FlashType.prototype*/{
@@ -1060,20 +1052,16 @@ define('bui/uploader/type/flash', function (require) {
             });
             //监听文件上传完成事件
             swfUploader.on('uploadCompleteData', function(ev){
-                var result = _self._processResponse(ev.data);
-                if(result && result.status === 1){
-                    _self.fire(FlashType.event.SUCCESS, {result: result});
-                }
-                else{
-                    _self.fire(FlashType.event.ERROR, {result: result});
-                }
-                _self.fire('complete', {result: result});
+                var file = _self.get('file'),
+                    result = _self._processResponse(ev.data);
+                _self.fire('complete', {result: result, file: file});
                 _self.set('file', null);
             });
             //监听文件失败事件
             swfUploader.on('uploadError',function(){
-                _self.set('file', file);
-                _self.fire(FlashType.event.ERROR, {msg : ev.msg});
+                var file = _self.get('file');
+                _self.fire(FlashType.event.ERROR, {file: file});
+                _self.set('file', null);
             });
         },
         /**
@@ -1109,6 +1097,9 @@ define('bui/uploader/type/flash', function (require) {
                 _self.set('file', null);
             }
             return _self;
+        },
+        clear: function(){
+
         },
         /**
          * 应用是否有flash跨域策略文件
@@ -1185,8 +1176,11 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
         delCls = _self.get('delCls');
 
       el.delegate('.' + delCls, 'click', function (ev) {
-        var itemContainer = $(ev.target).parent();
-        _self.removeItem(_self.getItemByElement(itemContainer));
+        var itemContainer = $(ev.target).parent(),
+          uploader = _self.get('uploader'),
+          item = _self.getItemByElement(itemContainer);
+        uploader && uploader.cancel && uploader.cancel(item);
+        _self.removeItem(item);
       });
     },
     /**
@@ -1338,15 +1332,15 @@ define('bui/uploader/uploader', function (require) {
       var _self = this;
       _self._initTheme();
       _self._initType();
-      _self._renderUploaderType();
       _self._renderButton();
+      _self._renderUploaderType();
       _self._renderQueue();
     },
     bindUI: function () {
       var _self = this;
       _self._bindButton();
-      _self._bindQueue();
       _self._bindUploaderCore();
+      _self._bindQueue();
     },
     /**
      * 检测浏览器是否支持ajax类型上传方式
@@ -1418,6 +1412,7 @@ define('bui/uploader/uploader', function (require) {
         type = _self.get('type'),
         config = _self._getUserConfig(['url', 'data']);
       var uploaderType = Factory.createUploadType(type, config);
+      uploaderType.set('uploader', _self);
       _self.set('uploaderType', uploaderType);
     },
     /**
@@ -1433,9 +1428,9 @@ define('bui/uploader/uploader', function (require) {
         button.render = el;
         button.autoRender = true;
         button = Factory.createButton(type, button);
-
         _self.set('button', button);
       }
+      button.set('uploader', _self);
     },
     /**
      * 初始化上传的对列
@@ -1448,9 +1443,11 @@ define('bui/uploader/uploader', function (require) {
       if (!(queue instanceof Component.Controller)) {
         queue.render = el;
         queue.autoRender = true;
+        //queue.uploader = _self;
         queue = Factory.createQueue(queue);
         _self.set('queue', queue);
-      };
+      }
+      queue.set('uploader', _self);
     },
     _bindButton: function () {
       var _self = this,
@@ -1500,61 +1497,61 @@ define('bui/uploader/uploader', function (require) {
           loaded = ev.loaded,
           total = ev.total;
 
-        //设置当前正处于的状态
-        queue.updateFileStatus(curUploadItem, 'progress');
-
         BUI.mix(curUploadItem, {
           loaded: loaded,
           total: total,
           loadedPercent: loaded * 100 / total
         });
 
-        //queue.updateItem(curUploadItem);
+        //设置当前正处于的状态
+        queue.updateFileStatus(curUploadItem, 'progress');
 
         _self.fire('progress', {item: curUploadItem, total: total, loaded: loaded});
       });
 
-      uploaderType.on('cancel', function(ev){
-        var curUploadItem = _self.get('curUploadItem');
-        queue.updateFileStatus(curUploadItem, 'cancel');
-        _self.set('curUploadItem', null);
-        _self.fire('cancel', {curUploadItem: curUploadItem});
-      });
-
-      
-
-      uploaderType.on('success', function(ev){
-        var result = ev.result;
-        var waitFiles = queue.getItemsByStatus('wait'),
-          curUploadItem = _self.get('curUploadItem');
-
-        BUI.mix(curUploadItem, {
-          url: result.url,
-          result: result
-        });
-        //设置对列中完成的文件
-        queue.updateFileStatus(curUploadItem, 'success');
-        //queue.updateItem(curUploadItem);
-
-        _self.fire('success', {item: curUploadItem});
-
-        //上传完了之后，如是对列中还有未上传的文件，则继续进行上传
-        _self.uploadFiles();
-        BUI.log('触发success事件！');
-      });
-
       uploaderType.on('error', function(ev){
-        var curUploadItem = _self.get('curUploadItem');
+        var curUploadItem = _self.get('curUploadItem'),
+          errorFn = _self.get('error'),
+          completeFn = _self.get('complete');
         //设置对列中完成的文件
         queue.updateFileStatus(curUploadItem, 'error');
+
+        errorFn && BUI.isFunction(errorFn) && errorFn.call(_self);
         _self.fire('error', {item: curUploadItem});
-        BUI.log('触发error事件！');
+
+        completeFn && BUI.isFunction(completeFn) && completeFn.call(_self);
+        _self.fire('complete', {item: curUploadItem});
+
+        _self.set('curUploadItem', null);
       });
 
       uploaderType.on('complete', function(ev){
-        _self.fire('complete');
+        var curUploadItem = _self.get('curUploadItem'),
+          result = ev.result,
+          isSuccess= _self.get('isSuccess'),
+          successFn = _self.get('success'),
+          errorFn = _self.get('error'),
+          completeFn = _self.get('complete');
+
+        curUploadItem.result = result;
+
+        if(isSuccess.call(_self, result)){
+          queue.updateFileStatus(curUploadItem, 'success');
+          successFn && BUI.isFunction(successFn) && successFn.call(_self, result);
+          _self.fire('success', {item: curUploadItem, result: result});
+        }
+        else{
+          queue.updateFileStatus(curUploadItem, 'error');
+          errorFn && BUI.isFunction(errorFn) && errorFn.call(_self, result);
+          _self.fire('error', {item: curUploadItem, result: result});
+        }
+
+        completeFn && BUI.isFunction(completeFn) && completeFn.call(_self, result);
+        _self.fire('complete', {item: curUploadItem, result: result});
         _self.set('curUploadItem', null);
-        BUI.log('触发complete事件！');
+
+        //重新上传其他等待的文件
+        _self.uploadFiles();
       });
     },
     uploadFile: function (item) {
@@ -1586,6 +1583,15 @@ define('bui/uploader/uploader', function (require) {
         //开始进行对列中的上传
         _self.uploadFile(items[0]);
       }
+    },
+    cancel: function(){
+      var _self = this,
+        uploaderType = _self.get('uploaderType'),
+        curUploadItem = _self.get('curUploadItem');
+
+      _self.fire('cancel', {item: curUploadItem});
+      uploaderType.cancel();
+      _self.set('curUploadItem', null);
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{
@@ -1618,6 +1624,24 @@ define('bui/uploader/uploader', function (require) {
        * @type {Object}
        */
       uploadStatus: {
+      },
+      /**
+       * 判断上传是否已经成功
+       * @type {Function}
+       */
+      isSuccess: {
+        value: function(result){
+          if(result && result.url){
+            return true;
+          }
+          return false;
+        }
+      },
+      success: {
+      },
+      error: {
+      },
+      complete: {
       },
       xview: {
         value: UploaderView

@@ -218,7 +218,7 @@ define('bui/uploader/button/base', function(require) {
         this.setFilter(v);
         return v;
       }
-    },
+    }
   };
 
   base.prototype = {
