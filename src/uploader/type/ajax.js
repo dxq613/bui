@@ -67,13 +67,11 @@ define('bui/uploader/type/ajax',function(require) {
             var self = this,
                 xhr = self.get('xhr'),
                 file = self.get('file');
-            if (!BUI.isObject(xhr)) {
-                BUI.log(LOG_PREFIX + 'cancel()，io值错误！');
-                return false;
-            }
             //中止ajax请求，会触发error事件
-            xhr.abort();
-            self.fire(AjaxType.event.CANCEL, {file: file});
+            if(xhr){
+                xhr.abort();
+                self.fire(AjaxType.event.CANCEL, {file: file});
+            }
             self.set('file', null);
             return self;
         },
@@ -94,17 +92,10 @@ define('bui/uploader/type/ajax',function(require) {
             });
             xhr.onload = function(ev){
                 var result = self._processResponse(xhr.responseText);
-                if(result && result.status === 1){
-                    self.fire(AjaxType.event.SUCCESS, {result : result, file: file});
-                }
-                else{
-                    self.fire(AjaxType.event.ERROR, {result : result, file: file});
-                }
                 self.fire('complete', {result: result, file: file});
             };
             xhr.onerror = function(ev){
                 self.fire(AjaxType.event.ERROR, {file: file});
-                self.fire('complete', {file: file});
             }
             xhr.open("POST", url, true);
             data.append("type", "ajax");
@@ -113,6 +104,8 @@ define('bui/uploader/type/ajax',function(require) {
             self._setFormData();
             self.set('xhr',xhr);
             return self;
+        },
+        clear: function(){
         },
         /**
          * 设置FormData数据
@@ -163,12 +156,12 @@ define('bui/uploader/type/ajax',function(require) {
         data: {
         },
         xhr: {
-        },
-        subDomain: {
-            value: {
-                proxy: '/sub_domain_proxy.html'
-            }
-        }
+        }//,
+        // subDomain: {
+        //     value: {
+        //         proxy: '/sub_domain_proxy.html'
+        //     }
+        // }
     }
     });
     return AjaxType;

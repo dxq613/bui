@@ -89,13 +89,11 @@ define('bui/uploader/type/base',function(require) {
      * 类似{name: 'test.jpg', size: 1024, textSize: '1K', input: {}, file: File}
      */
     upload: function(File) {
-
     },
     /** 
      * 停止上传
      */
-    stop: function(){
-        
+    cancel: function(){
     },
     /**
      * 处理服务器端返回的结果集
@@ -103,16 +101,15 @@ define('bui/uploader/type/base',function(require) {
      */
     _processResponse: function(responseText){
       var _self = this,
-        result = {};
+        file = _self.get('file'),
+        result;
       //格式化成json数据
       if(BUI.isString(responseText)){
         try{
           result = BUI.JSON.parse(responseText);
           // result = _self._fromUnicode(result);
         }catch(e){
-          var msg = responseText + '，返回结果集responseText格式不合法！';
-          BUI.log(msg);
-          _self.fire('error',{status:-1, result:{msg:msg}});
+          result = responseText;
         }
       }else if(BUI.isObject(responseText)){
         result = _self._fromUnicode(responseText);
@@ -137,6 +134,8 @@ define('bui/uploader/type/base',function(require) {
             });
         }
         return data;
+    },
+    clear: function(){
     }
   });
 
