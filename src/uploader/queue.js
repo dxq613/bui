@@ -17,8 +17,11 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
         delCls = _self.get('delCls');
 
       el.delegate('.' + delCls, 'click', function (ev) {
-        var itemContainer = $(ev.target).parent();
-        _self.removeItem(_self.getItemByElement(itemContainer));
+        var itemContainer = $(ev.target).parent(),
+          uploader = _self.get('uploader'),
+          item = _self.getItemByElement(itemContainer);
+        uploader && uploader.cancel && uploader.cancel(item);
+        _self.removeItem(item);
       });
     },
     /**

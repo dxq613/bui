@@ -15,10 +15,10 @@ define('bui/uploader/type/flash', function (require) {
      * @requires Node
      */
     function FlashType(config) {
-        var self = this;
+        var _self = this;
         //调用父类构造函数
-        FlashType.superclass.constructor.call(self, config);
-        self.isHasCrossdomain();
+        FlashType.superclass.constructor.call(_self, config);
+        _self.isHasCrossdomain();
     }
 
     BUI.mix(FlashType, /** @lends FlashType.prototype*/{
@@ -65,20 +65,16 @@ define('bui/uploader/type/flash', function (require) {
             });
             //监听文件上传完成事件
             swfUploader.on('uploadCompleteData', function(ev){
-                var result = _self._processResponse(ev.data);
-                if(result && result.status === 1){
-                    _self.fire(FlashType.event.SUCCESS, {result: result});
-                }
-                else{
-                    _self.fire(FlashType.event.ERROR, {result: result});
-                }
-                _self.fire('complete', {result: result});
+                var file = _self.get('file'),
+                    result = _self._processResponse(ev.data);
+                _self.fire('complete', {result: result, file: file});
                 _self.set('file', null);
             });
             //监听文件失败事件
             swfUploader.on('uploadError',function(){
-                _self.set('file', file);
-                _self.fire(FlashType.event.ERROR, {msg : ev.msg});
+                var file = _self.get('file');
+                _self.fire(FlashType.event.ERROR, {file: file});
+                _self.set('file', null);
             });
         },
         /**
@@ -114,6 +110,9 @@ define('bui/uploader/type/flash', function (require) {
                 _self.set('file', null);
             }
             return _self;
+        },
+        clear: function(){
+
         },
         /**
          * 应用是否有flash跨域策略文件
