@@ -8,8 +8,13 @@
  * @class jQuery
  * 原生的jQuery对象或者使用kissy时适配出来的对象
  */
-var jQuery = jQuery || (function () {
 
+var S = KISSY,
+    DOM = S.DOM,
+    NLP = S.Node.prototype;
+
+var jQuery = jQuery || (function () {
+  'use strict';
   function excuteDuration(self,fn,speed, easing,callback){
     var params = getDurationParams(speed, easing,callback);
 
@@ -64,9 +69,7 @@ var jQuery = jQuery || (function () {
     return null;
   }
 
-  var S = KISSY,
-    DOM = S.DOM,
-    NLP = S.Node.prototype,
+  var 
     wrapNode = function(selector,content){
       if(!(this instanceof wrapNode)){
         return new wrapNode(selector,content);
@@ -114,7 +117,7 @@ var jQuery = jQuery || (function () {
         return new wrapNode(rst);
       }
 
-      S.each(nodes,function(node,index){
+      S.each(nodes,function(node){
         if(node === selector){
           rst = node;
           return false;

@@ -154,8 +154,9 @@ define('bui/editor/mixin',function (require) {
     /**
      * 设置值，值的类型取决于编辑器编辑的数据
      * @param {String|Object} value 编辑器显示的值
+     * @param {Boolean} [hideError=false] 设置值时是否隐藏错误
      */
-    setValue : function(value){
+    setValue : function(value,hideError){
       var _self = this,
         innerControl = _self.getInnerControl();
       _self.set('editValue',value);
@@ -163,6 +164,9 @@ define('bui/editor/mixin',function (require) {
       innerControl.set(_self.get('innerValueField'),value);
       if(!value){//编辑的值等于空，则可能不会触发验证
         _self.valid();
+      }
+      if(hideError){
+        _self.clearErrors();
       }
     },
     /**
@@ -707,11 +711,11 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
      * 取消编辑
      */
     cancel : function(){
-      if(this.onCancel()!== false){
+      //if(this.onCancel()!== false){
         this.fire('cancel');
         this.clearValue();
         this.close();
-      } 
+      //} 
     },
     /**
      * @protected
@@ -794,6 +798,11 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
       success : {
         value : function () {
           this.accept();
+        }
+      },
+      cancel : {
+        value : function(){
+          this.cancel();
         }
       },
       /**
