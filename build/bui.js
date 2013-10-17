@@ -2733,7 +2733,7 @@ define('bui/observable',['bui/util'],function (r) {
  * @ignore
  * @author dxq613@gmail.com
  */
-define('bui/ua',function(){
+define('bui/ua', function () {
 
     function numberify(s) {
         var c = 0;
@@ -2743,37 +2743,50 @@ define('bui/ua',function(){
         }));
     };
 
-    var UA = $.UA || (function(){
-        var browser = $.browser,
+    function uaMatch(s) {
+        s = s.toLowerCase();
+        var r = /(chrome)[ \/]([\w.]+)/.exec(s) || /(webkit)[ \/]([\w.]+)/.exec(s) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(s) || /(msie) ([\w.]+)/.exec(s) || s.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(s) || [],
+            a = {
+                browser: r[1] || "",
+                version: r[2] || "0"
+            },
+            b = {};
+        a.browser && (b[a.browser] = !0, b.version = a.version),
+            b.chrome ? b.webkit = !0 : b.webkit && (b.safari = !0);
+        return b;
+    }
+
+    var UA = $.UA || (function () {
+        var browser = $.browser || uaMatch(navigator.userAgent),
             versionNumber = numberify(browser.version),
             /**
              * \u6d4f\u89c8\u5668\u7248\u672c\u68c0\u6d4b
              * @class BUI.UA
-                     * @singleton
+             * @singleton
              */
-            ua = 
+                ua =
             {
                 /**
                  * ie \u7248\u672c
                  * @type {Number}
                  */
-                ie : browser.msie && versionNumber,
+                ie: browser.msie && versionNumber,
 
                 /**
                  * webkit \u7248\u672c
                  * @type {Number}
                  */
-                webkit : browser.webkit && versionNumber,
+                webkit: browser.webkit && versionNumber,
                 /**
                  * opera \u7248\u672c
                  * @type {Number}
                  */
-                opera : browser.opera && versionNumber,
+                opera: browser.opera && versionNumber,
                 /**
                  * mozilla \u706b\u72d0\u7248\u672c
                  * @type {Number}
                  */
-                mozilla : browser.mozilla && versionNumber
+                mozilla: browser.mozilla && versionNumber
             };
         return ua;
     })();
@@ -19114,6 +19127,79 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
 
   return List;
 });/**
+ * @fileOverview \u6a21\u62df\u9009\u62e9\u6846\u5728\u8868\u5355\u4e2d
+ * @ignore
+ */
+
+define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (require) {
+
+  var BUI = require('bui/common'),
+    JSON = BUI.JSON,
+    Field = require('bui/form/basefield');
+
+  /**
+   * \u8868\u5355\u4e0a\u4f20\u57df
+   * @class BUI.Form.Field.Upload
+   * @extends BUI.Form.Field
+   */
+  var uploaderField = Field.extend({
+    //\u751f\u6210upload
+    renderUI : function(){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      if(_self.get('srcNode') && innerControl.get(0).type === 'file'){ //\u5982\u679c\u4f7f\u7528\u73b0\u6709DOM\u751f\u6210\uff0c\u4e0d\u4f7f\u7528\u4e0a\u4f20\u7ec4\u4ef6
+        return;
+      }
+      _self._initUpload();
+    },
+    _initUpload: function(){
+      var _self = this,
+        children = _self.get('children'),
+        uploader = _self.get('uploader') || {};
+
+      BUI.use('bui/uploader', function(Uploader){
+        uploader.render = _self.getControlContainer();
+        uploader.autoRender = true;
+        uploader = new Uploader.Uploader(uploader);
+        _self.set('uploader', uploader);
+        _self.set('isCreate',true);
+        _self.get('children').push(uploader);
+        uploader.get('uploaderType').on('success', function(ev){
+          var items = uploader.get('queue').getItems();
+          _self.setControlValue(items);
+        });
+      });
+    },
+    setControlValue: function(items){
+      var _self = this,
+        innerControl = _self.getInnerControl(),
+        result = [];
+      BUI.each(items, function(item){
+        result.push(item.result);
+      })
+      innerControl.val(JSON.stringify(result));
+    }
+  },{
+    ATTRS : {
+      /**
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
+       * @type {String}
+       */
+      controlTpl : {
+        value : '<input type="hidden"/>'
+      },
+      uploader: {
+      },
+      value:{
+        value: []
+      }
+    }
+  },{
+    xclass : 'form-field-uploader'
+  });
+
+  return uploaderField;
+});/**
  * @fileOverview \u53ef\u52fe\u9009\u7684\u5217\u8868\uff0c\u6a21\u62df\u591a\u4e2acheckbox
  * @ignore
  */
@@ -19211,6 +19297,7 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
     Checkbox : require(BASE + 'checkboxfield'),
     Plain : require(BASE + 'plainfield'),
     List : require(BASE + 'listfield'),
+    Uploader : require(BASE + 'uploaderfield'),
     CheckList : require(BASE + 'checklistfield'),
     RadioList : require(BASE + 'radiolistfield')
   });
