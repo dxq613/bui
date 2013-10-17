@@ -116,7 +116,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 
                 //设置加载数据后翻页栏的状态
                 totalCount = store.getTotalCount();
-                end = totalCount - start > pageSize ? start + store.getCount() : totalCount;
+                end = totalCount - start > pageSize ? start + store.getCount() - 1: totalCount;
                 totalPage = parseInt((totalCount + pageSize - 1) / pageSize, 10);
                 totalPage = totalPage > 0 ? totalPage : 1;
                 curPage = parseInt(start / pageSize, 10) + 1;

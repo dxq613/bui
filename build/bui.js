@@ -25656,7 +25656,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 
                 //\u8bbe\u7f6e\u52a0\u8f7d\u6570\u636e\u540e\u7ffb\u9875\u680f\u7684\u72b6\u6001
                 totalCount = store.getTotalCount();
-                end = totalCount - start > pageSize ? start + store.getCount() : totalCount;
+                end = totalCount - start > pageSize ? start + store.getCount() - 1: totalCount;
                 totalPage = parseInt((totalCount + pageSize - 1) / pageSize, 10);
                 totalPage = totalPage > 0 ? totalPage : 1;
                 curPage = parseInt(start / pageSize, 10) + 1;
