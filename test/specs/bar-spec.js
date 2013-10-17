@@ -126,18 +126,6 @@ BUI.use('bui/toolbar',function(Toolbar){
 				expect(getLog()).toBe('link1');
 			});
 		});/**/
-		/*it('测试文本框文本改变',function(){
-			var inputItem = bar.getItem('input'),
-				inputEl = null;
-			expect(inputItem).not.toBe(null);
-			inputEl = inputItem.get('el').find('input');
-			inputEl.val('123');
-			inputEl.fire('change');
-			waits(100);
-			runs(function(){
-				expect(getLog()).toBe('123');
-			});
-		});*/
 	});
 
 	describe("测试BarItem的内容改变", function () {

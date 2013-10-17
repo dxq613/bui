@@ -25594,15 +25594,16 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                     BUI.each(items, function (item,index) { //\u8f6c\u6362\u5bf9\u5e94\u7684\u5206\u9875\u680f
                         if(BUI.isString(item)){
                             if(BUI.Array.contains(item,ID_BUTTONS)){
-                                items[index] = _self._getButtonItem(item);
+                                item = _self._getButtonItem(item);
                             }else if(BUI.Array.contains(item,ID_TEXTS)){
                             
-                                items[index] = _self._getTextItem(item);
+                                item = _self._getTextItem(item);
                             }else{
-                                items[index] = {xtype : item};
+                                item = {xtype : item};
                             }
 
                         }
+                        children.push(item);
                     }); 
                 }
                 
@@ -25837,6 +25838,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
             //show the information of current page , total count of pages and total count of records
             _setNumberPages:function () {
                 var _self = this,
+                    items = _self.getItems();/*,
                     totalPageItem = _self.getItem(ID_TOTAL_PAGE),
                     totalCountItem = _self.getItem(ID_TOTAL_COUNT);
                 if (totalPageItem) {
@@ -25845,20 +25847,32 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 _self._setCurrentPageValue(_self.get(ID_CURRENT_PAGE));
                 if (totalCountItem) {
                     totalCountItem.set('content', _self._getTextItemTpl(ID_TOTAL_COUNT));
-                }
+                }*/
+                BUI.each(items,function(item){
+                    if(item.__xclass === 'bar-item-text'){
+                        item.set('content', _self._getTextItemTpl(item.get('id')));
+                    }
+                });
+
             },
             _getCurrentPageValue:function (curItem) {
                 var _self = this;
                 curItem = curItem || _self.getItem(ID_CURRENT_PAGE);
-                var textEl = curItem.get('el').find('input');
-                return textEl.val();
+                if(curItem){
+                    var textEl = curItem.get('el').find('input');
+                    return textEl.val();
+                }
+                
             },
             //show current page in textbox
             _setCurrentPageValue:function (value, curItem) {
                 var _self = this;
                 curItem = curItem || _self.getItem(ID_CURRENT_PAGE);
-                var textEl = curItem.get('el').find('input');
-                textEl.val(value);
+                if(curItem){
+                    var textEl = curItem.get('el').find('input');
+                    textEl.val(value);
+                }
+                
             }
         }, {
             ATTRS:
@@ -25957,7 +25971,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                  */
                 curPageTpl:{
                     value:'\u7b2c <input type="text" '+
-                        'autocomplete="off" class="'+PREFIX+'pb-page" size="20" name="inputItem"> \u9875'
+                        'autocomplete="off" class="'+PREFIX+'pb-page" size="20" value="{curPage}" name="inputItem"> \u9875'
                 },
                 /**
                  * the template of total count info
@@ -25965,6 +25979,9 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                  */
                 totalCountTpl:{
                     value:'\u5171{totalCount}\u6761\u8bb0\u5f55'
+                },
+                autoInitItems : {
+                    value : false
                 },
                 /**
                  * current page of the paging bar

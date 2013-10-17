@@ -1,3 +1,4 @@
+/**/
 BUI.use(['bui/toolbar','bui/data'],function(Toolbar,Data){
 	
 	var PBar = Toolbar.PagingBar,
@@ -86,7 +87,7 @@ BUI.use(['bui/toolbar','bui/data'],function(Toolbar,Data){
 					expect(bar.get('curPage')).toBe(1);
 				});
 			});
-		});/**/
+		});
 		it('在第一页时，点击首页按钮、前一页',function(){
 			waits(100);
 			runs(function(){
@@ -234,18 +235,58 @@ BUI.use(['bui/toolbar','bui/data'],function(Toolbar,Data){
 			});
 		});
 	});
-	/*暂时未提供自定义功能
-	describe("测试自定义分页栏", function () {
-		
-		it('测试改变链接内容',function(){
-			
+	
+	
+});
+
+
+BUI.use(['bui/toolbar','bui/data'],function(Toolbar,Data){
+	
+	var PBar = Toolbar.PagingBar,
+		Store = Data.Store;
+
+	var store = new Store({url:'data/number40.php'}),
+		items = ['first','prev','separator','totalPage','separator','refresh','separator','next','last'],
+		bar = new PBar({
+		render : '#pbar1',
+		  elCls : 'image-pbar',
+      items : items,
+      totalPageTpl : '{curPage}/{totalPage}',
+      store : store
+	});
+	bar.render();
+
+	describe('测试生成元素',function(){
+		it('测试按钮生成',function(){
+			expect(bar.getItem('first')).not.toBe(null);
 		});
-		it('测试链接内容改变后的事件',function(){
-			
+		it('测试文本生成',function(){
+			expect(bar.getItem('totalPage')).not.toBe(null);
+			expect(bar.getItem('curPage')).toBe(null);
 		});
-		it('测试按钮设置不可用',function(){
-			
+		it('测试生成项数目',function(){
+			expect(bar.getItemCount()).toBe(items.length);
+		});	
+	});
+
+	describe('测试加载',function(){
+		it('加载内容，测试按钮可用',function(){
+			store.load();
+			waits(500);
+			runs(function(){
+				expect(bar.getItem('first').get('disabled')).toBe(true);
+				expect(bar.getItem('last').get('disabled')).not.toBe(true);
+			});
 		});
-	});*/
+
+		it('测试显示的文本',function(){
+			expect(bar.getItem('totalPage').get('el').text()).not.toBe('/');
+		});
+		it('测试生成项数目',function(){
+			expect(bar.getItemCount()).toBe(items.length);
+		});	
+	});
+
+
 	
 });
