@@ -48,11 +48,11 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
      * 取消编辑
      */
     cancel : function(){
-      if(this.onCancel()!== false){
+      //if(this.onCancel()!== false){
         this.fire('cancel');
         this.clearValue();
         this.close();
-      } 
+      //} 
     },
     /**
      * @protected
@@ -135,6 +135,11 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
       success : {
         value : function () {
           this.accept();
+        }
+      },
+      cancel : {
+        value : function(){
+          this.cancel();
         }
       },
       /**

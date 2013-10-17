@@ -15,9 +15,12 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
         ID_NEXT = 'next',
         ID_LAST = 'last',
         ID_SKIP = 'skip',
+        ID_REFRESH = 'refresh',
         ID_TOTAL_PAGE = 'totalPage',
         ID_CURRENT_PAGE = 'curPage',
-        ID_TOTAL_COUNT = 'totalCount';
+        ID_TOTAL_COUNT = 'totalCount',
+        ID_BUTTONS = [ID_FIRST,ID_PREV,ID_NEXT,ID_LAST,ID_SKIP,ID_REFRESH],
+        ID_TEXTS = [ID_TOTAL_PAGE,ID_CURRENT_PAGE,ID_TOTAL_COUNT];
 
     /**
      * 分页栏
@@ -42,11 +45,25 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                     children = _self.get('children'),
                     items = _self.get('items'),
                     store = _self.get('store');
-                if(!items || items.length){
+                if(!items){
                     items = _self._getItems();
                     BUI.each(items, function (item) {
                         children.push(item);//item
                     });
+                }else{
+                    BUI.each(items, function (item,index) { //转换对应的分页栏
+                        if(BUI.isString(item)){
+                            if(BUI.Array.contains(item,ID_BUTTONS)){
+                                items[index] = _self._getButtonItem(item);
+                            }else if(BUI.Array.contains(item,ID_TEXTS)){
+                            
+                                items[index] = _self._getTextItem(item);
+                            }else{
+                                items[index] = {xtype : item};
+                            }
+
+                        }
+                    }); 
                 }
                 
                 if (store && store.get('pageSize')) {
@@ -140,6 +157,11 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 //skip to one page
                 _self._bindButtonItemEvent(ID_SKIP, function () {
                     handleSkip();
+                });
+
+                //refresh
+                _self._bindButtonItemEvent(ID_REFRESH, function () {
+                    _self.jumpToPage(_self.get('curPage'));
                 });
                 //input page number and press key "enter"
                 var curPage = _self.getItem(ID_CURRENT_PAGE);
@@ -239,8 +261,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
             //get text item's template
             _getTextItemTpl:function (id) {
                 var _self = this,
-                    obj = {};
-                obj[id] = _self.get(id);
+                    obj = _self.getAttrVals();
                 return BUI.substitute(this.get(id + 'Tpl'), obj);
             },
             //Whether to allow jump, if it had been in the current page or not within the scope of effective page, not allowed to jump
@@ -377,6 +398,12 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 skipCls:{
                     value:PREFIX + 'pb-skip'
                 },
+                refreshText : {
+                    value : '刷新'
+                },
+                refreshCls : {
+                    value:PREFIX + 'pb-refresh'
+                },
                 /**
                  * the template of total page info
                  * @default {String} '共 {totalPage} 页'
@@ -394,7 +421,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 },
                 /**
                  * the template of total count info
-                 * @default {String} '第 &lt;input type="text" autocomplete="off" class="bui-pb-page" size="20" name="inputItem"&gt; 页'
+                 * @default {String} '共{totalCount}条记录'
                  */
                 totalCountTpl:{
                     value:'共{totalCount}条记录'
@@ -444,6 +471,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
             ID_NEXT:ID_NEXT,
             ID_LAST:ID_LAST,
             ID_SKIP:ID_SKIP,
+            ID_REFRESH: ID_REFRESH,
             ID_TOTAL_PAGE:ID_TOTAL_PAGE,
             ID_CURRENT_PAGE:ID_CURRENT_PAGE,
             ID_TOTAL_COUNT:ID_TOTAL_COUNT
