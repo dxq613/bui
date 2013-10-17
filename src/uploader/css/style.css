@@ -1,0 +1,170 @@
+/* 清除浮动 */
+.clearfix:after { content: '\20'; display: block; height: 0; clear: both; }
+.clearfix { *zoom: 1; }
+
+/**按钮样式**/
+.bui-uploader-button-wrap {
+    border: 1px solid #C4DAED;
+    font-size: 12px;
+    text-align: center;
+    line-height: 24px;
+    display: block;
+    position: relative;
+    width: 110px;
+    z-index: 500;
+    margin-right: 10px;
+    text-decoration: none;
+    /*渐变*/
+    background: -webkit-gradient(linear, left top, left bottom, from(#FDFEFE), to(#DFE7EF));
+    background: -moz-linear-gradient(top, #FDFEFE, #DFE7EF);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FDFEFE', endColorstr = '#DFE7EF');
+}
+.bui-uploader-button-wrap:link,.bui-uploader-button-wrap:visited{
+    color:#404040;
+}
+
+.bui-uploader-button-wrap-hover, .bui-uploader-button-wrap:hover {
+    text-decoration: none;
+    color: black;
+    background: -webkit-gradient(linear, left top, left bottom, from(#DFE7EF), to(#FDFEFE));
+    background: -moz-linear-gradient(top, #DFE7EF, #FDFEFE);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#DFE7EF', endColorstr = '#FDFEFE');
+}
+
+.bui-uploader-button-wrap:active {
+    background: #DFE7EF;
+    filter: none;
+}
+
+.uploader-button-disabled, .uploader-button-disabled:hover {
+    border: 1px solid #BFBFBF;
+    color: #404040;
+    background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#E5E5E5));
+    background: -moz-linear-gradient(top, #FAFAFA, #E5E5E5);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FAFAFA', endColorstr = '#E5E5E5');
+}
+.uploader-button-disabled .file-input-wrapper .file-input {
+    display: none;
+}
+.bui-uploader-button-wrap .file-input-wrapper .file-input {
+    background: none repeat scroll 0 0 transparent;
+    border: medium none;
+    cursor: pointer;
+    height: 200px;
+    width: 110px;
+    top: -50px;
+    opacity: 0;
+    position: absolute;
+    font-size: 100px;
+    left: 0;
+}
+.bui-uploader-button-wrap .file-input-wrapper {
+    display: block;
+    height: 26px;
+    width: 110px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+    z-index: 300;
+}
+
+.bui-uploader-button .uploader-button-swf{
+  display: block;
+  width: 110px;
+  height: 26px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2000;
+  overflow: hidden;
+}
+/**按钮样式end**/
+
+
+
+
+
+
+
+.defaultTheme-queue a {
+    color: #3366CC;
+    text-decoration: none;
+}
+
+.defaultTheme-queue a:hover {
+    color: #FF6600;
+    text-decoration: underline;
+}
+
+
+
+
+.defaultTheme-queue {
+    color: #404040;
+    width: 400px;
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.defaultTheme-queue li {
+    margin-top: 5px;
+    list-style: none;
+    line-height: 18px;
+    color:#404040;
+}
+
+.defaultTheme-queue .file-icon {
+    width: 12px;
+    height: 16px;
+    margin-right: 5px;
+    background: url("http://img04.taobaocdn.com/tps/i4/T1HCGNXexjXXXXXXXX-12-16.png") 0 0 no-repeat;
+}
+
+.defaultTheme-queue .loading {
+    background: url("http://img01.taobaocdn.com/tps/i1/T1F5tVXjRfXXXXXXXX-16-16.gif") no-repeat scroll 0 1px transparent;
+    width: 16px;
+    height: 16px;
+}
+
+.defaultTheme-queue .status-wrapper {
+    margin-left: 5px;
+}
+.status-wrapper .status{
+    display: none;
+}
+.defaultTheme-queue .status-wrapper .uploader-progress {
+    margin-right: 5px;
+    margin-top:1px;
+    width:16px;
+}
+.file-input-wrapper .valid-under {
+    display: none !important;
+}
+
+.defaultTheme-queue .upload-error {
+    color: #FD7316;
+}
+
+.uploader-auth-msg .estate {
+    margin: 0;
+}
+
+/**-----进度条------**/
+.defaultTheme-queue .ks-progress-bar {
+    border: 1px solid #FA9515;
+    height: 10px;
+    background-color: #fff;
+    width: 80px;
+}
+
+.defaultTheme-queue .ks-progress-bar .ks-progress-bar-value {
+    width: 0;
+    height: 100%;
+    background-color: #FA9515;
+}
+

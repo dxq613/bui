@@ -770,7 +770,6 @@ BUI.use('bui/form/checkboxfield',function(CheckBox){
     value : 'a',
     checked : true
   });
-
   checkbox.render();
   var el = checkbox.get('el');
   describe('生成checkbox',function(){
@@ -782,3 +781,15 @@ BUI.use('bui/form/checkboxfield',function(CheckBox){
   });
 });
 /**/
+
+/**上传组件**/
+BUI.use('bui/form/uploaderfield',function(UploaderField){
+  var field = new UploaderField({
+    render : '#upload',
+    label: '文件上传字段',
+    uploader: {
+    }
+  });
+  field.render();
+
+});

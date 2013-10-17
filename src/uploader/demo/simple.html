@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>使用js传参方式上传文件</title>
+  <script type="text/javascript" src="../../jquery-1.8.1.min.js"></script>
+  <script type="text/javascript" src="../../../build/loader.js"></script>
+</head>
+<body>
+<h2>使用js传参方式上传文件</h2>
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <div id="J_Uploader"></div>
+      <div id="J_UploaderQueue"></div>
+    </div>
+  </div>
+</div>
+<script>
+  BUI.setDebug(true);
+  BUI.use(['bui/uploader'], function(Uploader){
+    var uploader = new Uploader.Uploader({
+    render: '#J_Uploader',
+    // queueTarget: '#J_UploaderQueue',
+    action: '../../../test/upload/uploader.php',
+    filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+  });
+  uploader.render();
+  });
+</script>
+</body>
+</html>
