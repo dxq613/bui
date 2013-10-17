@@ -2733,7 +2733,7 @@ define('bui/observable',['bui/util'],function (r) {
  * @ignore
  * @author dxq613@gmail.com
  */
-define('bui/ua',function(){
+define('bui/ua', function () {
 
     function numberify(s) {
         var c = 0;
@@ -2743,37 +2743,50 @@ define('bui/ua',function(){
         }));
     };
 
-    var UA = $.UA || (function(){
-        var browser = $.browser,
+    function uaMatch(s) {
+        s = s.toLowerCase();
+        var r = /(chrome)[ \/]([\w.]+)/.exec(s) || /(webkit)[ \/]([\w.]+)/.exec(s) || /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(s) || /(msie) ([\w.]+)/.exec(s) || s.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(s) || [],
+            a = {
+                browser: r[1] || "",
+                version: r[2] || "0"
+            },
+            b = {};
+        a.browser && (b[a.browser] = !0, b.version = a.version),
+            b.chrome ? b.webkit = !0 : b.webkit && (b.safari = !0);
+        return b;
+    }
+
+    var UA = $.UA || (function () {
+        var browser = $.browser || uaMatch(navigator.userAgent),
             versionNumber = numberify(browser.version),
             /**
              * \u6d4f\u89c8\u5668\u7248\u672c\u68c0\u6d4b
              * @class BUI.UA
-                     * @singleton
+             * @singleton
              */
-            ua = 
+                ua =
             {
                 /**
                  * ie \u7248\u672c
                  * @type {Number}
                  */
-                ie : browser.msie && versionNumber,
+                ie: browser.msie && versionNumber,
 
                 /**
                  * webkit \u7248\u672c
                  * @type {Number}
                  */
-                webkit : browser.webkit && versionNumber,
+                webkit: browser.webkit && versionNumber,
                 /**
                  * opera \u7248\u672c
                  * @type {Number}
                  */
-                opera : browser.opera && versionNumber,
+                opera: browser.opera && versionNumber,
                 /**
                  * mozilla \u706b\u72d0\u7248\u672c
                  * @type {Number}
                  */
-                mozilla : browser.mozilla && versionNumber
+                mozilla: browser.mozilla && versionNumber
             };
         return ua;
     })();

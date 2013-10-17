@@ -2021,6 +2021,7 @@ input.x-datepicker-time {
   border: 1px solid #C4DAED;
   font-size: 12px;
   text-align: center;
+  height: 24px;
   line-height: 24px;
   display: block;
   position: relative;
