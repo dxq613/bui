@@ -36,10 +36,20 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         _self.set('uploader', uploader);
         _self.set('isCreate',true);
         _self.get('children').push(uploader);
+
+        _self._initControlValue();
+        _self._initQueue(uploader.get('queue'));
+        
         uploader.on('success', function(ev){
-          var items = uploader.get('queue').getItems();
-          _self.setControlValue(items);
+          var items = uploader.get('queue').getItems(),
+            resultItems = [];
+          BUI.each(items, function(item){
+            item.result && resultItems.push(item.result);
+          });
+          _self.setControlValue(resultItems);
         });
+
+        
       });
     },
     setControlValue: function(items){
@@ -47,9 +57,28 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         innerControl = _self.getInnerControl(),
         result = [];
       BUI.each(items, function(item){
-        result.push(item.result);
+        result.push(item);
       });
+
       innerControl.val(JSON.stringify(result));
+    },
+    _initControlValue: function(){
+      var _self = this,
+        textValue = _self.getControlValue(),
+        value;
+      if(textValue){
+        value = BUI.JSON.parse(textValue);
+        _self.set('value', value);
+      }
+    },
+    _initQueue: function(queue){
+      var _self = this,
+        value = _self.get('value');
+      //初始化对列默认成功
+      BUI.each(value, function(item){
+        item.success = true;
+      });
+      queue && queue.setItems(value);
     }
   },{
     ATTRS : {
