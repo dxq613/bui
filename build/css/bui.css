@@ -2109,7 +2109,7 @@ input.x-datepicker-time {
   padding: 0;
   z-index: 300;
 }
-.defaultTheme-button .bui-uploader-button .uploader-button-swf {
+.defaultTheme-button .uploader-button-swf {
   display: block;
   width: 110px;
   height: 26px;
@@ -2137,10 +2137,8 @@ input.x-datepicker-time {
   font-size: 12px;
 }
 .defaultTheme-queue li {
-  margin-top: 5px;
-  list-style: none;
-  line-height: 18px;
-  color: #404040;
+  display: block;
+  clear: both;
 }
 .defaultTheme-queue .file-icon {
   width: 12px;
@@ -2153,37 +2151,17 @@ input.x-datepicker-time {
   width: 16px;
   height: 16px;
 }
-.defaultTheme-queue .status-wrapper {
-  margin-left: 5px;
+.defaultTheme-queue .filename {
+  float: left;
+  padding-right: 10px;
 }
-.status-wrapper .status {
-  display: none;
+.defaultTheme-queue .progress {
+  float: left;
+  width: 100px;
 }
-.defaultTheme-queue .status-wrapper .uploader-progress {
-  margin-right: 5px;
-  margin-top: 1px;
-  width: 16px;
-}
-.file-input-wrapper .valid-under {
-  display: none !important;
-}
-.defaultTheme-queue .upload-error {
-  color: #FD7316;
-}
-.uploader-auth-msg .estate {
-  margin: 0;
-}
-/**-----进度条------**/
-.defaultTheme-queue .ks-progress-bar {
-  border: 1px solid #FA9515;
-  height: 10px;
-  background-color: #fff;
-  width: 80px;
-}
-.defaultTheme-queue .ks-progress-bar .ks-progress-bar-value {
-  width: 0;
-  height: 100%;
-  background-color: #FA9515;
+.defaultTheme-queue .action {
+  float: left;
+  padding-left: 10px;
 }
 .bui-slider {
   border: 1px solid #c3c3d6;

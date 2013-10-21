@@ -457,8 +457,8 @@ define('bui/uploader/button/htmlButton', function(require) {
       _self.set('fileInput', fileInput);
 
       _self.setMultiple(_self.get('multiple'));
+      _self.setDisabled(_self.get('disabled'));
       _self.setFilter(_self.get('filter'));
-      //_self._setDisabled(_self.get('disabled'));
     },
 
     _bindChangeHandler: function(fileInput) {
@@ -514,6 +514,11 @@ define('bui/uploader/button/htmlButton', function(require) {
         fileInput.removeAttr('multiple');
       }
       return multiple;
+    },
+    setDisabled: function(v){
+      var _self = this,
+        fileInput = _self.get('fileInput');
+      //fileInput.hide();
     },
     /**
      * 设置上传文件的类型
@@ -1205,7 +1210,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   }, {
     ATTRS: {
       itemTpl: {
-        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
+        value: '<li><span data-url="{url}" class="filename">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></div></li>'
       },
       itemCls: {
         value: CLS_QUEUE_ITEM
@@ -1364,7 +1369,7 @@ define('bui/uploader/uploader', function (require) {
         if(attrVals[name] === undefined){
           _self.set(name, value);
         }
-        else if(BUI.isObject(value)){
+        else if($.isPlainObject(value)){
           BUI.mix(value, attrVals[name]);
           _self.set(name, value);
         }
@@ -1423,8 +1428,8 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         type = _self.get('type'),
         el = _self.get('el'),
-        button = _self.get('button') || {};
-      if(!(button instanceof Component.Controller)){
+        button = _self.get('button');
+      if(!button.isController){
         button.render = el;
         button.autoRender = true;
         button = Factory.createButton(type, button);
@@ -1440,7 +1445,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         el = _self.get('el'),
         queue = _self.get('queue') || {};
-      if (!(queue instanceof Component.Controller)) {
+      if (!queue.isController) {
         queue.render = el;
         queue.autoRender = true;
         //queue.uploader = _self;
@@ -1455,7 +1460,6 @@ define('bui/uploader/uploader', function (require) {
         queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
       button.on('change', function(ev) {
-
         //对添加的文件添加等待状态
         BUI.each(ev.files, function(file){
           BUI.mix(file, {
@@ -1616,6 +1620,21 @@ define('bui/uploader/uploader', function (require) {
         value: 'default'
       },
       button: {
+      },
+      disabled: {
+        value: false,
+        setter: function(v){
+          var _self = this,
+            button = _self.get('button') || {};
+          if($.isPlainObject(button)){
+            button.disabled = true;
+            _self.set('button', button);
+          }
+          else{
+            button.set('disabled', true);
+          }
+          return v;
+        }
       },
       queue: {
       },

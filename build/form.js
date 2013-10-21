@@ -1952,7 +1952,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         _self.set('uploader', uploader);
         _self.set('isCreate',true);
         _self.get('children').push(uploader);
-        uploader.get('uploaderType').on('success', function(ev){
+        uploader.on('success', function(ev){
           var items = uploader.get('queue').getItems();
           _self.setControlValue(items);
         });
@@ -1964,7 +1964,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         result = [];
       BUI.each(items, function(item){
         result.push(item.result);
-      })
+      });
       innerControl.val(JSON.stringify(result));
     }
   },{

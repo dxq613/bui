@@ -614,6 +614,7 @@
   top: 4px;
   width: 16px;
   height: 16px;
+  text-decoration: none;
   outline: none;
   overflow: hidden;
   cursor: pointer;
@@ -2055,7 +2056,7 @@ input.x-datepicker-time {
 
   background: -webkit-gradient(linear, left top, left bottom, from(#fdfefe), to(#dfe7ef));
   background: -moz-linear-gradient(top, #fdfefe, #dfe7ef);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FDFEFE', endColorstr='#DFE7EF');
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FDFEFE', endColorstr='#DFE7EF');
 }
 .defaultTheme-button .bui-uploader-button-wrap:link,
 .defaultTheme-button .bui-uploader-button-wrap:visited {
@@ -2067,7 +2068,7 @@ input.x-datepicker-time {
   color: black;
   background: -webkit-gradient(linear, left top, left bottom, from(#dfe7ef), to(#fdfefe));
   background: -moz-linear-gradient(top, #dfe7ef, #fdfefe);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#DFE7EF', endColorstr='#FDFEFE');
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#DFE7EF', endColorstr='#FDFEFE');
 }
 .defaultTheme-button .bui-uploader-button-wrap:active {
   background: #DFE7EF;
@@ -2079,7 +2080,7 @@ input.x-datepicker-time {
   color: #404040;
   background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e5e5e5));
   background: -moz-linear-gradient(top, #fafafa, #e5e5e5);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
 }
 .defaultTheme-button .uploader-button-disabled .file-input-wrapper .file-input {
   display: none;
