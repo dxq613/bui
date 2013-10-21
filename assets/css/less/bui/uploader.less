@@ -69,7 +69,7 @@
 		z-index: 300;
 	}
 
-	.bui-uploader-button .uploader-button-swf{
+	.uploader-button-swf{
 	  display: block;
 	  width: 110px;
 	  height: 26px;
@@ -108,61 +108,35 @@
     padding: 0;
     margin-top: 10px;
     font-size: 12px;
-}
 
-.defaultTheme-queue li {
-    margin-top: 5px;
-    list-style: none;
-    line-height: 18px;
-    color:#404040;
-}
 
-.defaultTheme-queue .file-icon {
-    width: 12px;
-    height: 16px;
-    margin-right: 5px;
-    background: url("http://img04.taobaocdn.com/tps/i4/T1HCGNXexjXXXXXXXX-12-16.png") 0 0 no-repeat;
-}
+  li {
+    display: block;
+    clear: both;
+  }
 
-.defaultTheme-queue .loading {
-    background: url("http://img01.taobaocdn.com/tps/i1/T1F5tVXjRfXXXXXXXX-16-16.gif") no-repeat scroll 0 1px transparent;
-    width: 16px;
-    height: 16px;
-}
+  .file-icon {
+      width: 12px;
+      height: 16px;
+      margin-right: 5px;
+      background: url("http://img04.taobaocdn.com/tps/i4/T1HCGNXexjXXXXXXXX-12-16.png") 0 0 no-repeat;
+  }
 
-.defaultTheme-queue .status-wrapper {
-    margin-left: 5px;
-}
-.status-wrapper .status{
-    display: none;
-}
-.defaultTheme-queue .status-wrapper .uploader-progress {
-    margin-right: 5px;
-    margin-top:1px;
-    width:16px;
-}
-.file-input-wrapper .valid-under {
-    display: none !important;
-}
-
-.defaultTheme-queue .upload-error {
-    color: #FD7316;
-}
-
-.uploader-auth-msg .estate {
-    margin: 0;
-}
-
-/**-----进度条------**/
-.defaultTheme-queue .ks-progress-bar {
-    border: 1px solid #FA9515;
-    height: 10px;
-    background-color: #fff;
-    width: 80px;
-}
-
-.defaultTheme-queue .ks-progress-bar .ks-progress-bar-value {
-    width: 0;
-    height: 100%;
-    background-color: #FA9515;
+  .loading {
+      background: url("http://img01.taobaocdn.com/tps/i1/T1F5tVXjRfXXXXXXXX-16-16.gif") no-repeat scroll 0 1px transparent;
+      width: 16px;
+      height: 16px;
+  }
+  .filename{
+    float: left;
+    padding-right: 10px;
+  }
+  .progress{
+    float: left;
+    width: 100px;
+  }
+  .action{
+    float: left;
+    padding-left: 10px;
+  }
 }

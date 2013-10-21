@@ -46,7 +46,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   }, {
     ATTRS: {
       itemTpl: {
-        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
+        value: '<li><span data-url="{url}" class="filename">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></div></li>'
       },
       itemCls: {
         value: CLS_QUEUE_ITEM

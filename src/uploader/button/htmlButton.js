@@ -62,8 +62,8 @@ define('bui/uploader/button/htmlButton', function(require) {
       _self.set('fileInput', fileInput);
 
       _self.setMultiple(_self.get('multiple'));
+      _self.setDisabled(_self.get('disabled'));
       _self.setFilter(_self.get('filter'));
-      //_self._setDisabled(_self.get('disabled'));
     },
 
     _bindChangeHandler: function(fileInput) {
@@ -119,6 +119,11 @@ define('bui/uploader/button/htmlButton', function(require) {
         fileInput.removeAttr('multiple');
       }
       return multiple;
+    },
+    setDisabled: function(v){
+      var _self = this,
+        fileInput = _self.get('fileInput');
+      //fileInput.hide();
     },
     /**
      * 设置上传文件的类型
