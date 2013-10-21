@@ -1181,7 +1181,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
         delCls = _self.get('delCls');
 
       el.delegate('.' + delCls, 'click', function (ev) {
-        var itemContainer = $(ev.target).parent(),
+        var itemContainer = $(ev.target).parents('.bui-queue-item'),
           uploader = _self.get('uploader'),
           item = _self.getItemByElement(itemContainer);
         uploader && uploader.cancel && uploader.cancel(item);
