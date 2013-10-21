@@ -2086,7 +2086,7 @@ input.x-datepicker-time {
   padding: 0;
   z-index: 300;
 }
-.defaultTheme-button .bui-uploader-button .uploader-button-swf {
+.defaultTheme-button .uploader-button-swf {
   display: block;
   width: 110px;
   height: 26px;
