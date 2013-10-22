@@ -87,7 +87,7 @@ BUI.use(['bui/uploader'], function (Uploader) {
     render: '#J_UploaderFlash',
     type: 'flash',
     // queueTarget: '#J_UploaderQueue',
-    url: 'upload/upload.php',
+    url: 'http://www.baidu.com',
     filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
   });
   uploader.render();
