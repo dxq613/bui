@@ -356,9 +356,9 @@ define('bui/uploader/button/base', function(require) {
       });
       return file;
     },
-    setMultiple: function(){
+    setMultiple: function(v){
     },
-    setDisabled: function(){
+    setDisabled: function(v){
     },
     getFilter: function(v){
       if(v){
@@ -518,7 +518,12 @@ define('bui/uploader/button/htmlButton', function(require) {
     setDisabled: function(v){
       var _self = this,
         fileInput = _self.get('fileInput');
-      //fileInput.hide();
+      if (v) {
+        fileInput.hide();
+      }
+      else{
+        fileInput.show();
+      }
     },
     /**
      * 设置上传文件的类型
@@ -598,7 +603,6 @@ define('bui/uploader/button/swfButton', function (require) {
   var SwfButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
       var _self = this;
-
       _self._initSwfUploader();
     },
     bindUI: function(){
@@ -626,18 +630,30 @@ define('bui/uploader/button/swfButton', function (require) {
         buttonEl = _self.get('el').find('.' + buttonCls),
         flashCfg = _self.get('flash'),
         swfTpl = _self.get('swfTpl'),
+        swfEl = $(swfTpl),
         swfUploader;
 
       BUI.mix(flashCfg, {
-        render: $(swfTpl).appendTo(buttonEl)
+        render: swfEl.appendTo(buttonEl)
       });
       swfUploader = new SWF(flashCfg);
+      _self.set('swfEl', swfEl);
       _self.set('swfUploader', swfUploader);
     },
     setMultiple: function(v){
       var _self = this,
         swfUploader = _self.get('swfUploader');
       swfUploader && swfUploader.multifile(v);
+    },
+    setDisabled: function(v){
+      var _self = this,
+        swfEl = _self.get('swfEl');
+      if(v){
+        swfEl.hide();
+      }
+      else{
+         swfEl.show();
+      }
     },
     setFilter: function(v){
       var _self = this,
@@ -1620,20 +1636,20 @@ define('bui/uploader/uploader', function (require) {
         value: 'default'
       },
       button: {
+        setter: function(v){
+          var disabled = this.get('disabled');
+          if(v.isController){
+            v.set('disabled', disabled);
+          }
+          return v;
+        }
       },
       disabled: {
         value: false,
         setter: function(v){
           var _self = this,
-            button = _self.get('button') || {};
-          if($.isPlainObject(button)){
-            button.disabled = true;
-            _self.set('button', button);
-          }
-          else{
-            button.set('disabled', true);
-          }
-          return v;
+            button = _self.get('button');
+          button && button.isController && button.set('disabled', true);
         }
       },
       queue: {

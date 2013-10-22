@@ -235,9 +235,9 @@ define('bui/uploader/button/base', function(require) {
       });
       return file;
     },
-    setMultiple: function(){
+    setMultiple: function(v){
     },
-    setDisabled: function(){
+    setDisabled: function(v){
     },
     getFilter: function(v){
       if(v){

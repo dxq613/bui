@@ -2,7 +2,7 @@
 <?php include("./templates/header.php"); ?>
 
 <link rel="stylesheet" href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css"/>
-<link rel="stylesheet" href="http://g.tbcdn.cn/fi/bui/css/bui-min.css"/>
+<link rel="stylesheet" href="../assets/css/bui.css"/>
 
   <div class="container">
     <div class="row">

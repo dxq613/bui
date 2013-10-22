@@ -69,9 +69,11 @@ BUI.use(['bui/uploader/button/htmlButton', 'bui/uploader/button/swfButton'], fun
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
-    disabled: true,
+    disabled: false,
     url: 'upload/upload.php',
-    filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+    button:{
+      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+    }
   });
   uploader.render();
   var el = uploader.get('el');
@@ -86,9 +88,12 @@ BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_UploaderFlash',
     type: 'flash',
+    // disabled: true,
     // queueTarget: '#J_UploaderQueue',
-    url: 'http://www.baidu.com',
-    filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+    url: 'upload/upload.php',
+    button: {
+      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+    }
   });
   uploader.render();
   var el = uploader.get('el');

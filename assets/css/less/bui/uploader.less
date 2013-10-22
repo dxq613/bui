@@ -33,17 +33,6 @@
 		background: #DFE7EF;
 		filter: none;
 	}
-
-	.uploader-button-disabled, .uploader-button-disabled:hover {
-		border: 1px solid #BFBFBF;
-		color: #404040;
-		background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#E5E5E5));
-		background: -moz-linear-gradient(top, #FAFAFA, #E5E5E5);
-		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FAFAFA', endColorstr = '#E5E5E5');
-	}
-	.uploader-button-disabled .file-input-wrapper .file-input {
-		display: none;
-	}
 	.bui-uploader-button-wrap .file-input-wrapper .file-input {
 		background: none repeat scroll 0 0 transparent;
 		border: medium none;
@@ -79,6 +68,21 @@
 	  z-index: 2000;
 	  overflow: hidden;
 	}
+}
+.bui-uploader-disabled{
+  .defaultTheme-button{
+    .bui-uploader-button-wrap{
+      cursor: default;
+      border: 1px solid #BFBFBF;
+      color: #404040;
+      background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#E5E5E5));
+      background: -moz-linear-gradient(top, #FAFAFA, #E5E5E5);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FAFAFA', endColorstr = '#E5E5E5');
+    }
+    .file-input-wrapper .file-input {
+      display: none;
+    }
+  }
 }
 /**按钮样式end**/
 

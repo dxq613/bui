@@ -123,7 +123,12 @@ define('bui/uploader/button/htmlButton', function(require) {
     setDisabled: function(v){
       var _self = this,
         fileInput = _self.get('fileInput');
-      //fileInput.hide();
+      if (v) {
+        fileInput.hide();
+      }
+      else{
+        fileInput.show();
+      }
     },
     /**
      * 设置上传文件的类型
