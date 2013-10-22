@@ -20,7 +20,6 @@ define('bui/uploader/button/swfButton', function (require) {
   var SwfButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
       var _self = this;
-
       _self._initSwfUploader();
     },
     bindUI: function(){
@@ -48,18 +47,30 @@ define('bui/uploader/button/swfButton', function (require) {
         buttonEl = _self.get('el').find('.' + buttonCls),
         flashCfg = _self.get('flash'),
         swfTpl = _self.get('swfTpl'),
+        swfEl = $(swfTpl),
         swfUploader;
 
       BUI.mix(flashCfg, {
-        render: $(swfTpl).appendTo(buttonEl)
+        render: swfEl.appendTo(buttonEl)
       });
       swfUploader = new SWF(flashCfg);
+      _self.set('swfEl', swfEl);
       _self.set('swfUploader', swfUploader);
     },
     setMultiple: function(v){
       var _self = this,
         swfUploader = _self.get('swfUploader');
       swfUploader && swfUploader.multifile(v);
+    },
+    setDisabled: function(v){
+      var _self = this,
+        swfEl = _self.get('swfEl');
+      if(v){
+        swfEl.hide();
+      }
+      else{
+         swfEl.show();
+      }
     },
     setFilter: function(v){
       var _self = this,

@@ -22,6 +22,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
       if(_self.get('srcNode') && innerControl.get(0).type === 'file'){ //如果使用现有DOM生成，不使用上传组件
         return;
       }
+      _self._initControlValue();
       _self._initUpload();
     },
     _initUpload: function(){
@@ -37,7 +38,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         _self.set('isCreate',true);
         _self.get('children').push(uploader);
 
-        _self._initControlValue();
+        
         _self._initQueue(uploader.get('queue'));
         
         uploader.on('success', function(ev){
@@ -48,19 +49,12 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
           });
           _self.setControlValue(resultItems);
         });
-
-        
       });
     },
     setControlValue: function(items){
       var _self = this,
-        innerControl = _self.getInnerControl(),
-        result = [];
-      BUI.each(items, function(item){
-        result.push(item);
-      });
-
-      innerControl.val(JSON.stringify(result));
+        innerControl = _self.getInnerControl();
+      innerControl.val(JSON.stringify(items));
     },
     _initControlValue: function(){
       var _self = this,
@@ -90,6 +84,18 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         value : '<input type="hidden"/>'
       },
       uploader: {
+        setter: function(v){
+          var disabled = this.get('disabled');
+          v && v.isController && v.set('disabled', disabled);
+          return v;
+        }
+      },
+      disabled: {
+        setter: function(v){
+          var _self = this,
+            uploader = _self.get('uploader');
+          uploader && uploader.isController && uploader.set('disabled', v);
+        }
       },
       value:{
         value: []

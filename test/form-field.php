@@ -40,9 +40,10 @@
       </div>
 
       <div id="upload">
-        <input type="file">
+        <input type="hidden" value='[{url: "aa"}]'>
       </div>
     </form>
+
   </div>
     <?php $url = 'bui/form/field'?>
     <?php include("./templates/script.php"); ?>

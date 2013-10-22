@@ -313,20 +313,20 @@ define('bui/uploader/uploader', function (require) {
         value: 'default'
       },
       button: {
+        setter: function(v){
+          var disabled = this.get('disabled');
+          if(v && v.isController){
+            v.set('disabled', disabled);
+          }
+          return v;
+        }
       },
       disabled: {
         value: false,
         setter: function(v){
           var _self = this,
-            button = _self.get('button') || {};
-          if($.isPlainObject(button)){
-            button.disabled = true;
-            _self.set('button', button);
-          }
-          else{
-            button.set('disabled', true);
-          }
-          return v;
+            button = _self.get('button');
+          button && button.isController && button.set('disabled', true);
         }
       },
       queue: {
