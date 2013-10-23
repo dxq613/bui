@@ -1,18 +1,19 @@
 /**按钮样式**/
 .defaultTheme-button{
 	.bui-uploader-button-wrap {
-		border: 1px solid #C4DAED;
-		font-size: 12px;
-		text-align: center;
-    height:24px;
-		line-height: 24px;
-		display: block;
-		position: relative;
-		width: 110px;
-		z-index: 500;
-		margin-right: 10px;
-		text-decoration: none;
-		/*渐变*/
+		display: inline-block;
+    padding: 0 5px;
+    height: 24px;
+    overflow: hidden;
+    line-height: 24px;
+    position: relative;
+    z-index: 500;
+    margin-right: 10px;
+    text-decoration: none;
+    border: 1px solid #C4DAED;
+    font-size: 12px;
+    text-align: center;
+    /*渐变*/
 		background: -webkit-gradient(linear, left top, left bottom, from(#FDFEFE), to(#DFE7EF));
 		background: -moz-linear-gradient(top, #FDFEFE, #DFE7EF);
 		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FDFEFE', endColorstr = '#DFE7EF');
@@ -38,7 +39,7 @@
 		border: medium none;
 		cursor: pointer;
 		height: 200px;
-		width: 110px;
+		width: 200px;
 		top: -50px;
 		opacity: 0;
 		position: absolute;
@@ -47,8 +48,8 @@
 	}
 	.bui-uploader-button-wrap .file-input-wrapper {
 		display: block;
+    width: 200px;
 		height: 26px;
-		width: 110px;
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -60,7 +61,7 @@
 
 	.uploader-button-swf{
 	  display: block;
-	  width: 110px;
+    width: 200px;
 	  height: 26px;
 	  position: absolute;
 	  top: 0px;
