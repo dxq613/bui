@@ -42,14 +42,26 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         _self._initQueue(uploader.get('queue'));
         
         uploader.on('success', function(ev){
-          var items = uploader.get('queue').getItems(),
-            resultItems = [];
-          BUI.each(items, function(item){
-            item.result && resultItems.push(item.result);
-          });
-          _self.setControlValue(resultItems);
+          var result = _self._getUploaderResult();
+          _self.setControlValue(result);
         });
+        uploader.get('queue').on('itemremoved', function(){
+          var result = _self._getUploaderResult();
+          _self.setControlValue(result);
+        })
       });
+    },
+    _getUploaderResult: function(){
+      var _self = this,
+        uploader = _self.get('uploader'),
+        queue = uploader.get('queue'),
+        items = queue.getItems(),
+        result = [];
+
+      BUI.each(items, function(item){
+        item.result && result.push(item.result);
+      });
+      return result;
     },
     setControlValue: function(items){
       var _self = this,
@@ -67,12 +79,16 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
     },
     _initQueue: function(queue){
       var _self = this,
-        value = _self.get('value');
+        value = _self.get('value'),
+        result = [];
       //初始化对列默认成功
       BUI.each(value, function(item){
-        item.success = true;
+        var newItem = BUI.cloneObject(item);
+        newItem.success = true;
+        newItem.result = item;
+        result.push(newItem);
       });
-      queue && queue.setItems(value);
+      queue && queue.setItems(result);
     }
   },{
     ATTRS : {
