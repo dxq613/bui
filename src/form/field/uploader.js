@@ -67,6 +67,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
       var _self = this,
         innerControl = _self.getInnerControl();
       innerControl.val(JSON.stringify(items));
+      _self.fire('change');
     },
     _initControlValue: function(){
       var _self = this,
