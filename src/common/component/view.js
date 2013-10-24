@@ -190,6 +190,12 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         _uiSetElStyle: function (style) {
             this.get('el').css(style);
         },
+        //设置role
+        _uiSetRole : function(role){
+            if(role){
+                this.get('el').attr('role',role);
+            } 
+        },
         /**
          * 设置应用到控件宽度
          * @protected
@@ -281,6 +287,13 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
          * see {@link BUI.Component.Controller#property-elStyle}
          */
         elStyle: {
+        },
+        /**
+         * ARIA 标准中的role
+         * @type {String}
+         */
+        role : {
+            
         },
         /**
          * 控件宽度

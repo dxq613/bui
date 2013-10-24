@@ -1565,6 +1565,10 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
  * @singleton
  */  
 var BUI = BUI || {};
+if(!BUI.use && seajs){
+    BUI.use = seajs.use;
+    BUI.config = seajs.config;
+}
 
 define('bui/util',function(){
   
@@ -9571,6 +9575,12 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         _uiSetElStyle: function (style) {
             this.get('el').css(style);
         },
+        //设置role
+        _uiSetRole : function(role){
+            if(role){
+                this.get('el').attr('role',role);
+            } 
+        },
         /**
          * 设置应用到控件宽度
          * @protected
@@ -9662,6 +9672,13 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
          * see {@link BUI.Component.Controller#property-elStyle}
          */
         elStyle: {
+        },
+        /**
+         * ARIA 标准中的role
+         * @type {String}
+         */
+        role : {
+            
         },
         /**
          * 控件宽度
@@ -11519,6 +11536,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             render:{
                 view:1
+            },
+            /**
+             * ARIA 标准中的role,不要更改此属性
+             * @type {String}
+             * @protected
+             */
+            role : {
+                view : 1
             },
             /**
              * 状态相关的样式,默认情况下会使用 前缀名 + xclass + '-' + 状态名

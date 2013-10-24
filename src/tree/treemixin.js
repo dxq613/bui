@@ -383,6 +383,9 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       if(BUI.isString(node)){
         node = _self.findNode(node);
       }
+      if(!node){
+        return;
+      }
       element = _self.findElement(node);
       
       _self._collapseNode(node,element);
@@ -423,6 +426,10 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         element;
       if(BUI.isString(node)){
         node = _self.findNode(node);
+      }
+
+      if(!node){
+        return;
       }
 
       if(node.parent && !_self.isExpanded(node.parent)){
@@ -883,15 +890,17 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       if(BUI.isString(node)){
         node = _self.findNode(node);
       }
-      element = _self.findElement(node)
-      if(element){
+      element = _self.findElement(node);
+
+      if(element){ //折叠节点，设置加载状态
+        _self._collapseNode(node,element);
         _self._setLoadStatus(node,element,true);
+        
       }
-      if(node){
+      else if(node){
         BUI.each(node.children,function(subNode){
           _self._removeNode(subNode);
         });
-        
       }
       
     },
@@ -1038,6 +1047,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         _self._initRoot();
       }
     },
+
      /**
      * @override 
      * @protected
