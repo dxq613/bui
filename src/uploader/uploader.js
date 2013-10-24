@@ -159,7 +159,10 @@ define('bui/uploader/uploader', function (require) {
             wait: true
           });
         });
-        queue.addItems(ev.files);
+        var files = ev.files;
+        _self.fire('beforechange', {items: files});
+        queue.addItems(files);
+        _self.fire('change', {items: files});
       });
     },
     _bindQueue: function () {
@@ -289,6 +292,15 @@ define('bui/uploader/uploader', function (require) {
       _self.fire('cancel', {item: curUploadItem});
       uploaderType.cancel();
       _self.set('curUploadItem', null);
+    },
+    /**
+     * 校验是否通过
+     * @description 判断成功的数量和列表中的数量是否一致
+     */
+    isValid: function(){
+      var _self = this,
+        queue = _self.get('queue');
+      return queue.getItemsByStatus('success').length === queue.getItems().length;
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{

@@ -29,12 +29,12 @@
     <?php include("./templates/script.php"); ?>
     <script src="../src/swf/src/swf.js"></script>
     <script src="../src/swf/src/swf/ua.js"></script>
-
     <script src="../src/uploader/base.js"></script>
     <script src="../src/uploader/uploader.js"></script>
     <script src="../src/uploader/factory.js"></script>
     <script src="../src/uploader/queue.js"></script>
     <script src="../src/uploader/theme.js"></script>
+    <script src="../src/uploader/button/filter.js"></script>
     <script src="../src/uploader/button/base.js"></script>
     <script src="../src/uploader/button/htmlButton.js"></script>
     <script src="../src/uploader/button/swfButton.js"></script>

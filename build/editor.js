@@ -732,6 +732,9 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
     }
   },{
     ATTRS : {
+      /*autoHide : {
+        value : false
+      },*/
       /**
        * 内部控件的代表Value的字段
        * @protected
@@ -793,7 +796,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
        * @type {Boolean}
        */
       focusable : {
-        value : true
+        value : false
       },
       success : {
         value : function () {

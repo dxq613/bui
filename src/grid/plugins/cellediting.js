@@ -41,7 +41,7 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
         bodyNode = grid.get('el').find('.' + CLS_BODY),
         rst = [];
       BUI.each(fields,function(field){
-        var cfg = {field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false};
+        var cfg = {field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false,editableFn : field.editableFn};
         if(field.xtype === 'checkbox'){
           cfg.innerValueField = 'checked';
         }
@@ -82,6 +82,26 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
       var _self = this,
         cell = $(options.cell);
       _self.resetWidth(editor,cell.outerWidth());
+      _self._makeEnable(editor,options);
+    },
+    _makeEnable : function(editor,options){
+      var editableFn = editor.get('editableFn'),
+        field,
+        enable,
+        record;
+      if(BUI.isFunction(editableFn)){
+        field = options.field;
+        record = options.record;
+        if(record && field){
+          enable = editableFn(record[field],record);
+          if(enable){
+            editor.get('field').enable();
+          }else{
+            editor.get('field').disable();
+          }
+        }
+        
+      }
     },
     resetWidth : function(editor,width){
       editor.set('width',width);

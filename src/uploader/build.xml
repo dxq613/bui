@@ -21,6 +21,7 @@
 	<target name="combine.js" depends="prepare">
         <concat destfile="${des.dir}/uploader.js" encoding="${charset}" outputencoding="${charset}">
             <path path="button/ajbridge.js"/>
+            <path path="button/filter.js"/>
             <path path="button/base.js"/>
             <path path="button/htmlButton.js"/>
             <path path="button/swfButton.js"/>

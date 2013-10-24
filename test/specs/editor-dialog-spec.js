@@ -1,16 +1,18 @@
-BUI.use('bui/editor',function (Editor) {
+BUI.use(['bui/editor','bui/overlay'],function (Editor,Overlay) {
 
   var DialogEditor = Editor.DialogEditor,
     FIELD = 'data-el';
 
   var editor = new DialogEditor({
     trigger : '.dialog',
-    contentId:'content',
+    contentId:'c1',
+    //focusable : true,
     width : 500,
     title : '编辑数据',
     form : {
       srcNode : '#J_Form'
     },
+    //mask : false,
     success : function(){
       BUI.log('success');
       this.accept();
@@ -18,6 +20,16 @@ BUI.use('bui/editor',function (Editor) {
   });
 
   editor.render();
+
+  /*var d = new Overlay.Dialog({
+    contentId:'c1',
+    width : 500,
+    title : '编辑数据'
+  });
+
+  $('#btn').on('click',function(){
+    d.show();
+  });*/
   $('.dialog').each(function (index,el) {
     var logEl = $(el).prev('.well'),
       info = logEl.text();

@@ -15,6 +15,12 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins','bui/grid/format'],functi
           xtype : 'text',
           rules : {
             maxlength : 5
+          },
+          editableFn : function(val,obj){
+            if(BUI.isNumber(obj.a)){
+              return true;
+            }
+            return false;
           }
         }
       },{
@@ -47,7 +53,7 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins','bui/grid/format'],functi
         value : '1'
       }
     }],
-    data = [{a:'123'},{a:0,b:'edd',c:1362625302818},{a:'123'},{a:'1333',c:'eee',d:2},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'}];
+    data = [{a:'123'},{a:0,b:'edd',c:1362625302818},{a:123},{a:'1333',c:'eee',d:2},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'},{a:'123'}];
   
 
   var editing = new Plugins.CellEditing,
