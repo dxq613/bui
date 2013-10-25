@@ -19221,8 +19221,8 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
     setControlValue: function(items){
       var _self = this,
         innerControl = _self.getInnerControl();
+      // _self.fire('change');
       innerControl.val(JSON.stringify(items));
-      _self.fire('change');
     },
     _initControlValue: function(){
       var _self = this,
