@@ -1304,6 +1304,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view:1
             },
             /**
+             * ARIA 标准中的role,不要更改此属性
+             * @type {String}
+             * @protected
+             */
+            role : {
+                view : 1
+            },
+            /**
              * 状态相关的样式,默认情况下会使用 前缀名 + xclass + '-' + 状态名
              * <ol>
              *     <li>hover</li>

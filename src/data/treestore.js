@@ -544,7 +544,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return true;
       }
       
-      return node.loaded || node.leaf || (node.children && node.children.length);
+      return node.loaded || node.leaf;
     },
     /**
      * 加载节点的子节点
@@ -562,16 +562,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(pidField){
         params[pidField] = node.id;
       }
-      _self.load(params);
-
-      /*if(!_self.get('url') && _self.get('data')){ //如果不从远程加载数据，不是根节点的话，取消加载
-        
-        _self.load(params);
-        return;
-      }else{
-        _self.load({id:node.id,path : ''});
-      }*/
-      
+      _self.load(params);  
+    },
+    /**
+     * 重新加载节点
+     * @param  {BUI.Data.Node} node node节点
+     */
+    reloadNode : function(node){
+      var _self = this;
+      node = node || _self.get('root');
+      node.loaded = false;
+      //node.children = [];
+      _self.loadNode(node);
     },
     /**
      * 加载节点，根据path

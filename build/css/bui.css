@@ -2041,17 +2041,18 @@ input.x-datepicker-time {
 }
 /**按钮样式**/
 .defaultTheme-button .bui-uploader-button-wrap {
-  border: 1px solid #C4DAED;
-  font-size: 12px;
-  text-align: center;
+  display: inline-block;
+  padding: 0 5px;
   height: 24px;
+  overflow: hidden;
   line-height: 24px;
-  display: block;
   position: relative;
-  width: 110px;
   z-index: 500;
   margin-right: 10px;
   text-decoration: none;
+  border: 1px solid #C4DAED;
+  font-size: 12px;
+  text-align: center;
   /*渐变*/
 
   background: -webkit-gradient(linear, left top, left bottom, from(#fdfefe), to(#dfe7ef));
@@ -2074,23 +2075,12 @@ input.x-datepicker-time {
   background: #DFE7EF;
   filter: none;
 }
-.defaultTheme-button .uploader-button-disabled,
-.defaultTheme-button .uploader-button-disabled:hover {
-  border: 1px solid #BFBFBF;
-  color: #404040;
-  background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e5e5e5));
-  background: -moz-linear-gradient(top, #fafafa, #e5e5e5);
-  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
-}
-.defaultTheme-button .uploader-button-disabled .file-input-wrapper .file-input {
-  display: none;
-}
 .defaultTheme-button .bui-uploader-button-wrap .file-input-wrapper .file-input {
   background: none repeat scroll 0 0 transparent;
   border: medium none;
   cursor: pointer;
   height: 200px;
-  width: 110px;
+  width: 200px;
   top: -50px;
   opacity: 0;
   position: absolute;
@@ -2099,8 +2089,8 @@ input.x-datepicker-time {
 }
 .defaultTheme-button .bui-uploader-button-wrap .file-input-wrapper {
   display: block;
+  width: 200px;
   height: 26px;
-  width: 110px;
   position: absolute;
   left: 0;
   top: 0;
@@ -2111,13 +2101,24 @@ input.x-datepicker-time {
 }
 .defaultTheme-button .uploader-button-swf {
   display: block;
-  width: 110px;
+  width: 200px;
   height: 26px;
   position: absolute;
   top: 0px;
   left: 0px;
   z-index: 2000;
   overflow: hidden;
+}
+.bui-uploader-disabled .defaultTheme-button .bui-uploader-button-wrap {
+  cursor: default;
+  border: 1px solid #BFBFBF;
+  color: #404040;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e5e5e5));
+  background: -moz-linear-gradient(top, #fafafa, #e5e5e5);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
+}
+.bui-uploader-disabled .defaultTheme-button .file-input-wrapper .file-input {
+  display: none;
 }
 /**按钮样式end**/
 .defaultTheme-queue a {

@@ -12,6 +12,10 @@
  * @singleton
  */  
 var BUI = BUI || {};
+if(!BUI.use && seajs){
+    BUI.use = seajs.use;
+    BUI.config = seajs.config;
+}
 
 define('bui/util',function(){
   

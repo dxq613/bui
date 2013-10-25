@@ -614,6 +614,7 @@
   top: 4px;
   width: 16px;
   height: 16px;
+  text-decoration: none;
   outline: none;
   overflow: hidden;
   cursor: pointer;
@@ -2040,22 +2041,23 @@ input.x-datepicker-time {
 }
 /**按钮样式**/
 .defaultTheme-button .bui-uploader-button-wrap {
-  border: 1px solid #C4DAED;
-  font-size: 12px;
-  text-align: center;
+  display: inline-block;
+  padding: 0 5px;
   height: 24px;
+  overflow: hidden;
   line-height: 24px;
-  display: block;
   position: relative;
-  width: 110px;
   z-index: 500;
   margin-right: 10px;
   text-decoration: none;
+  border: 1px solid #C4DAED;
+  font-size: 12px;
+  text-align: center;
   /*渐变*/
 
   background: -webkit-gradient(linear, left top, left bottom, from(#fdfefe), to(#dfe7ef));
   background: -moz-linear-gradient(top, #fdfefe, #dfe7ef);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FDFEFE', endColorstr='#DFE7EF');
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FDFEFE', endColorstr='#DFE7EF');
 }
 .defaultTheme-button .bui-uploader-button-wrap:link,
 .defaultTheme-button .bui-uploader-button-wrap:visited {
@@ -2067,7 +2069,7 @@ input.x-datepicker-time {
   color: black;
   background: -webkit-gradient(linear, left top, left bottom, from(#dfe7ef), to(#fdfefe));
   background: -moz-linear-gradient(top, #dfe7ef, #fdfefe);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#DFE7EF', endColorstr='#FDFEFE');
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#DFE7EF', endColorstr='#FDFEFE');
 }
 .defaultTheme-button .bui-uploader-button-wrap:active {
   background: #DFE7EF;
@@ -2078,7 +2080,7 @@ input.x-datepicker-time {
   border: medium none;
   cursor: pointer;
   height: 200px;
-  width: 110px;
+  width: 200px;
   top: -50px;
   opacity: 0;
   position: absolute;
@@ -2087,8 +2089,8 @@ input.x-datepicker-time {
 }
 .defaultTheme-button .bui-uploader-button-wrap .file-input-wrapper {
   display: block;
+  width: 200px;
   height: 26px;
-  width: 110px;
   position: absolute;
   left: 0;
   top: 0;
@@ -2099,7 +2101,7 @@ input.x-datepicker-time {
 }
 .defaultTheme-button .uploader-button-swf {
   display: block;
-  width: 110px;
+  width: 200px;
   height: 26px;
   position: absolute;
   top: 0px;
@@ -2113,7 +2115,7 @@ input.x-datepicker-time {
   color: #404040;
   background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e5e5e5));
   background: -moz-linear-gradient(top, #fafafa, #e5e5e5);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
 }
 .bui-uploader-disabled .defaultTheme-button .file-input-wrapper .file-input {
   display: none;

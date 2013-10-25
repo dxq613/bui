@@ -38,8 +38,14 @@
         </div>
         <button class="button  dialog" id="btnDialog2">编辑</button>
       </div>
+      <div class="span3">
+        <button id="btn">弹出</button>
+      </div>
     </div>
-    <div id="content" class="hide">
+    <div id="content">
+     
+    </div> 
+    <div id="c1">
       <form id="J_Form" class="form-horizontal">
         <div class="row">
           <div class="control-group span8">

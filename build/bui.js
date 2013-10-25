@@ -1565,6 +1565,10 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
  * @singleton
  */  
 var BUI = BUI || {};
+if(!BUI.use && seajs){
+    BUI.use = seajs.use;
+    BUI.config = seajs.config;
+}
 
 define('bui/util',function(){
   
@@ -9571,6 +9575,12 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         _uiSetElStyle: function (style) {
             this.get('el').css(style);
         },
+        //\u8bbe\u7f6erole
+        _uiSetRole : function(role){
+            if(role){
+                this.get('el').attr('role',role);
+            } 
+        },
         /**
          * \u8bbe\u7f6e\u5e94\u7528\u5230\u63a7\u4ef6\u5bbd\u5ea6
          * @protected
@@ -9662,6 +9672,13 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
          * see {@link BUI.Component.Controller#property-elStyle}
          */
         elStyle: {
+        },
+        /**
+         * ARIA \u6807\u51c6\u4e2d\u7684role
+         * @type {String}
+         */
+        role : {
+            
         },
         /**
          * \u63a7\u4ef6\u5bbd\u5ea6
@@ -11519,6 +11536,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             render:{
                 view:1
+            },
+            /**
+             * ARIA \u6807\u51c6\u4e2d\u7684role,\u4e0d\u8981\u66f4\u6539\u6b64\u5c5e\u6027
+             * @type {String}
+             * @protected
+             */
+            role : {
+                view : 1
             },
             /**
              * \u72b6\u6001\u76f8\u5173\u7684\u6837\u5f0f,\u9ed8\u8ba4\u60c5\u51b5\u4e0b\u4f1a\u4f7f\u7528 \u524d\u7f00\u540d + xclass + '-' + \u72b6\u6001\u540d
@@ -13493,7 +13518,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return true;
       }
       
-      return node.loaded || node.leaf || (node.children && node.children.length);
+      return node.loaded || node.leaf;
     },
     /**
      * \u52a0\u8f7d\u8282\u70b9\u7684\u5b50\u8282\u70b9
@@ -13511,16 +13536,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       if(pidField){
         params[pidField] = node.id;
       }
-      _self.load(params);
-
-      /*if(!_self.get('url') && _self.get('data')){ //\u5982\u679c\u4e0d\u4ece\u8fdc\u7a0b\u52a0\u8f7d\u6570\u636e\uff0c\u4e0d\u662f\u6839\u8282\u70b9\u7684\u8bdd\uff0c\u53d6\u6d88\u52a0\u8f7d
-        
-        _self.load(params);
-        return;
-      }else{
-        _self.load({id:node.id,path : ''});
-      }*/
-      
+      _self.load(params);  
+    },
+    /**
+     * \u91cd\u65b0\u52a0\u8f7d\u8282\u70b9
+     * @param  {BUI.Data.Node} node node\u8282\u70b9
+     */
+    reloadNode : function(node){
+      var _self = this;
+      node = node || _self.get('root');
+      node.loaded = false;
+      //node.children = [];
+      _self.loadNode(node);
     },
     /**
      * \u52a0\u8f7d\u8282\u70b9\uff0c\u6839\u636epath
@@ -19150,6 +19177,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
       if(_self.get('srcNode') && innerControl.get(0).type === 'file'){ //\u5982\u679c\u4f7f\u7528\u73b0\u6709DOM\u751f\u6210\uff0c\u4e0d\u4f7f\u7528\u4e0a\u4f20\u7ec4\u4ef6
         return;
       }
+      _self._initControlValue();
       _self._initUpload();
     },
     _initUpload: function(){
@@ -19165,30 +19193,36 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         _self.set('isCreate',true);
         _self.get('children').push(uploader);
 
-        _self._initControlValue();
+        
         _self._initQueue(uploader.get('queue'));
         
         uploader.on('success', function(ev){
-          var items = uploader.get('queue').getItems(),
-            resultItems = [];
-          BUI.each(items, function(item){
-            item.result && resultItems.push(item.result);
-          });
-          _self.setControlValue(resultItems);
+          var result = _self._getUploaderResult();
+          _self.setControlValue(result);
         });
-
-        
+        uploader.get('queue').on('itemremoved', function(){
+          var result = _self._getUploaderResult();
+          _self.setControlValue(result);
+        })
       });
+    },
+    _getUploaderResult: function(){
+      var _self = this,
+        uploader = _self.get('uploader'),
+        queue = uploader.get('queue'),
+        items = queue.getItems(),
+        result = [];
+
+      BUI.each(items, function(item){
+        item.result && result.push(item.result);
+      });
+      return result;
     },
     setControlValue: function(items){
       var _self = this,
-        innerControl = _self.getInnerControl(),
-        result = [];
-      BUI.each(items, function(item){
-        result.push(item);
-      });
-
-      innerControl.val(JSON.stringify(result));
+        innerControl = _self.getInnerControl();
+      innerControl.val(JSON.stringify(items));
+      _self.fire('change');
     },
     _initControlValue: function(){
       var _self = this,
@@ -19201,12 +19235,16 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
     },
     _initQueue: function(queue){
       var _self = this,
-        value = _self.get('value');
+        value = _self.get('value'),
+        result = [];
       //\u521d\u59cb\u5316\u5bf9\u5217\u9ed8\u8ba4\u6210\u529f
       BUI.each(value, function(item){
-        item.success = true;
+        var newItem = BUI.cloneObject(item);
+        newItem.success = true;
+        newItem.result = item;
+        result.push(newItem);
       });
-      queue && queue.setItems(value);
+      queue && queue.setItems(result);
     }
   },{
     ATTRS : {
@@ -19218,6 +19256,18 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         value : '<input type="hidden"/>'
       },
       uploader: {
+        setter: function(v){
+          var disabled = this.get('disabled');
+          v && v.isController && v.set('disabled', disabled);
+          return v;
+        }
+      },
+      disabled: {
+        setter: function(v){
+          var _self = this,
+            uploader = _self.get('uploader');
+          uploader && uploader.isController && uploader.set('disabled', v);
+        }
       },
       value:{
         value: []
@@ -28920,6 +28970,9 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
     }
   },{
     ATTRS : {
+      /*autoHide : {
+        value : false
+      },*/
       /**
        * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
        * @protected
@@ -28981,7 +29034,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
        * @type {Boolean}
        */
       focusable : {
-        value : true
+        value : false
       },
       success : {
         value : function () {
@@ -33703,7 +33756,7 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
         bodyNode = grid.get('el').find('.' + CLS_BODY),
         rst = [];
       BUI.each(fields,function(field){
-        var cfg = {field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false};
+        var cfg = {field : field,changeSourceEvent : null,hideExceptNode : bodyNode,autoUpdate : false,preventHide : false,editableFn : field.editableFn};
         if(field.xtype === 'checkbox'){
           cfg.innerValueField = 'checked';
         }
@@ -33744,6 +33797,26 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
       var _self = this,
         cell = $(options.cell);
       _self.resetWidth(editor,cell.outerWidth());
+      _self._makeEnable(editor,options);
+    },
+    _makeEnable : function(editor,options){
+      var editableFn = editor.get('editableFn'),
+        field,
+        enable,
+        record;
+      if(BUI.isFunction(editableFn)){
+        field = options.field;
+        record = options.record;
+        if(record && field){
+          enable = editableFn(record[field],record);
+          if(enable){
+            editor.get('field').enable();
+          }else{
+            editor.get('field').disable();
+          }
+        }
+        
+      }
     },
     resetWidth : function(editor,width){
       editor.set('width',width);
@@ -34240,6 +34313,10 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
 });define('bui/grid/plugins/rownumber',function (require) {
 
   var CLS_NUMBER = 'x-grid-rownumber';
+  /**
+   * @class BUI.Grid.Plugins.RowNumber
+   * \u8868\u683c\u663e\u793a\u884c\u5e8f\u53f7\u7684\u63d2\u4ef6
+   */
   function RowNumber(config){
     RowNumber.superclass.constructor.call(this, config);
   }
@@ -34247,13 +34324,9 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   BUI.extend(RowNumber,BUI.Base);
 
   RowNumber.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     /**
-    * column's width which contains the checkbox
+    * column's width which contains the row number
     */
     width : {
       value : 40
@@ -34268,6 +34341,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
 
   BUI.augment(RowNumber, 
   {
+    //\u521b\u5efa\u884c
     createDom : function(grid){
       var _self = this;
       var cfg = {
@@ -34685,6 +34759,9 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       if(BUI.isString(node)){
         node = _self.findNode(node);
       }
+      if(!node){
+        return;
+      }
       element = _self.findElement(node);
       
       _self._collapseNode(node,element);
@@ -34725,6 +34802,10 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         element;
       if(BUI.isString(node)){
         node = _self.findNode(node);
+      }
+
+      if(!node){
+        return;
       }
 
       if(node.parent && !_self.isExpanded(node.parent)){
@@ -35185,15 +35266,17 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       if(BUI.isString(node)){
         node = _self.findNode(node);
       }
-      element = _self.findElement(node)
-      if(element){
+      element = _self.findElement(node);
+
+      if(element){ //\u6298\u53e0\u8282\u70b9\uff0c\u8bbe\u7f6e\u52a0\u8f7d\u72b6\u6001
+        _self._collapseNode(node,element);
         _self._setLoadStatus(node,element,true);
+        
       }
-      if(node){
+      else if(node){
         BUI.each(node.children,function(subNode){
           _self._removeNode(subNode);
         });
-        
       }
       
     },
@@ -35340,6 +35423,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         _self._initRoot();
       }
     },
+
      /**
      * @override 
      * @protected

@@ -211,9 +211,7 @@ define('bui/uploader/button/filter', function(require){
       return type.join(',');
     }
   }
-});
-
-/**
+});/**
  * @fileoverview 文件上传按钮的基类
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
@@ -348,6 +346,7 @@ define('bui/uploader/button/base', function(require) {
       var filename = getFileName(file.name),
         textSize = convertByteSize(file.size || 0),
         extName = getFileExtName(file.name);
+
       BUI.mix(file, {
         name: filename,
         textSize: textSize,
@@ -1482,7 +1481,10 @@ define('bui/uploader/uploader', function (require) {
             wait: true
           });
         });
-        queue.addItems(ev.files);
+        var files = ev.files;
+        _self.fire('beforechange', {items: files});
+        queue.addItems(files);
+        _self.fire('change', {items: files});
       });
     },
     _bindQueue: function () {
@@ -1612,6 +1614,15 @@ define('bui/uploader/uploader', function (require) {
       _self.fire('cancel', {item: curUploadItem});
       uploaderType.cancel();
       _self.set('curUploadItem', null);
+    },
+    /**
+     * 校验是否通过
+     * @description 判断成功的数量和列表中的数量是否一致
+     */
+    isValid: function(){
+      var _self = this,
+        queue = _self.get('queue');
+      return queue.getItemsByStatus('success').length === queue.getItems().length;
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{
@@ -1638,7 +1649,7 @@ define('bui/uploader/uploader', function (require) {
       button: {
         setter: function(v){
           var disabled = this.get('disabled');
-          if(v.isController){
+          if(v && v.isController){
             v.set('disabled', disabled);
           }
           return v;
