@@ -581,7 +581,7 @@ define('bui/util',function(){
         BUI.each(fields,function(field){
           formHelper._setFieldValue(field,value);
         });
-      }else{
+      }else if(fields){
         formHelper._setFieldValue(fields,value);
       }
     },
