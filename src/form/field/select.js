@@ -11,7 +11,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   function resetOptions (select,options,self) {
     select.children().remove();
     var emptyText = self.get('emptyText');
-    if(emptyText){
+    if(emptyText && self.get('showBlank')){
       appendItem('',emptyText,select);
     }
     BUI.each(options,function (option) {
@@ -179,7 +179,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
        * @type {Boolean}
        */
       showBlank : {
-        value : true
+        value : false
       },
       /**
        * 选择为空时的文本

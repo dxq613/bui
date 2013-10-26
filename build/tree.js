@@ -249,6 +249,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
     },
     /**
+     * 是否可以勾选的字段名称
+     * @type {String}
+     */
+    checkableField : {
+      value : 'checkable'
+    },
+    /**
      * 选项对象中属性会直接影响相应的状态,默认：
      * <pre><code>
      * //默认值
@@ -716,17 +723,20 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       var _self = this,
         checkType = _self.get('checkType'),
         checkedField = _self.get('checkedField'),
+        checkableField = _self.get('checkableField'),
         parent; 
       if(checkType === MAP_TYPES.NONE){ //不允许选中
-        delete node[checkedField];
+        node[checkableField] = false;
+        node[checkedField] = false;
         return;
       }
 
       if(checkType === MAP_TYPES.ONLY_LEAF){ //仅叶子节点可选
         if(node.leaf){
-          node[checkedField] = node[checkedField] || false;
+          node[checkableField] = true;
         }else{
-          delete node[checkedField];
+          node[checkableField] = false;
+          node[checkedField] = false;
           if(deep){
             BUI.each(node.children,function(subNode){
               _self._initChecked(subNode,deep);
@@ -736,13 +746,21 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         return;
       }
 
+      if(checkType === MAP_TYPES.CUSTOM){ //自定义选中时，根据节点上是否有checked判断
+        if(node[checkableField] == null){
+          node[checkableField] = node[checkedField] != null;
+        }
+        
+      }
+
       if(checkType === MAP_TYPES.ALL){ //所有允许选中
-        node[checkedField] = node[checkedField] || false;
+        node[checkableField] = true;
       }
 
       if(!node || !_self.isCheckable(node)){ //如果不可选，则不处理勾选
         return;
       }
+
       parent = node.parent;
       if(!_self.isChecked(node)){ //节点未被选择，根据父、子节点处理勾选
         if(parent && _self.isChecked(parent)){ //如果父节点选中，当前节点必须勾选
@@ -1115,7 +1133,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      * @return {Boolean}  是否可以勾选
      */
     isCheckable : function(node){
-      return node[this.get('checkedField')] != null;
+      return node[this.get('checkableField')];
     },
     //获取展开折叠的icon
     _getExpandIcon : function(node){

@@ -2130,24 +2130,24 @@ define('bui/util',function(){
     */
     setField:function(form,fieldName,value){
       var fields = form.elements[fieldName];
-      if(BUI.isArray(fields) || (fields && fields.length)){
+      if(fields && fields.type){
+        formHelper._setFieldValue(fields,value);
+      }else if(BUI.isArray(fields) || (fields && fields.length)){
         BUI.each(fields,function(field){
           formHelper._setFieldValue(field,value);
         });
-      }else if(fields){
-        formHelper._setFieldValue(fields,value);
       }
     },
     //设置字段的值
     _setFieldValue : function(field,value){
         if(field.type === 'checkbox'){
-            if(field.value == value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
+            if(field.value == ''+ value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
               $(field).attr('checked',true);
             }else{
               $(field).attr('checked',false);  
             }
         }else if(field.type === 'radio'){
-            if(field.value == value){
+            if(field.value == ''+  value){
               $(field).attr('checked',true);
             }else{
               $(field).attr('checked',false); 

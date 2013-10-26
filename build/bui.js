@@ -2130,24 +2130,24 @@ define('bui/util',function(){
     */
     setField:function(form,fieldName,value){
       var fields = form.elements[fieldName];
-      if(BUI.isArray(fields) || (fields && fields.length)){
+      if(fields && fields.type){
+        formHelper._setFieldValue(fields,value);
+      }else if(BUI.isArray(fields) || (fields && fields.length)){
         BUI.each(fields,function(field){
           formHelper._setFieldValue(field,value);
         });
-      }else if(fields){
-        formHelper._setFieldValue(fields,value);
       }
     },
     //\u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
     _setFieldValue : function(field,value){
         if(field.type === 'checkbox'){
-            if(field.value == value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
+            if(field.value == ''+ value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
               $(field).attr('checked',true);
             }else{
               $(field).attr('checked',false);  
             }
         }else if(field.type === 'radio'){
-            if(field.value == value){
+            if(field.value == ''+  value){
               $(field).attr('checked',true);
             }else{
               $(field).attr('checked',false); 
@@ -15723,6 +15723,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'click',function(ev){
+        if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
+          return;
+        }
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
@@ -15735,6 +15738,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       });
       if(selectedEvent !== 'click'){ //\u5982\u679c\u9009\u4e2d\u4e8b\u4ef6\u4e0d\u7b49\u4e8eclick\uff0c\u5219\u8fdb\u884c\u76d1\u542c\u9009\u4e2d
         itemContainer.delegate('.'+itemCls,selectedEvent,function(ev){
+          if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
+            return;
+          }
           var itemEl = $(ev.currentTarget),
             item = _self.getItemByElement(itemEl);
           if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
@@ -15748,6 +15754,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       }
 
       itemContainer.delegate('.' + itemCls,'dblclick',function(ev){
+        if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
+          return;
+        }
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
@@ -16533,6 +16542,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'mouseover',function(ev){
+        if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
+          return;
+        }
         var element = ev.currentTarget,
           item = _self.getItemByElement(element);
         if(_self.isItemDisabled(ev.item,ev.currentTarget)){ //\u5982\u679c\u7981\u7528
@@ -16545,6 +16557,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
           _self.setItemStatus(item,'hover',true,element);
         }
       }).delegate('.'+itemCls,'mouseout',function(ev){
+        if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
+          return;
+        }
         var sender = $(ev.currentTarget);
         _self.get('view').setElementHover(sender,false);
       });
@@ -18322,7 +18337,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   function resetOptions (select,options,self) {
     select.children().remove();
     var emptyText = self.get('emptyText');
-    if(emptyText){
+    if(emptyText && self.get('showBlank')){
       appendItem('',emptyText,select);
     }
     BUI.each(options,function (option) {
@@ -18490,7 +18505,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
        * @type {Boolean}
        */
       showBlank : {
-        value : true
+        value : false
       },
       /**
        * \u9009\u62e9\u4e3a\u7a7a\u65f6\u7684\u6587\u672c
@@ -34559,6 +34574,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
     },
     /**
+     * \u662f\u5426\u53ef\u4ee5\u52fe\u9009\u7684\u5b57\u6bb5\u540d\u79f0
+     * @type {String}
+     */
+    checkableField : {
+      value : 'checkable'
+    },
+    /**
      * \u9009\u9879\u5bf9\u8c61\u4e2d\u5c5e\u6027\u4f1a\u76f4\u63a5\u5f71\u54cd\u76f8\u5e94\u7684\u72b6\u6001,\u9ed8\u8ba4\uff1a
      * <pre><code>
      * //\u9ed8\u8ba4\u503c
@@ -35026,17 +35048,20 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       var _self = this,
         checkType = _self.get('checkType'),
         checkedField = _self.get('checkedField'),
+        checkableField = _self.get('checkableField'),
         parent; 
       if(checkType === MAP_TYPES.NONE){ //\u4e0d\u5141\u8bb8\u9009\u4e2d
-        delete node[checkedField];
+        node[checkableField] = false;
+        node[checkedField] = false;
         return;
       }
 
       if(checkType === MAP_TYPES.ONLY_LEAF){ //\u4ec5\u53f6\u5b50\u8282\u70b9\u53ef\u9009
         if(node.leaf){
-          node[checkedField] = node[checkedField] || false;
+          node[checkableField] = true;
         }else{
-          delete node[checkedField];
+          node[checkableField] = false;
+          node[checkedField] = false;
           if(deep){
             BUI.each(node.children,function(subNode){
               _self._initChecked(subNode,deep);
@@ -35046,13 +35071,21 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         return;
       }
 
+      if(checkType === MAP_TYPES.CUSTOM){ //\u81ea\u5b9a\u4e49\u9009\u4e2d\u65f6\uff0c\u6839\u636e\u8282\u70b9\u4e0a\u662f\u5426\u6709checked\u5224\u65ad
+        if(node[checkableField] == null){
+          node[checkableField] = node[checkedField] != null;
+        }
+        
+      }
+
       if(checkType === MAP_TYPES.ALL){ //\u6240\u6709\u5141\u8bb8\u9009\u4e2d
-        node[checkedField] = node[checkedField] || false;
+        node[checkableField] = true;
       }
 
       if(!node || !_self.isCheckable(node)){ //\u5982\u679c\u4e0d\u53ef\u9009\uff0c\u5219\u4e0d\u5904\u7406\u52fe\u9009
         return;
       }
+
       parent = node.parent;
       if(!_self.isChecked(node)){ //\u8282\u70b9\u672a\u88ab\u9009\u62e9\uff0c\u6839\u636e\u7236\u3001\u5b50\u8282\u70b9\u5904\u7406\u52fe\u9009
         if(parent && _self.isChecked(parent)){ //\u5982\u679c\u7236\u8282\u70b9\u9009\u4e2d\uff0c\u5f53\u524d\u8282\u70b9\u5fc5\u987b\u52fe\u9009
@@ -35425,7 +35458,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      * @return {Boolean}  \u662f\u5426\u53ef\u4ee5\u52fe\u9009
      */
     isCheckable : function(node){
-      return node[this.get('checkedField')] != null;
+      return node[this.get('checkableField')];
     },
     //\u83b7\u53d6\u5c55\u5f00\u6298\u53e0\u7684icon
     _getExpandIcon : function(node){

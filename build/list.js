@@ -515,6 +515,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'click',function(ev){
+        if(_self.get('disabled')){ //控件禁用后，阻止事件
+          return;
+        }
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
@@ -527,6 +530,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       });
       if(selectedEvent !== 'click'){ //如果选中事件不等于click，则进行监听选中
         itemContainer.delegate('.'+itemCls,selectedEvent,function(ev){
+          if(_self.get('disabled')){ //控件禁用后，阻止事件
+            return;
+          }
           var itemEl = $(ev.currentTarget),
             item = _self.getItemByElement(itemEl);
           if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
@@ -540,6 +546,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       }
 
       itemContainer.delegate('.' + itemCls,'dblclick',function(ev){
+        if(_self.get('disabled')){ //控件禁用后，阻止事件
+          return;
+        }
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
@@ -1325,6 +1334,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'mouseover',function(ev){
+        if(_self.get('disabled')){ //控件禁用后，阻止事件
+          return;
+        }
         var element = ev.currentTarget,
           item = _self.getItemByElement(element);
         if(_self.isItemDisabled(ev.item,ev.currentTarget)){ //如果禁用
@@ -1337,6 +1349,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
           _self.setItemStatus(item,'hover',true,element);
         }
       }).delegate('.'+itemCls,'mouseout',function(ev){
+        if(_self.get('disabled')){ //控件禁用后，阻止事件
+          return;
+        }
         var sender = $(ev.currentTarget);
         _self.get('view').setElementHover(sender,false);
       });
