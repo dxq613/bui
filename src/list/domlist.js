@@ -490,6 +490,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'click',function(ev){
+        if(_self.get('disabled')){ //控件禁用后，阻止事件
+          return;
+        }
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
@@ -502,6 +505,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       });
       if(selectedEvent !== 'click'){ //如果选中事件不等于click，则进行监听选中
         itemContainer.delegate('.'+itemCls,selectedEvent,function(ev){
+          if(_self.get('disabled')){ //控件禁用后，阻止事件
+            return;
+          }
           var itemEl = $(ev.currentTarget),
             item = _self.getItemByElement(itemEl);
           if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
@@ -515,6 +521,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       }
 
       itemContainer.delegate('.' + itemCls,'dblclick',function(ev){
+        if(_self.get('disabled')){ //控件禁用后，阻止事件
+          return;
+        }
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
         if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中

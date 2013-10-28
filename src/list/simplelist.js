@@ -97,6 +97,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'mouseover',function(ev){
+        if(_self.get('disabled')){ //控件禁用后，阻止事件
+          return;
+        }
         var element = ev.currentTarget,
           item = _self.getItemByElement(element);
         if(_self.isItemDisabled(ev.item,ev.currentTarget)){ //如果禁用
@@ -109,6 +112,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
           _self.setItemStatus(item,'hover',true,element);
         }
       }).delegate('.'+itemCls,'mouseout',function(ev){
+        if(_self.get('disabled')){ //控件禁用后，阻止事件
+          return;
+        }
         var sender = $(ev.currentTarget);
         _self.get('view').setElementHover(sender,false);
       });

@@ -541,7 +541,9 @@
 .bui-list-item-disabled .x-radio {
   background-position: -48px 0px;
 }
+.bui-simple-list-disabled .x-checkbox,
 .bui-list-item-selected.bui-list-item-disabled .x-checkbox,
+.bui-simple-list-disabled .x-radio,
 .bui-list-item-selected.bui-list-item-disabled .x-radio {
   background-position: -48px -20px;
 }

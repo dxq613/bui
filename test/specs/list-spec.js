@@ -519,7 +519,11 @@ BUI.use('bui/list',function (List) {
 
   describe('测试listBox事件',function(){
 
+    
+
+  describe('测试listbox禁用',function(){
     it('测试点击项',function(){
+      list.set('disabled',false);
       var item = list.getItem(1),
           el = $(list.findElement(item));
 
@@ -535,6 +539,27 @@ BUI.use('bui/list',function (List) {
         });
       });
     });
+    
+    it('测试禁用',function(){
+      list.set('disabled',true);
+      var item = list.getItem(1),
+          el = $(list.findElement(item));
+
+      el.trigger('click');
+      waits(100);
+      runs(function(){
+        testSelected(item,false);
+        el.trigger('click');
+
+        waits(100);
+        runs(function(){
+          testSelected(item,false);
+        });
+      });
+    });
+  });
+
+    
   });
 
 });
