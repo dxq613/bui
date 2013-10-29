@@ -34380,6 +34380,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     CLS_EMPTY = CLS_ICON_PREFIX + 'empty',
     CLS_EXPANDER = CLS_ICON_PREFIX + 'expander',
     CLS_CHECKBOX = CLS_ICON + '-checkbox',
+    CLS_RADIO = CLS_ICON + '-radio', 
     CLS_EXPANDER_END = CLS_EXPANDER + '-end',
     Mixin = function(){
 
@@ -34562,6 +34563,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     accordion : {
       value : false
+    },
+    /**
+     * \u662f\u5426\u53ef\u4ee5\u52fe\u9009\u591a\u4e2a\u8282\u70b9
+     * @type {Boolean}
+     */
+    multipleCheck : {
+      value : true
     },
     /**
      * @private
@@ -34965,6 +34973,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
       var _self = this,
         parent,
+        multipleCheck = _self.get('multipleCheck'),
         element;
       node = makeSureNode(this,node);
       if(!node){
@@ -34977,17 +34986,36 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
       if(_self.isChecked(node) !== checked || _self.hasStatus(node,'checked') !== checked){
 
+        //\u5982\u679c\u662f\u5355\u9009\u5219\uff0c\u6e05\u9664\u5144\u5f1f\u5143\u7d20\u7684\u9009\u4e2d
+        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
+          var slibings = parent.children;
+          BUI.each(slibings,function(slibNode){
+            if(node !== slibNode){
+              _self.setNodeChecked(slibNode,false);
+            }
+            
+          });
+        }
+
+
         element =  _self.findElement(node);
         if(element){
           _self.setItemStatus(node,CHECKED,checked,element); //\u8bbe\u7f6e\u9009\u4e2d\u72b6\u6001
-          _self._resetPatialChecked(node,checked,checked,element); //\u8bbe\u7f6e\u90e8\u5206\u52fe\u9009\u72b6\u6001
+          if(multipleCheck){ //\u591a\u9009\u72b6\u6001\u4e0b\u8bbe\u7f6e\u534a\u9009\u72b6\u6001
+            _self._resetPatialChecked(node,checked,checked,element); //\u8bbe\u7f6e\u90e8\u5206\u52fe\u9009\u72b6\u6001
+          }else{
+            if(checked && parent){
+              _self.setNodeChecked(parent,checked,false);
+            }
+          }
         }else if(!_self.isItemDisabled(node)){
           _self.setStatusValue(node,'checked',checked);
         }
+
         if(parent){ //\u8bbe\u7f6e\u7236\u5143\u7d20\u9009\u4e2d
           if(_self.isChecked(parent) != checked){
             _self._resetParentChecked(parent);
-          }else{
+          }else if(multipleCheck){
             _self._resetPatialChecked(parent,null,null,null,true);
           }
         }
@@ -34995,8 +35023,10 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         
       }
       if(!node.leaf && deep){ //\u6811\u8282\u70b9\uff0c\u52fe\u9009\u6240\u6709\u5b50\u8282\u70b9
-        BUI.each(node.children,function(subNode){
-          _self.setNodeChecked(subNode,checked,deep);
+        BUI.each(node.children,function(subNode,index){
+          if(multipleCheck || !checked || (!multipleCheck && index == 0)){ //\u591a\u9009\u6216\u8005\u5355\u9009\u65f6\u7b2c\u4e00\u4e2a
+            _self.setNodeChecked(subNode,checked,deep);
+          }
         });
       }
     },
@@ -35048,6 +35078,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       var _self = this,
         checkType = _self.get('checkType'),
         checkedField = _self.get('checkedField'),
+        multipleCheck = _self.get('multipleCheck'),
         checkableField = _self.get('checkableField'),
         parent; 
       if(checkType === MAP_TYPES.NONE){ //\u4e0d\u5141\u8bb8\u9009\u4e2d
@@ -35088,11 +35119,14 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
       parent = node.parent;
       if(!_self.isChecked(node)){ //\u8282\u70b9\u672a\u88ab\u9009\u62e9\uff0c\u6839\u636e\u7236\u3001\u5b50\u8282\u70b9\u5904\u7406\u52fe\u9009
+
         if(parent && _self.isChecked(parent)){ //\u5982\u679c\u7236\u8282\u70b9\u9009\u4e2d\uff0c\u5f53\u524d\u8282\u70b9\u5fc5\u987b\u52fe\u9009
-          _self.setStatusValue(node,'checked',true);
+          if(multipleCheck || !_self._hasChildChecked(parent)){ //\u591a\u9009\u6216\u8005\u5144\u5f1f\u8282\u70b9\u6ca1\u6709\u88ab\u9009\u4e2d
+            _self.setStatusValue(node,'checked',true);
+          }
         }
         //\u8282\u70b9\u4e3a\u975e\u53f6\u5b50\u8282\u70b9\uff0c\u540c\u65f6\u53f6\u5b50\u8282\u70b9\u4e0d\u4e3a\u7a7a\u65f6\u6839\u636e\u53f6\u5b50\u8282\u70b9\u63a7\u5236
-        if(node.children && node.children.length && _self._isAllChildrenChecked(node)){
+        if((node.children && node.children.length && _self._isAllChildrenChecked(node)) ||(!multipleCheck && _self._hasChildChecked(node))){
           _self.setStatusValue(node,'checked',true);
         }
       }
@@ -35129,15 +35163,18 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         return;
       }
       var _self = this,
-        allChecked = _self._isAllChildrenChecked(parentNode);
+        multipleCheck = _self.get('multipleCheck'),
+        allChecked = multipleCheck ? _self._isAllChildrenChecked(parentNode) : _self._hasChildChecked(parentNode);
       _self.setStatusValue(parentNode,'checked',allChecked);
       _self.setNodeChecked(parentNode,allChecked,false);
-      _self._resetPatialChecked(parentNode,allChecked,null,null);
+
+      multipleCheck && _self._resetPatialChecked(parentNode,allChecked,null,null);
     },
     //\u7ed1\u5b9a\u4e8b\u4ef6
     __bindUI : function(){
       var _self = this,
-        el = _self.get('el');
+        el = _self.get('el'),
+        multipleCheck = _self.get('multipleCheck');
 
       //\u70b9\u51fb\u9009\u9879
       _self.on('itemclick',function(ev){
@@ -35150,19 +35187,17 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         }else if(sender.hasClass(CLS_CHECKBOX)){
           var checked = _self.isChecked(node);
           _self.setNodeChecked(node,!checked);
+        }else if(sender.hasClass(CLS_RADIO)){
+          _self.setNodeChecked(node,true);
         }
         
       });
-      
-      /*_self.on('beforeselectedchange',function(ev){
-        
-      });
-      */
+
       _self.on('itemrendered',function(ev){
         var node = ev.item,
           element = ev.domTarget;
         _self._resetIcons(node,element);
-        if(_self.isCheckable(node)){
+        if(_self.isCheckable(node) && multipleCheck){
           _self._resetPatialChecked(node,null,null,element);
         }
         if(_self._isExpanded(node,element)){
@@ -35200,6 +35235,12 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         }
       }
       
+    },
+    //\u662f\u5426\u6839\u636e\u5b50\u8282\u70b9\u9009\u4e2d
+    _isForceChecked : function(node){
+      var _self = this,
+        multipleCheck = _self.get('multipleCheck');
+      return multipleCheck ? _self._isAllChildrenChecked() : _isForceChecked();
     },
     //\u662f\u5426\u6240\u6709\u5b50\u8282\u70b9\u88ab\u9009\u4e2d
     _isAllChildrenChecked : function(node){
@@ -35445,9 +35486,11 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     //\u83b7\u53d6\u52fe\u9009icon
     _getCheckedIcon : function(node){
       var _self = this,
-        checkable = _self.isCheckable(node);
+        checkable = _self.isCheckable(node),
+        cls;
       if(checkable){
-        return _self._getIcon(CLS_CHECKBOX);
+        cls = _self.get('multipleCheck') ? CLS_CHECKBOX : CLS_RADIO;
+        return _self._getIcon(cls);
       }
       return '';
     },
@@ -35831,7 +35874,7 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],functi
         value : BUI.prefix + 'tree-item'
       },
       itemTpl : {
-        value : '<li class="{cls}">{text}</li>'
+        value : '<li>{text}</li>'
       },
       idField : {
         value : 'id'

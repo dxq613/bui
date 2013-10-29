@@ -68,6 +68,10 @@
         <h2>手风琴式展开</h2>
         
       </div>
+      <div class="span8" id="t9">
+        <h2>单选</h2>
+        
+      </div>
     </div>
 
   </div>
@@ -77,8 +81,9 @@
 
   <script type="text/javascript" src="../src/tree/treemixin.js"></script>
   <script type="text/javascript" src="../src/tree/treelist.js"></script>
- <script type="text/javascript" src="specs/tree-base-spec.js"></script><!-- -->
+ <!-- --><script type="text/javascript" src="specs/tree-base-spec.js"></script>
   <script type="text/javascript" src="specs/tree-check-spec.js"></script>  
+  <script type="text/javascript" src="specs/tree-radio-spec.js"></script> 
   <script type="text/javascript" src="specs/tree-store-spec.js"></script>
-  <script type="text/javascript" src="specs/tree-icon-spec.js"></script><!-- -->
+  <script type="text/javascript" src="specs/tree-icon-spec.js"></script> <!---->
 <?php include("./templates/footer.php"); ?>

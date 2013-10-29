@@ -41,6 +41,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     CLS_EMPTY = CLS_ICON_PREFIX + 'empty',
     CLS_EXPANDER = CLS_ICON_PREFIX + 'expander',
     CLS_CHECKBOX = CLS_ICON + '-checkbox',
+    CLS_RADIO = CLS_ICON + '-radio', 
     CLS_EXPANDER_END = CLS_EXPANDER + '-end',
     Mixin = function(){
 
@@ -223,6 +224,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     accordion : {
       value : false
+    },
+    /**
+     * 是否可以勾选多个节点
+     * @type {Boolean}
+     */
+    multipleCheck : {
+      value : true
     },
     /**
      * @private
@@ -626,6 +634,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
       var _self = this,
         parent,
+        multipleCheck = _self.get('multipleCheck'),
         element;
       node = makeSureNode(this,node);
       if(!node){
@@ -638,17 +647,36 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
       if(_self.isChecked(node) !== checked || _self.hasStatus(node,'checked') !== checked){
 
+        //如果是单选则，清除兄弟元素的选中
+        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
+          var slibings = parent.children;
+          BUI.each(slibings,function(slibNode){
+            if(node !== slibNode){
+              _self.setNodeChecked(slibNode,false);
+            }
+            
+          });
+        }
+
+
         element =  _self.findElement(node);
         if(element){
           _self.setItemStatus(node,CHECKED,checked,element); //设置选中状态
-          _self._resetPatialChecked(node,checked,checked,element); //设置部分勾选状态
+          if(multipleCheck){ //多选状态下设置半选状态
+            _self._resetPatialChecked(node,checked,checked,element); //设置部分勾选状态
+          }else{
+            if(checked && parent){
+              _self.setNodeChecked(parent,checked,false);
+            }
+          }
         }else if(!_self.isItemDisabled(node)){
           _self.setStatusValue(node,'checked',checked);
         }
+
         if(parent){ //设置父元素选中
           if(_self.isChecked(parent) != checked){
             _self._resetParentChecked(parent);
-          }else{
+          }else if(multipleCheck){
             _self._resetPatialChecked(parent,null,null,null,true);
           }
         }
@@ -656,8 +684,10 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         
       }
       if(!node.leaf && deep){ //树节点，勾选所有子节点
-        BUI.each(node.children,function(subNode){
-          _self.setNodeChecked(subNode,checked,deep);
+        BUI.each(node.children,function(subNode,index){
+          if(multipleCheck || !checked || (!multipleCheck && index == 0)){ //多选或者单选时第一个
+            _self.setNodeChecked(subNode,checked,deep);
+          }
         });
       }
     },
@@ -709,6 +739,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       var _self = this,
         checkType = _self.get('checkType'),
         checkedField = _self.get('checkedField'),
+        multipleCheck = _self.get('multipleCheck'),
         checkableField = _self.get('checkableField'),
         parent; 
       if(checkType === MAP_TYPES.NONE){ //不允许选中
@@ -749,11 +780,14 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
       parent = node.parent;
       if(!_self.isChecked(node)){ //节点未被选择，根据父、子节点处理勾选
+
         if(parent && _self.isChecked(parent)){ //如果父节点选中，当前节点必须勾选
-          _self.setStatusValue(node,'checked',true);
+          if(multipleCheck || !_self._hasChildChecked(parent)){ //多选或者兄弟节点没有被选中
+            _self.setStatusValue(node,'checked',true);
+          }
         }
         //节点为非叶子节点，同时叶子节点不为空时根据叶子节点控制
-        if(node.children && node.children.length && _self._isAllChildrenChecked(node)){
+        if((node.children && node.children.length && _self._isAllChildrenChecked(node)) ||(!multipleCheck && _self._hasChildChecked(node))){
           _self.setStatusValue(node,'checked',true);
         }
       }
@@ -790,15 +824,18 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         return;
       }
       var _self = this,
-        allChecked = _self._isAllChildrenChecked(parentNode);
+        multipleCheck = _self.get('multipleCheck'),
+        allChecked = multipleCheck ? _self._isAllChildrenChecked(parentNode) : _self._hasChildChecked(parentNode);
       _self.setStatusValue(parentNode,'checked',allChecked);
       _self.setNodeChecked(parentNode,allChecked,false);
-      _self._resetPatialChecked(parentNode,allChecked,null,null);
+
+      multipleCheck && _self._resetPatialChecked(parentNode,allChecked,null,null);
     },
     //绑定事件
     __bindUI : function(){
       var _self = this,
-        el = _self.get('el');
+        el = _self.get('el'),
+        multipleCheck = _self.get('multipleCheck');
 
       //点击选项
       _self.on('itemclick',function(ev){
@@ -811,19 +848,17 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         }else if(sender.hasClass(CLS_CHECKBOX)){
           var checked = _self.isChecked(node);
           _self.setNodeChecked(node,!checked);
+        }else if(sender.hasClass(CLS_RADIO)){
+          _self.setNodeChecked(node,true);
         }
         
       });
-      
-      /*_self.on('beforeselectedchange',function(ev){
-        
-      });
-      */
+
       _self.on('itemrendered',function(ev){
         var node = ev.item,
           element = ev.domTarget;
         _self._resetIcons(node,element);
-        if(_self.isCheckable(node)){
+        if(_self.isCheckable(node) && multipleCheck){
           _self._resetPatialChecked(node,null,null,element);
         }
         if(_self._isExpanded(node,element)){
@@ -861,6 +896,12 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         }
       }
       
+    },
+    //是否根据子节点选中
+    _isForceChecked : function(node){
+      var _self = this,
+        multipleCheck = _self.get('multipleCheck');
+      return multipleCheck ? _self._isAllChildrenChecked() : _isForceChecked();
     },
     //是否所有子节点被选中
     _isAllChildrenChecked : function(node){
@@ -1106,9 +1147,11 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
     //获取勾选icon
     _getCheckedIcon : function(node){
       var _self = this,
-        checkable = _self.isCheckable(node);
+        checkable = _self.isCheckable(node),
+        cls;
       if(checkable){
-        return _self._getIcon(CLS_CHECKBOX);
+        cls = _self.get('multipleCheck') ? CLS_CHECKBOX : CLS_RADIO;
+        return _self._getIcon(cls);
       }
       return '';
     },

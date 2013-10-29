@@ -8,7 +8,7 @@ BUI.use(['bui/editor','bui/overlay'],function (Editor,Overlay) {
     contentId:'c1',
     //focusable : true,
     width : 500,
-    title : '编辑数据',
+    title : '测试编辑',
     form : {
       srcNode : '#J_Form'
     },
