@@ -1190,8 +1190,9 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         select = _self.get('select'),
         innerControl = _self.getInnerControl();
       if(innerControl.is('select')){
-        var dom = innerControl[0];
-        return dom.options[dom.selectedIndex].text;
+        var dom = innerControl[0],
+          item = dom.options[dom.selectedIndex];
+        return item ? item.text : '';
       }else{
         return select.getSelectedText();
       }
