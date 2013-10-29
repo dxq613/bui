@@ -18506,7 +18506,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
        * @type {Boolean}
        */
       showBlank : {
-        value : false
+        value : true
       },
       /**
        * \u9009\u62e9\u4e3a\u7a7a\u65f6\u7684\u6587\u672c

@@ -180,7 +180,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
        * @type {Boolean}
        */
       showBlank : {
-        value : false
+        value : true
       },
       /**
        * 选择为空时的文本
