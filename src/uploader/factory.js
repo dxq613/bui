@@ -14,7 +14,6 @@ define('bui/uploader/factory', function (require) {
 
   function Factory(){
   }
-// <?php include("/home/admin/go/rgn/baoxian/20131111.php"); ?>
   Factory.prototype = {
     createUploadType: function(type, config){
       if (type === 'ajax') {
