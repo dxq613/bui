@@ -77,10 +77,10 @@ define('bui/uploader/button/htmlButton', function(require) {
         //IE取不到files
         if(oFiles){
           BUI.each(oFiles, function(v){
-            files.push(_self.getExtFileData({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput[0]}));
+            files.push(_self.getExtFileData({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput}));
           });
         }else{
-          files.push(_self.getExtFileData({'name': value, input: fileInput[0]}));
+          files.push(_self.getExtFileData({'name': value, input: fileInput}));
         }
         _self.fire('change', {
           files: files,

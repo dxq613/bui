@@ -14,13 +14,16 @@
       </div>
     </div>
     <div class="row">
-      <div class="span12">
+      <div class="span8">
         <div id="J_Uploader"></div>
         <div id="J_UploaderQueue"></div>
       </div>
-      <div class="span12">
+      <div class="span8">
         <div id="J_UploaderFlash"></div>
         <div id="J_UploaderQueueFlash"></div>
+      </div>
+      <div class="span8">
+        <div id="J_UploaderIframe"></div>
       </div>
     </div>
   </div>
@@ -40,7 +43,7 @@
     <script src="../src/uploader/button/swfButton.js"></script>
     <script src="../src/uploader/type/base.js"></script>
     <script src="../src/uploader/type/ajax.js"></script>
-    <!-- // <script src="../src/uploader/type/iframe.js"></script> -->
+    <script src="../src/uploader/type/iframe.js"></script>
     <script src="../src/uploader/type/flash.js"></script>
     <script src="../src/uploader/type/flash.js"></script>
     <script src="../src/uploader/button/ajbridge.js"></script>

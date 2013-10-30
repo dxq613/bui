@@ -73,12 +73,21 @@ define('bui/uploader/button/swfButton', function (require) {
          swfEl.show();
       }
     },
+    _convertFilter: function(v){
+      var desc = v.desc,
+        ext = [];
+      BUI.each(v.ext.split(','), function(item){
+        item && ext.push('*' + item);
+      });
+      v.ext = ext.join(';');
+      return v;
+    },
     setFilter: function(v){
       var _self = this,
         swfUploader = _self.get('swfUploader'),
-        filter = _self.getFilter(v);
+        filter = _self._convertFilter(_self.getFilter(v));
       //flash里需要一个数组
-      swfUploader && swfUploader.filter([v]);
+      swfUploader && swfUploader.filter([filter]);
       return v;
     }
   },{

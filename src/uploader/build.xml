@@ -28,6 +28,7 @@
             <path path="type/base.js"/>
             <path path="type/ajax.js"/>
             <path path="type/flash.js"/>
+            <path path="type/iframe.js"/>
             <path path="queue.js"/>
             <path path="theme.js"/>
             <path path="factory.js"/>

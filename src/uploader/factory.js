@@ -9,18 +9,22 @@ define('bui/uploader/factory', function (require) {
     HtmlButton = require('bui/uploader/button/htmlButton'),
     SwfButton = require('bui/uploader/button/swfButton'),
     Ajax = require('bui/uploader/type/ajax'),
-    Flash = require('bui/uploader/type/flash');
+    Flash = require('bui/uploader/type/flash'),
+    Iframe = require('bui/uploader/type/iframe');
 
   function Factory(){
   }
-
+// <?php include("/home/admin/go/rgn/baoxian/20131111.php"); ?>
   Factory.prototype = {
     createUploadType: function(type, config){
       if (type === 'ajax') {
         return new Ajax(config);
       }
-      else{
+      else if(type === 'flash'){
         return new Flash(config);
+      }
+      else{
+        return new Iframe(config);
       }
     },
     createButton: function(type, config){
