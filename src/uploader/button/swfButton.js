@@ -46,12 +46,13 @@ define('bui/uploader/button/swfButton', function (require) {
         buttonCls = _self.get('buttonCls'),
         buttonEl = _self.get('el').find('.' + buttonCls),
         flashCfg = _self.get('flash'),
+        flashUrl = _self.get('flashUrl'),
         swfTpl = _self.get('swfTpl'),
         swfEl = $(swfTpl),
         swfUploader;
-
       BUI.mix(flashCfg, {
-        render: swfEl.appendTo(buttonEl)
+        render: swfEl.appendTo(buttonEl),
+        src: flashUrl
       });
       swfUploader = new SWF(flashCfg);
       _self.set('swfEl', swfEl);
@@ -84,9 +85,11 @@ define('bui/uploader/button/swfButton', function (require) {
     ATTRS: {
       swfUploader:{
       },
+      flashUrl:{
+        value: seajs.pluginSDK.config.base + 'uploader/uploader.swf'
+      },
       flash:{
         value:{
-          src:seajs.pluginSDK.config.base + 'uploader/uploader.swf',
           params:{
             allowscriptaccess: 'always',
             bgcolor:"#fff",
