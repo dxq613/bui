@@ -17935,7 +17935,8 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     //\u7981\u7528\u63a7\u4ef6
     _uiSetDisabled : function(v){
       var _self = this,
-        innerControl = _self.getInnerControl();
+        innerControl = _self.getInnerControl(),
+        children = _self.get('children');
       innerControl.attr('disabled',v);
       if(_self.get('rendered')){
         if(v){//\u63a7\u4ef6\u4e0d\u53ef\u7528\uff0c\u6e05\u9664\u9519\u8bef
@@ -17945,6 +17946,11 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
           _self.valid();
         }
       }
+
+      BUI.each(children,function(child){
+        child.set('disabled',v);
+      });
+
     },
     _uiSetWidth : function(v){
       var _self = this;
@@ -21097,6 +21103,12 @@ define('bui/form/rule',['bui/common'],function (require) {
 
   //\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
   function valid(self,value,baseValue,msg,control){
+    if(BUI.isArray(baseValue) && BUI.isString(baseValue[1])){
+      if(baseValue[1]){
+        msg = baseValue[1];
+      }
+      baseValue = baseValue[0];
+    }
     var _self = self,
       validator = _self.get('validator'),
       formatedMsg = formatError(self,baseValue,msg),
@@ -34969,6 +34981,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     setNodeChecked : function(node,checked,deep){
       deep = deep == null ? true : deep;
+
       if(!node){
         return;
       }
@@ -34987,28 +35000,17 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
       if(_self.isChecked(node) !== checked || _self.hasStatus(node,'checked') !== checked){
 
-        //\u5982\u679c\u662f\u5355\u9009\u5219\uff0c\u6e05\u9664\u5144\u5f1f\u5143\u7d20\u7684\u9009\u4e2d
-        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
-          var slibings = parent.children;
-          BUI.each(slibings,function(slibNode){
-            if(node !== slibNode){
-              _self.setNodeChecked(slibNode,false);
-            }
-            
-          });
-        }
-
-
+        
         element =  _self.findElement(node);
         if(element){
           _self.setItemStatus(node,CHECKED,checked,element); //\u8bbe\u7f6e\u9009\u4e2d\u72b6\u6001
           if(multipleCheck){ //\u591a\u9009\u72b6\u6001\u4e0b\u8bbe\u7f6e\u534a\u9009\u72b6\u6001
             _self._resetPatialChecked(node,checked,checked,element); //\u8bbe\u7f6e\u90e8\u5206\u52fe\u9009\u72b6\u6001
           }else{
-            if(checked && parent){
+            if(checked && parent && _self.isChecked(parent) != checked){
               _self.setNodeChecked(parent,checked,false);
             }
-          }
+          }/**/
         }else if(!_self.isItemDisabled(node)){
           _self.setStatusValue(node,'checked',checked);
         }
@@ -35019,6 +35021,16 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           }else if(multipleCheck){
             _self._resetPatialChecked(parent,null,null,null,true);
           }
+        }
+
+        //\u5982\u679c\u662f\u5355\u9009\u5219\uff0c\u6e05\u9664\u5144\u5f1f\u5143\u7d20\u7684\u9009\u4e2d
+        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
+          var nodes = parent.children;
+          BUI.each(nodes,function(slibNode){
+            if(slibNode !== node && _self.isChecked(slibNode)){
+              _self.setNodeChecked(slibNode,false);
+            } 
+          });
         }
         _self.fire('checkedchange',{node : node,element: element,checked : checked});
         
@@ -35633,15 +35645,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         _self.removeItems(children);
       }
       
-    }/*,
-    _slideUpNodes : function(elements,callback){
-      var wrapEl = $('<div></div>').insertBefore(elements[0]);
-      $(elements).appendTo(wrapEl);
-      wrapEl.slideUp(function(){
-        callback();
-        wrapEl.remove();
-      });
-    }*/,
+    },
     _collapseChildren : function(parentNode,deep){
       var _self = this,
         children = parentNode.children;

@@ -643,6 +643,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     setNodeChecked : function(node,checked,deep){
       deep = deep == null ? true : deep;
+
       if(!node){
         return;
       }
@@ -661,28 +662,17 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
       if(_self.isChecked(node) !== checked || _self.hasStatus(node,'checked') !== checked){
 
-        //如果是单选则，清除兄弟元素的选中
-        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
-          var slibings = parent.children;
-          BUI.each(slibings,function(slibNode){
-            if(node !== slibNode){
-              _self.setNodeChecked(slibNode,false);
-            }
-            
-          });
-        }
-
-
+        
         element =  _self.findElement(node);
         if(element){
           _self.setItemStatus(node,CHECKED,checked,element); //设置选中状态
           if(multipleCheck){ //多选状态下设置半选状态
             _self._resetPatialChecked(node,checked,checked,element); //设置部分勾选状态
           }else{
-            if(checked && parent){
+            if(checked && parent && _self.isChecked(parent) != checked){
               _self.setNodeChecked(parent,checked,false);
             }
-          }
+          }/**/
         }else if(!_self.isItemDisabled(node)){
           _self.setStatusValue(node,'checked',checked);
         }
@@ -693,6 +683,16 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
           }else if(multipleCheck){
             _self._resetPatialChecked(parent,null,null,null,true);
           }
+        }
+
+        //如果是单选则，清除兄弟元素的选中
+        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
+          var nodes = parent.children;
+          BUI.each(nodes,function(slibNode){
+            if(slibNode !== node && _self.isChecked(slibNode)){
+              _self.setNodeChecked(slibNode,false);
+            } 
+          });
         }
         _self.fire('checkedchange',{node : node,element: element,checked : checked});
         
@@ -1307,15 +1307,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         _self.removeItems(children);
       }
       
-    }/*,
-    _slideUpNodes : function(elements,callback){
-      var wrapEl = $('<div></div>').insertBefore(elements[0]);
-      $(elements).appendTo(wrapEl);
-      wrapEl.slideUp(function(){
-        callback();
-        wrapEl.remove();
-      });
-    }*/,
+    },
     _collapseChildren : function(parentNode,deep){
       var _self = this,
         children = parentNode.children;

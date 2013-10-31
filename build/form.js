@@ -681,7 +681,8 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     //禁用控件
     _uiSetDisabled : function(v){
       var _self = this,
-        innerControl = _self.getInnerControl();
+        innerControl = _self.getInnerControl(),
+        children = _self.get('children');
       innerControl.attr('disabled',v);
       if(_self.get('rendered')){
         if(v){//控件不可用，清除错误
@@ -691,6 +692,11 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
           _self.valid();
         }
       }
+
+      BUI.each(children,function(child){
+        child.set('disabled',v);
+      });
+
     },
     _uiSetWidth : function(v){
       var _self = this;
@@ -3843,6 +3849,12 @@ define('bui/form/rule',['bui/common'],function (require) {
 
   //是否通过验证
   function valid(self,value,baseValue,msg,control){
+    if(BUI.isArray(baseValue) && BUI.isString(baseValue[1])){
+      if(baseValue[1]){
+        msg = baseValue[1];
+      }
+      baseValue = baseValue[0];
+    }
     var _self = self,
       validator = _self.get('validator'),
       formatedMsg = formatError(self,baseValue,msg),
