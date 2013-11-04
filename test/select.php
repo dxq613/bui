@@ -1,4 +1,4 @@
-<?php  $title='选择框测试' ?>
+<?php  $title='选择框测试';$css='select'; ?>
 <?php include("./templates/header.php"); ?>
 
   <div class="container">

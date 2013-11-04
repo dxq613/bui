@@ -1,0 +1,45 @@
+.x-icon{
+  .inline-block();
+  font-size:20px;
+  font-weight:bold;
+  font-family:"Arial";
+  text-align:center;
+  height:22px;
+  width:22px;
+  line-height:22px;
+  .border-radius(2px);
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  border: 1px solid transparent;
+  *position:relative;
+  cursor: inherit;
+  //使用图片icon时，使用此标签
+  i{
+    vertical-align: baseline;
+    *position:absolute;
+    *top:4px;
+    *left:2px;
+  }
+}
+
+.x-icon-normal{
+  text-shadow: none;
+  color: @iconColor;
+  .buttonBackground(@iconBackground, @iconBackgroundHighlight);
+  border: 1px solid darken(@btnBorder, 10%);
+}
+
+
+.x-icon-small{
+  font-size:17px;
+  *font-size:15px;
+  height:14px;
+  width:14px;
+  line-height:14px;
+  .border-radius(2px);
+  i{
+    *position:absolute;
+    *top:0;
+    *left:0;
+  }
+}
+

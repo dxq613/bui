@@ -1,4 +1,4 @@
-<?php  $title='菜单测试' ?>
+<?php  $title='菜单测试';$css="menu"; ?>
 <?php include("./templates/header.php"); ?>
 
     <div class="container">
