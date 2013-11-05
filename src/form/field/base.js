@@ -23,6 +23,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     renderUI : function(){
       var _self = this,
         control = _self.get('control');
+
       if(!control){
         var controlTpl = _self.get('controlTpl'),
           container = _self.getControlContainer();

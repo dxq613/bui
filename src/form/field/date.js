@@ -38,12 +38,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     bindUI : function(){
       var _self = this,
         datePicker = _self.get('datePicker');
-      datePicker.on('selectedchange',function(ev){
+      /*datePicker.on('selectedchange',function(ev){
         var curTrigger = ev.curTrigger;
         if(curTrigger[0] == _self.getInnerControl()[0]){
           _self.set('value',ev.value);
         }
-      });
+      });*/
     },
     /**
      * 设置字段的值

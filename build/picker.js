@@ -80,6 +80,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             if(selText != preText){
               $(textField).val(selText);
               isChange = true;
+              $(textField).trigger('change');
             }
           }
           
@@ -88,6 +89,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             if(valueField != preValue){
               $(valueField).val(selValue);
               isChange = true;
+              $(valueField).trigger('change');
             }
           }
           if(isChange){
@@ -148,6 +150,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
+        //curTrigger && curTrigger.trigger('change'); //触发改变事件
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
       },
       /**
@@ -342,6 +345,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
+        //curTrigger && curTrigger.trigger('change'); //触发改变事件
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger,item : ev.item});
       },
       /**

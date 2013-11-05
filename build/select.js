@@ -426,7 +426,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
          */
         tpl : {
           view:true,
-          value : '<input type="text" readonly="readonly" class="'+CLS_INPUT+'"/><span class="x-icon x-icon-normal"><span class="x-caret x-caret-down"></span></span>'
+          value : '<input type="text" readonly="readonly" class="'+CLS_INPUT+'"/><span class="x-icon x-icon-normal"><i class="icon icon-caret icon-caret-down"></i></span>'
         },
         /**
          * 触发的事件

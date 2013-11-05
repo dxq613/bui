@@ -14304,7 +14304,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
 
       _self._sortData(field,direction);
 
-      _self.fire('localsort');
+      _self.fire('localsort',{field:field,direction:direction});
     },
     _sortData : function(field,direction,data){
       var _self = this;
@@ -16444,11 +16444,91 @@ define('bui/list/keynav',function () {
 
   return KeyNav;
 });/**
+ * @fileOverview \u5217\u8868\u6392\u5e8f
+ * @ignore
+ */
+
+define('bui/list/sortable',['bui/common','bui/data'],function (require) {
+
+  var BUI = require('bui/common'),
+    DataSortable = require('bui/data').Sortable;
+
+  /**
+   * @class BUI.List.Sortable
+   * \u5217\u8868\u6392\u5e8f\u7684\u6269\u5c55
+   * @extends BUI.Data.Sortable
+   */
+  var Sortable = function(){
+
+  };
+
+
+
+  Sortable.ATTRS = BUI.merge(true,DataSortable.ATTRS, {
+
+  });
+
+  BUI.augment(Sortable,DataSortable,{
+    
+    /**
+     * @protected
+     * @override
+     * @ignore
+     * \u8986\u5199\u6bd4\u8f83\u65b9\u6cd5
+     */
+    compare : function(obj1,obj2,field,direction){
+      var _self = this,
+        dir;
+      field = field || _self.get('sortField');
+      direction = direction || _self.get('sortDirection');
+      //\u5982\u679c\u672a\u6307\u5b9a\u6392\u5e8f\u5b57\u6bb5\uff0c\u6216\u65b9\u5411\uff0c\u5219\u6309\u7167\u9ed8\u8ba4\u987a\u5e8f
+      if(!field || !direction){
+        return 1;
+      }
+      dir = direction === 'ASC' ? 1 : -1;
+      if(!$.isPlainObject(obj1)){
+        obj1 = _self.getItemByElement(obj1);
+      }
+      if(!$.isPlainObject(obj2)){
+        obj2 = _self.getItemByElement(obj2);
+      }
+
+      return _self.get('compareFunction')(obj1[field],obj2[field]) * dir;
+    },
+    /**
+     * \u83b7\u53d6\u6392\u5e8f\u7684\u96c6\u5408
+     * @protected
+     * @return {Array} \u6392\u5e8f\u96c6\u5408
+     */
+    getSortData : function(){
+      return this.get('view').getAllElements();
+    },
+    /**
+     * \u5217\u8868\u6392\u5e8f
+     * @param  {string} field  \u5b57\u6bb5\u540d
+     * @param  {string} direction \u6392\u5e8f\u65b9\u5411 ASC,DESC
+     */
+    sort : function(field,direction){
+      var _self = this,
+        sortedElements = _self.sortData(field,direction),
+        itemContainer = _self.get('view').getItemContainer();
+      if(!_self.get('store')){
+        _self.sortData(field,direction,_self.get('items'));
+      }
+      BUI.each(sortedElements,function(el){
+        $(el).appendTo(itemContainer);
+      });
+    }
+
+  });
+
+  return Sortable;
+});/**
  * @fileOverview \u7b80\u5355\u5217\u8868\uff0c\u76f4\u63a5\u4f7f\u7528DOM\u4f5c\u4e3a\u5217\u8868\u9879
  * @ignore
  */
 
-define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav'],function (require) {
+define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav','bui/list/sortable'],function (require) {
 
   /**
    * @name BUI.List
@@ -16459,6 +16539,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     UIBase = BUI.Component.UIBase,
     DomList = require('bui/list/domlist'),
     KeyNav = require('bui/list/keynav'),
+    Sortable = require('bui/list/sortable'),
     CLS_ITEM = BUI.prefix + 'list-item';
   
   /**
@@ -16526,7 +16607,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
    * @mixins BUI.List.KeyNav
    * @mixins BUI.Component.UIBase.Bindable
    */
-  var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav],
+  var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav,Sortable],
   /**
    * @lends BUI.List.SimpleList.prototype
    * @ignore
@@ -16594,7 +16675,8 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     * @protected
     */
     onLocalSort : function(e){
-      this.onLoad(e);
+      //this.onLoad(e);
+      this.sort(e.field ,e.direction);
     },
     /**
      * \u52a0\u8f7d\u6570\u636e
@@ -16935,6 +17017,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             if(selText != preText){
               $(textField).val(selText);
               isChange = true;
+              $(textField).trigger('change');
             }
           }
           
@@ -16943,6 +17026,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             if(valueField != preValue){
               $(valueField).val(selValue);
               isChange = true;
+              $(valueField).trigger('change');
             }
           }
           if(isChange){
@@ -17003,6 +17087,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
+        //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
       },
       /**
@@ -17197,6 +17282,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
+        //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger,item : ev.item});
       },
       /**
@@ -17556,6 +17642,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     renderUI : function(){
       var _self = this,
         control = _self.get('control');
+
       if(!control){
         var controlTpl = _self.get('controlTpl'),
           container = _self.getControlContainer();
@@ -18583,12 +18670,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     bindUI : function(){
       var _self = this,
         datePicker = _self.get('datePicker');
-      datePicker.on('selectedchange',function(ev){
+      /*datePicker.on('selectedchange',function(ev){
         var curTrigger = ev.curTrigger;
         if(curTrigger[0] == _self.getInnerControl()[0]){
           _self.set('value',ev.value);
         }
-      });
+      });*/
     },
     /**
      * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
@@ -22466,7 +22553,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
          */
         tpl : {
           view:true,
-          value : '<input type="text" readonly="readonly" class="'+CLS_INPUT+'"/><span class="x-icon x-icon-normal"><span class="x-caret x-caret-down"></span></span>'
+          value : '<input type="text" readonly="readonly" class="'+CLS_INPUT+'"/><span class="x-icon x-icon-normal"><i class="icon icon-caret icon-caret-down"></i></span>'
         },
         /**
          * \u89e6\u53d1\u7684\u4e8b\u4ef6
