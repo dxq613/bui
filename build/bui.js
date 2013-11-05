@@ -3434,28 +3434,29 @@ define('bui/date', function () {
         if (isNaN(dtTmp)) {
             dtTmp = new Date();
         }
+        NumDay = parseInt(NumDay,10);
         switch (strInterval) {
             case   's':
-                dtTmp = new Date(dtTmp.getTime() + (1000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (1000 * NumDay));
                 break;
             case   'n':
-                dtTmp = new Date(dtTmp.getTime() + (60000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (60000 * NumDay));
                 break;
             case   'h':
-                dtTmp = new Date(dtTmp.getTime() + (3600000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (3600000 * NumDay));
                 break;
             case   'd':
-                dtTmp = new Date(dtTmp.getTime() + (86400000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (86400000 * NumDay));
                 break;
             case   'w':
-                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * NumDay));
                 break;
             case   'm':
-                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + parseInt(NumDay), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + NumDay, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
                 break;
             case   'y':
                 //alert(dtTmp.getFullYear());
-                dtTmp = new Date(dtTmp.getFullYear() + parseInt(NumDay), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                dtTmp = new Date(dtTmp.getFullYear() + NumDay, dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
                 //alert(dtTmp);
                 break;
         }
@@ -18281,7 +18282,7 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
         allowDecimals = _self.get('allowDecimals');
       value = value.replace(/\,/g,'');
       if(!allowDecimals){
-        return parseInt(value);
+        return parseInt(value,10);
       }
       return parseFloat(parseFloat(value).toFixed(_self.get('decimalPrecision')));
     },
@@ -20515,7 +20516,7 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
       range : {
         setter : function (v) {
           if(BUI.isString(v) || BUI.isNumber(v)){
-            v = [parseInt(v)];
+            v = [parseInt(v,10)];
           }
           return v;
         }
@@ -27653,7 +27654,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
   function getTimeUnit (self,cls){
     var inputEl = self.get('el').find('.' + cls);
-    return parseInt(inputEl.val());
+    return parseInt(inputEl.val(),10);
 
   }
 
@@ -34428,13 +34429,14 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/tree',['bui/common','bui/tree/treemixin','bui/tree/treelist'],function (require) {
+define('bui/tree',['bui/common','bui/tree/treemixin','bui/tree/treelist','bui/tree/treemenu'],function (require) {
   var BUI = require('bui/common'),
     Tree = BUI.namespace('Tree');
 
   BUI.mix(Tree,{
     TreeList : require('bui/tree/treelist'),
-    Mixin : require('bui/tree/treemixin')
+    Mixin : require('bui/tree/treemixin'),
+    TreeMenu : require('bui/tree/treemenu')
   });
   return Tree;
 });/**
@@ -35980,6 +35982,129 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],functi
 });
 
 /**
+ * @fileOverview \u6811\u5f62\u83dc\u5355
+ * @ignore
+ */
+
+define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
+  var BUI = require('bui/common'),
+    List = require('bui/list'),
+    Mixin = require('bui/tree/treemixin');
+
+  var TreeMenuView = List.SimpleList.View.extend({
+    //\u8986\u5199\u83b7\u53d6\u6a21\u677f\u65b9\u6cd5
+    getItemTpl : function  (item,index) {
+      var _self = this,
+        render = _self.get('itemTplRender'),
+        itemTpl = item.leaf ? _self.get('leafTpl') : _self.get('dirTpl');  
+      if(render){
+        return render(item,index);
+      }
+      
+      return BUI.substitute(itemTpl,item);
+    }
+  },{
+    xclass : 'tree-menu-view'
+  });
+
+  /**
+   * @class BUI.Tree.Menu
+   * \u6811\u5f62\u5217\u8868\u63a7\u4ef6
+   * ** \u4f60\u53ef\u4ee5\u7b80\u5355\u7684\u4f7f\u7528\u914d\u7f6e\u6570\u636e **
+   * <pre><code>
+   *  BUI.use('bui/tree',function(Tree){
+   *    var tree = new Tree.Menu({
+   *      render : '#t1',
+   *      nodes : [
+   *        {id : '1',text : '1',children : [{id : '11',text : '11'}]},
+   *        {id : '2',text : '2'}
+   *      ]
+   *    });
+   *    tree.render();
+   *  });
+   * </code></pre>
+   *
+   * ** \u4f60\u8fd8\u53ef\u4ee5\u66ff\u6362icon ** 
+   * <pre><code>
+   *  BUI.use('bui/tree',function(Tree){
+   *    var tree = new Tree.Menu({
+   *      render : '#t1',
+   *      dirCls : 'folder', //\u66ff\u6362\u6811\u8282\u70b9\u7684\u6837\u5f0f
+   *      leafCls : 'file', //\u53f6\u5b50\u8282\u70b9\u7684\u6837\u5f0f
+   *      nodes : [ //\u6570\u636e\u4e2d\u5b58\u5728cls \u4f1a\u66ff\u6362\u8282\u70b9\u7684\u56fe\u6807\u6837\u5f0f
+   *        {id : '1',text : '1'cls:'task-folder',children : [{id : '11',text : '11',cls:'task'}]},
+   *        {id : '2',text : '2'}
+   *      ]
+   *    });
+   *    tree.render();
+   *  });
+   * @mixin BUI.Tree.Mixin
+   * @extends BUI.List.SimpleList
+   */
+  var TreeMenu = List.SimpleList.extend([Mixin],{
+    
+  },{
+    ATTRS : {
+      itemCls : {
+        value : BUI.prefix + 'tree-item'
+      },
+      /**
+       * \u6587\u4ef6\u5939\u662f\u5426\u53ef\u9009\uff0c\u7528\u4e8e\u9009\u62e9\u8282\u70b9\u65f6\uff0c\u907f\u514d\u9009\u4e2d\u975e\u53f6\u5b50\u8282\u70b9
+       * @cfg {Boolean} [dirSelectable = false]
+       */
+      dirSelectable  : {
+        value : false
+      },
+      /**
+       * \u8282\u70b9\u5c55\u5f00\u7684\u4e8b\u4ef6
+       * @type {String}
+       */
+      expandEvent : {
+        value : 'itemclick'
+      },
+
+      itemStatusFields  : {
+        value : {
+          selected : 'selected'
+        }
+      },
+      /**
+       * \u8282\u70b9\u6298\u53e0\u7684\u4e8b\u4ef6
+       * @type {String}
+       */
+      collapseEvent : {
+        value : 'itemclick'
+      },
+      /**/xview : {
+        value : TreeMenuView
+      },
+      /**
+       * \u975e\u53f6\u5b50\u8282\u70b9\u7684\u6a21\u677f
+       * @type {String}
+       */
+      dirTpl : {
+        view : true,
+        value : '<li class="{cls}"><a href="#">{text}</a></li>'
+      },
+      /**
+       * \u53f6\u5b50\u8282\u70b9\u7684\u6a21\u677f
+       * @type {String}
+       */
+      leafTpl : {
+        view : true,
+        value : '<li class="{cls}"><a href="{href}">{text}</a></li>'
+      },
+      idField : {
+        value : 'id'
+      }
+    }
+  },{
+    xclass : 'tree-menu'
+  });
+
+  TreeMenu.View = TreeMenuView;
+  return TreeMenu;
+});/**
  * @fileOverview \u63d0\u793a\u7684\u5165\u53e3\u6587\u4ef6
  * @ignore
  */

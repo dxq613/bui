@@ -941,7 +941,7 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
         allowDecimals = _self.get('allowDecimals');
       value = value.replace(/\,/g,'');
       if(!allowDecimals){
-        return parseInt(value);
+        return parseInt(value,10);
       }
       return parseFloat(parseFloat(value).toFixed(_self.get('decimalPrecision')));
     },
@@ -3175,7 +3175,7 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
       range : {
         setter : function (v) {
           if(BUI.isString(v) || BUI.isNumber(v)){
-            v = [parseInt(v)];
+            v = [parseInt(v,10)];
           }
           return v;
         }

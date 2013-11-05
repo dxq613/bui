@@ -23,6 +23,7 @@
 			<path path="base.js"/>
 			<path path="treemixin.js"/>
 			<path path="treelist.js"/>
+			<path path="treemenu.js"/>
 		</concat>
     </target>
 

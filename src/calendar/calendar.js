@@ -42,7 +42,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
   function getTimeUnit (self,cls){
     var inputEl = self.get('el').find('.' + cls);
-    return parseInt(inputEl.val());
+    return parseInt(inputEl.val(),10);
 
   }
 
