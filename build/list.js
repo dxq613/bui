@@ -1443,8 +1443,14 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      */
     onAdd : function(e){
       var _self = this,
+        store = _self.get('store'),
         item = e.record;
-      _self.addItemToView(item,e.index);
+      if(_self.getCount() == 0){ //初始为空时，列表跟Store不同步
+        _self.setItems(store.getResult());
+      }else{
+        _self.addItemToView(item,e.index);
+      }
+      
     },
     /**
      * 删除

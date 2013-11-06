@@ -78,10 +78,10 @@
     <script type="text/javascript" src="../src/list/list.js"></script>
     <script type="text/javascript" src="../src/list/listbox.js"></script>
     <script type="text/javascript" src="../src/list/base.js"></script>
-   <!-- <script type="text/javascript" src="specs/list-spec.js"></script>
+   <script type="text/javascript" src="specs/list-spec.js"></script>
     <script type="text/javascript" src="specs/list-nav-spec.js"></script>
     <script type="text/javascript" src="specs/list-status-spec.js"></script>
-    <script type="text/javascript" src="specs/list-loader-spec.js"></script>-->
+    <script type="text/javascript" src="specs/list-loader-spec.js"></script><!-- -->
 
     <script type="text/javascript" src="specs/list-sort-spec.js"></script>
  <?php include("./templates/footer.php"); ?>   

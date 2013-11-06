@@ -16652,8 +16652,14 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      */
     onAdd : function(e){
       var _self = this,
+        store = _self.get('store'),
         item = e.record;
-      _self.addItemToView(item,e.index);
+      if(_self.getCount() == 0){ //\u521d\u59cb\u4e3a\u7a7a\u65f6\uff0c\u5217\u8868\u8ddfStore\u4e0d\u540c\u6b65
+        _self.setItems(store.getResult());
+      }else{
+        _self.addItemToView(item,e.index);
+      }
+      
     },
     /**
      * \u5220\u9664
