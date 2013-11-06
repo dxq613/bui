@@ -735,7 +735,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
 
       _self._sortData(field,direction);
 
-      _self.fire('localsort');
+      _self.fire('localsort',{field:field,direction:direction});
     },
     _sortData : function(field,direction,data){
       var _self = this;

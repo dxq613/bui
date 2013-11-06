@@ -1,4 +1,4 @@
-<?php  $title='列表测试' ?>
+<?php  $title='列表测试';$css='slider'; ?>
 <?php include("./templates/header.php"); ?>
   <style>
     /*.bui-slider{

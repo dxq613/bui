@@ -1,4 +1,4 @@
-<?php  $title='弹出框测试' ?>
+<?php  $title='弹出框测试';$css="overlay"; ?>
 <?php include("./templates/header.php"); ?>
 
     <div id="d1">

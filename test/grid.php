@@ -1,4 +1,4 @@
-<?php  $title='表格测试' ?>
+<?php  $title='表格测试';$css='grid'; ?>
 <?php include("./templates/header.php"); ?>
 
 <div class="container">

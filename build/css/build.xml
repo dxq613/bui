@@ -17,6 +17,7 @@
     </target>
 
 	<target name="less">
+	
 		<exec executable="cmd" failonerror="true">
 			<arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/base/dpl.less > ${build.dir}/dpl.css"/>
 		</exec>
@@ -26,6 +27,33 @@
 		<exec executable="cmd" failonerror="true">
 			<arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/extend/extend.less > ${build.dir}/extend.css"/>
 		</exec>
+	<!---->
+		<exec executable="cmd" failonerror="true">
+			<arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/single/calendar.less > ${build.dir}/calendar.css"/>
+		</exec>
+		<exec executable="cmd" failonerror="true">
+		  <arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/single/overlay.less > ${build.dir}/overlay.css"/>
+		</exec>
+		<exec executable="cmd" failonerror="true">
+		  <arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/single/tab.less > ${build.dir}/tab.css"/>
+		</exec>
+		<exec executable="cmd" failonerror="true">
+		  <arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/single/menu.less > ${build.dir}/menu.css"/>
+		</exec>
+
+		<exec executable="cmd" failonerror="true">
+		  <arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/single/select.less > ${build.dir}/select.css"/>
+		</exec>
+
+		<exec executable="cmd" failonerror="true">
+		  <arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/single/slider.less > ${build.dir}/slider.css"/>
+		</exec>
+
+		<exec executable="cmd" failonerror="true">
+		  <arg line="/c node ${tools.dir}/less/bin/lessc ${less.dir}/single/grid.less > ${build.dir}/grid.css"/>
+		</exec>
+
+
 	</target>
 	
 	<!-- 用 YUICompressor 压缩 CSS -->

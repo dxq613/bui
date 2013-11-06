@@ -67,6 +67,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
+        //curTrigger && curTrigger.trigger('change'); //触发改变事件
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger,item : ev.item});
       },
       /**

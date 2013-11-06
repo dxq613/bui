@@ -1,0 +1,90 @@
+// Core
+.button {
+  .inline-block();
+  padding: 4px 15px;
+  margin-bottom: 0; // For input.button
+  font-size: 14px;
+  line-height: @baseLineHeight;
+  font-weight:bold;
+  color: @grayDark;
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(255,255,255,.75);
+  .buttonBackground(@btnBackground, @btnBackgroundHighlight);
+  border: 1px solid @btnBorder;
+  border-bottom-color: darken(@btnBorder, 10%);
+  .border-radius(@radius);
+  @shadow: inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05);
+  .box-shadow(@shadow);
+  cursor: pointer;
+
+  // Give IE7 some love
+  .ie7-restore-left-whitespace();
+}
+
+// Hover state
+.button:hover{
+  color: @grayDark;
+  text-decoration: none;
+  background-color: darken(@white, 10%);
+  background-position: 0 -15px;
+
+  // transition is only when going to hover, otherwise the background
+  // behind the gradient (there for IE<=9 fallback) gets mismatched
+  .transition(background-position .1s linear);
+}
+
+
+// Focus state for keyboard and accessibility
+.button:focus {
+  .tab-focus();
+}
+
+// Active state
+.button.active,
+.button:active {
+  background-image: none;
+  @shadow: inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05);
+  .box-shadow(@shadow);
+  background-color: darken(@white, 10%);
+  background-color: darken(@white, 15%) e("\9");
+  outline: 0;
+}
+
+// Disabled state
+.button[disabled] {
+  cursor: default;
+  outline-width :0;
+  background-image: none;
+  background-color: darken(@white, 10%);
+  .opacity(65);
+  .box-shadow(none);
+}
+
+// Small
+.button-small {
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight:normal;
+  line-height: @baseLineHeight - 2px;
+}
+
+// Alternate buttons
+// --------------------------------------------------
+
+// Set text color
+// -------------------------
+.button-primary,
+.button-primary:hover {
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  color: @white;
+}
+// Provide *some* extra contrast for those who can get it
+.button-primary.active {
+  color: rgba(255,255,255,.75);
+}
+
+// Set the backgrounds
+// -------------------------
+.button-primary {
+  .buttonBackground(@btnPrimaryBackground, @btnPrimaryBackgroundHighlight);
+}

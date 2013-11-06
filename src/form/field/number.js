@@ -31,7 +31,7 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
         allowDecimals = _self.get('allowDecimals');
       value = value.replace(/\,/g,'');
       if(!allowDecimals){
-        return parseInt(value);
+        return parseInt(value,10);
       }
       return parseFloat(parseFloat(value).toFixed(_self.get('decimalPrecision')));
     },

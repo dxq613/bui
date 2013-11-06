@@ -22,7 +22,8 @@
     <concat destfile="${des.dir}/list.js" encoding="${charset}" outputencoding="${charset}">
       <path path="base.js"/>
 			<path path="domlist.js"/>
-      <path path="keynav.js"/>
+			<path path="keynav.js"/>
+			<path path="sortable.js"/>
 			<path path="simplelist.js"/>
 			<path path="listbox.js"/>
 			<path path="listitem.js"/>

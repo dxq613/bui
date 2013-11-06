@@ -502,7 +502,7 @@
   -moz-border-radius: 0;
   border-radius: 0;
 }
-.bui-select .x-caret {
+.bui-select .icon-caret {
   vertical-align: middle;
 }
 /** list-checkbox **/
@@ -1105,7 +1105,7 @@ td.bui-grid-cell-empty {
 /**grid-bar**/
 .bui-grid .bui-pagingbar {
   float: right;
-  margin-top: 3px;
+  margin: 3px 0 0;
 }
 .bui-grid-tbar,
 .bui-grid-bbar {

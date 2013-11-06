@@ -302,6 +302,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     renderUI : function(){
       var _self = this,
         control = _self.get('control');
+
       if(!control){
         var controlTpl = _self.get('controlTpl'),
           container = _self.getControlContainer();
@@ -940,7 +941,7 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
         allowDecimals = _self.get('allowDecimals');
       value = value.replace(/\,/g,'');
       if(!allowDecimals){
-        return parseInt(value);
+        return parseInt(value,10);
       }
       return parseFloat(parseFloat(value).toFixed(_self.get('decimalPrecision')));
     },
@@ -1329,12 +1330,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     bindUI : function(){
       var _self = this,
         datePicker = _self.get('datePicker');
-      datePicker.on('selectedchange',function(ev){
+      /*datePicker.on('selectedchange',function(ev){
         var curTrigger = ev.curTrigger;
         if(curTrigger[0] == _self.getInnerControl()[0]){
           _self.set('value',ev.value);
         }
-      });
+      });*/
     },
     /**
      * 设置字段的值
@@ -3226,7 +3227,7 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
       range : {
         setter : function (v) {
           if(BUI.isString(v) || BUI.isNumber(v)){
-            v = [parseInt(v)];
+            v = [parseInt(v,10)];
           }
           return v;
         }

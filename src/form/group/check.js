@@ -66,7 +66,7 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
       range : {
         setter : function (v) {
           if(BUI.isString(v) || BUI.isNumber(v)){
-            v = [parseInt(v)];
+            v = [parseInt(v,10)];
           }
           return v;
         }

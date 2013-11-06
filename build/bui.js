@@ -3434,28 +3434,29 @@ define('bui/date', function () {
         if (isNaN(dtTmp)) {
             dtTmp = new Date();
         }
+        NumDay = parseInt(NumDay,10);
         switch (strInterval) {
             case   's':
-                dtTmp = new Date(dtTmp.getTime() + (1000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (1000 * NumDay));
                 break;
             case   'n':
-                dtTmp = new Date(dtTmp.getTime() + (60000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (60000 * NumDay));
                 break;
             case   'h':
-                dtTmp = new Date(dtTmp.getTime() + (3600000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (3600000 * NumDay));
                 break;
             case   'd':
-                dtTmp = new Date(dtTmp.getTime() + (86400000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (86400000 * NumDay));
                 break;
             case   'w':
-                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * NumDay));
                 break;
             case   'm':
-                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + parseInt(NumDay), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + NumDay, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
                 break;
             case   'y':
                 //alert(dtTmp.getFullYear());
-                dtTmp = new Date(dtTmp.getFullYear() + parseInt(NumDay), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                dtTmp = new Date(dtTmp.getFullYear() + NumDay, dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
                 //alert(dtTmp);
                 break;
         }
@@ -14304,7 +14305,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
 
       _self._sortData(field,direction);
 
-      _self.fire('localsort');
+      _self.fire('localsort',{field:field,direction:direction});
     },
     _sortData : function(field,direction,data){
       var _self = this;
@@ -16444,11 +16445,91 @@ define('bui/list/keynav',function () {
 
   return KeyNav;
 });/**
+ * @fileOverview \u5217\u8868\u6392\u5e8f
+ * @ignore
+ */
+
+define('bui/list/sortable',['bui/common','bui/data'],function (require) {
+
+  var BUI = require('bui/common'),
+    DataSortable = require('bui/data').Sortable;
+
+  /**
+   * @class BUI.List.Sortable
+   * \u5217\u8868\u6392\u5e8f\u7684\u6269\u5c55
+   * @extends BUI.Data.Sortable
+   */
+  var Sortable = function(){
+
+  };
+
+
+
+  Sortable.ATTRS = BUI.merge(true,DataSortable.ATTRS, {
+
+  });
+
+  BUI.augment(Sortable,DataSortable,{
+    
+    /**
+     * @protected
+     * @override
+     * @ignore
+     * \u8986\u5199\u6bd4\u8f83\u65b9\u6cd5
+     */
+    compare : function(obj1,obj2,field,direction){
+      var _self = this,
+        dir;
+      field = field || _self.get('sortField');
+      direction = direction || _self.get('sortDirection');
+      //\u5982\u679c\u672a\u6307\u5b9a\u6392\u5e8f\u5b57\u6bb5\uff0c\u6216\u65b9\u5411\uff0c\u5219\u6309\u7167\u9ed8\u8ba4\u987a\u5e8f
+      if(!field || !direction){
+        return 1;
+      }
+      dir = direction === 'ASC' ? 1 : -1;
+      if(!$.isPlainObject(obj1)){
+        obj1 = _self.getItemByElement(obj1);
+      }
+      if(!$.isPlainObject(obj2)){
+        obj2 = _self.getItemByElement(obj2);
+      }
+
+      return _self.get('compareFunction')(obj1[field],obj2[field]) * dir;
+    },
+    /**
+     * \u83b7\u53d6\u6392\u5e8f\u7684\u96c6\u5408
+     * @protected
+     * @return {Array} \u6392\u5e8f\u96c6\u5408
+     */
+    getSortData : function(){
+      return this.get('view').getAllElements();
+    },
+    /**
+     * \u5217\u8868\u6392\u5e8f
+     * @param  {string} field  \u5b57\u6bb5\u540d
+     * @param  {string} direction \u6392\u5e8f\u65b9\u5411 ASC,DESC
+     */
+    sort : function(field,direction){
+      var _self = this,
+        sortedElements = _self.sortData(field,direction),
+        itemContainer = _self.get('view').getItemContainer();
+      if(!_self.get('store')){
+        _self.sortData(field,direction,_self.get('items'));
+      }
+      BUI.each(sortedElements,function(el){
+        $(el).appendTo(itemContainer);
+      });
+    }
+
+  });
+
+  return Sortable;
+});/**
  * @fileOverview \u7b80\u5355\u5217\u8868\uff0c\u76f4\u63a5\u4f7f\u7528DOM\u4f5c\u4e3a\u5217\u8868\u9879
  * @ignore
  */
 
-define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav'],function (require) {
+define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav','bui/list/sortable'],function (require) {
 
   /**
    * @name BUI.List
@@ -16459,6 +16540,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     UIBase = BUI.Component.UIBase,
     DomList = require('bui/list/domlist'),
     KeyNav = require('bui/list/keynav'),
+    Sortable = require('bui/list/sortable'),
     CLS_ITEM = BUI.prefix + 'list-item';
   
   /**
@@ -16526,7 +16608,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
    * @mixins BUI.List.KeyNav
    * @mixins BUI.Component.UIBase.Bindable
    */
-  var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav],
+  var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav,Sortable],
   /**
    * @lends BUI.List.SimpleList.prototype
    * @ignore
@@ -16570,8 +16652,14 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
      */
     onAdd : function(e){
       var _self = this,
+        store = _self.get('store'),
         item = e.record;
-      _self.addItemToView(item,e.index);
+      if(_self.getCount() == 0){ //\u521d\u59cb\u4e3a\u7a7a\u65f6\uff0c\u5217\u8868\u8ddfStore\u4e0d\u540c\u6b65
+        _self.setItems(store.getResult());
+      }else{
+        _self.addItemToView(item,e.index);
+      }
+      
     },
     /**
      * \u5220\u9664
@@ -16594,7 +16682,8 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     * @protected
     */
     onLocalSort : function(e){
-      this.onLoad(e);
+      //this.onLoad(e);
+      this.sort(e.field ,e.direction);
     },
     /**
      * \u52a0\u8f7d\u6570\u636e
@@ -16935,6 +17024,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             if(selText != preText){
               $(textField).val(selText);
               isChange = true;
+              $(textField).trigger('change');
             }
           }
           
@@ -16943,6 +17033,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             if(valueField != preValue){
               $(valueField).val(selValue);
               isChange = true;
+              $(valueField).trigger('change');
             }
           }
           if(isChange){
@@ -17003,6 +17094,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
+        //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
       },
       /**
@@ -17197,6 +17289,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
+        //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger,item : ev.item});
       },
       /**
@@ -17556,6 +17649,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     renderUI : function(){
       var _self = this,
         control = _self.get('control');
+
       if(!control){
         var controlTpl = _self.get('controlTpl'),
           container = _self.getControlContainer();
@@ -18194,7 +18288,7 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
         allowDecimals = _self.get('allowDecimals');
       value = value.replace(/\,/g,'');
       if(!allowDecimals){
-        return parseInt(value);
+        return parseInt(value,10);
       }
       return parseFloat(parseFloat(value).toFixed(_self.get('decimalPrecision')));
     },
@@ -18583,12 +18677,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     bindUI : function(){
       var _self = this,
         datePicker = _self.get('datePicker');
-      datePicker.on('selectedchange',function(ev){
+      /*datePicker.on('selectedchange',function(ev){
         var curTrigger = ev.curTrigger;
         if(curTrigger[0] == _self.getInnerControl()[0]){
           _self.set('value',ev.value);
         }
-      });
+      });*/
     },
     /**
      * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
@@ -20480,7 +20574,7 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
       range : {
         setter : function (v) {
           if(BUI.isString(v) || BUI.isNumber(v)){
-            v = [parseInt(v)];
+            v = [parseInt(v,10)];
           }
           return v;
         }
@@ -22518,7 +22612,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
          */
         tpl : {
           view:true,
-          value : '<input type="text" readonly="readonly" class="'+CLS_INPUT+'"/><span class="x-icon x-icon-normal"><span class="x-caret x-caret-down"></span></span>'
+          value : '<input type="text" readonly="readonly" class="'+CLS_INPUT+'"/><span class="x-icon x-icon-normal"><i class="icon icon-caret icon-caret-down"></i></span>'
         },
         /**
          * \u89e6\u53d1\u7684\u4e8b\u4ef6
@@ -27618,7 +27712,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
   function getTimeUnit (self,cls){
     var inputEl = self.get('el').find('.' + cls);
-    return parseInt(inputEl.val());
+    return parseInt(inputEl.val(),10);
 
   }
 
@@ -34393,13 +34487,14 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/tree',['bui/common','bui/tree/treemixin','bui/tree/treelist'],function (require) {
+define('bui/tree',['bui/common','bui/tree/treemixin','bui/tree/treelist','bui/tree/treemenu'],function (require) {
   var BUI = require('bui/common'),
     Tree = BUI.namespace('Tree');
 
   BUI.mix(Tree,{
     TreeList : require('bui/tree/treelist'),
-    Mixin : require('bui/tree/treemixin')
+    Mixin : require('bui/tree/treemixin'),
+    TreeMenu : require('bui/tree/treemenu')
   });
   return Tree;
 });/**
@@ -35945,6 +36040,129 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],functi
 });
 
 /**
+ * @fileOverview \u6811\u5f62\u83dc\u5355
+ * @ignore
+ */
+
+define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
+  var BUI = require('bui/common'),
+    List = require('bui/list'),
+    Mixin = require('bui/tree/treemixin');
+
+  var TreeMenuView = List.SimpleList.View.extend({
+    //\u8986\u5199\u83b7\u53d6\u6a21\u677f\u65b9\u6cd5
+    getItemTpl : function  (item,index) {
+      var _self = this,
+        render = _self.get('itemTplRender'),
+        itemTpl = item.leaf ? _self.get('leafTpl') : _self.get('dirTpl');  
+      if(render){
+        return render(item,index);
+      }
+      
+      return BUI.substitute(itemTpl,item);
+    }
+  },{
+    xclass : 'tree-menu-view'
+  });
+
+  /**
+   * @class BUI.Tree.Menu
+   * \u6811\u5f62\u5217\u8868\u63a7\u4ef6
+   * ** \u4f60\u53ef\u4ee5\u7b80\u5355\u7684\u4f7f\u7528\u914d\u7f6e\u6570\u636e **
+   * <pre><code>
+   *  BUI.use('bui/tree',function(Tree){
+   *    var tree = new Tree.Menu({
+   *      render : '#t1',
+   *      nodes : [
+   *        {id : '1',text : '1',children : [{id : '11',text : '11'}]},
+   *        {id : '2',text : '2'}
+   *      ]
+   *    });
+   *    tree.render();
+   *  });
+   * </code></pre>
+   *
+   * ** \u4f60\u8fd8\u53ef\u4ee5\u66ff\u6362icon ** 
+   * <pre><code>
+   *  BUI.use('bui/tree',function(Tree){
+   *    var tree = new Tree.Menu({
+   *      render : '#t1',
+   *      dirCls : 'folder', //\u66ff\u6362\u6811\u8282\u70b9\u7684\u6837\u5f0f
+   *      leafCls : 'file', //\u53f6\u5b50\u8282\u70b9\u7684\u6837\u5f0f
+   *      nodes : [ //\u6570\u636e\u4e2d\u5b58\u5728cls \u4f1a\u66ff\u6362\u8282\u70b9\u7684\u56fe\u6807\u6837\u5f0f
+   *        {id : '1',text : '1'cls:'task-folder',children : [{id : '11',text : '11',cls:'task'}]},
+   *        {id : '2',text : '2'}
+   *      ]
+   *    });
+   *    tree.render();
+   *  });
+   * @mixin BUI.Tree.Mixin
+   * @extends BUI.List.SimpleList
+   */
+  var TreeMenu = List.SimpleList.extend([Mixin],{
+    
+  },{
+    ATTRS : {
+      itemCls : {
+        value : BUI.prefix + 'tree-item'
+      },
+      /**
+       * \u6587\u4ef6\u5939\u662f\u5426\u53ef\u9009\uff0c\u7528\u4e8e\u9009\u62e9\u8282\u70b9\u65f6\uff0c\u907f\u514d\u9009\u4e2d\u975e\u53f6\u5b50\u8282\u70b9
+       * @cfg {Boolean} [dirSelectable = false]
+       */
+      dirSelectable  : {
+        value : false
+      },
+      /**
+       * \u8282\u70b9\u5c55\u5f00\u7684\u4e8b\u4ef6
+       * @type {String}
+       */
+      expandEvent : {
+        value : 'itemclick'
+      },
+
+      itemStatusFields  : {
+        value : {
+          selected : 'selected'
+        }
+      },
+      /**
+       * \u8282\u70b9\u6298\u53e0\u7684\u4e8b\u4ef6
+       * @type {String}
+       */
+      collapseEvent : {
+        value : 'itemclick'
+      },
+      /**/xview : {
+        value : TreeMenuView
+      },
+      /**
+       * \u975e\u53f6\u5b50\u8282\u70b9\u7684\u6a21\u677f
+       * @type {String}
+       */
+      dirTpl : {
+        view : true,
+        value : '<li class="{cls}"><a href="#">{text}</a></li>'
+      },
+      /**
+       * \u53f6\u5b50\u8282\u70b9\u7684\u6a21\u677f
+       * @type {String}
+       */
+      leafTpl : {
+        view : true,
+        value : '<li class="{cls}"><a href="{href}">{text}</a></li>'
+      },
+      idField : {
+        value : 'id'
+      }
+    }
+  },{
+    xclass : 'tree-menu'
+  });
+
+  TreeMenu.View = TreeMenuView;
+  return TreeMenu;
+});/**
  * @fileOverview \u63d0\u793a\u7684\u5165\u53e3\u6587\u4ef6
  * @ignore
  */

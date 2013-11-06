@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav'],function (require) {
+define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav','bui/list/sortable'],function (require) {
 
   /**
    * @name BUI.List
@@ -14,6 +14,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     UIBase = BUI.Component.UIBase,
     DomList = require('bui/list/domlist'),
     KeyNav = require('bui/list/keynav'),
+    Sortable = require('bui/list/sortable'),
     CLS_ITEM = BUI.prefix + 'list-item';
   
   /**
@@ -81,7 +82,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
    * @mixins BUI.List.KeyNav
    * @mixins BUI.Component.UIBase.Bindable
    */
-  var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav],
+  var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav,Sortable],
   /**
    * @lends BUI.List.SimpleList.prototype
    * @ignore
@@ -125,8 +126,14 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
      */
     onAdd : function(e){
       var _self = this,
+        store = _self.get('store'),
         item = e.record;
-      _self.addItemToView(item,e.index);
+      if(_self.getCount() == 0){ //初始为空时，列表跟Store不同步
+        _self.setItems(store.getResult());
+      }else{
+        _self.addItemToView(item,e.index);
+      }
+      
     },
     /**
      * 删除
@@ -149,7 +156,8 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav']
     * @protected
     */
     onLocalSort : function(e){
-      this.onLoad(e);
+      //this.onLoad(e);
+      this.sort(e.field ,e.direction);
     },
     /**
      * 加载数据

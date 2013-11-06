@@ -1,4 +1,4 @@
-<?php  $title='切换标签页测试' ?>
+<?php  $title='切换标签页测试';$css='tab'; ?>
 <?php include("./templates/header.php"); ?>
 
     <div class="container">

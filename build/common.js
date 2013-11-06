@@ -1897,28 +1897,29 @@ define('bui/date', function () {
         if (isNaN(dtTmp)) {
             dtTmp = new Date();
         }
+        NumDay = parseInt(NumDay,10);
         switch (strInterval) {
             case   's':
-                dtTmp = new Date(dtTmp.getTime() + (1000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (1000 * NumDay));
                 break;
             case   'n':
-                dtTmp = new Date(dtTmp.getTime() + (60000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (60000 * NumDay));
                 break;
             case   'h':
-                dtTmp = new Date(dtTmp.getTime() + (3600000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (3600000 * NumDay));
                 break;
             case   'd':
-                dtTmp = new Date(dtTmp.getTime() + (86400000 * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + (86400000 * NumDay));
                 break;
             case   'w':
-                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * parseInt(NumDay)));
+                dtTmp = new Date(dtTmp.getTime() + ((86400000 * 7) * NumDay));
                 break;
             case   'm':
-                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + parseInt(NumDay), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                dtTmp = new Date(dtTmp.getFullYear(), (dtTmp.getMonth()) + NumDay, dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
                 break;
             case   'y':
                 //alert(dtTmp.getFullYear());
-                dtTmp = new Date(dtTmp.getFullYear() + parseInt(NumDay), dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
+                dtTmp = new Date(dtTmp.getFullYear() + NumDay, dtTmp.getMonth(), dtTmp.getDate(), dtTmp.getHours(), dtTmp.getMinutes(), dtTmp.getSeconds());
                 //alert(dtTmp);
                 break;
         }

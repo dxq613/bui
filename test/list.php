@@ -62,18 +62,26 @@
       <div  id="l7"  class="span8"></div>
       <div id="l8" class="span8"></div>
     </div>
+    <div class="row">
+      <div id="ls1" class="span8"></div>
+      <div  id="ls2"  class="span8"></div>
+      <div id="ls3" class="span8"></div>
+    </div>
   </div>
     <?php $url = 'bui/list'?>
     <?php include("./templates/script.php"); ?>
     <script type="text/javascript" src="../src/list/domlist.js"></script>
     <script type="text/javascript" src="../src/list/keynav.js"></script>
+    <script type="text/javascript" src="../src/list/sortable.js"></script>
     <script type="text/javascript" src="../src/list/simplelist.js"></script>
     <script type="text/javascript" src="../src/list/listitem.js"></script>
     <script type="text/javascript" src="../src/list/list.js"></script>
     <script type="text/javascript" src="../src/list/listbox.js"></script>
     <script type="text/javascript" src="../src/list/base.js"></script>
-    <script type="text/javascript" src="specs/list-spec.js"></script><!---->
+   <script type="text/javascript" src="specs/list-spec.js"></script>
     <script type="text/javascript" src="specs/list-nav-spec.js"></script>
     <script type="text/javascript" src="specs/list-status-spec.js"></script>
-    <script type="text/javascript" src="specs/list-loader-spec.js"></script>
+    <script type="text/javascript" src="specs/list-loader-spec.js"></script><!-- -->
+
+    <script type="text/javascript" src="specs/list-sort-spec.js"></script>
  <?php include("./templates/footer.php"); ?>   
