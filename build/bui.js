@@ -1580,6 +1580,40 @@ define('bui/util',function(){
       }
      
     })(jQuery);
+  /**
+   * @ignore
+   * \u5904\u4e8e\u6548\u7387\u7684\u76ee\u7684\uff0c\u590d\u5236\u5c5e\u6027
+   */
+  function mixAttrs(to,from){
+
+    for(var c in from){
+        if(from.hasOwnProperty(c)){
+            to[c] = to[c] || {};
+            mixAttr(to[c],from[c]);
+        }
+    }
+    
+  }
+
+  function mixAttr(attr,attrConfig){
+    for (var p in attrConfig) {
+      if(attrConfig.hasOwnProperty(p)){
+        if(p == 'value'){
+          if(BUI.isObject(attrConfig[p])){
+            attr[p] = attr[p] || {};
+            BUI.mix(true,attr[p], attrConfig[p]); 
+          }else if(BUI.isArray(attrConfig[p])){
+            attr[p] = attr[p] || [];
+            BUI.mix(true,attr[p], attrConfig[p]); 
+          }else{
+            attr[p] = attrConfig[p];
+          }
+        }else{
+          attr[p] = attrConfig[p];
+        }
+      }
+    };
+  }
     
   var win = window,
     doc = document,
@@ -1845,7 +1879,13 @@ define('bui/util',function(){
                             // \u4e0d\u8986\u76d6\u4e3b\u7c7b\u4e0a\u7684\u5b9a\u4e49\uff0c\u56e0\u4e3a\u7ee7\u627f\u5c42\u6b21\u4e0a\u6269\u5c55\u7c7b\u6bd4\u4e3b\u7c7b\u5c42\u6b21\u9ad8
                             // \u4f46\u662f\u503c\u662f\u5bf9\u8c61\u7684\u8bdd\u4f1a\u6df1\u5ea6\u5408\u5e76
                             // \u6ce8\u610f\uff1a\u6700\u597d\u503c\u662f\u7b80\u5355\u5bf9\u8c61\uff0c\u81ea\u5b9a\u4e49 new \u51fa\u6765\u7684\u5bf9\u8c61\u5c31\u4f1a\u6709\u95ee\u9898(\u7528 function return \u51fa\u6765)!
-                             BUI.mix(true,desc[K], ext[K]);
+                            if(K == 'ATTRS'){
+                                //BUI.mix(true,desc[K], ext[K]);
+                                mixAttrs(desc[K],ext[K]);
+                            }else{
+                                BUI.mix(desc[K], ext[K]);
+                            }
+                            //mixAttr(desc[k],ext[K]);
                         }
                     });
                 }
@@ -3789,7 +3829,7 @@ define('bui/base',['bui/observable'],function(require){
 
       // fire after event
       if (!opts['silent']) {
-          value = self.getAttrVals()[name];
+          value = self.__attrVals[name];
           __fireAttrChange(self, 'after', name, prevVal, value);
       }
       return self;
@@ -3872,7 +3912,8 @@ define('bui/base',['bui/observable'],function(require){
     var _self = this,
             c = _self.constructor,
             constructors = [];
-
+        this.__attrs = {};
+        this.__attrVals = {};
         Observable.apply(this,arguments);
         // define
         while (c) {
@@ -3903,14 +3944,36 @@ define('bui/base',['bui/observable'],function(require){
      */
     addAttr: function (name, attrConfig,overrides) {
             var _self = this,
-                attrs = _self.getAttrs(),
-                cfg = BUI.cloneObject(attrConfig);//;//$.clone(attrConfig);
-
-            if (!attrs[name]) {
-                attrs[name] = cfg;
-            } else if(overrides){
-                BUI.mix(true,attrs[name], cfg);
+                attrs = _self.__attrs,
+                attr = attrs[name];
+                //;//$.clone(attrConfig);
+            /**/
+            if(!attr){
+              attr = attrs[name] = {};
             }
+            for (var p in attrConfig) {
+              if(attrConfig.hasOwnProperty(p)){
+                if(p == 'value'){
+                  if(BUI.isObject(attrConfig[p])){
+                    attr[p] = attr[p] || {};
+                    BUI.mix(true,attr[p], attrConfig[p]); 
+                  }else if(BUI.isArray(attrConfig[p])){
+                    attr[p] = attr[p] || [];
+                    BUI.mix(true,attr[p], attrConfig[p]); 
+                  }else{
+                    attr[p] = attrConfig[p];
+                  }
+                }else{
+                  attr[p] = attrConfig[p];
+                }
+              }
+
+            };
+            /*if (!attrs[name]) {
+                attrs[name] = BUI.cloneObject(attrConfig);
+            } else if(overrides){
+                BUI.mix(true,attrs[name], attrConfig);
+            }*/
             return _self;
     },
     /**
@@ -3945,7 +4008,7 @@ define('bui/base',['bui/observable'],function(require){
      * @return {Boolean} \u662f\u5426\u5305\u542b
      */
     hasAttr : function(name){
-      return name && this.getAttrs().hasOwnProperty(name);
+      return name && this.__attrs.hasOwnProperty(name);
     },
     /**
      * \u83b7\u53d6\u9ed8\u8ba4\u7684\u5c5e\u6027\u503c
@@ -3953,7 +4016,7 @@ define('bui/base',['bui/observable'],function(require){
      * @return {Object} \u5c5e\u6027\u503c\u7684\u952e\u503c\u5bf9
      */
     getAttrs : function(){
-       return ensureNonEmpty(this, '__attrs', true);
+       return this.__attrs;//ensureNonEmpty(this, '__attrs', true);
     },
     /**
      * \u83b7\u53d6\u5c5e\u6027\u540d/\u5c5e\u6027\u503c\u952e\u503c\u5bf9
@@ -3961,7 +4024,7 @@ define('bui/base',['bui/observable'],function(require){
      * @return {Object} \u5c5e\u6027\u5bf9\u8c61
      */
     getAttrVals: function(){
-      return ensureNonEmpty(this, '__attrVals', true);
+      return this.__attrVals; //ensureNonEmpty(this, '__attrVals', true);
     },
     /**
      * \u83b7\u53d6\u5c5e\u6027\u503c\uff0c\u6240\u6709\u7684\u914d\u7f6e\u9879\u548c\u5c5e\u6027\u90fd\u53ef\u4ee5\u901a\u8fc7get\u65b9\u6cd5\u83b7\u53d6
@@ -3997,13 +4060,13 @@ define('bui/base',['bui/observable'],function(require){
      */
     get : function(name){
       var _self = this,
-                declared = _self.hasAttr(name),
-                attrVals = _self.getAttrVals(),
+                //declared = _self.hasAttr(name),
+                attrVals = _self.__attrVals,
                 attrConfig,
                 getter, 
                 ret;
 
-            attrConfig = ensureNonEmpty(_self.getAttrs(), name);
+            attrConfig = ensureNonEmpty(_self.__attrs, name);
             getter = attrConfig['getter'];
 
             // get user-set value or default value
@@ -4034,8 +4097,8 @@ define('bui/base',['bui/observable'],function(require){
         var _self = this;
 
         if (_self.hasAttr(name)) {
-            delete _self.getAttrs()[name];
-            delete _self.getAttrVals()[name];
+            delete _self.__attrs[name];
+            delete _self.__attrVals[name];
         }
 
         return _self;
@@ -4089,7 +4152,7 @@ define('bui/base',['bui/observable'],function(require){
     //\u83b7\u53d6\u5c5e\u6027\u9ed8\u8ba4\u503c
     _getDefAttrVal : function(name){
       var _self = this,
-        attrs = _self.getAttrs(),
+        attrs = _self.__attrs,
               attrConfig = ensureNonEmpty(attrs, name),
               valFn = attrConfig.valueFn,
               val;
@@ -4113,7 +4176,7 @@ define('bui/base',['bui/observable'],function(require){
             // then register on demand in order to collect all data meta info
             // \u4e00\u5b9a\u8981\u6ce8\u518c\u5c5e\u6027\u5143\u6570\u636e\uff0c\u5426\u5219\u5176\u4ed6\u6a21\u5757\u901a\u8fc7 _attrs \u4e0d\u80fd\u679a\u4e3e\u5230\u6240\u6709\u6709\u6548\u5c5e\u6027
             // \u56e0\u4e3a\u5c5e\u6027\u5728\u58f0\u660e\u6ce8\u518c\u524d\u53ef\u4ee5\u76f4\u63a5\u8bbe\u7f6e\u503c
-                attrConfig = ensureNonEmpty(_self.getAttrs(), name, true),
+                attrConfig = ensureNonEmpty(_self.__attrs, name, true),
                 setter = attrConfig['setter'];
 
             // if setter has effect
@@ -4130,7 +4193,7 @@ define('bui/base',['bui/observable'],function(require){
             }
             
             // finally set
-            _self.getAttrVals()[name] = value;
+            _self.__attrVals[name] = value;
     },
     //\u521d\u59cb\u5316\u5c5e\u6027
     _initAttrs : function(config){

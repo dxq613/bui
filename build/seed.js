@@ -1580,6 +1580,40 @@ define('bui/util',function(){
       }
      
     })(jQuery);
+  /**
+   * @ignore
+   * 处于效率的目的，复制属性
+   */
+  function mixAttrs(to,from){
+
+    for(var c in from){
+        if(from.hasOwnProperty(c)){
+            to[c] = to[c] || {};
+            mixAttr(to[c],from[c]);
+        }
+    }
+    
+  }
+
+  function mixAttr(attr,attrConfig){
+    for (var p in attrConfig) {
+      if(attrConfig.hasOwnProperty(p)){
+        if(p == 'value'){
+          if(BUI.isObject(attrConfig[p])){
+            attr[p] = attr[p] || {};
+            BUI.mix(true,attr[p], attrConfig[p]); 
+          }else if(BUI.isArray(attrConfig[p])){
+            attr[p] = attr[p] || [];
+            BUI.mix(true,attr[p], attrConfig[p]); 
+          }else{
+            attr[p] = attrConfig[p];
+          }
+        }else{
+          attr[p] = attrConfig[p];
+        }
+      }
+    };
+  }
     
   var win = window,
     doc = document,
@@ -1845,7 +1879,13 @@ define('bui/util',function(){
                             // 不覆盖主类上的定义，因为继承层次上扩展类比主类层次高
                             // 但是值是对象的话会深度合并
                             // 注意：最好值是简单对象，自定义 new 出来的对象就会有问题(用 function return 出来)!
-                             BUI.mix(true,desc[K], ext[K]);
+                            if(K == 'ATTRS'){
+                                //BUI.mix(true,desc[K], ext[K]);
+                                mixAttrs(desc[K],ext[K]);
+                            }else{
+                                BUI.mix(desc[K], ext[K]);
+                            }
+                            //mixAttr(desc[k],ext[K]);
                         }
                     });
                 }
@@ -3789,7 +3829,7 @@ define('bui/base',['bui/observable'],function(require){
 
       // fire after event
       if (!opts['silent']) {
-          value = self.getAttrVals()[name];
+          value = self.__attrVals[name];
           __fireAttrChange(self, 'after', name, prevVal, value);
       }
       return self;
@@ -3872,7 +3912,8 @@ define('bui/base',['bui/observable'],function(require){
     var _self = this,
             c = _self.constructor,
             constructors = [];
-
+        this.__attrs = {};
+        this.__attrVals = {};
         Observable.apply(this,arguments);
         // define
         while (c) {
@@ -3903,14 +3944,36 @@ define('bui/base',['bui/observable'],function(require){
      */
     addAttr: function (name, attrConfig,overrides) {
             var _self = this,
-                attrs = _self.getAttrs(),
-                cfg = BUI.cloneObject(attrConfig);//;//$.clone(attrConfig);
-
-            if (!attrs[name]) {
-                attrs[name] = cfg;
-            } else if(overrides){
-                BUI.mix(true,attrs[name], cfg);
+                attrs = _self.__attrs,
+                attr = attrs[name];
+                //;//$.clone(attrConfig);
+            /**/
+            if(!attr){
+              attr = attrs[name] = {};
             }
+            for (var p in attrConfig) {
+              if(attrConfig.hasOwnProperty(p)){
+                if(p == 'value'){
+                  if(BUI.isObject(attrConfig[p])){
+                    attr[p] = attr[p] || {};
+                    BUI.mix(true,attr[p], attrConfig[p]); 
+                  }else if(BUI.isArray(attrConfig[p])){
+                    attr[p] = attr[p] || [];
+                    BUI.mix(true,attr[p], attrConfig[p]); 
+                  }else{
+                    attr[p] = attrConfig[p];
+                  }
+                }else{
+                  attr[p] = attrConfig[p];
+                }
+              }
+
+            };
+            /*if (!attrs[name]) {
+                attrs[name] = BUI.cloneObject(attrConfig);
+            } else if(overrides){
+                BUI.mix(true,attrs[name], attrConfig);
+            }*/
             return _self;
     },
     /**
@@ -3945,7 +4008,7 @@ define('bui/base',['bui/observable'],function(require){
      * @return {Boolean} 是否包含
      */
     hasAttr : function(name){
-      return name && this.getAttrs().hasOwnProperty(name);
+      return name && this.__attrs.hasOwnProperty(name);
     },
     /**
      * 获取默认的属性值
@@ -3953,7 +4016,7 @@ define('bui/base',['bui/observable'],function(require){
      * @return {Object} 属性值的键值对
      */
     getAttrs : function(){
-       return ensureNonEmpty(this, '__attrs', true);
+       return this.__attrs;//ensureNonEmpty(this, '__attrs', true);
     },
     /**
      * 获取属性名/属性值键值对
@@ -3961,7 +4024,7 @@ define('bui/base',['bui/observable'],function(require){
      * @return {Object} 属性对象
      */
     getAttrVals: function(){
-      return ensureNonEmpty(this, '__attrVals', true);
+      return this.__attrVals; //ensureNonEmpty(this, '__attrVals', true);
     },
     /**
      * 获取属性值，所有的配置项和属性都可以通过get方法获取
@@ -3997,13 +4060,13 @@ define('bui/base',['bui/observable'],function(require){
      */
     get : function(name){
       var _self = this,
-                declared = _self.hasAttr(name),
-                attrVals = _self.getAttrVals(),
+                //declared = _self.hasAttr(name),
+                attrVals = _self.__attrVals,
                 attrConfig,
                 getter, 
                 ret;
 
-            attrConfig = ensureNonEmpty(_self.getAttrs(), name);
+            attrConfig = ensureNonEmpty(_self.__attrs, name);
             getter = attrConfig['getter'];
 
             // get user-set value or default value
@@ -4034,8 +4097,8 @@ define('bui/base',['bui/observable'],function(require){
         var _self = this;
 
         if (_self.hasAttr(name)) {
-            delete _self.getAttrs()[name];
-            delete _self.getAttrVals()[name];
+            delete _self.__attrs[name];
+            delete _self.__attrVals[name];
         }
 
         return _self;
@@ -4089,7 +4152,7 @@ define('bui/base',['bui/observable'],function(require){
     //获取属性默认值
     _getDefAttrVal : function(name){
       var _self = this,
-        attrs = _self.getAttrs(),
+        attrs = _self.__attrs,
               attrConfig = ensureNonEmpty(attrs, name),
               valFn = attrConfig.valueFn,
               val;
@@ -4113,7 +4176,7 @@ define('bui/base',['bui/observable'],function(require){
             // then register on demand in order to collect all data meta info
             // 一定要注册属性元数据，否则其他模块通过 _attrs 不能枚举到所有有效属性
             // 因为属性在声明注册前可以直接设置值
-                attrConfig = ensureNonEmpty(_self.getAttrs(), name, true),
+                attrConfig = ensureNonEmpty(_self.__attrs, name, true),
                 setter = attrConfig['setter'];
 
             // if setter has effect
@@ -4130,7 +4193,7 @@ define('bui/base',['bui/observable'],function(require){
             }
             
             // finally set
-            _self.getAttrVals()[name] = value;
+            _self.__attrVals[name] = value;
     },
     //初始化属性
     _initAttrs : function(config){
