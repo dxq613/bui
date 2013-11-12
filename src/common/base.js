@@ -150,6 +150,10 @@ define('bui/base',['bui/observable'],function(require){
         // define
         while (c) {
             constructors.push(c);
+            if(c.extensions){ //延迟执行mixin
+              BUI.mixin(c,c.extensions);
+              delete c.extensions;
+            }
             //_self.addAttrs(c['ATTRS']);
             c = c.superclass ? c.superclass.constructor : null;
         }

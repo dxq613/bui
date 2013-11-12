@@ -1,5 +1,5 @@
 
-define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/observable','bui/base','bui/component'],function(require){
+define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'],function(require){
 
   var BUI = require('bui/util');
 
@@ -57,7 +57,7 @@ define('bui/util',function(){
     }
     
   }
-
+  //合并属性
   function mixAttr(attr,attrConfig){
     for (var p in attrConfig) {
       if(attrConfig.hasOwnProperty(p)){
@@ -348,7 +348,7 @@ define('bui/util',function(){
                             }else{
                                 BUI.mix(desc[K], ext[K]);
                             }
-                            //mixAttr(desc[k],ext[K]);
+                            
                         }
                     });
                 }
@@ -2381,6 +2381,10 @@ define('bui/base',['bui/observable'],function(require){
         // define
         while (c) {
             constructors.push(c);
+            if(c.extensions){ //延迟执行mixin
+              BUI.mixin(c,c.extensions);
+              delete c.extensions;
+            }
             //_self.addAttrs(c['ATTRS']);
             c = c.superclass ? c.superclass.constructor : null;
         }
@@ -3372,6 +3376,24 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
         return _self;
     } 
   });
+    
+  //延时处理构造函数
+  function initConstuctor(c){
+    var constructors = [];
+    while(c.base){
+        constructors.push(c);
+        c = c.base;
+    }
+    for(var i = constructors.length - 1; i >=0 ; i--){
+        var C = constructors[i];
+        //BUI.extend(C,C.base,C.px,C.sx);
+        BUI.mix(C.prototype,C.px);
+        BUI.mix(C,C.sx);
+        C.base = null;
+        C.px = null;
+        C.sx = null;
+    }
+  }
   
   BUI.mix(UIBase,
     {
@@ -3392,11 +3414,22 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
           }
 
           function C() {
-              UIBase.apply(this, arguments);
+            var c = this.constructor;
+            if(c.base){
+                initConstuctor(c);
+            }
+            UIBase.apply(this, arguments);
           }
 
-          BUI.extend(C, base, px, sx);
-          BUI.mixin(C,extensions);
+          BUI.extend(C, base);  //无法延迟
+          C.base = base;
+          C.px = px;//延迟复制原型链上的函数
+          C.sx = sx;//延迟复制静态属性
+
+          //BUI.mixin(C,extensions);
+          if(extensions.length){ //延迟执行mixin
+            C.extensions = extensions;
+          }
          
           return C;
     },

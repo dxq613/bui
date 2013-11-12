@@ -1,4 +1,4 @@
-BUI.use('perform',function(Perform){
+
   Perform.start('load');
   BUI.use('bui/common',function(BUI){
     Perform.end('load');
@@ -25,4 +25,3 @@ BUI.use('perform',function(Perform){
     Perform.log('10 control');
 
   });
-});

@@ -41,7 +41,7 @@ define('bui/util',function(){
     }
     
   }
-
+  //合并属性
   function mixAttr(attr,attrConfig){
     for (var p in attrConfig) {
       if(attrConfig.hasOwnProperty(p)){
@@ -332,7 +332,7 @@ define('bui/util',function(){
                             }else{
                                 BUI.mix(desc[K], ext[K]);
                             }
-                            //mixAttr(desc[k],ext[K]);
+                            
                         }
                     });
                 }
