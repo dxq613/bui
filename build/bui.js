@@ -6614,6 +6614,7 @@ define('bui/component/uibase/mask',function (require) {
             if (!maskShared || maskDesc.num == 1) {
                 mask.show();
             }
+            $('body').addClass('x-masked-relative');
         },
 
         _maskExtHide:function () {
@@ -6630,6 +6631,7 @@ define('bui/component/uibase/mask',function (require) {
             } else if(mask){
                 mask.hide();
             }
+            $('body').removeClass('x-masked-relative');
         },
 
         __destructor:function () {
