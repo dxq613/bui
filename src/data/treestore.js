@@ -544,7 +544,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return true;
       }
       
-      return node.loaded || node.leaf;
+      return node.loaded || node.leaf || (node.children && node.children.length);
     },
     /**
      * 加载节点的子节点

@@ -13617,7 +13617,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return true;
       }
       
-      return node.loaded || node.leaf;
+      return node.loaded || node.leaf || (node.children && node.children.length);
     },
     /**
      * \u52a0\u8f7d\u8282\u70b9\u7684\u5b50\u8282\u70b9
@@ -35141,7 +35141,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       if(!node){
         return false;
       }
-      return  node[this.get('checkedField')];//this.getStatusValue(node,'checked');
+      return  !!node[this.get('checkedField')];//this.getStatusValue(node,'checked');
     },
     /**
      * \u5207\u6362\u663e\u793a\u9690\u85cf

@@ -596,7 +596,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       if(!node){
         return false;
       }
-      return  node[this.get('checkedField')];//this.getStatusValue(node,'checked');
+      return  !!node[this.get('checkedField')];//this.getStatusValue(node,'checked');
     },
     /**
      * 切换显示隐藏
