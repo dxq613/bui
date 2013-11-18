@@ -985,8 +985,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         children = _self.get('children'),
         header = new Header(),
         panel = new Panel(),
-        footer = _self.get('footer') || _self._createFooter(),
-        monthPicker = _self.get('monthPicker') || _self._createMonthPicker();
+        footer = _self.get('footer') || _self._createFooter();/*,
+        monthPicker = _self.get('monthPicker') || _self._createMonthPicker();*/
 
 
       //添加头
@@ -994,12 +994,12 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       //添加panel
       children.push(panel);
       children.push(footer);
-      children.push(monthPicker);
+      //children.push(monthPicker);
 
       _self.set('header',header);
       _self.set('panel',panel);
       _self.set('footer',footer);
-      _self.set('monthPicker',monthPicker);
+      //_self.set('monthPicker',monthPicker);
     },
     renderUI : function(){
       var _self = this,
@@ -1035,7 +1035,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       });
 
       header.on('headerclick',function(){
-        var monthPicker = _self.get('monthPicker');
+        var monthPicker = _self.get('monthpicker') || _self._createMonthPicker();
         monthPicker.set('year',header.get('year'));
         monthPicker.set('month',header.get('month'));
         monthPicker.show();
@@ -1112,9 +1112,10 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     },
     //创建选择月的控件
     _createMonthPicker: function(){
-      var _self = this;
-
-      return new MonthPicker({
+      var _self = this,
+        monthpicker;
+      monthpicker = new MonthPicker({
+        render : _self.get('el'),
         effect : {
           effect:'slide',
           duration:300
@@ -1129,6 +1130,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           this.hide();
         }
       });
+      _self.set('monthpicker',monthpicker);
+      _self.get('children').push(monthpicker);
+      return monthpicker;
     },
     //创建底部按钮栏
     _createFooter : function(){
@@ -1155,7 +1159,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           xclass:'bar-item-button',
           text:'今天',
           btnCls: 'button button-small',
-		  id:'todayBtn',
+		      id:'todayBtn',
           listeners:{
             click:function(){
               var day = today();
@@ -1414,24 +1418,34 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
   var datepicker = Picker.extend({
 
     initializer:function(){
+      
+    },
+    /**
+     * @protected
+     * 初始化内部控件
+     */
+    createControl : function(){
       var _self = this,
         children = _self.get('children'),
         calendar = new Calendar({
+          render : _self.get('el'),
           showTime : _self.get('showTime'),
           lockTime : _self.get('lockTime'),
           minDate: _self.get('minDate'),
-          maxDate: _self.get('maxDate')
+          maxDate: _self.get('maxDate'),
+          autoRender : true
         });
-	
-	  if (!_self.get('dateMask')) {
+
+      if (!_self.get('dateMask')) {
         if (_self.get('showTime')) {
             _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
         } else {
             _self.set('dateMask', 'yyyy-mm-dd');
         }
-       }	
+       }  
       children.push(calendar);
       _self.set('calendar',calendar);
+      return calendar;
     },
     /**
      * 设置选中的值
@@ -1442,6 +1456,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @protected
      */
     setSelectedValue : function(val){
+      if(!this.get('calendar')){
+        return;
+      }
       var _self = this,
         calendar = this.get('calendar'),
         date = DateUtil.parse(val,_self.get("dateMask"));
@@ -1463,6 +1480,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @return {String} 选中的值
      */
     getSelectedValue : function(){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this, 
         calendar = _self.get('calendar'),
       date =  DateUtil.getDate(calendar.get('selectedDate'));
@@ -1479,6 +1499,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @return {String} 选中的文本
      */
     getSelectedText : function(){
+      if(!this.get('calendar')){
+        return '';
+      }
       return DateUtil.format(this.getSelectedValue(),this._getFormatType());
     },
     _getFormatType : function(){
@@ -1486,11 +1509,17 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     },
     //设置最大值
     _uiSetMaxDate : function(v){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this;
       _self.get('calendar').set('maxDate',v);
     },
     //设置最小值
     _uiSetMinDate : function(v){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this;
       _self.get('calendar').set('minDate',v);
     }

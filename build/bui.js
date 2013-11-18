@@ -1601,10 +1601,10 @@ define('bui/util',function(){
         if(p == 'value'){
           if(BUI.isObject(attrConfig[p])){
             attr[p] = attr[p] || {};
-            BUI.mix(true,attr[p], attrConfig[p]); 
+            BUI.mix(/*true,*/attr[p], attrConfig[p]); 
           }else if(BUI.isArray(attrConfig[p])){
             attr[p] = attr[p] || [];
-            BUI.mix(true,attr[p], attrConfig[p]); 
+            BUI.mix(/*true,*/attr[p], attrConfig[p]); 
           }else{
             attr[p] = attrConfig[p];
           }
@@ -3960,10 +3960,10 @@ define('bui/base',['bui/observable'],function(require){
                 if(p == 'value'){
                   if(BUI.isObject(attrConfig[p])){
                     attr[p] = attr[p] || {};
-                    BUI.mix(true,attr[p], attrConfig[p]); 
+                    BUI.mix(/*true,*/attr[p], attrConfig[p]); 
                   }else if(BUI.isArray(attrConfig[p])){
                     attr[p] = attr[p] || [];
-                    BUI.mix(true,attr[p], attrConfig[p]); 
+                    BUI.mix(/*true,*/attr[p], attrConfig[p]); 
                   }else{
                     attr[p] = attrConfig[p];
                   }
@@ -6023,7 +6023,10 @@ define('bui/component/uibase/close',function () {
       },
       /**
        * \u5173\u95ed\u65f6\u9690\u85cf\u8fd8\u662f\u79fb\u9664DOM\u7ed3\u6784<br/>
-       * default "hide". \u53ef\u4ee5\u8bbe\u7f6e "destroy" \uff0c\u5f53\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u65f6\u79fb\u9664\uff08destroy)\u63a7\u4ef6
+       * 
+       *  - "hide" : default \u9690\u85cf. 
+       *  - "destroy"\uff1a\u5f53\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u65f6\u79fb\u9664\uff08destroy)\u63a7\u4ef6
+       *  - 'remove' : \u5f53\u5b58\u5728\u7236\u63a7\u4ef6\u65f6\u4f7f\u7528remove\uff0c\u540c\u65f6\u4ece\u7236\u5143\u7d20\u4e2d\u5220\u9664
        * @cfg {String} [closeAction = 'hide']
        */
       /**
@@ -6040,14 +6043,21 @@ define('bui/component/uibase/close',function () {
        * @event closing
        * \u6b63\u5728\u5173\u95ed\uff0c\u53ef\u4ee5\u901a\u8fc7return false \u963b\u6b62\u5173\u95ed\u4e8b\u4ef6
        * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
-       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy,remove
+       */
+      
+      /**
+       * @event beforeclosed
+       * \u5173\u95ed\u524d\uff0c\u53d1\u751f\u5728closing\u540e\uff0cclosed\u524d\uff0c\u7528\u4e8e\u5904\u7406\u5173\u95ed\u524d\u7684\u4e00\u4e9b\u5de5\u4f5c
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy,remove
        */
 
       /**
        * @event closed
        * \u5df2\u7ecf\u5173\u95ed
        * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
-       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy,remove
        */
       
       /**
@@ -6060,7 +6070,8 @@ define('bui/component/uibase/close',function () {
 
   var actions = {
       hide:HIDE,
-      destroy:'destroy'
+      destroy:'destroy',
+      remove : 'remove'
   };
 
   Close.prototype = {
@@ -6081,13 +6092,18 @@ define('bui/component/uibase/close',function () {
           btn && btn.detach();
       },
       /**
-       * \u5173\u95ed\u5f39\u51fa\u6846\uff0c\u5982\u679ccloseAction = 'hide'\u90a3\u4e48\u5c31\u662f\u9690\u85cf\uff0c\u5982\u679c closeAction = 'destroy'\u90a3\u4e48\u5c31\u662f\u91ca\u653e
+       * \u5173\u95ed\u5f39\u51fa\u6846\uff0c\u5982\u679ccloseAction = 'hide'\u90a3\u4e48\u5c31\u662f\u9690\u85cf\uff0c\u5982\u679c closeAction = 'destroy'\u90a3\u4e48\u5c31\u662f\u91ca\u653e,'remove'\u4ece\u7236\u63a7\u4ef6\u4e2d\u5220\u9664\uff0c\u5e76\u91ca\u653e
        */
       close : function(){
         var self = this,
           action = actions[self.get('closeAction') || HIDE];
         if(self.fire('closing',{action : action}) !== false){
-          self[action]();
+          self.fire('beforeclosed',{action : action});
+          if(action == 'remove'){ //\u79fb\u9664\u65f6\u540c\u65f6destroy
+            self[action](true);
+          }else{
+            self[action]();
+          }
           self.fire('closed',{action : action});
         }
       }
@@ -7562,7 +7578,8 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
         dom = el[0],
         attributes = dom.attributes,
         decorateCfgFields = _self.get('decorateCfgFields'),
-        config = {};
+        config = {},
+        statusCfg = _self._getStautsCfg(el);
 
       BUI.each(attributes,function(attr){
         var name = attr.nodeName;
@@ -7579,7 +7596,20 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
           BUI.log('parse field error,the attribute is:' + name);
         }
       });
-      return config;
+      return BUI.mix(config,statusCfg);
+    },
+    //\u6839\u636ecss class\u83b7\u53d6\u72b6\u6001\u5c5e\u6027
+    //\u5982\uff1a selected,disabled\u7b49\u5c5e\u6027
+    _getStautsCfg : function(el){
+      var _self = this,
+        rst = {},
+        statusCls = _self.get('statusCls');
+      BUI.each(statusCls,function(v,k){
+        if(el.hasClass(v)){
+          rst[k] = true;
+        }
+      });
+      return rst;
     },
     /**
      * \u83b7\u53d6\u5c01\u88c5\u6210\u5b50\u63a7\u4ef6\u7684\u8282\u70b9\u96c6\u5408
@@ -7676,6 +7706,9 @@ define('bui/component/uibase/tpl',function () {
      */
     tpl:{
 
+    },
+    tplEl : {
+
     }
   };
 
@@ -7722,10 +7755,21 @@ define('bui/component/uibase/tpl',function () {
         var _self = this,
             el = _self.get('el'),
             content = _self.get('content'),
+            tplEl = _self.get('tplEl'),
             tpl = _self.getTpl(attrs);
-        if(!content && tpl){
-          el.empty();
-          el.html(tpl);
+
+        //tplEl.remove();
+        if(!content && tpl){ //\u66ff\u6362\u6389\u539f\u5148\u7684\u5185\u5bb9
+          //el.empty();//el.html(tpl);
+          if(tplEl){
+            var node = $(tpl).insertBefore(tplEl);
+            tplEl.remove();
+            tplEl = node;
+          }else{
+            tplEl = $(tpl).appendTo(el);
+          }
+          _self.set('tplEl',tplEl)
+          
         }
     }
   }
@@ -7813,6 +7857,13 @@ define('bui/component/uibase/tpl',function () {
       if(!this.get('srcNode')){
         this.setTplContent();
       }
+    },
+    /**
+     * \u63a7\u4ef6\u4fe1\u606f\u53d1\u751f\u6539\u53d8\u65f6\uff0c\u63a7\u4ef6\u5185\u5bb9\u8ddf\u6a21\u677f\u76f8\u5173\u65f6\u9700\u8981\u8c03\u7528\u8fd9\u4e2a\u51fd\u6570\uff0c
+     * \u91cd\u65b0\u901a\u8fc7\u6a21\u677f\u548c\u63a7\u4ef6\u4fe1\u606f\u6784\u9020\u5185\u5bb9
+     */
+    updateContent : function(){
+      this.setTplContent();
     },
     /**
      * \u6839\u636e\u63a7\u4ef6\u7684\u5c5e\u6027\u548c\u6a21\u677f\u751f\u6210\u63a7\u4ef6\u5185\u5bb9
@@ -8785,6 +8836,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @type {Boolean}
      */
     autoInitItems : {
+      value : true
+    },
+    /**
+     * \u4f7f\u7528srcNode\u65f6\uff0c\u662f\u5426\u5c06\u5185\u90e8\u7684DOM\u8f6c\u6362\u6210\u5b50\u63a7\u4ef6
+     * @type {Boolean}
+     */
+    isDecorateChild : {
       value : true
     },
     /**
@@ -17097,17 +17155,49 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
     
       bindUI : function(){
         var _self = this,
-          innerControl = _self.get('innerControl'),
+          //innerControl = _self.get('innerControl'),
           hideEvent = _self.get('hideEvent'),
           trigger = $(_self.get('trigger'));
 
         trigger.on(_self.get('triggerEvent'),function(e){
+          if(!_self.get('isInit')){
+            _self._initControl();
+          }
           if(_self.get('autoSetValue')){
             var valueField = _self.get('valueField') || _self.get('textField') || this,
               val = $(valueField).val();
             _self.setSelectedValue(val);
           }
         });
+
+
+        //_self.initControlEvent();
+      },
+      _initControl : function(){
+        var _self = this;
+        if(_self.get('isInit')){ //\u5df2\u7ecf\u521d\u59cb\u5316\u8fc7
+          return ;
+        }
+        if(!_self.get('innerControl')){
+          var control = _self.createControl();
+          _self.get('children').push(control);
+        }
+        _self.initControlEvent();
+        _self.set('isInit',true);
+      },
+      /**
+       * @protected
+       * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6
+       */
+      createControl : function(){
+        
+      },
+      //\u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\u7684\u4e8b\u4ef6
+      initControlEvent : function(){
+        var _self = this,
+          innerControl = _self.get('innerControl'),
+          trigger = $(_self.get('trigger')),
+          hideEvent = _self.get('hideEvent');
 
         innerControl.on(_self.get('changeEvent'),function(e){
           var curTrigger = _self.get('curTrigger'),
@@ -17138,6 +17228,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             _self.onChange(selText,selValue,e);
           }
         });
+        
         if(hideEvent){
           innerControl.on(_self.get('hideEvent'),function(){
             var curTrigger = _self.get('curTrigger');
@@ -17370,6 +17461,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        */
       setSelectedValue : function(val){
         val = val ? val.toString() : '';
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         var _self = this,
           list = _self.get('list'),
           selectedValue = _self.getSelectedValue();
@@ -17395,6 +17489,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        * @return {String} \u9009\u4e2d\u7684\u503c
        */
       getSelectedValue : function(){
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         return this.get('list').getSelectionValues().join(',');
       },
       /**
@@ -17402,6 +17499,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        * @return {String} \u9009\u4e2d\u7684\u6587\u672c
        */
       getSelectedText : function(){
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         return this.get('list').getSelectionText().join(',');
       }
     },{
@@ -18056,11 +18156,12 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     },
     /**
      * \u6e05\u7406\u51fa\u9519\u4fe1\u606f\uff0c\u56de\u6eda\u5230\u672a\u51fa\u9519\u72b6\u6001
+     * @param {Boolean} reset \u6e05\u9664\u9519\u8bef\u65f6\uff0c\u662f\u5426\u56de\u6eda\u4e0a\u6b21\u6b63\u786e\u7684\u503c
      */
-    clearErrors : function(){
+    clearErrors : function(reset){
       var _self = this;
       _self._clearError();
-      if(_self.getControlValue()!= _self.get('value')){
+      if(reset && _self.getControlValue()!= _self.get('value')){
         _self.setControlValue(_self.get('value'));
       }
     },
@@ -24111,6 +24212,268 @@ define('bui/tab',['bui/common','bui/tab/tab','bui/tab/tabitem','bui/tab/navtabit
 
   return Tab;
 });/**
+ * @fileOverview \u62e5\u6709\u5185\u5bb9\u7684\u6807\u7b7e\u9879\u7684\u6269\u5c55\u7c7b\uff0c\u6bcf\u4e2a\u6807\u7b7e\u9879\u90fd\u6709\u4e00\u4e2a\u5206\u79bb\u7684\u5bb9\u5668\u4f5c\u4e3a\u9762\u677f
+ * @ignore
+ */
+
+define('bui/tab/panelitem',function (requrie) {
+
+  /**
+   * @class BUI.Tab.PanelItem
+   * \u5305\u542b\u9762\u677f\u7684\u6807\u7b7e\u9879\u7684\u6269\u5c55
+   */
+  var PanelItem = function(){
+
+  };
+
+  PanelItem.ATTRS = {
+
+    /**
+     * \u6807\u7b7e\u9879\u5bf9\u5e94\u7684\u9762\u677f\u5bb9\u5668\uff0c\u5f53\u6807\u7b7e\u9009\u4e2d\u65f6\uff0c\u9762\u677f\u663e\u793a
+     * @cfg {String|HTMLElement|jQuery} panel
+     * @internal \u9762\u677f\u5c5e\u6027\u4e00\u822c\u7531 tabPanel\u8bbe\u7f6e\u800c\u4e0d\u5e94\u8be5\u7531\u7528\u6237\u624b\u5de5\u8bbe\u7f6e
+     */
+    /**
+     * \u6807\u7b7e\u9879\u5bf9\u5e94\u7684\u9762\u677f\u5bb9\u5668\uff0c\u5f53\u6807\u7b7e\u9009\u4e2d\u65f6\uff0c\u9762\u677f\u663e\u793a
+     * @type {String|HTMLElement|jQuery}
+     * @readOnly
+     */
+    panel : {
+
+    },
+    /**
+     * \u9762\u677f\u7684\u5185\u5bb9
+     * @type {String}
+     */
+    panelContent : {
+
+    },
+    /**
+     * \u5173\u8054\u9762\u677f\u663e\u793a\u9690\u85cf\u7684\u5c5e\u6027\u540d
+     * @protected
+     * @type {string}
+     */
+    panelVisibleStatus : {
+      value : 'selected'
+    },
+    /**
+       * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
+       * <pre>
+       *  {
+       *   property : 'panelContent',
+       *   lazyLoad : {
+       *       event : 'active'
+       *   },
+       *     loadMask : {
+       *       el : _self.get('panel')
+       *   }
+       * }
+       * </pre>
+       * @type {Object}
+       */
+      defaultLoaderCfg  : {
+        valueFn :function(){
+          var _self = this,
+            eventName = _self._getVisibleEvent();
+          return {
+            property : 'panelContent',
+            autoLoad : false,
+            lazyLoad : {
+              event : eventName
+            },
+            loadMask : {
+              el : _self.get('panel')
+            }
+          }
+        } 
+      },
+    /**
+     * \u9762\u677f\u662f\u5426\u8ddf\u968f\u6807\u7b7e\u4e00\u8d77\u91ca\u653e
+     * @type {Boolean}
+     */
+    panelDestroyable : {
+      value : true
+    }
+  }
+
+
+  BUI.augment(PanelItem,{
+
+    __renderUI : function(){
+      this._resetPanelVisible();
+    },
+    __bindUI : function(){
+      var _self = this,
+      eventName = _self._getVisibleEvent();
+
+      _self.on(eventName,function(ev){
+        _self._setPanelVisible(ev.newVal);
+      });
+    },
+    _resetPanelVisible : function(){
+      var _self = this,
+        status = _self.get('panelVisibleStatus'),
+        visible = _self.get(status);
+      _self._setPanelVisible(visible);
+    },
+    //\u83b7\u53d6\u663e\u793a\u9690\u85cf\u7684\u4e8b\u4ef6
+    _getVisibleEvent : function(){
+      var _self = this,
+        status = _self.get('panelVisibleStatus');
+
+      return 'after' + BUI.ucfirst(status) + 'Change';;
+    },
+    /**
+     * @private
+     * \u8bbe\u7f6e\u9762\u677f\u7684\u53ef\u89c1
+     * @param {Boolean} visible \u663e\u793a\u6216\u8005\u9690\u85cf
+     */
+    _setPanelVisible : function(visible){
+      var _self = this,
+        panel = _self.get('panel'),
+        method = visible ? 'show' : 'hide';
+      if(panel){
+        $(panel)[method]();
+      }
+    },
+    __destructor : function(){
+      var _self = this,
+        panel = _self.get('panel');
+      if(panel && _self.get('panelDestroyable')){
+        $(panel).remove();
+      }
+    },
+    _setPanelContent : function(panel,content){
+      var panelEl = $(panel);
+      $(panel).html(content);
+    },
+    _uiSetPanelContent : function(v){
+      var _self = this,
+        panel = _self.get('panel');
+      //$(panel).html(v);
+      _self._setPanelContent(panel,v);
+    },
+    //\u8bbe\u7f6epanel
+    _uiSetPanel : function(v){
+      var _self = this,
+        content = _self.get('panelContent');
+      if(content){
+        _self._setPanelContent(v,content);
+      }
+      _self._resetPanelVisible();
+    }
+  });
+
+  return PanelItem;
+
+});/**
+ * @fileOverview \u62e5\u6709\u591a\u4e2a\u9762\u677f\u7684\u5bb9\u5668
+ * @ignore
+ */
+
+define('bui/tab/panels',function (require) {
+  
+  /**
+   * @class BUI.Tab.Panels
+   * \u5305\u542b\u9762\u677f\u7684\u6807\u7b7e\u7684\u6269\u5c55\u7c7b
+   */
+  var Panels = function(){
+    //this._initPanels();
+  };
+
+  Panels.ATTRS = {
+
+    /**
+     * \u9762\u677f\u7684\u6a21\u677f
+     * @type {String}
+     */
+    panelTpl : {
+
+    },
+    /**
+     * \u9762\u677f\u7684\u5bb9\u5668\uff0c\u5982\u679c\u662fid\u76f4\u63a5\u901a\u8fc7id\u67e5\u627e\uff0c\u5982\u679c\u662f\u975eid\uff0c\u90a3\u4e48\u4eceel\u5f00\u59cb\u67e5\u627e,\u4f8b\u5982\uff1a
+     *   -#id \uff1a \u901a\u8fc7$('#id')\u67e5\u627e
+     *   -.cls : \u901a\u8fc7 this.get('el').find('.cls') \u67e5\u627e
+     *   -DOM/jQuery \uff1a\u4e0d\u9700\u8981\u67e5\u627e
+     * @type {String|HTMLElement|jQuery}
+     */
+    panelContainer : {
+      
+    },
+    /**
+     * panel \u9762\u677f\u4f7f\u7528\u7684\u6837\u5f0f\uff0c\u5982\u679c\u521d\u59cb\u5316\u65f6\uff0c\u5bb9\u5668\u5185\u5df2\u7ecf\u5b58\u5728\u6709\u8be5\u6837\u5f0f\u7684DOM\uff0c\u5219\u4f5c\u4e3a\u9762\u677f\u4f7f\u7528
+     * \u5bf9\u5e94\u540c\u4e00\u4e2a\u4f4d\u7f6e\u7684\u6807\u7b7e\u9879,\u5982\u679c\u4e3a\u7a7a\uff0c\u9ed8\u8ba4\u53d6\u9762\u677f\u5bb9\u5668\u7684\u5b50\u5143\u7d20
+     * @type {String}
+     */
+    panelCls : {
+
+    }
+  };
+
+  BUI.augment(Panels,{
+
+    __renderUI : function(){
+      var _self = this,
+        children = _self.get('children'),
+        panelContainer = _self._initPanelContainer(),
+        panelCls = _self.get('panelCls'),
+        panels = panelCls ? panelContainer.find('.' + panels) : panelContainer.children();
+
+      BUI.each(children,function(item,index){
+        var panel = panels[index];
+        _self._initPanelItem(item,panel);
+      });
+    },
+
+    __bindUI : function(){
+      var _self = this;
+      _self.on('beforeAddChild',function(ev){
+        var item = ev.child;
+        _self._initPanelItem(item);
+      });
+    },
+    //\u521d\u59cb\u5316\u5bb9\u5668
+    _initPanelContainer : function(){
+      var _self = this,
+        panelContainer = _self.get('panelContainer');
+      if(panelContainer && BUI.isString(panelContainer)){
+        if(panelContainer.indexOf('#') == 0){ //\u5982\u679c\u662fid
+          panelContainer = $(panelContainer);
+        }else{
+          panelContainer = _self.get('el').find(panelContainer);
+        }
+        _self.setInternal('panelContainer',panelContainer);
+      }
+      return panelContainer;
+    },
+    //\u521d\u59cb\u5316\u9762\u677f\u914d\u7f6e\u4fe1\u606f
+    _initPanelItem : function(item,panel){
+      var _self = this;
+
+      if(item.set){
+        if(!item.get('panel')){
+          panel = panel || _self._getPanel(item.get('userConfig'));
+          item.set('panel',panel);
+        }
+      }else{
+        if(!item.panel){
+          panel = panel || _self._getPanel(item);
+          item.panel = panel;
+        }
+      }
+    },
+    //\u83b7\u53d6\u9762\u677f
+    _getPanel : function(item){
+      var _self = this,
+        panelContainer = _self.get('panelContainer'),
+        panelTpl = BUI.substitute(_self.get('panelTpl'),item);
+      
+      return $(panelTpl).appendTo(panelContainer);
+    }
+  });
+
+  return Panels;
+});/**
  * @fileOverview \u5bfc\u822a\u9879
  * @author dxq613@gmail.com
  * @ignore
@@ -25191,11 +25554,12 @@ define('bui/tab/tab',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require) {
+define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem'],function (require) {
   
 
   var BUI = require('bui/common'),
     TabItem = require('bui/tab/tabitem'),
+    PanelItem = require('bui/tab/panelitem'),
     Component = BUI.Component;
 
   /**
@@ -25204,7 +25568,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
    * @extends BUI.Tab.TabItemView
    * \u5b58\u5728\u9762\u677f\u7684\u6807\u7b7e\u9879\u89c6\u56fe\u5c42\u5bf9\u8c61
    */
-  var itemView = TabItem.View.extend({
+  var itemView = TabItem.View.extend([Component.UIBase.Close.View],{
   },{
     xclass:'tab-panel-item-view'
   });
@@ -25214,98 +25578,25 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
    * \u6807\u7b7e\u9879
    * @class BUI.Tab.TabPanelItem
    * @extends BUI.Tab.TabItem
+   * @mixins BUI.Tab.PanelItem
+   * @mixins BUI.Component.UIBase.Close
    */
-  var item = TabItem.extend({
+  var item = TabItem.extend([PanelItem,Component.UIBase.Close],{
     
-    renderUI : function(){
-      var _self = this,
-        selected = _self.get('selected');
-        _self._setPanelVisible(selected);
-    },
-    //\u8bbe\u7f6e\u9762\u677f\u662f\u5426\u53ef\u89c1
-    _setPanelVisible : function(visible){
-      var _self = this,
-        panel = _self.get('panel'),
-        method = visible ? 'show' : 'hide';
-      if(panel){
-        $(panel)[method]();
-      }
-    },
-    //\u9009\u4e2d\u6807\u7b7e\u9879\u65f6\u663e\u793a\u9762\u677f
-    _uiSetSelected : function(v){
-      this._setPanelVisible(v);
-    },
-    destructor: function(){
-      var _self = this,
-        panel = _self.get('panel');
-      if(panel && _self.get('panelDestroyable')){
-        $(panel).remove();
-      }
-    },
-    _uiSetPanelContent : function(v){
-      var _self = this,
-        panel = _self.get('panel');
-      $(panel).html(v);
-    }
   },{
     ATTRS : 
     {
       /**
-       * \u6807\u7b7e\u9879\u5bf9\u5e94\u7684\u9762\u677f\u5bb9\u5668\uff0c\u5f53\u6807\u7b7e\u9009\u4e2d\u65f6\uff0c\u9762\u677f\u663e\u793a
-       * @cfg {String|HTMLElement|jQuery} panel
-       * @internal \u9762\u677f\u5c5e\u6027\u4e00\u822c\u7531 tabPanel\u8bbe\u7f6e\u800c\u4e0d\u5e94\u8be5\u7531\u7528\u6237\u624b\u5de5\u8bbe\u7f6e
+       * \u5173\u95ed\u65f6\u76f4\u63a5\u9500\u6bc1\u6807\u7b7e\u9879\uff0c\u6267\u884cremove\u65b9\u6cd5
+       * @type {String}
        */
-      /**
-       * \u6807\u7b7e\u9879\u5bf9\u5e94\u7684\u9762\u677f\u5bb9\u5668\uff0c\u5f53\u6807\u7b7e\u9009\u4e2d\u65f6\uff0c\u9762\u677f\u663e\u793a
-       * @type {String|HTMLElement|jQuery}
-       * @readOnly
-       */
-      panel : {
-
+      closeAction : {
+        value : 'remove'
       },
-      /**
-       * panel\u7684\u5185\u5bb9
-       * @property {String}
-       */
-      panelContent : {
-
-      },
-      /**
-       * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
-       * <pre>
-       *  {
-       *   property : 'panelContent',
-       *   lazyLoad : {
-       *       event : 'active'
-       *   },
-       *     loadMask : {
-       *       el : _self.get('panel')
-       *   }
-       * }
-       * </pre>
-       * @type {Object}
-       */
-      defaultLoaderCfg  : {
-        valueFn :function(){
-          var _self = this;
-          return {
-            property : 'panelContent',
-            autoLoad : false,
-            lazyLoad : {
-              event : 'afterSelectedChange'
-            },
-            loadMask : {
-              el : _self.get('panel')
-            }
-          }
-        } 
-      },
-      /**
-       * \u79fb\u9664\u6807\u7b7e\u9879\u65f6\u662f\u5426\u79fb\u9664\u9762\u677f\uff0c\u9ed8\u8ba4\u4e3a false
-       * @type {Boolean}
-       */
-      panelDestroyable : {
-        value : true
+      events : {
+        value : {
+          beforeclosed : true
+        }
       },
       xview:{
         value:itemView
@@ -25323,10 +25614,11 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem'],function (require
  * @ignore
  */
 
-define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
+define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function (require) {
   
   var BUI = require('bui/common'),
-    Tab = require('bui/tab/tab');
+    Tab = require('bui/tab/tab'),
+    Panels = require('bui/tab/panels');
 
   /**
    * \u5e26\u6709\u9762\u677f\u7684\u5207\u6362\u6807\u7b7e
@@ -25349,47 +25641,65 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
    * </code></pre>
    * @class BUI.Tab.TabPanel
    * @extends BUI.Tab.Tab
+   * @mixins BUI.Tab.Panels
    */
-  var tabPanel = Tab.extend({
-    initializer : function(){
-      var _self = this,
-        children = _self.get('children'),
-        panelContainer = $(_self.get('panelContainer')),
-        panelCls = _self.get('panelCls'),
-        panels = panelCls ? panelContainer.find('.' + panels) : panelContainer.children();
+  var tabPanel = Tab.extend([Panels],{
 
-      BUI.each(children,function(item,index){
-        if(item.set){
-          item.set('panel',panels[index]);
-        }else{
-          item.panel = panels[index];
-        }
+    bindUI : function(){
+      var _self = this;
+      //\u5173\u95ed\u6807\u7b7e
+      _self.on('beforeclosed',function(ev){
+        var item = ev.target;
+        _self._beforeClosedItem(item);
       });
+    },
+    //\u5173\u95ed\u6807\u7b7e\u9009\u9879\u524d
+    _beforeClosedItem : function(item){
+      if(!item.get('selected')){ //\u5982\u679c\u672a\u9009\u4e2d\u4e0d\u6267\u884c\u4e0b\u9762\u7684\u9009\u4e2d\u64cd\u4f5c
+        return;
+      }
+
+      var _self = this,
+        index = _self.indexOfItem(item),
+        count = _self.getItemCount(),
+        preItem,
+        nextItem;
+      if(index !== count - 1){ //\u4e0d\u662f\u6700\u540e\u4e00\u4e2a\uff0c\u5219\u6fc0\u6d3b\u6700\u540e\u4e00\u4e2a
+        nextItem = _self.getItemAt(index + 1);
+        _self.setSelected(nextItem);
+      }else if(index !== 0){
+        preItem = _self.getItemAt(index - 1);
+        _self.setSelected(preItem);
+      }
     }
+
   },{
     ATTRS : {
-
+      elTagName : {
+        value : 'div'
+      },
+      childContainer : {
+        value : 'ul'
+      },
+      tpl : {
+        value : '<div class="tab-panel-inner"><ul></ul><div class="tab-panels"></div></div>'
+      },
+      panelTpl : {
+        value : '<div></div>'
+      },
+      /**
+       * \u9ed8\u8ba4\u7684\u9762\u677f\u5bb9\u5668
+       * @cfg {String} [panelContainer='.tab-panels']
+       */
+      panelContainer : {
+        value : '.tab-panels'
+      },
       /**
        * \u9ed8\u8ba4\u5b50\u63a7\u4ef6\u7684xclass
        * @type {String}
        */
       defaultChildClass:{
         value : 'tab-panel-item'
-      },
-      /**
-       * \u9762\u677f\u7684\u5bb9\u5668
-       * @type {String|HTMLElement|jQuery}
-       */
-      panelContainer : {
-        
-      },
-      /**
-       * panel \u9762\u677f\u4f7f\u7528\u7684\u6837\u5f0f\uff0c\u5982\u679c\u521d\u59cb\u5316\u65f6\uff0c\u5bb9\u5668\u5185\u5df2\u7ecf\u5b58\u5728\u6709\u8be5\u6837\u5f0f\u7684DOM\uff0c\u5219\u4f5c\u4e3a\u9762\u677f\u4f7f\u7528
-       * \u5bf9\u5e94\u540c\u4e00\u4e2a\u4f4d\u7f6e\u7684\u6807\u7b7e\u9879,\u5982\u679c\u4e3a\u7a7a\uff0c\u9ed8\u8ba4\u53d6\u9762\u677f\u5bb9\u5668\u7684\u5b50\u5143\u7d20
-       * @type {String}
-       */
-      panelCls : {
-
       }
     }
   },{
@@ -27800,8 +28110,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         children = _self.get('children'),
         header = new Header(),
         panel = new Panel(),
-        footer = _self.get('footer') || _self._createFooter(),
-        monthPicker = _self.get('monthPicker') || _self._createMonthPicker();
+        footer = _self.get('footer') || _self._createFooter();/*,
+        monthPicker = _self.get('monthPicker') || _self._createMonthPicker();*/
 
 
       //\u6dfb\u52a0\u5934
@@ -27809,12 +28119,12 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       //\u6dfb\u52a0panel
       children.push(panel);
       children.push(footer);
-      children.push(monthPicker);
+      //children.push(monthPicker);
 
       _self.set('header',header);
       _self.set('panel',panel);
       _self.set('footer',footer);
-      _self.set('monthPicker',monthPicker);
+      //_self.set('monthPicker',monthPicker);
     },
     renderUI : function(){
       var _self = this,
@@ -27850,7 +28160,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       });
 
       header.on('headerclick',function(){
-        var monthPicker = _self.get('monthPicker');
+        var monthPicker = _self.get('monthpicker') || _self._createMonthPicker();
         monthPicker.set('year',header.get('year'));
         monthPicker.set('month',header.get('month'));
         monthPicker.show();
@@ -27927,9 +28237,10 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     },
     //\u521b\u5efa\u9009\u62e9\u6708\u7684\u63a7\u4ef6
     _createMonthPicker: function(){
-      var _self = this;
-
-      return new MonthPicker({
+      var _self = this,
+        monthpicker;
+      monthpicker = new MonthPicker({
+        render : _self.get('el'),
         effect : {
           effect:'slide',
           duration:300
@@ -27944,6 +28255,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           this.hide();
         }
       });
+      _self.set('monthpicker',monthpicker);
+      _self.get('children').push(monthpicker);
+      return monthpicker;
     },
     //\u521b\u5efa\u5e95\u90e8\u6309\u94ae\u680f
     _createFooter : function(){
@@ -27970,7 +28284,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           xclass:'bar-item-button',
           text:'\u4eca\u5929',
           btnCls: 'button button-small',
-		  id:'todayBtn',
+		      id:'todayBtn',
           listeners:{
             click:function(){
               var day = today();
@@ -28229,24 +28543,34 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
   var datepicker = Picker.extend({
 
     initializer:function(){
+      
+    },
+    /**
+     * @protected
+     * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6
+     */
+    createControl : function(){
       var _self = this,
         children = _self.get('children'),
         calendar = new Calendar({
+          render : _self.get('el'),
           showTime : _self.get('showTime'),
           lockTime : _self.get('lockTime'),
           minDate: _self.get('minDate'),
-          maxDate: _self.get('maxDate')
+          maxDate: _self.get('maxDate'),
+          autoRender : true
         });
-	
-	  if (!_self.get('dateMask')) {
+
+      if (!_self.get('dateMask')) {
         if (_self.get('showTime')) {
             _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
         } else {
             _self.set('dateMask', 'yyyy-mm-dd');
         }
-       }	
+       }  
       children.push(calendar);
       _self.set('calendar',calendar);
+      return calendar;
     },
     /**
      * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
@@ -28257,6 +28581,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @protected
      */
     setSelectedValue : function(val){
+      if(!this.get('calendar')){
+        return;
+      }
       var _self = this,
         calendar = this.get('calendar'),
         date = DateUtil.parse(val,_self.get("dateMask"));
@@ -28278,6 +28605,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @return {String} \u9009\u4e2d\u7684\u503c
      */
     getSelectedValue : function(){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this, 
         calendar = _self.get('calendar'),
       date =  DateUtil.getDate(calendar.get('selectedDate'));
@@ -28294,6 +28624,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @return {String} \u9009\u4e2d\u7684\u6587\u672c
      */
     getSelectedText : function(){
+      if(!this.get('calendar')){
+        return '';
+      }
       return DateUtil.format(this.getSelectedValue(),this._getFormatType());
     },
     _getFormatType : function(){
@@ -28301,11 +28634,17 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     },
     //\u8bbe\u7f6e\u6700\u5927\u503c
     _uiSetMaxDate : function(v){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this;
       _self.get('calendar').set('maxDate',v);
     },
     //\u8bbe\u7f6e\u6700\u5c0f\u503c
     _uiSetMinDate : function(v){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this;
       _self.get('calendar').set('minDate',v);
     }

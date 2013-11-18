@@ -192,10 +192,10 @@ define('bui/base',['bui/observable'],function(require){
                 if(p == 'value'){
                   if(BUI.isObject(attrConfig[p])){
                     attr[p] = attr[p] || {};
-                    BUI.mix(true,attr[p], attrConfig[p]); 
+                    BUI.mix(/*true,*/attr[p], attrConfig[p]); 
                   }else if(BUI.isArray(attrConfig[p])){
                     attr[p] = attr[p] || [];
-                    BUI.mix(true,attr[p], attrConfig[p]); 
+                    BUI.mix(/*true,*/attr[p], attrConfig[p]); 
                   }else{
                     attr[p] = attrConfig[p];
                   }

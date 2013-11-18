@@ -201,7 +201,8 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
         dom = el[0],
         attributes = dom.attributes,
         decorateCfgFields = _self.get('decorateCfgFields'),
-        config = {};
+        config = {},
+        statusCfg = _self._getStautsCfg(el);
 
       BUI.each(attributes,function(attr){
         var name = attr.nodeName;
@@ -218,7 +219,20 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
           BUI.log('parse field error,the attribute is:' + name);
         }
       });
-      return config;
+      return BUI.mix(config,statusCfg);
+    },
+    //根据css class获取状态属性
+    //如： selected,disabled等属性
+    _getStautsCfg : function(el){
+      var _self = this,
+        rst = {},
+        statusCls = _self.get('statusCls');
+      BUI.each(statusCls,function(v,k){
+        if(el.hasClass(v)){
+          rst[k] = true;
+        }
+      });
+      return rst;
     },
     /**
      * 获取封装成子控件的节点集合

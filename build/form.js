@@ -611,11 +611,12 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     },
     /**
      * 清理出错信息，回滚到未出错状态
+     * @param {Boolean} reset 清除错误时，是否回滚上次正确的值
      */
-    clearErrors : function(){
+    clearErrors : function(reset){
       var _self = this;
       _self._clearError();
-      if(_self.getControlValue()!= _self.get('value')){
+      if(reset && _self.getControlValue()!= _self.get('value')){
         _self.setControlValue(_self.get('value'));
       }
     },

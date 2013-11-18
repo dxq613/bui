@@ -31,24 +31,34 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
   var datepicker = Picker.extend({
 
     initializer:function(){
+      
+    },
+    /**
+     * @protected
+     * 初始化内部控件
+     */
+    createControl : function(){
       var _self = this,
         children = _self.get('children'),
         calendar = new Calendar({
+          render : _self.get('el'),
           showTime : _self.get('showTime'),
           lockTime : _self.get('lockTime'),
           minDate: _self.get('minDate'),
-          maxDate: _self.get('maxDate')
+          maxDate: _self.get('maxDate'),
+          autoRender : true
         });
-	
-	  if (!_self.get('dateMask')) {
+
+      if (!_self.get('dateMask')) {
         if (_self.get('showTime')) {
             _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
         } else {
             _self.set('dateMask', 'yyyy-mm-dd');
         }
-       }	
+       }  
       children.push(calendar);
       _self.set('calendar',calendar);
+      return calendar;
     },
     /**
      * 设置选中的值
@@ -59,6 +69,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @protected
      */
     setSelectedValue : function(val){
+      if(!this.get('calendar')){
+        return;
+      }
       var _self = this,
         calendar = this.get('calendar'),
         date = DateUtil.parse(val,_self.get("dateMask"));
@@ -80,6 +93,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @return {String} 选中的值
      */
     getSelectedValue : function(){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this, 
         calendar = _self.get('calendar'),
       date =  DateUtil.getDate(calendar.get('selectedDate'));
@@ -96,6 +112,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @return {String} 选中的文本
      */
     getSelectedText : function(){
+      if(!this.get('calendar')){
+        return '';
+      }
       return DateUtil.format(this.getSelectedValue(),this._getFormatType());
     },
     _getFormatType : function(){
@@ -103,11 +122,17 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     },
     //设置最大值
     _uiSetMaxDate : function(v){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this;
       _self.get('calendar').set('maxDate',v);
     },
     //设置最小值
     _uiSetMinDate : function(v){
+      if(!this.get('calendar')){
+        return null;
+      }
       var _self = this;
       _self.get('calendar').set('minDate',v);
     }

@@ -55,17 +55,49 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
     
       bindUI : function(){
         var _self = this,
-          innerControl = _self.get('innerControl'),
+          //innerControl = _self.get('innerControl'),
           hideEvent = _self.get('hideEvent'),
           trigger = $(_self.get('trigger'));
 
         trigger.on(_self.get('triggerEvent'),function(e){
+          if(!_self.get('isInit')){
+            _self._initControl();
+          }
           if(_self.get('autoSetValue')){
             var valueField = _self.get('valueField') || _self.get('textField') || this,
               val = $(valueField).val();
             _self.setSelectedValue(val);
           }
         });
+
+
+        //_self.initControlEvent();
+      },
+      _initControl : function(){
+        var _self = this;
+        if(_self.get('isInit')){ //已经初始化过
+          return ;
+        }
+        if(!_self.get('innerControl')){
+          var control = _self.createControl();
+          _self.get('children').push(control);
+        }
+        _self.initControlEvent();
+        _self.set('isInit',true);
+      },
+      /**
+       * @protected
+       * 初始化内部控件
+       */
+      createControl : function(){
+        
+      },
+      //初始化内部控件的事件
+      initControlEvent : function(){
+        var _self = this,
+          innerControl = _self.get('innerControl'),
+          trigger = $(_self.get('trigger')),
+          hideEvent = _self.get('hideEvent');
 
         innerControl.on(_self.get('changeEvent'),function(e){
           var curTrigger = _self.get('curTrigger'),
@@ -96,6 +128,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
             _self.onChange(selText,selValue,e);
           }
         });
+        
         if(hideEvent){
           innerControl.on(_self.get('hideEvent'),function(){
             var curTrigger = _self.get('curTrigger');
@@ -328,6 +361,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        */
       setSelectedValue : function(val){
         val = val ? val.toString() : '';
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         var _self = this,
           list = _self.get('list'),
           selectedValue = _self.getSelectedValue();
@@ -353,6 +389,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        * @return {String} 选中的值
        */
       getSelectedValue : function(){
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         return this.get('list').getSelectionValues().join(',');
       },
       /**
@@ -360,6 +399,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        * @return {String} 选中的文本
        */
       getSelectedText : function(){
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         return this.get('list').getSelectionText().join(',');
       }
     },{

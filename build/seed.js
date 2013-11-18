@@ -1601,10 +1601,10 @@ define('bui/util',function(){
         if(p == 'value'){
           if(BUI.isObject(attrConfig[p])){
             attr[p] = attr[p] || {};
-            BUI.mix(true,attr[p], attrConfig[p]); 
+            BUI.mix(/*true,*/attr[p], attrConfig[p]); 
           }else if(BUI.isArray(attrConfig[p])){
             attr[p] = attr[p] || [];
-            BUI.mix(true,attr[p], attrConfig[p]); 
+            BUI.mix(/*true,*/attr[p], attrConfig[p]); 
           }else{
             attr[p] = attrConfig[p];
           }
@@ -3960,10 +3960,10 @@ define('bui/base',['bui/observable'],function(require){
                 if(p == 'value'){
                   if(BUI.isObject(attrConfig[p])){
                     attr[p] = attr[p] || {};
-                    BUI.mix(true,attr[p], attrConfig[p]); 
+                    BUI.mix(/*true,*/attr[p], attrConfig[p]); 
                   }else if(BUI.isArray(attrConfig[p])){
                     attr[p] = attr[p] || [];
-                    BUI.mix(true,attr[p], attrConfig[p]); 
+                    BUI.mix(/*true,*/attr[p], attrConfig[p]); 
                   }else{
                     attr[p] = attrConfig[p];
                   }
@@ -6023,7 +6023,10 @@ define('bui/component/uibase/close',function () {
       },
       /**
        * 关闭时隐藏还是移除DOM结构<br/>
-       * default "hide". 可以设置 "destroy" ，当点击关闭按钮时移除（destroy)控件
+       * 
+       *  - "hide" : default 隐藏. 
+       *  - "destroy"：当点击关闭按钮时移除（destroy)控件
+       *  - 'remove' : 当存在父控件时使用remove，同时从父元素中删除
        * @cfg {String} [closeAction = 'hide']
        */
       /**
@@ -6040,14 +6043,21 @@ define('bui/component/uibase/close',function () {
        * @event closing
        * 正在关闭，可以通过return false 阻止关闭事件
        * @param {Object} e 关闭事件
-       * @param {String} e.action 关闭执行的行为，hide,destroy
+       * @param {String} e.action 关闭执行的行为，hide,destroy,remove
+       */
+      
+      /**
+       * @event beforeclosed
+       * 关闭前，发生在closing后，closed前，用于处理关闭前的一些工作
+       * @param {Object} e 关闭事件
+       * @param {String} e.action 关闭执行的行为，hide,destroy,remove
        */
 
       /**
        * @event closed
        * 已经关闭
        * @param {Object} e 关闭事件
-       * @param {String} e.action 关闭执行的行为，hide,destroy
+       * @param {String} e.action 关闭执行的行为，hide,destroy,remove
        */
       
       /**
@@ -6060,7 +6070,8 @@ define('bui/component/uibase/close',function () {
 
   var actions = {
       hide:HIDE,
-      destroy:'destroy'
+      destroy:'destroy',
+      remove : 'remove'
   };
 
   Close.prototype = {
@@ -6081,13 +6092,18 @@ define('bui/component/uibase/close',function () {
           btn && btn.detach();
       },
       /**
-       * 关闭弹出框，如果closeAction = 'hide'那么就是隐藏，如果 closeAction = 'destroy'那么就是释放
+       * 关闭弹出框，如果closeAction = 'hide'那么就是隐藏，如果 closeAction = 'destroy'那么就是释放,'remove'从父控件中删除，并释放
        */
       close : function(){
         var self = this,
           action = actions[self.get('closeAction') || HIDE];
         if(self.fire('closing',{action : action}) !== false){
-          self[action]();
+          self.fire('beforeclosed',{action : action});
+          if(action == 'remove'){ //移除时同时destroy
+            self[action](true);
+          }else{
+            self[action]();
+          }
           self.fire('closed',{action : action});
         }
       }
@@ -7562,7 +7578,8 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
         dom = el[0],
         attributes = dom.attributes,
         decorateCfgFields = _self.get('decorateCfgFields'),
-        config = {};
+        config = {},
+        statusCfg = _self._getStautsCfg(el);
 
       BUI.each(attributes,function(attr){
         var name = attr.nodeName;
@@ -7579,7 +7596,20 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
           BUI.log('parse field error,the attribute is:' + name);
         }
       });
-      return config;
+      return BUI.mix(config,statusCfg);
+    },
+    //根据css class获取状态属性
+    //如： selected,disabled等属性
+    _getStautsCfg : function(el){
+      var _self = this,
+        rst = {},
+        statusCls = _self.get('statusCls');
+      BUI.each(statusCls,function(v,k){
+        if(el.hasClass(v)){
+          rst[k] = true;
+        }
+      });
+      return rst;
     },
     /**
      * 获取封装成子控件的节点集合
@@ -7676,6 +7706,9 @@ define('bui/component/uibase/tpl',function () {
      */
     tpl:{
 
+    },
+    tplEl : {
+
     }
   };
 
@@ -7722,10 +7755,21 @@ define('bui/component/uibase/tpl',function () {
         var _self = this,
             el = _self.get('el'),
             content = _self.get('content'),
+            tplEl = _self.get('tplEl'),
             tpl = _self.getTpl(attrs);
-        if(!content && tpl){
-          el.empty();
-          el.html(tpl);
+
+        //tplEl.remove();
+        if(!content && tpl){ //替换掉原先的内容
+          //el.empty();//el.html(tpl);
+          if(tplEl){
+            var node = $(tpl).insertBefore(tplEl);
+            tplEl.remove();
+            tplEl = node;
+          }else{
+            tplEl = $(tpl).appendTo(el);
+          }
+          _self.set('tplEl',tplEl)
+          
         }
     }
   }
@@ -7813,6 +7857,13 @@ define('bui/component/uibase/tpl',function () {
       if(!this.get('srcNode')){
         this.setTplContent();
       }
+    },
+    /**
+     * 控件信息发生改变时，控件内容跟模板相关时需要调用这个函数，
+     * 重新通过模板和控件信息构造内容
+     */
+    updateContent : function(){
+      this.setTplContent();
     },
     /**
      * 根据控件的属性和模板生成控件内容
@@ -8785,6 +8836,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @type {Boolean}
      */
     autoInitItems : {
+      value : true
+    },
+    /**
+     * 使用srcNode时，是否将内部的DOM转换成子控件
+     * @type {Boolean}
+     */
+    isDecorateChild : {
       value : true
     },
     /**

@@ -50,6 +50,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        */
       setSelectedValue : function(val){
         val = val ? val.toString() : '';
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         var _self = this,
           list = _self.get('list'),
           selectedValue = _self.getSelectedValue();
@@ -75,6 +78,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        * @return {String} 选中的值
        */
       getSelectedValue : function(){
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         return this.get('list').getSelectionValues().join(',');
       },
       /**
@@ -82,6 +88,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
        * @return {String} 选中的文本
        */
       getSelectedText : function(){
+        if(!this.get('isInit')){
+          this._initControl();
+        }
         return this.get('list').getSelectionText().join(',');
       }
     },{

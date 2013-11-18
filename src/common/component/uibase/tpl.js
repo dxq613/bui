@@ -22,6 +22,9 @@ define('bui/component/uibase/tpl',function () {
      */
     tpl:{
 
+    },
+    tplEl : {
+
     }
   };
 
@@ -68,10 +71,21 @@ define('bui/component/uibase/tpl',function () {
         var _self = this,
             el = _self.get('el'),
             content = _self.get('content'),
+            tplEl = _self.get('tplEl'),
             tpl = _self.getTpl(attrs);
-        if(!content && tpl){
-          el.empty();
-          el.html(tpl);
+
+        //tplEl.remove();
+        if(!content && tpl){ //替换掉原先的内容
+          //el.empty();//el.html(tpl);
+          if(tplEl){
+            var node = $(tpl).insertBefore(tplEl);
+            tplEl.remove();
+            tplEl = node;
+          }else{
+            tplEl = $(tpl).appendTo(el);
+          }
+          _self.set('tplEl',tplEl)
+          
         }
     }
   }
@@ -159,6 +173,13 @@ define('bui/component/uibase/tpl',function () {
       if(!this.get('srcNode')){
         this.setTplContent();
       }
+    },
+    /**
+     * 控件信息发生改变时，控件内容跟模板相关时需要调用这个函数，
+     * 重新通过模板和控件信息构造内容
+     */
+    updateContent : function(){
+      this.setTplContent();
     },
     /**
      * 根据控件的属性和模板生成控件内容

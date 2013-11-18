@@ -438,6 +438,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       value : true
     },
     /**
+     * 使用srcNode时，是否将内部的DOM转换成子控件
+     * @type {Boolean}
+     */
+    isDecorateChild : {
+      value : true
+    },
+    /**
      * 默认的加载控件内容的配置,默认值：
      * <pre>
      *  {
