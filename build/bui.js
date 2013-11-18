@@ -1,9 +1,9 @@
-/**
- * @preserve SeaJS - A Module Loader for the Web
- * v1.3.0 | seajs.org | MIT Licensed
- */
-
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 /**
  * Base namespace for the framework.
  */
@@ -1503,6 +1503,7 @@ seajs._config = {
 })(seajs, seajs._config, this)
 
 
+
 var loaderPath = seajs.pluginSDK.util.loaderDir;
 seajs.config({
   map : [
@@ -1536,6 +1537,10 @@ BUI.setDebug = function (debug) {
     });
   }
 }
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
+
 define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'],function(require){
 
   var BUI = require('bui/util');
@@ -1552,18 +1557,6 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
   });
   return BUI;
 });
-/**
- * @class BUI.Util
- * \u63a7\u4ef6\u5e93\u7684\u5de5\u5177\u65b9\u6cd5\uff0c\u8fd9\u4e9b\u5de5\u5177\u65b9\u6cd5\u76f4\u63a5\u7ed1\u5b9a\u5230BUI\u5bf9\u8c61\u4e0a
- * <pre><code>
- *     BUI.isString(str);
- *
- *     BUI.extend(A,B);
- *
- *     BUI.mix(A,{a:'a'});
- * </code></pre>
- * @singleton
- */  
 var BUI = BUI || {};
 if(!BUI.use && seajs){
     BUI.use = seajs.use;
@@ -2208,11 +2201,7 @@ define('bui/util',function(){
   };
 
   return BUI;
-});/**
- * @fileOverview \u6570\u7ec4\u5e2e\u52a9\u7c7b
- * @ignore
- */
-
+});
 /**
  * @class BUI
  * \u63a7\u4ef6\u5e93\u7684\u57fa\u7840\u547d\u540d\u7a7a\u95f4
@@ -2431,11 +2420,7 @@ define('bui/array',['bui/util'],function (r) {
 
   };
   return BUI.Array;
-});/**
- * @fileOverview \u89c2\u5bdf\u8005\u6a21\u5f0f\u5b9e\u73b0\u4e8b\u4ef6
- * @ignore
- */
-
+});
 define('bui/observable',['bui/util'],function (r) {
   
   var BUI = r('bui/util');
@@ -2772,11 +2757,7 @@ define('bui/observable',['bui/util'],function (r) {
   });
 
   return Observable;
-});/**
- * @fileOverview UA,jQuery\u7684 $.browser \u5bf9\u8c61\u975e\u5e38\u96be\u4f7f\u7528
- * @ignore
- * @author dxq613@gmail.com
- */
+});
 define('bui/ua', function () {
 
     function numberify(s) {
@@ -2836,10 +2817,7 @@ define('bui/ua', function () {
     })();
 
     return UA;
-});/**
- * @fileOverview \u7531\u4e8ejQuery\u53ea\u6709 parseJSON \uff0c\u6ca1\u6709stringify\u6240\u4ee5\u4f7f\u7528\u8fc7\u7a0b\u4e0d\u65b9\u4fbf
- * @ignore
- */
+});
 define('bui/json',['bui/ua'],function (require) {
 
   var win = window,
@@ -3114,11 +3092,7 @@ define('bui/json',['bui/ua'],function (require) {
   }
 
   return JSON;
-});/**
- * @fileOverview \u952e\u76d8\u503c
- * @ignore
- */
-
+});
 define('bui/keycode',function () {
   
   /**
@@ -3304,25 +3278,7 @@ define('bui/keycode',function () {
   };
 
   return keyCode;
-});/*
- * @fileOverview Date Format 1.2.3
- * @ignore
- * (c) 2007-2009 Steven Levithan <stevenlevithan.com>
- * MIT license
- *
- * Includes enhancements by Scott Trenda <scott.trenda.net>
- * and Kris Kowal <cixar.com/~kris.kowal/>
- *
- * Accepts a date, a mask, or a date and a mask.
- * Returns a formatted version of the given date.
- * The date defaults to the current date/time.
- * The mask defaults to dateFormat.masks.default.
- *
- * Last modified by jayli \u62d4\u8d64 2010-09-09
- * - \u589e\u52a0\u4e2d\u6587\u7684\u652f\u6301
- * - \u7b80\u5355\u7684\u672c\u5730\u5316\uff0c\u5bf9w\uff08\u661f\u671fx\uff09\u7684\u652f\u6301
- * 
- */
+});
 define('bui/date', function () {
 
     var dateRegex = /^(?:(?!0000)[0-9]{4}([-/.]+)(?:(?:0?[1-9]|1[0-2])\1(?:0?[1-9]|1[0-9]|2[0-8])|(?:0?[13-9]|1[0-2])\1(?:29|30)|(?:0?[13578]|1[02])\1(?:31))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)([-/.]?)0?2\2(?:29))(\s+([01]|([01][0-9]|2[0-3])):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9]))?$/;
@@ -3766,12 +3722,7 @@ define('bui/date', function () {
     };
 
     return DateUtil;
-});/**
- * @fileOverview  Base UI\u63a7\u4ef6\u7684\u6700\u57fa\u7840\u7684\u7c7b
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/base',['bui/observable'],function(require){
 
   var INVALID = {},
@@ -4216,11 +4167,7 @@ define('bui/base',['bui/observable'],function(require){
 
   //BUI.Base = Base;
   return Base;
-});/**
- * @fileOverview Component\u547d\u540d\u7a7a\u95f4\u7684\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
-
+});
 define('bui/component',['bui/component/manage','bui/component/uibase','bui/component/view','bui/component/controller'],function (require) {
   /**
    * @class BUI.Component
@@ -4264,15 +4211,7 @@ define('bui/component',['bui/component/manage','bui/component/uibase','bui/compo
   Component.create = create;
 
   return Component;
-});/**
- * @fileOverview  Base UI\u63a7\u4ef6\u7684\u7ba1\u7406\u7c7b
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
-
-
-
+});
 //\u63a7\u4ef6\u7c7b\u7684\u7ba1\u7406\u5668
 define('bui/component/manage',function(require){
 
@@ -4405,10 +4344,7 @@ define('bui/component/manage',function(require){
     };
 
     return Manager;
-});/**
- * @fileOverview uibase\u7684\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
+});
 ;(function(){
 var BASE = 'bui/component/uibase/';
 define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BASE + 'autohide',
@@ -4454,12 +4390,7 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
   return UIBase;
 });   
 })();
-/**
- * @fileOverview  UI\u63a7\u4ef6\u7684\u6d41\u7a0b\u63a7\u5236
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
+
 define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   var Manager = require('bui/component/manage'),
@@ -5009,13 +4940,6 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   return UIBase;
 });
-/**
- * @fileOverview \u8ddf\u6307\u5b9a\u7684\u5143\u7d20\u9879\u5bf9\u9f50\u7684\u65b9\u5f0f
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
-
 
 define('bui/component/uibase/align',['bui/ua'],function (require) {
     var UA = require('bui/ua'),
@@ -5471,11 +5395,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
     };
     
   return Align;
-});/**
- * @fileOverview click\uff0cfocus,hover\u7b49\u5f15\u8d77\u63a7\u4ef6\u663e\u793a\uff0c\u5e76\u4e14\u5b9a\u4f4d
- * @ignore
- */
-
+});
 define('bui/component/uibase/autoshow',function () {
 
   /**
@@ -5714,11 +5634,7 @@ define('bui/component/uibase/autoshow',function () {
   };
 
   return autoShow;
-});/**
- * @fileOverview \u70b9\u51fb\u6216\u79fb\u51fa\u63a7\u4ef6\u5916\u90e8\uff0c\u63a7\u4ef6\u9690\u85cf
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/uibase/autohide',function () {
 
   var wrapBehavior = BUI.wrapBehavior,
@@ -5911,12 +5827,6 @@ define('bui/component/uibase/autohide',function () {
 
 
 
-/**
- * @fileOverview close \u5173\u95ed\u6216\u9690\u85cf\u63a7\u4ef6
- * @author yiminghe@gmail.com
- * copied and modified by dxq613@gmail.com
- * @ignore
- */
 
 define('bui/component/uibase/close',function () {
   
@@ -6113,11 +6023,6 @@ define('bui/component/uibase/close',function () {
 
   return Close;
 });
-/**
- * @fileOverview \u62d6\u62fd
- * @author by dxq613@gmail.com
- * @ignore
- */
 
 define('bui/component/uibase/drag',function(){
 
@@ -6350,11 +6255,7 @@ define('bui/component/uibase/drag',function(){
 
     return drag;
 
-});/**
- * @fileOverview \u4f7f\u7528\u952e\u76d8\u5bfc\u822a
- * @ignore
- */
-
+});
 define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
   var KeyCode = require('bui/keycode'),
@@ -6511,12 +6412,6 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
   return keyNav;
 });
-/**
- * @fileOverview mask \u906e\u7f69\u5c42
- * @author yiminghe@gmail.com
- * copied and modified by dxq613@gmail.com
- * @ignore
- */
 
 define('bui/component/uibase/mask',function (require) {
 
@@ -6752,12 +6647,7 @@ define('bui/component/uibase/mask',function (require) {
   return Mask;
 });
 
-/**
- * @fileOverview \u4f4d\u7f6e\uff0c\u63a7\u4ef6\u7edd\u5bf9\u5b9a\u4f4d
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
+
 define('bui/component/uibase/position',function () {
 
 
@@ -7051,10 +6941,6 @@ define('bui/component/uibase/position',function () {
     Position.View = PositionView;
     return Position;
 });
-/**
- * @fileOverview \u53ef\u9009\u4e2d\u7684\u63a7\u4ef6,\u7236\u63a7\u4ef6\u652f\u6301selection\u6269\u5c55
- * @ignore
- */
 
 define('bui/component/uibase/listitem',function () {
 
@@ -7132,11 +7018,7 @@ define('bui/component/uibase/listitem',function () {
   return listItem;
 
 });
-/**
- * @fileOverview 
- * \u63a7\u4ef6\u5305\u542b\u5934\u90e8\uff08head)\u3001\u5185\u5bb9(content)\u548c\u5c3e\u90e8\uff08foot)
- * @ignore
- */
+
 define('bui/component/uibase/stdmod',function () {
 
     var CLS_PREFIX = BUI.prefix + 'stdmod-';
@@ -7375,11 +7257,7 @@ define('bui/component/uibase/stdmod',function () {
 
   StdMod.View = StdModView;
   return StdMod;
-});/**
- * @fileOverview \u4f7f\u7528wrapper
- * @ignore
- */
-
+});
 define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/manage'],function (require) {
   
   var ArrayUtil = require('bui/array'),
@@ -7682,11 +7560,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
   };
 
   return decorate;
-});/**
- * @fileOverview \u63a7\u4ef6\u6a21\u677f
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/uibase/tpl',function () {
 
   /**
@@ -7887,10 +7761,6 @@ define('bui/component/uibase/tpl',function () {
 });
  
 
-/**
- * @fileOverview \u53ef\u4ee5\u5c55\u5f00\u6298\u53e0\u7684\u63a7\u4ef6
- * @ignore
- */
 
 define('bui/component/uibase/collapseable',function () {
 
@@ -7982,11 +7852,7 @@ define('bui/component/uibase/collapseable',function () {
   collapseable.View = collapseableView;
   
   return collapseable;
-});/**
- * @fileOverview \u5355\u9009\u6216\u8005\u591a\u9009
- * @author  dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/uibase/selection',function () {
     var 
         SINGLE_SELECTED = 'single';
@@ -8399,11 +8265,7 @@ define('bui/component/uibase/selection',function () {
     }
     
     return selection;
-});/**
- * @fileOverview \u6240\u6709\u5b50\u5143\u7d20\u90fd\u662f\u540c\u4e00\u7c7b\u7684\u96c6\u5408
- * @ignore
- */
-
+});
 define('bui/component/uibase/list',['bui/component/uibase/selection'],function (require) {
   
   var Selection = require('bui/component/uibase/selection');
@@ -9064,11 +8926,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
  * @ignore
  * 2013-1-22 
  *   \u66f4\u6539\u663e\u793a\u6570\u636e\u7684\u65b9\u5f0f\uff0c\u4f7f\u7528 _uiSetItems
- *//**
- * @fileOverview \u5b50\u63a7\u4ef6\u7684\u9ed8\u8ba4\u914d\u7f6e\u9879
- * @ignore
  */
-
 define('bui/component/uibase/childcfg',function (require) {
 
   /**
@@ -9126,11 +8984,7 @@ define('bui/component/uibase/childcfg',function (require) {
 
   return childCfg;
 
-});/**
- * @fileOverview \u4f9d\u8d56\u6269\u5c55\uff0c\u7528\u4e8e\u89c2\u5bdf\u8005\u6a21\u5f0f\u4e2d\u7684\u89c2\u5bdf\u8005
- * @ignore
- */
-
+});
 define('bui/component/uibase/depends',['bui/component/manage'],function (require) {
   
   var regexp = /^#(.*):(.*)$/,
@@ -9322,11 +9176,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
   };
   
   return Depends;
-});/**
- * @fileOverview bindable extension class.
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/uibase/bindable',function(){
 	
 	/**
@@ -9540,12 +9390,7 @@ define('bui/component/uibase/bindable',function(){
 	});
 
 	return bindable;
-});/**
- * @fileOverview  \u63a7\u4ef6\u7684\u89c6\u56fe\u5c42
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/view',['bui/component/manage','bui/component/uibase'],function(require){
 
   var win = window,
@@ -9961,441 +9806,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
     };
 
     return View;
-});/**
- * @fileOverview \u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9
- * @ignore
- */
-
-define('bui/component/loader',['bui/util'],function (require) {
-  'use strict';
-  var BUI = require('bui/util'),
-    Base = require('bui/base'),
-    /**
-     * @class BUI.Component.Loader
-     * @extends BUI.Base
-     * ** \u63a7\u4ef6\u7684\u9ed8\u8ba4Loader\u5c5e\u6027\u662f\uff1a**
-     * <pre><code>
-     *   
-     *   defaultLoader : {
-     *     value : {
-     *       property : 'content',
-     *       autoLoad : true
-     *     }
-     *   }
-     * </code></pre>
-     * ** \u4e00\u822c\u7684\u63a7\u4ef6\u9ed8\u8ba4\u8bfb\u53d6html\uff0c\u4f5c\u4e3a\u63a7\u4ef6\u7684content\u503c **
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     *
-     * ** \u53ef\u4ee5\u4fee\u6539Loader\u7684\u9ed8\u8ba4\u5c5e\u6027\uff0c\u52a0\u8f7dchildren **
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/children.json',
-     *       property : 'children',
-     *       dataType : 'json'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * \u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u7c7b\uff0c\u4e00\u822c\u4e0d\u8fdb\u884c\u5b9e\u4f8b\u5316
-     */
-    Loader = function(config){
-      Loader.superclass.constructor.call(this,config);
-      this._init();
-    };
-
-  Loader.ATTRS = {
-
-    /**
-     * \u52a0\u8f7d\u5185\u5bb9\u7684\u5730\u5740
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {String} url
-     */
-    url : {
-
-    },
-    /**
-     * \u5bf9\u5e94\u7684\u63a7\u4ef6\uff0c\u52a0\u8f7d\u5b8c\u6210\u540e\u8bbe\u7f6e\u5c5e\u6027\u5230\u5bf9\u5e94\u7684\u63a7\u4ef6
-     * @readOnly
-     * @type {BUI.Component.Controller}
-     */
-    target : {
-
-    },
-    /**
-     * @private
-     * \u662f\u5426load \u8fc7
-     */
-    hasLoad : {
-      value : false
-    },
-    /**
-     * \u662f\u5426\u81ea\u52a8\u52a0\u8f7d\u6570\u636e
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       autoLoad : false
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Boolean} [autoLoad = true]
-     */
-    autoLoad : {
-
-    },
-    /**
-     * \u5ef6\u8fdf\u52a0\u8f7d
-     * 
-     *   - event : \u89e6\u53d1\u52a0\u8f7d\u7684\u4e8b\u4ef6
-     *   - repeat \uff1a\u662f\u5426\u91cd\u590d\u52a0\u8f7d
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       lazyLoad : {
-     *         event : 'show',
-     *         repeat : true
-     *       }
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Object} [lazyLoad = null]
-     */
-    lazyLoad: {
-
-    },
-    /**
-     * \u52a0\u8f7d\u8fd4\u56de\u7684\u6570\u636e\u4f5c\u4e3a\u63a7\u4ef6\u7684\u90a3\u4e2a\u5c5e\u6027
-     * <pre><code>
-     *   var control = new BUI.List.SimpleList({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       dataType : 'json',
-     *       property : 'items'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {String} property
-     */
-    property : {
-
-    },
-    /**
-     * \u683c\u5f0f\u5316\u8fd4\u56de\u7684\u6570\u636e
-     * @cfg {Function} renderer
-     */
-    renderer : {
-      value : function(value){
-        return value;
-      }
-    },
-    /**
-     * \u52a0\u8f7d\u6570\u636e\u65f6\u662f\u5426\u663e\u793a\u5c4f\u853d\u5c42\u548c\u52a0\u8f7d\u63d0\u793a {@link BUI.Mask.LoadMask}
-     * 
-     *  -  loadMask : true\u65f6\u4f7f\u7528loadMask \u9ed8\u8ba4\u7684\u914d\u7f6e\u4fe1\u606f
-     *  -  loadMask : {msg : '\u6b63\u5728\u52a0\u8f7d\uff0c\u8bf7\u7a0d\u540e\u3002\u3002'} LoadMask\u7684\u914d\u7f6e\u4fe1\u606f
-     *   <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       loadMask : true
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Boolean|Object} [loadMask = false]
-     */
-    loadMask : {
-      value : false
-    },
-    /**
-     * ajax \u8bf7\u6c42\u8fd4\u56de\u6570\u636e\u7684\u7c7b\u578b
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       dataType : 'json',
-     *       property : 'items'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {String} [dataType = 'text']
-     */
-    dataType : {
-      value : 'text'
-    },
-    /**
-     * Ajax\u8bf7\u6c42\u7684\u914d\u7f6e\u9879,\u4f1a\u8986\u76d6 url,dataType\u6570\u636e
-     * @cfg {Object} ajaxOptions
-     */
-    ajaxOptions : {
-      value : {
-        type : 'get',
-        cache : false
-      }
-    },
-    /**
-     * \u521d\u59cb\u5316\u7684\u8bf7\u6c42\u53c2\u6570
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       params : {
-     *         a : 'a',
-     *         b : 'b'
-     *       }
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Object} params
-     * @default null
-     */
-    params : {
-
-    },
-    /**
-     * \u9644\u52a0\u53c2\u6570\uff0c\u6bcf\u6b21\u8bf7\u6c42\u90fd\u5e26\u7684\u53c2\u6570
-     * @cfg {Object} appendParams
-     */
-    appendParams : {
-
-    },
-    /**
-     * \u6700\u540e\u4e00\u6b21\u8bf7\u6c42\u7684\u53c2\u6570
-     * @readOnly
-     * @private
-     * @type {Object}
-     */
-    lastParams : {
-      value : {}
-    },
-    /**
-     * \u52a0\u8f7d\u6570\u636e\uff0c\u5e76\u6dfb\u52a0\u5c5e\u6027\u5230\u63a7\u4ef6\u540e\u7684\u56de\u8c03\u51fd\u6570
-     *   - data : \u52a0\u8f7d\u7684\u6570\u636e
-     *   - params : \u52a0\u8f7d\u7684\u53c2\u6570
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       callback : function(text){
-     *         var target = this.get('target');//control
-     *         //TO DO
-     *       }
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Function} callback
-     */
-    callback : {
-
-    },
-    /**
-     * \u5931\u8d25\u7684\u56de\u8c03\u51fd\u6570
-     *   - response : \u8fd4\u56de\u7684\u9519\u8bef\u5bf9\u8c61
-     *   - params : \u52a0\u8f7d\u7684\u53c2\u6570
-     * @cfg {Function} failure
-     */
-    failure : {
-
-    }
-
-  };
-
-  BUI.extend(Loader,Base);
-
-  BUI.augment(Loader,{
-    /**
-     * @protected
-     * \u662f\u5426\u662fLoader
-     * @type {Boolean}
-     */
-    isLoader : true,
-    //\u521d\u59cb\u5316
-    _init : function(){
-      var _self = this,
-        autoLoad = _self.get('autoLoad'),
-        params = _self.get('params');
-
-      _self._initMask();
-      if(autoLoad){
-        _self.load(params);
-      }else{
-        _self._initParams();
-        _self._initLazyLoad();
-      }
-    },
-    //\u521d\u59cb\u5316\u5ef6\u8fdf\u52a0\u8f7d
-    _initLazyLoad : function(){
-      var _self = this,
-        target = _self.get('target'),
-        lazyLoad= _self.get('lazyLoad');
-
-      if(target && lazyLoad && lazyLoad.event){
-        target.on(lazyLoad.event,function(){
-          if(!_self.get('hasLoad') || lazyLoad.repeat){
-            _self.load();
-          }
-        });
-      }
-    },
-    /**
-     * \u521d\u59cb\u5316mask
-     * @private
-     */
-    _initMask : function(){
-      var _self = this,
-        target = _self.get('target'),
-        loadMask = _self.get('loadMask');
-      if(target && loadMask){
-        BUI.use('bui/mask',function(Mask){
-          var cfg = $.isPlainObject(loadMask) ? loadMask : {};
-          loadMask = new Mask.LoadMask(BUI.mix({el : target.get('el')},cfg));
-          _self.set('loadMask',loadMask);
-        });
-      }
-    },
-    //\u521d\u59cb\u5316\u67e5\u8be2\u53c2\u6570
-    _initParams : function(){
-      var _self = this,
-        lastParams = _self.get('lastParams'),
-        params = _self.get('params');
-
-      //\u521d\u59cb\u5316 \u53c2\u6570
-      BUI.mix(lastParams,params);
-    },
-    /**
-     * \u52a0\u8f7d\u5185\u5bb9
-     * @param {Object} params \u52a0\u8f7d\u6570\u636e\u7684\u53c2\u6570
-     */
-    load : function(params){
-      var _self = this,
-        url = _self.get('url'),
-        ajaxOptions = _self.get('ajaxOptions'),
-        lastParams = _self.get('lastParams'),
-        appendParams = _self.get('appendParams');
-
-      //BUI.mix(true,lastParams,appendParams,params);
-      params = params || lastParams;
-      params = BUI.merge(appendParams,params); //BUI.cloneObject(lastParams);
-      _self.set('lastParams',params);
-      //\u672a\u63d0\u4f9b\u52a0\u8f7d\u5730\u5740\uff0c\u963b\u6b62\u52a0\u8f7d
-      if(!url){
-        return;
-      }
-
-      _self.onBeforeLoad();
-      _self.set('hasLoad',true);
-      $.ajax(BUI.mix({
-        dataType : _self.get('dataType'),
-        data : params,
-        url : url,
-        success : function(data){
-          _self.onload(data,params);
-        },
-        error : function(jqXHR, textStatus, errorThrown){
-          _self.onException({
-            jqXHR : jqXHR, 
-            textStatus : textStatus, 
-            errorThrown : errorThrown
-          },params);
-        }
-      },ajaxOptions));
-    },
-    /**
-     * @private
-     * \u52a0\u8f7d\u524d
-     */
-    onBeforeLoad : function(){
-      var _self = this,
-        loadMask = _self.get('loadMask');
-      if(loadMask && loadMask.show){
-        loadMask.show();
-      }
-    },
-    /**
-     * @private
-     * \u52a0\u8f7d\u5b8c\u6bd5
-     */
-    onload : function(data,params){
-      var _self = this,
-        loadMask = _self.get('loadMask'),
-        property = _self.get('property'),
-        callback = _self.get('callback'),
-        renderer = _self.get('renderer'),
-        target = _self.get('target');
-      target.set(property,renderer.call(_self,data));
-
-      /**/
-      if(loadMask && loadMask.hide){
-        loadMask.hide();
-      }
-      if(callback){
-        callback.call(this,data,params);
-      }
-    },
-    /**
-     * @private
-     * \u52a0\u8f7d\u51fa\u9519
-     */
-    onException : function(response,params){
-      var _self = this,
-        failure = _self.get('failure');
-      if(failure){
-        failure.call(this,response,params);
-      }
-    }
-
-  });
-
-  return Loader;
-});/**
- * @fileOverview  \u63a7\u4ef6\u53ef\u4ee5\u5b9e\u4f8b\u5316\u7684\u57fa\u7c7b
- * @ignore
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- */
-
+});
 /**
  * jQuery \u4e8b\u4ef6
  * @class jQuery.Event
@@ -11964,13 +11375,10 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
     
     return Controller;
 });
-/**
- * @ignore
- * @fileOverview cookie
- * @author lifesinger@gmail.com
- */
 
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/cookie',function () {
 
     var doc = document,
@@ -12075,10 +11483,10 @@ define('bui/cookie',function () {
 * - api \u8bbe\u8ba1\u4e0a\uff0c\u539f\u672c\u60f3\u501f\u9274 jQuery \u7684\u7b80\u660e\u98ce\u683c\uff1aS.cookie(name, ...), \u4f46\u8003\u8651\u5230\u53ef\u6269\u5c55\u6027\uff0c\u76ee\u524d
 * \u72ec\u7acb\u6210\u9759\u6001\u5de5\u5177\u7c7b\u7684\u65b9\u5f0f\u66f4\u4f18\u3002
 */
-/**
- * @fileOverview Data \u547d\u540d\u7a7a\u95f4\u7684\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
+
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 (function(){
 var BASE = 'bui/data/';
 define('bui/data',['bui/common',BASE + 'sortable',BASE + 'proxy',BASE + 'abstractstore',BASE + 'store',
@@ -12098,10 +11506,6 @@ define('bui/data',['bui/common',BASE + 'sortable',BASE + 'proxy',BASE + 'abstrac
   return Data;
 });
 })();
-/**
- * @fileOverview \u53ef\u6392\u5e8f\u6269\u5c55\u7c7b
- * @ignore
- */
 
 define('bui/data/sortable',function() {
 
@@ -12270,6 +11674,7 @@ define('bui/data/sortable',function() {
 
   return sortable;
 });
+
 define('bui/data/proxy',['bui/data/sortable'],function(require) {
 
   var Sortable = require('bui/data/sortable');
@@ -12567,10 +11972,6 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
 
 
 });
-/**
- * @fileOverview \u62bd\u8c61\u6570\u636e\u7f13\u51b2\u7c7b
- * @ignore
- */
 
 define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (require) {
   var BUI = require('bui/common'),
@@ -13038,12 +12439,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
   });
 
   return AbstractStore;
-});/**
- * @fileOverview \u6811\u5f62\u6570\u636e\u7ed3\u6784\u7684\u8282\u70b9\u7c7b\uff0c\u65e0\u6cd5\u76f4\u63a5\u4f7f\u7528\u6570\u636e\u4f5c\u4e3a\u8282\u70b9\uff0c\u6240\u4ee5\u8fdb\u884c\u4e00\u5c42\u5c01\u88c5
- * \u53ef\u4ee5\u76f4\u63a5\u4f5c\u4e3aTreeNode\u63a7\u4ef6\u7684\u914d\u7f6e\u9879
- * @ignore
- */
-
+});
 define('bui/data/node',['bui/common'],function (require) {
   var BUI = require('bui/common');
 
@@ -13129,11 +12525,7 @@ define('bui/data/node',['bui/common'],function (require) {
     isNode : true
   });
   return Node;
-});/**
- * @fileOverview \u6811\u5f62\u5bf9\u8c61\u7f13\u51b2\u7c7b
- * @ignore
- */
-
+});
 define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstore','bui/data/proxy'],function (require) {
 
   var BUI = require('bui/common'),
@@ -13724,12 +13116,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
 
   return TreeStore;
 
-});/**
- * @fileOverview \u6570\u636e\u7f13\u51b2\u5bf9\u8c61
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sortable'],function(require) {
   
   var Proxy = require('bui/data/proxy'),
@@ -14511,862 +13898,14 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   });
 
   return store;
-});/**
- * @fileOverview Overlay \u6a21\u5757\u7684\u5165\u53e3
- * @ignore
- */
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 
-define('bui/overlay',['bui/common','bui/overlay/overlay','bui/overlay/dialog','bui/overlay/message'],function (require) {
-  var BUI = require('bui/common'),
-    Overlay = BUI.namespace('Overlay');
-
-  BUI.mix(Overlay,{
-    Overlay : require('bui/overlay/overlay'),
-    Dialog : require('bui/overlay/dialog'),
-    Message : require('bui/overlay/message')
-  });
-
-  BUI.mix(Overlay,{
-    OverlayView : Overlay.Overlay.View,
-    DialogView : Overlay.Dialog.View
-  });
-
-  BUI.Message = BUI.Overlay.Message;
-  return Overlay;
-
-});/**
- * @fileOverview \u60ac\u6d6e\u5c42
- * @ignore
- */
-
-define('bui/overlay/overlay',['bui/common'],function (require) {
-  var BUI = require('bui/common'),
-    Component =  BUI.Component,
-    CLS_ARROW = 'x-align-arrow',
-    UIBase = Component.UIBase;
-
-  /**
-   * \u60ac\u6d6e\u5c42\u7684\u89c6\u56fe\u7c7b
-   * @class BUI.Overlay.OverlayView
-   * @extends BUI.Component.View
-   * @mixins BUI.Component.UIBase.PositionView
-   * @mixins BUI.Component.UIBase.CloseView
-   * @private
-   */
-  var overlayView = Component.View.extend([
-      UIBase.PositionView,
-      UIBase.CloseView
-    ]);
-
-  /**
-   * \u60ac\u6d6e\u5c42\uff0c\u663e\u793a\u60ac\u6d6e\u4fe1\u606f\uff0cMessage\u3001Dialog\u7684\u57fa\u7c7b
-   * <p>
-   * <img src="../assets/img/class-overlay.jpg"/>
-   * </p>
-   * xclass : 'overlay'
-   * ** \u4e00\u822c\u6765\u8bf4\uff0coverlay\u7684\u5b50\u7c7b\uff0cDialog \u3001Message\u3001ToolTip\u5df2\u7ecf\u80fd\u591f\u6ee1\u8db3\u65e5\u5e38\u5e94\u7528\uff0c\u4f46\u662f\u4f7f\u7528overay\u66f4\u9002\u5408\u4e00\u4e9b\u66f4\u52a0\u7075\u6d3b\u7684\u5730\u65b9 **
-   * ## \u7b80\u5355overlay
-   * <pre><code>
-   *   BUI.use('bui/overlay',function(Overlay){
-   *     //\u70b9\u51fb#btn\uff0c\u663e\u793aoverlay
-   *     var overlay = new Overlay.Overlay({
-   *       trigger : '#btn',
-   *       content : '\u8fd9\u662f\u5185\u5bb9',
-   *       align : {
-   *         points : ['bl','tl']
-   *       }, //\u5bf9\u9f50\u65b9\u5f0f
-   *       elCls : 'custom-cls', //\u81ea\u5b9a\u4e49\u6837\u5f0f
-   *       autoHide : true //\u70b9\u51fboverlay\u5916\u9762\uff0coverlay \u4f1a\u81ea\u52a8\u9690\u85cf
-   *     });
-   *
-   *     overlay.render();
-   *   });
-   * </code></pre>
-   *
-   * 
-   * @class BUI.Overlay.Overlay
-   * @extends BUI.Component.Controller
-   * @mixins BUI.Component.UIBase.Position
-   * @mixins BUI.Component.UIBase.Align
-   * @mixins BUI.Component.UIBase.Close
-   * @mixins BUI.Component.UIBase.AutoShow
-   * @mixins BUI.Component.UIBase.AutoHide
-   */
-  var overlay = Component.Controller.extend([UIBase.Position,UIBase.Align,UIBase.Close,UIBase.AutoShow,UIBase.AutoHide],{
-    renderUI : function(){
-      var _self = this,
-        el = _self.get('el'),
-        arrowContainer = _self.get('arrowContainer'),
-        container = arrowContainer ? el.one(arrowContainer) : el;
-      if(_self.get('showArrow')){
-        $(_self.get('arrowTpl')).appendTo(container);
-      }
-    },
-    show : function(){
-      var _self = this,
-        effectCfg = _self.get('effect'),
-        el = _self.get('el'),
-		    visibleMode = _self.get('visibleMode'),
-        effect = effectCfg.effect,
-        duration = effectCfg.duration;
-
-  	  
-      //\u5982\u679c\u8fd8\u672a\u6e32\u67d3\uff0c\u5219\u5148\u6e32\u67d3\u63a7\u4ef6
-      if(!_self.get('rendered')){
-        _self.set('visible',true);
-        _self.render();
-        _self.set('visible',false);
-        el = _self.get('el');
-      }
-
-      if(visibleMode === 'visibility'){
-        _self.set('visible',true);
-        el.css({display : 'none'});
-      }
-      
-      switch(effect){
-        case  'linear' :
-          el.show(duration,callback);
-          break;
-        case  'fade' :
-          el.fadeIn(duration,callback);
-          break;
-        case  'slide' :
-          el.slideDown(duration,callback);
-          break;
-        default:
-          callback();
-        break;
-      }
-
-      function callback(){
-        if(visibleMode === 'visibility'){
-          el.css({display : 'block'});
-        }else{
-          _self.set('visible',true);
-        }
-        if(effectCfg.callback){
-          effectCfg.callback.call(_self);
-        }
-      }
-
-    },
-    hide : function(){
-      var _self = this,
-        effectCfg = _self.get('effect'),
-        el = _self.get('el'),
-        effect = effectCfg.effect,
-        duration = effectCfg.duration;
-  	  
-      switch(effect){
-        case 'linear':
-          el.hide(duration,callback);
-          break;
-        case  'fade' :
-          el.fadeOut(duration,callback);
-          break;
-        case  'slide' :
-          el.slideUp(duration,callback);
-          break;
-        default:
-          callback();
-        break;
-      }
-      function callback(){
-        if(_self.get('visibleMode') === 'visibility'){
-          el.css({display : 'block'});
-        }
-        _self.set('visible',false);
-        if(effectCfg.callback){
-          effectCfg.callback.call(_self);
-        }
-      }
-
-    }
-  },{
-    ATTRS : 
-	/**
-	* @lends BUI.Overlay.Overlay#
-  * @ignore 
-	**/	
-	{
-      /**
-       * {Object} - \u53ef\u9009, \u663e\u793a\u6216\u9690\u85cf\u65f6\u7684\u7279\u6548\u652f\u6301, \u5bf9\u8c61\u5305\u542b\u4ee5\u4e0b\u914d\u7f6e
-       * <ol>
-       * <li>effect:\u7279\u6548\u6548\u679c\uff0c'none(\u9ed8\u8ba4\u65e0\u7279\u6548)','linear(\u7ebf\u6027)',fade(\u6e10\u53d8)','slide(\u6ed1\u52a8\u51fa\u73b0)'</li>
-       * <li>duration:\u65f6\u95f4\u95f4\u9694 </li>
-       * </ol>
-       * @type {Object}
-       */
-      effect:{
-        value : {
-          effect : 'none',
-          duration : 0,
-          callback : null
-        }
-      },
-      /**
-       * whether this component can be closed.
-       * @default false
-       * @type {Boolean}
-       * @protected
-       */
-      closeable:{
-          value:false
-      },
-      /**
-       * \u662f\u5426\u663e\u793a\u6307\u5411\u7bad\u5934\uff0c\u8ddfalign\u5c5e\u6027\u7684points\u76f8\u5173
-       * @cfg {Boolean} [showArrow = false]
-       */
-      showArrow : {
-        value : false
-      },
-      /**
-       * \u7bad\u5934\u653e\u7f6e\u5728\u7684\u4f4d\u7f6e\uff0c\u662f\u4e00\u4e2a\u9009\u62e9\u5668\uff0c\u4f8b\u5982 .arrow-wraper
-       *     new Tip({ //\u53ef\u4ee5\u8bbe\u7f6e\u6574\u4e2a\u63a7\u4ef6\u7684\u6a21\u677f
-       *       arrowContainer : '.arrow-wraper',
-       *       tpl : '<div class="arrow-wraper"></div>'
-       *     });
-       *     
-       * @cfg {String} arrowContainer
-       */
-      arrowContainer : {
-        view : true
-      },
-      /**
-       * \u6307\u5411\u7bad\u5934\u7684\u6a21\u677f
-       * @cfg {Object} arrowTpl
-       */
-      arrowTpl : {
-        value : '<s class="' + CLS_ARROW + '"><s class="' + CLS_ARROW + '-inner"></s></s>'
-      },
-      visibleMode : {
-        value : 'visibility'
-      },
-      visible :{
-        value:false
-      },
-      xview : {
-        value : overlayView
-      }
-    }
-  },{
-    xclass:'overlay'
-  });
-
-  overlay.View = overlayView;
-  return overlay;
-
-});/**
- * @fileOverview \u5f39\u51fa\u6846
- * @author dxq613@gmail.com
- * @ignore
- */
-
-define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
-  var Overlay = require('bui/overlay/overlay'),
-    UIBase = BUI.Component.UIBase,
-  	CLS_TITLE = 'header-title',
-  	PREFIX = BUI.prefix,
-    HEIGHT_PADDING = 20;
-
-  /**
-   * dialog\u7684\u89c6\u56fe\u7c7b
-   * @class BUI.Overlay.DialogView
-   * @extends BUI.Overlay.OverlayView
-   * @mixins BUI.Component.UIBase.StdModView
-   * @mixins BUI.Component.UIBase.MaskView
-   * @private
-   */
-  var dialogView = Overlay.View.extend([UIBase.StdModView,UIBase.MaskView],{
-
-    _uiSetTitle:function(v){
-      var _self = this,
-        el = _self.get('el');
-
-      el.find('.' + CLS_TITLE).html(v);
-
-    },
-    _uiSetContentId : function(v){
-      var _self = this,
-        body = _self.get('body'),
-        children = $('#'+v).children();
-
-      children.appendTo(body);
-    },
-    _uiSetHeight : function(v){
-      var _self = this,
-        bodyHeight = v,
-        header = _self.get('header'),
-        body = _self.get('body'),
-        footer = _self.get('footer');
-
-      bodyHeight -= header.outerHeight()+footer.outerHeight();
-      bodyHeight -=HEIGHT_PADDING * 2;
-      body.height(bodyHeight);
-    },
-    _removeContent : function(){
-      var _self = this,
-        body = _self.get('body'),
-        contentId = _self.get('contentId');
-      if(contentId){
-        body.children().appendTo($('#'+contentId));
-      }else {
-        body.children().remove();
-      }
-    }
-
-  },{
-    xclass:'dialog-view'
-  });
-
-  /**
-   * \u5f39\u51fa\u6846 xclass:'dialog'
-   * <p>
-   * <img src="../assets/img/class-overlay.jpg"/>
-   * </p>
-   * ** \u666e\u901a\u5f39\u51fa\u6846 **
-   * <pre><code>
-   *  BUI.use('bui/overlay',function(Overlay){
-   *      var dialog = new Overlay.Dialog({
-   *        title:'\u975e\u6a21\u6001\u7a97\u53e3',
-   *        width:500,
-   *        height:300,
-   *        mask:false,  //\u8bbe\u7f6e\u662f\u5426\u6a21\u6001
-   *        buttons:[],
-   *        bodyContent:'<p>\u8fd9\u662f\u4e00\u4e2a\u975e\u6a21\u6001\u7a97\u53e3,\u5e76\u4e14\u4e0d\u5e26\u6309\u94ae</p>'
-   *      });
-   *    dialog.show();
-   *    $('#btnShow').on('click',function () {
-   *      dialog.show();
-   *    });
-   *  });
-   * </code></pre>
-   *
-   * ** \u4f7f\u7528\u73b0\u6709\u7684html\u7ed3\u6784 **
-   * <pre><code>
-   *  BUI.use('bui/overlay',function(Overlay){
-   *      var dialog = new Overlay.Dialog({
-   *        title:'\u914d\u7f6eDOM',
-   *        width:500,
-   *        height:250,
-   *        contentId:'content',//\u914d\u7f6eDOM\u5bb9\u5668\u7684\u7f16\u53f7
-   *        success:function () {
-   *          alert('\u786e\u8ba4');
-   *          this.hide();
-   *        }
-   *      });
-   *    dialog.show();
-   *    $('#btnShow').on('click',function () {
-   *      dialog.show();
-   *    });
-   *  });
-   * </code></pre>
-   * @class BUI.Overlay.Dialog
-   * @extends BUI.Overlay.Overlay
-   * @mixins BUI.Component.UIBase.StdMod
-   * @mixins BUI.Component.UIBase.Mask
-   * @mixins BUI.Component.UIBase.Drag
-   */
-  var dialog = Overlay.extend([UIBase.StdMod,UIBase.Mask,UIBase.Drag],{
-    
-    show:function(){
-      var _self = this;
-
-      dialog.superclass.show.call(this);
-      _self.center();
-    },
-    //\u7ed1\u5b9a\u4e8b\u4ef6
-    bindUI : function(){
-      var _self = this;
-      _self.on('closeclick',function(){
-        return _self.onCancel();
-      });
-    },
-    /**
-     * @protected
-     * \u53d6\u6d88
-     */
-    onCancel : function(){
-      var _self = this,
-        cancel = _self.get('cancel');
-      return cancel.call(this);
-    },
-    //\u8bbe\u7f6e\u6309\u94ae
-    _uiSetButtons:function(buttons){
-      var _self = this,
-        footer = _self.get('footer');
-
-      footer.children().remove();
-      BUI.each(buttons,function(conf){
-        _self._createButton(conf,footer);
-      });
-
-    },
-    //\u521b\u5efa\u6309\u94ae
-    _createButton : function(conf,parent){
-      var _self = this,
-        temp = '<button class="'+conf.elCls+'">'+conf.text+'</button>',
-        btn = $(temp).appendTo(parent);
-      btn.on('click',function(){
-        conf.handler.call(_self,_self,this);
-      });
-    },
-    destructor : function(){
-      var _self = this,
-        contentId = _self.get('contentId'),
-        body = _self.get('body'),
-        closeAction = _self.get('closeAction');
-      if(closeAction == 'destroy'){
-        _self.hide();
-        if(contentId){
-          body.children().appendTo('#'+contentId);
-        }
-      }
-    }
-  },{
-
-    ATTRS : 
-  	/**
-  	* @lends BUI.Overlay.Dialog#
-    * @ignore 
-  	*/
-    {
-      closeTpl:{
-        view:true,
-        value : '<a tabindex="0" href=javascript:void("\u5173\u95ed") role="button" class="' + PREFIX + 'ext-close" style=""><span class="' + PREFIX + 'ext-close-x x-icon x-icon-normal">\u00d7</span></a>'
-      },
-     /**
-       * \u5f39\u51fa\u5e93\u7684\u6309\u94ae\uff0c\u53ef\u4ee5\u6709\u591a\u4e2a,\u67093\u4e2a\u53c2\u6570
-       * var dialog = new Overlay.Dialog({
-       *     title:'\u81ea\u5b9a\u4e49\u6309\u94ae',
-       *     width:500,
-       *     height:300,
-       *     mask:false,
-       *     buttons:[
-       *       {
-       *         text:'\u81ea\u5b9a\u4e49',
-       *         elCls : 'button button-primary',
-       *         handler : function(){
-       *           //do some thing
-       *           this.hide();
-       *         }
-       *       },{
-       *         text:'\u5173\u95ed',
-       *         elCls : 'button',
-       *         handler : function(){
-       *           this.hide();
-       *         }
-       *       }
-       *     ],
-       *     
-       *     bodyContent:'<p>\u8fd9\u662f\u4e00\u4e2a\u81ea\u5b9a\u4e49\u6309\u94ae\u7a97\u53e3,\u53ef\u4ee5\u914d\u7f6e\u4e8b\u4ef6\u548c\u6587\u672c\u6837\u5f0f</p>'
-       *   });
-       *  dialog.show();
-       * <ol>
-       *   <li>text:\u6309\u94ae\u6587\u672c</li>
-       *   <li>elCls:\u6309\u94ae\u6837\u5f0f</li>
-       *   <li>handler:\u70b9\u51fb\u6309\u94ae\u7684\u56de\u8c03\u4e8b\u4ef6</li>
-       * </ol>
-       * @cfg {Array} buttons
-       * @default '\u786e\u5b9a'\u3001'\u53d6\u6d88'2\u4e2a\u6309\u94ae
-       * 
-       */
-      buttons:{
-        value:[
-          {
-            text:'\u786e\u5b9a',
-            elCls : 'button button-primary',
-            handler : function(){
-              var _self = this,
-                success = _self.get('success');
-              if(success){
-                success.call(_self);
-              }
-            }
-          },{
-            text:'\u53d6\u6d88',
-            elCls : 'button button-primary',
-            handler : function(dialog,btn){
-              if(this.onCancel() !== false){
-                this.close();
-              }
-            }
-          }
-        ]
-      },
-      /**
-       * \u5f39\u51fa\u6846\u663e\u793a\u5185\u5bb9\u7684DOM\u5bb9\u5668ID
-       * @cfg {Object} contentId
-       */
-      contentId:{
-        view:true
-      },
-  	  /**
-      * \u70b9\u51fb\u6210\u529f\u65f6\u7684\u56de\u8c03\u51fd\u6570
-      * @cfg {Function} success
-      */
-      success : {
-        value : function(){
-          this.close();
-        }
-      },
-      /**
-       * \u7528\u6237\u53d6\u6d88\u65f6\u8c03\u7528\uff0c\u5982\u679creturn false\u5219\u963b\u6b62\u7a97\u53e3\u5173\u95ed
-       * @cfg {Function} cancel
-       */
-      cancel : {
-        value : function(){
-
-        }
-      },
-      dragNode : {
-        /**
-         * @private
-         */
-        valueFn : function(){
-          return this.get('header');
-        }
-      },
-
-      /**
-       * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
-       * <pre>
-       *  {
-       *    property : 'bodyContent',
-       *    autoLoad : false,
-       *    lazyLoad : {
-       *      event : 'show'
-       *    },
-       *    loadMask : {
-       *      el : _self.get('body')
-       *    }
-       *  }
-       * </pre>
-       * @type {Object}
-       */
-      defaultLoaderCfg  : {
-        valueFn :function(){
-          var _self = this;
-          return {
-            property : 'bodyContent',
-            autoLoad : false,
-            lazyLoad : {
-              event : 'show'
-            },
-            loadMask : {
-              el : _self.get('body')
-            }
-          }
-        } 
-      },
-      /**
-       * \u5f39\u51fa\u6846\u6807\u9898
-       * @cfg {String} title
-       */
-      /**
-       * \u5f39\u51fa\u6846\u6807\u9898
-       * <pre><code>
-       *  dialog.set('title','new title');
-       * </code></pre>
-       * @type {String}
-       */
-      title : {
-        view:true,
-        value : ''
-      },
-      mask : {
-        value:true
-      },
-      maskShared:{
-        value:false
-      },
-      headerContent:{
-        value:'<div class="' + CLS_TITLE + '">\u6807\u9898</div>'
-      },
-      footerContent:{
-
-      },
-      closeable:{
-        value : true
-      },
-      xview:{
-        value:dialogView
-      }
-    }
-  },{
-    xclass : 'dialog'
-  });
-  
-  dialog.View = dialogView;
-  return dialog;
-  
-});/**
- * @fileOverview \u6d88\u606f\u6846\uff0c\u8b66\u544a\u3001\u786e\u8ba4
- * @author dxq613@gmail.com
- * @ignore
- */
-
-define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
-  var Dialog = require('bui/overlay/dialog'),
-	  PREFIX = BUI.prefix,
-    iconText ={
-        info : 'i',
-        error : '\u00d7',
-        success : '<i class="icon-ok icon-white"></i>',
-        question : '?',
-        warning: '!'
-    };
-
-  /**
-   * \u6d88\u606f\u6846\u7c7b\uff0c\u4e00\u822c\u4e0d\u76f4\u63a5\u521b\u5efa\u5bf9\u8c61\uff0c\u800c\u662f\u8c03\u7528\u5176Alert\u548cConfirm\u65b9\u6cd5
-   * <pre><code>
-   ** BUI.use('bui/overlay',function(overlay){
-   * 
-   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u63d0\u793a\u4fe1\u606f','info');
-   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u6210\u529f\u4fe1\u606f','success');
-   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u8b66\u544a\u4fe1\u606f','warning');
-   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u9519\u8bef\u4fe1\u606f','error');
-   *    BUI.Message.Alert('\u8fd9\u53ea\u662f\u7b80\u5355\u7684\u8be2\u95ee\u4fe1\u606f','question');
-   *
-   *    //\u56de\u8c03\u51fd\u6570
-   *    BUI.Message.Alert('\u70b9\u51fb\u89e6\u53d1\u56de\u8c03\u51fd\u6570',function() {
-   *         alert('\u6267\u884c\u56de\u8c03');
-   *       },'error');
-   *       
-   *    //\u590d\u6742\u7684\u63d0\u793a\u4fe1\u606f
-   *    var msg = '&lt;h2&gt;\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u4e0a\u4f2010M\u4ee5\u5185\u7684\u6587\u4ef6&lt;/h2&gt;'+
-   *       '&lt;p class="auxiliary-text"&gt;\u5982\u8fde\u7eed\u4e0a\u4f20\u5931\u8d25\uff0c\u8bf7\u53ca\u65f6\u8054\u7cfb\u5ba2\u670d\u70ed\u7ebf\uff1a0511-23883767834&lt;/p&gt;'+
-   *       '&lt;p&gt;&lt;a href="#"&gt;\u8fd4\u56delist\u9875\u9762&lt;/a&gt; &lt;a href="#"&gt;\u67e5\u770b\u8be6\u60c5&lt;/a&gt;&lt;/p&gt;';
-   *     BUI.Message.Alert(msg,'error');
-   *    //\u786e\u8ba4\u4fe1\u606f
-   *    BUI.Message.Confirm('\u786e\u8ba4\u8981\u66f4\u6539\u4e48\uff1f',function(){
-   *       alert('\u786e\u8ba4');
-   *     },'question');
-   * });
-   * </code></pre>
-   * @class BUI.Overlay.Message
-   * @private
-   * @extends BUI.Overlay.Dialog
-   */
-  var message = Dialog.extend({
-
-    /**
-     * @protected
-     * @ignore
-     */
-    renderUI : function(){
-      this._setContent();
-    },
-    bindUI : function(){
-      var _self = this,
-        body = _self.get('body');
-      _self.on('afterVisibleChange',function(ev){
-        if(ev.newVal){
-          if(BUI.UA.ie < 8){
-           /**
-           * fix ie6,7 bug
-           * @ignore
-           */
-            var outerWidth = body.outerWidth();
-            if(BUI.UA.ie == 6){
-              outerWidth = outerWidth > 350 ? 350 : outerWidth;
-            }
-            _self.get('header').width(outerWidth - 20);
-            _self.get('footer').width(outerWidth);
-          }
-        }
-      });
-    },
-    //\u6839\u636e\u6a21\u7248\u8bbe\u7f6e\u5185\u5bb9
-    _setContent : function(){
-      var _self = this,
-        body = _self.get('body'),
-        contentTpl = BUI.substitute(_self.get('contentTpl'),{
-          msg : _self.get('msg'),
-          iconTpl : _self.get('iconTpl')
-        });
-      body.empty();
-
-      $(contentTpl).appendTo(body);
-    },
-    //\u8bbe\u7f6e\u7c7b\u578b
-    _uiSetIcon : function(v){
-       if (!this.get('rendered')) {
-            return;
-        }
-        this._setContent();
-    },
-    //\u8bbe\u7f6e\u6587\u672c
-    _uiSetMsg : function(v){
-       if (!this.get('rendered')) {
-            return;
-        }
-        this._setContent();
-    }
-
-  },{
-    ATTRS : 
-    {
-      /**
-       * \u56fe\u6807\u7c7b\u578b
-       * <ol>
-       * <li>\u63d0\u793a\u4fe1\u606f\uff0c\u7c7b\u578b\u53c2\u6570<code>info</code></li>
-       * <li>\u6210\u529f\u4fe1\u606f\uff0c\u7c7b\u578b\u53c2\u6570<code>success</code></li>
-       * <li>\u8b66\u544a\u4fe1\u606f\uff0c\u7c7b\u578b\u53c2\u6570<code>warning</code></li>
-       * <li>\u9519\u8bef\u4fe1\u606f\uff0c\u7c7b\u578b\u53c2\u6570<code>error</code></li>
-       * <li>\u786e\u8ba4\u4fe1\u606f\uff0c\u7c7b\u578b\u53c2\u6570<code>question</code></li>
-       * </ol>
-       * @type {String}
-       */
-      icon : {
-
-      },
-      /**
-       * \u63d0\u793a\u6d88\u606f\uff0c\u53ef\u4ee5\u662f\u6587\u672c\u6216\u8005html
-       * @cfg {String} msg
-       */
-      /**
-       * \u63d0\u793a\u6d88\u606f\uff0c\u53ef\u4ee5\u662f\u6587\u672c\u6216\u8005html
-       * @type {String}
-       */
-      msg : {
-
-      },
-      /**
-       * @private
-       */
-      iconTpl : {
-        /**
-         * @private
-         */
-        getter:function(){
-          var _self = this,
-            type = _self.get('icon');
-          return '<div class="x-icon x-icon-' + type + '">' + iconText[type] + '</div>';
-        }
-      },
-      /**
-       * \u5185\u5bb9\u7684\u6a21\u7248
-       * @type {String}
-       * @protected
-       */
-      contentTpl : {
-        value : '{iconTpl}<div class="' + PREFIX + 'message-content">{msg}</div>'
-      }
-    }
-  },{
-    xclass : 'message',
-    priority : 0
-  });
-  
-  var singlelon = new message({
-      icon:'info',
-      title:''
-  });
-      
-  function messageFun(buttons,defaultIcon){
-   
-    return function (msg,callback,icon){
-
-      if(BUI.isString(callback)){
-        icon = callback;
-        callback = null;
-      }
-      icon = icon || defaultIcon;
-      callback = callback || hide;
-      showMessage({
-        'buttons': buttons,
-        'icon':icon,
-        'msg':msg,
-        'success' : callback
-      });
-    };
-  }
-
-  function showMessage(config){
-    singlelon.set(config);
-      
-    singlelon.show();
-  }
-
-  function success(){
-   var _self = this,
-      success = _self.get('success');
-    if(success){
-      success.call(_self);
-      _self.hide();
-    }
-  }
-
-  function hide(){
-     this.hide();
-  }
-
-  
-  var Alert = messageFun([{
-          text:'\u786e\u5b9a',
-          elCls : 'button button-primary',
-          handler : success
-        }
-      ],'info'),
-    Confirm = messageFun([{
-          text:'\u786e\u5b9a',
-          elCls : 'button button-primary',
-          handler : success
-        },{
-            text:'\u53d6\u6d88',
-            elCls : 'button button-primary',
-            handler : hide
-          }
-      ],'question');
-
-  /**
-   * \u63d0\u793a\u6846\u9759\u6001\u7c7b
-   * @class BUI.Message
-   */
-
-  /**
-   * \u663e\u793a\u63d0\u793a\u4fe1\u606f\u6846
-   * @static
-   * @method
-   * @member BUI.Message
-   * @param  {String}   msg      \u63d0\u793a\u4fe1\u606f
-   * @param  {Function} callback \u786e\u5b9a\u7684\u56de\u8c03\u51fd\u6570
-   * @param  {String}   icon     \u56fe\u6807\uff0c\u63d0\u4f9b\u4ee5\u4e0b\u51e0\u79cd\u56fe\u6807\uff1ainfo,error,success,question,warning
-   */
-  message.Alert = Alert;
-
-  /**
-   * \u663e\u793a\u786e\u8ba4\u6846
-   * <pre><code>
-   * BUI.Message.Confirm('\u786e\u8ba4\u8981\u66f4\u6539\u4e48\uff1f',function(){
-   *       alert('\u786e\u8ba4');
-   * },'question');
-   * </code></pre>
-   * @static
-   * @method
-   * @member BUI.Message
-   * @param  {String}   msg      \u63d0\u793a\u4fe1\u606f
-   * @param  {Function} callback \u786e\u5b9a\u7684\u56de\u8c03\u51fd\u6570
-   * @param  {String}   icon     \u56fe\u6807\uff0c\u63d0\u4f9b\u4ee5\u4e0b\u51e0\u79cd\u56fe\u6807\uff1ainfo,error,success,question,warning
-   */
-  message.Confirm = Confirm;
-
-  /**
-   * \u81ea\u5b9a\u4e49\u6d88\u606f\u6846\uff0c\u4f20\u5165\u914d\u7f6e\u4fe1\u606f {@link BUI.Overlay.Dialog} \u548c {@link BUI.Overlay.Message}
-   * @static
-   * @method
-   * @member BUI.Message
-   * @param  {Object}   config  \u914d\u7f6e\u4fe1\u606f
-   */
-  message.Show = showMessage;
-
-  return message;
-});/**
- * @fileOverview \u5217\u8868\u6a21\u5757\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 ;(function(){
 var BASE = 'bui/list/';
 define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simplelist',BASE + 'listbox'],function (r) {
@@ -15388,11 +13927,6 @@ define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simpleli
   return List;
 });  
 })();
-/**
- * @fileOverview \u4f7f\u7528DOM\u5143\u7d20\u4f5c\u4e3a\u9009\u9879\u7684\u6269\u5c55\u7c7b
- * @author dxq613@gmail.com
- * @ignore
- */
 
 define('bui/list/domlist',['bui/common'],function (require) {
   'use strict';
@@ -16366,12 +14900,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
   domList.View = domListView;
 
   return domList;
-});/**
- * @fileOverview \u5217\u8868\u9009\u9879\uff0c\u4f7f\u7528\u952e\u76d8\u5bfc\u822a
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/list/keynav',function () {
   'use strict';
   /**
@@ -16600,91 +15129,7 @@ define('bui/list/keynav',function () {
   });
 
   return KeyNav;
-});/**
- * @fileOverview \u5217\u8868\u6392\u5e8f
- * @ignore
- */
-
-define('bui/list/sortable',['bui/common','bui/data'],function (require) {
-
-  var BUI = require('bui/common'),
-    DataSortable = require('bui/data').Sortable;
-
-  /**
-   * @class BUI.List.Sortable
-   * \u5217\u8868\u6392\u5e8f\u7684\u6269\u5c55
-   * @extends BUI.Data.Sortable
-   */
-  var Sortable = function(){
-
-  };
-
-
-
-  Sortable.ATTRS = BUI.merge(true,DataSortable.ATTRS, {
-
-  });
-
-  BUI.augment(Sortable,DataSortable,{
-    
-    /**
-     * @protected
-     * @override
-     * @ignore
-     * \u8986\u5199\u6bd4\u8f83\u65b9\u6cd5
-     */
-    compare : function(obj1,obj2,field,direction){
-      var _self = this,
-        dir;
-      field = field || _self.get('sortField');
-      direction = direction || _self.get('sortDirection');
-      //\u5982\u679c\u672a\u6307\u5b9a\u6392\u5e8f\u5b57\u6bb5\uff0c\u6216\u65b9\u5411\uff0c\u5219\u6309\u7167\u9ed8\u8ba4\u987a\u5e8f
-      if(!field || !direction){
-        return 1;
-      }
-      dir = direction === 'ASC' ? 1 : -1;
-      if(!$.isPlainObject(obj1)){
-        obj1 = _self.getItemByElement(obj1);
-      }
-      if(!$.isPlainObject(obj2)){
-        obj2 = _self.getItemByElement(obj2);
-      }
-
-      return _self.get('compareFunction')(obj1[field],obj2[field]) * dir;
-    },
-    /**
-     * \u83b7\u53d6\u6392\u5e8f\u7684\u96c6\u5408
-     * @protected
-     * @return {Array} \u6392\u5e8f\u96c6\u5408
-     */
-    getSortData : function(){
-      return this.get('view').getAllElements();
-    },
-    /**
-     * \u5217\u8868\u6392\u5e8f
-     * @param  {string} field  \u5b57\u6bb5\u540d
-     * @param  {string} direction \u6392\u5e8f\u65b9\u5411 ASC,DESC
-     */
-    sort : function(field,direction){
-      var _self = this,
-        sortedElements = _self.sortData(field,direction),
-        itemContainer = _self.get('view').getItemContainer();
-      if(!_self.get('store')){
-        _self.sortData(field,direction,_self.get('items'));
-      }
-      BUI.each(sortedElements,function(el){
-        $(el).appendTo(itemContainer);
-      });
-    }
-
-  });
-
-  return Sortable;
-});/**
- * @fileOverview \u7b80\u5355\u5217\u8868\uff0c\u76f4\u63a5\u4f7f\u7528DOM\u4f5c\u4e3a\u5217\u8868\u9879
- * @ignore
- */
-
+});
 define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav','bui/list/sortable'],function (require) {
 
   /**
@@ -16941,12 +15386,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
 
   simpleList.View = simpleListView;
   return simpleList;
-});/**
- * @fileOverview \u53ef\u9009\u62e9\u7684\u5217\u8868
- * @author dengbin
- * @ignore
- */
-
+});
 define('bui/list/listbox',['bui/list/simplelist'],function (require) {
   var SimpleList = require('bui/list/simplelist');
   /**
@@ -16991,11 +15431,7 @@ define('bui/list/listbox',['bui/list/simplelist'],function (require) {
   });
 
   return listbox;
-});/**
- * @fileOverview \u5217\u8868\u9879
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/list/listitem',function ($) {
 
 
@@ -17048,10 +15484,7 @@ define('bui/list/listitem',function ($) {
   item.View = itemView;
   
   return item;
-});/**
- * @fileOverview \u5217\u8868
- * @ignore
- */
+});
 define('bui/list/list',function (require) {
   
   var Component = BUI.Component,
@@ -17098,12 +15531,10 @@ define('bui/list/list',function (require) {
   });
 
   return list;
-});/**
- * @fileOverview Picker\u7684\u5165\u53e3
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/picker',['bui/common','bui/picker/picker','bui/picker/listpicker'],function (require) {
   var BUI = require('bui/common'),
     Picker = BUI.namespace('Picker');
@@ -17114,11 +15545,7 @@ define('bui/picker',['bui/common','bui/picker/picker','bui/picker/listpicker'],f
   });
 
   return Picker;
-});/**
- * @fileOverview \u9009\u62e9\u5668
- * @ignore
- */
-
+});
 define('bui/picker/picker',['bui/overlay'],function (require) {
   
   var Overlay = require('bui/overlay').Overlay;
@@ -17409,11 +15836,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
   });
 
   return picker;
-});/**
- * @fileOverview \u5217\u8868\u9879\u7684\u9009\u62e9\u5668
- * @ignore
- */
-
+});
 define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (require) {
 
   var List = require('bui/list'),
@@ -17543,10 +15966,10 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
     });
 
   return listPicker;
-});/**
- * @fileOverview form \u547d\u540d\u7a7a\u95f4\u5165\u53e3
- * @ignore
- */
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 ;(function(){
 var BASE = 'bui/form/';
 define('bui/form',['bui/common',BASE + 'fieldcontainer',BASE + 'form',BASE + 'row',BASE + 'fieldgroup',BASE + 'horizontal',BASE + 'rules',BASE + 'field',BASE + 'fieldgroup'],function (r) {
@@ -17569,11 +15992,6 @@ define('bui/form',['bui/common',BASE + 'fieldcontainer',BASE + 'form',BASE + 'ro
   return Form;
 });
 })();
-/**
- * @fileOverview \u8f93\u5165\u63d0\u793a\u4fe1\u606f
- * @author dxq613@gmail.com
- * @ignore
- */
 
 define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
 
@@ -17822,11 +16240,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
   Tips.Item = tipItem;
   return Tips;
 
-});/**
- * @fileOverview \u8868\u5355\u5143\u7d20
- * @ignore
- */
-
+});
 define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/form/remote'],function (require){
 
   var BUI = require('bui/common'),
@@ -18433,12 +16847,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
   
   return field;
 
-});/**
- * @fileOverview \u8868\u5355\u6587\u672c\u57df
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/textfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
@@ -18454,12 +16863,7 @@ define('bui/form/textfield',['bui/form/basefield'],function (require) {
   });
 
   return textField;
-});/**
- * @fileOverview \u8868\u5355\u6587\u672c\u57df
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/numberfield',['bui/form/basefield'],function (require) {
 
   /**
@@ -18558,12 +16962,7 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
   });
 
   return numberField;
-});/**
-* @fileOverview \u9690\u85cf\u5b57\u6bb5
-* @ignore
-* @author dxq613@gmail.com
-*/
-
+});
 define('bui/form/hiddenfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
@@ -18592,12 +16991,7 @@ define('bui/form/hiddenfield',['bui/form/basefield'],function (require) {
 
   return hiddenField;
 
-});/**
-* @fileOverview \u53ea\u8bfb\u5b57\u6bb5
-* @ignore
-* @author dxq613@gmail.com
-*/
-
+});
 define('bui/form/readonlyfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
@@ -18623,11 +17017,7 @@ define('bui/form/readonlyfield',['bui/form/basefield'],function (require) {
 
   return readonlyField;
 
-});/**
- * @fileOverview \u6a21\u62df\u9009\u62e9\u6846\u5728\u8868\u5355\u4e2d
- * @ignore
- */
-
+});
 define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (require) {
 
   var BUI = require('bui/common'),
@@ -18836,12 +17226,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   });
 
   return selectField;
-});/**
- * @fileOverview \u8868\u5355\u65e5\u5386\u57df
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],function (require) {
 
   var BUI = require('bui/common'),
@@ -19014,11 +17399,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
   });
 
   return dateField;
-});/**
- * @fileOverview  \u53ef\u52fe\u9009\u5b57\u6bb5
- * @ignore
- */
-
+});
 define('bui/form/checkfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
@@ -19117,11 +17498,7 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
   });
 
   return checkField;
-});/**
- * @fileOverview  \u590d\u9009\u6846\u8868\u5355\u57df
- * @ignore
- */
-
+});
 define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
@@ -19159,11 +17536,7 @@ define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
   });
 
   return CheckBoxField;
-});/**
- * @fileOverview  \u5355\u9009\u6846\u8868\u5355\u57df
- * @ignore
- */
-
+});
 define('bui/form/radiofield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
@@ -19216,11 +17589,7 @@ define('bui/form/radiofield',['bui/form/checkfield'],function (required) {
   });
 
   return RadioField;
-});/**
- * @fileOverview \u4ec5\u4ec5\u7528\u4e8e\u663e\u793a\u6587\u672c\uff0c\u4e0d\u80fd\u7f16\u8f91\u7684\u5b57\u6bb5
- * @ignore
- */
-
+});
 define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
@@ -19303,323 +17672,7 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   return PlainField;
-});/**
- * @fileOverview \u8868\u5355\u4e2d\u7684\u5217\u8868\uff0c\u6bcf\u4e2a\u5217\u8868\u540e\u6709\u4e2a\u9690\u85cf\u57df\u7528\u6765\u5b58\u50a8\u6570\u636e
- * @ignore
- */
-
-define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],function (require) {
-  var BUI = require('bui/common'),
-    List = require('bui/list'),
-    Field = require('bui/form/basefield');
-
-  function parseItems(items){
-    var rst = items;
-    if($.isPlainObject(items)){
-      rst = [];
-      BUI.each(items,function(v,k){
-        rst.push({text : v,value : k});
-      });
-    }
-    return rst;
-  }
-
-  /**
-   * @class BUI.Form.Field.List
-   * \u8868\u5355\u4e2d\u7684\u5217\u8868
-   * @extends BUI.Form.Field
-   */
-  var List = Field.extend({
-
-    initializer : function(){
-      var _self = this;
-      //if(!_self.get('srcNode')){
-        _self._initList();
-      //}
-    },
-    _getList : function(){
-      var _self = this,
-        children = _self.get('children');
-      return children[0];
-    },
-    bindUI : function(){
-      var _self = this,
-        list = _self._getList();
-      if(list){
-        list.on('selectedchange',function(){
-          var value = _self._getListValue(list);
-          _self.set('value',value);
-        });
-      }
-    },
-    //\u83b7\u53d6\u5217\u8868\u503c
-    _getListValue : function(list){
-      var _self = this;
-      list = list || _self._getList();
-      return list.getSelectionValues().join(',');
-    },
-    /**
-     * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
-     * @protected
-     * @param {*} value \u5b57\u6bb5\u503c
-     */
-    setControlValue : function(value){
-      var _self = this,
-        innerControl = _self.getInnerControl(),
-        list = _self._getList();
-      innerControl.val(value);
-      if(_self._getListValue(list) !== value && list.getCount()){
-        if(list.get('multipleSelect')){
-          list.clearSelection();
-        }
-        list.setSelectionByField(value.split(','));
-      }
-    },
-    //\u540c\u6b65\u6570\u636e
-    syncUI : function(){
-       this.set('list',this._getList());
-    },
-    //\u521d\u59cb\u5316\u5217\u8868
-    _initList : function(){
-      var _self = this,
-        defaultListCfg = _self.get('defaultListCfg'),
-        children = _self.get('children'),
-        list = _self.get('list') || {};
-      if(children[0]){
-        return;
-      }
-      if($.isPlainObject(list)){
-        BUI.mix(list,defaultListCfg);
-      }
-      children.push(list);
-    },
-    /**
-     * \u8bbe\u7f6e\u9009\u9879
-     * @param {Array} items \u9009\u9879\u8bb0\u5f55
-     */
-    setItems : function(items){
-      var _self = this,
-        value = _self.get('value'),
-        list = _self._getList();
-      list.set('items',parseItems(items));
-      list.setSelectionByField(value.split(','));
-    },
-    //\u8bbe\u7f6e\u9009\u9879\u96c6\u5408
-    _uiSetItems : function(v){
-      if(v){
-        this.setItems(v);
-      }
-    }
-  },{
-    ATTRS : {
-      /**
-       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
-       * @type {String}
-       */
-      controlTpl : {
-        value : '<input type="hidden"/>'
-      },
-      /**
-       * @protected
-       * \u9ed8\u8ba4\u7684\u5217\u8868\u914d\u7f6e
-       * @type {Object}
-       */
-      defaultListCfg : {
-        value : {
-          xclass : 'simple-list'
-        }
-      },
-      /**
-       * \u9009\u9879
-       * @type {Array}
-       */
-      items : {
-        setter : function(v){
-          if($.isPlainObject(v)){
-            var rst = [];
-            BUI.each(v,function(v,k){
-              rst.push({value : k,text :v});
-            });
-            v = rst;
-          }
-          return v;
-        }
-      },
-      /**
-       * \u5217\u8868
-       * @type {BUI.List.SimpleList}
-       */
-      list : {
-
-      }
-    },
-    PARSER : {
-      list : function(el){
-        var listEl = el.find('.bui-simple-list');
-        if(listEl.length){
-          return {
-            srcNode : listEl
-          };
-        }
-      }
-    }
-  },{
-    xclass : 'form-field-list'
-  });
-
-  return List;
-});/**
- * @fileOverview \u6a21\u62df\u9009\u62e9\u6846\u5728\u8868\u5355\u4e2d
- * @ignore
- */
-
-define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (require) {
-
-  var BUI = require('bui/common'),
-    JSON = BUI.JSON,
-    Field = require('bui/form/basefield');
-
-  /**
-   * \u8868\u5355\u4e0a\u4f20\u57df
-   * @class BUI.Form.Field.Upload
-   * @extends BUI.Form.Field
-   */
-  var uploaderField = Field.extend({
-    //\u751f\u6210upload
-    renderUI : function(){
-      var _self = this,
-        innerControl = _self.getInnerControl();
-      if(_self.get('srcNode') && innerControl.get(0).type === 'file'){ //\u5982\u679c\u4f7f\u7528\u73b0\u6709DOM\u751f\u6210\uff0c\u4e0d\u4f7f\u7528\u4e0a\u4f20\u7ec4\u4ef6
-        return;
-      }
-      _self._initUpload();
-    },
-    _initUpload: function(){
-      var _self = this,
-        children = _self.get('children'),
-        uploader = _self.get('uploader') || {};
-
-      BUI.use('bui/uploader', function(Uploader){
-        uploader.render = _self.getControlContainer();
-        uploader.autoRender = true;
-        uploader = new Uploader.Uploader(uploader);
-        _self.set('uploader', uploader);
-        _self.set('isCreate',true);
-        _self.get('children').push(uploader);
-        uploader.get('uploaderType').on('success', function(ev){
-          var items = uploader.get('queue').getItems();
-          _self.setControlValue(items);
-        });
-      });
-    },
-    setControlValue: function(items){
-      var _self = this,
-        innerControl = _self.getInnerControl(),
-        result = [];
-      BUI.each(items, function(item){
-        result.push(item.result);
-      })
-      innerControl.val(JSON.stringify(result));
-    }
-  },{
-    ATTRS : {
-      /**
-       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
-       * @type {String}
-       */
-      controlTpl : {
-        value : '<input type="hidden"/>'
-      },
-      uploader: {
-      },
-      value:{
-        value: []
-      }
-    }
-  },{
-    xclass : 'form-field-uploader'
-  });
-
-  return uploaderField;
-});/**
- * @fileOverview \u53ef\u52fe\u9009\u7684\u5217\u8868\uff0c\u6a21\u62df\u591a\u4e2acheckbox
- * @ignore
- */
-
-define('bui/form/checklistfield',['bui/common','bui/form/listfield'],function (require) {
-  'use strict';
-  var BUI = require('bui/common'),
-    ListField = require('bui/form/listfield');
-
-  /**
-   * @class BUI.Form.Field.CheckList
-   * \u53ef\u52fe\u9009\u7684\u5217\u8868\uff0c\u6a21\u62df\u591a\u4e2acheckbox
-   * @extends BUI.Form.Field.List
-   */
-  var CheckList = ListField.extend({
-
-  },{
-    ATTRS : {
-      /**
-       * @protected
-       * \u9ed8\u8ba4\u7684\u5217\u8868\u914d\u7f6e
-       * @type {Object}
-       */
-      defaultListCfg : {
-        value : {
-          itemTpl : '<li><span class="x-checkbox"></span>{text}</li>',
-          multipleSelect : true,
-          allowTextSelection : false
-        }
-      }
-    }
-  },{
-    xclass : 'form-field-checklist'
-  });
-
-  return CheckList;
-
-});/**
- * @fileOverview \u53ef\u52fe\u9009\u7684\u5217\u8868\uff0c\u6a21\u62df\u591a\u4e2aradio
- * @ignore
- */
-
-define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (require) {
-  'use strict';
-  var BUI = require('bui/common'),
-    ListField = require('bui/form/listfield');
-
-  /**
-   * @class BUI.Form.Field.RadioList
-   * \u53ef\u52fe\u9009\u7684\u5217\u8868\uff0c\u6a21\u62df\u591a\u4e2aradio
-   * @extends BUI.Form.Field.List
-   */
-  var RadioList = ListField.extend({
-
-  },{
-    ATTRS : {
-      /**
-       * @protected
-       * \u9ed8\u8ba4\u7684\u5217\u8868\u914d\u7f6e
-       * @type {Object}
-       */
-      defaultListCfg : {
-        value : {
-          itemTpl : '<li><span class="x-radio"></span>{text}</li>',
-          allowTextSelection : false
-        }
-      }
-    }
-  },{
-    xclass : 'form-field-radiolist'
-  });
-
-  return RadioList;
-
-});/**
- * @fileOverview \u8868\u5355\u57df\u7684\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
+});
 ;(function(){
 var BASE = 'bui/form/';
 define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
@@ -19648,10 +17701,6 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
 });
 
 })();
-/**
- * @fileOverview \u8868\u5355\u9a8c\u8bc1
- * @ignore
- */
 
 define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
@@ -19993,11 +18042,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
   Valid.View = ValidView;
   return Valid;
-});/**
- * @fileOverview \u8868\u5355\u5206\u7ec4\u9a8c\u8bc1
- * @ignore
- */
-
+});
 define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   
   var CLS_ERROR = 'x-form-error',
@@ -20173,10 +18218,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   GroupValid.View = GroupValidView;
 
   return GroupValid;
-});/**
- * @fileOverview \u8868\u5355\u5b57\u6bb5\u7684\u5bb9\u5668\u6269\u5c55
- * @ignore
- */
+});
 define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupvalid'],function (require) {
   var BUI = require('bui/common'),
     Field = require('bui/form/field'),
@@ -20542,12 +18584,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
   container.View = containerView;
   return container;
   
-});/**
- * @fileOverview \u8868\u5355\u6587\u672c\u57df\u7ec4\uff0c\u53ef\u4ee5\u5305\u542b\u4e00\u4e2a\u81f3\u591a\u4e2a\u5b57\u6bb5
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/group/base',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
@@ -20577,11 +18614,7 @@ define('bui/form/group/base',['bui/common','bui/form/fieldcontainer'],function (
   });
 
   return Group;
-});/**
- * @fileOverview \u8303\u56f4\u7684\u5b57\u6bb5\u7ec4\uff0c\u6bd4\u5982\u65e5\u671f\u8303\u56f4\u7b49
- * @ignore
- */
-
+});
 define('bui/form/group/range',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
@@ -20653,11 +18686,7 @@ define('bui/form/group/range',['bui/form/group/base'],function (require) {
   });
 
   return Range;
-});/**
- * @fileOverview \u9009\u62e9\u5206\u7ec4\uff0c\u5305\u542b\uff0ccheckbox,radio
- * @ignore
- */
-
+});
 define('bui/form/group/check',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
@@ -20733,11 +18762,7 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
 
   return Check;
 
-});/**
- * @fileOverview \u9009\u62e9\u6846\u5206\u7ec4
- * @ignore
- */
-
+});
 define('bui/form/group/select',['bui/form/group/base','bui/data'],function (require) {
   var Group = require('bui/form/group/base'),
     Data = require('bui/data'),
@@ -20885,12 +18910,7 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
 
 
   return Select;
-});/**
- * @fileOverview \u8868\u5355\u6587\u672c\u57df\u7ec4\uff0c\u53ef\u4ee5\u5305\u542b\u4e00\u4e2a\u81f3\u591a\u4e2a\u5b57\u6bb5
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/fieldgroup',['bui/common','bui/form/group/base','bui/form/group/range','bui/form/group/check','bui/form/group/select'],function (require) {
   var BUI = require('bui/common'),
     Group = require('bui/form/group/base');
@@ -20901,11 +18921,7 @@ define('bui/form/fieldgroup',['bui/common','bui/form/group/base','bui/form/group
     Select : require('bui/form/group/select')
   });
   return Group;
-});/**
- * @fileOverview \u521b\u5efa\u8868\u5355
- * @ignore
- */
-
+});
 define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],function (require) {
   
   var BUI = require('bui/common'),
@@ -21253,11 +19269,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
   
   Form.View = FormView;
   return Form;
-});/**
- * @fileOverview \u5782\u76f4\u8868\u5355
- * @ignore
- */
-
+});
 define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
   var BUI = require('bui/common'),
     Form = require('bui/form/form');
@@ -21306,11 +19318,7 @@ define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
     xclass : 'form-horizontal'
   });
   return Horizontal;
-});/**
- * @fileOverview \u8868\u5355\u91cc\u7684\u4e00\u884c\u5143\u7d20
- * @ignore
- */
-
+});
 define('bui/form/row',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
@@ -21349,11 +19357,7 @@ define('bui/form/row',['bui/common','bui/form/fieldcontainer'],function (require
   });
 
   return Row;
-});/**
- * @fileOverview \u9a8c\u8bc1\u89c4\u5219
- * @ignore
- */
-
+});
 define('bui/form/rule',['bui/common'],function (require) {
 
   var BUI = require('bui/common');
@@ -21476,11 +19480,7 @@ define('bui/form/rule',['bui/common'],function (require) {
   return Rule;
 
 
-});/**
- * @fileOverview \u9a8c\u8bc1\u96c6\u5408
- * @ignore
- */
-
+});
 define('bui/form/rules',['bui/form/rule'],function (require) {
 
   var Rule = require('bui/form/rule');
@@ -22044,11 +20044,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   
 
   return rules;
-});/**
- * @fileOverview \u8868\u5355\u5f02\u6b65\u8bf7\u6c42\uff0c\u5f02\u6b65\u6821\u9a8c\u3001\u8fdc\u7a0b\u83b7\u53d6\u6570\u636e
- * @ignore
- */
-
+});
 define('bui/form/remote',['bui/common'],function(require) {
   var BUI = require('bui/common');
 
@@ -22331,11 +20327,10 @@ define('bui/form/remote',['bui/common'],function(require) {
 
   Remote.View = RemoteView;
   return Remote;
-});/**
- * @fileOverview \u9009\u62e9\u6846\u547d\u540d\u7a7a\u95f4\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/select',['bui/common','bui/select/select','bui/select/combox','bui/select/suggest'],function (require) {
   var BUI = require('bui/common'),
     Select = BUI.namespace('Select');
@@ -22346,12 +20341,7 @@ define('bui/select',['bui/common','bui/select/select','bui/select/combox','bui/s
     Suggest: require('bui/select/suggest')
   });
   return Select;
-});/**
- * @fileOverview \u9009\u62e9\u63a7\u4ef6
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/select/select',['bui/common','bui/picker'],function (require) {
   'use strict';
   var BUI = require('bui/common'),
@@ -22776,11 +20766,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
 
   return select;
 
-});/**
- * @fileOverview \u7ec4\u5408\u6846\u53ef\u7528\u4e8e\u9009\u62e9\u8f93\u5165\u6587\u672c
- * @ignore
- */
-
+});
 define('bui/select/combox',['bui/common','bui/select/select'],function (require) {
 
   var BUI = require('bui/common'),
@@ -22864,11 +20850,7 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
   });
 
   return combox;
-});/**
- * @fileOverview \u7ec4\u5408\u6846\u53ef\u7528\u4e8e\u9009\u62e9\u8f93\u5165\u6587\u672c
- * @ignore
- */
-
+});
 define('bui/select/suggest',['bui/common','bui/select/combox'],function (require) {
   'use strict';
   var BUI = require('bui/common'),
@@ -23213,22 +21195,16 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
   });
 
   return suggest;
-});/**
- * @fileOverview Mask\u7684\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/mask',['bui/common','bui/mask/mask','bui/mask/loadmask'],function (require) {
   var BUI = require('bui/common'),
     Mask = require('bui/mask/mask');
   Mask.LoadMask = require('bui/mask/loadmask');
   return Mask;
-});/**
- * @fileOverview Mask\u5c4f\u853d\u5c42
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/mask/mask',['bui/common'],function (require) {
 
     var BUI = require('bui/common'),
@@ -23314,11 +21290,7 @@ define('bui/mask/mask',['bui/common'],function (require) {
     });
     
     return Mask;
-});/**
- * @fileOverview \u52a0\u8f7d\u6570\u636e\u65f6\u5c4f\u853d\u5c42
- * @ignore
- */
-
+});
 define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
   
   var Mask = require('bui/mask/mask');
@@ -23456,11 +21428,10 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
     });
 
     return LoadMask;
-});/**
- * @fileOverview \u83dc\u5355\u547d\u540d\u7a7a\u95f4\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/menu',['bui/common','bui/menu/menu','bui/menu/menuitem','bui/memu/contextmenu','bui/menu/popmenu','bui/menu/sidemenu'],function (require) {
   
   var BUI = require('bui/common'),
@@ -23475,10 +21446,7 @@ define('bui/menu',['bui/common','bui/menu/menu','bui/menu/menuitem','bui/memu/co
 
   Menu.ContextMenuItem = Menu.ContextMenu.Item;
   return Menu;
-});/**
- * @fileOverview \u83dc\u5355\u9879
- * @ignore
- */
+});
 define('bui/menu/menuitem',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
@@ -23723,12 +21691,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
   menuItem.Separator = separator;
   
   return menuItem;
-});/**
- * @fileOverview \u83dc\u5355\u57fa\u7c7b
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/menu/menu',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
@@ -23873,12 +21836,7 @@ define('bui/menu/menu',['bui/common'],function(require){
   });
 
   return Menu;
-});/**
- * @fileOverview \u4e0b\u62c9\u83dc\u5355\uff0c\u4e00\u822c\u7528\u4e8e\u4e0b\u62c9\u663e\u793a\u83dc\u5355
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
 
   var BUI = require('bui/common'),
@@ -23941,12 +21899,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
   
   return popMenu;
 
-});/**
- * @fileOverview \u5f39\u51fa\u83dc\u5355\uff0c\u4e00\u822c\u7528\u4e8e\u53f3\u952e\u83dc\u5355
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmenu'],function (require) {
 
   var BUI = require('bui/common'),
@@ -24044,11 +21997,7 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   contextMenu.Item = contextMenuItem;
   return contextMenu;
 });
-/**
- * @fileOverview \u4fa7\u8fb9\u680f\u83dc\u5355
- * @author dxq613@gmail.com
- * @ignore
- */
+
 define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
   var BUI = require('bui/common'),
@@ -24192,11 +22141,10 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
   });
 
   return sideMenu;
-});/**
- * @fileOverview \u5207\u6362\u6807\u7b7e\u5165\u53e3
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/tab',['bui/common','bui/tab/tab','bui/tab/tabitem','bui/tab/navtabitem','bui/tab/navtab','bui/tab/tabpanel','bui/tab/tabpanelitem'],function (require) {
   var BUI = require('bui/common'),
     Tab = BUI.namespace('Tab');
@@ -24211,273 +22159,7 @@ define('bui/tab',['bui/common','bui/tab/tab','bui/tab/tabitem','bui/tab/navtabit
   });
 
   return Tab;
-});/**
- * @fileOverview \u62e5\u6709\u5185\u5bb9\u7684\u6807\u7b7e\u9879\u7684\u6269\u5c55\u7c7b\uff0c\u6bcf\u4e2a\u6807\u7b7e\u9879\u90fd\u6709\u4e00\u4e2a\u5206\u79bb\u7684\u5bb9\u5668\u4f5c\u4e3a\u9762\u677f
- * @ignore
- */
-
-define('bui/tab/panelitem',function (requrie) {
-
-  /**
-   * @class BUI.Tab.PanelItem
-   * \u5305\u542b\u9762\u677f\u7684\u6807\u7b7e\u9879\u7684\u6269\u5c55
-   */
-  var PanelItem = function(){
-
-  };
-
-  PanelItem.ATTRS = {
-
-    /**
-     * \u6807\u7b7e\u9879\u5bf9\u5e94\u7684\u9762\u677f\u5bb9\u5668\uff0c\u5f53\u6807\u7b7e\u9009\u4e2d\u65f6\uff0c\u9762\u677f\u663e\u793a
-     * @cfg {String|HTMLElement|jQuery} panel
-     * @internal \u9762\u677f\u5c5e\u6027\u4e00\u822c\u7531 tabPanel\u8bbe\u7f6e\u800c\u4e0d\u5e94\u8be5\u7531\u7528\u6237\u624b\u5de5\u8bbe\u7f6e
-     */
-    /**
-     * \u6807\u7b7e\u9879\u5bf9\u5e94\u7684\u9762\u677f\u5bb9\u5668\uff0c\u5f53\u6807\u7b7e\u9009\u4e2d\u65f6\uff0c\u9762\u677f\u663e\u793a
-     * @type {String|HTMLElement|jQuery}
-     * @readOnly
-     */
-    panel : {
-
-    },
-    /**
-     * \u9762\u677f\u7684\u5185\u5bb9
-     * @type {String}
-     */
-    panelContent : {
-
-    },
-    /**
-     * \u5173\u8054\u9762\u677f\u663e\u793a\u9690\u85cf\u7684\u5c5e\u6027\u540d
-     * @protected
-     * @type {string}
-     */
-    panelVisibleStatus : {
-      value : 'selected'
-    },
-    /**
-       * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
-       * <pre>
-       *  {
-       *   property : 'panelContent',
-       *   lazyLoad : {
-       *       event : 'active'
-       *   },
-       *     loadMask : {
-       *       el : _self.get('panel')
-       *   }
-       * }
-       * </pre>
-       * @type {Object}
-       */
-      defaultLoaderCfg  : {
-        valueFn :function(){
-          var _self = this,
-            eventName = _self._getVisibleEvent();
-          return {
-            property : 'panelContent',
-            autoLoad : false,
-            lazyLoad : {
-              event : eventName
-            },
-            loadMask : {
-              el : _self.get('panel')
-            }
-          }
-        } 
-      },
-    /**
-     * \u9762\u677f\u662f\u5426\u8ddf\u968f\u6807\u7b7e\u4e00\u8d77\u91ca\u653e
-     * @type {Boolean}
-     */
-    panelDestroyable : {
-      value : true
-    }
-  }
-
-
-  BUI.augment(PanelItem,{
-
-    __renderUI : function(){
-      this._resetPanelVisible();
-    },
-    __bindUI : function(){
-      var _self = this,
-      eventName = _self._getVisibleEvent();
-
-      _self.on(eventName,function(ev){
-        _self._setPanelVisible(ev.newVal);
-      });
-    },
-    _resetPanelVisible : function(){
-      var _self = this,
-        status = _self.get('panelVisibleStatus'),
-        visible = _self.get(status);
-      _self._setPanelVisible(visible);
-    },
-    //\u83b7\u53d6\u663e\u793a\u9690\u85cf\u7684\u4e8b\u4ef6
-    _getVisibleEvent : function(){
-      var _self = this,
-        status = _self.get('panelVisibleStatus');
-
-      return 'after' + BUI.ucfirst(status) + 'Change';;
-    },
-    /**
-     * @private
-     * \u8bbe\u7f6e\u9762\u677f\u7684\u53ef\u89c1
-     * @param {Boolean} visible \u663e\u793a\u6216\u8005\u9690\u85cf
-     */
-    _setPanelVisible : function(visible){
-      var _self = this,
-        panel = _self.get('panel'),
-        method = visible ? 'show' : 'hide';
-      if(panel){
-        $(panel)[method]();
-      }
-    },
-    __destructor : function(){
-      var _self = this,
-        panel = _self.get('panel');
-      if(panel && _self.get('panelDestroyable')){
-        $(panel).remove();
-      }
-    },
-    _setPanelContent : function(panel,content){
-      var panelEl = $(panel);
-      $(panel).html(content);
-    },
-    _uiSetPanelContent : function(v){
-      var _self = this,
-        panel = _self.get('panel');
-      //$(panel).html(v);
-      _self._setPanelContent(panel,v);
-    },
-    //\u8bbe\u7f6epanel
-    _uiSetPanel : function(v){
-      var _self = this,
-        content = _self.get('panelContent');
-      if(content){
-        _self._setPanelContent(v,content);
-      }
-      _self._resetPanelVisible();
-    }
-  });
-
-  return PanelItem;
-
-});/**
- * @fileOverview \u62e5\u6709\u591a\u4e2a\u9762\u677f\u7684\u5bb9\u5668
- * @ignore
- */
-
-define('bui/tab/panels',function (require) {
-  
-  /**
-   * @class BUI.Tab.Panels
-   * \u5305\u542b\u9762\u677f\u7684\u6807\u7b7e\u7684\u6269\u5c55\u7c7b
-   */
-  var Panels = function(){
-    //this._initPanels();
-  };
-
-  Panels.ATTRS = {
-
-    /**
-     * \u9762\u677f\u7684\u6a21\u677f
-     * @type {String}
-     */
-    panelTpl : {
-
-    },
-    /**
-     * \u9762\u677f\u7684\u5bb9\u5668\uff0c\u5982\u679c\u662fid\u76f4\u63a5\u901a\u8fc7id\u67e5\u627e\uff0c\u5982\u679c\u662f\u975eid\uff0c\u90a3\u4e48\u4eceel\u5f00\u59cb\u67e5\u627e,\u4f8b\u5982\uff1a
-     *   -#id \uff1a \u901a\u8fc7$('#id')\u67e5\u627e
-     *   -.cls : \u901a\u8fc7 this.get('el').find('.cls') \u67e5\u627e
-     *   -DOM/jQuery \uff1a\u4e0d\u9700\u8981\u67e5\u627e
-     * @type {String|HTMLElement|jQuery}
-     */
-    panelContainer : {
-      
-    },
-    /**
-     * panel \u9762\u677f\u4f7f\u7528\u7684\u6837\u5f0f\uff0c\u5982\u679c\u521d\u59cb\u5316\u65f6\uff0c\u5bb9\u5668\u5185\u5df2\u7ecf\u5b58\u5728\u6709\u8be5\u6837\u5f0f\u7684DOM\uff0c\u5219\u4f5c\u4e3a\u9762\u677f\u4f7f\u7528
-     * \u5bf9\u5e94\u540c\u4e00\u4e2a\u4f4d\u7f6e\u7684\u6807\u7b7e\u9879,\u5982\u679c\u4e3a\u7a7a\uff0c\u9ed8\u8ba4\u53d6\u9762\u677f\u5bb9\u5668\u7684\u5b50\u5143\u7d20
-     * @type {String}
-     */
-    panelCls : {
-
-    }
-  };
-
-  BUI.augment(Panels,{
-
-    __renderUI : function(){
-      var _self = this,
-        children = _self.get('children'),
-        panelContainer = _self._initPanelContainer(),
-        panelCls = _self.get('panelCls'),
-        panels = panelCls ? panelContainer.find('.' + panels) : panelContainer.children();
-
-      BUI.each(children,function(item,index){
-        var panel = panels[index];
-        _self._initPanelItem(item,panel);
-      });
-    },
-
-    __bindUI : function(){
-      var _self = this;
-      _self.on('beforeAddChild',function(ev){
-        var item = ev.child;
-        _self._initPanelItem(item);
-      });
-    },
-    //\u521d\u59cb\u5316\u5bb9\u5668
-    _initPanelContainer : function(){
-      var _self = this,
-        panelContainer = _self.get('panelContainer');
-      if(panelContainer && BUI.isString(panelContainer)){
-        if(panelContainer.indexOf('#') == 0){ //\u5982\u679c\u662fid
-          panelContainer = $(panelContainer);
-        }else{
-          panelContainer = _self.get('el').find(panelContainer);
-        }
-        _self.setInternal('panelContainer',panelContainer);
-      }
-      return panelContainer;
-    },
-    //\u521d\u59cb\u5316\u9762\u677f\u914d\u7f6e\u4fe1\u606f
-    _initPanelItem : function(item,panel){
-      var _self = this;
-
-      if(item.set){
-        if(!item.get('panel')){
-          panel = panel || _self._getPanel(item.get('userConfig'));
-          item.set('panel',panel);
-        }
-      }else{
-        if(!item.panel){
-          panel = panel || _self._getPanel(item);
-          item.panel = panel;
-        }
-      }
-    },
-    //\u83b7\u53d6\u9762\u677f
-    _getPanel : function(item){
-      var _self = this,
-        panelContainer = _self.get('panelContainer'),
-        panelTpl = BUI.substitute(_self.get('panelTpl'),item);
-      
-      return $(panelTpl).appendTo(panelContainer);
-    }
-  });
-
-  return Panels;
-});/**
- * @fileOverview \u5bfc\u822a\u9879
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/tab/navtabitem',['bui/common'],function(requrie){
 
   var BUI = requrie('bui/common'),
@@ -24823,11 +22505,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
 
   navTabItem.View = navTabItemView;
   return navTabItem;
-});/**
- * @fileOverview \u5bfc\u822a\u6807\u7b7e
- * @author dxq613@gmail.com
- * @ignore              
- */
+});
 define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
 
   var BUI = require('bui/common'),
@@ -25429,11 +23107,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
   );
 
   return navTab;
-});/**
- * @fileOverview 
- * @ignore
- */
-
+});
 define('bui/tab/tabitem',['bui/common'],function (require) {
   
 
@@ -25485,11 +23159,7 @@ define('bui/tab/tabitem',['bui/common'],function (require) {
   
   item.View = itemView;
   return item;
-});/**
- * @fileOverview \u5207\u6362\u6807\u7b7e
- * @ignore
- */
-
+});
 define('bui/tab/tab',['bui/common'],function (require) {
   
 
@@ -25549,11 +23219,7 @@ define('bui/tab/tab',['bui/common'],function (require) {
 
   return tab;
 
-});/**
- * @fileOverview 
- * @ignore
- */
-
+});
 define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem'],function (require) {
   
 
@@ -25609,11 +23275,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
   item.View = itemView;
   return item;
 
-});/**
- * @fileOverview \u6bcf\u4e2a\u6807\u7b7e\u5bf9\u5e94\u4e00\u4e2a\u9762\u677f
- * @ignore
- */
-
+});
 define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function (require) {
   
   var BUI = require('bui/common'),
@@ -25707,11 +23369,10 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function
   });
 
   return tabPanel;
-});/**
- * @fileOverview \u5de5\u5177\u680f\u547d\u540d\u7a7a\u95f4\u5165\u53e3
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/toolbar',['bui/common','bui/toolbar/baritem','bui/toolbar/bar','bui/toolbar/pagingbar','bui/toolbar/numberpagingbar'],function (require) {
   var BUI = require('bui/common'),
     Toolbar = BUI.namespace('Toolbar');
@@ -25723,11 +23384,7 @@ define('bui/toolbar',['bui/common','bui/toolbar/baritem','bui/toolbar/bar','bui/
     NumberPagingBar : require('bui/toolbar/numberpagingbar')
   });
   return Toolbar;
-});/**
- * @fileOverview buttons or controls of toolbar
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
+});
 define('bui/toolbar/baritem',function(){
 
   /**
@@ -25985,11 +23642,7 @@ define('bui/toolbar/baritem',function(){
   
 
   return BarItem;
-});/**
- * @fileOverview A collection of commonly used function buttons or controls represented in compact visual form.
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
+});
 define('bui/toolbar/bar',function(){
 
 	var Component = BUI.Component,
@@ -26095,11 +23748,7 @@ define('bui/toolbar/bar',function(){
 	});
 
 	return Bar;
-});/**
- * @fileOverview  a specialized toolbar that is bound to a Grid.Store and provides automatic paging control.
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
+});
 define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
 
     var Bar = require('bui/toolbar/bar'),
@@ -26596,11 +24245,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
 
     return PagingBar;
 
-});/**
- * @fileOverview  a specialized toolbar that is bound to a Grid.Store and provides automatic paging control.
- * @author 
- * @ignore
- */
+});
 define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require) {
 
     var Component = BUI.Component,
@@ -26819,11 +24464,10 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
 
     return NumberPagingBar;
 
-});/**
- * @fileOverview \u8fdb\u5ea6\u6761\u547d\u540d\u7a7a\u95f4\u5165\u53e3
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/progressbar',['bui/common','bui/progressbar/base','bui/progressbar/load'],function (require) {
   var BUI = require('bui/common'),
     ProgressBar = BUI.namespace('ProgressBar');
@@ -26833,12 +24477,7 @@ define('bui/progressbar',['bui/common','bui/progressbar/base','bui/progressbar/l
   });
 
   return ProgressBar;
-});/**
- * @fileOverview \u8fdb\u5ea6\u6761
- * @author dengbin
- * @ignore
- */
-
+});
 define('bui/progressbar/base',['bui/common'],function(require){
 
 	var BUI = require('bui/common');
@@ -26905,12 +24544,7 @@ define('bui/progressbar/base',['bui/common'],function(require){
 	});
 
 	return progressBar;
-});/**
- * @fileOverview \u5f02\u6b65\u8fdb\u5ea6\u6761
- * @author dengbin
- * @ignore
- */
-
+});
 define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 
 	var Base = require('bui/progressbar/base'),
@@ -27123,11 +24757,10 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 
 	return loadProgressBar;
 });
-/**
- * @fileOverview \u65e5\u5386\u547d\u540d\u7a7a\u95f4\u5165\u53e3
- * @ignore
- */
 
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/calendar',['bui/common','bui/calendar/calendar','bui/calendar/monthpicker','bui/calendar/datepicker'],function (require) {
   var BUI = require('bui/common'),
     Calendar = BUI.namespace('Calendar');
@@ -27138,12 +24771,7 @@ define('bui/calendar',['bui/common','bui/calendar/calendar','bui/calendar/monthp
   });
 
   return Calendar;
-});/**
- * @fileOverview \u9009\u62e9\u5e74\u6708
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/toolbar'],function (require){
   var BUI = require('bui/common'),
     Component = BUI.Component,
@@ -27480,11 +25108,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
   });
   return monthPicker;
 
-});/**
- * @fileOverview \u65e5\u671f\u63a7\u4ef6\u6765\u9009\u62e9\u5e74\u6708\u7684\u90e8\u5206
- * @ignore
- */
-
+});
 define('bui/calendar/header',['bui/common'],function (require) {
   
   var BUI = require('bui/common'),
@@ -27629,11 +25253,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
 
   return header;
 
-});/**
- * @fileOverview \u65e5\u5386\u63a7\u4ef6\u663e\u793a\u4e00\u6708\u7684\u65e5\u671f
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/calendar/panel',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
@@ -28024,12 +25644,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
   });
 
   return panel;
-});/**
- * @fileOverview \u65e5\u671f\u63a7\u4ef6
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
 
   var BUI = require('bui/common'),
@@ -28510,11 +26125,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
   });
 
   return calendar;
-});/**
- * @fileOverview \u65e5\u671f\u9009\u62e9\u5668
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calendar'],function(require){
   
   var BUI = require('bui/common'),
@@ -28743,11 +26354,10 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
   });
   return datepicker;
   
-});/**
- * @fileOverview \u7f16\u8f91\u5668\u547d\u540d\u7a7a\u95f4\u5165\u53e3
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/editor',['bui/common','bui/form','bui/editor/editor','bui/editor/record','bui/editor/dialog'],function (require) {
   var BUI = require('bui/common'),
     Form = require('bui/form'),
@@ -28759,11 +26369,7 @@ define('bui/editor',['bui/common','bui/form','bui/editor/editor','bui/editor/rec
     DialogEditor : require('bui/editor/dialog')
   });
   return Editor;
-});/**
- * @fileOverview \u7f16\u8f91\u5668\u6269\u5c55\u7c7b\uff0c\u5f15\u5165\u8fd9\u4e2a\u6269\u5c55\uff0c\u63a7\u4ef6\u53ef\u4ee5\u652f\u6301\u7f16\u8f91\u5668\u529f\u80fd\u3002
- * @ignore
- */
-
+});
 define('bui/editor/mixin',function (require) {
 
   function initEditor (self) {
@@ -29065,12 +26671,7 @@ define('bui/editor/mixin',function (require) {
   };
 
   return Mixin;
-});/**
- * @ignore
- * @fileOverview \u7f16\u8f91\u5668
- * @author dxq613@gmail.com
- */
-
+});
 define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],function (require) {
   var BUI = require('bui/common'),
     Overlay = require('bui/overlay').Overlay
@@ -29261,11 +26862,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
   });
 
   return editor;
-});/**
- * @fileOverview \u5bf9\u8c61\u7f16\u8f91\u5668
- * @ignore
- */
-
+});
 define('bui/editor/record',['bui/common','bui/editor/editor'],function (require) {
   var BUI = require('bui/common'),
     Editor = require('bui/editor/editor');
@@ -29406,11 +27003,7 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
   });
 
   return editor;
-});/**
- * @fileOverview \u4f7f\u7528\u5f39\u51fa\u6846\u4f5c\u4e3a\u7f16\u8f91\u5668
- * @ignore
- */
-
+});
 define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require) {
   var Dialog = require('bui/overlay').Dialog,
     Mixin = require('bui/editor/mixin');
@@ -29566,11 +27159,10 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
   });
 
   return editor;
-});/**
- * @fileOverview \u8868\u683c\u547d\u540d\u7a7a\u95f4\u5165\u53e3
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/grid',['bui/common','bui/grid/simplegrid','bui/grid/grid','bui/grid/column','bui/grid/header','bui/grid/format','bui/grid/plugins'],function (require) {
 
   var BUI = require('bui/common'),
@@ -29587,11 +27179,7 @@ define('bui/grid',['bui/common','bui/grid/simplegrid','bui/grid/grid','bui/grid/
 
   return Grid;
 
-});/**
- * @fileOverview \u7b80\u5355\u8868\u683c,\u4ec5\u7528\u4e8e\u5c55\u793a\u6570\u636e
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   
   var BUI = require('bui/common'),
@@ -29946,12 +27534,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   
   simpleGrid.View = simpleGridView;
   return  simpleGrid;
-});/**
- * @fileOverview This class specifies the definition for a column of a grid.
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/grid/column',['bui/common'],function (require) {
 
     var	BUI = require('bui/common'),
@@ -30458,11 +28041,6 @@ define('bui/grid/column',['bui/common'],function (require) {
 
 });
 	
-/**
- * @fileOverview \u8868\u683c\u7684\u5934\u90e8
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
 
 define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
@@ -30962,12 +28540,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
     });
   
   return header;
-});/**
- * @fileOverview \u8868\u683c
- * @ignore
- * @author dxq613@gmail.com
- */
-
+});
 define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/grid/header','bui/grid/column'],function (require) {
 
   var BUI = require('bui/common'),
@@ -32294,10 +29867,6 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
  * 2013.1.18 
  *   \u8fd9\u662f\u4e00\u4e2a\u91cd\u6784\u7684\u7248\u672c\uff0c\u5c06Body\u53d6\u6d88\u6389\u4e86\uff0c\u76ee\u7684\u662f\u4e3a\u4e86\u53ef\u4ee5\u5c06Grid\u548cSimpleGrid\u8054\u7cfb\u8d77\u6765\uff0c
  *   \u540c\u65f6\u5c06selection \u7edf\u4e00         
- *//**
- * @fileOverview this class details some util tools of grid,like loadMask, formatter for grid's cell render
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
  */
 define('bui/grid/format',function (require) {
 
@@ -32442,11 +30011,7 @@ define('bui/grid/format',function (require) {
     };
 
     return Format;
-});/**
- * @fileOverview \u8868\u683c\u63d2\u4ef6\u7684\u5165\u53e3
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
+});
 ;(function(){
 var BASE = 'bui/grid/plugins/';
 define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',
@@ -32472,63 +30037,7 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 	return Plugins;
 });
 })();
-/**
- * @fileOverview \u81ea\u52a8\u9002\u5e94\u8868\u683c\u5bbd\u5ea6\u7684\u6269\u5c55
- * @ignore
- */
 
-define('bui/grid/plugins/autofit',['bui/common'],function (require) {
-  var BUI = require('bui/common');
-
-  /**
-   * \u8868\u683c\u81ea\u9002\u5e94\u5bbd\u5ea6
-   * @class BUI.Grid.Plugins.AutoFit
-   * @extends BUI.Base
-   */
-  var AutoFit = function(cfg){
-    AutoFit.superclass.constructor.call(this,cfg);
-  };
-
-  BUI.extend(AutoFit,BUI.Base);
-
-  AutoFit.ATTRS = {
-
-  };
-
-  BUI.augment(AutoFit,{
-    //\u7ed1\u5b9a\u4e8b\u4ef6
-    bindUI : function(grid){
-      var _self = this,
-        handler;
-      $(window).on('resize',function(){
-
-        function autoFit(){
-          clearTimeout(handler); //\u9632\u6b62resize\u77ed\u65f6\u95f4\u5185\u53cd\u590d\u8c03\u7528
-          handler = setTimeout(function(){
-            _self._autoFit(grid);
-          },100);
-        }
-        autoFit();
-      });
-    },
-    //\u81ea\u9002\u5e94\u5bbd\u5ea6
-    _autoFit : function(grid){
-      var render = grid.get('render'),
-          width;
-        grid.set('visible',false);
-        width = $(render).width();
-
-        grid.set('visible',true);
-        grid.set('width',width);
-    }
-
-  });
-
-  return AutoFit;
-});/**
- * @fileOverview Grid \u83dc\u5355
- * @ignore
- */
 define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
   var BUI = require('bui/common'),
@@ -32771,11 +30280,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
   return gridMenu;
 
-});/**
- * @fileOverview \u7ea7\u8054\u8868\u683c
- * @ignore
- */
-
+});
 define('bui/grid/plugins/cascade',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
@@ -33165,11 +30670,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   });
 
   return cascade;
-});/**
- * @fileOverview \u9009\u62e9\u7684\u63d2\u4ef6
- * @ignore
- */
-
+});
 define('bui/grid/plugins/selection',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
@@ -33372,11 +30873,7 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
 
   
   return Selection;
-});/**
- * @fileOverview \u8868\u683c\u6570\u636e\u6c47\u603b
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
@@ -33701,11 +31198,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
   });
 
   return summary;
-});/**
- * @fileOverview \u8868\u683c\u7f16\u8f91\u63d2\u4ef6
- * @ignore
- */
-
+});
 define('bui/grid/plugins/editing',function (require) {
 
   var CLS_CELL_INNER = BUI.prefix + 'grid-cell-inner',
@@ -34220,11 +31713,7 @@ define('bui/grid/plugins/editing',function (require) {
   });
 
   return Editing;
-});/**
- * @fileOverview \u8868\u683c\u5355\u5143\u683c\u7f16\u8f91
- * @ignore
- */
-
+});
 define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (require) {
   var Editing = require('bui/grid/plugins/editing'),
     CLS_BODY = BUI.prefix + 'grid-body',
@@ -34384,11 +31873,7 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
   });
 
   return CellEditing;
-});/**
- * @fileOverview \u8868\u683c\u884c\u7f16\u8f91
- * @ignore
- */
-
+});
 define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],function (require) {
    var BUI = require('bui/common'),
     Editing = require('bui/grid/plugins/editing'),
@@ -34599,11 +32084,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     }
   });
   return RowEditing;
-});/**
- * @fileOverview \u8868\u683c\u8ddf\u8868\u5355\u8054\u7528
- * @ignore
- */
-
+});
 define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   var BUI = require('bui/common'),
     TYPE_ADD = 'add',
@@ -34817,61 +32298,10 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   });
 
   return Dialog;
-});define('bui/grid/plugins/rownumber',function (require) {
-
-  var CLS_NUMBER = 'x-grid-rownumber';
-  /**
-   * @class BUI.Grid.Plugins.RowNumber
-   * \u8868\u683c\u663e\u793a\u884c\u5e8f\u53f7\u7684\u63d2\u4ef6
-   */
-  function RowNumber(config){
-    RowNumber.superclass.constructor.call(this, config);
-  }
-
-  BUI.extend(RowNumber,BUI.Base);
-
-  RowNumber.ATTRS = 
-  {
-    /**
-    * column's width which contains the row number
-    */
-    width : {
-      value : 40
-    },
-    /**
-    * @private
-    */
-    column : {
-      
-    }
-  };
-
-  BUI.augment(RowNumber, 
-  {
-    //\u521b\u5efa\u884c
-    createDom : function(grid){
-      var _self = this;
-      var cfg = {
-            title : '',
-            width : _self.get('width'),
-            fixed : true,
-            resizable:false,
-            sortable : false,
-            renderer : function(value,obj,index){return index + 1;},
-            elCls : CLS_NUMBER
-        },
-        column = grid.addColumn(cfg,0);
-      _self.set('column',column);
-    }
-  });
-  
-  return RowNumber;
-  
-});/**
- * @fileOverview \u9009\u62e9\u6846\u547d\u540d\u7a7a\u95f4\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
-
+});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/tree',['bui/common','bui/tree/treemixin','bui/tree/treelist','bui/tree/treemenu'],function (require) {
   var BUI = require('bui/common'),
     Tree = BUI.namespace('Tree');
@@ -34882,11 +32312,7 @@ define('bui/tree',['bui/common','bui/tree/treemixin','bui/tree/treelist','bui/tr
     TreeMenu : require('bui/tree/treemenu')
   });
   return Tree;
-});/**
- * @fileOverview \u6811\u5f62\u6269\u5c55\uff0c\u57fa\u4e8elist\u6269\u5c55\uff0c\u53ef\u4ee5\u7ec4\u5408\u51fatree list,tree grid ,tree menu
- * @ignore
- */
-
+});
 define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
   //\u5c06id \u8f6c\u6362\u6210node
@@ -36321,11 +33747,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
   });
 
   return Mixin;
-})/**
- * @fileOverview \u6811\u5f62\u5217\u8868
- * @ignore
- */
-
+})
 define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
   var BUI = require('bui/common'),
     List = require('bui/list'),
@@ -36424,134 +33846,10 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],functi
   return TreeList;
 });
 
-/**
- * @fileOverview \u6811\u5f62\u83dc\u5355
- * @ignore
- */
 
-define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
-  var BUI = require('bui/common'),
-    List = require('bui/list'),
-    Mixin = require('bui/tree/treemixin');
-
-  var TreeMenuView = List.SimpleList.View.extend({
-    //\u8986\u5199\u83b7\u53d6\u6a21\u677f\u65b9\u6cd5
-    getItemTpl : function  (item,index) {
-      var _self = this,
-        render = _self.get('itemTplRender'),
-        itemTpl = item.leaf ? _self.get('leafTpl') : _self.get('dirTpl');  
-      if(render){
-        return render(item,index);
-      }
-      
-      return BUI.substitute(itemTpl,item);
-    }
-  },{
-    xclass : 'tree-menu-view'
-  });
-
-  /**
-   * @class BUI.Tree.Menu
-   * \u6811\u5f62\u5217\u8868\u63a7\u4ef6
-   * ** \u4f60\u53ef\u4ee5\u7b80\u5355\u7684\u4f7f\u7528\u914d\u7f6e\u6570\u636e **
-   * <pre><code>
-   *  BUI.use('bui/tree',function(Tree){
-   *    var tree = new Tree.Menu({
-   *      render : '#t1',
-   *      nodes : [
-   *        {id : '1',text : '1',children : [{id : '11',text : '11'}]},
-   *        {id : '2',text : '2'}
-   *      ]
-   *    });
-   *    tree.render();
-   *  });
-   * </code></pre>
-   *
-   * ** \u4f60\u8fd8\u53ef\u4ee5\u66ff\u6362icon ** 
-   * <pre><code>
-   *  BUI.use('bui/tree',function(Tree){
-   *    var tree = new Tree.Menu({
-   *      render : '#t1',
-   *      dirCls : 'folder', //\u66ff\u6362\u6811\u8282\u70b9\u7684\u6837\u5f0f
-   *      leafCls : 'file', //\u53f6\u5b50\u8282\u70b9\u7684\u6837\u5f0f
-   *      nodes : [ //\u6570\u636e\u4e2d\u5b58\u5728cls \u4f1a\u66ff\u6362\u8282\u70b9\u7684\u56fe\u6807\u6837\u5f0f
-   *        {id : '1',text : '1'cls:'task-folder',children : [{id : '11',text : '11',cls:'task'}]},
-   *        {id : '2',text : '2'}
-   *      ]
-   *    });
-   *    tree.render();
-   *  });
-   * @mixin BUI.Tree.Mixin
-   * @extends BUI.List.SimpleList
-   */
-  var TreeMenu = List.SimpleList.extend([Mixin],{
-    
-  },{
-    ATTRS : {
-      itemCls : {
-        value : BUI.prefix + 'tree-item'
-      },
-      /**
-       * \u6587\u4ef6\u5939\u662f\u5426\u53ef\u9009\uff0c\u7528\u4e8e\u9009\u62e9\u8282\u70b9\u65f6\uff0c\u907f\u514d\u9009\u4e2d\u975e\u53f6\u5b50\u8282\u70b9
-       * @cfg {Boolean} [dirSelectable = false]
-       */
-      dirSelectable  : {
-        value : false
-      },
-      /**
-       * \u8282\u70b9\u5c55\u5f00\u7684\u4e8b\u4ef6
-       * @type {String}
-       */
-      expandEvent : {
-        value : 'itemclick'
-      },
-
-      itemStatusFields  : {
-        value : {
-          selected : 'selected'
-        }
-      },
-      /**
-       * \u8282\u70b9\u6298\u53e0\u7684\u4e8b\u4ef6
-       * @type {String}
-       */
-      collapseEvent : {
-        value : 'itemclick'
-      },
-      /**/xview : {
-        value : TreeMenuView
-      },
-      /**
-       * \u975e\u53f6\u5b50\u8282\u70b9\u7684\u6a21\u677f
-       * @type {String}
-       */
-      dirTpl : {
-        view : true,
-        value : '<li class="{cls}"><a href="#">{text}</a></li>'
-      },
-      /**
-       * \u53f6\u5b50\u8282\u70b9\u7684\u6a21\u677f
-       * @type {String}
-       */
-      leafTpl : {
-        view : true,
-        value : '<li class="{cls}"><a href="{href}">{text}</a></li>'
-      },
-      idField : {
-        value : 'id'
-      }
-    }
-  },{
-    xclass : 'tree-menu'
-  });
-
-  TreeMenu.View = TreeMenuView;
-  return TreeMenu;
-});/**
- * @fileOverview \u63d0\u793a\u7684\u5165\u53e3\u6587\u4ef6
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/tooltip',['bui/common','bui/tooltip/tip','bui/tooltip/tips'],function (require) {
   var BUI = require('bui/common'),
     Tooltip = BUI.namespace('Tooltip'),
@@ -36563,11 +33861,7 @@ define('bui/tooltip',['bui/common','bui/tooltip/tip','bui/tooltip/tips'],functio
     Tips : Tips
   });
   return Tooltip;
-});/**
- * @fileOverview \u7b80\u5355\u6613\u7528\u7684\u63d0\u793a\u4fe1\u606f
- * @ignore
- */
-
+});
 define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
   var BUI = require('bui/common'),
     Overlay = require('bui/overlay'),
@@ -36817,11 +34111,7 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
   Tip.View = TipView;
 
   return Tip;
-});/**
- * @fileOverview \u6279\u91cf\u663e\u793a\u63d0\u793a\u4fe1\u606f
- * @ignore
- */
-
+});
 define('bui/tooltip/tips',['bui/common','bui/tooltip/tip'],function(require) {
 
   //\u662f\u5426json\u5bf9\u8c61\u6784\u6210\u7684\u5b57\u7b26\u4e32
@@ -36971,7 +34261,8 @@ define('bui/tooltip/tips',['bui/common','bui/tooltip/tip'],function(require) {
   });
 
   return Tips;
-});(function () {
+});
+(function () {
   var scripts = document.getElementsByTagName('script'),
     loaderScript = scripts[scripts.length - 1];
   if(loaderScript.getAttribute('data-auto-use') == 'false'){

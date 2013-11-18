@@ -1,5 +1,5 @@
 /**
- * @fileOverview 树形选择器，单选使用选中，多选使用勾选
+ * @fileOverview \u6811\u5f62\u9009\u62e9\u5668\uff0c\u5355\u9009\u4f7f\u7528\u9009\u4e2d\uff0c\u591a\u9009\u4f7f\u7528\u52fe\u9009
  * @ignore
  */
 
@@ -12,20 +12,20 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
 
   /**
    * @class BUI.Extensions.TreePicker
-   * 树形选择器
+   * \u6811\u5f62\u9009\u62e9\u5668
    * @extends BUI.Picker.ListPicker
    */
   var TreePicker = ListPicker.extend({
 
     /**
-     * 设置选中的值
-     * @param {String} val 设置值
+     * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
+     * @param {String} val \u8bbe\u7f6e\u503c
      */
     setSelectedValue : function(value){
       value = value || '';
       var _self = this,
         tree = _self.get('tree');
-      if(_self.get('selectStatus') === 'selected'){ //如果不使用勾选
+      if(_self.get('selectStatus') === 'selected'){ //\u5982\u679c\u4e0d\u4f7f\u7528\u52fe\u9009
         if(value){
           tree.expandNode(value);
         }
@@ -39,13 +39,13 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
       }
     },
     /**
-     * 获取选中的值，多选状态下，值以','分割
-     * @return {String} 选中的值
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
+     * @return {String} \u9009\u4e2d\u7684\u503c
      */
     getSelectedValue : function(){
       var _self = this,
         tree = _self.get('tree');
-      if(_self.get('selectStatus') === 'selected'){ //如果不使用勾选
+      if(_self.get('selectStatus') === 'selected'){ //\u5982\u679c\u4e0d\u4f7f\u7528\u52fe\u9009
         return  ListPicker.prototype.getSelectedValue.call(_self);
       }
 
@@ -57,14 +57,14 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
       
     },
     /**
-     * 获取选中项的文本，多选状态下，文本以','分割
-     * @return {String} 选中的文本
+     * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
+     * @return {String} \u9009\u4e2d\u7684\u6587\u672c
      */
     getSelectedText : function(){
       var _self = this,
         tree = _self.get('tree');
        
-      if(_self.get('selectStatus') === 'selected'){ //如果不使用勾选
+      if(_self.get('selectStatus') === 'selected'){ //\u5982\u679c\u4e0d\u4f7f\u7528\u52fe\u9009
         return  ListPicker.prototype.getSelectedText.call(_self);
       }
 
@@ -75,7 +75,7 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
       }).join(',');
       
     },
-    //获取过滤的节点
+    //\u83b7\u53d6\u8fc7\u6ee4\u7684\u8282\u70b9
     _getFilterNodes : function(nodes){
       var _self = this,
         filter = _self.get('filter');
@@ -87,7 +87,7 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
   },{
     ATTRS : {
       /**
-       * 默认子控件的样式,默认为'simple-list'
+       * \u9ed8\u8ba4\u5b50\u63a7\u4ef6\u7684\u6837\u5f0f,\u9ed8\u8ba4\u4e3a'simple-list'
        * @type {String}
        * @override
        */
@@ -95,7 +95,7 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
         value : 'tree-list'
       },
       /**
-       * 选中的状态,selected,checked
+       * \u9009\u4e2d\u7684\u72b6\u6001,selected,checked
        * @type {String}
        */
       selectStatus : {
@@ -115,7 +115,7 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
         }
       },
       /**
-       * 结果集的过滤函数
+       * \u7ed3\u679c\u96c6\u7684\u8fc7\u6ee4\u51fd\u6570
        * @type {Function}
        */
       filter : {

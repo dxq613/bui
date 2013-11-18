@@ -687,52 +687,6 @@ td.x-grid-rownumber {
   font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 12px;
 }
-.x-editor-tips {
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  border: 1px solid #e5a098;
-  background-color: #ffffff;
-  padding: 4px;
-}
-.bui-editor {
-  z-index: 1080;
-}
-.bui-record-editor {
-  padding: 3px 0 3px 3px;
-  border: 1px solid #c3c3d6;
-  background-color: white;
-}
-.bui-record-editor .button {
-  *margin-top: 5px;
-}
-.bui-record-editor .bui-bar {
-  width: 150px;
-  position: absolute;
-  left: 40%;
-  background-color: white;
-  border: 1px solid #c3c3d6;
-  border-top: none;
-  border-radius: 0 0 3px 3px;
-  bottom: -37px;
-}
-.bui-record-editor .bui-form-field {
-  padding-right: 3px;
-}
-.bui-record-editor .x-form-text {
-  background-color: #ffffff;
-  display: inline-block;
-  height: 18px;
-  padding: 1px 4px;
-  border: 1px solid #c3c3d6;
-}
-.bui-editor .bui-form-check-field {
-  background-color: #ffffff;
-  text-align: center;
-}
-.bui-editor .bui-form-check-field input {
-  vertical-align: middle;
-}
 .bui-hidden {
   display: none;
 }

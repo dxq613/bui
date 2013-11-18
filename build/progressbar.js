@@ -1,8 +1,6 @@
-/**
- * @fileOverview 进度条命名空间入口
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/progressbar',['bui/common','bui/progressbar/base','bui/progressbar/load'],function (require) {
   var BUI = require('bui/common'),
     ProgressBar = BUI.namespace('ProgressBar');
@@ -12,12 +10,7 @@ define('bui/progressbar',['bui/common','bui/progressbar/base','bui/progressbar/l
   });
 
   return ProgressBar;
-});/**
- * @fileOverview 进度条
- * @author dengbin
- * @ignore
- */
-
+});
 define('bui/progressbar/base',['bui/common'],function(require){
 
 	var BUI = require('bui/common');
@@ -41,7 +34,7 @@ define('bui/progressbar/base',['bui/common'],function(require){
 		}
 	});
 	/**
- 	* 基础进度条，用于显示进度
+ 	* \u57fa\u7840\u8fdb\u5ea6\u6761\uff0c\u7528\u4e8e\u663e\u793a\u8fdb\u5ea6
  	* xclass:'progress-bar'
  	* <pre><code>
  	*  BUI.use('bui/progressbar',function(ProgressBar){
@@ -64,7 +57,7 @@ define('bui/progressbar/base',['bui/common'],function(require){
 	},{
 		ATTRS : {
 			/**
-	        * 进度百分比
+	        * \u8fdb\u5ea6\u767e\u5206\u6bd4
 	        * @type {number}
 	        */
 			percent : {
@@ -84,12 +77,7 @@ define('bui/progressbar/base',['bui/common'],function(require){
 	});
 
 	return progressBar;
-});/**
- * @fileOverview 异步进度条
- * @author dengbin
- * @ignore
- */
-
+});
 define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 
 	var Base = require('bui/progressbar/base'),
@@ -97,7 +85,7 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		hasStarted = 1,
 		hasEnded = 2;
 	/**
-	 * 异步加载进度条
+	 * \u5f02\u6b65\u52a0\u8f7d\u8fdb\u5ea6\u6761
 	 *<pre><code>
 	 *  BUI.use('bui/progressbar',function(ProgressBar){
    *   
@@ -154,7 +142,7 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 
 		},
 		/**
-		 * 开始
+		 * \u5f00\u59cb
 		 * <pre><code>
 		 *   progressbar.start();
 		 * </code></pre>
@@ -166,7 +154,7 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 			}
 		},
 		/**
-		 * 完成
+		 * \u5b8c\u6210
 		 * <pre><code>
 		 *   progressbar.complete();
 		 * </code></pre>
@@ -178,7 +166,7 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 			
 		},
 		/**
-		 * 取消
+		 * \u53d6\u6d88
 		 * <pre><code>
 		 *   progressbar.cancel();
 		 * </code></pre>
@@ -192,7 +180,7 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 			_self.set('status',notStarted);
 		},
 		/**
-		 * 开始
+		 * \u5f00\u59cb
 		 * @protected
 		 */
 		onstart : function(){
@@ -206,7 +194,7 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 			_self._startLoad();
 		},
 		/**
-		 * 加载变化
+		 * \u52a0\u8f7d\u53d8\u5316
 		 * @protected
 		 */
 		onChange : function(){
@@ -215,7 +203,7 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 		},
 
 		/**
-		 * 完成
+		 * \u5b8c\u6210
 		 * @protected
 		 */
 		onCompleted : function(){
@@ -225,15 +213,15 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 			
 		},
 		/**
-		 * 是否正在加载
-		 * @return {Boolean} 是否正在加载
+		 * \u662f\u5426\u6b63\u5728\u52a0\u8f7d
+		 * @return {Boolean} \u662f\u5426\u6b63\u5728\u52a0\u8f7d
 		 */
 		isLoading : function  () {
 			return this.get('status') === hasStarted;
 		},
 		/**
-		 * 是否已经加载完毕
-		 * @return {Boolean} 是否加载完毕
+		 * \u662f\u5426\u5df2\u7ecf\u52a0\u8f7d\u5b8c\u6bd5
+		 * @return {Boolean} \u662f\u5426\u52a0\u8f7d\u5b8c\u6bd5
 		 */
 		isCompleted : function () {
 			return this.get('status') === hasEnded;
@@ -259,34 +247,34 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 	},{
 		ATTRS : {
 			/**
-			 * 进度条状态
-			 * 0： 未开始
-			 * 1 ： 已开始
-			 * 2 ： 以结束
+			 * \u8fdb\u5ea6\u6761\u72b6\u6001
+			 * 0\uff1a \u672a\u5f00\u59cb
+			 * 1 \uff1a \u5df2\u5f00\u59cb
+			 * 2 \uff1a \u4ee5\u7ed3\u675f
 			 * @type {Number}
 			 */
 			status : {
 				value : 0
 			},
 			/**
-			 * ajax配置项
+			 * ajax\u914d\u7f6e\u9879
 			 * @type {Object}
 			 */
 			ajaxCfg : {
 
 			},
 			/**
-			 * 发送请求时间间隔
+			 * \u53d1\u9001\u8bf7\u6c42\u65f6\u95f4\u95f4\u9694
 			 * @type {number}
 			 */
 			interval : {
 				value : 500
 			},
 			/**  
-	        * 当数据加载完成后
+	        * \u5f53\u6570\u636e\u52a0\u8f7d\u5b8c\u6210\u540e
 	        * @name BUI.ProgressBar.Load  
 	        * @event  
-	        * @param {jQuery.Event} e  事件对象，包含加载数据时的参数
+	        * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61\uff0c\u5305\u542b\u52a0\u8f7d\u6570\u636e\u65f6\u7684\u53c2\u6570
 	        */
 			events : {
 				value : [

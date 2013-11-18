@@ -1,3 +1,6 @@
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/slider',['bui/slider/slider'],function (require) {
   var Slider = BUI.namespace('Slider');
 
@@ -6,11 +9,7 @@ define('bui/slider',['bui/slider/slider'],function (require) {
   });
 
   return Slider;
-});/**
- * @fileOverview 滑块
- * @ignore
- */
-
+});
 define('bui/slider/slider',['bui/common'],function (require) {
   'use strict';
   var doc = document,
@@ -43,7 +42,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         _self.get('el').addClass(CLS_HORI);
       }
     },
-    //设置范围
+    //\u8bbe\u7f6e\u8303\u56f4
     setRange : function(start,end,anim){
       if(start > end){
         start = end;
@@ -64,7 +63,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
        /**
        * @private
        * @ignore
-       * 垂直时使用bottom
+       * \u5782\u76f4\u65f6\u4f7f\u7528bottom
        */
       function getPos(pos){
         return pos + '%';
@@ -96,7 +95,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
 
      
     },
-    //设置背景色
+    //\u8bbe\u7f6e\u80cc\u666f\u8272
     _uiSetBackTpl : function(v){
       var _self = this,
         el = _self.get('el'),
@@ -104,7 +103,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
       backEl.addClass(CLS_BACK);
       _self.setInternal('backEl',backEl);
     },
-    //设置可拖动的滑块
+    //\u8bbe\u7f6e\u53ef\u62d6\u52a8\u7684\u6ed1\u5757
     _uiSetHandleTpl : function(v){
       var _self = this,
         el = _self.get('el'),
@@ -140,18 +139,18 @@ define('bui/slider/slider',['bui/common'],function (require) {
   
   /**
    * @class BUI.Slider.Slider
-   * 滑动控件
+   * \u6ed1\u52a8\u63a7\u4ef6
    * @extends BUI.Component.Controller
    */
   var Slider = BUI.Component.Controller.extend({
     /**
-     * 滑动到指定位置
-     * @param  {Number|Array} v 滑动到位置，传入数组标示指定滑块的上下范围
+     * \u6ed1\u52a8\u5230\u6307\u5b9a\u4f4d\u7f6e
+     * @param  {Number|Array} v \u6ed1\u52a8\u5230\u4f4d\u7f6e\uff0c\u4f20\u5165\u6570\u7ec4\u6807\u793a\u6307\u5b9a\u6ed1\u5757\u7684\u4e0a\u4e0b\u8303\u56f4
      */
     slideTo : function(v){
       this.set('value',v);
     },
-    //绑定事件
+    //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(){
       var _self = this,
         el = _self.get('el');
@@ -173,12 +172,12 @@ define('bui/slider/slider',['bui/common'],function (require) {
         }
       });
     },
-    //根据容器位置确定滑块的位置
+    //\u6839\u636e\u5bb9\u5668\u4f4d\u7f6e\u786e\u5b9a\u6ed1\u5757\u7684\u4f4d\u7f6e
     _slideByOffset : function(offset,anim){
       var _self = this,
         curVal = _self.get('value'),
         value = _self._formatValue(offset);
-      if(curVal === value || (BUI.isArray(value) && BUI.Array.equals(value,curVal))){ //当前值如果等于变化值，不处理
+      if(curVal === value || (BUI.isArray(value) && BUI.Array.equals(value,curVal))){ //\u5f53\u524d\u503c\u5982\u679c\u7b49\u4e8e\u53d8\u5316\u503c\uff0c\u4e0d\u5904\u7406
         return;
       }
       if(anim){
@@ -188,7 +187,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         _self._setValue(value,false);
       }
     },
-    //处理拖拽
+    //\u5904\u7406\u62d6\u62fd
     _handleDrag : function(ev){
       
       var _self = this,
@@ -285,7 +284,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
 
         var disStart = Math.abs(curVal[0] - calValue),
           disEnd = Math.abs(curVal[1] - calValue);
-        if(disStart < disEnd){ //距离开始小于结束，则滑动开始
+        if(disStart < disEnd){ //\u8ddd\u79bb\u5f00\u59cb\u5c0f\u4e8e\u7ed3\u675f\uff0c\u5219\u6ed1\u52a8\u5f00\u59cb
           return [calValue,curVal[1]];
         }
 
@@ -293,11 +292,11 @@ define('bui/slider/slider',['bui/common'],function (require) {
       }
       return curVal;
     },
-    //设置值
+    //\u8bbe\u7f6e\u503c
     _uiSetValue : function(v){
       this._setValue(v,true);
     },
-    //设置值
+    //\u8bbe\u7f6e\u503c
     _setValue : function(value,anim){
       var _self = this,
         min = _self.get('min'),
@@ -316,7 +315,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
       _self._setRange(start,end,anim);
       _self.fire('change',{value : value});
     },
-    //设置范围
+    //\u8bbe\u7f6e\u8303\u56f4
     _setRange : function(start,end,anim){
       this.get('view').setRange(start,end,anim);
     }
@@ -325,14 +324,14 @@ define('bui/slider/slider',['bui/common'],function (require) {
     ATTRS : {
 
       /**
-       * 最小值
+       * \u6700\u5c0f\u503c
        * @cfg {Number}
        */
       min : {
         value : 0
       },
       /**
-       * 滑动动画的执行间隔
+       * \u6ed1\u52a8\u52a8\u753b\u7684\u6267\u884c\u95f4\u9694
        * @type {Object}
        */
       duration : {
@@ -340,28 +339,28 @@ define('bui/slider/slider',['bui/common'],function (require) {
         value : 400
       },
       /**
-       * 最大值
+       * \u6700\u5927\u503c
        * @cfg {Number}
        */
       max : {
         value : 100
       },
       /**
-       * 当前值
+       * \u5f53\u524d\u503c
        * @type {Number}
        */
       value : {
         view :true
       },
       /**
-       * 最小滑动单位
+       * \u6700\u5c0f\u6ed1\u52a8\u5355\u4f4d
        * @type {Number}
        */
       step : {
         value : 1
       },
       /**
-       * 拖拽的滑块的模板
+       * \u62d6\u62fd\u7684\u6ed1\u5757\u7684\u6a21\u677f
        * @type {String}
        */
       handleTpl : {
@@ -369,7 +368,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         value : '<span></span>'
       },
       /**
-       * 是否垂直
+       * \u662f\u5426\u5782\u76f4
        * @type {Boolean}
        */
       isVertical : {
@@ -377,7 +376,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         value : false
       },
       /**
-       * 是否滑动范围，默认状态下只能调整最大值，无法调整最小值
+       * \u662f\u5426\u6ed1\u52a8\u8303\u56f4\uff0c\u9ed8\u8ba4\u72b6\u6001\u4e0b\u53ea\u80fd\u8c03\u6574\u6700\u5927\u503c\uff0c\u65e0\u6cd5\u8c03\u6574\u6700\u5c0f\u503c
        * @type {Boolean}
        */
       range : {
@@ -385,7 +384,7 @@ define('bui/slider/slider',['bui/common'],function (require) {
         value : false
       },
       /**
-       * 用于显示滑动背景的模板
+       * \u7528\u4e8e\u663e\u793a\u6ed1\u52a8\u80cc\u666f\u7684\u6a21\u677f
        * @type {String}
        */
       backTpl : {
@@ -397,8 +396,8 @@ define('bui/slider/slider',['bui/common'],function (require) {
       }
       /**
        * @event change
-       * 滑动值改变
-       * @param {Object} e 事件对象
+       * \u6ed1\u52a8\u503c\u6539\u53d8
+       * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
        * @param {Number|Array} e.value
        */
 

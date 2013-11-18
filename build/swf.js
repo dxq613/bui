@@ -1,8 +1,6 @@
-/**
- * @ignore
- * Flash UA 探测
- * @author oicuicu@gmail.com
- */
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/swf/ua', function (require) {
 
     var fpvCached,
@@ -10,8 +8,8 @@ define('bui/swf/ua', function (require) {
         win = window;
 
     /*
-     获取 Flash 版本号
-     返回数据 [M, S, R] 若未安装，则返回 undefined
+     \u83b7\u53d6 Flash \u7248\u672c\u53f7
+     \u8fd4\u56de\u6570\u636e [M, S, R] \u82e5\u672a\u5b89\u88c5\uff0c\u5219\u8fd4\u56de undefined
      */
     function getFlashVersion() {
         var ver,
@@ -31,12 +29,12 @@ define('bui/swf/ua', function (require) {
             }
         }
 
-        // 插件没安装或有问题时，ver 为 undefined
+        // \u63d2\u4ef6\u6ca1\u5b89\u88c5\u6216\u6709\u95ee\u9898\u65f6\uff0cver \u4e3a undefined
         if (!ver) {
             return undefined;
         }
 
-        // 插件安装正常时，ver 为 "Shockwave Flash 10.1 r53" or "WIN 10,1,53,64"
+        // \u63d2\u4ef6\u5b89\u88c5\u6b63\u5e38\u65f6\uff0cver \u4e3a "Shockwave Flash 10.1 r53" or "WIN 10,1,53,64"
         return getArrayVersion(ver);
     }
 
@@ -48,8 +46,8 @@ define('bui/swf/ua', function (require) {
     }
 
     /*
-     格式：主版本号Major.次版本号Minor(小数点后3位，占3位)修正版本号Revision(小数点后第4至第8位，占5位)
-     ver 参数不符合预期时，返回 0
+     \u683c\u5f0f\uff1a\u4e3b\u7248\u672c\u53f7Major.\u6b21\u7248\u672c\u53f7Minor(\u5c0f\u6570\u70b9\u540e3\u4f4d\uff0c\u53603\u4f4d)\u4fee\u6b63\u7248\u672c\u53f7Revision(\u5c0f\u6570\u70b9\u540e\u7b2c4\u81f3\u7b2c8\u4f4d\uff0c\u53605\u4f4d)
+     ver \u53c2\u6570\u4e0d\u7b26\u5408\u9884\u671f\u65f6\uff0c\u8fd4\u56de 0
      getNumberVersion("10.1 r53") => 10.00100053
      getNumberVersion(["10", "1", "53"]) => 10.00100053
      getNumberVersion(12.2) => 12.2
@@ -83,7 +81,7 @@ define('bui/swf/ua', function (require) {
      * @static
      */
     function fpv(force) {
-        // 考虑 new ActiveX 和 try catch 的 性能损耗，延迟初始化到第一次调用时
+        // \u8003\u8651 new ActiveX \u548c try catch \u7684 \u6027\u80fd\u635f\u8017\uff0c\u5ef6\u8fdf\u521d\u59cb\u5316\u5230\u7b2c\u4e00\u6b21\u8c03\u7528\u65f6
         if (force || firstRun) {
             firstRun = false;
             fpvCached = getFlashVersion();
@@ -115,24 +113,20 @@ define('bui/swf/ua', function (require) {
  *
  * NOTES:
  *
- -  ActiveXObject JS 小记
+ -  ActiveXObject JS \u5c0f\u8bb0
  -    newObj = new ActiveXObject(ProgID:String[, location:String])
- -    newObj      必需    用于部署 ActiveXObject  的变量
- -    ProgID      必选    形式为 "serverName.typeName" 的字符串
- -    serverName  必需    提供该对象的应用程序的名称
- -    typeName    必需    创建对象的类型或者类
- -    location    可选    创建该对象的网络服务器的名称
+ -    newObj      \u5fc5\u9700    \u7528\u4e8e\u90e8\u7f72 ActiveXObject  \u7684\u53d8\u91cf
+ -    ProgID      \u5fc5\u9009    \u5f62\u5f0f\u4e3a "serverName.typeName" \u7684\u5b57\u7b26\u4e32
+ -    serverName  \u5fc5\u9700    \u63d0\u4f9b\u8be5\u5bf9\u8c61\u7684\u5e94\u7528\u7a0b\u5e8f\u7684\u540d\u79f0
+ -    typeName    \u5fc5\u9700    \u521b\u5efa\u5bf9\u8c61\u7684\u7c7b\u578b\u6216\u8005\u7c7b
+ -    location    \u53ef\u9009    \u521b\u5efa\u8be5\u5bf9\u8c61\u7684\u7f51\u7edc\u670d\u52a1\u5668\u7684\u540d\u79f0
 
- -  Google Chrome 比较特别：
- -    即使对方未安装 flashplay 插件 也含最新的 Flashplayer
+ -  Google Chrome \u6bd4\u8f83\u7279\u522b\uff1a
+ -    \u5373\u4f7f\u5bf9\u65b9\u672a\u5b89\u88c5 flashplay \u63d2\u4ef6 \u4e5f\u542b\u6700\u65b0\u7684 Flashplayer
  -    ref: http://googlechromereleases.blogspot.com/2010/03/dev-channel-update_30.html
  *
  */
-/**
- * @ignore
- * insert swf into document in an easy way
- * @author yiminghe@gmail.com, oicuicu@gmail.com
- */
+
 define('bui/swf', function (require) {
 
     var BUI = require('bui/common'),
@@ -155,16 +149,16 @@ define('bui/swf', function (require) {
         OBJECT_TAG = 'object',
         encode = encodeURIComponent,
 
-    // flash player 的参数范围
+    // flash player \u7684\u53c2\u6570\u8303\u56f4
         PARAMS = {
-            // swf 传入的第三方数据。支持复杂的 Object / XML 数据 / Json 字符串
+            // swf \u4f20\u5165\u7684\u7b2c\u4e09\u65b9\u6570\u636e\u3002\u652f\u6301\u590d\u6742\u7684 Object / XML \u6570\u636e / Json \u5b57\u7b26\u4e32
             // flashvars: EMPTY,
             wmode: EMPTY,
             allowscriptaccess: EMPTY,
             allownetworking: EMPTY,
             allowfullscreen: EMPTY,
 
-            // 显示 控制 删除
+            // \u663e\u793a \u63a7\u5236 \u5220\u9664
             play: 'false',
             loop: EMPTY,
             menu: EMPTY,
@@ -175,7 +169,7 @@ define('bui/swf', function (require) {
             devicefont: EMPTY,
             hasPriority: EMPTY,
 
-            //	其他控制参数
+            //	\u5176\u4ed6\u63a7\u5236\u53c2\u6570
             base: EMPTY,
             swliveconnect: EMPTY,
             seamlesstabbing: EMPTY
@@ -208,17 +202,17 @@ define('bui/swf', function (require) {
 
             id = attrs.id = attrs.id || BUI.guid('ks-swf-');
 
-            // 2. flash 插件没有安装
+            // 2. flash \u63d2\u4ef6\u6ca1\u6709\u5b89\u88c5
             if (!fpv()) {
                 self.set('status', SWF.Status.NOT_INSTALLED);
                 return;
             }
 
-            // 3. 已安装，但当前客户端版本低于指定版本时
+            // 3. \u5df2\u5b89\u88c5\uff0c\u4f46\u5f53\u524d\u5ba2\u6237\u7aef\u7248\u672c\u4f4e\u4e8e\u6307\u5b9a\u7248\u672c\u65f6
             if (version && !fpvGTE(version)) {
                 self.set('status', SWF.Status.TOO_LOW);
 
-                // 有 expressInstall 时，将 src 替换为快速安装
+                // \u6709 expressInstall \u65f6\uff0c\u5c06 src \u66ff\u6362\u4e3a\u5feb\u901f\u5b89\u88c5
                 if (expressInstall) {
                     installedSrc = expressInstall;
 
@@ -249,7 +243,7 @@ define('bui/swf', function (require) {
                 html = _stringSWFDefault(installedSrc, attrs, params)
             }
 
-            // ie 再取  target.innerHTML 属性大写，很多多与属性，等
+            // ie \u518d\u53d6  target.innerHTML \u5c5e\u6027\u5927\u5199\uff0c\u5f88\u591a\u591a\u4e0e\u5c5e\u6027\uff0c\u7b49
             self.set('html', html);
 
             if (elBefore) {
@@ -276,8 +270,8 @@ define('bui/swf', function (require) {
                 }
             }
 
-            // bug fix: 重新获取对象,否则还是老对象.
-            // 如 入口为 div 如果不重新获取则仍然是 div	longzang | 2010/8/9
+            // bug fix: \u91cd\u65b0\u83b7\u53d6\u5bf9\u8c61,\u5426\u5219\u8fd8\u662f\u8001\u5bf9\u8c61.
+            // \u5982 \u5165\u53e3\u4e3a div \u5982\u679c\u4e0d\u91cd\u65b0\u83b7\u53d6\u5219\u4ecd\u7136\u662f div	longzang | 2010/8/9
             self.set('el', swf);
 
             if (!self.get('status')) {
@@ -596,7 +590,7 @@ define('bui/swf', function (require) {
         return elements;
     }
 
-    // setSrc ie 不重新渲染
+    // setSrc ie \u4e0d\u91cd\u65b0\u6e32\u67d3
 
     function collectionParams(params) {
         var par = EMPTY;
@@ -605,7 +599,7 @@ define('bui/swf', function (require) {
             if (k in PARAMS) {
                 par += stringParam(k, v);
             }
-            // 特殊参数
+            // \u7279\u6b8a\u53c2\u6570
             else if (k == FLASHVARS) {
                 par += stringParam(k, toFlashVars(v));
             }
@@ -627,7 +621,7 @@ define('bui/swf', function (require) {
             ie = UA.ie;
         }
 
-        // 普通属性
+        // \u666e\u901a\u5c5e\u6027
         BUI.each(attrs, function (v, k) {
             attr += stringAttr(k, v);
         });
@@ -636,9 +630,9 @@ define('bui/swf', function (require) {
             attr += stringAttr('classid', CID);
             par += stringParam('movie', src);
         } else {
-            // 源
+            // \u6e90
             attr += stringAttr('data', src);
-            // 特殊属性
+            // \u7279\u6b8a\u5c5e\u6027
             attr += stringAttr('type', TYPE);
         }
 
@@ -649,7 +643,7 @@ define('bui/swf', function (require) {
         return res
     }
 
-    // full oo 结构
+    // full oo \u7ed3\u6784
     function _stringSWFFull(src, attrs, params) {
         var outside, inside;
         if (UA.ie) {
@@ -667,7 +661,7 @@ define('bui/swf', function (require) {
     }
 
     /*
-     将普通对象转换为 flashvars
+     \u5c06\u666e\u901a\u5bf9\u8c61\u8f6c\u6362\u4e3a flashvars
      eg: {a: 1, b: { x: 2, z: 's=1&c=2' }} => a=1&b=encode({"x":2,"z":"s%3D1%26c%3D2"})
      */
     function toFlashVars(obj) {
@@ -700,6 +694,6 @@ define('bui/swf', function (require) {
 
 /**
  * NOTES:
- * 20130903 从kissy1.3.1移植成BUI的模块（索丘修改）
+ * 20130903 \u4ecekissy1.3.1\u79fb\u690d\u6210BUI\u7684\u6a21\u5757\uff08\u7d22\u4e18\u4fee\u6539\uff09
  */
 

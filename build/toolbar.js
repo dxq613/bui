@@ -1,8 +1,6 @@
-/**
- * @fileOverview 工具栏命名空间入口
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/toolbar',['bui/common','bui/toolbar/baritem','bui/toolbar/bar','bui/toolbar/pagingbar','bui/toolbar/numberpagingbar'],function (require) {
   var BUI = require('bui/common'),
     Toolbar = BUI.namespace('Toolbar');
@@ -14,16 +12,12 @@ define('bui/toolbar',['bui/common','bui/toolbar/baritem','bui/toolbar/bar','bui/
     NumberPagingBar : require('bui/toolbar/numberpagingbar')
   });
   return Toolbar;
-});/**
- * @fileOverview buttons or controls of toolbar
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
+});
 define('bui/toolbar/baritem',function(){
 
   /**
    * @name BUI.Toolbar
-   * @namespace 工具栏命名空间
+   * @namespace \u5de5\u5177\u680f\u547d\u540d\u7a7a\u95f4
    * @ignore
    */
   var PREFIX = BUI.prefix,
@@ -31,7 +25,7 @@ define('bui/toolbar/baritem',function(){
     UIBase = Component.UIBase;
     
   /**
-   * barItem的视图类
+   * barItem\u7684\u89c6\u56fe\u7c7b
    * @class BUI.Toolbar.BarItemView
    * @extends BUI.Component.View
    * @mixins BUI.Component.UIBase.ListItemView
@@ -39,7 +33,7 @@ define('bui/toolbar/baritem',function(){
    */
   var BarItemView = Component.View.extend([UIBase.ListItemView]);
   /**
-     * 工具栏的子项，包括按钮、文本、链接和分隔符等
+     * \u5de5\u5177\u680f\u7684\u5b50\u9879\uff0c\u5305\u62ec\u6309\u94ae\u3001\u6587\u672c\u3001\u94fe\u63a5\u548c\u5206\u9694\u7b26\u7b49
      * @class BUI.Toolbar.BarItem
      * @extends BUI.Component.Controller
      */
@@ -68,7 +62,7 @@ define('bui/toolbar/baritem',function(){
           value : 'li'
       },
       /**
-       * 是否可选择
+       * \u662f\u5426\u53ef\u9009\u62e9
        * <pre><code>
        * 
        * </code></pre>
@@ -78,7 +72,7 @@ define('bui/toolbar/baritem',function(){
         value : false
       },
       /**
-      * 是否获取焦点
+      * \u662f\u5426\u83b7\u53d6\u7126\u70b9
       * @default {boolean} false
       */
       focusable : {
@@ -94,7 +88,7 @@ define('bui/toolbar/baritem',function(){
   });
 
   /**
-     * 工具栏的子项，添加按钮
+     * \u5de5\u5177\u680f\u7684\u5b50\u9879\uff0c\u6dfb\u52a0\u6309\u94ae
      * xclass : 'bar-item-button'
      * @extends  BUI.Toolbar.BarItem
      * @class BUI.Toolbar.BarItem.Button
@@ -134,14 +128,14 @@ define('bui/toolbar/baritem',function(){
      */
     {
       /**
-       * 是否选中
+       * \u662f\u5426\u9009\u4e2d
        * @type {Boolean}
        */
       checked : {
         value :false
       },
       /**
-       * 模板
+       * \u6a21\u677f
        * @type {String}
        */
       tpl : {
@@ -149,11 +143,11 @@ define('bui/toolbar/baritem',function(){
         value : '<button type="button" class="{btnCls}">{text}</button>'
       },
       /**
-       * 按钮的样式
+       * \u6309\u94ae\u7684\u6837\u5f0f
        * @cfg {String} btnCls
        */
       /**
-       * 按钮的样式
+       * \u6309\u94ae\u7684\u6837\u5f0f
        * @type {String}
        */
       btnCls:{
@@ -178,7 +172,7 @@ define('bui/toolbar/baritem',function(){
   });
   
   /**
-     * 工具栏项之间的分隔符
+     * \u5de5\u5177\u680f\u9879\u4e4b\u95f4\u7684\u5206\u9694\u7b26
      * xclass:'bar-item-separator'
      * @extends  BUI.Toolbar.BarItem
      * @class BUI.Toolbar.BarItem.Separator
@@ -200,7 +194,7 @@ define('bui/toolbar/baritem',function(){
 
   
   /**
-     * 工具栏项之间的空白
+     * \u5de5\u5177\u680f\u9879\u4e4b\u95f4\u7684\u7a7a\u767d
      * xclass:'bar-item-spacer'
      * @extends  BUI.Toolbar.BarItem
      * @class BUI.Toolbar.BarItem.Spacer
@@ -215,7 +209,7 @@ define('bui/toolbar/baritem',function(){
     */
     {
       /**
-      * 空白宽度
+      * \u7a7a\u767d\u5bbd\u5ea6
       * @type {Number}
       */
       width : {
@@ -230,7 +224,7 @@ define('bui/toolbar/baritem',function(){
   
 
   /**
-     * 显示文本的工具栏项
+     * \u663e\u793a\u6587\u672c\u7684\u5de5\u5177\u680f\u9879
      * xclass:'bar-item-text'
      * @extends  BUI.Toolbar.BarItem
      * @class BUI.Toolbar.BarItem.Text
@@ -250,11 +244,11 @@ define('bui/toolbar/baritem',function(){
     {
       
       /**
-      * 文本用作 innerHTML (html tags are accepted).
+      * \u6587\u672c\u7528\u4f5c innerHTML (html tags are accepted).
       * @cfg {String} text
       */
       /**
-      * 文本用作 innerHTML (html tags are accepted).
+      * \u6587\u672c\u7528\u4f5c innerHTML (html tags are accepted).
       * @default {String} ""
       */
       text : {
@@ -276,18 +270,14 @@ define('bui/toolbar/baritem',function(){
   
 
   return BarItem;
-});/**
- * @fileOverview A collection of commonly used function buttons or controls represented in compact visual form.
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
+});
 define('bui/toolbar/bar',function(){
 
 	var Component = BUI.Component,
     UIBase = Component.UIBase;
 		
 	/**
-	 * bar的视图类
+	 * bar\u7684\u89c6\u56fe\u7c7b
 	 * @class BUI.Toolbar.BarView
 	 * @extends BUI.Component.View
 	 * @private
@@ -305,13 +295,13 @@ define('bui/toolbar/bar',function(){
 	});
 
 	/**
-	 * 工具栏
-   * 可以放置按钮、文本、链接等，是分页栏的基类
+	 * \u5de5\u5177\u680f
+   * \u53ef\u4ee5\u653e\u7f6e\u6309\u94ae\u3001\u6587\u672c\u3001\u94fe\u63a5\u7b49\uff0c\u662f\u5206\u9875\u680f\u7684\u57fa\u7c7b
    * xclass : 'bar'
    * <p>
    * <img src="../assets/img/class-toolbar.jpg"/>
    * </p>
-   * ## 按钮组
+   * ## \u6309\u94ae\u7ec4
    * <pre><code>
    *   BUI.use('bui/toolbar',function(Toolbar){
    *     var buttonGroup = new Toolbar.Bar({
@@ -319,7 +309,7 @@ define('bui/toolbar/bar',function(){
    *       defaultChildCfg : {
    *         elCls : 'button button-small'
    *       },
-   *       children : [{content : '增加'},{content : '修改'},{content : '删除'}],
+   *       children : [{content : '\u589e\u52a0'},{content : '\u4fee\u6539'},{content : '\u5220\u9664'}],
    *       
    *       render : '#b1'
    *     });
@@ -338,7 +328,7 @@ define('bui/toolbar/bar',function(){
 	 */	
 	{
 		/**
-		* 通过id 获取项
+		* \u901a\u8fc7id \u83b7\u53d6\u9879
 		* @param {String|Number} id the id of item 
 		* @return {BUI.Toolbar.BarItem}
 		*/
@@ -357,7 +347,7 @@ define('bui/toolbar/bar',function(){
           value : 'ul'
       },
       /**
-       * 默认子项的样式
+       * \u9ed8\u8ba4\u5b50\u9879\u7684\u6837\u5f0f
        * @type {String}
        * @override
        */
@@ -365,7 +355,7 @@ define('bui/toolbar/bar',function(){
         value : 'bar-item'
       },
 			/**
-			* 获取焦点
+			* \u83b7\u53d6\u7126\u70b9
       * @protected
       * @ignore
 			*/
@@ -386,11 +376,7 @@ define('bui/toolbar/bar',function(){
 	});
 
 	return Bar;
-});/**
- * @fileOverview  a specialized toolbar that is bound to a Grid.Store and provides automatic paging control.
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
+});
 define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
 
     var Bar = require('bui/toolbar/bar'),
@@ -411,7 +397,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
         ID_TEXTS = [ID_TOTAL_PAGE,ID_CURRENT_PAGE,ID_TOTAL_COUNT];
 
     /**
-     * 分页栏
+     * \u5206\u9875\u680f
      * xclass:'pagingbar'
      * @extends BUI.Toolbar.Bar
      * @mixins BUI.Component.UIBase.Bindable
@@ -439,7 +425,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                         children.push(item);//item
                     });
                 }else{
-                    BUI.each(items, function (item,index) { //转换对应的分页栏
+                    BUI.each(items, function (item,index) { //\u8f6c\u6362\u5bf9\u5e94\u7684\u5206\u9875\u680f
                         if(BUI.isString(item)){
                             if(BUI.Array.contains(item,ID_BUTTONS)){
                                 item = _self._getButtonItem(item);
@@ -494,15 +480,15 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
             _afterStoreLoad:function (store, params) {
                 var _self = this,
                     pageSize = _self.get('pageSize'),
-                    start = 0, //页面的起始记录
-                    end, //页面的结束记录
-                    totalCount, //记录的总数
-                    curPage, //当前页
-                    totalPage;//总页数;
+                    start = 0, //\u9875\u9762\u7684\u8d77\u59cb\u8bb0\u5f55
+                    end, //\u9875\u9762\u7684\u7ed3\u675f\u8bb0\u5f55
+                    totalCount, //\u8bb0\u5f55\u7684\u603b\u6570
+                    curPage, //\u5f53\u524d\u9875
+                    totalPage;//\u603b\u9875\u6570;
 
                 start = store.get('start');
                 
-                //设置加载数据后翻页栏的状态
+                //\u8bbe\u7f6e\u52a0\u8f7d\u6570\u636e\u540e\u7ffb\u9875\u680f\u7684\u72b6\u6001
                 totalCount = store.getTotalCount();
                 end = totalCount - start > pageSize ? start + store.getCount() - 1: totalCount;
                 totalPage = parseInt((totalCount + pageSize - 1) / pageSize, 10);
@@ -515,7 +501,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 _self.set('curPage', curPage);
                 _self.set('totalPage', totalPage);
 
-                //设置按钮状态
+                //\u8bbe\u7f6e\u6309\u94ae\u72b6\u6001
                 _self._setAllButtonsState();
                 _self._setNumberPages();
             },
@@ -732,10 +718,10 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                
                 /**
                  * the text of button for first page
-                 * @default {String} "首 页"
+                 * @default {String} "\u9996 \u9875"
                  */
                 firstText:{
-                    value:'首 页'
+                    value:'\u9996 \u9875'
                 },
                 /**
                  * the cls of button for first page
@@ -746,10 +732,10 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 },
                 /**
                  * the text for previous page button
-                 * @default {String} "前一页"
+                 * @default {String} "\u524d\u4e00\u9875"
                  */
                 prevText:{
-                    value:'上一页'
+                    value:'\u4e0a\u4e00\u9875'
                 },
                 /**
                  * the cls for previous page button
@@ -760,10 +746,10 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 },
                 /**
                  * the text for next page button
-                 * @default {String} "下一页"
+                 * @default {String} "\u4e0b\u4e00\u9875"
                  */
                 nextText:{
-                    value:'下一页'
+                    value:'\u4e0b\u4e00\u9875'
                 },
                 /**
                  * the cls for next page button
@@ -774,10 +760,10 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 },
                 /**
                  * the text for last page button
-                 * @default {String} "末 页"
+                 * @default {String} "\u672b \u9875"
                  */
                 lastText:{
-                    value:'末 页'
+                    value:'\u672b \u9875'
                 },
                 /**
                  * the cls for last page button
@@ -788,10 +774,10 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 },
                 /**
                  * the text for skip page button
-                 * @default {String} "跳 转"
+                 * @default {String} "\u8df3 \u8f6c"
                  */
                 skipText:{
-                    value:'确定'
+                    value:'\u786e\u5b9a'
                 },
                 /**
                  * the cls for skip page button
@@ -801,32 +787,32 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                     value:PREFIX + 'pb-skip'
                 },
                 refreshText : {
-                    value : '刷新'
+                    value : '\u5237\u65b0'
                 },
                 refreshCls : {
                     value:PREFIX + 'pb-refresh'
                 },
                 /**
                  * the template of total page info
-                 * @default {String} '共 {totalPage} 页'
+                 * @default {String} '\u5171 {totalPage} \u9875'
                  */
                 totalPageTpl:{
-                    value:'共 {totalPage} 页'
+                    value:'\u5171 {totalPage} \u9875'
                 },
                 /**
                  * the template of current page info
-                 * @default {String} '第 &lt;input type="text" autocomplete="off" class="bui-pb-page" size="20" name="inputItem"&gt; 页'
+                 * @default {String} '\u7b2c &lt;input type="text" autocomplete="off" class="bui-pb-page" size="20" name="inputItem"&gt; \u9875'
                  */
                 curPageTpl:{
-                    value:'第 <input type="text" '+
-                        'autocomplete="off" class="'+PREFIX+'pb-page" size="20" value="{curPage}" name="inputItem"> 页'
+                    value:'\u7b2c <input type="text" '+
+                        'autocomplete="off" class="'+PREFIX+'pb-page" size="20" value="{curPage}" name="inputItem"> \u9875'
                 },
                 /**
                  * the template of total count info
-                 * @default {String} '共{totalCount}条记录'
+                 * @default {String} '\u5171{totalCount}\u6761\u8bb0\u5f55'
                  */
                 totalCountTpl:{
-                    value:'共{totalCount}条记录'
+                    value:'\u5171{totalCount}\u6761\u8bb0\u5f55'
                 },
                 autoInitItems : {
                     value : false
@@ -887,11 +873,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
 
     return PagingBar;
 
-});/**
- * @fileOverview  a specialized toolbar that is bound to a Grid.Store and provides automatic paging control.
- * @author 
- * @ignore
- */
+});
 define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require) {
 
     var Component = BUI.Component,
@@ -902,7 +884,7 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
         CLS_NUMBER_BUTTON = PREFIX + 'button-number';
 
     /**
-     * 数字分页栏
+     * \u6570\u5b57\u5206\u9875\u680f
      * xclass:'pagingbar-number'
      * @extends BUI.Toolbar.PagingBar
      * @class BUI.Toolbar.NumberPagingBar
@@ -962,13 +944,13 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
               }
             });
         },
-        //设置页码信息，设置 页数 按钮
+        //\u8bbe\u7f6e\u9875\u7801\u4fe1\u606f\uff0c\u8bbe\u7f6e \u9875\u6570 \u6309\u94ae
         _setNumberPages : function(){
             var _self = this;
 
             _self._setNumberButtons();
         },
-        //设置 页数 按钮
+        //\u8bbe\u7f6e \u9875\u6570 \u6309\u94ae
         _setNumberButtons : function(){
             var _self = this,
                 curPage = _self.get('curPage'),
@@ -1002,7 +984,7 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
             count = _self.getItemCount();          
           }
         },
-        //获取所有页码按钮的配置项
+        //\u83b7\u53d6\u6240\u6709\u9875\u7801\u6309\u94ae\u7684\u914d\u7f6e\u9879
         _getNumberItems : function(curPage, totalPage){
             var _self = this,
                 result = [],
@@ -1046,7 +1028,7 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
 
             return result;
         },
-        //获取省略号
+        //\u83b7\u53d6\u7701\u7565\u53f7
         _getEllipsisItem : function(){
             var _self = this;
             return {
@@ -1054,7 +1036,7 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
                 content : _self.get('ellipsisTpl')
             };
         },
-        //生成页面按钮配置项
+        //\u751f\u6210\u9875\u9762\u6309\u94ae\u914d\u7f6e\u9879
         _getNumberItem : function(page){
             var _self = this;
             return {
@@ -1081,7 +1063,7 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
               value : '>>'
             },
             /**
-            * 当页码超过该设置页码时候显示省略号
+            * \u5f53\u9875\u7801\u8d85\u8fc7\u8be5\u8bbe\u7f6e\u9875\u7801\u65f6\u5019\u663e\u793a\u7701\u7565\u53f7
             * @default {Number} 4
             */
             maxLimitCount : {

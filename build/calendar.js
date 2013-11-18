@@ -1,8 +1,6 @@
-/**
- * @fileOverview 日历命名空间入口
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/calendar',['bui/common','bui/calendar/calendar','bui/calendar/monthpicker','bui/calendar/datepicker'],function (require) {
   var BUI = require('bui/common'),
     Calendar = BUI.namespace('Calendar');
@@ -13,12 +11,7 @@ define('bui/calendar',['bui/common','bui/calendar/calendar','bui/calendar/monthp
   });
 
   return Calendar;
-});/**
- * @fileOverview 选择年月
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/toolbar'],function (require){
   var BUI = require('bui/common'),
     Component = BUI.Component,
@@ -33,7 +26,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
     CLS_YEAR_NAV = 'x-monthpicker-yearnav',
     CLS_SELECTED = 'x-monthpicker-selected',
     CLS_ITEM = 'x-monthpicker-item',
-    months = ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月'];
+    months = ['\u4e00\u6708','\u4e8c\u6708','\u4e09\u6708','\u56db\u6708','\u4e94\u6708','\u516d\u6708','\u4e03\u6708','\u516b\u6708','\u4e5d\u6708','\u5341\u6708','\u5341\u4e00\u6708','\u5341\u4e8c\u6708'];
 
   function getMonths(){
     return $.map(months,function(month,index){
@@ -163,7 +156,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
 
       },
       /**
-       * 起始年
+       * \u8d77\u59cb\u5e74
        * @private
        * @ignore
        * @type {Number}
@@ -172,7 +165,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         value: new Date().getFullYear()
       },
       /**
-       * 年数
+       * \u5e74\u6570
        * @private
        * @ignore
        * @type {Number}
@@ -198,7 +191,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
   });
   
   /**
-   * 月份选择器
+   * \u6708\u4efd\u9009\u62e9\u5668
    * xclass : 'calendar-monthpicker'
    * @class BUI.Calendar.MonthPicker
    * @extends BUI.Overlay.Overlay
@@ -254,14 +247,14 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
           children:[
             {
               xclass:'bar-item-button',
-              text:'确定',
+              text:'\u786e\u5b9a',
               btnCls: 'button button-small button-primary',
               handler:function(){
                 _self._successCall();
               }
             },{
               xclass:'bar-item-button',
-              text:'取消',
+              text:'\u53d6\u6d88',
               btnCls:'button button-small last',
               handler:function(){
                 var callback = _self.get('cancel');
@@ -287,7 +280,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
      */
     {
       /**
-       * 下部工具栏
+       * \u4e0b\u90e8\u5de5\u5177\u680f
        * @private
        * @type {Object}
        */
@@ -298,14 +291,14 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         value : {}
       },
       /**
-       * 选中的年
+       * \u9009\u4e2d\u7684\u5e74
        * @type {Number}
        */
       year : {
         
       },
       /**
-       * 成功的回调函数
+       * \u6210\u529f\u7684\u56de\u8c03\u51fd\u6570
        * @type {Function}
        */
       success:{
@@ -314,7 +307,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         }
       },
       /**
-       * 取消的回调函数
+       * \u53d6\u6d88\u7684\u56de\u8c03\u51fd\u6570
        * @type {Function}
        */
       cancel :{
@@ -326,14 +319,14 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         value:180
       },
       /**
-       * 选中的月
+       * \u9009\u4e2d\u7684\u6708
        * @type {Number}
        */
       month:{
         
       },
       /**
-       * 选择年的控件
+       * \u9009\u62e9\u5e74\u7684\u63a7\u4ef6
        * @private
        * @type {Object}
        */
@@ -341,7 +334,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
 
       },
       /**
-       * 选择月的控件
+       * \u9009\u62e9\u6708\u7684\u63a7\u4ef6
        * @private
        * @type {Object}
        */
@@ -355,11 +348,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
   });
   return monthPicker;
 
-});/**
- * @fileOverview 日期控件来选择年月的部分
- * @ignore
- */
-
+});
 define('bui/calendar/header',['bui/common'],function (require) {
   
   var BUI = require('bui/common'),
@@ -372,7 +361,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
     CLS_NEXT = 'x-datepicker-next';
       
   /**
-   * 日历控件显示选择年月
+   * \u65e5\u5386\u63a7\u4ef6\u663e\u793a\u9009\u62e9\u5e74\u6708
    * xclass:'calendar-header'
    * @class BUI.Calendar.Header
    * @private
@@ -400,10 +389,10 @@ define('bui/calendar/header',['bui/common'],function (require) {
 	  
     },
     /**
-     * 设置年月
+     * \u8bbe\u7f6e\u5e74\u6708
      * @ignore
-     * @param {Number} year  年
-     * @param {Number} month 月
+     * @param {Number} year  \u5e74
+     * @param {Number} month \u6708
      */
     setMonth : function(year,month){
       var _self = this,
@@ -416,7 +405,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
       }
     },
     /**
-     * 下一月
+     * \u4e0b\u4e00\u6708
      * @ignore
      */
     nextMonth : function(){
@@ -426,7 +415,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
       _self.setMonth(date.getFullYear(),date.getMonth());
     },
     /**
-     * 上一月
+     * \u4e0a\u4e00\u6708
      * @ignore
      */
     prevMonth : function(){
@@ -447,14 +436,14 @@ define('bui/calendar/header',['bui/common'],function (require) {
   },{
     ATTRS : {
       /**
-       * 年
+       * \u5e74
        * @type {Number}
        */
       year:{
         sync:false
       },
       /**
-       * 月
+       * \u6708
        * @type {Number}
        */
       month:{
@@ -475,7 +464,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
         value:'<div class="'+CLS_ARROW+' ' + CLS_PREV + '"><span class="icon icon-white icon-caret  icon-caret-left"></span></div>'+
           '<div class="x-datepicker-month">'+
             '<div class="month-text-container">'+
-              '<span><span class="year-text">{year}</span>年 <span class="month-text">{monthText}</span>月</span>'+
+              '<span><span class="year-text">{year}</span>\u5e74 <span class="month-text">{monthText}</span>\u6708</span>'+
               '<span class="' + PREFIX + 'caret ' + PREFIX + 'caret-down"></span>'+
             '</div>'+
           '</div>' +
@@ -488,11 +477,11 @@ define('bui/calendar/header',['bui/common'],function (require) {
   	  events:{
     		value:{
           /**
-           * 月发生改变，年发生改变也意味着月发生改变
+           * \u6708\u53d1\u751f\u6539\u53d8\uff0c\u5e74\u53d1\u751f\u6539\u53d8\u4e5f\u610f\u5473\u7740\u6708\u53d1\u751f\u6539\u53d8
            * @event
-           * @param {Object} e 事件对象
-           * @param {Number} e.year 年
-           * @param {Number} e.month 月
+           * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Number} e.year \u5e74
+           * @param {Number} e.month \u6708
            */
     			'monthchange' : true
     		}
@@ -504,11 +493,7 @@ define('bui/calendar/header',['bui/common'],function (require) {
 
   return header;
 
-});/**
- * @fileOverview 日历控件显示一月的日期
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/calendar/panel',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
@@ -518,10 +503,10 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     CLS_TODAY = 'x-datepicker-today',
     CLS_DISABLED = 'x-datepicker-disabled',
     CLS_ACTIVE = 'x-datepicker-active',
-    DATA_DATE = 'data-date',//存储日期对象
+    DATA_DATE = 'data-date',//\u5b58\u50a8\u65e5\u671f\u5bf9\u8c61
     DATE_MASK = 'isoDate',
     CLS_SELECTED = 'x-datepicker-selected',
-    SHOW_WEEKS = 6,//当前容器显示6周
+    SHOW_WEEKS = 6,//\u5f53\u524d\u5bb9\u5668\u663e\u793a6\u5468
     dateTypes = {
       deactive : 'prevday',
       active : 'active',
@@ -530,7 +515,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     weekDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
   /**
-   * 日历面板的视图类
+   * \u65e5\u5386\u9762\u677f\u7684\u89c6\u56fe\u7c7b
    * @class BUI.Calendar.PanelView
    * @extends BUI.Component.View
    * @private
@@ -541,7 +526,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
       this.updatePanel();
     },
 
-    //更新容器，当月、年发生改变时
+    //\u66f4\u65b0\u5bb9\u5668\uff0c\u5f53\u6708\u3001\u5e74\u53d1\u751f\u6539\u53d8\u65f6
     updatePanel : function(){
       var _self = this,
         el = _self.get('el'),
@@ -551,7 +536,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
       bodyEl.empty();
       $(innerTem).appendTo(bodyEl);
     },
-    //获取容器内容
+    //\u83b7\u53d6\u5bb9\u5668\u5185\u5bb9
     _getPanelInnerTpl : function(){
       var _self = this,
         startDate = _self._getFirstDate(),
@@ -564,7 +549,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
 
       return temps.join('');
     },
-    //获取周模版
+    //\u83b7\u53d6\u5468\u6a21\u7248
     _getWeekTpl : function(startDate){
       var _self = this,
         weekTpl = _self.get('weekTpl'),
@@ -578,7 +563,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         daysTpl:daysTemps.join('')
       });
     },
-    //获取日模版
+    //\u83b7\u53d6\u65e5\u6a21\u7248
     _getDayTpl : function(date){
       var _self = this,
         dayTpl = _self.get('dayTpl'),
@@ -586,8 +571,8 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         todayCls = _self._isToday(date) ? CLS_TODAY:'',
         dayOfWeek = weekDays[day],
         dateNumber = date.getDate(),
-        //不是本月则处于不活动状态
-        //不在指定的最大最小范围内，禁止选中
+        //\u4e0d\u662f\u672c\u6708\u5219\u5904\u4e8e\u4e0d\u6d3b\u52a8\u72b6\u6001
+        //\u4e0d\u5728\u6307\u5b9a\u7684\u6700\u5927\u6700\u5c0f\u8303\u56f4\u5185\uff0c\u7981\u6b62\u9009\u4e2d
         dateType = _self._isInRange(date) ? (_self._isCurrentMonth(date) ? dateTypes.active : dateTypes.deactive) : dateTypes.disabled;
 
       return BUI.substitute(dayTpl,{
@@ -598,30 +583,30 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         date : DateUtil.format(date,DATE_MASK)
       });
     },
-    //获取当前容器的第一天
+    //\u83b7\u53d6\u5f53\u524d\u5bb9\u5668\u7684\u7b2c\u4e00\u5929
     _getFirstDate : function(year,month){
       var _self = this,
         monthFirstDate = _self._getMonthFirstDate(year,month),
         day = monthFirstDate.getDay();
       return DateUtil.addDay(day * -1,monthFirstDate);
     },
-    //获取当月的第一天
+    //\u83b7\u53d6\u5f53\u6708\u7684\u7b2c\u4e00\u5929
     _getMonthFirstDate : function(year,month){
       var _self = this,
         year = year || _self.get('year'),
         month = month || _self.get('month');
       return new Date(year,month);
     },
-    //是否是当前显示的月
+    //\u662f\u5426\u662f\u5f53\u524d\u663e\u793a\u7684\u6708
     _isCurrentMonth : function(date){
       return date.getMonth() === this.get('month');
     },
-    //是否是今天
+    //\u662f\u5426\u662f\u4eca\u5929
     _isToday : function(date){
       var tody = new Date();
       return tody.getFullYear() === date.getFullYear() && tody.getMonth() === date.getMonth() && tody.getDate() === date.getDate();
     },
-    //是否在允许的范围内
+    //\u662f\u5426\u5728\u5141\u8bb8\u7684\u8303\u56f4\u5185
     _isInRange : function(date){
       var _self = this,
         maxDate = _self.get('maxDate'),
@@ -635,12 +620,12 @@ define('bui/calendar/panel',['bui/common'],function (require) {
       }
       return true;
     },
-    //清除选中的日期
+    //\u6e05\u9664\u9009\u4e2d\u7684\u65e5\u671f
     _clearSelectedDate : function(){
       var _self = this;
       _self.get('el').find('.'+CLS_SELECTED).removeClass(CLS_SELECTED);
     },
-    //查找日期对应的DOM节点
+    //\u67e5\u627e\u65e5\u671f\u5bf9\u5e94\u7684DOM\u8282\u70b9
     _findDateElement : function(date){
       var _self = this,
         dateStr = DateUtil.format(date,DATE_MASK),
@@ -656,7 +641,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
       }
       return result;
     },
-    //设置选中的日期
+    //\u8bbe\u7f6e\u9009\u4e2d\u7684\u65e5\u671f
     _setSelectedDate : function(date){
       var _self = this,
         dateEl = _self._findDateElement(date);
@@ -673,7 +658,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
   });
   
   /**
-   * 日历控件显示日期的容器
+   * \u65e5\u5386\u63a7\u4ef6\u663e\u793a\u65e5\u671f\u7684\u5bb9\u5668
    * xclass:'calendar-panel'
    * @class BUI.Calendar.Panel
    * @private
@@ -687,7 +672,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
   {
 
     /**
-     * 设置默认年月
+     * \u8bbe\u7f6e\u9ed8\u8ba4\u5e74\u6708
      * @protected
      */
     initializer : function(){
@@ -711,7 +696,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
       el.delegate('.' + CLS_DATE,'click',function(e){
         e.preventDefault();
       });
-      //阻止禁用的日期被选择
+      //\u963b\u6b62\u7981\u7528\u7684\u65e5\u671f\u88ab\u9009\u62e9
       el.delegate('.' + CLS_DISABLED,'mouseup',function(e){
         e.stopPropagation();
       });
@@ -735,9 +720,9 @@ define('bui/calendar/panel',['bui/common'],function (require) {
       }
     },
     /**
-     * 设置年月
-     * @param {Number} year  年
-     * @param {Number} month 月
+     * \u8bbe\u7f6e\u5e74\u6708
+     * @param {Number} year  \u5e74
+     * @param {Number} month \u6708
      */
     setMonth : function(year,month){
       var _self = this,
@@ -751,7 +736,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     		//}
       }
     },
-    //选中日期
+    //\u9009\u4e2d\u65e5\u671f
     _uiSetSelected : function(date,ev){
       var _self = this;
       
@@ -761,13 +746,13 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         _self.fire('selectedchange',{date:date});
       } 
     },
-    //设置最日期
+    //\u8bbe\u7f6e\u6700\u65e5\u671f
     _uiSetMaxDate : function(v){
       if(v){
         this.get('view').updatePanel();
       }
     },
-    //设置最小日期
+    //\u8bbe\u7f6e\u6700\u5c0f\u65e5\u671f
     _uiSetMinDate : function(v){
       if(v){
         this.get('view').updatePanel();
@@ -781,21 +766,21 @@ define('bui/calendar/panel',['bui/common'],function (require) {
      */
     {
       /**
-       * 展示的月所属年
+       * \u5c55\u793a\u7684\u6708\u6240\u5c5e\u5e74
        * @type {Number}
        */
       year : {
         view :true
       },
       /**
-       * 展示的月
+       * \u5c55\u793a\u7684\u6708
        * @type {Number}
        */
       month:{
         view :true
       },
       /**
-       * 选中的日期
+       * \u9009\u4e2d\u7684\u65e5\u671f
        * @type {Date}
        */
       selected : {
@@ -805,7 +790,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         value:true
       },
       /**
-       * 日期的模板
+       * \u65e5\u671f\u7684\u6a21\u677f
        * @private
        * @type {Object}
        */
@@ -822,20 +807,20 @@ define('bui/calendar/panel',['bui/common'],function (require) {
           /**
            * @event
            * @name BUI.Calendar.Panel#click
-           * @param {Object} e 点击事件
+           * @param {Object} e \u70b9\u51fb\u4e8b\u4ef6
            * @param {Date} e.date
            */
           'click' : false,
           /**
            * @name BUI.Calendar.Panel#selectedchange
-           * @param {Object} e 点击事件
+           * @param {Object} e \u70b9\u51fb\u4e8b\u4ef6
            * @param {Date} e.date
            */
           'selectedchange' : false
         }
       },
       /**
-       * 最小日期
+       * \u6700\u5c0f\u65e5\u671f
        * @type {Date | String}
        */
       maxDate : {
@@ -850,7 +835,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         }
       },
       /**
-       * 最小日期
+       * \u6700\u5c0f\u65e5\u671f
        * @type {Date | String}
        */
       minDate : {
@@ -865,7 +850,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         }
       },
       /**
-       * 周的模板
+       * \u5468\u7684\u6a21\u677f
        * @private
        * @type {Object}
        */
@@ -878,13 +863,13 @@ define('bui/calendar/panel',['bui/common'],function (require) {
         value:'<table class="x-datepicker-inner" cellspacing="0">' +
                 '<thead>' +
                    '<tr>' +
-                    '<th  title="Sunday"><span>日</span></th>' +
-                    '<th  title="Monday"><span>一</span></th>' +
-                    '<th  title="Tuesday"><span>二</span></th>' +
-                    '<th  title="Wednesday"><span>三</span></th>' +
-                    '<th  title="Thursday"><span>四</span></th>' +
-                    '<th  title="Friday"><span>五</span></th>' +
-                    '<th  title="Saturday"><span>六</span></th>' +
+                    '<th  title="Sunday"><span>\u65e5</span></th>' +
+                    '<th  title="Monday"><span>\u4e00</span></th>' +
+                    '<th  title="Tuesday"><span>\u4e8c</span></th>' +
+                    '<th  title="Wednesday"><span>\u4e09</span></th>' +
+                    '<th  title="Thursday"><span>\u56db</span></th>' +
+                    '<th  title="Friday"><span>\u4e94</span></th>' +
+                    '<th  title="Saturday"><span>\u516d</span></th>' +
                   '</tr>' +
                 '</thead>' +
                 '<tbody class="x-datepicker-body">' +
@@ -899,12 +884,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
   });
 
   return panel;
-});/**
- * @fileOverview 日期控件
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/calendar/header','bui/calendar/panel','bui/toolbar'],function(require){
 
   var BUI = require('bui/common'),
@@ -958,7 +938,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
 
   /**
-   * 日期控件
+   * \u65e5\u671f\u63a7\u4ef6
    * <p>
    * <img src="../assets/img/class-calendar.jpg"/>
    * </p>
@@ -979,7 +959,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
    */
   var calendar = Component.Controller.extend({
 
-    //设置内容
+    //\u8bbe\u7f6e\u5185\u5bb9
     initializer: function(){
       var _self = this,
         children = _self.get('children'),
@@ -989,9 +969,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         monthPicker = _self.get('monthPicker') || _self._createMonthPicker();*/
 
 
-      //添加头
+      //\u6dfb\u52a0\u5934
       children.push(header);
-      //添加panel
+      //\u6dfb\u52a0panel
       children.push(panel);
       children.push(footer);
       //children.push(monthPicker);
@@ -1010,7 +990,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         _self.set('timepicker',timepicker);
       }
     },
-    //绑定事件
+    //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(){
       var _self = this,
         header = _self.get('header'),
@@ -1101,7 +1081,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         }
       });
     },
-    //更改年和月
+    //\u66f4\u6539\u5e74\u548c\u6708
     _setYearMonth : function(year,month){
       var _self = this,
         selectedDate = _self.get('selectedDate'),
@@ -1110,7 +1090,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         _self.set('selectedDate',new Date(year,month,date));
       }
     },
-    //创建选择月的控件
+    //\u521b\u5efa\u9009\u62e9\u6708\u7684\u63a7\u4ef6
     _createMonthPicker: function(){
       var _self = this,
         monthpicker;
@@ -1134,7 +1114,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       _self.get('children').push(monthpicker);
       return monthpicker;
     },
-    //创建底部按钮栏
+    //\u521b\u5efa\u5e95\u90e8\u6309\u94ae\u680f
     _createFooter : function(){
       var _self = this,
         showTime = this.get('showTime'),
@@ -1146,7 +1126,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         });
         items.push({
           xclass:'bar-item-button',
-          text:'确定',
+          text:'\u786e\u5b9a',
           btnCls: 'button button-small button-primary',
           listeners:{
             click:function(){
@@ -1157,7 +1137,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       }else{
         items.push({
           xclass:'bar-item-button',
-          text:'今天',
+          text:'\u4eca\u5929',
           btnCls: 'button button-small',
 		      id:'todayBtn',
           listeners:{
@@ -1175,7 +1155,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           children:items
         });
     },
-	//更新今天按钮的状态
+	//\u66f4\u65b0\u4eca\u5929\u6309\u94ae\u7684\u72b6\u6001
     _updateTodayBtnAble: function () {
             var _self = this;
             if (!_self.get('showTime')) {
@@ -1186,7 +1166,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
                 panelView._isInRange(now) ? btn.enable() : btn.disable();
             }
     },
-    //设置所选日期
+    //\u8bbe\u7f6e\u6240\u9009\u65e5\u671f
     _uiSetSelectedDate : function(v){
       var _self = this,
         year = v.getFullYear(),
@@ -1205,13 +1185,13 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     _uiSetSecond : function(v){
       setTimeUnit(this,CLS_PICKER_SECOND,v);
     },
-    //设置最大值
+    //\u8bbe\u7f6e\u6700\u5927\u503c
     _uiSetMaxDate : function(v){
       var _self = this;
       _self.get('panel').set('maxDate',v);
 	  _self._updateTodayBtnAble();
     },
-    //设置最小值
+    //\u8bbe\u7f6e\u6700\u5c0f\u503c
     _uiSetMinDate : function(v){
       var _self = this;
       _self.get('panel').set('minDate',v);
@@ -1226,7 +1206,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
      */
     {
       /**
-       * 日历控件头部，选择年月
+       * \u65e5\u5386\u63a7\u4ef6\u5934\u90e8\uff0c\u9009\u62e9\u5e74\u6708
        * @private
        * @type {Object}
        */
@@ -1235,7 +1215,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       },
 
       /**
-       * 日历控件选择日
+       * \u65e5\u5386\u63a7\u4ef6\u9009\u62e9\u65e5
        * @private
        * @type {Object}
        */
@@ -1243,7 +1223,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
       },
       /**
-       * 最大日期
+       * \u6700\u5927\u65e5\u671f
        * <pre><code>
        *   calendar.set('maxDate','2013-07-29');
        * </code></pre>
@@ -1253,7 +1233,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
       },
       /**
-       * 最小日期
+       * \u6700\u5c0f\u65e5\u671f
        * <pre><code>
        *   calendar.set('minDate','2013-07-29');
        * </code></pre>
@@ -1263,7 +1243,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
       },
       /**
-       * 选择月份控件
+       * \u9009\u62e9\u6708\u4efd\u63a7\u4ef6
        * @private
        * @type {Object}
        */
@@ -1271,7 +1251,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
       },
       /**
-       * 选择时间控件
+       * \u9009\u62e9\u65f6\u95f4\u63a7\u4ef6
        * @private
        * @type {Object}
        */
@@ -1286,26 +1266,26 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
            /**
            * @event
            * @name BUI.Calendar.Calendar#click
-           * @param {Object} e 点击事件
+           * @param {Object} e \u70b9\u51fb\u4e8b\u4ef6
            * @param {Date} e.date
            */
           'click' : false,
           /**
-           * 确认日期更改，如果不显示日期则当点击日期或者点击今天按钮时触发，如果显示日期，则当点击确认按钮时触发。
+           * \u786e\u8ba4\u65e5\u671f\u66f4\u6539\uff0c\u5982\u679c\u4e0d\u663e\u793a\u65e5\u671f\u5219\u5f53\u70b9\u51fb\u65e5\u671f\u6216\u8005\u70b9\u51fb\u4eca\u5929\u6309\u94ae\u65f6\u89e6\u53d1\uff0c\u5982\u679c\u663e\u793a\u65e5\u671f\uff0c\u5219\u5f53\u70b9\u51fb\u786e\u8ba4\u6309\u94ae\u65f6\u89e6\u53d1\u3002
            * @event
            */
           'accept' : false,
           /**
            * @event
            * @name BUI.Calendar.Calendar#datechange
-           * @param {Object} e 选中的日期发生改变
+           * @param {Object} e \u9009\u4e2d\u7684\u65e5\u671f\u53d1\u751f\u6539\u53d8
            * @param {Date} e.date
            */
           'datechange' : false,
            /**
            * @event
            * @name BUI.Calendar.Calendar#monthchange
-           * @param {Object} e 月份发生改变
+           * @param {Object} e \u6708\u4efd\u53d1\u751f\u6539\u53d8
            * @param {Number} e.year
            * @param {Number} e.month
            */
@@ -1313,7 +1293,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         }
       },
       /**
-       * 是否选择时间,此选项决定是否可以选择时间
+       * \u662f\u5426\u9009\u62e9\u65f6\u95f4,\u6b64\u9009\u9879\u51b3\u5b9a\u662f\u5426\u53ef\u4ee5\u9009\u62e9\u65f6\u95f4
        *
        * @cfg {Boolean} showTime
        */
@@ -1321,11 +1301,11 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         value : false
       },
       /**
-      * 锁定时间选择
+      * \u9501\u5b9a\u65f6\u95f4\u9009\u62e9
       *<pre><code>
       *  var calendar = new Calendar.Calendar({
       *  render:'#calendar',
-      *  lockTime : {hour:00,minute:30} //表示锁定时为00,分为30分,秒无锁用户可选择
+      *  lockTime : {hour:00,minute:30} //\u8868\u793a\u9501\u5b9a\u65f6\u4e3a00,\u5206\u4e3a30\u5206,\u79d2\u65e0\u9501\u7528\u6237\u53ef\u9009\u62e9
       * });
       * </code></pre>
        *
@@ -1337,17 +1317,17 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         value : '<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_HOUR + '" />:<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_MINUTE + '" />:<input type="text" readonly class="' + CLS_PICKER_TIME + ' ' + CLS_PICKER_SECOND + '" />'
       },
       /**
-       * 选择的日期,默认为当天
+       * \u9009\u62e9\u7684\u65e5\u671f,\u9ed8\u8ba4\u4e3a\u5f53\u5929
        * <pre><code>
        *  var calendar = new Calendar.Calendar({
        *  render:'#calendar',
-       *   selectedDate : new Date('2013/07/01') //不能使用字符串
+       *   selectedDate : new Date('2013/07/01') //\u4e0d\u80fd\u4f7f\u7528\u5b57\u7b26\u4e32
        * });
        * </code></pre>
        * @cfg {Date} selectedDate
        */
       /**
-       * 选择的日期
+       * \u9009\u62e9\u7684\u65e5\u671f
        * <pre><code>
        *   calendar.set('selectedDate',new Date('2013-9-01'));
        * </code></pre>
@@ -1358,21 +1338,21 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         value : today()
       },
       /**
-       * 小时,默认为当前小时
+       * \u5c0f\u65f6,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u5c0f\u65f6
        * @type {Number}
        */
       hour : {
         value : new Date().getHours()
       },
       /**
-       * 分,默认为当前分
+       * \u5206,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u5206
        * @type {Number}
        */
       minute:{
         value : new Date().getMinutes()
       },
       /**
-       * 秒,默认为当前秒
+       * \u79d2,\u9ed8\u8ba4\u4e3a\u5f53\u524d\u79d2
        * @type {Number}
        */
       second : {
@@ -1385,11 +1365,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
   });
 
   return calendar;
-});/**
- * @fileOverview 日期选择器
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calendar'],function(require){
   
   var BUI = require('bui/common'),
@@ -1398,7 +1374,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     DateUtil = BUI.Date;
 
   /**
-   * 日期选择器，可以由输入框等触发
+   * \u65e5\u671f\u9009\u62e9\u5668\uff0c\u53ef\u4ee5\u7531\u8f93\u5165\u6846\u7b49\u89e6\u53d1
    * <p>
    * <img src="../assets/img/class-calendar.jpg"/>
    * </p>
@@ -1407,7 +1383,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
    *   BUI.use('bui/calendar',function(Calendar){
    *      var datepicker = new Calendar.DatePicker({
    *        trigger:'.calendar',
-   *        //delegateTigger : true, //如果设置此参数，那么新增加的.calendar元素也会支持日历选择
+   *        //delegateTigger : true, //\u5982\u679c\u8bbe\u7f6e\u6b64\u53c2\u6570\uff0c\u90a3\u4e48\u65b0\u589e\u52a0\u7684.calendar\u5143\u7d20\u4e5f\u4f1a\u652f\u6301\u65e5\u5386\u9009\u62e9
    *        autoRender : true
    *      });
    *    });
@@ -1422,7 +1398,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     },
     /**
      * @protected
-     * 初始化内部控件
+     * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6
      */
     createControl : function(){
       var _self = this,
@@ -1448,11 +1424,11 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       return calendar;
     },
     /**
-     * 设置选中的值
+     * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
      * <pre><code>
      *   datePicker.setSelectedValue('2012-01-1');
      * </code></pre>
-     * @param {String} val 设置值
+     * @param {String} val \u8bbe\u7f6e\u503c
      * @protected
      */
     setSelectedValue : function(val){
@@ -1475,9 +1451,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       }
     },
     /**
-     * 获取选中的值
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u503c
      * @protected
-     * @return {String} 选中的值
+     * @return {String} \u9009\u4e2d\u7684\u503c
      */
     getSelectedValue : function(){
       if(!this.get('calendar')){
@@ -1494,9 +1470,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       return date;
     },
     /**
-     * 获取选中项的文本，多选状态下，文本以','分割
+     * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
      * @protected
-     * @return {String} 选中的文本
+     * @return {String} \u9009\u4e2d\u7684\u6587\u672c
      */
     getSelectedText : function(){
       if(!this.get('calendar')){
@@ -1507,7 +1483,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
     _getFormatType : function(){
       return this.get('dateMask');
     },
-    //设置最大值
+    //\u8bbe\u7f6e\u6700\u5927\u503c
     _uiSetMaxDate : function(v){
       if(!this.get('calendar')){
         return null;
@@ -1515,7 +1491,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this;
       _self.get('calendar').set('maxDate',v);
     },
-    //设置最小值
+    //\u8bbe\u7f6e\u6700\u5c0f\u503c
     _uiSetMinDate : function(v){
       if(!this.get('calendar')){
         return null;
@@ -1532,11 +1508,11 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      */
     {
       /**
-       * 是否显示日期
+       * \u662f\u5426\u663e\u793a\u65e5\u671f
        * <pre><code>
        *  var datepicker = new Calendar.DatePicker({
        *    trigger:'.calendar',
-       *    showTime : true, //可以选择日期
+       *    showTime : true, //\u53ef\u4ee5\u9009\u62e9\u65e5\u671f
        *    autoRender : true
        *  });
        * </code></pre>
@@ -1546,11 +1522,11 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         value:false
       },
        /**
-       * 锁定时间选择
+       * \u9501\u5b9a\u65f6\u95f4\u9009\u62e9
        *<pre><code>
        *  var calendar = new Calendar.Calendar({
        *  render:'#calendar',
-       *  lockTime : {hour:00,minute:30} //表示锁定时为00,分为30分,秒无锁用户可选择
+       *  lockTime : {hour:00,minute:30} //\u8868\u793a\u9501\u5b9a\u65f6\u4e3a00,\u5206\u4e3a30\u5206,\u79d2\u65e0\u9501\u7528\u6237\u53ef\u9009\u62e9
        * });
        * </code></pre>
        *
@@ -1559,7 +1535,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       lockTime :{
       },
       /**
-       * 最大日期
+       * \u6700\u5927\u65e5\u671f
        * <pre><code>
        *   var datepicker = new Calendar.DatePicker({
        *     trigger:'.calendar',
@@ -1574,7 +1550,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
       },
       /**
-       * 最小日期
+       * \u6700\u5c0f\u65e5\u671f
        * <pre><code>
        *   var datepicker = new Calendar.DatePicker({
        *     trigger:'.calendar',
@@ -1589,7 +1565,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
       },
 	  /**
-       * 返回日期格式，如果不设置默认为 yyyy-mm-dd，时间选择为true时为 yyyy-mm-dd HH:MM:ss
+       * \u8fd4\u56de\u65e5\u671f\u683c\u5f0f\uff0c\u5982\u679c\u4e0d\u8bbe\u7f6e\u9ed8\u8ba4\u4e3a yyyy-mm-dd\uff0c\u65f6\u95f4\u9009\u62e9\u4e3atrue\u65f6\u4e3a yyyy-mm-dd HH:MM:ss
        * <pre><code>
        *   calendar.set('dateMask','yyyy-mm-dd');
        * </code></pre>
@@ -1605,7 +1581,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         value:'accept'
       },
       /**
-       * 日历对象,可以进行更多的操作，参看{@link BUI.Calendar.Calendar}
+       * \u65e5\u5386\u5bf9\u8c61,\u53ef\u4ee5\u8fdb\u884c\u66f4\u591a\u7684\u64cd\u4f5c\uff0c\u53c2\u770b{@link BUI.Calendar.Calendar}
        * @type {BUI.Calendar.Calendar}
        */
       calendar:{

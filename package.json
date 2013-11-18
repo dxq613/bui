@@ -1,0 +1,46 @@
+{
+  "name": "BUI",
+  "title": "BUI",
+  "description": "基于jQuery,兼容KISSY的UI类库",
+  "version": "0.1.0",
+  "homepage": "https://github.com/dxq613/bui",
+  "author": {
+    "name": "dxq613",
+    "email": "dxq613@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dxq613/bui.git"
+  },
+  "bugs": "https://github.com/dxq613/bui/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/dxq613/bui/blob/master/LICENSE-MIT"
+    }
+  ],
+  "dependencies": {
+    "jquery": "*"
+  },
+    "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt qunit"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-qunit": "~0.2.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.0",
+    "grunt-contrib-watch": "~0.4.0",
+    "grunt-contrib-clean": "~0.4.0",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-contrib-less": "~0.6.0",
+    "grunt-native2ascii": "~0.1.0",
+    "grunt-contrib-copy": "~0.4.1",
+    "grunt-contrib-cssmin": "~0.4.1",
+    "grunt-text-replace": "~0.3.6",
+    "grunt": "~0.4.1"
+  }
+}

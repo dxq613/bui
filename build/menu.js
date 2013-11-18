@@ -1,8 +1,6 @@
-/**
- * @fileOverview 菜单命名空间入口文件
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/menu',['bui/common','bui/menu/menu','bui/menu/menuitem','bui/memu/contextmenu','bui/menu/popmenu','bui/menu/sidemenu'],function (require) {
   
   var BUI = require('bui/common'),
@@ -17,10 +15,7 @@ define('bui/menu',['bui/common','bui/menu/menu','bui/menu/menuitem','bui/memu/co
 
   Menu.ContextMenuItem = Menu.ContextMenu.Item;
   return Menu;
-});/**
- * @fileOverview 菜单项
- * @ignore
- */
+});
 define('bui/menu/menuitem',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
@@ -37,7 +32,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @class BUI.Menu.MenuItemView
    * @mixins BUI.Component.UIBase.ListItemView
    * @mixins BUI.Component.UIBase.CollapseableView
-   * 菜单项的视图类
+   * \u83dc\u5355\u9879\u7684\u89c6\u56fe\u7c7b
    */
   var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapseableView],{
 
@@ -58,14 +53,14 @@ define('bui/menu/menuitem',['bui/common'],function(require){
   });
 
   /**
-   * 菜单项
+   * \u83dc\u5355\u9879
    * @class BUI.Menu.MenuItem
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ListItem
    */
   var menuItem = Component.Controller.extend([UIBase.ListItem,UIBase.Collapseable],{
     /**
-     * 渲染
+     * \u6e32\u67d3
      * @protected
      */
     renderUI : function(){
@@ -73,7 +68,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         el = _self.get('el'),
         id = _self.get('id'),
         temp = null;
-      //未设置id时自动生成
+      //\u672a\u8bbe\u7f6eid\u65f6\u81ea\u52a8\u751f\u6210
       if(!id){
         id = BUI.guid('menu-item');
         _self.set('id',id);
@@ -81,7 +76,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
       el.attr(DATA_ID,id);   
     },
      /**
-     * 处理鼠标移入
+     * \u5904\u7406\u9f20\u6807\u79fb\u5165
      * @protected
      */
     handleMouseEnter : function (ev) {
@@ -92,7 +87,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
       menuItem.superclass.handleMouseEnter.call(this,ev);
     },
     /**
-     * 处理鼠标移出
+     * \u5904\u7406\u9f20\u6807\u79fb\u51fa
      * @protected
      */
     handleMouseLeave :function (ev) {
@@ -107,7 +102,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
       menuItem.superclass.handleMouseLeave.call(this,ev);
     },
     /**
-     * 自己和子菜单是否包含
+     * \u81ea\u5df1\u548c\u5b50\u83dc\u5355\u662f\u5426\u5305\u542b
      * @override
      */
     containsElement:function (elem) {
@@ -120,7 +115,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
       }
       return contains;
     }, 
-    //设置打开子菜单 
+    //\u8bbe\u7f6e\u6253\u5f00\u5b50\u83dc\u5355 
     _uiSetOpen : function (v) {
       var _self = this,
         subMenu = _self.get('subMenu'),
@@ -132,7 +127,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
           subMenu.show();
         }else{
           var menuAlign = subMenu.get('align');
-          //防止子菜单被公用时
+          //\u9632\u6b62\u5b50\u83dc\u5355\u88ab\u516c\u7528\u65f6
           if(!menuAlign || menuAlign.node == _self.get('el')){
             subMenu.hide();
           }
@@ -140,13 +135,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         }
       }
     },
-    //设置下级菜单
+    //\u8bbe\u7f6e\u4e0b\u7ea7\u83dc\u5355
     _uiSetSubMenu : function (subMenu) {
       if(subMenu){
         var _self = this,
           el = _self.get('el'),
           parent = _self.get('parent');
-        //设置菜单项所属的菜单为上一级菜单
+        //\u8bbe\u7f6e\u83dc\u5355\u9879\u6240\u5c5e\u7684\u83dc\u5355\u4e3a\u4e0a\u4e00\u7ea7\u83dc\u5355
         if(!subMenu.get('parentMenu')){
           subMenu.set('parentMenu',parent);
           if(parent.get('autoHide')){
@@ -157,7 +152,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
       }
     },
     /** 
-     * 析构函数
+     * \u6790\u6784\u51fd\u6570
      * @protected
      */
     destructor : function () {
@@ -176,7 +171,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      */
     {
       /**
-       * 默认的Html 标签
+       * \u9ed8\u8ba4\u7684Html \u6807\u7b7e
        * @type {String}
        */
       elTagName : {
@@ -186,11 +181,11 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : menuItemView
       },
       /**
-       * 菜单项是否展开，显示子菜单
+       * \u83dc\u5355\u9879\u662f\u5426\u5c55\u5f00\uff0c\u663e\u793a\u5b50\u83dc\u5355
        * @cfg {Boolean} [open=false]
        */
       /**
-       * 菜单项是否展开，显示子菜单
+       * \u83dc\u5355\u9879\u662f\u5426\u5c55\u5f00\uff0c\u663e\u793a\u5b50\u83dc\u5355
        * @type {Boolean}
        * @default false
        */
@@ -199,33 +194,33 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : false
       },
       /**
-       * 下级菜单
+       * \u4e0b\u7ea7\u83dc\u5355
        * @cfg {BUI.Menu.Menu} subMenu
        */
       /**
-       * 下级菜单
+       * \u4e0b\u7ea7\u83dc\u5355
        * @type {BUI.Menu.Menu}
        */
       subMenu : {
         view : true
       },
        /**
-       * 下级菜单和菜单项的对齐方式
+       * \u4e0b\u7ea7\u83dc\u5355\u548c\u83dc\u5355\u9879\u7684\u5bf9\u9f50\u65b9\u5f0f
        * @type {Object}
        * @protected
-       * @default 默认在下面显示
+       * @default \u9ed8\u8ba4\u5728\u4e0b\u9762\u663e\u793a
        */
       subMenuAlign : {
         valueFn : function (argument) {
           return {
-             //node: this.get('el'), // 参考元素, falsy 或 window 为可视区域, 'trigger' 为触发元素, 其他为指定元素
-             points: ['tr','tl'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
-             offset: [-5, 0]      // 有效值为 [n, m]
+             //node: this.get('el'), // \u53c2\u8003\u5143\u7d20, falsy \u6216 window \u4e3a\u53ef\u89c6\u533a\u57df, 'trigger' \u4e3a\u89e6\u53d1\u5143\u7d20, \u5176\u4ed6\u4e3a\u6307\u5b9a\u5143\u7d20
+             points: ['tr','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+             offset: [-5, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
           }
         }
       },
       /**
-       * 当存在子菜单时的箭头模版
+       * \u5f53\u5b58\u5728\u5b50\u83dc\u5355\u65f6\u7684\u7bad\u5934\u6a21\u7248
        * @protected
        * @type {String}
        */
@@ -265,12 +260,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
   menuItem.Separator = separator;
   
   return menuItem;
-});/**
- * @fileOverview 菜单基类
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/menu/menu',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
@@ -278,7 +268,7 @@ define('bui/menu/menu',['bui/common'],function(require){
     UIBase = Component.UIBase;
 
   /**
-   * 菜单
+   * \u83dc\u5355
    * xclass:'menu'
    * <img src="../assets/img/class-menu.jpg"/>
    * @class BUI.Menu.Menu
@@ -287,7 +277,7 @@ define('bui/menu/menu',['bui/common'],function(require){
    */
   var Menu = Component.Controller.extend([UIBase.ChildList],{
 	  /**
-     * 绑定事件
+     * \u7ed1\u5b9a\u4e8b\u4ef6
      * @protected
      */
 	  bindUI:function(){
@@ -297,7 +287,7 @@ define('bui/menu/menu',['bui/common'],function(require){
         var item = e.target,
           multipleSelect = _self.get('multipleSelect');
         if(_self != item){
-          //单选情况下，允许自动隐藏，且没有子菜单的情况下，菜单隐藏
+          //\u5355\u9009\u60c5\u51b5\u4e0b\uff0c\u5141\u8bb8\u81ea\u52a8\u9690\u85cf\uff0c\u4e14\u6ca1\u6709\u5b50\u83dc\u5355\u7684\u60c5\u51b5\u4e0b\uff0c\u83dc\u5355\u9690\u85cf
           if(!multipleSelect && _self.get('clickHide') && !item.get('subMenu')){
             _self.getTopAutoHideMenu().hide();
           }
@@ -324,7 +314,7 @@ define('bui/menu/menu',['bui/common'],function(require){
       });
     },
    
-    //点击自动隐藏时
+    //\u70b9\u51fb\u81ea\u52a8\u9690\u85cf\u65f6
     getTopAutoHideMenu : function() {
       var _self = this,
         parentMenu = _self.get('parentMenu'),
@@ -337,7 +327,7 @@ define('bui/menu/menu',['bui/common'],function(require){
       }
       return null;
     },
-    //清除菜单项的激活状态
+    //\u6e05\u9664\u83dc\u5355\u9879\u7684\u6fc0\u6d3b\u72b6\u6001
     _clearOpen : function () {
       var _self = this,
         children = _self.get('children');
@@ -348,9 +338,9 @@ define('bui/menu/menu',['bui/common'],function(require){
       });
     },
     /**
-     * 根据ID查找菜单项
-     * @param  {String} id 编号
-     * @return {BUI.Menu.MenuItem} 菜单项
+     * \u6839\u636eID\u67e5\u627e\u83dc\u5355\u9879
+     * @param  {String} id \u7f16\u53f7
+     * @return {BUI.Menu.MenuItem} \u83dc\u5355\u9879
      */
     findItemById : function(id){ 
 
@@ -378,14 +368,14 @@ define('bui/menu/menu',['bui/common'],function(require){
       },
       /**
        * @protected
-       * 是否根据DOM生成子控件
+       * \u662f\u5426\u6839\u636eDOM\u751f\u6210\u5b50\u63a7\u4ef6
        * @type {Boolean}
        */
       isDecorateChild : {
         value : true
       },
       /**
-       * 子类的默认类名，即类的 xclass
+       * \u5b50\u7c7b\u7684\u9ed8\u8ba4\u7c7b\u540d\uff0c\u5373\u7c7b\u7684 xclass
        * @type {String}
        * @default 'menu-item'
        */
@@ -393,14 +383,14 @@ define('bui/menu/menu',['bui/common'],function(require){
         value : 'menu-item'
       },
       /**
-       * 选中的菜单项
+       * \u9009\u4e2d\u7684\u83dc\u5355\u9879
        * @type {Object}
        */
       selectedItem : {
 
       },
       /**
-       * 上一级菜单
+       * \u4e0a\u4e00\u7ea7\u83dc\u5355
        * @type {BUI.Menu.Menu}
        * @readOnly
        */
@@ -415,12 +405,7 @@ define('bui/menu/menu',['bui/common'],function(require){
   });
 
   return Menu;
-});/**
- * @fileOverview 下拉菜单，一般用于下拉显示菜单
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
 
   var BUI = require('bui/common'),
@@ -433,7 +418,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
 
    /**
    * @class BUI.Menu.PopMenu
-   * 上下文菜单，一般用于弹出菜单
+   * \u4e0a\u4e0b\u6587\u83dc\u5355\uff0c\u4e00\u822c\u7528\u4e8e\u5f39\u51fa\u83dc\u5355
    * xclass:'pop-menu'
    * @extends BUI.Menu.Menu
    * @mixins BUI.Component.UIBase.AutoShow
@@ -445,7 +430,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
 
   },{
     ATTRS:{
-       /** 点击菜单项，如果菜单不是多选，菜单隐藏
+       /** \u70b9\u51fb\u83dc\u5355\u9879\uff0c\u5982\u679c\u83dc\u5355\u4e0d\u662f\u591a\u9009\uff0c\u83dc\u5355\u9690\u85cf
        * @type {Boolean} 
        * @default true
        */
@@ -454,16 +439,16 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
       },
       align : {
         value : {
-           points: ['bl','tl'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
-           offset: [0, 0]      // 有效值为 [n, m]
+           points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+           offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
         }
       },
       visibleMode : {
         value : 'visibility'
       },
       /**
-       * 点击菜单外面，菜单隐藏
-       * 点击菜单项，如果菜单不是多选，菜单隐藏
+       * \u70b9\u51fb\u83dc\u5355\u5916\u9762\uff0c\u83dc\u5355\u9690\u85cf
+       * \u70b9\u51fb\u83dc\u5355\u9879\uff0c\u5982\u679c\u83dc\u5355\u4e0d\u662f\u591a\u9009\uff0c\u83dc\u5355\u9690\u85cf
        * @type {Boolean} 
        * @default true
        */
@@ -483,12 +468,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
   
   return popMenu;
 
-});/**
- * @fileOverview 弹出菜单，一般用于右键菜单
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmenu'],function (require) {
 
   var BUI = require('bui/common'),
@@ -501,7 +481,7 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
     UIBase = Component.UIBase;
 
   /**
-   * 上下文菜单项
+   * \u4e0a\u4e0b\u6587\u83dc\u5355\u9879
    * xclass:'context-menu-item'
    * @class BUI.Menu.ContextMenuItem 
    * @extends BUI.Menu.MenuItem
@@ -515,7 +495,7 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
         ev.preventDefault();
       });
     }, 
-    //设置图标样式
+    //\u8bbe\u7f6e\u56fe\u6807\u6837\u5f0f
     _uiSetIconCls : function (v,ev) {
       var _self = this,
         preCls = ev.prevVal,
@@ -532,7 +512,7 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
      */
     {
       /**
-       * 显示的文本
+       * \u663e\u793a\u7684\u6587\u672c
        * @type {String}
        */
       text:{
@@ -540,7 +520,7 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
         value:''
       },
       /**
-       * 菜单项图标的样式
+       * \u83dc\u5355\u9879\u56fe\u6807\u7684\u6837\u5f0f
        * @type {String}
        */
       iconCls:{
@@ -557,7 +537,7 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   });
 
   /**
-   * 上下文菜单，一般用于弹出菜单
+   * \u4e0a\u4e0b\u6587\u83dc\u5355\uff0c\u4e00\u822c\u7528\u4e8e\u5f39\u51fa\u83dc\u5355
    * xclass:'context-menu'
    * @class BUI.Menu.ContextMenu
    * @extends BUI.Menu.PopMenu
@@ -567,7 +547,7 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   },{
     ATTRS:{
       /**
-       * 子类的默认类名，即类的 xclass
+       * \u5b50\u7c7b\u7684\u9ed8\u8ba4\u7c7b\u540d\uff0c\u5373\u7c7b\u7684 xclass
        * @type {String}
        * @override
        * @default 'menu-item'
@@ -586,11 +566,7 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   contextMenu.Item = contextMenuItem;
   return contextMenu;
 });
-/**
- * @fileOverview 侧边栏菜单
- * @author dxq613@gmail.com
- * @ignore
- */
+
 define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
   var BUI = require('bui/common'),
@@ -600,7 +576,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
     CLS_MENU_LEAF = 'menu-leaf';
     
   /**
-   * 侧边栏菜单
+   * \u4fa7\u8fb9\u680f\u83dc\u5355
    * xclass:'side-menu'
    * @class BUI.Menu.SideMenu
    * @extends BUI.Menu.Menu
@@ -611,7 +587,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
    * @ignore
    */
   {
-    //初始化配置项
+    //\u521d\u59cb\u5316\u914d\u7f6e\u9879
     initializer : function(){
       var _self = this,
         items = _self.get('items'),
@@ -633,11 +609,11 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
           });
         }
       });
-      //防止链接跳转
+      //\u9632\u6b62\u94fe\u63a5\u8df3\u8f6c
       _self.get('el').delegate('a','click',function(ev){
         ev.preventDefault();
       });
-      //处理点击事件，展开、折叠、选中
+      //\u5904\u7406\u70b9\u51fb\u4e8b\u4ef6\uff0c\u5c55\u5f00\u3001\u6298\u53e0\u3001\u9009\u4e2d
       _self.on('itemclick',function(ev){
         var item = ev.item,
           titleEl = $(ev.domTarget).closest('.' + CLS_MENU_TITLE);
@@ -665,7 +641,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       }); 
       return items;
     },
-    //初始化菜单配置项
+    //\u521d\u59cb\u5316\u83dc\u5355\u914d\u7f6e\u9879
     _initMenuCfg : function(item){
       var _self = this,
         items = item.items,
@@ -689,7 +665,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       return cfg;
 
     },
-    //初始化二级菜单
+    //\u521d\u59cb\u5316\u4e8c\u7ea7\u83dc\u5355
     _initSubMenuCfg : function(subItem){
       var _self = this,
         cfg = {
@@ -709,7 +685,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
     {
       
       /**
-       * 配置的items 项是在初始化时作为children
+       * \u914d\u7f6e\u7684items \u9879\u662f\u5728\u521d\u59cb\u5316\u65f6\u4f5c\u4e3achildren
        * @protected
        * @type {Boolean}
        */
@@ -719,11 +695,11 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       events : {
         value : {
           /**
-           * 点击菜单项
+           * \u70b9\u51fb\u83dc\u5355\u9879
 		       * @name BUI.Menu.SideMenu#menuclick
            * @event 
-           * @param {Object} e 事件对象
-           * @param {Object} e.item 当前选中的项
+           * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Object} e.item \u5f53\u524d\u9009\u4e2d\u7684\u9879
            */
           'menuclick' : false
         }

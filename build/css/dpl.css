@@ -589,76 +589,76 @@ s {
 .row-fluid > [class*="span"]:first-child {
   margin-left: 0;
 }
-.row-fluid  .span24 {
+.row-fluid .span24 {
   width: 99.9999999979%;
 }
-.row-fluid  .span23 {
+.row-fluid .span23 {
   width: 95.7894736822%;
 }
-.row-fluid  .span22 {
+.row-fluid .span22 {
   width: 91.57894736649999%;
 }
-.row-fluid  .span21 {
+.row-fluid .span21 {
   width: 87.3684210508%;
 }
-.row-fluid  .span20 {
+.row-fluid .span20 {
   width: 83.1578947351%;
 }
-.row-fluid  .span19 {
+.row-fluid .span19 {
   width: 78.9473684194%;
 }
-.row-fluid  .span18 {
+.row-fluid .span18 {
   width: 74.7368421037%;
 }
-.row-fluid  .span17 {
+.row-fluid .span17 {
   width: 70.526315788%;
 }
-.row-fluid  .span16 {
+.row-fluid .span16 {
   width: 66.3157894723%;
 }
-.row-fluid  .span15 {
+.row-fluid .span15 {
   width: 62.105263156599996%;
 }
-.row-fluid  .span14 {
+.row-fluid .span14 {
   width: 57.8947368409%;
 }
-.row-fluid  .span13 {
+.row-fluid .span13 {
   width: 53.6842105252%;
 }
-.row-fluid  .span12 {
+.row-fluid .span12 {
   width: 49.4736842095%;
 }
-.row-fluid  .span11 {
+.row-fluid .span11 {
   width: 45.2631578938%;
 }
-.row-fluid  .span10 {
+.row-fluid .span10 {
   width: 41.0526315781%;
 }
-.row-fluid  .span9 {
+.row-fluid .span9 {
   width: 36.8421052624%;
 }
-.row-fluid  .span8 {
+.row-fluid .span8 {
   width: 32.6315789467%;
 }
-.row-fluid  .span7 {
+.row-fluid .span7 {
   width: 28.421052631000002%;
 }
-.row-fluid  .span6 {
+.row-fluid .span6 {
   width: 24.2105263153%;
 }
-.row-fluid  .span5 {
+.row-fluid .span5 {
   width: 19.9999999996%;
 }
-.row-fluid  .span4 {
+.row-fluid .span4 {
   width: 15.789473683899999%;
 }
-.row-fluid  .span3 {
+.row-fluid .span3 {
   width: 11.5789473682%;
 }
-.row-fluid  .span2 {
+.row-fluid .span2 {
   width: 7.3684210525%;
 }
-.row-fluid  .span1 {
+.row-fluid .span1 {
   width: 3.1578947368%;
 }
 [class*="span"] > [class*="span"]:first-child {
@@ -1174,9 +1174,6 @@ s {
 }
 [class^="icon-caret"],
 [class*=" icon-caret"] {
-  width: 8px;
-  height: 8px;
-  display: inline-block;
   width: 8px;
   height: 8px;
   display: inline-block;
@@ -2055,7 +2052,6 @@ select {
 .control-text {
   width: 140px;
   display: inline-block;
-  height: 18px;
   padding: 1px 4px;
   border: 1px solid #c3c3d6;
   height: 18px;
@@ -2080,76 +2076,124 @@ textarea,
 .uneditable-input {
   margin-left: 0;
 }
-input.span24, textarea.span24, .uneditable-input.span24 {
+input.span24,
+textarea.span24,
+.uneditable-input.span24 {
   width: 940px;
 }
-input.span23, textarea.span23, .uneditable-input.span23 {
+input.span23,
+textarea.span23,
+.uneditable-input.span23 {
   width: 900px;
 }
-input.span22, textarea.span22, .uneditable-input.span22 {
+input.span22,
+textarea.span22,
+.uneditable-input.span22 {
   width: 860px;
 }
-input.span21, textarea.span21, .uneditable-input.span21 {
+input.span21,
+textarea.span21,
+.uneditable-input.span21 {
   width: 820px;
 }
-input.span20, textarea.span20, .uneditable-input.span20 {
+input.span20,
+textarea.span20,
+.uneditable-input.span20 {
   width: 780px;
 }
-input.span19, textarea.span19, .uneditable-input.span19 {
+input.span19,
+textarea.span19,
+.uneditable-input.span19 {
   width: 740px;
 }
-input.span18, textarea.span18, .uneditable-input.span18 {
+input.span18,
+textarea.span18,
+.uneditable-input.span18 {
   width: 700px;
 }
-input.span17, textarea.span17, .uneditable-input.span17 {
+input.span17,
+textarea.span17,
+.uneditable-input.span17 {
   width: 660px;
 }
-input.span16, textarea.span16, .uneditable-input.span16 {
+input.span16,
+textarea.span16,
+.uneditable-input.span16 {
   width: 620px;
 }
-input.span15, textarea.span15, .uneditable-input.span15 {
+input.span15,
+textarea.span15,
+.uneditable-input.span15 {
   width: 580px;
 }
-input.span14, textarea.span14, .uneditable-input.span14 {
+input.span14,
+textarea.span14,
+.uneditable-input.span14 {
   width: 540px;
 }
-input.span13, textarea.span13, .uneditable-input.span13 {
+input.span13,
+textarea.span13,
+.uneditable-input.span13 {
   width: 500px;
 }
-input.span12, textarea.span12, .uneditable-input.span12 {
+input.span12,
+textarea.span12,
+.uneditable-input.span12 {
   width: 460px;
 }
-input.span11, textarea.span11, .uneditable-input.span11 {
+input.span11,
+textarea.span11,
+.uneditable-input.span11 {
   width: 420px;
 }
-input.span10, textarea.span10, .uneditable-input.span10 {
+input.span10,
+textarea.span10,
+.uneditable-input.span10 {
   width: 380px;
 }
-input.span9, textarea.span9, .uneditable-input.span9 {
+input.span9,
+textarea.span9,
+.uneditable-input.span9 {
   width: 340px;
 }
-input.span8, textarea.span8, .uneditable-input.span8 {
+input.span8,
+textarea.span8,
+.uneditable-input.span8 {
   width: 300px;
 }
-input.span7, textarea.span7, .uneditable-input.span7 {
+input.span7,
+textarea.span7,
+.uneditable-input.span7 {
   width: 260px;
 }
-input.span6, textarea.span6, .uneditable-input.span6 {
+input.span6,
+textarea.span6,
+.uneditable-input.span6 {
   width: 220px;
 }
-input.span5, textarea.span5, .uneditable-input.span5 {
+input.span5,
+textarea.span5,
+.uneditable-input.span5 {
   width: 180px;
 }
-input.span4, textarea.span4, .uneditable-input.span4 {
+input.span4,
+textarea.span4,
+.uneditable-input.span4 {
   width: 140px;
 }
-input.span3, textarea.span3, .uneditable-input.span3 {
+input.span3,
+textarea.span3,
+.uneditable-input.span3 {
   width: 100px;
 }
-input.span2, textarea.span2, .uneditable-input.span2 {
+input.span2,
+textarea.span2,
+.uneditable-input.span2 {
   width: 60px;
 }
-input.span1, textarea.span1, .uneditable-input.span1 {
+input.span1,
+textarea.span1,
+.uneditable-input.span1 {
   width: 20px;
 }
 /**/
@@ -2289,17 +2333,16 @@ legend {
 .form-horizontal .control-row-auto .well {
   margin-bottom: 0;
 }
-.form-horizontal .valid-text {
+.form-horizontal .controls .valid-text {
   display: block;
 }
-.form-horizontal .valid-text .x-icon {
+.form-horizontal .controls .valid-text .x-icon {
   margin-right: 5px;
 }
-.form-horizontal .valid-text em {
+.form-horizontal .controls .valid-text em {
   font-style: normal;
 }
 .form-horizontal .valid-text em {
-  line-height: 16px;
   line-height: 16px;
   background-color: transparent;
   font-style: normal;
