@@ -1,9 +1,6 @@
-/**
- * @fileOverview Picker的入口
- * @author dxq613@gmail.com
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/picker',['bui/common','bui/picker/picker','bui/picker/listpicker'],function (require) {
   var BUI = require('bui/common'),
     Picker = BUI.namespace('Picker');
@@ -14,25 +11,21 @@ define('bui/picker',['bui/common','bui/picker/picker','bui/picker/listpicker'],f
   });
 
   return Picker;
-});/**
- * @fileOverview 选择器
- * @ignore
- */
-
+});
 define('bui/picker/picker',['bui/overlay'],function (require) {
   
   var Overlay = require('bui/overlay').Overlay;
 
   /**
-   * 选择器控件的基类，弹出一个层来选择数据，不要使用此类创建控件，仅用于继承实现控件
+   * \u9009\u62e9\u5668\u63a7\u4ef6\u7684\u57fa\u7c7b\uff0c\u5f39\u51fa\u4e00\u4e2a\u5c42\u6765\u9009\u62e9\u6570\u636e\uff0c\u4e0d\u8981\u4f7f\u7528\u6b64\u7c7b\u521b\u5efa\u63a7\u4ef6\uff0c\u4ec5\u7528\u4e8e\u7ee7\u627f\u5b9e\u73b0\u63a7\u4ef6
    * xclass : 'picker'
    * <pre><code>
    * BUI.use(['bui/picker','bui/list'],function(Picker,List){
    *
    * var items = [
-   *       {text:'选项1',value:'a'},
-   *       {text:'选项2',value:'b'},
-   *      {text:'选项3',value:'c'}
+   *       {text:'\u9009\u98791',value:'a'},
+   *       {text:'\u9009\u98792',value:'b'},
+   *      {text:'\u9009\u98793',value:'c'}
    *     ],
    *   list = new List.SimpleList({
    *     elCls:'bui-select-list',
@@ -40,9 +33,9 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
    *   }),
    *   picker = new Picker.ListPicker({
    *     trigger : '#show',  
-   *     valueField : '#hide', //如果需要列表返回的value，放在隐藏域，那么指定隐藏域
-   *     width:100,  //指定宽度
-   *     children : [list] //配置picker内的列表
+   *     valueField : '#hide', //\u5982\u679c\u9700\u8981\u5217\u8868\u8fd4\u56de\u7684value\uff0c\u653e\u5728\u9690\u85cf\u57df\uff0c\u90a3\u4e48\u6307\u5b9a\u9690\u85cf\u57df
+   *     width:100,  //\u6307\u5b9a\u5bbd\u5ea6
+   *     children : [list] //\u914d\u7f6epicker\u5185\u7684\u5217\u8868
    *   });
    * picker.render();
    * });
@@ -75,7 +68,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       },
       _initControl : function(){
         var _self = this;
-        if(_self.get('isInit')){ //已经初始化过
+        if(_self.get('isInit')){ //\u5df2\u7ecf\u521d\u59cb\u5316\u8fc7
           return ;
         }
         if(!_self.get('innerControl')){
@@ -87,12 +80,12 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       },
       /**
        * @protected
-       * 初始化内部控件
+       * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6
        */
       createControl : function(){
         
       },
-      //初始化内部控件的事件
+      //\u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\u7684\u4e8b\u4ef6
       initControlEvent : function(){
         var _self = this,
           innerControl = _self.get('innerControl'),
@@ -132,7 +125,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         if(hideEvent){
           innerControl.on(_self.get('hideEvent'),function(){
             var curTrigger = _self.get('curTrigger');
-            try{ //隐藏时，在ie6,7下会报错
+            try{ //\u9690\u85cf\u65f6\uff0c\u5728ie6,7\u4e0b\u4f1a\u62a5\u9519
               if(curTrigger){
                 curTrigger.focus();
               }
@@ -144,52 +137,52 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         }
       },
       /**
-       * 设置选中的值
+       * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
        * @template
        * @protected
-       * @param {String} val 设置值
+       * @param {String} val \u8bbe\u7f6e\u503c
        */
       setSelectedValue : function(val){
         
       },
       /**
-       * 获取选中的值，多选状态下，值以','分割
+       * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
        * @template
        * @protected
-       * @return {String} 选中的值
+       * @return {String} \u9009\u4e2d\u7684\u503c
        */
       getSelectedValue : function(){
         
       },
       /**
-       * 获取选中项的文本，多选状态下，文本以','分割
+       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
        * @template
        * @protected
-       * @return {String} 选中的文本
+       * @return {String} \u9009\u4e2d\u7684\u6587\u672c
        */
       getSelectedText : function(){
 
       },
       /**
-       * 选择器获取焦点时，默认选中内部控件
+       * \u9009\u62e9\u5668\u83b7\u53d6\u7126\u70b9\u65f6\uff0c\u9ed8\u8ba4\u9009\u4e2d\u5185\u90e8\u63a7\u4ef6
        */
       focus : function(){
         this.get('innerControl').focus();
       },
       /**
        * @protected
-       * 发生改变
+       * \u53d1\u751f\u6539\u53d8
        */
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
-        //curTrigger && curTrigger.trigger('change'); //触发改变事件
+        //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
       },
       /**
-       * 处理 esc 键
+       * \u5904\u7406 esc \u952e
        * @protected
-       * @param  {jQuery.Event} ev 事件对象
+       * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
        */
       handleNavEsc : function (ev) {
         this.hide();
@@ -208,7 +201,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
     ATTRS : {
       
       /**
-       * 用于选择的控件，默认为第一个子元素,此控件实现 @see {BUI.Component.UIBase.Selection} 接口
+       * \u7528\u4e8e\u9009\u62e9\u7684\u63a7\u4ef6\uff0c\u9ed8\u8ba4\u4e3a\u7b2c\u4e00\u4e2a\u5b50\u5143\u7d20,\u6b64\u63a7\u4ef6\u5b9e\u73b0 @see {BUI.Component.UIBase.Selection} \u63a5\u53e3
        * @protected
        * @type {Object|BUI.Component.Controller}
        */
@@ -218,11 +211,11 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         }
       },
       /**
-       * 显示选择器的事件
+       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
        * @cfg {String} [triggerEvent='click']
        */
       /**
-       * 显示选择器的事件
+       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
        * @type {String}
        * @default 'click'
        */
@@ -230,29 +223,29 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         value:'click'
       },
       /**
-       * 选择器选中的项，是否随着触发器改变
+       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
        * @cfg {Boolean} [autoSetValue=true]
        */
       /**
-       * 选择器选中的项，是否随着触发器改变
+       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
        * @type {Boolean}
        */
       autoSetValue : {
         value : true
       },
       /**
-       * 选择发生改变的事件
+       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
        * @cfg {String} [changeEvent='selectedchange']
        */
       /**
-       * 选择发生改变的事件
+       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
        * @type {String}
        */
       changeEvent : {
         value:'selectedchange'
       },
       /**
-       * 自动隐藏
+       * \u81ea\u52a8\u9690\u85cf
        * @type {Boolean}
        * @override
        */
@@ -260,7 +253,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         value : true
       },
       /**
-       * 隐藏选择器的事件
+       * \u9690\u85cf\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
        * @protected
        * @type {String}
        */
@@ -268,11 +261,11 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         value:'itemclick'
       },
       /**
-       * 返回的文本放在的DOM，一般是input
+       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
        * @cfg {String|HTMLElement|jQuery} textField
        */
       /**
-       * 返回的文本放在的DOM，一般是input
+       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
        * @type {String|HTMLElement|jQuery}
        */
       textField : {
@@ -280,16 +273,16 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       },
       align : {
         value : {
-           points: ['bl','tl'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
-           offset: [0, 0]      // 有效值为 [n, m]
+           points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+           offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
         }
       },
       /**
-       * 返回的值放置DOM ,一般是input
+       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
        * @cfg {String|HTMLElement|jQuery} valueField
        */
       /**
-       * 返回的值放置DOM ,一般是input
+       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
        * @type {String|HTMLElement|jQuery}
        */
       valueField:{
@@ -297,11 +290,11 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       }
       /**
        * @event selectedchange
-       * 选中值改变事件
-       * @param {Object} e 事件对象
-       * @param {String} text 选中的文本
-       * @param {string} value 选中的值
-       * @param {jQuery} curTrigger 当前触发picker的元素
+       * \u9009\u4e2d\u503c\u6539\u53d8\u4e8b\u4ef6
+       * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+       * @param {String} text \u9009\u4e2d\u7684\u6587\u672c
+       * @param {string} value \u9009\u4e2d\u7684\u503c
+       * @param {jQuery} curTrigger \u5f53\u524d\u89e6\u53d1picker\u7684\u5143\u7d20
        */
     }
   },{
@@ -309,33 +302,29 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
   });
 
   return picker;
-});/**
- * @fileOverview 列表项的选择器
- * @ignore
- */
-
+});
 define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (require) {
 
   var List = require('bui/list'),
     Picker = require('bui/picker/picker'),
     /**
-     * 列表选择器,xclass = 'list-picker'
+     * \u5217\u8868\u9009\u62e9\u5668,xclass = 'list-picker'
      * <pre><code>
      * BUI.use(['bui/picker'],function(Picker){
      *
      * var items = [
-     *       {text:'选项1',value:'a'},
-     *       {text:'选项2',value:'b'},
-     *      {text:'选项3',value:'c'}
+     *       {text:'\u9009\u98791',value:'a'},
+     *       {text:'\u9009\u98792',value:'b'},
+     *      {text:'\u9009\u98793',value:'c'}
      *     ],
      *   picker = new Picker.ListPicker({
      *     trigger : '#show',  
-     *     valueField : '#hide', //如果需要列表返回的value，放在隐藏域，那么指定隐藏域
-     *     width:100,  //指定宽度
+     *     valueField : '#hide', //\u5982\u679c\u9700\u8981\u5217\u8868\u8fd4\u56de\u7684value\uff0c\u653e\u5728\u9690\u85cf\u57df\uff0c\u90a3\u4e48\u6307\u5b9a\u9690\u85cf\u57df
+     *     width:100,  //\u6307\u5b9a\u5bbd\u5ea6
      *     children : [{
      *        elCls:'bui-select-list',
      *        items : items
-     *     }] //配置picker内的列表
+     *     }] //\u914d\u7f6epicker\u5185\u7684\u5217\u8868
      *   });
      * picker.render();
      * });
@@ -355,9 +344,9 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
         }
       },
       /**
-       * 设置选中的值
+       * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
        * @override
-       * @param {String} val 设置值
+       * @param {String} val \u8bbe\u7f6e\u503c
        */
       setSelectedValue : function(val){
         val = val ? val.toString() : '';
@@ -381,12 +370,12 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
       onChange : function(selText,selValue,ev){
         var _self = this,
           curTrigger = _self.get('curTrigger');
-        //curTrigger && curTrigger.trigger('change'); //触发改变事件
+        //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
         _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger,item : ev.item});
       },
       /**
-       * 获取选中的值，多选状态下，值以','分割
-       * @return {String} 选中的值
+       * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
+       * @return {String} \u9009\u4e2d\u7684\u503c
        */
       getSelectedValue : function(){
         if(!this.get('isInit')){
@@ -395,8 +384,8 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
         return this.get('list').getSelectionValues().join(',');
       },
       /**
-       * 获取选中项的文本，多选状态下，文本以','分割
-       * @return {String} 选中的文本
+       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
+       * @return {String} \u9009\u4e2d\u7684\u6587\u672c
        */
       getSelectedText : function(){
         if(!this.get('isInit')){
@@ -407,7 +396,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
     },{
       ATTRS : {
         /**
-         * 默认子控件的样式,默认为'simple-list'
+         * \u9ed8\u8ba4\u5b50\u63a7\u4ef6\u7684\u6837\u5f0f,\u9ed8\u8ba4\u4e3a'simple-list'
          * @type {String}
          * @override
          */
@@ -415,7 +404,7 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
           value : 'simple-list'
         },
         /**
-         * 选择的列表
+         * \u9009\u62e9\u7684\u5217\u8868
          * <pre><code>
          *  var list = picker.get('list');
          *  list.getSelected();
@@ -430,12 +419,12 @@ define('bui/picker/listpicker',['bui/picker/picker','bui/list'],function (requir
         }
         /**
          * @event selectedchange
-         * 选择发生改变事件
-         * @param {Object} e 事件对象
-         * @param {String} e.text 选中的文本
-         * @param {string} e.value 选中的值
-         * @param {Object} e.item 发生改变的选项
-         * @param {jQuery} e.curTrigger 当前触发picker的元素
+         * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u4e8b\u4ef6
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {String} e.text \u9009\u4e2d\u7684\u6587\u672c
+         * @param {string} e.value \u9009\u4e2d\u7684\u503c
+         * @param {Object} e.item \u53d1\u751f\u6539\u53d8\u7684\u9009\u9879
+         * @param {jQuery} e.curTrigger \u5f53\u524d\u89e6\u53d1picker\u7684\u5143\u7d20
          */
       }
     },{

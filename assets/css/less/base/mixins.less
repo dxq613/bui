@@ -460,10 +460,10 @@
   &:hover, &:active, &.active, &.disabled {
     background-color: @endColor;
   }
-	//ie6 bug,导致同一个rule的其他选择器不起作用
-	&[disabled] {
-		background-color: @endColor;
-	}
+  //ie6 bug,导致同一个rule的其他选择器不起作用
+  &[disabled] {
+    background-color: @endColor;
+  }
 
   // IE 7 + 8 can't handle box-shadow to show active, so we darken a bit ourselves
   &:active,
@@ -548,11 +548,11 @@
 }
 
 .spanWidth (@columns) {
-	width: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1));
+  width: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1));
 }
 
 .offsetWidth (@columns) {
-	margin-left: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1)) + (@gridGutterWidth * 2);
+  margin-left: (@gridColumnWidth * @columns) + (@gridGutterWidth * (@columns - 1)) + (@gridGutterWidth * 2);
 }
 
 // The Grid
@@ -561,13 +561,13 @@
   .core (@gridColumnWidth, @gridGutterWidth) {
 
     .spanX (@index) when (@index > 0) {
-      (~".span@{index}") { .span(@index); }
+      .span@{index} { .span(@index); }
       .spanX(@index - 1);
     }
     .spanX (0) {}
 
     .offsetX (@index) when (@index > 0) {
-      (~".offset@{index}") { .offset(@index); }
+      .offset@{index} { .offset(@index); }
       .offsetX(@index - 1);
     }
     .offsetX (0) {}
@@ -605,7 +605,7 @@
 
     .spanX (@index) when (@index > 0) {
       //(~"> .span@{index}") { .span(@index); } 
-			(~" .span@{index}") { .span(@index); }//fixed ie6 bug
+      .span@{index} { .span(@index); }
       .spanX(@index - 1);
     }
     .spanX (0) {}
@@ -634,7 +634,7 @@
   .input(@gridColumnWidth, @gridGutterWidth) {
 
     .spanX (@index) when (@index > 0) {
-      (~"input.span@{index}, textarea.span@{index}, .uneditable-input.span@{index}") { .span(@index); }
+      input.span@{index}, textarea.span@{index}, .uneditable-input.span@{index} { .span(@index); }
       .spanX(@index - 1);
     }
     .spanX (0) {}

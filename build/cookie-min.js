@@ -1,5 +1,4 @@
-/**
- * @ignore
- * @fileOverview cookie
- * @author lifesinger@gmail.com
- */define("bui/cookie",function(){function i(e){return typeof e=="string"&&e!==""}var e=document,t=864e5,n=encodeURIComponent,r=decodeURIComponent,s={get:function(t){var n,s;return i(t)&&(s=String(e.cookie).match(new RegExp("(?:^| )"+t+"(?:(?:=([^;]*))|;|$)")))&&(n=s[1]?r(s[1]):""),n},set:function(r,s,o,u,a,f){var l=String(n(s)),c=o;typeof c=="number"&&(c=new Date,c.setTime(c.getTime()+o*t)),c instanceof Date&&(l+="; expires="+c.toUTCString()),i(u)&&(l+="; domain="+u),i(a)&&(l+="; path="+a),f&&(l+="; secure"),e.cookie=r+"="+l},remove:function(e,t,n,r){this.set(e,"",-1,t,n,r)}};return BUI.Cookie=s,s});
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
+define("bui/cookie",function(){function a(a){return"string"==typeof a&&""!==a}var b=document,c=864e5,d=encodeURIComponent,e=decodeURIComponent,f={get:function(c){var d,f;return a(c)&&(f=String(b.cookie).match(new RegExp("(?:^| )"+c+"(?:(?:=([^;]*))|;|$)")))&&(d=f[1]?e(f[1]):""),d},set:function(e,f,g,h,i,j){var k=String(d(f)),l=g;"number"==typeof l&&(l=new Date,l.setTime(l.getTime()+g*c)),l instanceof Date&&(k+="; expires="+l.toUTCString()),a(h)&&(k+="; domain="+h),a(i)&&(k+="; path="+i),j&&(k+="; secure"),b.cookie=e+"="+k},remove:function(a,b,c,d){this.set(a,"",-1,b,c,d)}};return BUI.Cookie=f,f});

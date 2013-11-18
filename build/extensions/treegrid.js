@@ -11,7 +11,7 @@ define('bui/extensions/treegrid',['bui/common','bui/grid','bui/tree'],function (
 
   /**
    * @class BUI.Extensions.TreeGrid
-   * 树型结构的表格，注意此种表格不要跟分页控件一起使用
+   * \u6811\u578b\u7ed3\u6784\u7684\u8868\u683c\uff0c\u6ce8\u610f\u6b64\u79cd\u8868\u683c\u4e0d\u8981\u8ddf\u5206\u9875\u63a7\u4ef6\u4e00\u8d77\u4f7f\u7528
    * @extends BUI.Grid.Grid
    */
   var TreeGrid = Grid.Grid.extend([Tree.Mixin],{

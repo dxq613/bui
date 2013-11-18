@@ -1,19 +1,12 @@
-/**
- * @fileOverview Mask的入口文件
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/mask',['bui/common','bui/mask/mask','bui/mask/loadmask'],function (require) {
   var BUI = require('bui/common'),
     Mask = require('bui/mask/mask');
   Mask.LoadMask = require('bui/mask/loadmask');
   return Mask;
-});/**
- * @fileOverview Mask屏蔽层
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/mask/mask',['bui/common'],function (require) {
 
     var BUI = require('bui/common'),
@@ -24,11 +17,11 @@ define('bui/mask/mask',['bui/common'],function (require) {
 
     BUI.mix(Mask,
     /**
-    * 屏蔽层
+    * \u5c4f\u853d\u5c42
     * <pre><code>
     * BUI.use('bui/mask',function(Mask){
-    *   Mask.maskElement('#domId'); //屏蔽dom
-    *   Mask.unmaskElement('#domId'); //解除DOM屏蔽
+    *   Mask.maskElement('#domId'); //\u5c4f\u853ddom
+    *   Mask.unmaskElement('#domId'); //\u89e3\u9664DOM\u5c4f\u853d
     * });
     * </code></pre>
     * @class BUI.Mask
@@ -36,10 +29,10 @@ define('bui/mask/mask',['bui/common'],function (require) {
     */
     {
         /**
-         * @description 屏蔽指定元素
-         * @param {String|HTMLElement} element 被屏蔽的元素
-         * @param {String} [msg] 屏蔽元素时显示的文本
-         * @param {String} [msgCls] 显示文本应用的样式
+         * @description \u5c4f\u853d\u6307\u5b9a\u5143\u7d20
+         * @param {String|HTMLElement} element \u88ab\u5c4f\u853d\u7684\u5143\u7d20
+         * @param {String} [msg] \u5c4f\u853d\u5143\u7d20\u65f6\u663e\u793a\u7684\u6587\u672c
+         * @param {String} [msgCls] \u663e\u793a\u6587\u672c\u5e94\u7528\u7684\u6837\u5f0f
          * <pre><code>
          *   BUI.Mask.maskElement('#domId');
          *   
@@ -77,8 +70,8 @@ define('bui/mask/mask',['bui/common'],function (require) {
             return maskDiv;
         },
         /**
-         * @description 解除元素的屏蔽
-         * @param {String|HTMLElement} 屏蔽的元素
+         * @description \u89e3\u9664\u5143\u7d20\u7684\u5c4f\u853d
+         * @param {String|HTMLElement} \u5c4f\u853d\u7684\u5143\u7d20
          * <pre><code>
          * BUI.Mask.unmaskElement('#domId');
          * </code></pre>
@@ -99,17 +92,13 @@ define('bui/mask/mask',['bui/common'],function (require) {
     });
     
     return Mask;
-});/**
- * @fileOverview 加载数据时屏蔽层
- * @ignore
- */
-
+});
 define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
   
   var Mask = require('bui/mask/mask');
 
    /**
-     * 屏蔽指定元素，并显示加载信息
+     * \u5c4f\u853d\u6307\u5b9a\u5143\u7d20\uff0c\u5e76\u663e\u793a\u52a0\u8f7d\u4fe1\u606f
      * <pre></code>
      * BUI.use('bui/mask',function(Mask){
      *    var loadMask = new Mask.LoadMask({
@@ -138,7 +127,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
 
     LoadMask.ATTRS = {
         /**
-         * 屏蔽的元素
+         * \u5c4f\u853d\u7684\u5143\u7d20
          * <pre></code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId'
@@ -150,11 +139,11 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
 
         },
         /**
-         * 加载时显示的加载信息
+         * \u52a0\u8f7d\u65f6\u663e\u793a\u7684\u52a0\u8f7d\u4fe1\u606f
          * <pre></code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId',
-         *        msg : '正在加载，请稍后。。。'
+         *        msg : '\u6b63\u5728\u52a0\u8f7d\uff0c\u8bf7\u7a0d\u540e\u3002\u3002\u3002'
          *    });
          * </code></pre>
          * @cfg {String} msg [msg = 'Loading...']
@@ -163,7 +152,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
             value : 'Loading...'
         },
         /**
-         * 加载时显示的加载信息的样式
+         * \u52a0\u8f7d\u65f6\u663e\u793a\u7684\u52a0\u8f7d\u4fe1\u606f\u7684\u6837\u5f0f
          * <pre></code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId',
@@ -176,7 +165,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
             value : 'x-mask-loading'
         },
         /**
-         * 加载控件是否禁用
+         * \u52a0\u8f7d\u63a7\u4ef6\u662f\u5426\u7981\u7528
          * @type {Boolean}
          * @field
          * @default false
@@ -187,7 +176,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
         }
     };
 
-    //对象原型
+    //\u5bf9\u8c61\u539f\u578b
     BUI.augment(LoadMask,
     /** 
     * @lends BUI.Mask.LoadMask.prototype 
@@ -196,19 +185,19 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
     {
         
         /**
-         * 设置控件不可用
+         * \u8bbe\u7f6e\u63a7\u4ef6\u4e0d\u53ef\u7528
          */
         disable:function () {
             this.set('disabled',true);
         },
         /**
-         * @private 加载已经完毕，解除屏蔽
+         * @private \u52a0\u8f7d\u5df2\u7ecf\u5b8c\u6bd5\uff0c\u89e3\u9664\u5c4f\u853d
          */
         onLoad:function () {
             Mask.unmaskElement(this.get('el'));
         },
         /**
-         * @private 开始加载，屏蔽当前元素
+         * @private \u5f00\u59cb\u52a0\u8f7d\uff0c\u5c4f\u853d\u5f53\u524d\u5143\u7d20
          */
         onBeforeLoad:function () {
             var _self = this;
@@ -217,21 +206,21 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
             }
         },
         /**
-         * 显示加载条，并遮盖元素
+         * \u663e\u793a\u52a0\u8f7d\u6761\uff0c\u5e76\u906e\u76d6\u5143\u7d20
          */
         show:function () {
             this.onBeforeLoad();
         },
 
         /**
-         * 隐藏加载条，并解除遮盖元素
+         * \u9690\u85cf\u52a0\u8f7d\u6761\uff0c\u5e76\u89e3\u9664\u906e\u76d6\u5143\u7d20
          */
         hide:function () {
             this.onLoad();
         },
 
         /*
-         * 清理资源
+         * \u6e05\u7406\u8d44\u6e90
          */
         destroy:function () {
             this.hide();

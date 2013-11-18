@@ -1,10 +1,6 @@
-/**
- * @ignore
- * @fileOverview cookie
- * @author lifesinger@gmail.com
- */
-
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/cookie',function () {
 
     var doc = document,
@@ -52,7 +48,7 @@ define('bui/cookie',function () {
         set: function (name, val, expires, domain, path, secure) {
             var text = String(encode(val)), date = expires;
 
-            // 从当前时间开始，多少天后过期
+            // \u4ece\u5f53\u524d\u65f6\u95f4\u5f00\u59cb\uff0c\u591a\u5c11\u5929\u540e\u8fc7\u671f
             if (typeof date === 'number') {
                 date = new Date();
                 date.setTime(date.getTime() + expires * MILLISECONDS_OF_DAY);
@@ -103,9 +99,9 @@ define('bui/cookie',function () {
 * - jsdoc added
 *
 * 2010.04
-* - get 方法要考虑 ie 下，
-* 值为空的 cookie 为 'test3; test3=3; test3tt=2; test1=t1test3; test3', 没有等于号。
-* 除了正则获取，还可以 split 字符串的方式来获取。
-* - api 设计上，原本想借鉴 jQuery 的简明风格：S.cookie(name, ...), 但考虑到可扩展性，目前
-* 独立成静态工具类的方式更优。
+* - get \u65b9\u6cd5\u8981\u8003\u8651 ie \u4e0b\uff0c
+* \u503c\u4e3a\u7a7a\u7684 cookie \u4e3a 'test3; test3=3; test3tt=2; test1=t1test3; test3', \u6ca1\u6709\u7b49\u4e8e\u53f7\u3002
+* \u9664\u4e86\u6b63\u5219\u83b7\u53d6\uff0c\u8fd8\u53ef\u4ee5 split \u5b57\u7b26\u4e32\u7684\u65b9\u5f0f\u6765\u83b7\u53d6\u3002
+* - api \u8bbe\u8ba1\u4e0a\uff0c\u539f\u672c\u60f3\u501f\u9274 jQuery \u7684\u7b80\u660e\u98ce\u683c\uff1aS.cookie(name, ...), \u4f46\u8003\u8651\u5230\u53ef\u6269\u5c55\u6027\uff0c\u76ee\u524d
+* \u72ec\u7acb\u6210\u9759\u6001\u5de5\u5177\u7c7b\u7684\u65b9\u5f0f\u66f4\u4f18\u3002
 */

@@ -1,3 +1,6 @@
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 
 define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'],function(require){
 
@@ -15,18 +18,6 @@ define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','b
   });
   return BUI;
 });
-/**
- * @class BUI.Util
- * 控件库的工具方法，这些工具方法直接绑定到BUI对象上
- * <pre><code>
- *     BUI.isString(str);
- *
- *     BUI.extend(A,B);
- *
- *     BUI.mix(A,{a:'a'});
- * </code></pre>
- * @singleton
- */  
 var BUI = BUI || {};
 if(!BUI.use && seajs){
     BUI.use = seajs.use;
@@ -35,7 +26,7 @@ if(!BUI.use && seajs){
 
 define('bui/util',function(){
   
-    //兼容jquery 1.6以下
+    //\u517c\u5bb9jquery 1.6\u4ee5\u4e0b
     (function($){
       if($.fn){
         $.fn.on = $.fn.on || $.fn.bind;
@@ -45,7 +36,7 @@ define('bui/util',function(){
     })(jQuery);
   /**
    * @ignore
-   * 处于效率的目的，复制属性
+   * \u5904\u4e8e\u6548\u7387\u7684\u76ee\u7684\uff0c\u590d\u5236\u5c5e\u6027
    */
   function mixAttrs(to,from){
 
@@ -57,7 +48,7 @@ define('bui/util',function(){
     }
     
   }
-  //合并属性
+  //\u5408\u5e76\u5c5e\u6027
   function mixAttr(attr,attrConfig){
     for (var p in attrConfig) {
       if(attrConfig.hasOwnProperty(p)){
@@ -89,45 +80,45 @@ define('bui/util',function(){
   $.extend(BUI,
   {
     /**
-     * 版本号
+     * \u7248\u672c\u53f7
      * @memberOf BUI
      * @type {Number}
      */
     version:1.0,
 
     /**
-     * 子版本号
+     * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
     subVersion : 2,
 
     /**
-     * 是否为函数
-     * @param  {*} fn 对象
-     * @return {Boolean}  是否函数
+     * \u662f\u5426\u4e3a\u51fd\u6570
+     * @param  {*} fn \u5bf9\u8c61
+     * @return {Boolean}  \u662f\u5426\u51fd\u6570
      */
     isFunction : function(fn){
       return typeof(fn) === 'function';
     },
     /**
-     * 是否数组
+     * \u662f\u5426\u6570\u7ec4
      * @method 
-     * @param  {*}  obj 是否数组
-     * @return {Boolean}  是否数组
+     * @param  {*}  obj \u662f\u5426\u6570\u7ec4
+     * @return {Boolean}  \u662f\u5426\u6570\u7ec4
      */
     isArray : ('isArray' in Array) ? Array.isArray : function(value) {
         return toString.call(value) === '[object Array]';
     },
     /**
-     * 是否日期
-     * @param  {*}  value 对象
-     * @return {Boolean}  是否日期
+     * \u662f\u5426\u65e5\u671f
+     * @param  {*}  value \u5bf9\u8c61
+     * @return {Boolean}  \u662f\u5426\u65e5\u671f
      */
     isDate: function(value) {
         return toString.call(value) === '[object Date]';
     },
     /**
-     * 是否是javascript对象
+     * \u662f\u5426\u662fjavascript\u5bf9\u8c61
      * @param {Object} value The value to test
      * @return {Boolean}
      * @method
@@ -141,10 +132,10 @@ define('bui/util',function(){
         return toString.call(value) === '[object Object]';
     },
     /**
-     * 将指定的方法或属性放到构造函数的原型链上，
-     * 函数支持多于2个变量，后面的变量同s1一样将其成员复制到构造函数的原型链上。
-     * @param  {Function} r  构造函数
-     * @param  {Object} s1 将s1 的成员复制到构造函数的原型链上
+     * \u5c06\u6307\u5b9a\u7684\u65b9\u6cd5\u6216\u5c5e\u6027\u653e\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\uff0c
+     * \u51fd\u6570\u652f\u6301\u591a\u4e8e2\u4e2a\u53d8\u91cf\uff0c\u540e\u9762\u7684\u53d8\u91cf\u540cs1\u4e00\u6837\u5c06\u5176\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\u3002
+     * @param  {Function} r  \u6784\u9020\u51fd\u6570
+     * @param  {Object} s1 \u5c06s1 \u7684\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a
      *			@example
      *			BUI.augment(class1,{
      *				method1: function(){
@@ -163,9 +154,9 @@ define('bui/util',function(){
       return r;
     },
     /**
-     * 拷贝对象
-     * @param  {Object} obj 要拷贝的对象
-     * @return {Object} 拷贝生成的对象
+     * \u62f7\u8d1d\u5bf9\u8c61
+     * @param  {Object} obj \u8981\u62f7\u8d1d\u7684\u5bf9\u8c61
+     * @return {Object} \u62f7\u8d1d\u751f\u6210\u7684\u5bf9\u8c61
      */
     cloneObject : function(obj){
             var result = BUI.isArray(obj) ? [] : {};
@@ -173,7 +164,7 @@ define('bui/util',function(){
       return BUI.mix(true,result,obj);
     },
     /**
-    * 抛出错误
+    * \u629b\u51fa\u9519\u8bef
     */
     error : function(msg){
         if(BUI.debug){
@@ -181,14 +172,14 @@ define('bui/util',function(){
         }
     },
     /**
-     * 实现类的继承，通过父类生成子类
+     * \u5b9e\u73b0\u7c7b\u7684\u7ee7\u627f\uff0c\u901a\u8fc7\u7236\u7c7b\u751f\u6210\u5b50\u7c7b
      * @param  {Function} subclass
-     * @param  {Function} superclass 父类构造函数
-     * @param  {Object} overrides  子类的属性或者方法
-     * @return {Function} 返回的子类构造函数
-		 * 示例:
+     * @param  {Function} superclass \u7236\u7c7b\u6784\u9020\u51fd\u6570
+     * @param  {Object} overrides  \u5b50\u7c7b\u7684\u5c5e\u6027\u6216\u8005\u65b9\u6cd5
+     * @return {Function} \u8fd4\u56de\u7684\u5b50\u7c7b\u6784\u9020\u51fd\u6570
+		 * \u793a\u4f8b:
      *		@example
-     *		//父类
+     *		//\u7236\u7c7b
      *		function base(){
      * 
      *		}
@@ -196,18 +187,18 @@ define('bui/util',function(){
      *		function sub(){
      * 
      *		}
-     *		//子类
+     *		//\u5b50\u7c7b
      *		BUI.extend(sub,base,{
      *			method : function(){
      *    
      *			}
      *		});
      *
-     *		//或者
+     *		//\u6216\u8005
      *		var sub = BUI.extend(base,{});
      */
     extend : function(subclass,superclass,overrides, staticOverrides){
-      //如果只提供父类构造函数，则自动生成子类构造函数
+      //\u5982\u679c\u53ea\u63d0\u4f9b\u7236\u7c7b\u6784\u9020\u51fd\u6570\uff0c\u5219\u81ea\u52a8\u751f\u6210\u5b50\u7c7b\u6784\u9020\u51fd\u6570
       if(!BUI.isFunction(superclass))
       {
         
@@ -234,19 +225,19 @@ define('bui/util',function(){
                 o.constructor = c;
                 return o;
             };
-      var superObj = create(superclass.prototype,subclass);//new superclass(),//实例化父类作为子类的prototype
-      subclass.prototype = BUI.mix(superObj,subclass.prototype);     //指定子类的prototype
+      var superObj = create(superclass.prototype,subclass);//new superclass(),//\u5b9e\u4f8b\u5316\u7236\u7c7b\u4f5c\u4e3a\u5b50\u7c7b\u7684prototype
+      subclass.prototype = BUI.mix(superObj,subclass.prototype);     //\u6307\u5b9a\u5b50\u7c7b\u7684prototype
       subclass.superclass = create(superclass.prototype,superclass);  
       BUI.mix(superObj,overrides);
       BUI.mix(subclass,staticOverrides);
       return subclass;
     },
     /**
-     * 生成唯一的Id
+     * \u751f\u6210\u552f\u4e00\u7684Id
      * @method
-     * @param {String} prefix 前缀
+     * @param {String} prefix \u524d\u7f00
      * @default 'bui-guid'
-     * @return {String} 唯一的编号
+     * @return {String} \u552f\u4e00\u7684\u7f16\u53f7
      */
     guid : (function(){
         var map = {};
@@ -261,22 +252,22 @@ define('bui/util',function(){
         };
     })(),
     /**
-     * 判断是否是字符串
-     * @return {Boolean} 是否是字符串
+     * \u5224\u65ad\u662f\u5426\u662f\u5b57\u7b26\u4e32
+     * @return {Boolean} \u662f\u5426\u662f\u5b57\u7b26\u4e32
      */
     isString : function(value){
       return typeof value === 'string';
     },
     /**
-     * 判断是否数字，由于$.isNumberic方法会把 '123'认为数字
-     * @return {Boolean} 是否数字
+     * \u5224\u65ad\u662f\u5426\u6570\u5b57\uff0c\u7531\u4e8e$.isNumberic\u65b9\u6cd5\u4f1a\u628a '123'\u8ba4\u4e3a\u6570\u5b57
+     * @return {Boolean} \u662f\u5426\u6570\u5b57
      */
     isNumber : function(value){
       return typeof value === 'number';
     },
     /**
-     * 控制台输出日志
-     * @param  {Object} obj 输出的数据
+     * \u63a7\u5236\u53f0\u8f93\u51fa\u65e5\u5fd7
+     * @param  {Object} obj \u8f93\u51fa\u7684\u6570\u636e
      */
     log : function(obj){
       if(BUI.debug && win.console && win.console.log){
@@ -284,7 +275,7 @@ define('bui/util',function(){
       }
     },
     /**
-    * 将多个对象的属性复制到一个新的对象
+    * \u5c06\u591a\u4e2a\u5bf9\u8c61\u7684\u5c5e\u6027\u590d\u5236\u5230\u4e00\u4e2a\u65b0\u7684\u5bf9\u8c61
     */
     merge : function(){
       var args = $.makeArray(arguments);
@@ -293,15 +284,15 @@ define('bui/util',function(){
 
     },
     /**
-     * 封装 jQuery.extend 方法，将多个对象的属性merge到第一个对象中
+     * \u5c01\u88c5 jQuery.extend \u65b9\u6cd5\uff0c\u5c06\u591a\u4e2a\u5bf9\u8c61\u7684\u5c5e\u6027merge\u5230\u7b2c\u4e00\u4e2a\u5bf9\u8c61\u4e2d
      * @return {Object} 
      */
     mix : function(){
       return $.extend.apply(null,arguments);
     },
     /**
-    * 创造顶层的命名空间，附加到window对象上,
-    * 包含namespace方法
+    * \u521b\u9020\u9876\u5c42\u7684\u547d\u540d\u7a7a\u95f4\uff0c\u9644\u52a0\u5230window\u5bf9\u8c61\u4e0a,
+    * \u5305\u542bnamespace\u65b9\u6cd5
     */
     app : function(name){
       if(!window[name]){
@@ -314,11 +305,11 @@ define('bui/util',function(){
       return window[name];
     },
     /**
-     * 将其他类作为mixin集成到指定类上面
-     * @param {Function} c 构造函数
-     * @param {Array} mixins 扩展类
-     * @param {Array} attrs 扩展的静态属性，默认为['ATTRS']
-     * @return {Function} 传入的构造函数
+     * \u5c06\u5176\u4ed6\u7c7b\u4f5c\u4e3amixin\u96c6\u6210\u5230\u6307\u5b9a\u7c7b\u4e0a\u9762
+     * @param {Function} c \u6784\u9020\u51fd\u6570
+     * @param {Array} mixins \u6269\u5c55\u7c7b
+     * @param {Array} attrs \u6269\u5c55\u7684\u9759\u6001\u5c5e\u6027\uff0c\u9ed8\u8ba4\u4e3a['ATTRS']
+     * @return {Function} \u4f20\u5165\u7684\u6784\u9020\u51fd\u6570
      */
     mixin : function(c,mixins,attrs){
         attrs = attrs || [ATTRS,PARSER];
@@ -331,17 +322,17 @@ define('bui/util',function(){
                 // HTML_PARSER:
             }, constructors = extensions['concat'](c);
 
-            // [ex1,ex2]，扩展类后面的优先，ex2 定义的覆盖 ex1 定义的
-            // 主类最优先
+            // [ex1,ex2]\uff0c\u6269\u5c55\u7c7b\u540e\u9762\u7684\u4f18\u5148\uff0cex2 \u5b9a\u4e49\u7684\u8986\u76d6 ex1 \u5b9a\u4e49\u7684
+            // \u4e3b\u7c7b\u6700\u4f18\u5148
             BUI.each(constructors, function (ext) {
                 if (ext) {
-                    // 合并 ATTRS/HTML_PARSER 到主类
+                    // \u5408\u5e76 ATTRS/HTML_PARSER \u5230\u4e3b\u7c7b
                     BUI.each(attrs, function (K) {
                         if (ext[K]) {
                             desc[K] = desc[K] || {};
-                            // 不覆盖主类上的定义，因为继承层次上扩展类比主类层次高
-                            // 但是值是对象的话会深度合并
-                            // 注意：最好值是简单对象，自定义 new 出来的对象就会有问题(用 function return 出来)!
+                            // \u4e0d\u8986\u76d6\u4e3b\u7c7b\u4e0a\u7684\u5b9a\u4e49\uff0c\u56e0\u4e3a\u7ee7\u627f\u5c42\u6b21\u4e0a\u6269\u5c55\u7c7b\u6bd4\u4e3b\u7c7b\u5c42\u6b21\u9ad8
+                            // \u4f46\u662f\u503c\u662f\u5bf9\u8c61\u7684\u8bdd\u4f1a\u6df1\u5ea6\u5408\u5e76
+                            // \u6ce8\u610f\uff1a\u6700\u597d\u503c\u662f\u7b80\u5355\u5bf9\u8c61\uff0c\u81ea\u5b9a\u4e49 new \u51fa\u6765\u7684\u5bf9\u8c61\u5c31\u4f1a\u6709\u95ee\u9898(\u7528 function return \u51fa\u6765)!
                             if(K == 'ATTRS'){
                                 //BUI.mix(true,desc[K], ext[K]);
                                 mixAttrs(desc[K],ext[K]);
@@ -360,13 +351,13 @@ define('bui/util',function(){
 
             var prototype = {};
 
-            // 主类最优先
+            // \u4e3b\u7c7b\u6700\u4f18\u5148
             BUI.each(constructors, function (ext) {
                 if (ext) {
                     var proto = ext.prototype;
-                    // 合并功能代码到主类，不覆盖
+                    // \u5408\u5e76\u529f\u80fd\u4ee3\u7801\u5230\u4e3b\u7c7b\uff0c\u4e0d\u8986\u76d6
                     for (var p in proto) {
-                        // 不覆盖主类，但是主类的父类还是覆盖吧
+                        // \u4e0d\u8986\u76d6\u4e3b\u7c7b\uff0c\u4f46\u662f\u4e3b\u7c7b\u7684\u7236\u7c7b\u8fd8\u662f\u8986\u76d6\u5427
                         if (proto.hasOwnProperty(p)) {
                             prototype[p] = proto[p];
                         }
@@ -381,10 +372,10 @@ define('bui/util',function(){
         return c;
     },
     /**
-     * 生成命名空间
-     * @param  {String} name 命名空间的名称
-     * @param  {Object} baseNS 在已有的命名空间上创建命名空间，默认“BUI”
-     * @return {Object} 返回的命名空间对象
+     * \u751f\u6210\u547d\u540d\u7a7a\u95f4
+     * @param  {String} name \u547d\u540d\u7a7a\u95f4\u7684\u540d\u79f0
+     * @param  {Object} baseNS \u5728\u5df2\u6709\u7684\u547d\u540d\u7a7a\u95f4\u4e0a\u521b\u5efa\u547d\u540d\u7a7a\u95f4\uff0c\u9ed8\u8ba4\u201cBUI\u201d
+     * @return {Object} \u8fd4\u56de\u7684\u547d\u540d\u7a7a\u95f4\u5bf9\u8c61
      *		@example
      *		BUI.namespace("Grid"); // BUI.Grid
      */
@@ -407,15 +398,15 @@ define('bui/util',function(){
       return curNS;
     },
     /**
-     * BUI 控件的公用前缀
+     * BUI \u63a7\u4ef6\u7684\u516c\u7528\u524d\u7f00
      * @type {String}
      */
     prefix : 'bui-',
     /**
-     * 替换字符串中的字段.
-     * @param {String} str 模版字符串
+     * \u66ff\u6362\u5b57\u7b26\u4e32\u4e2d\u7684\u5b57\u6bb5.
+     * @param {String} str \u6a21\u7248\u5b57\u7b26\u4e32
      * @param {Object} o json data
-     * @param {RegExp} [regexp] 匹配字符串的正则表达式
+     * @param {RegExp} [regexp] \u5339\u914d\u5b57\u7b26\u4e32\u7684\u6b63\u5219\u8868\u8fbe\u5f0f
      */
     substitute: function (str, o, regexp) {
         if (!BUI.isString(str)
@@ -431,18 +422,18 @@ define('bui/util',function(){
         });
     },
     /**
-     * 使第一个字母变成大写
-     * @param  {String} s 字符串
-     * @return {String} 首字母大写后的字符串
+     * \u4f7f\u7b2c\u4e00\u4e2a\u5b57\u6bcd\u53d8\u6210\u5927\u5199
+     * @param  {String} s \u5b57\u7b26\u4e32
+     * @return {String} \u9996\u5b57\u6bcd\u5927\u5199\u540e\u7684\u5b57\u7b26\u4e32
      */
     ucfirst : function(s){
       s += '';
             return s.charAt(0).toUpperCase() + s.substring(1);
     },
     /**
-     * 页面上的一点是否在用户的视图内
-     * @param {Object} offset 坐标，left,top
-     * @return {Boolean} 是否在视图内
+     * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
+     * @param {Object} offset \u5750\u6807\uff0cleft,top
+     * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
      */
     isInView : function(offset){
       var left = offset.left,
@@ -451,91 +442,91 @@ define('bui/util',function(){
         wiewHeight = BUI.viewportHeight(),
         scrollTop = BUI.scrollTop(),
         scrollLeft = BUI.scrollLeft();
-      //判断横坐标
+      //\u5224\u65ad\u6a2a\u5750\u6807
       if(left < scrollLeft ||left > scrollLeft + viewWidth){
         return false;
       }
-      //判断纵坐标
+      //\u5224\u65ad\u7eb5\u5750\u6807
       if(top < scrollTop || top > scrollTop + wiewHeight){
         return false;
       }
       return true;
     },
     /**
-     * 页面上的一点纵向坐标是否在用户的视图内
-     * @param {Object} top  纵坐标
-     * @return {Boolean} 是否在视图内
+     * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u7eb5\u5411\u5750\u6807\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
+     * @param {Object} top  \u7eb5\u5750\u6807
+     * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
      */
     isInVerticalView : function(top){
       var wiewHeight = BUI.viewportHeight(),
         scrollTop = BUI.scrollTop();
       
-      //判断纵坐标
+      //\u5224\u65ad\u7eb5\u5750\u6807
       if(top < scrollTop || top > scrollTop + wiewHeight){
         return false;
       }
       return true;
     },
     /**
-     * 页面上的一点横向坐标是否在用户的视图内
-     * @param {Object} left 横坐标
-     * @return {Boolean} 是否在视图内
+     * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u6a2a\u5411\u5750\u6807\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
+     * @param {Object} left \u6a2a\u5750\u6807
+     * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
      */
     isInHorizontalView : function(left){
       var viewWidth = BUI.viewportWidth(),     
         scrollLeft = BUI.scrollLeft();
-      //判断横坐标
+      //\u5224\u65ad\u6a2a\u5750\u6807
       if(left < scrollLeft ||left > scrollLeft + viewWidth){
         return false;
       }
       return true;
     },
     /**
-     * 获取窗口可视范围宽度
-     * @return {Number} 可视区宽度
+     * \u83b7\u53d6\u7a97\u53e3\u53ef\u89c6\u8303\u56f4\u5bbd\u5ea6
+     * @return {Number} \u53ef\u89c6\u533a\u5bbd\u5ea6
      */
     viewportWidth : function(){
         return $(window).width();
     },
     /**
-     * 获取窗口可视范围高度
-     * @return {Number} 可视区高度
+     * \u83b7\u53d6\u7a97\u53e3\u53ef\u89c6\u8303\u56f4\u9ad8\u5ea6
+     * @return {Number} \u53ef\u89c6\u533a\u9ad8\u5ea6
      */
     viewportHeight:function(){
          return $(window).height();
     },
     /**
-     * 滚动到窗口的left位置
+     * \u6eda\u52a8\u5230\u7a97\u53e3\u7684left\u4f4d\u7f6e
      */
     scrollLeft : function(){
         return $(window).scrollLeft();
     },
     /**
-     * 滚动到横向位置
+     * \u6eda\u52a8\u5230\u6a2a\u5411\u4f4d\u7f6e
      */
     scrollTop : function(){
         return $(window).scrollTop();
     },
     /**
-     * 窗口宽度
-     * @return {Number} 窗口宽度
+     * \u7a97\u53e3\u5bbd\u5ea6
+     * @return {Number} \u7a97\u53e3\u5bbd\u5ea6
      */
     docWidth : function(){
         var body = document.documentElement || document.body;
         return $(body).width();
     },
     /**
-     * 窗口高度
-     * @return {Number} 窗口高度
+     * \u7a97\u53e3\u9ad8\u5ea6
+     * @return {Number} \u7a97\u53e3\u9ad8\u5ea6
      */
     docHeight : function(){
         var body = document.documentElement || document.body;
         return $(body).height();
     },
     /**
-     * 遍历数组或者对象
-     * @param {Object|Array} element/Object 数组中的元素或者对象的值 
-     * @param {Function} func 遍历的函数 function(elememt,index){} 或者 function(value,key){}
+     * \u904d\u5386\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
+     * @param {Object|Array} element/Object \u6570\u7ec4\u4e2d\u7684\u5143\u7d20\u6216\u8005\u5bf9\u8c61\u7684\u503c 
+     * @param {Function} func \u904d\u5386\u7684\u51fd\u6570 function(elememt,index){} \u6216\u8005 function(value,key){}
      */
     each : function (elements,func) {
       if(!elements){
@@ -546,10 +537,10 @@ define('bui/util',function(){
       });
     },
     /**
-     * 封装事件，便于使用上下文this,和便于解除事件时使用
+     * \u5c01\u88c5\u4e8b\u4ef6\uff0c\u4fbf\u4e8e\u4f7f\u7528\u4e0a\u4e0b\u6587this,\u548c\u4fbf\u4e8e\u89e3\u9664\u4e8b\u4ef6\u65f6\u4f7f\u7528
      * @protected
-     * @param  {Object} self   对象
-     * @param  {String} action 事件名称
+     * @param  {Object} self   \u5bf9\u8c61
+     * @param  {String} action \u4e8b\u4ef6\u540d\u79f0
      */
     wrapBehavior : function(self, action) {
       return self['__bui_wrap_' + action] = function (e) {
@@ -559,10 +550,10 @@ define('bui/util',function(){
       };
     },
     /**
-     * 获取封装的事件
+     * \u83b7\u53d6\u5c01\u88c5\u7684\u4e8b\u4ef6
      * @protected
-     * @param  {Object} self   对象
-     * @param  {String} action 事件名称
+     * @param  {Object} self   \u5bf9\u8c61
+     * @param  {String} action \u4e8b\u4ef6\u540d\u79f0
      */
     getWrapBehavior : function(self, action) {
         return self['__bui_wrap_' + action];
@@ -571,24 +562,24 @@ define('bui/util',function(){
   });
 
   /**
-  * 表单帮助类，序列化、反序列化，设置值
+  * \u8868\u5355\u5e2e\u52a9\u7c7b\uff0c\u5e8f\u5217\u5316\u3001\u53cd\u5e8f\u5217\u5316\uff0c\u8bbe\u7f6e\u503c
   * @class BUI.FormHelper
   * @singleton
   */
   var formHelper = BUI.FormHelper = {
     /**
-    * 将表单格式化成键值对形式
-    * @param {HTMLElement} form 表单
-    * @return {Object} 键值对的对象
+    * \u5c06\u8868\u5355\u683c\u5f0f\u5316\u6210\u952e\u503c\u5bf9\u5f62\u5f0f
+    * @param {HTMLElement} form \u8868\u5355
+    * @return {Object} \u952e\u503c\u5bf9\u7684\u5bf9\u8c61
     */
     serializeToObject:function(form){
       var array = $(form).serializeArray(),
         result = {};
       BUI.each(array,function(item){
         var name = item.name;
-        if(!result[name]){ //如果是单个值，直接赋值
+        if(!result[name]){ //\u5982\u679c\u662f\u5355\u4e2a\u503c\uff0c\u76f4\u63a5\u8d4b\u503c
           result[name] = item.value;  
-        }else{ //多值使用数组
+        }else{ //\u591a\u503c\u4f7f\u7528\u6570\u7ec4
           if(!BUI.isArray(result[name])){
             result[name] = [result[name]];
           }
@@ -598,9 +589,9 @@ define('bui/util',function(){
       return result;
     },
     /**
-     * 设置表单的值
-     * @param {HTMLElement} form 表单
-     * @param {Object} obj  键值对
+     * \u8bbe\u7f6e\u8868\u5355\u7684\u503c
+     * @param {HTMLElement} form \u8868\u5355
+     * @param {Object} obj  \u952e\u503c\u5bf9
      */
     setFields : function(form,obj){
       for(var name in obj){
@@ -610,8 +601,8 @@ define('bui/util',function(){
       }
     },
     /**
-     * 清空表单
-     * @param  {HTMLElement} form 表单元素
+     * \u6e05\u7a7a\u8868\u5355
+     * @param  {HTMLElement} form \u8868\u5355\u5143\u7d20
      */
     clear : function(form){
       var elements = $.makeArray(form.elements);
@@ -626,10 +617,10 @@ define('bui/util',function(){
       });
     },
     /**
-    * 设置表单字段
-    * @param {HTMLElement} form 表单元素
-    * @param {string} field 字段名 
-    * @param {string} value 字段值
+    * \u8bbe\u7f6e\u8868\u5355\u5b57\u6bb5
+    * @param {HTMLElement} form \u8868\u5355\u5143\u7d20
+    * @param {string} field \u5b57\u6bb5\u540d 
+    * @param {string} value \u5b57\u6bb5\u503c
     */
     setField:function(form,fieldName,value){
       var fields = form.elements[fieldName];
@@ -641,7 +632,7 @@ define('bui/util',function(){
         });
       }
     },
-    //设置字段的值
+    //\u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
     _setFieldValue : function(field,value){
         if(field.type === 'checkbox'){
             if(field.value == ''+ value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
@@ -660,10 +651,10 @@ define('bui/util',function(){
         }
     },
     /**
-     * 获取表单字段值
-     * @param {HTMLElement} form 表单元素
-     * @param {string} field 字段名 
-     * @return {String}   字段值
+     * \u83b7\u53d6\u8868\u5355\u5b57\u6bb5\u503c
+     * @param {HTMLElement} form \u8868\u5355\u5143\u7d20
+     * @param {string} field \u5b57\u6bb5\u540d 
+     * @return {String}   \u5b57\u6bb5\u503c
      */
     getField : function(form,fieldName){
       return BUI.FormHelper.serializeToObject(form)[fieldName];
@@ -671,14 +662,10 @@ define('bui/util',function(){
   };
 
   return BUI;
-});/**
- * @fileOverview 数组帮助类
- * @ignore
- */
-
+});
 /**
  * @class BUI
- * 控件库的基础命名空间
+ * \u63a7\u4ef6\u5e93\u7684\u57fa\u7840\u547d\u540d\u7a7a\u95f4
  * @singleton
  */
 
@@ -687,23 +674,23 @@ define('bui/array',['bui/util'],function (r) {
   var BUI = r('bui/util');
   /**
    * @class BUI.Array
-   * 数组帮助类
+   * \u6570\u7ec4\u5e2e\u52a9\u7c7b
    */
   BUI.Array ={
     /**
-     * 返回数组的最后一个对象
-     * @param {Array} array 数组或者类似于数组的对象.
-     * @return {*} 数组的最后一项.
+     * \u8fd4\u56de\u6570\u7ec4\u7684\u6700\u540e\u4e00\u4e2a\u5bf9\u8c61
+     * @param {Array} array \u6570\u7ec4\u6216\u8005\u7c7b\u4f3c\u4e8e\u6570\u7ec4\u7684\u5bf9\u8c61.
+     * @return {*} \u6570\u7ec4\u7684\u6700\u540e\u4e00\u9879.
      */
     peek : function(array) {
       return array[array.length - 1];
     },
     /**
-     * 查找记录所在的位置
-     * @param  {*} value 值
-     * @param  {Array} array 数组或者类似于数组的对象
-     * @param  {Number} [fromIndex=0] 起始项，默认为0
-     * @return {Number} 位置，如果为 -1则不在数组内
+     * \u67e5\u627e\u8bb0\u5f55\u6240\u5728\u7684\u4f4d\u7f6e
+     * @param  {*} value \u503c
+     * @param  {Array} array \u6570\u7ec4\u6216\u8005\u7c7b\u4f3c\u4e8e\u6570\u7ec4\u7684\u5bf9\u8c61
+     * @param  {Number} [fromIndex=0] \u8d77\u59cb\u9879\uff0c\u9ed8\u8ba4\u4e3a0
+     * @return {Number} \u4f4d\u7f6e\uff0c\u5982\u679c\u4e3a -1\u5219\u4e0d\u5728\u6570\u7ec4\u5185
      */
     indexOf : function(value, array,opt_fromIndex){
        var fromIndex = opt_fromIndex == null ?
@@ -717,26 +704,26 @@ define('bui/array',['bui/util'],function (r) {
       return -1;
     },
     /**
-     * 数组是否存在指定值
-     * @param  {*} value 值
-     * @param  {Array} array 数组或者类似于数组的对象
-     * @return {Boolean} 是否存在于数组中
+     * \u6570\u7ec4\u662f\u5426\u5b58\u5728\u6307\u5b9a\u503c
+     * @param  {*} value \u503c
+     * @param  {Array} array \u6570\u7ec4\u6216\u8005\u7c7b\u4f3c\u4e8e\u6570\u7ec4\u7684\u5bf9\u8c61
+     * @return {Boolean} \u662f\u5426\u5b58\u5728\u4e8e\u6570\u7ec4\u4e2d
      */
     contains : function(value,array){
       return BUI.Array.indexOf(value,array) >=0;
     },
     /**
-     * 遍历数组或者对象
+     * \u904d\u5386\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
      * @method 
-     * @param {Object|Array} element/Object 数组中的元素或者对象的值 
-     * @param {Function} func 遍历的函数 function(elememt,index){} 或者 function(value,key){}
+     * @param {Object|Array} element/Object \u6570\u7ec4\u4e2d\u7684\u5143\u7d20\u6216\u8005\u5bf9\u8c61\u7684\u503c 
+     * @param {Function} func \u904d\u5386\u7684\u51fd\u6570 function(elememt,index){} \u6216\u8005 function(value,key){}
      */
     each : BUI.each,
     /**
-     * 2个数组内部的值是否相等
-     * @param  {Array} a1 数组1
-     * @param  {Array} a2 数组2
-     * @return {Boolean} 2个数组相等或者内部元素是否相等
+     * 2\u4e2a\u6570\u7ec4\u5185\u90e8\u7684\u503c\u662f\u5426\u76f8\u7b49
+     * @param  {Array} a1 \u6570\u7ec41
+     * @param  {Array} a2 \u6570\u7ec42
+     * @return {Boolean} 2\u4e2a\u6570\u7ec4\u76f8\u7b49\u6216\u8005\u5185\u90e8\u5143\u7d20\u662f\u5426\u76f8\u7b49
      */
     equals : function(a1,a2){
       if(a1 == a2){
@@ -760,10 +747,10 @@ define('bui/array',['bui/util'],function (r) {
     },
 
     /**
-     * 过滤数组
-     * @param {Object|Array} element/Object 数组中的元素或者对象的值 
-     * @param {Function} func 遍历的函数 function(elememt,index){} 或者 function(value,key){},如果返回true则添加到结果集
-     * @return {Array} 过滤的结果集
+     * \u8fc7\u6ee4\u6570\u7ec4
+     * @param {Object|Array} element/Object \u6570\u7ec4\u4e2d\u7684\u5143\u7d20\u6216\u8005\u5bf9\u8c61\u7684\u503c 
+     * @param {Function} func \u904d\u5386\u7684\u51fd\u6570 function(elememt,index){} \u6216\u8005 function(value,key){},\u5982\u679c\u8fd4\u56detrue\u5219\u6dfb\u52a0\u5230\u7ed3\u679c\u96c6
+     * @return {Array} \u8fc7\u6ee4\u7684\u7ed3\u679c\u96c6
      */
     filter : function(array,func){
       var result = [];
@@ -775,10 +762,10 @@ define('bui/array',['bui/util'],function (r) {
       return result;
     },
     /**
-     * 转换数组数组
-     * @param {Object|Array} element/Object 数组中的元素或者对象的值 
-     * @param {Function} func 遍历的函数 function(elememt,index){} 或者 function(value,key){},将返回的结果添加到结果集
-     * @return {Array} 过滤的结果集
+     * \u8f6c\u6362\u6570\u7ec4\u6570\u7ec4
+     * @param {Object|Array} element/Object \u6570\u7ec4\u4e2d\u7684\u5143\u7d20\u6216\u8005\u5bf9\u8c61\u7684\u503c 
+     * @param {Function} func \u904d\u5386\u7684\u51fd\u6570 function(elememt,index){} \u6216\u8005 function(value,key){},\u5c06\u8fd4\u56de\u7684\u7ed3\u679c\u6dfb\u52a0\u5230\u7ed3\u679c\u96c6
+     * @return {Array} \u8fc7\u6ee4\u7684\u7ed3\u679c\u96c6
      */
     map : function(array,func){
       var result = [];
@@ -788,20 +775,20 @@ define('bui/array',['bui/util'],function (r) {
       return result;
     },
     /**
-     * 获取第一个符合条件的数据
-     * @param  {Array} array 数组
-     * @param  {Function} func  匹配函数
-     * @return {*}  符合条件的数据
+     * \u83b7\u53d6\u7b2c\u4e00\u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u6570\u636e
+     * @param  {Array} array \u6570\u7ec4
+     * @param  {Function} func  \u5339\u914d\u51fd\u6570
+     * @return {*}  \u7b26\u5408\u6761\u4ef6\u7684\u6570\u636e
      */
     find : function(array,func){
       var i = BUI.Array.findIndex(array, func);
       return i < 0 ? null : array[i];
     },
     /**
-     * 获取第一个符合条件的数据的索引值
-    * @param  {Array} array 数组
-     * @param  {Function} func  匹配函数
-     * @return {Number} 符合条件的数据的索引值
+     * \u83b7\u53d6\u7b2c\u4e00\u4e2a\u7b26\u5408\u6761\u4ef6\u7684\u6570\u636e\u7684\u7d22\u5f15\u503c
+    * @param  {Array} array \u6570\u7ec4
+     * @param  {Function} func  \u5339\u914d\u51fd\u6570
+     * @return {Number} \u7b26\u5408\u6761\u4ef6\u7684\u6570\u636e\u7684\u7d22\u5f15\u503c
      */
     findIndex : function(array,func){
       var result = -1;
@@ -814,35 +801,35 @@ define('bui/array',['bui/util'],function (r) {
       return result;
     },
     /**
-     * 数组是否为空
-     * @param  {Array}  array 数组
-     * @return {Boolean}  是否为空
+     * \u6570\u7ec4\u662f\u5426\u4e3a\u7a7a
+     * @param  {Array}  array \u6570\u7ec4
+     * @return {Boolean}  \u662f\u5426\u4e3a\u7a7a
      */
     isEmpty : function(array){
       return array.length == 0;
     },
     /**
-     * 插入数组
-     * @param  {Array} array 数组
-     * @param  {Number} index 位置
-     * @param {*} value 插入的数据
+     * \u63d2\u5165\u6570\u7ec4
+     * @param  {Array} array \u6570\u7ec4
+     * @param  {Number} index \u4f4d\u7f6e
+     * @param {*} value \u63d2\u5165\u7684\u6570\u636e
      */
     add : function(array,value){
       array.push(value);
     },
     /**
-     * 将数据插入数组指定的位置
-     * @param  {Array} array 数组
-     * @param {*} value 插入的数据
-     * @param  {Number} index 位置
+     * \u5c06\u6570\u636e\u63d2\u5165\u6570\u7ec4\u6307\u5b9a\u7684\u4f4d\u7f6e
+     * @param  {Array} array \u6570\u7ec4
+     * @param {*} value \u63d2\u5165\u7684\u6570\u636e
+     * @param  {Number} index \u4f4d\u7f6e
      */
     addAt : function(array,value,index){
       BUI.Array.splice(array, index, 0, value);
     },
     /**
-     * 清空数组
-     * @param  {Array} array 数组
-     * @return {Array}  清空后的数组
+     * \u6e05\u7a7a\u6570\u7ec4
+     * @param  {Array} array \u6570\u7ec4
+     * @return {Array}  \u6e05\u7a7a\u540e\u7684\u6570\u7ec4
      */
     empty : function(array){
       if(!(array instanceof(Array))){
@@ -853,10 +840,10 @@ define('bui/array',['bui/util'],function (r) {
       array.length = 0;
     },
     /**
-     * 移除记录
-     * @param  {Array} array 数组
-     * @param  {*} value 记录
-     * @return {Boolean}   是否移除成功
+     * \u79fb\u9664\u8bb0\u5f55
+     * @param  {Array} array \u6570\u7ec4
+     * @param  {*} value \u8bb0\u5f55
+     * @return {Boolean}   \u662f\u5426\u79fb\u9664\u6210\u529f
      */
     remove : function(array,value){
       var i = BUI.Array.indexOf(value, array);
@@ -867,10 +854,10 @@ define('bui/array',['bui/util'],function (r) {
       return rv;
     },
     /**
-     * 移除指定位置的记录
-     * @param  {Array} array 数组
-     * @param  {Number} index 索引值
-     * @return {Boolean}   是否移除成功
+     * \u79fb\u9664\u6307\u5b9a\u4f4d\u7f6e\u7684\u8bb0\u5f55
+     * @param  {Array} array \u6570\u7ec4
+     * @param  {Number} index \u7d22\u5f15\u503c
+     * @return {Boolean}   \u662f\u5426\u79fb\u9664\u6210\u529f
      */
     removeAt : function(array,index){
       return BUI.Array.splice(array, index, 1).length == 1;
@@ -894,19 +881,15 @@ define('bui/array',['bui/util'],function (r) {
 
   };
   return BUI.Array;
-});/**
- * @fileOverview 观察者模式实现事件
- * @ignore
- */
-
+});
 define('bui/observable',['bui/util'],function (r) {
   
   var BUI = r('bui/util');
   /**
    * @private
    * @class BUI.Observable.Callbacks
-   * jquery 1.7 时存在 $.Callbacks,但是fireWith的返回结果是$.Callbacks 对象，
-   * 而我们想要的效果是：当其中有一个函数返回为false时，阻止后面的执行，并返回false
+   * jquery 1.7 \u65f6\u5b58\u5728 $.Callbacks,\u4f46\u662ffireWith\u7684\u8fd4\u56de\u7ed3\u679c\u662f$.Callbacks \u5bf9\u8c61\uff0c
+   * \u800c\u6211\u4eec\u60f3\u8981\u7684\u6548\u679c\u662f\uff1a\u5f53\u5176\u4e2d\u6709\u4e00\u4e2a\u51fd\u6570\u8fd4\u56de\u4e3afalse\u65f6\uff0c\u963b\u6b62\u540e\u9762\u7684\u6267\u884c\uff0c\u5e76\u8fd4\u56defalse
    */
   var Callbacks = function(){
     this._init();
@@ -922,15 +905,15 @@ define('bui/observable',['bui/util'],function (r) {
       _self._functions = [];
     },
     /**
-     * 添加回调函数
-     * @param {Function} fn 回调函数
+     * \u6dfb\u52a0\u56de\u8c03\u51fd\u6570
+     * @param {Function} fn \u56de\u8c03\u51fd\u6570
      */
     add:function(fn){
       this._functions.push(fn);
     },
     /**
-     * 移除回调函数
-     * @param  {Function} fn 回调函数
+     * \u79fb\u9664\u56de\u8c03\u51fd\u6570
+     * @param  {Function} fn \u56de\u8c03\u51fd\u6570
      */
     remove : function(fn){
       var functions = this._functions;
@@ -940,14 +923,14 @@ define('bui/observable',['bui/util'],function (r) {
       }
     },
     empty : function(){
-      var length = this._functions.length; //ie6,7下，必须指定需要删除的数量
+      var length = this._functions.length; //ie6,7\u4e0b\uff0c\u5fc5\u987b\u6307\u5b9a\u9700\u8981\u5220\u9664\u7684\u6570\u91cf
       this._functions.splice(0,length);
     },
     /**
-     * 触发回调
-     * @param  {Object} scope 上下文
-     * @param  {Array} args  回调函数的参数
-     * @return {Boolean|undefined} 当其中有一个函数返回为false时，阻止后面的执行，并返回false
+     * \u89e6\u53d1\u56de\u8c03
+     * @param  {Object} scope \u4e0a\u4e0b\u6587
+     * @param  {Array} args  \u56de\u8c03\u51fd\u6570\u7684\u53c2\u6570
+     * @return {Boolean|undefined} \u5f53\u5176\u4e2d\u6709\u4e00\u4e2a\u51fd\u6570\u8fd4\u56de\u4e3afalse\u65f6\uff0c\u963b\u6b62\u540e\u9762\u7684\u6267\u884c\uff0c\u5e76\u8fd4\u56defalse
      */
     fireWith : function(scope,args){
       var _self = this,
@@ -967,9 +950,9 @@ define('bui/observable',['bui/util'],function (r) {
     return new Callbacks();
   }
   /**
-   * 支持事件的对象，参考观察者模式
-   *  - 此类提供事件绑定
-   *  - 提供事件冒泡机制
+   * \u652f\u6301\u4e8b\u4ef6\u7684\u5bf9\u8c61\uff0c\u53c2\u8003\u89c2\u5bdf\u8005\u6a21\u5f0f
+   *  - \u6b64\u7c7b\u63d0\u4f9b\u4e8b\u4ef6\u7ed1\u5b9a
+   *  - \u63d0\u4f9b\u4e8b\u4ef6\u5192\u6ce1\u673a\u5236
    *
    * <pre><code>
    *   var control = new Control();
@@ -977,11 +960,11 @@ define('bui/observable',['bui/util'],function (r) {
    *   
    *   });
    *
-   *   control.off();  //移除所有事件
+   *   control.off();  //\u79fb\u9664\u6240\u6709\u4e8b\u4ef6
    * </code></pre>
    * @class BUI.Observable
    * @abstract
-   * @param {Object} config 配置项键值对
+   * @param {Object} config \u914d\u7f6e\u9879\u952e\u503c\u5bf9
    */
   var Observable = function(config){
         this._events = [];
@@ -995,7 +978,7 @@ define('bui/observable',['bui/util'],function (r) {
 
     /**
      * @cfg {Object} listeners 
-     *  初始化事件,快速注册事件
+     *  \u521d\u59cb\u5316\u4e8b\u4ef6,\u5feb\u901f\u6ce8\u518c\u4e8b\u4ef6
      *  <pre><code>
      *    var list = new BUI.List.SimpleList({
      *      listeners : {
@@ -1010,23 +993,23 @@ define('bui/observable',['bui/util'],function (r) {
     
     /**
      * @cfg {Function} handler
-     * 点击事件的处理函数，快速配置点击事件而不需要写listeners属性
+     * \u70b9\u51fb\u4e8b\u4ef6\u7684\u5904\u7406\u51fd\u6570\uff0c\u5feb\u901f\u914d\u7f6e\u70b9\u51fb\u4e8b\u4ef6\u800c\u4e0d\u9700\u8981\u5199listeners\u5c5e\u6027
      * <pre><code>
      *    var list = new BUI.List.SimpleList({
-     *      handler : function(ev){} //click 事件
+     *      handler : function(ev){} //click \u4e8b\u4ef6
      *    });
      *    list.render();
      *  </code></pre>
      */
     
     /**
-     * 支持的事件名列表
+     * \u652f\u6301\u7684\u4e8b\u4ef6\u540d\u5217\u8868
      * @private
      */
     _events:[],
 
     /**
-     * 绑定的事件
+     * \u7ed1\u5b9a\u7684\u4e8b\u4ef6
      * @private
      */
     _eventMap : {},
@@ -1035,13 +1018,13 @@ define('bui/observable',['bui/util'],function (r) {
 
     _bubbleTarget : null,
 
-    //获取回调集合
+    //\u83b7\u53d6\u56de\u8c03\u96c6\u5408
     _getCallbacks : function(eventType){
       var _self = this,
         eventMap = _self._eventMap;
       return eventMap[eventType];
     },
-    //初始化事件列表
+    //\u521d\u59cb\u5316\u4e8b\u4ef6\u5217\u8868
     _initEvents : function(config){
       var _self = this,
         listeners = null; 
@@ -1061,22 +1044,22 @@ define('bui/observable',['bui/util'],function (r) {
         };
       }
     },
-    //事件是否支持冒泡
+    //\u4e8b\u4ef6\u662f\u5426\u652f\u6301\u5192\u6ce1
     _isBubbles : function (eventType) {
         return BUI.Array.indexOf(eventType,this._bubblesEvents) >= 0;
     },
     /**
-     * 添加冒泡的对象
+     * \u6dfb\u52a0\u5192\u6ce1\u7684\u5bf9\u8c61
      * @protected
-     * @param {Object} target  冒泡的事件源
+     * @param {Object} target  \u5192\u6ce1\u7684\u4e8b\u4ef6\u6e90
      */
     addTarget : function(target) {
         this._bubbleTarget = target;
     },
     /**
-     * 添加支持的事件
+     * \u6dfb\u52a0\u652f\u6301\u7684\u4e8b\u4ef6
      * @protected
-     * @param {String|String[]} events 事件
+     * @param {String|String[]} events \u4e8b\u4ef6
      */
     addEvents : function(events){
       var _self = this,
@@ -1098,7 +1081,7 @@ define('bui/observable',['bui/util'],function (r) {
       }
     },
     /**
-     * 移除所有绑定的事件
+     * \u79fb\u9664\u6240\u6709\u7ed1\u5b9a\u7684\u4e8b\u4ef6
      * @protected
      */
     clearListeners : function(){
@@ -1111,18 +1094,18 @@ define('bui/observable',['bui/util'],function (r) {
       }
     },
     /**
-     * 触发事件
+     * \u89e6\u53d1\u4e8b\u4ef6
      * <pre><code>
-     *   //绑定事件
+     *   //\u7ed1\u5b9a\u4e8b\u4ef6
      *   list.on('itemclick',function(ev){
      *     alert('21');
      *   });
-     *   //触发事件
+     *   //\u89e6\u53d1\u4e8b\u4ef6
      *   list.fire('itemclick');
      * </code></pre>
-     * @param  {String} eventType 事件类型
-     * @param  {Object} eventData 事件触发时传递的数据
-     * @return {Boolean|undefined}  如果其中一个事件处理器返回 false , 则返回 false, 否则返回最后一个事件处理器的返回值
+     * @param  {String} eventType \u4e8b\u4ef6\u7c7b\u578b
+     * @param  {Object} eventData \u4e8b\u4ef6\u89e6\u53d1\u65f6\u4f20\u9012\u7684\u6570\u636e
+     * @return {Boolean|undefined}  \u5982\u679c\u5176\u4e2d\u4e00\u4e2a\u4e8b\u4ef6\u5904\u7406\u5668\u8fd4\u56de false , \u5219\u8fd4\u56de false, \u5426\u5219\u8fd4\u56de\u6700\u540e\u4e00\u4e2a\u4e8b\u4ef6\u5904\u7406\u5668\u7684\u8fd4\u56de\u503c
      */
     fire : function(eventType,eventData){
       var _self = this,
@@ -1148,22 +1131,22 @@ define('bui/observable',['bui/util'],function (r) {
       return result;
     },
     /**
-     * 添加绑定事件
+     * \u6dfb\u52a0\u7ed1\u5b9a\u4e8b\u4ef6
      * <pre><code>
-     *   //绑定单个事件
+     *   //\u7ed1\u5b9a\u5355\u4e2a\u4e8b\u4ef6
      *   list.on('itemclick',function(ev){
      *     alert('21');
      *   });
-     *   //绑定多个事件
+     *   //\u7ed1\u5b9a\u591a\u4e2a\u4e8b\u4ef6
      *   list.on('itemrendered itemupdated',function(){
-     *     //列表项创建、更新时触发操作
+     *     //\u5217\u8868\u9879\u521b\u5efa\u3001\u66f4\u65b0\u65f6\u89e6\u53d1\u64cd\u4f5c
      *   });
      * </code></pre>
-     * @param  {String}   eventType 事件类型
-     * @param  {Function} fn        回调函数
+     * @param  {String}   eventType \u4e8b\u4ef6\u7c7b\u578b
+     * @param  {Function} fn        \u56de\u8c03\u51fd\u6570
      */
     on : function(eventType,fn){
-      //一次监听多个事件
+      //\u4e00\u6b21\u76d1\u542c\u591a\u4e2a\u4e8b\u4ef6
       var arr = eventType.split(' '),
         _self = this,
         callbacks =null;
@@ -1183,20 +1166,20 @@ define('bui/observable',['bui/util'],function (r) {
       return _self;
     },
     /**
-     * 移除绑定的事件
+     * \u79fb\u9664\u7ed1\u5b9a\u7684\u4e8b\u4ef6
      * <pre><code>
-     *  //移除所有事件
+     *  //\u79fb\u9664\u6240\u6709\u4e8b\u4ef6
      *  list.off();
      *  
-     *  //移除特定事件
+     *  //\u79fb\u9664\u7279\u5b9a\u4e8b\u4ef6
      *  function callback(ev){}
      *  list.on('click',callback);
      *
-     *  list.off('click',callback);//需要保存回调函数的引用
+     *  list.off('click',callback);//\u9700\u8981\u4fdd\u5b58\u56de\u8c03\u51fd\u6570\u7684\u5f15\u7528
      * 
      * </code></pre>
-     * @param  {String}   eventType 事件类型
-     * @param  {Function} fn        回调函数
+     * @param  {String}   eventType \u4e8b\u4ef6\u7c7b\u578b
+     * @param  {Function} fn        \u56de\u8c03\u51fd\u6570
      */
     off : function(eventType,fn){
       if(!eventType && !fn){
@@ -1211,11 +1194,11 @@ define('bui/observable',['bui/util'],function (r) {
       return _self;
     },
     /**
-     * 配置事件是否允许冒泡
+     * \u914d\u7f6e\u4e8b\u4ef6\u662f\u5426\u5141\u8bb8\u5192\u6ce1
      * @protected
-     * @param  {String} eventType 支持冒泡的事件
-     * @param  {Object} cfg 配置项
-     * @param {Boolean} cfg.bubbles 是否支持冒泡
+     * @param  {String} eventType \u652f\u6301\u5192\u6ce1\u7684\u4e8b\u4ef6
+     * @param  {Object} cfg \u914d\u7f6e\u9879
+     * @param {Boolean} cfg.bubbles \u662f\u5426\u652f\u6301\u5192\u6ce1
      */
     publish : function(eventType, cfg){
       var _self = this,
@@ -1235,11 +1218,7 @@ define('bui/observable',['bui/util'],function (r) {
   });
 
   return Observable;
-});/**
- * @fileOverview UA,jQuery的 $.browser 对象非常难使用
- * @ignore
- * @author dxq613@gmail.com
- */
+});
 define('bui/ua', function () {
 
     function numberify(s) {
@@ -1267,30 +1246,30 @@ define('bui/ua', function () {
         var browser = $.browser || uaMatch(navigator.userAgent),
             versionNumber = numberify(browser.version),
             /**
-             * 浏览器版本检测
+             * \u6d4f\u89c8\u5668\u7248\u672c\u68c0\u6d4b
              * @class BUI.UA
              * @singleton
              */
                 ua =
             {
                 /**
-                 * ie 版本
+                 * ie \u7248\u672c
                  * @type {Number}
                  */
                 ie: browser.msie && versionNumber,
 
                 /**
-                 * webkit 版本
+                 * webkit \u7248\u672c
                  * @type {Number}
                  */
                 webkit: browser.webkit && versionNumber,
                 /**
-                 * opera 版本
+                 * opera \u7248\u672c
                  * @type {Number}
                  */
                 opera: browser.opera && versionNumber,
                 /**
-                 * mozilla 火狐版本
+                 * mozilla \u706b\u72d0\u7248\u672c
                  * @type {Number}
                  */
                 mozilla: browser.mozilla && versionNumber
@@ -1299,17 +1278,14 @@ define('bui/ua', function () {
     })();
 
     return UA;
-});/**
- * @fileOverview 由于jQuery只有 parseJSON ，没有stringify所以使用过程不方便
- * @ignore
- */
+});
 define('bui/json',['bui/ua'],function (require) {
 
   var win = window,
     UA = require('bui/ua'),
     JSON = win.JSON;
 
-  // ie 8.0.7600.16315@win7 json 有问题
+  // ie 8.0.7600.16315@win7 json \u6709\u95ee\u9898
   if (!JSON || UA['ie'] < 9) {
       JSON = win.JSON = {};
   }
@@ -1550,42 +1526,38 @@ define('bui/json',['bui/ua'],function (require) {
     }
   }
  /**
-	* JSON 格式化
+	* JSON \u683c\u5f0f\u5316
   * @class BUI.JSON
 	* @singleton
   */
   var JSON = {
     /**
-     * 转成json 等同于$.parseJSON
+     * \u8f6c\u6210json \u7b49\u540c\u4e8e$.parseJSON
      * @method
-     * @param {String} jsonstring 合法的json 字符串
+     * @param {String} jsonstring \u5408\u6cd5\u7684json \u5b57\u7b26\u4e32
      */
     parse : $.parseJSON,
     /**
-     * 业务中有些字符串组成的json数据不是严格的json数据，如使用单引号，或者属性名不是字符串
-     * 如 ： {a:'abc'}
+     * \u4e1a\u52a1\u4e2d\u6709\u4e9b\u5b57\u7b26\u4e32\u7ec4\u6210\u7684json\u6570\u636e\u4e0d\u662f\u4e25\u683c\u7684json\u6570\u636e\uff0c\u5982\u4f7f\u7528\u5355\u5f15\u53f7\uff0c\u6216\u8005\u5c5e\u6027\u540d\u4e0d\u662f\u5b57\u7b26\u4e32
+     * \u5982 \uff1a {a:'abc'}
      * @method 
      * @param {String} jsonstring
      */
     looseParse : looseParse,
     /**
-     * 将Json转成字符串
+     * \u5c06Json\u8f6c\u6210\u5b57\u7b26\u4e32
      * @method 
-     * @param {Object} json json 对象
+     * @param {Object} json json \u5bf9\u8c61
      */
     stringify : JSON.stringify
   }
 
   return JSON;
-});/**
- * @fileOverview 键盘值
- * @ignore
- */
-
+});
 define('bui/keycode',function () {
   
   /**
-   * 键盘按键对应的数字值
+   * \u952e\u76d8\u6309\u952e\u5bf9\u5e94\u7684\u6570\u5b57\u503c
    * @class BUI.KeyCode
    * @singleton
    */
@@ -1767,25 +1739,7 @@ define('bui/keycode',function () {
   };
 
   return keyCode;
-});/*
- * @fileOverview Date Format 1.2.3
- * @ignore
- * (c) 2007-2009 Steven Levithan <stevenlevithan.com>
- * MIT license
- *
- * Includes enhancements by Scott Trenda <scott.trenda.net>
- * and Kris Kowal <cixar.com/~kris.kowal/>
- *
- * Accepts a date, a mask, or a date and a mask.
- * Returns a formatted version of the given date.
- * The date defaults to the current date/time.
- * The mask defaults to dateFormat.masks.default.
- *
- * Last modified by jayli 拔赤 2010-09-09
- * - 增加中文的支持
- * - 简单的本地化，对w（星期x）的支持
- * 
- */
+});
 define('bui/date', function () {
 
     var dateRegex = /^(?:(?!0000)[0-9]{4}([-/.]+)(?:(?:0?[1-9]|1[0-2])\1(?:0?[1-9]|1[0-9]|2[0-8])|(?:0?[13-9]|1[0-2])\1(?:29|30)|(?:0?[13578]|1[02])\1(?:31))|(?:[0-9]{2}(?:0[48]|[2468][048]|[13579][26])|(?:0[48]|[2468][048]|[13579][26])00)([-/.]?)0?2\2(?:29))(\s+([01]|([01][0-9]|2[0-3])):([0-9]|[0-5][0-9]):([0-9]|[0-5][0-9]))?$/;
@@ -1994,12 +1948,12 @@ define('bui/date', function () {
                 isoUTCDateTime:"UTC:yyyy-mm-dd'T'HH:MM:ss'Z'",
 
                 //added by jayli
-                localShortDate:'yy年mm月dd日',
-                localShortDateTime:'yy年mm月dd日 hh:MM:ss TT',
-                localLongDate:'yyyy年mm月dd日',
-                localLongDateTime:'yyyy年mm月dd日 hh:MM:ss TT',
-                localFullDate:'yyyy年mm月dd日 w',
-                localFullDateTime:'yyyy年mm月dd日 w hh:MM:ss TT'
+                localShortDate:'yy\u5e74mm\u6708dd\u65e5',
+                localShortDateTime:'yy\u5e74mm\u6708dd\u65e5 hh:MM:ss TT',
+                localLongDate:'yyyy\u5e74mm\u6708dd\u65e5',
+                localLongDateTime:'yyyy\u5e74mm\u6708dd\u65e5 hh:MM:ss TT',
+                localFullDate:'yyyy\u5e74mm\u6708dd\u65e5 w',
+                localFullDateTime:'yyyy\u5e74mm\u6708dd\u65e5 w hh:MM:ss TT'
 
             },
 
@@ -2008,7 +1962,7 @@ define('bui/date', function () {
                 dayNames:[
                     'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat',
                     'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
-                    '星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'
+                    '\u661f\u671f\u65e5', '\u661f\u671f\u4e00', '\u661f\u671f\u4e8c', '\u661f\u671f\u4e09', '\u661f\u671f\u56db', '\u661f\u671f\u4e94', '\u661f\u671f\u516d'
                 ],
                 monthNames:[
                     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
@@ -2087,90 +2041,90 @@ define('bui/date', function () {
     }();
 
     /**
-     * 日期的工具方法
+     * \u65e5\u671f\u7684\u5de5\u5177\u65b9\u6cd5
      * @class BUI.Date
      */
     var DateUtil = {
         /**
-         * 日期加法
-         * @param {String} strInterval 加法的类型，s(秒),n(分),h(时),d(天),w(周),m(月),y(年)
-         * @param {Number} Num         数量，如果为负数，则为减法
-         * @param {Date} dtDate      起始日期，默认为此时
+         * \u65e5\u671f\u52a0\u6cd5
+         * @param {String} strInterval \u52a0\u6cd5\u7684\u7c7b\u578b\uff0cs(\u79d2),n(\u5206),h(\u65f6),d(\u5929),w(\u5468),m(\u6708),y(\u5e74)
+         * @param {Number} Num         \u6570\u91cf\uff0c\u5982\u679c\u4e3a\u8d1f\u6570\uff0c\u5219\u4e3a\u51cf\u6cd5
+         * @param {Date} dtDate      \u8d77\u59cb\u65e5\u671f\uff0c\u9ed8\u8ba4\u4e3a\u6b64\u65f6
          */
         add: function (strInterval, Num, dtDate) {
             return DateAdd(strInterval, Num, dtDate);
         },
         /**
-         * 小时的加法
-         * @param {Number} hours 小时
-         * @param {Date} date 起始日期
+         * \u5c0f\u65f6\u7684\u52a0\u6cd5
+         * @param {Number} hours \u5c0f\u65f6
+         * @param {Date} date \u8d77\u59cb\u65e5\u671f
          */
         addHour: function (hours, date) {
             return DateAdd('h', hours, date);
         },
         /**
-         * 分的加法
-         * @param {Number} minutes 分
-         * @param {Date} date 起始日期
+         * \u5206\u7684\u52a0\u6cd5
+         * @param {Number} minutes \u5206
+         * @param {Date} date \u8d77\u59cb\u65e5\u671f
          */
         addMinute: function (minutes, date) {
             return DateAdd('n', minutes, date);
         },
         /**
-         * 秒的加法
-         * @param {Number} seconds 秒
-         * @param {Date} date 起始日期
+         * \u79d2\u7684\u52a0\u6cd5
+         * @param {Number} seconds \u79d2
+         * @param {Date} date \u8d77\u59cb\u65e5\u671f
          */
         addSecond: function (seconds, date) {
             return DateAdd('s', seconds, date);
         },
         /**
-         * 天的加法
-         * @param {Number} days 天数
-         * @param {Date} date 起始日期
+         * \u5929\u7684\u52a0\u6cd5
+         * @param {Number} days \u5929\u6570
+         * @param {Date} date \u8d77\u59cb\u65e5\u671f
          */
         addDay: function (days, date) {
             return DateAdd('d', days, date);
         },
         /**
-         * 增加周
-         * @param {Number} weeks 周数
-         * @param {Date} date  起始日期
+         * \u589e\u52a0\u5468
+         * @param {Number} weeks \u5468\u6570
+         * @param {Date} date  \u8d77\u59cb\u65e5\u671f
          */
         addWeek: function (weeks, date) {
             return DateAdd('w', weeks, date);
         },
         /**
-         * 增加月
-         * @param {Number} months 月数
-         * @param {Date} date  起始日期
+         * \u589e\u52a0\u6708
+         * @param {Number} months \u6708\u6570
+         * @param {Date} date  \u8d77\u59cb\u65e5\u671f
          */
         addMonths: function (months, date) {
             return DateAdd('m', months, date);
         },
         /**
-         * 增加年
-         * @param {Number} years 年数
-         * @param {Date} date  起始日期
+         * \u589e\u52a0\u5e74
+         * @param {Number} years \u5e74\u6570
+         * @param {Date} date  \u8d77\u59cb\u65e5\u671f
          */
         addYear: function (years, date) {
             return DateAdd('y', years, date);
         },
         /**
-         * 日期是否相等，忽略时间
-         * @param  {Date}  d1 日期对象
-         * @param  {Date}  d2 日期对象
-         * @return {Boolean}    是否相等
+         * \u65e5\u671f\u662f\u5426\u76f8\u7b49\uff0c\u5ffd\u7565\u65f6\u95f4
+         * @param  {Date}  d1 \u65e5\u671f\u5bf9\u8c61
+         * @param  {Date}  d2 \u65e5\u671f\u5bf9\u8c61
+         * @return {Boolean}    \u662f\u5426\u76f8\u7b49
          */
         isDateEquals: function (d1, d2) {
 
             return d1.getFullYear() === d2.getFullYear() && d1.getMonth() === d2.getMonth() && d1.getDate() === d2.getDate();
         },
         /**
-         * 日期时间是否相等，包含时间
-         * @param  {Date}  d1 日期对象
-         * @param  {Date}  d2 日期对象
-         * @return {Boolean}    是否相等
+         * \u65e5\u671f\u65f6\u95f4\u662f\u5426\u76f8\u7b49\uff0c\u5305\u542b\u65f6\u95f4
+         * @param  {Date}  d1 \u65e5\u671f\u5bf9\u8c61
+         * @param  {Date}  d2 \u65e5\u671f\u5bf9\u8c61
+         * @return {Boolean}    \u662f\u5426\u76f8\u7b49
          */
         isEquals: function (d1, d2) {
             if (d1 == d2) {
@@ -2185,43 +2139,43 @@ define('bui/date', function () {
             return d1.getTime() == d2.getTime();
         },
         /**
-         * 字符串是否是有效的日期类型
-         * @param {String} str 字符串
-         * @return 字符串是否能转换成日期
+         * \u5b57\u7b26\u4e32\u662f\u5426\u662f\u6709\u6548\u7684\u65e5\u671f\u7c7b\u578b
+         * @param {String} str \u5b57\u7b26\u4e32
+         * @return \u5b57\u7b26\u4e32\u662f\u5426\u80fd\u8f6c\u6362\u6210\u65e5\u671f
          */
         isDateString: function (str) {
             return dateRegex.test(str);
         },
         /**
-         * 将日期格式化成字符串
-         * @param  {Date} date 日期
-         * @param  {String} mask 格式化方式
-         * @param  {Date} utc  是否utc时间
-         * @return {String}      日期的字符串
+         * \u5c06\u65e5\u671f\u683c\u5f0f\u5316\u6210\u5b57\u7b26\u4e32
+         * @param  {Date} date \u65e5\u671f
+         * @param  {String} mask \u683c\u5f0f\u5316\u65b9\u5f0f
+         * @param  {Date} utc  \u662f\u5426utc\u65f6\u95f4
+         * @return {String}      \u65e5\u671f\u7684\u5b57\u7b26\u4e32
          */
         format: function (date, mask, utc) {
             return dateFormat(date, mask, utc);
         },
         /**
-         * 转换成日期
-         * @param  {String|Date} date 字符串或者日期
-         * @param  {String} dateMask  日期的格式,如:yyyy-MM-dd
-         * @return {Date}      日期对象
+         * \u8f6c\u6362\u6210\u65e5\u671f
+         * @param  {String|Date} date \u5b57\u7b26\u4e32\u6216\u8005\u65e5\u671f
+         * @param  {String} dateMask  \u65e5\u671f\u7684\u683c\u5f0f,\u5982:yyyy-MM-dd
+         * @return {Date}      \u65e5\u671f\u5bf9\u8c61
          */
         parse: function (date, s) {
             return dateParse(date, s);
         },
         /**
-         * 当前天
-         * @return {Date} 当前天 00:00:00
+         * \u5f53\u524d\u5929
+         * @return {Date} \u5f53\u524d\u5929 00:00:00
          */
         today: function () {
             var now = new Date();
             return new Date(now.getFullYear(), now.getMonth(), now.getDate());
         },
         /**
-         * 返回当前日期
-         * @return {Date} 日期的 00:00:00
+         * \u8fd4\u56de\u5f53\u524d\u65e5\u671f
+         * @return {Date} \u65e5\u671f\u7684 00:00:00
          */
         getDate: function (date) {
             return new Date(date.getFullYear(), date.getMonth(), date.getDate());
@@ -2229,12 +2183,7 @@ define('bui/date', function () {
     };
 
     return DateUtil;
-});/**
- * @fileOverview  Base UI控件的最基础的类
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/base',['bui/observable'],function(require){
 
   var INVALID = {},
@@ -2273,7 +2222,7 @@ define('bui/base',['bui/observable'],function(require){
 
       prevVal = self.get(name);
 
-      //如果未改变值不进行修改
+      //\u5982\u679c\u672a\u6539\u53d8\u503c\u4e0d\u8fdb\u884c\u4fee\u6539
       if(!$.isPlainObject(value) && !BUI.isArray(value) && prevVal === value){
         return undefined;
       }
@@ -2299,77 +2248,77 @@ define('bui/base',['bui/observable'],function(require){
   }
 
   /**
-   * 基础类，此类提供以下功能
-   *  - 提供设置获取属性
-   *  - 提供事件支持
-   *  - 属性变化时会触发对应的事件
-   *  - 将配置项自动转换成属性
+   * \u57fa\u7840\u7c7b\uff0c\u6b64\u7c7b\u63d0\u4f9b\u4ee5\u4e0b\u529f\u80fd
+   *  - \u63d0\u4f9b\u8bbe\u7f6e\u83b7\u53d6\u5c5e\u6027
+   *  - \u63d0\u4f9b\u4e8b\u4ef6\u652f\u6301
+   *  - \u5c5e\u6027\u53d8\u5316\u65f6\u4f1a\u89e6\u53d1\u5bf9\u5e94\u7684\u4e8b\u4ef6
+   *  - \u5c06\u914d\u7f6e\u9879\u81ea\u52a8\u8f6c\u6362\u6210\u5c5e\u6027
    *
-   * ** 创建类，继承BUI.Base类 **
+   * ** \u521b\u5efa\u7c7b\uff0c\u7ee7\u627fBUI.Base\u7c7b **
    * <pre><code>
    *   var Control = function(cfg){
-   *     Control.superclass.constructor.call(this,cfg); //调用BUI.Base的构造方法，将配置项变成属性
+   *     Control.superclass.constructor.call(this,cfg); //\u8c03\u7528BUI.Base\u7684\u6784\u9020\u65b9\u6cd5\uff0c\u5c06\u914d\u7f6e\u9879\u53d8\u6210\u5c5e\u6027
    *   };
    *
    *   BUI.extend(Control,BUI.Base);
    * </code></pre>
    *
-   * ** 声明默认属性 ** 
+   * ** \u58f0\u660e\u9ed8\u8ba4\u5c5e\u6027 ** 
    * <pre><code>
    *   Control.ATTRS = {
    *     id : {
-   *       value : 'id' //value 是此属性的默认值
+   *       value : 'id' //value \u662f\u6b64\u5c5e\u6027\u7684\u9ed8\u8ba4\u503c
    *     },
    *     renderTo : {
    *      
    *     },
    *     el : {
-   *       valueFn : function(){                 //第一次调用的时候将renderTo的DOM转换成el属性
+   *       valueFn : function(){                 //\u7b2c\u4e00\u6b21\u8c03\u7528\u7684\u65f6\u5019\u5c06renderTo\u7684DOM\u8f6c\u6362\u6210el\u5c5e\u6027
    *         return $(this.get('renderTo'));
    *       }
    *     },
    *     text : {
-   *       getter : function(){ //getter 用于获取值，而不是设置的值
+   *       getter : function(){ //getter \u7528\u4e8e\u83b7\u53d6\u503c\uff0c\u800c\u4e0d\u662f\u8bbe\u7f6e\u7684\u503c
    *         return this.get('el').val();
    *       },
-   *       setter : function(v){ //不仅仅是设置值，可以进行相应的操作
+   *       setter : function(v){ //\u4e0d\u4ec5\u4ec5\u662f\u8bbe\u7f6e\u503c\uff0c\u53ef\u4ee5\u8fdb\u884c\u76f8\u5e94\u7684\u64cd\u4f5c
    *         this.get('el').val(v);
    *       }
    *     }
    *   };
    * </code></pre>
    *
-   * ** 声明类的方法 ** 
+   * ** \u58f0\u660e\u7c7b\u7684\u65b9\u6cd5 ** 
    * <pre><code>
    *   BUI.augment(Control,{
    *     getText : function(){
-   *       return this.get('text');   //可以用get方法获取属性值
+   *       return this.get('text');   //\u53ef\u4ee5\u7528get\u65b9\u6cd5\u83b7\u53d6\u5c5e\u6027\u503c
    *     },
    *     setText : function(txt){
-   *       this.set('text',txt);      //使用set 设置属性值
+   *       this.set('text',txt);      //\u4f7f\u7528set \u8bbe\u7f6e\u5c5e\u6027\u503c
    *     }
    *   });
    * </code></pre>
    *
-   * ** 创建对象 ** 
+   * ** \u521b\u5efa\u5bf9\u8c61 ** 
    * <pre><code>
    *   var c = new Control({
    *     id : 'oldId',
-   *     text : '测试文本',
+   *     text : '\u6d4b\u8bd5\u6587\u672c',
    *     renderTo : '#t1'
    *   });
    *
    *   var el = c.get(el); //$(#t1);
-   *   el.val(); //text的值 ： '测试文本'
-   *   c.set('text','修改的值');
-   *   el.val();  //'修改的值'
+   *   el.val(); //text\u7684\u503c \uff1a '\u6d4b\u8bd5\u6587\u672c'
+   *   c.set('text','\u4fee\u6539\u7684\u503c');
+   *   el.val();  //'\u4fee\u6539\u7684\u503c'
    *
-   *   c.set('id','newId') //会触发2个事件： beforeIdChange,afterIdChange 2个事件 ev.newVal 和ev.prevVal标示新旧值
+   *   c.set('id','newId') //\u4f1a\u89e6\u53d12\u4e2a\u4e8b\u4ef6\uff1a beforeIdChange,afterIdChange 2\u4e2a\u4e8b\u4ef6 ev.newVal \u548cev.prevVal\u6807\u793a\u65b0\u65e7\u503c
    * </code></pre>
    * @class BUI.Base
    * @abstract
    * @extends BUI.Observable
-   * @param {Object} config 配置项
+   * @param {Object} config \u914d\u7f6e\u9879
    */
   var Base = function(config){
     var _self = this,
@@ -2381,14 +2330,14 @@ define('bui/base',['bui/observable'],function(require){
         // define
         while (c) {
             constructors.push(c);
-            if(c.extensions){ //延迟执行mixin
+            if(c.extensions){ //\u5ef6\u8fdf\u6267\u884cmixin
               BUI.mixin(c,c.extensions);
               delete c.extensions;
             }
             //_self.addAttrs(c['ATTRS']);
             c = c.superclass ? c.superclass.constructor : null;
         }
-        //以当前对象的属性最终添加到属性中，覆盖之前的属性
+        //\u4ee5\u5f53\u524d\u5bf9\u8c61\u7684\u5c5e\u6027\u6700\u7ec8\u6dfb\u52a0\u5230\u5c5e\u6027\u4e2d\uff0c\u8986\u76d6\u4e4b\u524d\u7684\u5c5e\u6027
         for (var i = constructors.length - 1; i >= 0; i--) {
           _self.addAttrs(constructors[i]['ATTRS'],true);
         };
@@ -2403,11 +2352,11 @@ define('bui/base',['bui/observable'],function(require){
   BUI.augment(Base,
   {
     /**
-     * 添加属性定义
+     * \u6dfb\u52a0\u5c5e\u6027\u5b9a\u4e49
      * @protected
-     * @param {String} name       属性名
-     * @param {Object} attrConfig 属性定义
-     * @param {Boolean} overrides 是否覆盖字段
+     * @param {String} name       \u5c5e\u6027\u540d
+     * @param {Object} attrConfig \u5c5e\u6027\u5b9a\u4e49
+     * @param {Boolean} overrides \u662f\u5426\u8986\u76d6\u5b57\u6bb5
      */
     addAttr: function (name, attrConfig,overrides) {
             var _self = this,
@@ -2444,11 +2393,11 @@ define('bui/base',['bui/observable'],function(require){
             return _self;
     },
     /**
-     * 添加属性定义
+     * \u6dfb\u52a0\u5c5e\u6027\u5b9a\u4e49
      * @protected
      * @param {Object} attrConfigs  An object with attribute name/configuration pairs.
      * @param {Object} initialValues user defined initial values
-     * @param {Boolean} overrides 是否覆盖字段
+     * @param {Boolean} overrides \u662f\u5426\u8986\u76d6\u5b57\u6bb5
      */
     addAttrs: function (attrConfigs, initialValues,overrides) {
         var _self = this;
@@ -2469,44 +2418,44 @@ define('bui/base',['bui/observable'],function(require){
         return _self;
     },
     /**
-     * 是否包含此属性
+     * \u662f\u5426\u5305\u542b\u6b64\u5c5e\u6027
      * @protected
-     * @param  {String}  name 值
-     * @return {Boolean} 是否包含
+     * @param  {String}  name \u503c
+     * @return {Boolean} \u662f\u5426\u5305\u542b
      */
     hasAttr : function(name){
       return name && this.__attrs.hasOwnProperty(name);
     },
     /**
-     * 获取默认的属性值
+     * \u83b7\u53d6\u9ed8\u8ba4\u7684\u5c5e\u6027\u503c
      * @protected
-     * @return {Object} 属性值的键值对
+     * @return {Object} \u5c5e\u6027\u503c\u7684\u952e\u503c\u5bf9
      */
     getAttrs : function(){
        return this.__attrs;//ensureNonEmpty(this, '__attrs', true);
     },
     /**
-     * 获取属性名/属性值键值对
+     * \u83b7\u53d6\u5c5e\u6027\u540d/\u5c5e\u6027\u503c\u952e\u503c\u5bf9
      * @protected
-     * @return {Object} 属性对象
+     * @return {Object} \u5c5e\u6027\u5bf9\u8c61
      */
     getAttrVals: function(){
       return this.__attrVals; //ensureNonEmpty(this, '__attrVals', true);
     },
     /**
-     * 获取属性值，所有的配置项和属性都可以通过get方法获取
+     * \u83b7\u53d6\u5c5e\u6027\u503c\uff0c\u6240\u6709\u7684\u914d\u7f6e\u9879\u548c\u5c5e\u6027\u90fd\u53ef\u4ee5\u901a\u8fc7get\u65b9\u6cd5\u83b7\u53d6
      * <pre><code>
      *  var control = new Control({
      *   text : 'control text'
      *  });
      *  control.get('text'); //control text
      *
-     *  control.set('customValue','value'); //临时变量
+     *  control.set('customValue','value'); //\u4e34\u65f6\u53d8\u91cf
      *  control.get('customValue'); //value
      * </code></pre>
-     * ** 属性值/配置项 **
+     * ** \u5c5e\u6027\u503c/\u914d\u7f6e\u9879 **
      * <pre><code> 
-     *   Control.ATTRS = { //声明属性值
+     *   Control.ATTRS = { //\u58f0\u660e\u5c5e\u6027\u503c
      *     text : {
      *       valueFn : function(){},
      *       value : 'value',
@@ -2516,14 +2465,14 @@ define('bui/base',['bui/observable'],function(require){
      *   var c = new Control({
      *     text : 'text value'
      *   });
-     *   //get 函数取的顺序为：是否有修改值（配置项、set)、默认值（第一次调用执行valueFn)，如果有getter，则将值传入getter返回
+     *   //get \u51fd\u6570\u53d6\u7684\u987a\u5e8f\u4e3a\uff1a\u662f\u5426\u6709\u4fee\u6539\u503c\uff08\u914d\u7f6e\u9879\u3001set)\u3001\u9ed8\u8ba4\u503c\uff08\u7b2c\u4e00\u6b21\u8c03\u7528\u6267\u884cvalueFn)\uff0c\u5982\u679c\u6709getter\uff0c\u5219\u5c06\u503c\u4f20\u5165getter\u8fd4\u56de
      *
      *   c.get('text') //text value
-     *   c.set('text','new text');//修改值
+     *   c.set('text','new text');//\u4fee\u6539\u503c
      *   c.get('text');//new text
      * </code></pre>
-     * @param  {String} name 属性名
-     * @return {Object} 属性值
+     * @param  {String} name \u5c5e\u6027\u540d
+     * @return {Object} \u5c5e\u6027\u503c
      */
     get : function(name){
       var _self = this,
@@ -2550,14 +2499,14 @@ define('bui/base',['bui/observable'],function(require){
             return ret;
     },
   	/**
-  	* @清理所有属性值
+  	* @\u6e05\u7406\u6240\u6709\u5c5e\u6027\u503c
     * @protected 
   	*/
   	clearAttrVals : function(){
   		this.__attrVals = {};
   	},
     /**
-     * 移除属性定义
+     * \u79fb\u9664\u5c5e\u6027\u5b9a\u4e49
      * @protected
      */
     removeAttr: function (name) {
@@ -2571,7 +2520,7 @@ define('bui/base',['bui/observable'],function(require){
         return _self;
     },
     /**
-     * 设置属性值，会触发before+Name+Change,和 after+Name+Change事件
+     * \u8bbe\u7f6e\u5c5e\u6027\u503c\uff0c\u4f1a\u89e6\u53d1before+Name+Change,\u548c after+Name+Change\u4e8b\u4ef6
      * <pre><code>
      *  control.on('beforeTextChange',function(ev){
      *    var newVal = ev.newVal,
@@ -2580,13 +2529,13 @@ define('bui/base',['bui/observable'],function(require){
      *
      *    //TO DO
      *  });
-     *  control.set('text','new text');  //此时触发 beforeTextChange,afterTextChange
-     *  control.set('text','modify text',{silent : true}); //此时不触发事件
+     *  control.set('text','new text');  //\u6b64\u65f6\u89e6\u53d1 beforeTextChange,afterTextChange
+     *  control.set('text','modify text',{silent : true}); //\u6b64\u65f6\u4e0d\u89e6\u53d1\u4e8b\u4ef6
      * </code></pre>
-     * @param {String|Object} name  属性名
-     * @param {Object} value 值
-     * @param {Object} opts 配置项
-     * @param {Boolean} opts.silent  配置属性时，是否不触发事件
+     * @param {String|Object} name  \u5c5e\u6027\u540d
+     * @param {Object} value \u503c
+     * @param {Object} opts \u914d\u7f6e\u9879
+     * @param {Boolean} opts.silent  \u914d\u7f6e\u5c5e\u6027\u65f6\uff0c\u662f\u5426\u4e0d\u89e6\u53d1\u4e8b\u4ef6
      */
     set : function(name,value,opts){
       var _self = this;
@@ -2605,18 +2554,18 @@ define('bui/base',['bui/observable'],function(require){
             return setInternal(_self, name, value, opts);
     },
     /**
-     * 设置属性，不触发事件
+     * \u8bbe\u7f6e\u5c5e\u6027\uff0c\u4e0d\u89e6\u53d1\u4e8b\u4ef6
      * <pre><code>
-     *  control.setInternal('text','text');//此时不触发事件
+     *  control.setInternal('text','text');//\u6b64\u65f6\u4e0d\u89e6\u53d1\u4e8b\u4ef6
      * </code></pre>
-     * @param  {String} name  属性名
-     * @param  {Object} value 属性值
-     * @return {Boolean|undefined}   如果值无效则返回false,否则返回undefined
+     * @param  {String} name  \u5c5e\u6027\u540d
+     * @param  {Object} value \u5c5e\u6027\u503c
+     * @return {Boolean|undefined}   \u5982\u679c\u503c\u65e0\u6548\u5219\u8fd4\u56defalse,\u5426\u5219\u8fd4\u56deundefined
      */
     setInternal : function(name, value, opts){
         return this._set(name, value, opts);
     },
-    //获取属性默认值
+    //\u83b7\u53d6\u5c5e\u6027\u9ed8\u8ba4\u503c
     _getDefAttrVal : function(name){
       var _self = this,
         attrs = _self.__attrs,
@@ -2635,14 +2584,14 @@ define('bui/base',['bui/observable'],function(require){
 
           return attrConfig.value;
     },
-    //仅仅设置属性值
+    //\u4ec5\u4ec5\u8bbe\u7f6e\u5c5e\u6027\u503c
     _set : function(name, value, opts){
       var _self = this,
                 setValue,
             // if host does not have meta info corresponding to (name,value)
             // then register on demand in order to collect all data meta info
-            // 一定要注册属性元数据，否则其他模块通过 _attrs 不能枚举到所有有效属性
-            // 因为属性在声明注册前可以直接设置值
+            // \u4e00\u5b9a\u8981\u6ce8\u518c\u5c5e\u6027\u5143\u6570\u636e\uff0c\u5426\u5219\u5176\u4ed6\u6a21\u5757\u901a\u8fc7 _attrs \u4e0d\u80fd\u679a\u4e3e\u5230\u6240\u6709\u6709\u6548\u5c5e\u6027
+            // \u56e0\u4e3a\u5c5e\u6027\u5728\u58f0\u660e\u6ce8\u518c\u524d\u53ef\u4ee5\u76f4\u63a5\u8bbe\u7f6e\u503c
                 attrConfig = ensureNonEmpty(_self.__attrs, name, true),
                 setter = attrConfig['setter'];
 
@@ -2662,13 +2611,13 @@ define('bui/base',['bui/observable'],function(require){
             // finally set
             _self.__attrVals[name] = value;
     },
-    //初始化属性
+    //\u521d\u59cb\u5316\u5c5e\u6027
     _initAttrs : function(config){
       var _self = this;
       if (config) {
               for (var attr in config) {
                   if (config.hasOwnProperty(attr)) {
-                      // 用户设置会调用 setter/validator 的，但不会触发属性变化事件
+                      // \u7528\u6237\u8bbe\u7f6e\u4f1a\u8c03\u7528 setter/validator \u7684\uff0c\u4f46\u4e0d\u4f1a\u89e6\u53d1\u5c5e\u6027\u53d8\u5316\u4e8b\u4ef6
                       _self._set(attr, config[attr]);
                   }
 
@@ -2679,18 +2628,14 @@ define('bui/base',['bui/observable'],function(require){
 
   //BUI.Base = Base;
   return Base;
-});/**
- * @fileOverview Component命名空间的入口文件
- * @ignore
- */
-
+});
 define('bui/component',['bui/component/manage','bui/component/uibase','bui/component/view','bui/component/controller'],function (require) {
   /**
    * @class BUI.Component
    * <p>
    * <img src="../assets/img/class-common.jpg"/>
    * </p>
-   * 控件基类的命名空间
+   * \u63a7\u4ef6\u57fa\u7c7b\u7684\u547d\u540d\u7a7a\u95f4
    */
   var Component = {};
 
@@ -2717,30 +2662,22 @@ define('bui/component',['bui/component/manage','bui/component/uibase','bui/compo
   }
 
   /**
-   * 根据Xclass创建对象
+   * \u6839\u636eXclass\u521b\u5efa\u5bf9\u8c61
    * @method
    * @static
-   * @param  {Object} component 控件的配置项或者控件
-   * @param  {Object} self      父类实例
-   * @return {Object} 实例对象
+   * @param  {Object} component \u63a7\u4ef6\u7684\u914d\u7f6e\u9879\u6216\u8005\u63a7\u4ef6
+   * @param  {Object} self      \u7236\u7c7b\u5b9e\u4f8b
+   * @return {Object} \u5b9e\u4f8b\u5bf9\u8c61
    */
   Component.create = create;
 
   return Component;
-});/**
- * @fileOverview  Base UI控件的管理类
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
-
-
-
-//控件类的管理器
+});
+//\u63a7\u4ef6\u7c7b\u7684\u7ba1\u7406\u5668
 define('bui/component/manage',function(require){
 
     var uis = {
-        // 不带前缀 prefixCls
+        // \u4e0d\u5e26\u524d\u7f00 prefixCls
         /*
          "menu" :{
          priority:0,
@@ -2810,31 +2747,31 @@ define('bui/component/manage',function(require){
 
         __instances:componentInstances,
         /**
-         * 每实例化一个控件，就注册到管理器上
-         * @param {String} id  控件 id
-         * @param {BUI.Component.Controller} component 控件对象
+         * \u6bcf\u5b9e\u4f8b\u5316\u4e00\u4e2a\u63a7\u4ef6\uff0c\u5c31\u6ce8\u518c\u5230\u7ba1\u7406\u5668\u4e0a
+         * @param {String} id  \u63a7\u4ef6 id
+         * @param {BUI.Component.Controller} component \u63a7\u4ef6\u5bf9\u8c61
          */
         addComponent:function (id, component) {
             componentInstances[id] = component;
         },
         /**
-         * 移除注册的控件
-         * @param  {String} id 控件 id
+         * \u79fb\u9664\u6ce8\u518c\u7684\u63a7\u4ef6
+         * @param  {String} id \u63a7\u4ef6 id
          */
         removeComponent:function (id) {
             delete componentInstances[id];
         },
         /**
-         * 遍历所有的控件
-         * @param  {Function} fn 遍历函数
+         * \u904d\u5386\u6240\u6709\u7684\u63a7\u4ef6
+         * @param  {Function} fn \u904d\u5386\u51fd\u6570
          */
         eachComponent : function(fn){
             BUI.each(componentInstances,fn);
         },
         /**
-         * 根据Id获取控件
-         * @param  {String} id 编号
-         * @return {BUI.Component.UIBase}   继承 UIBase的类对象
+         * \u6839\u636eId\u83b7\u53d6\u63a7\u4ef6
+         * @param  {String} id \u7f16\u53f7
+         * @return {BUI.Component.UIBase}   \u7ee7\u627f UIBase\u7684\u7c7b\u5bf9\u8c61
          */
         getComponent:function (id) {
             return componentInstances[id];
@@ -2842,15 +2779,15 @@ define('bui/component/manage',function(require){
 
         getCssClassWithPrefix:getCssClassWithPrefix,
         /**
-         * 通过构造函数获取xclass.
-         * @param {Function} constructor 控件的构造函数.
+         * \u901a\u8fc7\u6784\u9020\u51fd\u6570\u83b7\u53d6xclass.
+         * @param {Function} constructor \u63a7\u4ef6\u7684\u6784\u9020\u51fd\u6570.
          * @type {Function}
          * @return {String}
          * @method
          */
         getXClassByConstructor:getXClassByConstructor,
         /**
-         * 通过xclass获取控件的构造函数
+         * \u901a\u8fc7xclass\u83b7\u53d6\u63a7\u4ef6\u7684\u6784\u9020\u51fd\u6570
          * @param {String} classNames Class names separated by space.
          * @type {Function}
          * @return {Function}
@@ -2858,20 +2795,17 @@ define('bui/component/manage',function(require){
          */
         getConstructorByXClass:getConstructorByXClass,
         /**
-         * 将 xclass 同构造函数相关联.
+         * \u5c06 xclass \u540c\u6784\u9020\u51fd\u6570\u76f8\u5173\u8054.
          * @type {Function}
-         * @param {String} className 控件的xclass名称.
-         * @param {Function} componentConstructor 构造函数
+         * @param {String} className \u63a7\u4ef6\u7684xclass\u540d\u79f0.
+         * @param {Function} componentConstructor \u6784\u9020\u51fd\u6570
          * @method
          */
         setConstructorByXClass:setConstructorByXClass
     };
 
     return Manager;
-});/**
- * @fileOverview uibase的入口文件
- * @ignore
- */
+});
 ;(function(){
 var BASE = 'bui/component/uibase/';
 define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BASE + 'autohide',
@@ -2917,12 +2851,7 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
   return UIBase;
 });   
 })();
-/**
- * @fileOverview  UI控件的流程控制
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
+
 define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   var Manager = require('bui/component/manage'),
@@ -2933,7 +2862,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
         noop = $.noop,
         Base = require('bui/base');
    /**
-     * 模拟多继承
+     * \u6a21\u62df\u591a\u7ee7\u627f
      * init attr using constructors ATTRS meta info
      * @ignore
      */
@@ -2952,14 +2881,14 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
         // define
         while (c) {
 
-            // 收集扩展类
+            // \u6536\u96c6\u6269\u5c55\u7c7b
             t = [];
             if (exts = c.mixins) {
                 for (var i = 0; i < exts.length; i++) {
                     ext = exts[i];
                     if (ext) {
                         if (extMethod != 'constructor') {
-                            //只调用真正自己构造器原型的定义，继承原型链上的不要管
+                            //\u53ea\u8c03\u7528\u771f\u6b63\u81ea\u5df1\u6784\u9020\u5668\u539f\u578b\u7684\u5b9a\u4e49\uff0c\u7ee7\u627f\u539f\u578b\u94fe\u4e0a\u7684\u4e0d\u8981\u7ba1
                             if (ext.prototype.hasOwnProperty(extMethod)) {
                                 ext = ext.prototype[extMethod];
                             } else {
@@ -2971,15 +2900,15 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
                 }
             }
 
-            // 收集主类
-            // 只调用真正自己构造器原型的定义，继承原型链上的不要管 !important
-            // 所以不用自己在 renderUI 中调用 superclass.renderUI 了，UIBase 构造器自动搜寻
-            // 以及 initializer 等同理
+            // \u6536\u96c6\u4e3b\u7c7b
+            // \u53ea\u8c03\u7528\u771f\u6b63\u81ea\u5df1\u6784\u9020\u5668\u539f\u578b\u7684\u5b9a\u4e49\uff0c\u7ee7\u627f\u539f\u578b\u94fe\u4e0a\u7684\u4e0d\u8981\u7ba1 !important
+            // \u6240\u4ee5\u4e0d\u7528\u81ea\u5df1\u5728 renderUI \u4e2d\u8c03\u7528 superclass.renderUI \u4e86\uff0cUIBase \u6784\u9020\u5668\u81ea\u52a8\u641c\u5bfb
+            // \u4ee5\u53ca initializer \u7b49\u540c\u7406
             if (c.prototype.hasOwnProperty(mainMethod) && (main = c.prototype[mainMethod])) {
                 t.push(main);
             }
 
-            // 原地 reverse
+            // \u539f\u5730 reverse
             if (t.length) {
                 extChains.push.apply(extChains, t.reverse());
             }
@@ -2987,15 +2916,15 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             c = c.superclass && c.superclass.constructor;
         }
 
-        // 初始化函数
-        // 顺序：父类的所有扩展类函数 -> 父类对应函数 -> 子类的所有扩展函数 -> 子类对应函数
+        // \u521d\u59cb\u5316\u51fd\u6570
+        // \u987a\u5e8f\uff1a\u7236\u7c7b\u7684\u6240\u6709\u6269\u5c55\u7c7b\u51fd\u6570 -> \u7236\u7c7b\u5bf9\u5e94\u51fd\u6570 -> \u5b50\u7c7b\u7684\u6240\u6709\u6269\u5c55\u51fd\u6570 -> \u5b50\u7c7b\u5bf9\u5e94\u51fd\u6570
         for (i = extChains.length - 1; i >= 0; i--) {
             extChains[i] && extChains[i].call(host);
         }
     }
 
      /**
-     * 销毁组件顺序： 子类 destructor -> 子类扩展 destructor -> 父类 destructor -> 父类扩展 destructor
+     * \u9500\u6bc1\u7ec4\u4ef6\u987a\u5e8f\uff1a \u5b50\u7c7b destructor -> \u5b50\u7c7b\u6269\u5c55 destructor -> \u7236\u7c7b destructor -> \u7236\u7c7b\u6269\u5c55 destructor
      * @ignore
      */
     function destroyHierarchy(host) {
@@ -3005,7 +2934,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             i;
 
         while (c) {
-            // 只触发该类真正的析构器，和父亲没关系，所以不要在子类析构器中调用 superclass
+            // \u53ea\u89e6\u53d1\u8be5\u7c7b\u771f\u6b63\u7684\u6790\u6784\u5668\uff0c\u548c\u7236\u4eb2\u6ca1\u5173\u7cfb\uff0c\u6240\u4ee5\u4e0d\u8981\u5728\u5b50\u7c7b\u6790\u6784\u5668\u4e2d\u8c03\u7528 superclass
             if (c.prototype.hasOwnProperty('destructor')) {
                 c.prototype.destructor.apply(host);
             }
@@ -3022,7 +2951,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     }
 
     /**
-     * 构建 插件
+     * \u6784\u5efa \u63d2\u4ef6
      * @ignore
      */
     function constructPlugins(plugins) {
@@ -3037,7 +2966,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     }
 
     /**
-     * 调用插件的方法
+     * \u8c03\u7528\u63d2\u4ef6\u7684\u65b9\u6cd5
      * @ignore
      */
     function actionPlugins(self, plugins, action) {
@@ -3052,7 +2981,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     }
 
      /**
-     * 根据属性变化设置 UI
+     * \u6839\u636e\u5c5e\u6027\u53d8\u5316\u8bbe\u7f6e UI
      * @ignore
      */
     function bindUI(self) {
@@ -3064,10 +2993,10 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             if (attrs.hasOwnProperty(attr)) {
                 m = UI_SET + ucfirst(attr);
                 if (self[m]) {
-                    // 自动绑定事件到对应函数
+                    // \u81ea\u52a8\u7ed1\u5b9a\u4e8b\u4ef6\u5230\u5bf9\u5e94\u51fd\u6570
                     (function (attr, m) {
                         self.on('after' + ucfirst(attr) + 'Change', function (ev) {
-                            // fix! 防止冒泡过来的
+                            // fix! \u9632\u6b62\u5192\u6ce1\u8fc7\u6765\u7684
                             if (ev.target === self) {
                                 self[m](ev.newVal, ev);
                             }
@@ -3079,7 +3008,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     }
 
         /**
-     * 根据当前（初始化）状态来设置 UI
+     * \u6839\u636e\u5f53\u524d\uff08\u521d\u59cb\u5316\uff09\u72b6\u6001\u6765\u8bbe\u7f6e UI
      * @ignore
      */
     function syncUI(self) {
@@ -3089,9 +3018,9 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
         for (var a in attrs) {
             if (attrs.hasOwnProperty(a)) {
                 var m = UI_SET + ucfirst(a);
-                //存在方法，并且用户设置了初始值或者存在默认值，就同步状态
+                //\u5b58\u5728\u65b9\u6cd5\uff0c\u5e76\u4e14\u7528\u6237\u8bbe\u7f6e\u4e86\u521d\u59cb\u503c\u6216\u8005\u5b58\u5728\u9ed8\u8ba4\u503c\uff0c\u5c31\u540c\u6b65\u72b6\u6001
                 if ((f = self[m])
-                    // 用户如果设置了显式不同步，就不同步，比如一些值从 html 中读取，不需要同步再次设置
+                    // \u7528\u6237\u5982\u679c\u8bbe\u7f6e\u4e86\u663e\u5f0f\u4e0d\u540c\u6b65\uff0c\u5c31\u4e0d\u540c\u6b65\uff0c\u6bd4\u5982\u4e00\u4e9b\u503c\u4ece html \u4e2d\u8bfb\u53d6\uff0c\u4e0d\u9700\u8981\u540c\u6b65\u518d\u6b21\u8bbe\u7f6e
                     && attrs[a].sync !== false
                     && (v = self.get(a)) !== undefined) {
                     f.call(self, v);
@@ -3101,25 +3030,25 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     }
 
   /**
-   * 控件库的基类，包括控件的生命周期,下面是基本的扩展类
+   * \u63a7\u4ef6\u5e93\u7684\u57fa\u7c7b\uff0c\u5305\u62ec\u63a7\u4ef6\u7684\u751f\u547d\u5468\u671f,\u4e0b\u9762\u662f\u57fa\u672c\u7684\u6269\u5c55\u7c7b
    * <p>
    * <img src="https://dxq613.github.io/assets/img/class-mixins.jpg"/>
    * </p>
    * @class BUI.Component.UIBase
    * @extends BUI.Base
-   * @param  {Object} config 配置项
+   * @param  {Object} config \u914d\u7f6e\u9879
    */
   var UIBase = function(config){
 
      var _self = this, 
       id;
 
-        // 读取用户设置的属性值并设置到自身
+        // \u8bfb\u53d6\u7528\u6237\u8bbe\u7f6e\u7684\u5c5e\u6027\u503c\u5e76\u8bbe\u7f6e\u5230\u81ea\u8eab
         Base.apply(_self, arguments);
 
-        //保存用户传入的配置项
+        //\u4fdd\u5b58\u7528\u6237\u4f20\u5165\u7684\u914d\u7f6e\u9879
         _self.setInternal('userConfig',config);
-        // 按照类层次执行初始函数，主类执行 initializer 函数，扩展类执行构造器函数
+        // \u6309\u7167\u7c7b\u5c42\u6b21\u6267\u884c\u521d\u59cb\u51fd\u6570\uff0c\u4e3b\u7c7b\u6267\u884c initializer \u51fd\u6570\uff0c\u6269\u5c55\u7c7b\u6267\u884c\u6784\u9020\u5668\u51fd\u6570
         initHierarchy(_self, config);
 
         var listener,
@@ -3131,11 +3060,11 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     
         var xclass= _self.get('xclass');
         if(xclass){
-          _self.__xclass = xclass;//debug 方便
+          _self.__xclass = xclass;//debug \u65b9\u4fbf
         }
         actionPlugins(_self, plugins, 'initializer');
 
-        // 是否自动渲染
+        // \u662f\u5426\u81ea\u52a8\u6e32\u67d3
         config && config.autoRender && _self.render();
 
   };
@@ -3145,7 +3074,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     
     
     /**
-     * 用户传入的配置项
+     * \u7528\u6237\u4f20\u5165\u7684\u914d\u7f6e\u9879
      * @type {Object}
      * @readOnly
      * @protected
@@ -3154,13 +3083,13 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
     },
     /**
-     * 是否自动渲染,如果不自动渲染，需要用户调用 render()方法
+     * \u662f\u5426\u81ea\u52a8\u6e32\u67d3,\u5982\u679c\u4e0d\u81ea\u52a8\u6e32\u67d3\uff0c\u9700\u8981\u7528\u6237\u8c03\u7528 render()\u65b9\u6cd5
      * <pre><code>
-     *  //默认状态下创建对象，并没有进行render
+     *  //\u9ed8\u8ba4\u72b6\u6001\u4e0b\u521b\u5efa\u5bf9\u8c61\uff0c\u5e76\u6ca1\u6709\u8fdb\u884crender
      *  var control = new Control();
-     *  control.render(); //需要调用render方法
+     *  control.render(); //\u9700\u8981\u8c03\u7528render\u65b9\u6cd5
      *
-     *  //设置autoRender后，不需要调用render方法
+     *  //\u8bbe\u7f6eautoRender\u540e\uff0c\u4e0d\u9700\u8981\u8c03\u7528render\u65b9\u6cd5
      *  var control = new Control({
      *   autoRender : true
      *  });
@@ -3168,7 +3097,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @cfg {Boolean} autoRender
      */
     /**
-     * 是否自动渲染,如果不自动渲染，需要用户调用 render()方法
+     * \u662f\u5426\u81ea\u52a8\u6e32\u67d3,\u5982\u679c\u4e0d\u81ea\u52a8\u6e32\u67d3\uff0c\u9700\u8981\u7528\u6237\u8c03\u7528 render()\u65b9\u6cd5
      * @type {Boolean}
      * @ignore
      */
@@ -3177,7 +3106,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     },
     /**
      * @type {Object}
-     * 事件处理函数:
+     * \u4e8b\u4ef6\u5904\u7406\u51fd\u6570:
      *      {
      *        'click':function(e){}
      *      }
@@ -3187,7 +3116,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
         value: {}
     },
     /**
-     * 插件集合
+     * \u63d2\u4ef6\u96c6\u5408
      * <pre><code>
      *  var grid = new Grid({
      *    columns : [{},{}],
@@ -3197,7 +3126,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @cfg {Array} plugins
      */
     /**
-     * 插件集合
+     * \u63d2\u4ef6\u96c6\u5408
      * @type {Array}
      * @readOnly
      */
@@ -3205,7 +3134,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
       value : []
     },
     /**
-     * 是否已经渲染完成
+     * \u662f\u5426\u5df2\u7ecf\u6e32\u67d3\u5b8c\u6210
      * @type {Boolean}
      * @default  false
      * @readOnly
@@ -3214,7 +3143,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
         value : false
     },
     /**
-    * 获取控件的 xclass
+    * \u83b7\u53d6\u63a7\u4ef6\u7684 xclass
     * @readOnly
     * @type {String}
     * @protected
@@ -3231,12 +3160,12 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   BUI.augment(UIBase,
   {
     /**
-     * 创建DOM结构
+     * \u521b\u5efaDOM\u7ed3\u6784
      * @protected
      */
     create : function(){
       var self = this;
-            // 是否生成过节点
+            // \u662f\u5426\u751f\u6210\u8fc7\u8282\u70b9
             if (!self.get('created')) {
                 /**
                  * @event beforeCreateDom
@@ -3257,11 +3186,11 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             return self;
     },
     /**
-     * 渲染
+     * \u6e32\u67d3
      */
     render : function(){
       var _self = this;
-            // 是否已经渲染过
+            // \u662f\u5426\u5df2\u7ecf\u6e32\u67d3\u8fc7
             if (!_self.get('rendered')) {
                 var plugins = _self.get('plugins');
                 _self.create(undefined);
@@ -3326,32 +3255,32 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             return _self;
     },
     /**
-     * 子类可继承此方法，当DOM创建时调用
+     * \u5b50\u7c7b\u53ef\u7ee7\u627f\u6b64\u65b9\u6cd5\uff0c\u5f53DOM\u521b\u5efa\u65f6\u8c03\u7528
      * @protected
      * @method
      */
     createDom : noop,
     /**
-     * 子类可继承此方法，渲染UI时调用
+     * \u5b50\u7c7b\u53ef\u7ee7\u627f\u6b64\u65b9\u6cd5\uff0c\u6e32\u67d3UI\u65f6\u8c03\u7528
      * @protected
      *  @method
      */
     renderUI : noop,
     /**
-     * 子类可继承此方法,绑定事件时调用
+     * \u5b50\u7c7b\u53ef\u7ee7\u627f\u6b64\u65b9\u6cd5,\u7ed1\u5b9a\u4e8b\u4ef6\u65f6\u8c03\u7528
      * @protected
      * @method
      */
     bindUI : noop,
     /**
-     * 同步属性值到UI上
+     * \u540c\u6b65\u5c5e\u6027\u503c\u5230UI\u4e0a
      * @protected
      * @method
      */
     syncUI : noop,
 
     /**
-     * 析构函数
+     * \u6790\u6784\u51fd\u6570
      */
     destroy: function () {
         var _self = this;
@@ -3377,7 +3306,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
     } 
   });
     
-  //延时处理构造函数
+  //\u5ef6\u65f6\u5904\u7406\u6784\u9020\u51fd\u6570
   function initConstuctor(c){
     var constructors = [];
     while(c.base){
@@ -3398,13 +3327,13 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
   BUI.mix(UIBase,
     {
     /**
-     * 定义一个类
+     * \u5b9a\u4e49\u4e00\u4e2a\u7c7b
      * @static
-     * @param  {Function} base   基类构造函数
-     * @param  {Array} extensions 扩展
-     * @param  {Object} px  原型链上的扩展
+     * @param  {Function} base   \u57fa\u7c7b\u6784\u9020\u51fd\u6570
+     * @param  {Array} extensions \u6269\u5c55
+     * @param  {Object} px  \u539f\u578b\u94fe\u4e0a\u7684\u6269\u5c55
      * @param  {Object} sx  
-     * @return {Function} 继承与基类的构造函数
+     * @return {Function} \u7ee7\u627f\u4e0e\u57fa\u7c7b\u7684\u6784\u9020\u51fd\u6570
      */
     define : function(base, extensions, px, sx){
           if ($.isPlainObject(extensions)) {
@@ -3421,25 +3350,25 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             UIBase.apply(this, arguments);
           }
 
-          BUI.extend(C, base);  //无法延迟
+          BUI.extend(C, base);  //\u65e0\u6cd5\u5ef6\u8fdf
           C.base = base;
-          C.px = px;//延迟复制原型链上的函数
-          C.sx = sx;//延迟复制静态属性
+          C.px = px;//\u5ef6\u8fdf\u590d\u5236\u539f\u578b\u94fe\u4e0a\u7684\u51fd\u6570
+          C.sx = sx;//\u5ef6\u8fdf\u590d\u5236\u9759\u6001\u5c5e\u6027
 
           //BUI.mixin(C,extensions);
-          if(extensions.length){ //延迟执行mixin
+          if(extensions.length){ //\u5ef6\u8fdf\u6267\u884cmixin
             C.extensions = extensions;
           }
          
           return C;
     },
     /**
-     * 扩展一个类，基类就是类本身
+     * \u6269\u5c55\u4e00\u4e2a\u7c7b\uff0c\u57fa\u7c7b\u5c31\u662f\u7c7b\u672c\u8eab
      * @static
-     * @param  {Array} extensions 扩展
-     * @param  {Object} px  原型链上的扩展
+     * @param  {Array} extensions \u6269\u5c55
+     * @param  {Object} px  \u539f\u578b\u94fe\u4e0a\u7684\u6269\u5c55
      * @param  {Object} sx  
-     * @return {Function} 继承与基类的构造函数
+     * @return {Function} \u7ee7\u627f\u4e0e\u57fa\u7c7b\u7684\u6784\u9020\u51fd\u6570
      */
     extend: function extend(extensions, px, sx) {
         var args = $.makeArray(arguments),
@@ -3458,7 +3387,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
                 constructor: ret,
                 priority: priority
             });
-            //方便调试
+            //\u65b9\u4fbf\u8c03\u8bd5
             ret.__xclass = last.xclass;
             ret.priority = priority;
             ret.toString = function(){
@@ -3472,13 +3401,6 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
   return UIBase;
 });
-/**
- * @fileOverview 跟指定的元素项对齐的方式
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
-
 
 define('bui/component/uibase/align',['bui/ua'],function (require) {
     var UA = require('bui/ua'),
@@ -3493,15 +3415,15 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
      */
 
     /**
-     * 得到会导致元素显示不全的祖先元素
+     * \u5f97\u5230\u4f1a\u5bfc\u81f4\u5143\u7d20\u663e\u793a\u4e0d\u5168\u7684\u7956\u5148\u5143\u7d20
      * @ignore
      */
     function getOffsetParent(element) {
-        // ie 这个也不是完全可行
+        // ie \u8fd9\u4e2a\u4e5f\u4e0d\u662f\u5b8c\u5168\u53ef\u884c
         /**
          <div style="width: 50px;height: 100px;overflow: hidden">
          <div style="width: 50px;height: 100px;position: relative;" id="d6">
-         元素 6 高 100px 宽 50px<br/>
+         \u5143\u7d20 6 \u9ad8 100px \u5bbd 50px<br/>
          </div>
          </div>
          @ignore
@@ -3512,7 +3434,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
         //        if (UA.ie && ieMode < 8) {
         //            return element.offsetParent;
         //        }
-                // 统一的 offsetParent 方法
+                // \u7edf\u4e00\u7684 offsetParent \u65b9\u6cd5
         var doc = element.ownerDocument,
             body = doc.body,
             parent,
@@ -3533,7 +3455,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
     }
 
     /**
-     * 获得元素的显示部分的区域
+     * \u83b7\u5f97\u5143\u7d20\u7684\u663e\u793a\u90e8\u5206\u7684\u533a\u57df
      * @private
      * @ignore
      */
@@ -3645,7 +3567,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
 
         // Right edge outside viewport, try to move it.
         if (overflow.adjustX && pos.left + size.width > visibleRect.right) {
-            // 保证左边界和可视区域左边界对齐
+            // \u4fdd\u8bc1\u5de6\u8fb9\u754c\u548c\u53ef\u89c6\u533a\u57df\u5de6\u8fb9\u754c\u5bf9\u9f50
             pos.left = Math.max(visibleRect.right - size.width, visibleRect.left);
         }
 
@@ -3663,7 +3585,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
 
         // Bottom edge outside viewport, try to move it.
         if (overflow.adjustY && pos.top + size.height > visibleRect.bottom) {
-            // 保证上边界和可视区域上边界对齐
+            // \u4fdd\u8bc1\u4e0a\u8fb9\u754c\u548c\u53ef\u89c6\u533a\u57df\u4e0a\u8fb9\u754c\u5bf9\u9f50
             pos.top = Math.max(visibleRect.bottom - size.height, visibleRect.top);
         }
 
@@ -3704,28 +3626,28 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
     Align.ATTRS =
     {
         /**
-         * 对齐配置，详细说明请参看： <a href="http://www.cnblogs.com/zaohe/archive/2013/04/09/3010651.html">JS控件 对齐</a>
+         * \u5bf9\u9f50\u914d\u7f6e\uff0c\u8be6\u7ec6\u8bf4\u660e\u8bf7\u53c2\u770b\uff1a <a href="http://www.cnblogs.com/zaohe/archive/2013/04/09/3010651.html">JS\u63a7\u4ef6 \u5bf9\u9f50</a>
          * @cfg {Object} align
          * <pre><code>
          *  var overlay = new Overlay( {  
          *       align :{
-         *         node: null,         // 参考元素, falsy 或 window 为可视区域, 'trigger' 为触发元素, 其他为指定元素
-         *         points: ['cc','cc'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
-         *         offset: [0, 0]      // 有效值为 [n, m]
+         *         node: null,         // \u53c2\u8003\u5143\u7d20, falsy \u6216 window \u4e3a\u53ef\u89c6\u533a\u57df, 'trigger' \u4e3a\u89e6\u53d1\u5143\u7d20, \u5176\u4ed6\u4e3a\u6307\u5b9a\u5143\u7d20
+         *         points: ['cc','cc'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+         *         offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
          *       }
          *     }); 
          * </code></pre>
          */
 
         /**
-         * 设置对齐属性
+         * \u8bbe\u7f6e\u5bf9\u9f50\u5c5e\u6027
          * @type {Object}
          * @field
          * <code>
          *   var align =  {
-         *        node: null,         // 参考元素, falsy 或 window 为可视区域, 'trigger' 为触发元素, 其他为指定元素
-         *        points: ['cc','cc'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
-         *        offset: [0, 0]      // 有效值为 [n, m]
+         *        node: null,         // \u53c2\u8003\u5143\u7d20, falsy \u6216 window \u4e3a\u53ef\u89c6\u533a\u57df, 'trigger' \u4e3a\u89e6\u53d1\u5143\u7d20, \u5176\u4ed6\u4e3a\u6307\u5b9a\u5143\u7d20
+         *        points: ['cc','cc'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+         *        offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
          *     };
          *   overlay.set('align',align);
          * </code>
@@ -3752,7 +3674,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
     }
 
     /**
-     * 获取 node 上的 align 对齐点 相对于页面的坐标
+     * \u83b7\u53d6 node \u4e0a\u7684 align \u5bf9\u9f50\u70b9 \u76f8\u5bf9\u4e8e\u9875\u9762\u7684\u5750\u6807
      * @param region
      * @param align
      */
@@ -3781,7 +3703,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
         return { left:x, top:y };
     }
 
-    //清除对齐的css样式
+    //\u6e05\u9664\u5bf9\u9f50\u7684css\u6837\u5f0f
     function clearAlignCls(el){
         var cls = el.attr('class'),
             regex = new RegExp('\s?'+CLS_ALIGN_PREFIX+'[a-z]{2}-[a-z]{2}','ig'),
@@ -3796,7 +3718,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
         _uiSetAlign:function (v,ev) {
             var alignCls = '',
                 el,   
-                selfAlign; //points 的第二个参数，是自己对齐于其他节点的的方式
+                selfAlign; //points \u7684\u7b2c\u4e8c\u4e2a\u53c2\u6570\uff0c\u662f\u81ea\u5df1\u5bf9\u9f50\u4e8e\u5176\u4ed6\u8282\u70b9\u7684\u7684\u65b9\u5f0f
             if (v && v.points) {
                 this.align(v.node, v.points, v.offset, v.overflow);
                 this.set('cachePosition',null);
@@ -3810,12 +3732,12 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
         },
 
         /*
-         对齐 Overlay 到 node 的 points 点, 偏移 offset 处
+         \u5bf9\u9f50 Overlay \u5230 node \u7684 points \u70b9, \u504f\u79fb offset \u5904
          @method
          @ignore
-         @param {Element} node 参照元素, 可取配置选项中的设置, 也可是一元素
-         @param {String[]} points 对齐方式
-         @param {Number[]} [offset] 偏移
+         @param {Element} node \u53c2\u7167\u5143\u7d20, \u53ef\u53d6\u914d\u7f6e\u9009\u9879\u4e2d\u7684\u8bbe\u7f6e, \u4e5f\u53ef\u662f\u4e00\u5143\u7d20
+         @param {String[]} points \u5bf9\u9f50\u65b9\u5f0f
+         @param {Number[]} [offset] \u504f\u79fb
          */
         align:function (refNode, points, offset, overflow) {
             refNode = $(refNode || win);
@@ -3825,45 +3747,45 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
             var self = this,
                 el = self.get('el'),
                 fail = 0,
-            // 当前节点可以被放置的显示区域
+            // \u5f53\u524d\u8282\u70b9\u53ef\u4ee5\u88ab\u653e\u7f6e\u7684\u663e\u793a\u533a\u57df
                 visibleRect = getVisibleRectForElement(el[0]),
-            // 当前节点所占的区域, left/top/width/height
+            // \u5f53\u524d\u8282\u70b9\u6240\u5360\u7684\u533a\u57df, left/top/width/height
                 elRegion = getRegion(el),
-            // 参照节点所占的区域, left/top/width/height
+            // \u53c2\u7167\u8282\u70b9\u6240\u5360\u7684\u533a\u57df, left/top/width/height
                 refNodeRegion = getRegion(refNode),
-            // 当前节点将要被放置的位置
+            // \u5f53\u524d\u8282\u70b9\u5c06\u8981\u88ab\u653e\u7f6e\u7684\u4f4d\u7f6e
                 elFuturePos = getElFuturePos(elRegion, refNodeRegion, points, offset),
-            // 当前节点将要所处的区域
+            // \u5f53\u524d\u8282\u70b9\u5c06\u8981\u6240\u5904\u7684\u533a\u57df
                 newElRegion = BUI.merge(elRegion, elFuturePos);
 
-            // 如果可视区域不能完全放置当前节点时允许调整
+            // \u5982\u679c\u53ef\u89c6\u533a\u57df\u4e0d\u80fd\u5b8c\u5168\u653e\u7f6e\u5f53\u524d\u8282\u70b9\u65f6\u5141\u8bb8\u8c03\u6574
             if (visibleRect && (overflow.adjustX || overflow.adjustY)) {
 
-                // 如果横向不能放下
+                // \u5982\u679c\u6a2a\u5411\u4e0d\u80fd\u653e\u4e0b
                 if (isFailX(elFuturePos, elRegion, visibleRect)) {
                     fail = 1;
-                    // 对齐位置反下
+                    // \u5bf9\u9f50\u4f4d\u7f6e\u53cd\u4e0b
                     points = flip(points, /[lr]/ig, {
                         l:'r',
                         r:'l'
                     });
-                    // 偏移量也反下
+                    // \u504f\u79fb\u91cf\u4e5f\u53cd\u4e0b
                     offset = flipOffset(offset, 0);
                 }
 
-                // 如果纵向不能放下
+                // \u5982\u679c\u7eb5\u5411\u4e0d\u80fd\u653e\u4e0b
                 if (isFailY(elFuturePos, elRegion, visibleRect)) {
                     fail = 1;
-                    // 对齐位置反下
+                    // \u5bf9\u9f50\u4f4d\u7f6e\u53cd\u4e0b
                     points = flip(points, /[tb]/ig, {
                         t:'b',
                         b:'t'
                     });
-                    // 偏移量也反下
+                    // \u504f\u79fb\u91cf\u4e5f\u53cd\u4e0b
                     offset = flipOffset(offset, 1);
                 }
 
-                // 如果失败，重新计算当前节点将要被放置的位置
+                // \u5982\u679c\u5931\u8d25\uff0c\u91cd\u65b0\u8ba1\u7b97\u5f53\u524d\u8282\u70b9\u5c06\u8981\u88ab\u653e\u7f6e\u7684\u4f4d\u7f6e
                 if (fail) {
                     elFuturePos = getElFuturePos(elRegion, refNodeRegion, points, offset);
                     BUI.mix(newElRegion, elFuturePos);
@@ -3871,22 +3793,22 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
 
                 var newOverflowCfg = {};
 
-                // 检查反下后的位置是否可以放下了
-                // 如果仍然放不下只有指定了可以调整当前方向才调整
+                // \u68c0\u67e5\u53cd\u4e0b\u540e\u7684\u4f4d\u7f6e\u662f\u5426\u53ef\u4ee5\u653e\u4e0b\u4e86
+                // \u5982\u679c\u4ecd\u7136\u653e\u4e0d\u4e0b\u53ea\u6709\u6307\u5b9a\u4e86\u53ef\u4ee5\u8c03\u6574\u5f53\u524d\u65b9\u5411\u624d\u8c03\u6574
                 newOverflowCfg.adjustX = overflow.adjustX &&
                     isFailX(elFuturePos, elRegion, visibleRect);
 
                 newOverflowCfg.adjustY = overflow.adjustY &&
                     isFailY(elFuturePos, elRegion, visibleRect);
 
-                // 确实要调整，甚至可能会调整高度宽度
+                // \u786e\u5b9e\u8981\u8c03\u6574\uff0c\u751a\u81f3\u53ef\u80fd\u4f1a\u8c03\u6574\u9ad8\u5ea6\u5bbd\u5ea6
                 if (newOverflowCfg.adjustX || newOverflowCfg.adjustY) {
                     newElRegion = adjustForViewport(elFuturePos, elRegion,
                         visibleRect, newOverflowCfg);
                 }
             }
 
-            // 新区域位置发生了变化
+            // \u65b0\u533a\u57df\u4f4d\u7f6e\u53d1\u751f\u4e86\u53d8\u5316
             if (newElRegion.left != elRegion.left) {
                 self.setInternal('x', null);
                 self.get('view').setInternal('x', null);
@@ -3895,15 +3817,15 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
 
             if (newElRegion.top != elRegion.top) {
                 // https://github.com/kissyteam/kissy/issues/190
-                // 相对于屏幕位置没变，而 left/top 变了
-                // 例如 <div 'relative'><el absolute></div>
+                // \u76f8\u5bf9\u4e8e\u5c4f\u5e55\u4f4d\u7f6e\u6ca1\u53d8\uff0c\u800c left/top \u53d8\u4e86
+                // \u4f8b\u5982 <div 'relative'><el absolute></div>
                 // el.align(div)
                 self.setInternal('y', null);
                 self.get('view').setInternal('y', null);
                 self.set('y', newElRegion.top);
             }
 
-            // 新区域高宽发生了变化
+            // \u65b0\u533a\u57df\u9ad8\u5bbd\u53d1\u751f\u4e86\u53d8\u5316
             if (newElRegion.width != elRegion.width) {
                 el.width(el.width() + newElRegion.width - elRegion.width);
             }
@@ -3915,9 +3837,9 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
         },
 
         /**
-         * 对齐到元素的中间，查看属性 {@link BUI.Component.UIBase.Align#property-align} .
+         * \u5bf9\u9f50\u5230\u5143\u7d20\u7684\u4e2d\u95f4\uff0c\u67e5\u770b\u5c5e\u6027 {@link BUI.Component.UIBase.Align#property-align} .
          * <pre><code>
-         *  control.center('#t1'); //控件处于容器#t1的中间位置
+         *  control.center('#t1'); //\u63a7\u4ef6\u5904\u4e8e\u5bb9\u5668#t1\u7684\u4e2d\u95f4\u4f4d\u7f6e
          * </code></pre>
          * @param {undefined|String|HTMLElement|jQuery} node
          * 
@@ -3934,15 +3856,11 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
     };
     
   return Align;
-});/**
- * @fileOverview click，focus,hover等引起控件显示，并且定位
- * @ignore
- */
-
+});
 define('bui/component/uibase/autoshow',function () {
 
   /**
-   * 处理自动显示控件的扩展，一般用于显示menu,picker,tip等
+   * \u5904\u7406\u81ea\u52a8\u663e\u793a\u63a7\u4ef6\u7684\u6269\u5c55\uff0c\u4e00\u822c\u7528\u4e8e\u663e\u793amenu,picker,tip\u7b49
    * @class BUI.Component.UIBase.AutoShow
    */
   function autoShow() {
@@ -3952,39 +3870,39 @@ define('bui/component/uibase/autoshow',function () {
   autoShow.ATTRS = {
 
     /**
-     * 触发显示控件的DOM选择器
+     * \u89e6\u53d1\u663e\u793a\u63a7\u4ef6\u7684DOM\u9009\u62e9\u5668
      * <pre><code>
-     *  var overlay = new Overlay({ //点击#t1时显示，点击#t1,overlay之外的元素隐藏
+     *  var overlay = new Overlay({ //\u70b9\u51fb#t1\u65f6\u663e\u793a\uff0c\u70b9\u51fb#t1,overlay\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
      *    trigger : '#t1',
      *    autoHide : true,
-     *    content : '悬浮内容'
+     *    content : '\u60ac\u6d6e\u5185\u5bb9'
      *  });
      *  overlay.render();
      * </code></pre>
      * @cfg {HTMLElement|String|jQuery} trigger
      */
     /**
-     * 触发显示控件的DOM选择器
+     * \u89e6\u53d1\u663e\u793a\u63a7\u4ef6\u7684DOM\u9009\u62e9\u5668
      * @type {HTMLElement|String|jQuery}
      */
     trigger : {
 
     },
     /**
-     * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
+     * \u662f\u5426\u4f7f\u7528\u4ee3\u7406\u7684\u65b9\u5f0f\u89e6\u53d1\u663e\u793a\u63a7\u4ef6,\u5982\u679ctigger\u4e0d\u662f\u5b57\u7b26\u4e32\uff0c\u6b64\u5c5e\u6027\u65e0\u6548
      * <pre><code>
-     *  var overlay = new Overlay({ //点击.t1(无论创建控件时.t1是否存在)时显示，点击.t1,overlay之外的元素隐藏
+     *  var overlay = new Overlay({ //\u70b9\u51fb.t1(\u65e0\u8bba\u521b\u5efa\u63a7\u4ef6\u65f6.t1\u662f\u5426\u5b58\u5728)\u65f6\u663e\u793a\uff0c\u70b9\u51fb.t1,overlay\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
      *    trigger : '.t1',
      *    autoHide : true,
-     *    delegateTigger : true, //使用委托的方式触发显示控件
-     *    content : '悬浮内容'
+     *    delegateTigger : true, //\u4f7f\u7528\u59d4\u6258\u7684\u65b9\u5f0f\u89e6\u53d1\u663e\u793a\u63a7\u4ef6
+     *    content : '\u60ac\u6d6e\u5185\u5bb9'
      *  });
      *  overlay.render();
      * </code></pre>
      * @cfg {Boolean} [delegateTigger = false]
      */
     /**
-     * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
+     * \u662f\u5426\u4f7f\u7528\u4ee3\u7406\u7684\u65b9\u5f0f\u89e6\u53d1\u663e\u793a\u63a7\u4ef6,\u5982\u679ctigger\u4e0d\u662f\u5b57\u7b26\u4e32\uff0c\u6b64\u5c5e\u6027\u65e0\u6548
      * @type {Boolean}
      * @ignore
      */
@@ -3992,12 +3910,12 @@ define('bui/component/uibase/autoshow',function () {
       value : false
     },
     /**
-     * 选择器是否始终跟随触发器对齐
+     * \u9009\u62e9\u5668\u662f\u5426\u59cb\u7ec8\u8ddf\u968f\u89e6\u53d1\u5668\u5bf9\u9f50
      * @cfg {Boolean} autoAlign
      * @ignore
      */
     /**
-     * 选择器是否始终跟随触发器对齐
+     * \u9009\u62e9\u5668\u662f\u5426\u59cb\u7ec8\u8ddf\u968f\u89e6\u53d1\u5668\u5bf9\u9f50
      * @type {Boolean}
      * @protected
      */
@@ -4005,15 +3923,15 @@ define('bui/component/uibase/autoshow',function () {
       value : true
     },
     /**
-     * 显示时是否默认获取焦点
+     * \u663e\u793a\u65f6\u662f\u5426\u9ed8\u8ba4\u83b7\u53d6\u7126\u70b9
      * @type {Boolean}
      */
     autoFocused : {
       value : true
     },
     /**
-     * 控件显示时由此trigger触发，当配置项 trigger 选择器代表多个DOM 对象时，
-     * 控件可由多个DOM对象触发显示。
+     * \u63a7\u4ef6\u663e\u793a\u65f6\u7531\u6b64trigger\u89e6\u53d1\uff0c\u5f53\u914d\u7f6e\u9879 trigger \u9009\u62e9\u5668\u4ee3\u8868\u591a\u4e2aDOM \u5bf9\u8c61\u65f6\uff0c
+     * \u63a7\u4ef6\u53ef\u7531\u591a\u4e2aDOM\u5bf9\u8c61\u89e6\u53d1\u663e\u793a\u3002
      * <pre><code>
      *  overlay.on('show',function(){
      *    var curTrigger = overlay.get('curTrigger');
@@ -4027,12 +3945,12 @@ define('bui/component/uibase/autoshow',function () {
 
     },
     /**
-     * 触发显示时的回调函数
+     * \u89e6\u53d1\u663e\u793a\u65f6\u7684\u56de\u8c03\u51fd\u6570
      * @cfg {Function} triggerCallback
      * @ignore
      */
     /**
-     * 触发显示时的回调函数
+     * \u89e6\u53d1\u663e\u793a\u65f6\u7684\u56de\u8c03\u51fd\u6570
      * @type {Function}
      * @ignore
      */
@@ -4042,14 +3960,14 @@ define('bui/component/uibase/autoshow',function () {
       }
     },
     /**
-     * 显示菜单的事件
+     * \u663e\u793a\u83dc\u5355\u7684\u4e8b\u4ef6
      *  <pre><code>
-     *    var overlay = new Overlay({ //移动到#t1时显示，移动出#t1,overlay之外控件隐藏
+     *    var overlay = new Overlay({ //\u79fb\u52a8\u5230#t1\u65f6\u663e\u793a\uff0c\u79fb\u52a8\u51fa#t1,overlay\u4e4b\u5916\u63a7\u4ef6\u9690\u85cf
      *      trigger : '#t1',
      *      autoHide : true,
      *      triggerEvent :'mouseover',
      *      autoHideType : 'leave',
-     *      content : '悬浮内容'
+     *      content : '\u60ac\u6d6e\u5185\u5bb9'
      *    });
      *    overlay.render();
      * 
@@ -4058,7 +3976,7 @@ define('bui/component/uibase/autoshow',function () {
      * @default 'click'
      */
     /**
-     * 显示菜单的事件
+     * \u663e\u793a\u83dc\u5355\u7684\u4e8b\u4ef6
      * @type {String}
      * @default 'click'
      * @ignore
@@ -4067,12 +3985,12 @@ define('bui/component/uibase/autoshow',function () {
       value:'click'
     },
     /**
-     * 因为触发元素发生改变而导致控件隐藏
+     * \u56e0\u4e3a\u89e6\u53d1\u5143\u7d20\u53d1\u751f\u6539\u53d8\u800c\u5bfc\u81f4\u63a7\u4ef6\u9690\u85cf
      * @cfg {String} triggerHideEvent
      * @ignore
      */
     /**
-     * 因为触发元素发生改变而导致控件隐藏
+     * \u56e0\u4e3a\u89e6\u53d1\u5143\u7d20\u53d1\u751f\u6539\u53d8\u800c\u5bfc\u81f4\u63a7\u4ef6\u9690\u85cf
      * @type {String}
      * @ignore
      */
@@ -4082,7 +4000,7 @@ define('bui/component/uibase/autoshow',function () {
     events : {
       value : {
         /**
-         * 当触发器（触发选择器出现）发生改变时，经常用于一个选择器对应多个触发器的情况
+         * \u5f53\u89e6\u53d1\u5668\uff08\u89e6\u53d1\u9009\u62e9\u5668\u51fa\u73b0\uff09\u53d1\u751f\u6539\u53d8\u65f6\uff0c\u7ecf\u5e38\u7528\u4e8e\u4e00\u4e2a\u9009\u62e9\u5668\u5bf9\u5e94\u591a\u4e2a\u89e6\u53d1\u5668\u7684\u60c5\u51b5
          * <pre><code>
          *  overlay.on('triggerchange',function(ev){
          *    var curTrigger = ev.curTrigger;
@@ -4090,9 +4008,9 @@ define('bui/component/uibase/autoshow',function () {
          *  });
          * </code></pre>
          * @event
-         * @param {Object} e 事件对象
-         * @param {jQuery} e.prevTrigger 之前触发器，可能为null
-         * @param {jQuery} e.curTrigger 当前的触发器
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {jQuery} e.prevTrigger \u4e4b\u524d\u89e6\u53d1\u5668\uff0c\u53ef\u80fd\u4e3anull
+         * @param {jQuery} e.curTrigger \u5f53\u524d\u7684\u89e6\u53d1\u5668
          */
         'triggerchange':false
       }
@@ -4113,7 +4031,7 @@ define('bui/component/uibase/autoshow',function () {
         isDelegate = _self.get('delegateTigger'),
         triggerEl = $(trigger);
 
-      //触发显示
+      //\u89e6\u53d1\u663e\u793a
       function tiggerShow (ev) {
         var prevTrigger = _self.get('curTrigger'),
           curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
@@ -4130,7 +4048,7 @@ define('bui/component/uibase/autoshow',function () {
         _self.set('align',align);
         _self.show();
         /*if(_self.get('autoFocused')){
-          try{ //元素隐藏的时候，ie下经常会报错
+          try{ //\u5143\u7d20\u9690\u85cf\u7684\u65f6\u5019\uff0cie\u4e0b\u7ecf\u5e38\u4f1a\u62a5\u9519
             _self.focus();
           }catch(ev){
             BUI.log(ev);
@@ -4141,10 +4059,10 @@ define('bui/component/uibase/autoshow',function () {
         triggerCallback && triggerCallback(ev);
       }
 
-      //触发隐藏
+      //\u89e6\u53d1\u9690\u85cf
       function tiggerHide (ev){
         var toElement = ev.toElement || ev.relatedTarget;
-        if(!toElement || !_self.containsElement(toElement)){ //mouseleave时，如果移动到当前控件上，取消消失
+        if(!toElement || !_self.containsElement(toElement)){ //mouseleave\u65f6\uff0c\u5982\u679c\u79fb\u52a8\u5230\u5f53\u524d\u63a7\u4ef6\u4e0a\uff0c\u53d6\u6d88\u6d88\u5931
           _self.hide();
         }
       }
@@ -4169,7 +4087,7 @@ define('bui/component/uibase/autoshow',function () {
     __renderUI : function () {
       var _self = this,
         align = _self.get('align');
-      //如果控件显示时不是由trigger触发，则同父元素对齐
+      //\u5982\u679c\u63a7\u4ef6\u663e\u793a\u65f6\u4e0d\u662f\u7531trigger\u89e6\u53d1\uff0c\u5219\u540c\u7236\u5143\u7d20\u5bf9\u9f50
       if(align && !align.node){
         align.node = _self.get('render') || _self.get('trigger');
       }
@@ -4177,11 +4095,7 @@ define('bui/component/uibase/autoshow',function () {
   };
 
   return autoShow;
-});/**
- * @fileOverview 点击或移出控件外部，控件隐藏
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/uibase/autohide',function () {
 
   var wrapBehavior = BUI.wrapBehavior,
@@ -4195,7 +4109,7 @@ define('bui/component/uibase/autohide',function () {
     return false;
   }
   /**
-   * 点击隐藏控件的扩展
+   * \u70b9\u51fb\u9690\u85cf\u63a7\u4ef6\u7684\u6269\u5c55
    * @class BUI.Component.UIBase.AutoHide
    */
   function autoHide() {
@@ -4205,23 +4119,23 @@ define('bui/component/uibase/autohide',function () {
   autoHide.ATTRS = {
 
     /**
-     * 控件自动隐藏的事件，这里支持2种：
+     * \u63a7\u4ef6\u81ea\u52a8\u9690\u85cf\u7684\u4e8b\u4ef6\uff0c\u8fd9\u91cc\u652f\u63012\u79cd\uff1a
      *  - 'click'
      *  - 'leave'
      *  <pre><code>
-     *    var overlay = new Overlay({ //点击#t1时显示，点击#t1之外的元素隐藏
+     *    var overlay = new Overlay({ //\u70b9\u51fb#t1\u65f6\u663e\u793a\uff0c\u70b9\u51fb#t1\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
      *      trigger : '#t1',
      *      autoHide : true,
-     *      content : '悬浮内容'
+     *      content : '\u60ac\u6d6e\u5185\u5bb9'
      *    });
      *    overlay.render();
      *
-     *    var overlay = new Overlay({ //移动到#t1时显示，移动出#t1,overlay之外控件隐藏
+     *    var overlay = new Overlay({ //\u79fb\u52a8\u5230#t1\u65f6\u663e\u793a\uff0c\u79fb\u52a8\u51fa#t1,overlay\u4e4b\u5916\u63a7\u4ef6\u9690\u85cf
      *      trigger : '#t1',
      *      autoHide : true,
      *      triggerEvent :'mouseover',
      *      autoHideType : 'leave',
-     *      content : '悬浮内容'
+     *      content : '\u60ac\u6d6e\u5185\u5bb9'
      *    });
      *    overlay.render();
      * 
@@ -4229,28 +4143,28 @@ define('bui/component/uibase/autohide',function () {
      * @cfg {String} [autoHideType = 'click']
      */
     /**
-     * 控件自动隐藏的事件，这里支持2种：
-     * 'click',和'leave',默认为'click'
+     * \u63a7\u4ef6\u81ea\u52a8\u9690\u85cf\u7684\u4e8b\u4ef6\uff0c\u8fd9\u91cc\u652f\u63012\u79cd\uff1a
+     * 'click',\u548c'leave',\u9ed8\u8ba4\u4e3a'click'
      * @type {String}
      */
     autoHideType : {
       value : 'click'
     },
     /**
-     * 是否自动隐藏
+     * \u662f\u5426\u81ea\u52a8\u9690\u85cf
      * <pre><code>
      *  
-     *  var overlay = new Overlay({ //点击#t1时显示，点击#t1,overlay之外的元素隐藏
+     *  var overlay = new Overlay({ //\u70b9\u51fb#t1\u65f6\u663e\u793a\uff0c\u70b9\u51fb#t1,overlay\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
      *    trigger : '#t1',
      *    autoHide : true,
-     *    content : '悬浮内容'
+     *    content : '\u60ac\u6d6e\u5185\u5bb9'
      *  });
      *  overlay.render();
      * </code></pre>
      * @cfg {Object} autoHide
      */
     /**
-     * 是否自动隐藏
+     * \u662f\u5426\u81ea\u52a8\u9690\u85cf
      * @type {Object}
      * @ignore
      */
@@ -4258,14 +4172,14 @@ define('bui/component/uibase/autohide',function () {
       value : false
     },
     /**
-     * 点击或者移动到此节点时不触发自动隐藏
+     * \u70b9\u51fb\u6216\u8005\u79fb\u52a8\u5230\u6b64\u8282\u70b9\u65f6\u4e0d\u89e6\u53d1\u81ea\u52a8\u9690\u85cf
      * <pre><code>
      *  
-     *  var overlay = new Overlay({ //点击#t1时显示，点击#t1,#t2,overlay之外的元素隐藏
+     *  var overlay = new Overlay({ //\u70b9\u51fb#t1\u65f6\u663e\u793a\uff0c\u70b9\u51fb#t1,#t2,overlay\u4e4b\u5916\u7684\u5143\u7d20\u9690\u85cf
      *    trigger : '#t1',
      *    autoHide : true,
      *    hideExceptNode : '#t2',
-     *    content : '悬浮内容'
+     *    content : '\u60ac\u6d6e\u5185\u5bb9'
      *  });
      *  overlay.render();
      * </code></pre>
@@ -4278,13 +4192,13 @@ define('bui/component/uibase/autohide',function () {
       value : {
         /**
          * @event autohide
-         * 点击控件外部时触发，只有在控件设置自动隐藏(autoHide = true)有效
-         * 可以阻止控件隐藏，通过在事件监听函数中 return false
+         * \u70b9\u51fb\u63a7\u4ef6\u5916\u90e8\u65f6\u89e6\u53d1\uff0c\u53ea\u6709\u5728\u63a7\u4ef6\u8bbe\u7f6e\u81ea\u52a8\u9690\u85cf(autoHide = true)\u6709\u6548
+         * \u53ef\u4ee5\u963b\u6b62\u63a7\u4ef6\u9690\u85cf\uff0c\u901a\u8fc7\u5728\u4e8b\u4ef6\u76d1\u542c\u51fd\u6570\u4e2d return false
          * <pre><code>
          *  overlay.on('autohide',function(){
-         *    var curTrigger = overlay.curTrigger; //当前触发的项
+         *    var curTrigger = overlay.curTrigger; //\u5f53\u524d\u89e6\u53d1\u7684\u9879
          *    if(condtion){
-         *      return false; //阻止隐藏
+         *      return false; //\u963b\u6b62\u9690\u85cf
          *    }
          *  });
          * </code></pre>
@@ -4311,8 +4225,8 @@ define('bui/component/uibase/autohide',function () {
       });
     },
     /**
-     * 处理鼠标移出事件，不影响{BUI.Component.Controller#handleMouseLeave}事件
-     * @param  {jQuery.Event} ev 事件对象
+     * \u5904\u7406\u9f20\u6807\u79fb\u51fa\u4e8b\u4ef6\uff0c\u4e0d\u5f71\u54cd{BUI.Component.Controller#handleMouseLeave}\u4e8b\u4ef6
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleMoveOuter : function (ev) {
       var _self = this,
@@ -4324,8 +4238,8 @@ define('bui/component/uibase/autohide',function () {
       }
     },
     /**
-     * 点击页面时的处理函数
-     * @param {jQuery.Event} ev 事件对象
+     * \u70b9\u51fb\u9875\u9762\u65f6\u7684\u5904\u7406\u51fd\u6570
+     * @param {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      * @protected
      */
     handleDocumentClick : function (ev) {
@@ -4351,7 +4265,7 @@ define('bui/component/uibase/autohide',function () {
       }
 
     },
-    //清除绑定的隐藏事件
+    //\u6e05\u9664\u7ed1\u5b9a\u7684\u9690\u85cf\u4e8b\u4ef6
     _clearHideEvent : function() {
       var _self = this,
         trigger = _self.get('curTrigger'),
@@ -4374,12 +4288,6 @@ define('bui/component/uibase/autohide',function () {
 
 
 
-/**
- * @fileOverview close 关闭或隐藏控件
- * @author yiminghe@gmail.com
- * copied and modified by dxq613@gmail.com
- * @ignore
- */
 
 define('bui/component/uibase/close',function () {
   
@@ -4390,7 +4298,7 @@ define('bui/component/uibase/close',function () {
   }
 
   /**
-  * 关闭按钮的视图类
+  * \u5173\u95ed\u6309\u94ae\u7684\u89c6\u56fe\u7c7b
   * @class BUI.Component.UIBase.CloseView
   * @private
   */
@@ -4401,12 +4309,12 @@ define('bui/component/uibase/close',function () {
     closeTpl : {
       value : '<a ' +
             'tabindex="0" ' +
-            "href='javascript:void(\"关闭\")' " +
+            "href='javascript:void(\"\u5173\u95ed\")' " +
             'role="button" ' +
             'class="' + CLS_PREFIX + 'close' + '">' +
             '<span class="' +
             CLS_PREFIX + 'close-x' +
-            '">关闭<' + '/span>' +
+            '">\u5173\u95ed<' + '/span>' +
             '<' + '/a>'
     },
     closeable:{
@@ -4445,7 +4353,7 @@ define('bui/component/uibase/close',function () {
   Close.ATTRS =
   {
       /**
-      * 关闭按钮的默认模版
+      * \u5173\u95ed\u6309\u94ae\u7684\u9ed8\u8ba4\u6a21\u7248
       * <pre><code>
       *   var overlay = new Overlay({
       *     closeTpl : '<a href="#" title="close">x</a>',
@@ -4457,7 +4365,7 @@ define('bui/component/uibase/close',function () {
       * @cfg {String} closeTpl
       */
       /**
-      * 关闭按钮的默认模版
+      * \u5173\u95ed\u6309\u94ae\u7684\u9ed8\u8ba4\u6a21\u7248
       * @type {String}
       * @protected
       */
@@ -4465,11 +4373,11 @@ define('bui/component/uibase/close',function () {
         view : true
       },
       /**
-       * 是否出现关闭按钮
+       * \u662f\u5426\u51fa\u73b0\u5173\u95ed\u6309\u94ae
        * @cfg {Boolean} [closeable = false]
        */
       /**
-       * 是否出现关闭按钮
+       * \u662f\u5426\u51fa\u73b0\u5173\u95ed\u6309\u94ae
        * @type {Boolean}
        */
       closeable:{
@@ -4477,7 +4385,7 @@ define('bui/component/uibase/close',function () {
       },
 
       /**
-       * 关闭按钮.
+       * \u5173\u95ed\u6309\u94ae.
        * @protected
        * @type {jQuery}
        */
@@ -4485,16 +4393,16 @@ define('bui/component/uibase/close',function () {
           view:1
       },
       /**
-       * 关闭时隐藏还是移除DOM结构<br/>
+       * \u5173\u95ed\u65f6\u9690\u85cf\u8fd8\u662f\u79fb\u9664DOM\u7ed3\u6784<br/>
        * 
-       *  - "hide" : default 隐藏. 
-       *  - "destroy"：当点击关闭按钮时移除（destroy)控件
-       *  - 'remove' : 当存在父控件时使用remove，同时从父元素中删除
+       *  - "hide" : default \u9690\u85cf. 
+       *  - "destroy"\uff1a\u5f53\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u65f6\u79fb\u9664\uff08destroy)\u63a7\u4ef6
+       *  - 'remove' : \u5f53\u5b58\u5728\u7236\u63a7\u4ef6\u65f6\u4f7f\u7528remove\uff0c\u540c\u65f6\u4ece\u7236\u5143\u7d20\u4e2d\u5220\u9664
        * @cfg {String} [closeAction = 'hide']
        */
       /**
-       * 关闭时隐藏还是移除DOM结构
-       * default "hide".可以设置 "destroy" ，当点击关闭按钮时移除（destroy)控件
+       * \u5173\u95ed\u65f6\u9690\u85cf\u8fd8\u662f\u79fb\u9664DOM\u7ed3\u6784
+       * default "hide".\u53ef\u4ee5\u8bbe\u7f6e "destroy" \uff0c\u5f53\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u65f6\u79fb\u9664\uff08destroy)\u63a7\u4ef6
        * @type {String}
        * @protected
        */
@@ -4504,30 +4412,30 @@ define('bui/component/uibase/close',function () {
 
       /**
        * @event closing
-       * 正在关闭，可以通过return false 阻止关闭事件
-       * @param {Object} e 关闭事件
-       * @param {String} e.action 关闭执行的行为，hide,destroy,remove
+       * \u6b63\u5728\u5173\u95ed\uff0c\u53ef\u4ee5\u901a\u8fc7return false \u963b\u6b62\u5173\u95ed\u4e8b\u4ef6
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy,remove
        */
       
       /**
        * @event beforeclosed
-       * 关闭前，发生在closing后，closed前，用于处理关闭前的一些工作
-       * @param {Object} e 关闭事件
-       * @param {String} e.action 关闭执行的行为，hide,destroy,remove
+       * \u5173\u95ed\u524d\uff0c\u53d1\u751f\u5728closing\u540e\uff0cclosed\u524d\uff0c\u7528\u4e8e\u5904\u7406\u5173\u95ed\u524d\u7684\u4e00\u4e9b\u5de5\u4f5c
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy,remove
        */
 
       /**
        * @event closed
-       * 已经关闭
-       * @param {Object} e 关闭事件
-       * @param {String} e.action 关闭执行的行为，hide,destroy,remove
+       * \u5df2\u7ecf\u5173\u95ed
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.action \u5173\u95ed\u6267\u884c\u7684\u884c\u4e3a\uff0chide,destroy,remove
        */
       
       /**
        * @event closeclick
-       * 触发点击关闭按钮的事件,return false 阻止关闭
-       * @param {Object} e 关闭事件
-       * @param {String} e.domTarget 点击的关闭按钮节点
+       * \u89e6\u53d1\u70b9\u51fb\u5173\u95ed\u6309\u94ae\u7684\u4e8b\u4ef6,return false \u963b\u6b62\u5173\u95ed
+       * @param {Object} e \u5173\u95ed\u4e8b\u4ef6
+       * @param {String} e.domTarget \u70b9\u51fb\u7684\u5173\u95ed\u6309\u94ae\u8282\u70b9
        */
   };
 
@@ -4555,14 +4463,14 @@ define('bui/component/uibase/close',function () {
           btn && btn.detach();
       },
       /**
-       * 关闭弹出框，如果closeAction = 'hide'那么就是隐藏，如果 closeAction = 'destroy'那么就是释放,'remove'从父控件中删除，并释放
+       * \u5173\u95ed\u5f39\u51fa\u6846\uff0c\u5982\u679ccloseAction = 'hide'\u90a3\u4e48\u5c31\u662f\u9690\u85cf\uff0c\u5982\u679c closeAction = 'destroy'\u90a3\u4e48\u5c31\u662f\u91ca\u653e,'remove'\u4ece\u7236\u63a7\u4ef6\u4e2d\u5220\u9664\uff0c\u5e76\u91ca\u653e
        */
       close : function(){
         var self = this,
           action = actions[self.get('closeAction') || HIDE];
         if(self.fire('closing',{action : action}) !== false){
           self.fire('beforeclosed',{action : action});
-          if(action == 'remove'){ //移除时同时destroy
+          if(action == 'remove'){ //\u79fb\u9664\u65f6\u540c\u65f6destroy
             self[action](true);
           }else{
             self[action]();
@@ -4576,11 +4484,6 @@ define('bui/component/uibase/close',function () {
 
   return Close;
 });
-/**
- * @fileOverview 拖拽
- * @author by dxq613@gmail.com
- * @ignore
- */
 
 define('bui/component/uibase/drag',function(){
 
@@ -4588,13 +4491,13 @@ define('bui/component/uibase/drag',function(){
     var dragBackId = BUI.guid('drag');
     
     /**
-     * 拖拽控件的扩展
+     * \u62d6\u62fd\u63a7\u4ef6\u7684\u6269\u5c55
      * <pre><code>
      *  var Control = Overlay.extend([UIBase.Drag],{
      *      
      *  });
      *
-     *  var c = new Contol({ //拖动控件时，在#t2内
+     *  var c = new Contol({ //\u62d6\u52a8\u63a7\u4ef6\u65f6\uff0c\u5728#t2\u5185
      *      content : '<div id="header"></div><div></div>',
      *      dragNode : '#header',
      *      constraint : '#t2'
@@ -4610,13 +4513,13 @@ define('bui/component/uibase/drag',function(){
     {
 
         /**
-         * 点击拖动的节点
+         * \u70b9\u51fb\u62d6\u52a8\u7684\u8282\u70b9
          * <pre><code>
          *  var Control = Overlay.extend([UIBase.Drag],{
          *      
          *  });
          *
-         *  var c = new Contol({ //拖动控件时，在#t2内
+         *  var c = new Contol({ //\u62d6\u52a8\u63a7\u4ef6\u65f6\uff0c\u5728#t2\u5185
          *      content : '<div id="header"></div><div></div>',
          *      dragNode : '#header',
          *      constraint : '#t2'
@@ -4625,7 +4528,7 @@ define('bui/component/uibase/drag',function(){
          * @cfg {jQuery} dragNode
          */
         /**
-         * 点击拖动的节点
+         * \u70b9\u51fb\u62d6\u52a8\u7684\u8282\u70b9
          * @type {jQuery}
          * @ignore
          */
@@ -4633,7 +4536,7 @@ define('bui/component/uibase/drag',function(){
 
         },
         /**
-         * 是否正在拖动
+         * \u662f\u5426\u6b63\u5728\u62d6\u52a8
          * @type {Boolean}
          * @protected
          */
@@ -4646,13 +4549,13 @@ define('bui/component/uibase/drag',function(){
             value:null
         },
         /**
-         * 拖动的限制范围
+         * \u62d6\u52a8\u7684\u9650\u5236\u8303\u56f4
          * <pre><code>
          *  var Control = Overlay.extend([UIBase.Drag],{
          *      
          *  });
          *
-         *  var c = new Contol({ //拖动控件时，在#t2内
+         *  var c = new Contol({ //\u62d6\u52a8\u63a7\u4ef6\u65f6\uff0c\u5728#t2\u5185
          *      content : '<div id="header"></div><div></div>',
          *      dragNode : '#header',
          *      constraint : '#t2'
@@ -4661,7 +4564,7 @@ define('bui/component/uibase/drag',function(){
          * @cfg {jQuery} constraint
          */
         /**
-         * 拖动的限制范围
+         * \u62d6\u52a8\u7684\u9650\u5236\u8303\u56f4
          * @type {jQuery}
          * @ignore
          */
@@ -4768,7 +4671,7 @@ define('bui/component/uibase/drag',function(){
                 width =  _self.get('el').outerWidth(),
                 endX = x + width,
                 curX = _self.get('x');
-            //如果存在约束
+            //\u5982\u679c\u5b58\u5728\u7ea6\u675f
             if(constraint){
                 var constraintOffset = constraint.offset();
                 if(constraintOffset.left >= x){
@@ -4779,7 +4682,7 @@ define('bui/component/uibase/drag',function(){
                 }
                 return x;
             }
-            //当左右顶点都在视图内，移动到此点
+            //\u5f53\u5de6\u53f3\u9876\u70b9\u90fd\u5728\u89c6\u56fe\u5185\uff0c\u79fb\u52a8\u5230\u6b64\u70b9
             if(BUI.isInHorizontalView(x) && BUI.isInHorizontalView(endX)){
                 return x;
             }
@@ -4791,7 +4694,7 @@ define('bui/component/uibase/drag',function(){
                 height =  _self.get('el').outerHeight(),
                 endY = y + height,
                 curY = _self.get('y');
-            //如果存在约束
+            //\u5982\u679c\u5b58\u5728\u7ea6\u675f
             if(constraint){
                 var constraintOffset = constraint.offset();
                 if(constraintOffset.top > y){
@@ -4802,7 +4705,7 @@ define('bui/component/uibase/drag',function(){
                 }
                 return y;
             }
-            //当左右顶点都在视图内，移动到此点
+            //\u5f53\u5de6\u53f3\u9876\u70b9\u90fd\u5728\u89c6\u56fe\u5185\uff0c\u79fb\u52a8\u5230\u6b64\u70b9
             if(BUI.isInVerticalView(y) && BUI.isInVerticalView(endY)){
                 return y;
             }
@@ -4813,18 +4716,14 @@ define('bui/component/uibase/drag',function(){
 
     return drag;
 
-});/**
- * @fileOverview 使用键盘导航
- * @ignore
- */
-
+});
 define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
   var KeyCode = require('bui/keycode'),
       wrapBehavior = BUI.wrapBehavior,
       getWrapBehavior = BUI.getWrapBehavior;
   /**
-   * 键盘导航
+   * \u952e\u76d8\u5bfc\u822a
    * @class BUI.Component.UIBase.KeyNav
    */
   var keyNav = function () {
@@ -4834,21 +4733,21 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
   keyNav.ATTRS = {
 
     /**
-     * 是否允许键盘导航
+     * \u662f\u5426\u5141\u8bb8\u952e\u76d8\u5bfc\u822a
      * @cfg {Boolean} [allowKeyNav = true]
      */
     allowKeyNav : {
       value : true
     },
     /**
-     * 导航使用的事件
+     * \u5bfc\u822a\u4f7f\u7528\u7684\u4e8b\u4ef6
      * @cfg {String} [navEvent = 'keydown']
      */
     navEvent : {
       value : 'keydown'
     },
     /**
-     * 当获取事件的DOM是 input,textarea,select等时，不处理键盘导航
+     * \u5f53\u83b7\u53d6\u4e8b\u4ef6\u7684DOM\u662f input,textarea,select\u7b49\u65f6\uff0c\u4e0d\u5904\u7406\u952e\u76d8\u5bfc\u822a
      * @cfg {Object} [ignoreInputFields='true']
      */
     ignoreInputFields : {
@@ -4873,7 +4772,7 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       }
     },
     /**
-     * 处理键盘导航
+     * \u5904\u7406\u952e\u76d8\u5bfc\u822a
      * @private
      */
     _handleKeyDown : function(ev){
@@ -4915,56 +4814,56 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       }
     },
     /**
-     * 处理向上导航
+     * \u5904\u7406\u5411\u4e0a\u5bfc\u822a
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavUp : function (ev) {
       // body...
     },
     /**
-     * 处理向下导航
+     * \u5904\u7406\u5411\u4e0b\u5bfc\u822a
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavDown : function (ev) {
       // body...
     },
     /**
-     * 处理向左导航
+     * \u5904\u7406\u5411\u5de6\u5bfc\u822a
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavLeft : function (ev) {
       // body...
     },
     /**
-     * 处理向右导航
+     * \u5904\u7406\u5411\u53f3\u5bfc\u822a
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavRight : function (ev) {
       // body...
     },
     /**
-     * 处理确认键
+     * \u5904\u7406\u786e\u8ba4\u952e
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavEnter : function (ev) {
       // body...
     },
     /**
-     * 处理 esc 键
+     * \u5904\u7406 esc \u952e
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavEsc : function (ev) {
       // body...
     },
     /**
-     * 处理Tab键
-     * @param  {jQuery.Event} ev 事件对象
+     * \u5904\u7406Tab\u952e
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavTab : function(ev){
 
@@ -4974,19 +4873,13 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
 
   return keyNav;
 });
-/**
- * @fileOverview mask 遮罩层
- * @author yiminghe@gmail.com
- * copied and modified by dxq613@gmail.com
- * @ignore
- */
 
 define('bui/component/uibase/mask',function (require) {
 
     var UA = require('bui/ua'),
         
         /**
-         * 每组相同 prefixCls 的 position 共享一个遮罩
+         * \u6bcf\u7ec4\u76f8\u540c prefixCls \u7684 position \u5171\u4eab\u4e00\u4e2a\u906e\u7f69
          * @ignore
          */
         maskMap = {
@@ -5035,7 +4928,7 @@ define('bui/component/uibase/mask',function (require) {
             '</div>')
             .prependTo('body');
         /**
-         * 点 mask 焦点不转移
+         * \u70b9 mask \u7126\u70b9\u4e0d\u8f6c\u79fb
          * @ignore
          */
        // mask.unselectable();
@@ -5046,7 +4939,7 @@ define('bui/component/uibase/mask',function (require) {
     }
 
     /**
-    * 遮罩层的视图类
+    * \u906e\u7f69\u5c42\u7684\u89c6\u56fe\u7c7b
     * @class BUI.Component.UIBase.MaskView
     * @private
     */
@@ -5141,9 +5034,9 @@ define('bui/component/uibase/mask',function (require) {
     Mask.ATTRS =
     {
         /**
-         * 控件显示时，是否显示屏蔽层
+         * \u63a7\u4ef6\u663e\u793a\u65f6\uff0c\u662f\u5426\u663e\u793a\u5c4f\u853d\u5c42
          * <pre><code>
-         *   var overlay = new Overlay({ //显示overlay时，屏蔽body
+         *   var overlay = new Overlay({ //\u663e\u793aoverlay\u65f6\uff0c\u5c4f\u853dbody
          *     mask : true,
          *     maskNode : 'body',
          *     trigger : '#t1'
@@ -5153,7 +5046,7 @@ define('bui/component/uibase/mask',function (require) {
          * @cfg {Boolean} [mask = false]
          */
         /**
-         * 控件显示时，是否显示屏蔽层
+         * \u63a7\u4ef6\u663e\u793a\u65f6\uff0c\u662f\u5426\u663e\u793a\u5c4f\u853d\u5c42
          * @type {Boolean}
          * @protected
          */
@@ -5161,9 +5054,9 @@ define('bui/component/uibase/mask',function (require) {
             value:false
         },
         /**
-         * 屏蔽的内容
+         * \u5c4f\u853d\u7684\u5185\u5bb9
          * <pre><code>
-         *   var overlay = new Overlay({ //显示overlay时，屏蔽body
+         *   var overlay = new Overlay({ //\u663e\u793aoverlay\u65f6\uff0c\u5c4f\u853dbody
          *     mask : true,
          *     maskNode : 'body',
          *     trigger : '#t1'
@@ -5173,7 +5066,7 @@ define('bui/component/uibase/mask',function (require) {
          * @cfg {jQuery} maskNode
          */
         /**
-         * 屏蔽的内容
+         * \u5c4f\u853d\u7684\u5185\u5bb9
          * @type {jQuery}
          * @protected
          */
@@ -5215,17 +5108,12 @@ define('bui/component/uibase/mask',function (require) {
   return Mask;
 });
 
-/**
- * @fileOverview 位置，控件绝对定位
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
+
 define('bui/component/uibase/position',function () {
 
 
     /**
-    * 对齐的视图类
+    * \u5bf9\u9f50\u7684\u89c6\u56fe\u7c7b
     * @class BUI.Component.UIBase.PositionView
     * @private
     */
@@ -5236,21 +5124,21 @@ define('bui/component/uibase/position',function () {
     PositionView.ATTRS = {
         x:{
             /**
-             * 水平方向绝对位置
+             * \u6c34\u5e73\u65b9\u5411\u7edd\u5bf9\u4f4d\u7f6e
              * @private
              * @ignore
              */
             valueFn:function () {
                 var self = this;
-                // 读到这里时，el 一定是已经加到 dom 树中了，否则报未知错误
-                // el 不在 dom 树中 offset 报错的
-                // 最早读就是在 syncUI 中，一点重复设置(读取自身 X 再调用 _uiSetX)无所谓了
+                // \u8bfb\u5230\u8fd9\u91cc\u65f6\uff0cel \u4e00\u5b9a\u662f\u5df2\u7ecf\u52a0\u5230 dom \u6811\u4e2d\u4e86\uff0c\u5426\u5219\u62a5\u672a\u77e5\u9519\u8bef
+                // el \u4e0d\u5728 dom \u6811\u4e2d offset \u62a5\u9519\u7684
+                // \u6700\u65e9\u8bfb\u5c31\u662f\u5728 syncUI \u4e2d\uff0c\u4e00\u70b9\u91cd\u590d\u8bbe\u7f6e(\u8bfb\u53d6\u81ea\u8eab X \u518d\u8c03\u7528 _uiSetX)\u65e0\u6240\u8c13\u4e86
                 return self.get('el') && self.get('el').offset().left;
             }
         },
         y:{
             /**
-             * 垂直方向绝对位置
+             * \u5782\u76f4\u65b9\u5411\u7edd\u5bf9\u4f4d\u7f6e
              * @private
              * @ignore
              */
@@ -5323,11 +5211,11 @@ define('bui/component/uibase/position',function () {
      */
     {
         /**
-         * 水平坐标
+         * \u6c34\u5e73\u5750\u6807
          * @cfg {Number} x
          */
         /**
-         * 水平坐标
+         * \u6c34\u5e73\u5750\u6807
          * <pre><code>
          *     overlay.set('x',100);
          * </code></pre>
@@ -5337,11 +5225,11 @@ define('bui/component/uibase/position',function () {
             view:1
         },
         /**
-         * 垂直坐标
+         * \u5782\u76f4\u5750\u6807
          * @cfg {Number} y
          */
         /**
-         * 垂直坐标
+         * \u5782\u76f4\u5750\u6807
          * <pre><code>
          *     overlay.set('y',100);
          * </code></pre>
@@ -5351,7 +5239,7 @@ define('bui/component/uibase/position',function () {
             view:1
         },
         /**
-         * 相对于父元素的水平位置
+         * \u76f8\u5bf9\u4e8e\u7236\u5143\u7d20\u7684\u6c34\u5e73\u4f4d\u7f6e
          * @type {Number}
          * @protected
          */
@@ -5359,7 +5247,7 @@ define('bui/component/uibase/position',function () {
             view:1
         },
         /**
-         * 相对于父元素的垂直位置
+         * \u76f8\u5bf9\u4e8e\u7236\u5143\u7d20\u7684\u5782\u76f4\u4f4d\u7f6e
          * @type {Number}
          * @protected
          */
@@ -5367,7 +5255,7 @@ define('bui/component/uibase/position',function () {
             view:1
         },
         /**
-         * 水平和垂直坐标
+         * \u6c34\u5e73\u548c\u5782\u76f4\u5750\u6807
          * <pre><code>
          * var overlay = new Overlay({
          *   xy : [100,100],
@@ -5378,19 +5266,19 @@ define('bui/component/uibase/position',function () {
          * @cfg {Number[]} xy
          */
         /**
-         * 水平和垂直坐标
+         * \u6c34\u5e73\u548c\u5782\u76f4\u5750\u6807
          * <pre><code>
          *     overlay.set('xy',[100,100]);
          * </code></pre>
          * @type {Number[]}
          */
         xy:{
-            // 相对 page 定位, 有效值为 [n, m], 为 null 时, 选 align 设置
+            // \u76f8\u5bf9 page \u5b9a\u4f4d, \u6709\u6548\u503c\u4e3a [n, m], \u4e3a null \u65f6, \u9009 align \u8bbe\u7f6e
             setter:function (v) {
                 var self = this,
                     xy = $.makeArray(v);
                 /*
-                 属性内分发特别注意：
+                 \u5c5e\u6027\u5185\u5206\u53d1\u7279\u522b\u6ce8\u610f\uff1a
                  xy -> x,y
                  */
                 if (xy.length) {
@@ -5400,7 +5288,7 @@ define('bui/component/uibase/position',function () {
                 return v;
             },
             /**
-             * xy 纯中转作用
+             * xy \u7eaf\u4e2d\u8f6c\u4f5c\u7528
              * @ignore
              */
             getter:function () {
@@ -5465,7 +5353,7 @@ define('bui/component/uibase/position',function () {
             self.set('xy', [x, y]);
             return self;
         },
-        //设置 x 坐标时，重置 left
+        //\u8bbe\u7f6e x \u5750\u6807\u65f6\uff0c\u91cd\u7f6e left
         _uiSetX : function(v){
             if(v != null){
                 var _self = this,
@@ -5478,7 +5366,7 @@ define('bui/component/uibase/position',function () {
             }
             
         },
-        //设置 y 坐标时，重置 top
+        //\u8bbe\u7f6e y \u5750\u6807\u65f6\uff0c\u91cd\u7f6e top
         _uiSetY : function(v){
             if(v != null){
                 var _self = this,
@@ -5489,23 +5377,23 @@ define('bui/component/uibase/position',function () {
                 }
             }
         },
-        //设置 left时，重置 x
+        //\u8bbe\u7f6e left\u65f6\uff0c\u91cd\u7f6e x
         _uiSetLeft : function(v){
             var _self = this,
                     el = _self.get('el');
             if(v != null){
                 _self.setInternal('x',el.offset().left);
-            }/*else{ //如果lef 为null,同时设置过left和top，那么取对应的值
+            }/*else{ //\u5982\u679clef \u4e3anull,\u540c\u65f6\u8bbe\u7f6e\u8fc7left\u548ctop\uff0c\u90a3\u4e48\u53d6\u5bf9\u5e94\u7684\u503c
                 _self.setInternal('left',el.position().left);
             }*/
         },
-        //设置top 时，重置y
+        //\u8bbe\u7f6etop \u65f6\uff0c\u91cd\u7f6ey
         _uiSetTop : function(v){
             var _self = this,
                 el = _self.get('el');
             if(v != null){
                 _self.setInternal('y',el.offset().top);
-            }/*else{ //如果lef 为null,同时设置过left和top，那么取对应的值
+            }/*else{ //\u5982\u679clef \u4e3anull,\u540c\u65f6\u8bbe\u7f6e\u8fc7left\u548ctop\uff0c\u90a3\u4e48\u53d6\u5bf9\u5e94\u7684\u503c
                 _self.setInternal('top',el.position().top);
             }*/
         }
@@ -5514,15 +5402,11 @@ define('bui/component/uibase/position',function () {
     Position.View = PositionView;
     return Position;
 });
-/**
- * @fileOverview 可选中的控件,父控件支持selection扩展
- * @ignore
- */
 
 define('bui/component/uibase/listitem',function () {
 
   /**
-   * 列表项控件的视图层
+   * \u5217\u8868\u9879\u63a7\u4ef6\u7684\u89c6\u56fe\u5c42
    * @class BUI.Component.UIBase.ListItemView
    * @private
    */
@@ -5532,7 +5416,7 @@ define('bui/component/uibase/listitem',function () {
 
   listItemView.ATTRS = {
     /**
-     * 是否选中
+     * \u662f\u5426\u9009\u4e2d
      * @type {Boolean}
      */
     selected : {
@@ -5553,7 +5437,7 @@ define('bui/component/uibase/listitem',function () {
     }
   };
   /**
-   * 列表项的扩展
+   * \u5217\u8868\u9879\u7684\u6269\u5c55
    * @class BUI.Component.UIBase.ListItem
    */
   function listItem() {
@@ -5563,11 +5447,11 @@ define('bui/component/uibase/listitem',function () {
   listItem.ATTRS = {
 
     /**
-     * 是否可以被选中
+     * \u662f\u5426\u53ef\u4ee5\u88ab\u9009\u4e2d
      * @cfg {Boolean} [selectable=true]
      */
     /**
-     * 是否可以被选中
+     * \u662f\u5426\u53ef\u4ee5\u88ab\u9009\u4e2d
      * @type {Boolean}
      */
     selectable : {
@@ -5575,7 +5459,7 @@ define('bui/component/uibase/listitem',function () {
     },
     
     /**
-     * 是否选中,只能通过设置父类的选中方法来实现选中
+     * \u662f\u5426\u9009\u4e2d,\u53ea\u80fd\u901a\u8fc7\u8bbe\u7f6e\u7236\u7c7b\u7684\u9009\u4e2d\u65b9\u6cd5\u6765\u5b9e\u73b0\u9009\u4e2d
      * @type {Boolean}
      * @readOnly
      */
@@ -5595,18 +5479,14 @@ define('bui/component/uibase/listitem',function () {
   return listItem;
 
 });
-/**
- * @fileOverview 
- * 控件包含头部（head)、内容(content)和尾部（foot)
- * @ignore
- */
+
 define('bui/component/uibase/stdmod',function () {
 
     var CLS_PREFIX = BUI.prefix + 'stdmod-';
         
 
     /**
-    * 标准模块组织的视图类
+    * \u6807\u51c6\u6a21\u5757\u7ec4\u7ec7\u7684\u89c6\u56fe\u7c7b
     * @class BUI.Component.UIBase.StdModView
     * @private
     */
@@ -5718,7 +5598,7 @@ define('bui/component/uibase/stdmod',function () {
      */
     {
         /**
-         * 控件的头部DOM. Readonly
+         * \u63a7\u4ef6\u7684\u5934\u90e8DOM. Readonly
          * @readOnly
          * @type {jQuery}
          */
@@ -5726,7 +5606,7 @@ define('bui/component/uibase/stdmod',function () {
             view:1
         },
         /**
-         * 控件的内容DOM. Readonly
+         * \u63a7\u4ef6\u7684\u5185\u5bb9DOM. Readonly
          * @readOnly
          * @type {jQuery}
          */
@@ -5734,7 +5614,7 @@ define('bui/component/uibase/stdmod',function () {
             view:1
         },
         /**
-         * 控件的底部DOM. Readonly
+         * \u63a7\u4ef6\u7684\u5e95\u90e8DOM. Readonly
          * @readOnly
          * @type {jQuery}
          */
@@ -5742,11 +5622,11 @@ define('bui/component/uibase/stdmod',function () {
             view:1
         },
         /**
-         * 应用到控件内容的css属性，键值对形式
+         * \u5e94\u7528\u5230\u63a7\u4ef6\u5185\u5bb9\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @cfg {Object} bodyStyle
          */
         /**
-         * 应用到控件内容的css属性，键值对形式
+         * \u5e94\u7528\u5230\u63a7\u4ef6\u5185\u5bb9\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @type {Object}
          * @protected
          */
@@ -5754,11 +5634,11 @@ define('bui/component/uibase/stdmod',function () {
             view:1
         },
         /**
-         * 应用到控件底部的css属性，键值对形式
+         * \u5e94\u7528\u5230\u63a7\u4ef6\u5e95\u90e8\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @cfg {Object} footerStyle
          */
         /**
-         * 应用到控件底部的css属性，键值对形式
+         * \u5e94\u7528\u5230\u63a7\u4ef6\u5e95\u90e8\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @type {Object}
          * @protected
          */
@@ -5766,11 +5646,11 @@ define('bui/component/uibase/stdmod',function () {
             view:1
         },
         /**
-         * 应用到控件头部的css属性，键值对形式
+         * \u5e94\u7528\u5230\u63a7\u4ef6\u5934\u90e8\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @cfg {Object} headerStyle
          */
         /**
-         * 应用到控件头部的css属性，键值对形式
+         * \u5e94\u7528\u5230\u63a7\u4ef6\u5934\u90e8\u7684css\u5c5e\u6027\uff0c\u952e\u503c\u5bf9\u5f62\u5f0f
          * @type {Object}
          * @protected
          */
@@ -5778,7 +5658,7 @@ define('bui/component/uibase/stdmod',function () {
             view:1
         },
         /**
-         * 控件头部的html
+         * \u63a7\u4ef6\u5934\u90e8\u7684html
          * <pre><code>
          * var dialog = new Dialog({
          *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
@@ -5790,14 +5670,14 @@ define('bui/component/uibase/stdmod',function () {
          * @cfg {jQuery|String} headerContent
          */
         /**
-         * 控件头部的html
+         * \u63a7\u4ef6\u5934\u90e8\u7684html
          * @type {jQuery|String}
          */
         headerContent:{
             view:1
         },
         /**
-         * 控件内容的html
+         * \u63a7\u4ef6\u5185\u5bb9\u7684html
          * <pre><code>
          * var dialog = new Dialog({
          *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
@@ -5809,14 +5689,14 @@ define('bui/component/uibase/stdmod',function () {
          * @cfg {jQuery|String} bodyContent
          */
         /**
-         * 控件内容的html
+         * \u63a7\u4ef6\u5185\u5bb9\u7684html
          * @type {jQuery|String}
          */
         bodyContent:{
             view:1
         },
         /**
-         * 控件底部的html
+         * \u63a7\u4ef6\u5e95\u90e8\u7684html
          * <pre><code>
          * var dialog = new Dialog({
          *     headerContent: '&lt;div class="header"&gt;&lt;/div&gt;',
@@ -5828,7 +5708,7 @@ define('bui/component/uibase/stdmod',function () {
          * @cfg {jQuery|String} footerContent
          */
         /**
-         * 控件底部的html
+         * \u63a7\u4ef6\u5e95\u90e8\u7684html
          * @type {jQuery|String}
          */
         footerContent:{
@@ -5838,11 +5718,7 @@ define('bui/component/uibase/stdmod',function () {
 
   StdMod.View = StdModView;
   return StdMod;
-});/**
- * @fileOverview 使用wrapper
- * @ignore
- */
-
+});
 define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/manage'],function (require) {
   
   var ArrayUtil = require('bui/array'),
@@ -5865,7 +5741,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     return false;
   }
 
-  // 收集单继承链，子类在前，父类在后
+  // \u6536\u96c6\u5355\u7ee7\u627f\u94fe\uff0c\u5b50\u7c7b\u5728\u524d\uff0c\u7236\u7c7b\u5728\u540e
   function collectConstructorChains(self) {
       var constructorChains = [],
           c = self.constructor;
@@ -5876,7 +5752,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       return constructorChains;
   }
 
-  //如果属性为对象或者数组，则进行转换
+  //\u5982\u679c\u5c5e\u6027\u4e3a\u5bf9\u8c61\u6216\u8005\u6570\u7ec4\uff0c\u5219\u8fdb\u884c\u8f6c\u6362
   function parseFieldValue(value){
     value = $.trim(value);
     if(regx.test(value)){
@@ -5889,8 +5765,8 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
     var userConfig = self.userConfig || {};
     for (var p in cfg) {
-      // 用户设置过那么这里不从 dom 节点取
-      // 用户设置 > html parser > default value
+      // \u7528\u6237\u8bbe\u7f6e\u8fc7\u90a3\u4e48\u8fd9\u91cc\u4e0d\u4ece dom \u8282\u70b9\u53d6
+      // \u7528\u6237\u8bbe\u7f6e > html parser > default value
       if (!(p in userConfig)) {
         self.setInternal(p,cfg[p]);
       }
@@ -5901,21 +5777,21 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       p, v,
       userConfig = self.userConfig || {};
 
-    // 从 parser 中，默默设置属性，不触发事件
+    // \u4ece parser \u4e2d\uff0c\u9ed8\u9ed8\u8bbe\u7f6e\u5c5e\u6027\uff0c\u4e0d\u89e6\u53d1\u4e8b\u4ef6
     for (p in parser) {
-      // 用户设置过那么这里不从 dom 节点取
-      // 用户设置 > html parser > default value
+      // \u7528\u6237\u8bbe\u7f6e\u8fc7\u90a3\u4e48\u8fd9\u91cc\u4e0d\u4ece dom \u8282\u70b9\u53d6
+      // \u7528\u6237\u8bbe\u7f6e > html parser > default value
       if (!(p in userConfig)) {
         v = parser[p];
-        // 函数
+        // \u51fd\u6570
         if (BUI.isFunction(v)) {
             self.setInternal(p, v.call(self, srcNode));
         }
-        // 单选选择器
+        // \u5355\u9009\u9009\u62e9\u5668
         else if (typeof v == 'string') {
             self.setInternal(p, srcNode.find(v));
         }
-        // 多选选择器
+        // \u591a\u9009\u9009\u62e9\u5668
         else if (BUI.isArray(v) && v[0]) {
             self.setInternal(p, srcNode.find(v[0]))
         }
@@ -5932,7 +5808,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
     constructorChains = collectConstructorChains(self);
 
-    // 从父类到子类开始从 html 读取属性
+    // \u4ece\u7236\u7c7b\u5230\u5b50\u7c7b\u5f00\u59cb\u4ece html \u8bfb\u53d6\u5c5e\u6027
     for (len = constructorChains.length - 1; len >= 0; len--) {
         c = constructorChains[len];
         if (p = c[PARSER]) {
@@ -5955,7 +5831,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       decorateCfg = _self.getDecorateConfig(srcNode);
       setConfigFields(self,decorateCfg);
       
-      //如果从DOM中读取子控件
+      //\u5982\u679c\u4eceDOM\u4e2d\u8bfb\u53d6\u5b50\u63a7\u4ef6
       if(_self.get('isDecorateChild') && _self.decorateInternal){
         _self.decorateInternal(srcNode);
       }
@@ -5965,7 +5841,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
 
   /**
    * @class BUI.Component.UIBase.Decorate
-   * 将DOM对象封装成控件
+   * \u5c06DOM\u5bf9\u8c61\u5c01\u88c5\u6210\u63a7\u4ef6
    */
   function decorate(){
     initDecorate(this);
@@ -5974,7 +5850,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
   decorate.ATTRS = {
 
     /**
-     * 配置控件的根节点的DOM
+     * \u914d\u7f6e\u63a7\u4ef6\u7684\u6839\u8282\u70b9\u7684DOM
      * <pre><code>
      * new Form.Form({
      *   srcNode : '#J_Form'
@@ -5983,14 +5859,14 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
      * @cfg {jQuery} srcNode
      */
     /**
-     * 配置控件的根节点的DOM
+     * \u914d\u7f6e\u63a7\u4ef6\u7684\u6839\u8282\u70b9\u7684DOM
      * @type {jQuery} 
      */
     srcNode : {
       view : true
     },
     /**
-     * 是否根据DOM生成子控件
+     * \u662f\u5426\u6839\u636eDOM\u751f\u6210\u5b50\u63a7\u4ef6
      * @type {Boolean}
      * @protected
      */
@@ -5998,13 +5874,13 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       value : false
     },
     /**
-     * 此配置项配置使用那些srcNode上的节点作为配置项
-     *  - 当时用 decorate 时，取 srcNode上的节点的属性作为控件的配置信息
-     *  - 默认id,name,value,title 都会作为属性传入
-     *  - 使用 'data-cfg' 作为整体的配置属性
+     * \u6b64\u914d\u7f6e\u9879\u914d\u7f6e\u4f7f\u7528\u90a3\u4e9bsrcNode\u4e0a\u7684\u8282\u70b9\u4f5c\u4e3a\u914d\u7f6e\u9879
+     *  - \u5f53\u65f6\u7528 decorate \u65f6\uff0c\u53d6 srcNode\u4e0a\u7684\u8282\u70b9\u7684\u5c5e\u6027\u4f5c\u4e3a\u63a7\u4ef6\u7684\u914d\u7f6e\u4fe1\u606f
+     *  - \u9ed8\u8ba4id,name,value,title \u90fd\u4f1a\u4f5c\u4e3a\u5c5e\u6027\u4f20\u5165
+     *  - \u4f7f\u7528 'data-cfg' \u4f5c\u4e3a\u6574\u4f53\u7684\u914d\u7f6e\u5c5e\u6027
      *  <pre><code>
      *     <input id="c1" type="text" name="txtName" id="id",data-cfg="{allowBlank:false}" />
-     *     //会生成以下配置项：
+     *     //\u4f1a\u751f\u6210\u4ee5\u4e0b\u914d\u7f6e\u9879\uff1a
      *     {
      *         name : 'txtName',
      *         id : 'id',
@@ -6030,7 +5906,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
   decorate.prototype = {
 
     /**
-     * 获取控件的配置信息
+     * \u83b7\u53d6\u63a7\u4ef6\u7684\u914d\u7f6e\u4fe1\u606f
      * @protected
      */
     getDecorateConfig : function(el){
@@ -6061,8 +5937,8 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       });
       return BUI.mix(config,statusCfg);
     },
-    //根据css class获取状态属性
-    //如： selected,disabled等属性
+    //\u6839\u636ecss class\u83b7\u53d6\u72b6\u6001\u5c5e\u6027
+    //\u5982\uff1a selected,disabled\u7b49\u5c5e\u6027
     _getStautsCfg : function(el){
       var _self = this,
         rst = {},
@@ -6075,9 +5951,9 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       return rst;
     },
     /**
-     * 获取封装成子控件的节点集合
+     * \u83b7\u53d6\u5c01\u88c5\u6210\u5b50\u63a7\u4ef6\u7684\u8282\u70b9\u96c6\u5408
      * @protected
-     * @return {Array} 节点集合
+     * @return {Array} \u8282\u70b9\u96c6\u5408
      */
     getDecorateElments : function(){
       var _self = this,
@@ -6091,7 +5967,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     },
 
     /**
-     * 封装所有的子控件
+     * \u5c01\u88c5\u6240\u6709\u7684\u5b50\u63a7\u4ef6
      * @protected
      * @param {jQuery} el Root element of current component.
      */
@@ -6100,16 +5976,16 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       self.decorateChildren(el);
     },
     /**
-     * 获取子控件的xclass类型
+     * \u83b7\u53d6\u5b50\u63a7\u4ef6\u7684xclass\u7c7b\u578b
      * @protected
-     * @param {jQuery} 子控件的根节点
+     * @param {jQuery} \u5b50\u63a7\u4ef6\u7684\u6839\u8282\u70b9
      */
     findXClassByNode: function (childNode, ignoreError) {
       var _self = this,
         cls = childNode.attr("class") || '',
-        childClass = _self.get('defaultChildClass'); //如果没有样式或者查找不到对应的类，使用默认的子控件类型
+        childClass = _self.get('defaultChildClass'); //\u5982\u679c\u6ca1\u6709\u6837\u5f0f\u6216\u8005\u67e5\u627e\u4e0d\u5230\u5bf9\u5e94\u7684\u7c7b\uff0c\u4f7f\u7528\u9ed8\u8ba4\u7684\u5b50\u63a7\u4ef6\u7c7b\u578b
 
-          // 过滤掉特定前缀
+          // \u8fc7\u6ee4\u6389\u7279\u5b9a\u524d\u7f00
       cls = cls.replace(new RegExp("\\b" + prefixCls, "ig"), "");
 
       var UI = Manager.getConstructorByXClass(cls) ||  Manager.getConstructorByXClass(childClass);
@@ -6120,7 +5996,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       }
       return Manager.getXClassByConstructor(UI);
     },
-    // 生成一个组件
+    // \u751f\u6210\u4e00\u4e2a\u7ec4\u4ef6
     decorateChildrenInternal: function (xclass, c) {
       var _self = this,
         children = _self.get('children');
@@ -6130,7 +6006,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       });
     },
     /**
-     * 封装子控件
+     * \u5c01\u88c5\u5b50\u63a7\u4ef6
      * @private
      * @param {jQuery} el component's root element.
      */
@@ -6145,16 +6021,12 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
   };
 
   return decorate;
-});/**
- * @fileOverview 控件模板
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/uibase/tpl',function () {
 
   /**
    * @private
-   * 控件模板扩展类的渲染类(view)
+   * \u63a7\u4ef6\u6a21\u677f\u6269\u5c55\u7c7b\u7684\u6e32\u67d3\u7c7b(view)
    * @class BUI.Component.UIBase.TplView
    */
   function tplView () {
@@ -6163,7 +6035,7 @@ define('bui/component/uibase/tpl',function () {
 
   tplView.ATTRS = {
     /**
-     * 模板
+     * \u6a21\u677f
      * @protected
      * @type {String}
      */
@@ -6189,10 +6061,10 @@ define('bui/component/uibase/tpl',function () {
       }
     },
     /**
-     * 获取生成控件的模板
+     * \u83b7\u53d6\u751f\u6210\u63a7\u4ef6\u7684\u6a21\u677f
      * @protected
-     * @param  {Object} attrs 属性值
-     * @return {String} 模板
+     * @param  {Object} attrs \u5c5e\u6027\u503c
+     * @return {String} \u6a21\u677f
      */
     getTpl:function (attrs) {
         var _self = this,
@@ -6209,10 +6081,10 @@ define('bui/component/uibase/tpl',function () {
         return '';
     },
     /**
-     * 如果控件设置了模板，则根据模板和属性值生成DOM
-     * 如果设置了content属性，此模板不应用
+     * \u5982\u679c\u63a7\u4ef6\u8bbe\u7f6e\u4e86\u6a21\u677f\uff0c\u5219\u6839\u636e\u6a21\u677f\u548c\u5c5e\u6027\u503c\u751f\u6210DOM
+     * \u5982\u679c\u8bbe\u7f6e\u4e86content\u5c5e\u6027\uff0c\u6b64\u6a21\u677f\u4e0d\u5e94\u7528
      * @protected
-     * @param  {Object} attrs 属性值，默认为初始化时传入的值
+     * @param  {Object} attrs \u5c5e\u6027\u503c\uff0c\u9ed8\u8ba4\u4e3a\u521d\u59cb\u5316\u65f6\u4f20\u5165\u7684\u503c
      */
     setTplContent:function (attrs) {
         var _self = this,
@@ -6222,7 +6094,7 @@ define('bui/component/uibase/tpl',function () {
             tpl = _self.getTpl(attrs);
 
         //tplEl.remove();
-        if(!content && tpl){ //替换掉原先的内容
+        if(!content && tpl){ //\u66ff\u6362\u6389\u539f\u5148\u7684\u5185\u5bb9
           //el.empty();//el.html(tpl);
           if(tplEl){
             var node = $(tpl).insertBefore(tplEl);
@@ -6238,7 +6110,7 @@ define('bui/component/uibase/tpl',function () {
   }
 
   /**
-   * 控件的模板扩展
+   * \u63a7\u4ef6\u7684\u6a21\u677f\u6269\u5c55
    * @class BUI.Component.UIBase.Tpl
    */
   function tpl() {
@@ -6247,13 +6119,13 @@ define('bui/component/uibase/tpl',function () {
 
   tpl.ATTRS = {
     /**
-    * 控件的模版，用于初始化
+    * \u63a7\u4ef6\u7684\u6a21\u7248\uff0c\u7528\u4e8e\u521d\u59cb\u5316
     * <pre><code>
     * var list = new List.List({
     *   tpl : '&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;',
     *   childContainer : 'ul'
     * });
-    * //用于统一子控件模板
+    * //\u7528\u4e8e\u7edf\u4e00\u5b50\u63a7\u4ef6\u6a21\u677f
     * var list = new List.List({
     *   defaultChildCfg : {
     *     tpl : '&lt;span&gt;{text}&lt;/span&gt;'
@@ -6264,7 +6136,7 @@ define('bui/component/uibase/tpl',function () {
     * @cfg {String} tpl
     */
     /**
-     * 控件的模板
+     * \u63a7\u4ef6\u7684\u6a21\u677f
      * <pre><code>
      *   list.set('tpl','&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;&lt;div class="bottom"&gt;&lt;/div&gt;')
      * </code></pre>
@@ -6275,10 +6147,10 @@ define('bui/component/uibase/tpl',function () {
       sync: false
     },
     /**
-     * <p>控件的渲染函数，应对一些简单模板解决不了的问题，例如有if,else逻辑，有循环逻辑,
-     * 函数原型是function(data){},其中data是控件的属性值</p>
-     * <p>控件模板的加强模式，此属性会覆盖@see {BUI.Component.UIBase.Tpl#property-tpl}属性</p>
-     * //用于统一子控件模板
+     * <p>\u63a7\u4ef6\u7684\u6e32\u67d3\u51fd\u6570\uff0c\u5e94\u5bf9\u4e00\u4e9b\u7b80\u5355\u6a21\u677f\u89e3\u51b3\u4e0d\u4e86\u7684\u95ee\u9898\uff0c\u4f8b\u5982\u6709if,else\u903b\u8f91\uff0c\u6709\u5faa\u73af\u903b\u8f91,
+     * \u51fd\u6570\u539f\u578b\u662ffunction(data){},\u5176\u4e2ddata\u662f\u63a7\u4ef6\u7684\u5c5e\u6027\u503c</p>
+     * <p>\u63a7\u4ef6\u6a21\u677f\u7684\u52a0\u5f3a\u6a21\u5f0f\uff0c\u6b64\u5c5e\u6027\u4f1a\u8986\u76d6@see {BUI.Component.UIBase.Tpl#property-tpl}\u5c5e\u6027</p>
+     * //\u7528\u4e8e\u7edf\u4e00\u5b50\u63a7\u4ef6\u6a21\u677f
      * var list = new List.List({
      *   defaultChildCfg : {
      *     tplRender : funciton(item){
@@ -6298,8 +6170,8 @@ define('bui/component/uibase/tpl',function () {
       value : null
     },
     /**
-     * 这是一个选择器，使用了模板后，子控件可能会添加到模板对应的位置,
-     *  - 默认为null,此时子控件会将控件最外层 el 作为容器
+     * \u8fd9\u662f\u4e00\u4e2a\u9009\u62e9\u5668\uff0c\u4f7f\u7528\u4e86\u6a21\u677f\u540e\uff0c\u5b50\u63a7\u4ef6\u53ef\u80fd\u4f1a\u6dfb\u52a0\u5230\u6a21\u677f\u5bf9\u5e94\u7684\u4f4d\u7f6e,
+     *  - \u9ed8\u8ba4\u4e3anull,\u6b64\u65f6\u5b50\u63a7\u4ef6\u4f1a\u5c06\u63a7\u4ef6\u6700\u5916\u5c42 el \u4f5c\u4e3a\u5bb9\u5668
      * <pre><code>
      * var list = new List.List({
      *   tpl : '&lt;div class="toolbar"&gt;&lt;/div&gt;&lt;ul&gt;&lt;/ul&gt;',
@@ -6316,20 +6188,20 @@ define('bui/component/uibase/tpl',function () {
   tpl.prototype = {
 
     __renderUI : function () {
-      //使用srcNode时，不使用模板
+      //\u4f7f\u7528srcNode\u65f6\uff0c\u4e0d\u4f7f\u7528\u6a21\u677f
       if(!this.get('srcNode')){
         this.setTplContent();
       }
     },
     /**
-     * 控件信息发生改变时，控件内容跟模板相关时需要调用这个函数，
-     * 重新通过模板和控件信息构造内容
+     * \u63a7\u4ef6\u4fe1\u606f\u53d1\u751f\u6539\u53d8\u65f6\uff0c\u63a7\u4ef6\u5185\u5bb9\u8ddf\u6a21\u677f\u76f8\u5173\u65f6\u9700\u8981\u8c03\u7528\u8fd9\u4e2a\u51fd\u6570\uff0c
+     * \u91cd\u65b0\u901a\u8fc7\u6a21\u677f\u548c\u63a7\u4ef6\u4fe1\u606f\u6784\u9020\u5185\u5bb9
      */
     updateContent : function(){
       this.setTplContent();
     },
     /**
-     * 根据控件的属性和模板生成控件内容
+     * \u6839\u636e\u63a7\u4ef6\u7684\u5c5e\u6027\u548c\u6a21\u677f\u751f\u6210\u63a7\u4ef6\u5185\u5bb9
      * @protected
      */
     setTplContent : function () {
@@ -6337,7 +6209,7 @@ define('bui/component/uibase/tpl',function () {
         attrs = _self.getAttrVals();
       _self.get('view').setTplContent(attrs);
     },
-    //模板发生改变
+    //\u6a21\u677f\u53d1\u751f\u6539\u53d8
     _uiSetTpl : function(){
       this.setTplContent();
     }
@@ -6350,15 +6222,11 @@ define('bui/component/uibase/tpl',function () {
 });
  
 
-/**
- * @fileOverview 可以展开折叠的控件
- * @ignore
- */
 
 define('bui/component/uibase/collapseable',function () {
 
   /**
-  * 控件展开折叠的视图类
+  * \u63a7\u4ef6\u5c55\u5f00\u6298\u53e0\u7684\u89c6\u56fe\u7c7b
   * @class BUI.Component.UIBase.CollapseableView
   * @private
   */
@@ -6371,7 +6239,7 @@ define('bui/component/uibase/collapseable',function () {
   }
 
   collapseableView.prototype = {
-    //设置收缩样式
+    //\u8bbe\u7f6e\u6536\u7f29\u6837\u5f0f
     _uiSetCollapsed : function(v){
       var _self = this,
         cls = _self.getStatusCls('collapsed'),
@@ -6384,7 +6252,7 @@ define('bui/component/uibase/collapseable',function () {
     }
   }
   /**
-   * 控件展开折叠的扩展
+   * \u63a7\u4ef6\u5c55\u5f00\u6298\u53e0\u7684\u6269\u5c55
    * @class BUI.Component.UIBase.Collapseable
    */
   var collapseable = function(){
@@ -6393,18 +6261,18 @@ define('bui/component/uibase/collapseable',function () {
 
   collapseable.ATTRS = {
     /**
-     * 是否可折叠
+     * \u662f\u5426\u53ef\u6298\u53e0
      * @type {Boolean}
      */
     collapseable: {
       value : false
     },
     /**
-     * 是否已经折叠 collapsed
+     * \u662f\u5426\u5df2\u7ecf\u6298\u53e0 collapsed
      * @cfg {Boolean} collapsed
      */
     /**
-     * 是否已经折叠
+     * \u662f\u5426\u5df2\u7ecf\u6298\u53e0
      * @type {Boolean}
      */
     collapsed : {
@@ -6414,17 +6282,17 @@ define('bui/component/uibase/collapseable',function () {
     events : {
       value : {
         /**
-         * 控件展开
+         * \u63a7\u4ef6\u5c55\u5f00
          * @event
-         * @param {Object} e 事件对象
-         * @param {BUI.Component.Controller} target 控件
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {BUI.Component.Controller} target \u63a7\u4ef6
          */
         'expanded' : true,
         /**
-         * 控件折叠
+         * \u63a7\u4ef6\u6298\u53e0
          * @event
-         * @param {Object} e 事件对象
-         * @param {BUI.Component.Controller} target 控件
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {BUI.Component.Controller} target \u63a7\u4ef6
          */
         'collapsed' : true
       }
@@ -6445,24 +6313,20 @@ define('bui/component/uibase/collapseable',function () {
   collapseable.View = collapseableView;
   
   return collapseable;
-});/**
- * @fileOverview 单选或者多选
- * @author  dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/uibase/selection',function () {
     var 
         SINGLE_SELECTED = 'single';
 
     /**
      * @class BUI.Component.UIBase.Selection
-     * 选中控件中的项（子元素或者DOM），此类选择的内容有2种
+     * \u9009\u4e2d\u63a7\u4ef6\u4e2d\u7684\u9879\uff08\u5b50\u5143\u7d20\u6216\u8005DOM\uff09\uff0c\u6b64\u7c7b\u9009\u62e9\u7684\u5185\u5bb9\u67092\u79cd
      * <ol>
-     *     <li>子控件</li>
-     *     <li>DOM元素</li>
+     *     <li>\u5b50\u63a7\u4ef6</li>
+     *     <li>DOM\u5143\u7d20</li>
      * </ol>
-     * ** 当选择是子控件时，element 和 item 都是指 子控件；**
-     * ** 当选择的是DOM元素时，element 指DOM元素，item 指DOM元素对应的记录 **
+     * ** \u5f53\u9009\u62e9\u662f\u5b50\u63a7\u4ef6\u65f6\uff0celement \u548c item \u90fd\u662f\u6307 \u5b50\u63a7\u4ef6\uff1b**
+     * ** \u5f53\u9009\u62e9\u7684\u662fDOM\u5143\u7d20\u65f6\uff0celement \u6307DOM\u5143\u7d20\uff0citem \u6307DOM\u5143\u7d20\u5bf9\u5e94\u7684\u8bb0\u5f55 **
      * @abstract
      */
     var selection = function(){
@@ -6476,7 +6340,7 @@ define('bui/component/uibase/selection',function () {
      */
     {
         /**
-         * 选中的事件
+         * \u9009\u4e2d\u7684\u4e8b\u4ef6
          * <pre><code>
          * var list = new List.SimpleList({
          *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
@@ -6494,46 +6358,46 @@ define('bui/component/uibase/selection',function () {
         events : {
             value : {
                 /**
-                   * 选中的菜单改变时发生，
-                   * 多选时，选中，取消选中都触发此事件，单选时，只有选中时触发此事件
+                   * \u9009\u4e2d\u7684\u83dc\u5355\u6539\u53d8\u65f6\u53d1\u751f\uff0c
+                   * \u591a\u9009\u65f6\uff0c\u9009\u4e2d\uff0c\u53d6\u6d88\u9009\u4e2d\u90fd\u89e6\u53d1\u6b64\u4e8b\u4ef6\uff0c\u5355\u9009\u65f6\uff0c\u53ea\u6709\u9009\u4e2d\u65f6\u89e6\u53d1\u6b64\u4e8b\u4ef6
                    * @name  BUI.Component.UIBase.Selection#selectedchange
                    * @event
-                   * @param {Object} e 事件对象
-                   * @param {Object} e.item 当前选中的项
-                   * @param {HTMLElement} e.domTarget 当前选中的项的DOM结构
-                   * @param {Boolean} e.selected 是否选中
+                   * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                   * @param {Object} e.item \u5f53\u524d\u9009\u4e2d\u7684\u9879
+                   * @param {HTMLElement} e.domTarget \u5f53\u524d\u9009\u4e2d\u7684\u9879\u7684DOM\u7ed3\u6784
+                   * @param {Boolean} e.selected \u662f\u5426\u9009\u4e2d
                    */
                 'selectedchange' : false,
 
                 /**
-                   * 选择改变前触发，可以通过return false，阻止selectedchange事件
+                   * \u9009\u62e9\u6539\u53d8\u524d\u89e6\u53d1\uff0c\u53ef\u4ee5\u901a\u8fc7return false\uff0c\u963b\u6b62selectedchange\u4e8b\u4ef6
                    * @event
-                   * @param {Object} e 事件对象
-                   * @param {Object} e.item 当前选中的项
-                   * @param {Boolean} e.selected 是否选中
+                   * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                   * @param {Object} e.item \u5f53\u524d\u9009\u4e2d\u7684\u9879
+                   * @param {Boolean} e.selected \u662f\u5426\u9009\u4e2d
                    */
                 'beforeselectedchange' : false,
 
                 /**
-                   * 菜单选中
+                   * \u83dc\u5355\u9009\u4e2d
                    * @event
-                   * @param {Object} e 事件对象
-                   * @param {Object} e.item 当前选中的项
-                   * @param {HTMLElement} e.domTarget 当前选中的项的DOM结构
+                   * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                   * @param {Object} e.item \u5f53\u524d\u9009\u4e2d\u7684\u9879
+                   * @param {HTMLElement} e.domTarget \u5f53\u524d\u9009\u4e2d\u7684\u9879\u7684DOM\u7ed3\u6784
                    */
                 'itemselected' : false,
                 /**
-                   * 菜单取消选中
+                   * \u83dc\u5355\u53d6\u6d88\u9009\u4e2d
                    * @event
-                   * @param {Object} e 事件对象
-                   * @param {Object} e.item 当前选中的项
-                   * @param {HTMLElement} e.domTarget 当前选中的项的DOM结构
+                   * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                   * @param {Object} e.item \u5f53\u524d\u9009\u4e2d\u7684\u9879
+                   * @param {HTMLElement} e.domTarget \u5f53\u524d\u9009\u4e2d\u7684\u9879\u7684DOM\u7ed3\u6784
                    */
                 'itemunselected' : false
             }
         },
         /**
-         * 数据的id字段名称，通过此字段查找对应的数据
+         * \u6570\u636e\u7684id\u5b57\u6bb5\u540d\u79f0\uff0c\u901a\u8fc7\u6b64\u5b57\u6bb5\u67e5\u627e\u5bf9\u5e94\u7684\u6570\u636e
          * <pre><code>
          * var list = new List.SimpleList({
          *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
@@ -6545,7 +6409,7 @@ define('bui/component/uibase/selection',function () {
          * @cfg {String} [idField = 'id']
          */
         /**
-         * 数据的id字段名称，通过此字段查找对应的数据
+         * \u6570\u636e\u7684id\u5b57\u6bb5\u540d\u79f0\uff0c\u901a\u8fc7\u6b64\u5b57\u6bb5\u67e5\u627e\u5bf9\u5e94\u7684\u6570\u636e
          * @type {String}
          * @ignore
          */
@@ -6553,7 +6417,7 @@ define('bui/component/uibase/selection',function () {
             value : 'id'
         },
         /**
-         * 是否多选
+         * \u662f\u5426\u591a\u9009
          * <pre><code>
          * var list = new List.SimpleList({
          *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
@@ -6566,7 +6430,7 @@ define('bui/component/uibase/selection',function () {
          * @cfg {Boolean} [multipleSelect=false]
          */
         /**
-         * 是否多选
+         * \u662f\u5426\u591a\u9009
          * @type {Boolean}
          * @default false
          */
@@ -6583,7 +6447,7 @@ define('bui/component/uibase/selection',function () {
      */
     {
         /**
-         * 清理选中的项
+         * \u6e05\u7406\u9009\u4e2d\u7684\u9879
          * <pre><code>
          *  list.clearSelection();
          * </code></pre>
@@ -6597,7 +6461,7 @@ define('bui/component/uibase/selection',function () {
             });
         },
         /**
-         * 获取选中的项的值
+         * \u83b7\u53d6\u9009\u4e2d\u7684\u9879\u7684\u503c
          * @template
          * @return {Array} 
          */
@@ -6605,19 +6469,19 @@ define('bui/component/uibase/selection',function () {
 
         },
         /**
-         * 获取选中的第一项
+         * \u83b7\u53d6\u9009\u4e2d\u7684\u7b2c\u4e00\u9879
          * <pre><code>
-         * var item = list.getSelected(); //多选模式下第一条
+         * var item = list.getSelected(); //\u591a\u9009\u6a21\u5f0f\u4e0b\u7b2c\u4e00\u6761
          * </code></pre>
-         * @return {Object} 选中的第一项或者为undefined
+         * @return {Object} \u9009\u4e2d\u7684\u7b2c\u4e00\u9879\u6216\u8005\u4e3aundefined
          */
         getSelected : function(){
             return this.getSelection()[0];
         },
         /**
-         * 根据 idField 获取到的值
+         * \u6839\u636e idField \u83b7\u53d6\u5230\u7684\u503c
          * @protected
-         * @return {Object} 选中的值
+         * @return {Object} \u9009\u4e2d\u7684\u503c
          */
         getSelectedValue : function(){
             var _self = this,
@@ -6627,9 +6491,9 @@ define('bui/component/uibase/selection',function () {
             return _self.getValueByField(item,field);
         },
         /**
-         * 获取选中的值集合
+         * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\u96c6\u5408
          * @protected
-         * @return {Array} 选中值得集合
+         * @return {Array} \u9009\u4e2d\u503c\u5f97\u96c6\u5408
          */
         getSelectionValues:function(){
             var _self = this,
@@ -6640,9 +6504,9 @@ define('bui/component/uibase/selection',function () {
             });
         },
         /**
-         * 获取选中的文本
+         * \u83b7\u53d6\u9009\u4e2d\u7684\u6587\u672c
          * @protected
-         * @return {Array} 选中的文本集合
+         * @return {Array} \u9009\u4e2d\u7684\u6587\u672c\u96c6\u5408
          */
         getSelectionText:function(){
             var _self = this,
@@ -6652,15 +6516,15 @@ define('bui/component/uibase/selection',function () {
             });
         },
         /**
-         * 移除选中
+         * \u79fb\u9664\u9009\u4e2d
          * <pre><code>
-         *    var item = list.getItem('id'); //通过id 获取选项
-         *    list.setSelected(item); //选中
+         *    var item = list.getItem('id'); //\u901a\u8fc7id \u83b7\u53d6\u9009\u9879
+         *    list.setSelected(item); //\u9009\u4e2d
          *
-         *    list.clearSelected();//单选模式下清除所选，多选模式下清除选中的第一项
-         *    list.clearSelected(item); //清除选项的选中状态
+         *    list.clearSelected();//\u5355\u9009\u6a21\u5f0f\u4e0b\u6e05\u9664\u6240\u9009\uff0c\u591a\u9009\u6a21\u5f0f\u4e0b\u6e05\u9664\u9009\u4e2d\u7684\u7b2c\u4e00\u9879
+         *    list.clearSelected(item); //\u6e05\u9664\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001
          * </code></pre>
-         * @param {Object} [item] 清除选项的选中状态，如果未指定则清除选中的第一个选项的选中状态
+         * @param {Object} [item] \u6e05\u9664\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001\uff0c\u5982\u679c\u672a\u6307\u5b9a\u5219\u6e05\u9664\u9009\u4e2d\u7684\u7b2c\u4e00\u4e2a\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001
          */
         clearSelected : function(item){
             var _self = this;
@@ -6670,7 +6534,7 @@ define('bui/component/uibase/selection',function () {
             } 
         },
         /**
-         * 获取选项显示的文本
+         * \u83b7\u53d6\u9009\u9879\u663e\u793a\u7684\u6587\u672c
          * @protected
          */
         getSelectedText : function(){
@@ -6679,12 +6543,12 @@ define('bui/component/uibase/selection',function () {
             return _self.getItemText(item);
         },
         /**
-         * 设置选中的项
+         * \u8bbe\u7f6e\u9009\u4e2d\u7684\u9879
          * <pre><code>
-         *  var items = list.getItemsByStatus('active'); //获取某种状态的选项
+         *  var items = list.getItemsByStatus('active'); //\u83b7\u53d6\u67d0\u79cd\u72b6\u6001\u7684\u9009\u9879
          *  list.setSelection(items);
          * </code></pre>
-         * @param {Array} items 项的集合
+         * @param {Array} items \u9879\u7684\u96c6\u5408
          */
         setSelection: function(items){
             var _self = this;
@@ -6696,12 +6560,12 @@ define('bui/component/uibase/selection',function () {
             }); 
         },
         /**
-         * 设置选中的项
+         * \u8bbe\u7f6e\u9009\u4e2d\u7684\u9879
          * <pre><code>
          *   var item = list.getItem('id');
          *   list.setSelected(item);
          * </code></pre>
-         * @param {Object} item 记录或者子控件
+         * @param {Object} item \u8bb0\u5f55\u6216\u8005\u5b50\u63a7\u4ef6
          */
         setSelected: function(item){
             var _self = this,
@@ -6713,7 +6577,7 @@ define('bui/component/uibase/selection',function () {
             if(!multipleSelect){
                 var selectedItem = _self.getSelected();
                 if(item != selectedItem){
-                    //如果是单选，清除已经选中的项
+                    //\u5982\u679c\u662f\u5355\u9009\uff0c\u6e05\u9664\u5df2\u7ecf\u9009\u4e2d\u7684\u9879
                     _self.clearSelected(selectedItem);
                 }
                
@@ -6722,34 +6586,34 @@ define('bui/component/uibase/selection',function () {
             
         },
         /**
-         * 选项是否被选中
+         * \u9009\u9879\u662f\u5426\u88ab\u9009\u4e2d
          * @template
-         * @param  {*}  item 选项
-         * @return {Boolean}  是否选中
+         * @param  {*}  item \u9009\u9879
+         * @return {Boolean}  \u662f\u5426\u9009\u4e2d
          */
         isItemSelected : function(item){
 
         },
         /**
-         * 选项是否可以选中
+         * \u9009\u9879\u662f\u5426\u53ef\u4ee5\u9009\u4e2d
          * @protected
-         * @param {*} item 选项
-         * @return {Boolean} 选项是否可以选中
+         * @param {*} item \u9009\u9879
+         * @return {Boolean} \u9009\u9879\u662f\u5426\u53ef\u4ee5\u9009\u4e2d
          */
         isItemSelectable : function(item){
           return true;
         },
         /**
-         * 设置选项的选中状态
-         * @param {*} item 选项
-         * @param {Boolean} selected 选中或者取消选中
+         * \u8bbe\u7f6e\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001
+         * @param {*} item \u9009\u9879
+         * @param {Boolean} selected \u9009\u4e2d\u6216\u8005\u53d6\u6d88\u9009\u4e2d
          * @protected
          */
         setItemSelected : function(item,selected){
             var _self = this,
                 isSelected;
             
-            //当前状态等于要设置的状态时，不触发改变事件
+            //\u5f53\u524d\u72b6\u6001\u7b49\u4e8e\u8981\u8bbe\u7f6e\u7684\u72b6\u6001\u65f6\uff0c\u4e0d\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
             if(item){
                 isSelected =  _self.isItemSelected(item);
                 if(isSelected == selected){
@@ -6761,19 +6625,19 @@ define('bui/component/uibase/selection',function () {
             }
         },
         /**
-         * 设置选项的选中状态
+         * \u8bbe\u7f6e\u9009\u9879\u7684\u9009\u4e2d\u72b6\u6001
          * @template
-         * @param {*} item 选项
-         * @param {Boolean} selected 选中或者取消选中
+         * @param {*} item \u9009\u9879
+         * @param {Boolean} selected \u9009\u4e2d\u6216\u8005\u53d6\u6d88\u9009\u4e2d
          * @protected
          */
         setItemSelectedStatus : function(item,selected){
 
         },
         /**
-         * 设置所有选项选中
+         * \u8bbe\u7f6e\u6240\u6709\u9009\u9879\u9009\u4e2d
          * <pre><code>
-         *  list.setAllSelection(); //选中全部，多选状态下有效
+         *  list.setAllSelection(); //\u9009\u4e2d\u5168\u90e8\uff0c\u591a\u9009\u72b6\u6001\u4e0b\u6709\u6548
          * </code></pre>
          * @template
          */
@@ -6781,20 +6645,20 @@ define('bui/component/uibase/selection',function () {
           
         },
         /**
-         * 设置项选中，通过字段和值
-         * @param {String} field 字段名,默认为配置项'idField',所以此字段可以不填写，仅填写值
-         * @param {Object} value 值
+         * \u8bbe\u7f6e\u9879\u9009\u4e2d\uff0c\u901a\u8fc7\u5b57\u6bb5\u548c\u503c
+         * @param {String} field \u5b57\u6bb5\u540d,\u9ed8\u8ba4\u4e3a\u914d\u7f6e\u9879'idField',\u6240\u4ee5\u6b64\u5b57\u6bb5\u53ef\u4ee5\u4e0d\u586b\u5199\uff0c\u4ec5\u586b\u5199\u503c
+         * @param {Object} value \u503c
          * @example
          * <pre><code>
          * var list = new List.SimpleList({
          *   itemTpl : '&lt;li id="{id}"&gt;{text}&lt;/li&gt;',
-         *   idField : 'id', //id 字段作为key
+         *   idField : 'id', //id \u5b57\u6bb5\u4f5c\u4e3akey
          *   render : '#t1',
          *   items : [{id : '1',text : '1'},{id : '2',text : '2'}]
          * });
          *
-         *   list.setSelectedByField('123'); //默认按照id字段查找
-         *   //或者
+         *   list.setSelectedByField('123'); //\u9ed8\u8ba4\u6309\u7167id\u5b57\u6bb5\u67e5\u627e
+         *   //\u6216\u8005
          *   list.setSelectedByField('id','123');
          *
          *   list.setSelectedByField('value','123');
@@ -6810,11 +6674,11 @@ define('bui/component/uibase/selection',function () {
             _self.setSelected(item);
         },
         /**
-         * 设置多个选中，根据字段和值
+         * \u8bbe\u7f6e\u591a\u4e2a\u9009\u4e2d\uff0c\u6839\u636e\u5b57\u6bb5\u548c\u503c
          * <pre><code>
          * var list = new List.SimpleList({
          *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
-         *   idField : 'value', //value 字段作为key
+         *   idField : 'value', //value \u5b57\u6bb5\u4f5c\u4e3akey
          *   render : '#t1',
          *   multipleSelect : true,
          *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
@@ -6822,11 +6686,11 @@ define('bui/component/uibase/selection',function () {
          *   var values = ['1','2','3'];
          *   list.setSelectionByField(values);//
          *
-         *   //等于
+         *   //\u7b49\u4e8e
          *   list.setSelectionByField('value',values);
          * </code></pre>
-         * @param {String} field 默认为idField
-         * @param {Array} values 值得集合
+         * @param {String} field \u9ed8\u8ba4\u4e3aidField
+         * @param {Array} values \u503c\u5f97\u96c6\u5408
          */
         setSelectionByField:function(field,values){
             if(!values){
@@ -6839,10 +6703,10 @@ define('bui/component/uibase/selection',function () {
             });   
         },
         /**
-         * 选中完成后，触发事件
+         * \u9009\u4e2d\u5b8c\u6210\u540e\uff0c\u89e6\u53d1\u4e8b\u4ef6
          * @protected
-         * @param  {*} item 选项
-         * @param  {Boolean} selected 是否选中
+         * @param  {*} item \u9009\u9879
+         * @param  {Boolean} selected \u662f\u5426\u9009\u4e2d
          * @param  {jQuery} element 
          */
         afterSelected : function(item,selected,element){
@@ -6853,7 +6717,7 @@ define('bui/component/uibase/selection',function () {
                 _self.fire('selectedchange',{item:item,domTarget:element,selected:selected});
             }else{
                 _self.fire('itemunselected',{item:item,domTarget:element});
-                if(_self.get('multipleSelect')){ //只有当多选时，取消选中才触发selectedchange
+                if(_self.get('multipleSelect')){ //\u53ea\u6709\u5f53\u591a\u9009\u65f6\uff0c\u53d6\u6d88\u9009\u4e2d\u624d\u89e6\u53d1selectedchange
                     _self.fire('selectedchange',{item:item,domTarget:element,selected:selected});
                 } 
             } 
@@ -6862,17 +6726,13 @@ define('bui/component/uibase/selection',function () {
     }
     
     return selection;
-});/**
- * @fileOverview 所有子元素都是同一类的集合
- * @ignore
- */
-
+});
 define('bui/component/uibase/list',['bui/component/uibase/selection'],function (require) {
   
   var Selection = require('bui/component/uibase/selection');
 
   /**
-   * 列表一类的控件的扩展，list,menu,grid都是可以从此类扩展
+   * \u5217\u8868\u4e00\u7c7b\u7684\u63a7\u4ef6\u7684\u6269\u5c55\uff0clist,menu,grid\u90fd\u662f\u53ef\u4ee5\u4ece\u6b64\u7c7b\u6269\u5c55
    * @class BUI.Component.UIBase.List
    */
   var list = function(){
@@ -6882,7 +6742,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
   list.ATTRS = {
 
     /**
-     * 选择的数据集合
+     * \u9009\u62e9\u7684\u6570\u636e\u96c6\u5408
      * <pre><code>
      * var list = new List.SimpleList({
      *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;',
@@ -6895,10 +6755,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @cfg {Array} items
      */
     /**
-     * 选择的数据集合
+     * \u9009\u62e9\u7684\u6570\u636e\u96c6\u5408
      * <pre><code>
-     *  list.set('items',items); //列表会直接替换内容
-     *  //等同于 
+     *  list.set('items',items); //\u5217\u8868\u4f1a\u76f4\u63a5\u66ff\u6362\u5185\u5bb9
+     *  //\u7b49\u540c\u4e8e 
      *  list.clearItems();
      *  list.addItems(items);
      * </code></pre>
@@ -6908,14 +6768,14 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       view : true
     },
     /**
-     * 选项的默认key值
+     * \u9009\u9879\u7684\u9ed8\u8ba4key\u503c
      * @cfg {String} [idField = 'id']
      */
     idField : {
       value : 'id'
     },
     /**
-     * 列表项的默认模板,仅在初始化时传入。
+     * \u5217\u8868\u9879\u7684\u9ed8\u8ba4\u6a21\u677f,\u4ec5\u5728\u521d\u59cb\u5316\u65f6\u4f20\u5165\u3002
      * @type {String}
      * @ignore
      */
@@ -6923,7 +6783,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       view : true
     },
     /**
-     * 列表项的渲染函数，应对列表项之间有很多差异时
+     * \u5217\u8868\u9879\u7684\u6e32\u67d3\u51fd\u6570\uff0c\u5e94\u5bf9\u5217\u8868\u9879\u4e4b\u95f4\u6709\u5f88\u591a\u5dee\u5f02\u65f6
      * <pre><code>
      * var list = new List.SimpleList({
      *   itemTplRender : function(item){
@@ -6945,13 +6805,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       view : true
     },
     /**
-     * 子控件各个状态默认采用的样式
+     * \u5b50\u63a7\u4ef6\u5404\u4e2a\u72b6\u6001\u9ed8\u8ba4\u91c7\u7528\u7684\u6837\u5f0f
      * <pre><code>
      * var list = new List.SimpleList({
      *   render : '#t1',
      *   itemStatusCls : {
-     *     selected : 'active', //默认样式为list-item-selected,现在变成'active'
-     *     hover : 'hover' //默认样式为list-item-hover,现在变成'hover'
+     *     selected : 'active', //\u9ed8\u8ba4\u6837\u5f0f\u4e3alist-item-selected,\u73b0\u5728\u53d8\u6210'active'
+     *     hover : 'hover' //\u9ed8\u8ba4\u6837\u5f0f\u4e3alist-item-hover,\u73b0\u5728\u53d8\u6210'hover'
      *   },
      *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
      * });
@@ -6968,13 +6828,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 
       value : {
         /**
-         * 选项点击事件
+         * \u9009\u9879\u70b9\u51fb\u4e8b\u4ef6
          * @event
-         * @param {Object} e 事件对象
-         * @param {BUI.Component.UIBase.ListItem} e.item 点击的选项
-         * @param {HTMLElement} e.element 选项代表的DOM对象
-         * @param {HTMLElement} e.domTarget 点击的DOM对象
-         * @param {HTMLElement} e.domEvent 点击的原生事件对象
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {BUI.Component.UIBase.ListItem} e.item \u70b9\u51fb\u7684\u9009\u9879
+         * @param {HTMLElement} e.element \u9009\u9879\u4ee3\u8868\u7684DOM\u5bf9\u8c61
+         * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684DOM\u5bf9\u8c61
+         * @param {HTMLElement} e.domEvent \u70b9\u51fb\u7684\u539f\u751f\u4e8b\u4ef6\u5bf9\u8c61
          */
         'itemclick' : true
       }  
@@ -6984,111 +6844,111 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
   list.prototype = {
 
     /**
-     * 获取选项的数量
+     * \u83b7\u53d6\u9009\u9879\u7684\u6570\u91cf
      * <pre><code>
      *   var count = list.getItemCount();
      * </code></pre>
-     * @return {Number} 选项数量
+     * @return {Number} \u9009\u9879\u6570\u91cf
      */
     getItemCount : function () {
         return this.getItems().length;
     },
     /**
-     * 获取字段的值
-     * @param {*} item 字段名
-     * @param {String} field 字段名
-     * @return {*} 字段的值
+     * \u83b7\u53d6\u5b57\u6bb5\u7684\u503c
+     * @param {*} item \u5b57\u6bb5\u540d
+     * @param {String} field \u5b57\u6bb5\u540d
+     * @return {*} \u5b57\u6bb5\u7684\u503c
      * @protected
      */
     getValueByField : function(item,field){
 
     },
     /**
-     * 获取所有选项值，如果选项是子控件，则是所有子控件
+     * \u83b7\u53d6\u6240\u6709\u9009\u9879\u503c\uff0c\u5982\u679c\u9009\u9879\u662f\u5b50\u63a7\u4ef6\uff0c\u5219\u662f\u6240\u6709\u5b50\u63a7\u4ef6
      * <pre><code>
      *   var items = list.getItems();
-     *   //等同
+     *   //\u7b49\u540c
      *   list.get(items);
      * </code></pre>
-     * @return {Array} 选项值集合
+     * @return {Array} \u9009\u9879\u503c\u96c6\u5408
      */
     getItems : function () {
       
     },
     /**
-     * 获取第一项
+     * \u83b7\u53d6\u7b2c\u4e00\u9879
      * <pre><code>
      *   var item = list.getFirstItem();
-     *   //等同
+     *   //\u7b49\u540c
      *   list.getItemAt(0);
      * </code></pre>
-     * @return {Object|BUI.Component.Controller} 选项值（子控件）
+     * @return {Object|BUI.Component.Controller} \u9009\u9879\u503c\uff08\u5b50\u63a7\u4ef6\uff09
      */
     getFirstItem : function () {
       return this.getItemAt(0);
     },
     /**
-     * 获取最后一项
+     * \u83b7\u53d6\u6700\u540e\u4e00\u9879
      * <pre><code>
      *   var item = list.getLastItem();
-     *   //等同
+     *   //\u7b49\u540c
      *   list.getItemAt(list.getItemCount()-1);
      * </code></pre>
-     * @return {Object|BUI.Component.Controller} 选项值（子控件）
+     * @return {Object|BUI.Component.Controller} \u9009\u9879\u503c\uff08\u5b50\u63a7\u4ef6\uff09
      */
     getLastItem : function () {
       return this.getItemAt(this.getItemCount() - 1);
     },
     /**
-     * 通过索引获取选项值（子控件）
+     * \u901a\u8fc7\u7d22\u5f15\u83b7\u53d6\u9009\u9879\u503c\uff08\u5b50\u63a7\u4ef6\uff09
      * <pre><code>
-     *   var item = list.getItemAt(0); //获取第1个
-     *   var item = list.getItemAt(2); //获取第3个
+     *   var item = list.getItemAt(0); //\u83b7\u53d6\u7b2c1\u4e2a
+     *   var item = list.getItemAt(2); //\u83b7\u53d6\u7b2c3\u4e2a
      * </code></pre>
-     * @param  {Number} index 索引值
-     * @return {Object|BUI.Component.Controller}  选项（子控件）
+     * @param  {Number} index \u7d22\u5f15\u503c
+     * @return {Object|BUI.Component.Controller}  \u9009\u9879\uff08\u5b50\u63a7\u4ef6\uff09
      */
     getItemAt : function  (index) {
       return this.getItems()[index] || null;
     },
     /**
-     * 通过Id获取选项，如果是改变了idField则通过改变的idField来查找选项
+     * \u901a\u8fc7Id\u83b7\u53d6\u9009\u9879\uff0c\u5982\u679c\u662f\u6539\u53d8\u4e86idField\u5219\u901a\u8fc7\u6539\u53d8\u7684idField\u6765\u67e5\u627e\u9009\u9879
      * <pre><code>
-     *   //如果idField = 'id'
+     *   //\u5982\u679cidField = 'id'
      *   var item = list.getItem('2'); 
-     *   //等同于
+     *   //\u7b49\u540c\u4e8e
      *   list.findItemByField('id','2');
      *
-     *   //如果idField = 'value'
+     *   //\u5982\u679cidField = 'value'
      *   var item = list.getItem('2'); 
-     *   //等同于
+     *   //\u7b49\u540c\u4e8e
      *   list.findItemByField('value','2');
      * </code></pre>
-     * @param {String} id 编号
-     * @return {Object|BUI.Component.Controller} 选项（子控件）
+     * @param {String} id \u7f16\u53f7
+     * @return {Object|BUI.Component.Controller} \u9009\u9879\uff08\u5b50\u63a7\u4ef6\uff09
      */
     getItem : function(id){
       var field = this.get('idField');
       return this.findItemByField(field,id);
     },
     /**
-     * 返回指定项的索引
+     * \u8fd4\u56de\u6307\u5b9a\u9879\u7684\u7d22\u5f15
      * <pre><code>
-     * var index = list.indexOf(item); //返回索引，不存在则返回-1
+     * var index = list.indexOf(item); //\u8fd4\u56de\u7d22\u5f15\uff0c\u4e0d\u5b58\u5728\u5219\u8fd4\u56de-1
      * </code></pre>
-     * @param  {Object|BUI.Component.Controller} 选项
-     * @return {Number}   项的索引值
+     * @param  {Object|BUI.Component.Controller} \u9009\u9879
+     * @return {Number}   \u9879\u7684\u7d22\u5f15\u503c
      */
     indexOfItem : function(item){
       return BUI.Array.indexOf(item,this.getItems());
     },
     /**
-     * 添加多条选项
+     * \u6dfb\u52a0\u591a\u6761\u9009\u9879
      * <pre><code>
      * var items = [{id : '1',text : '1'},{id : '2',text : '2'}];
      * list.addItems(items);
      * </code></pre>
-     * @param {Array} items 记录集合（子控件配置项）
+     * @param {Array} items \u8bb0\u5f55\u96c6\u5408\uff08\u5b50\u63a7\u4ef6\u914d\u7f6e\u9879\uff09
      */
     addItems : function (items) {
       var _self = this;
@@ -7097,14 +6957,14 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       });
     },
     /**
-     * 插入多条记录
+     * \u63d2\u5165\u591a\u6761\u8bb0\u5f55
      * <pre><code>
      * var items = [{id : '1',text : '1'},{id : '2',text : '2'}];
-     * list.addItemsAt(items,0); // 在最前面插入
-     * list.addItemsAt(items,2); //第三个位置插入
+     * list.addItemsAt(items,0); // \u5728\u6700\u524d\u9762\u63d2\u5165
+     * list.addItemsAt(items,2); //\u7b2c\u4e09\u4e2a\u4f4d\u7f6e\u63d2\u5165
      * </code></pre>
-     * @param  {Array} items 多条记录
-     * @param  {Number} start 起始位置
+     * @param  {Array} items \u591a\u6761\u8bb0\u5f55
+     * @param  {Number} start \u8d77\u59cb\u4f4d\u7f6e
      */
     addItemsAt : function(items,start){
       var _self = this;
@@ -7113,47 +6973,47 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       });
     },
     /**
-     * 更新列表项，修改选项值后，DOM跟随变化
+     * \u66f4\u65b0\u5217\u8868\u9879\uff0c\u4fee\u6539\u9009\u9879\u503c\u540e\uff0cDOM\u8ddf\u968f\u53d8\u5316
      * <pre><code>
      *   var item = list.getItem('2');
-     *   list.text = '新内容'; //此时对应的DOM不会变化
-     *   list.updateItem(item); //DOM进行相应的变化
+     *   list.text = '\u65b0\u5185\u5bb9'; //\u6b64\u65f6\u5bf9\u5e94\u7684DOM\u4e0d\u4f1a\u53d8\u5316
+     *   list.updateItem(item); //DOM\u8fdb\u884c\u76f8\u5e94\u7684\u53d8\u5316
      * </code></pre>
-     * @param  {Object} item 选项值
+     * @param  {Object} item \u9009\u9879\u503c
      */
     updateItem : function(item){
 
     },
     /**
-     * 添加选项,添加在控件最后
+     * \u6dfb\u52a0\u9009\u9879,\u6dfb\u52a0\u5728\u63a7\u4ef6\u6700\u540e
      * 
      * <pre><code>
      * list.addItem({id : '3',text : '3',type : '0'});
      * </code></pre>
      * 
-     * @param {Object|BUI.Component.Controller} item 选项，子控件配置项、子控件
-     * @return {Object|BUI.Component.Controller} 子控件或者选项记录
+     * @param {Object|BUI.Component.Controller} item \u9009\u9879\uff0c\u5b50\u63a7\u4ef6\u914d\u7f6e\u9879\u3001\u5b50\u63a7\u4ef6
+     * @return {Object|BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005\u9009\u9879\u8bb0\u5f55
      */
     addItem : function (item) {
        return this.addItemAt(item,this.getItemCount());
     },
     /**
-     * 在指定位置添加选项
+     * \u5728\u6307\u5b9a\u4f4d\u7f6e\u6dfb\u52a0\u9009\u9879
      * <pre><code>
-     * list.addItemAt({id : '3',text : '3',type : '0'},0); //第一个位置
+     * list.addItemAt({id : '3',text : '3',type : '0'},0); //\u7b2c\u4e00\u4e2a\u4f4d\u7f6e
      * </code></pre>
-     * @param {Object|BUI.Component.Controller} item 选项，子控件配置项、子控件
-     * @param {Number} index 索引
-     * @return {Object|BUI.Component.Controller} 子控件或者选项记录
+     * @param {Object|BUI.Component.Controller} item \u9009\u9879\uff0c\u5b50\u63a7\u4ef6\u914d\u7f6e\u9879\u3001\u5b50\u63a7\u4ef6
+     * @param {Number} index \u7d22\u5f15
+     * @return {Object|BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005\u9009\u9879\u8bb0\u5f55
      */
     addItemAt : function(item,index) {
 
     },
     /**
-      * 根据字段查找指定的项
-      * @param {String} field 字段名
-      * @param {Object} value 字段值
-      * @return {Object} 查询出来的项（传入的记录或者子控件）
+      * \u6839\u636e\u5b57\u6bb5\u67e5\u627e\u6307\u5b9a\u7684\u9879
+      * @param {String} field \u5b57\u6bb5\u540d
+      * @param {Object} value \u5b57\u6bb5\u503c
+      * @return {Object} \u67e5\u8be2\u51fa\u6765\u7684\u9879\uff08\u4f20\u5165\u7684\u8bb0\u5f55\u6216\u8005\u5b50\u63a7\u4ef6\uff09
       * @protected
     */
     findItemByField:function(field,value){
@@ -7161,18 +7021,18 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     /**
      * 
-     * 获取此项显示的文本  
-     * @param {Object} item 获取记录显示的文本
+     * \u83b7\u53d6\u6b64\u9879\u663e\u793a\u7684\u6587\u672c  
+     * @param {Object} item \u83b7\u53d6\u8bb0\u5f55\u663e\u793a\u7684\u6587\u672c
      * @protected            
      */
     getItemText:function(item){
 
     },
     /**
-     * 清除所有选项,不等同于删除全部，此时不会触发删除事件
+     * \u6e05\u9664\u6240\u6709\u9009\u9879,\u4e0d\u7b49\u540c\u4e8e\u5220\u9664\u5168\u90e8\uff0c\u6b64\u65f6\u4e0d\u4f1a\u89e6\u53d1\u5220\u9664\u4e8b\u4ef6
      * <pre><code>
      * list.clearItems(); 
-     * //等同于
+     * //\u7b49\u540c\u4e8e
      * list.set('items',items);
      * </code></pre>
      */
@@ -7183,23 +7043,23 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.clearControl();
     },
     /**
-     * 删除选项
+     * \u5220\u9664\u9009\u9879
      * <pre><code>
      * var item = list.getItem('1');
      * list.removeItem(item);
      * </code></pre>
-     * @param {Object|BUI.Component.Controller} item 选项（子控件）
+     * @param {Object|BUI.Component.Controller} item \u9009\u9879\uff08\u5b50\u63a7\u4ef6\uff09
      */
     removeItem : function (item) {
 
     },
     /**
-     * 移除选项集合
+     * \u79fb\u9664\u9009\u9879\u96c6\u5408
      * <pre><code>
      * var items = list.getSelection();
      * list.removeItems(items);
      * </code></pre>
-     * @param  {Array} items 选项集合
+     * @param  {Array} items \u9009\u9879\u96c6\u5408
      */
     removeItems : function(items){
       var _self = this;
@@ -7209,11 +7069,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       });
     },
     /**
-     * 通过索引删除选项
+     * \u901a\u8fc7\u7d22\u5f15\u5220\u9664\u9009\u9879
      * <pre><code>
-     * list.removeItemAt(0); //删除第一个
+     * list.removeItemAt(0); //\u5220\u9664\u7b2c\u4e00\u4e2a
      * </code></pre>
-     * @param  {Number} index 索引
+     * @param  {Number} index \u7d22\u5f15
      */
     removeItemAt : function (index) {
       this.removeItem(this.getItemAt(index));
@@ -7221,7 +7081,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * @protected
      * @template
-     * 清除所有的子控件或者列表项的DOM
+     * \u6e05\u9664\u6240\u6709\u7684\u5b50\u63a7\u4ef6\u6216\u8005\u5217\u8868\u9879\u7684DOM
      */
     clearControl : function(){
 
@@ -7248,17 +7108,17 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       defaultStatusCls = self.get('itemStatusCls'),
       defaultTplRender = self.get('itemTplRender');
 
-    //配置默认模板
+    //\u914d\u7f6e\u9ed8\u8ba4\u6a21\u677f
     if(defaultTpl && !c.tpl){
       setItemAttr(item,'tpl',defaultTpl);
       //  c.tpl = defaultTpl;
     }
-    //配置默认渲染函数
+    //\u914d\u7f6e\u9ed8\u8ba4\u6e32\u67d3\u51fd\u6570
     if(defaultTplRender && !c.tplRender){
       setItemAttr(item,'tplRender',defaultTplRender);
       //c.tplRender = defaultTplRender;
     }
-    //配置默认状态样式
+    //\u914d\u7f6e\u9ed8\u8ba4\u72b6\u6001\u6837\u5f0f
     if(defaultStatusCls){
       var statusCls = c.statusCls || item.isController ? item.get('statusCls') : {};
       BUI.each(defaultStatusCls,function(v,k){
@@ -7281,7 +7141,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
   
   /**
   * @class BUI.Component.UIBase.ChildList
-  * 选中其中的DOM结构
+  * \u9009\u4e2d\u5176\u4e2d\u7684DOM\u7ed3\u6784
   * @extends BUI.Component.UIBase.List
   * @mixins BUI.Component.UIBase.Selection
   */
@@ -7294,7 +7154,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       sync : false
     },
     /**
-     * 配置的items 项是在初始化时作为children
+     * \u914d\u7f6e\u7684items \u9879\u662f\u5728\u521d\u59cb\u5316\u65f6\u4f5c\u4e3achildren
      * @protected
      * @type {Boolean}
      */
@@ -7302,14 +7162,14 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       value : true
     },
     /**
-     * 使用srcNode时，是否将内部的DOM转换成子控件
+     * \u4f7f\u7528srcNode\u65f6\uff0c\u662f\u5426\u5c06\u5185\u90e8\u7684DOM\u8f6c\u6362\u6210\u5b50\u63a7\u4ef6
      * @type {Boolean}
      */
     isDecorateChild : {
       value : true
     },
     /**
-     * 默认的加载控件内容的配置,默认值：
+     * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
      * <pre>
      *  {
      *   property : 'children',
@@ -7327,7 +7187,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
   });
 
   BUI.augment(childList,list,Selection,{
-    //初始化，将items转换成children
+    //\u521d\u59cb\u5316\uff0c\u5c06items\u8f6c\u6362\u6210children
     __init : function(){
       var _self = this,
         items = _self.get('items');
@@ -7340,11 +7200,11 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     },
     _uiSetItems : function (items) {
       var _self = this;
-      //清理子控件
+      //\u6e05\u7406\u5b50\u63a7\u4ef6
       _self.clearControl();
       _self.addItems(items);
     },
-    //渲染子控件
+    //\u6e32\u67d3\u5b50\u63a7\u4ef6
     _beforeRenderUI : function(){
       var _self = this,
         children = _self.get('children'),
@@ -7353,7 +7213,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
         beforeAddItem(_self,item);
       });
     },
-    //绑定事件
+    //\u7ed1\u5b9a\u4e8b\u4ef6
     __bindUI : function(){
       var _self = this,
         selectedEvent = _self.get('selectedEvent');
@@ -7380,7 +7240,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.on('beforeRemoveChild',function(ev){
         var item = ev.child,
           selected = item.get('selected');
-        //清理选中状态
+        //\u6e05\u7406\u9009\u4e2d\u72b6\u6001
         if(selected){
           if(_self.get('multipleSelect')){
             _self.clearSelected(item);
@@ -7394,22 +7254,22 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
     /**
      * @protected
      * @override
-     * 清除者列表项的DOM
+     * \u6e05\u9664\u8005\u5217\u8868\u9879\u7684DOM
      */
     clearControl : function(){
       this.removeChildren(true);
     },
     /**
-     * 获取所有子控件
-     * @return {Array} 子控件集合
+     * \u83b7\u53d6\u6240\u6709\u5b50\u63a7\u4ef6
+     * @return {Array} \u5b50\u63a7\u4ef6\u96c6\u5408
      * @override
      */
     getItems : function () {
       return this.get('children');
     },
     /**
-     * 更新列表项
-     * @param  {Object} item 选项值
+     * \u66f4\u65b0\u5217\u8868\u9879
+     * @param  {Object} item \u9009\u9879\u503c
      */
     updateItem : function(item){
       var _self = this,
@@ -7421,8 +7281,8 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       return element;
     },
     /**
-     * 删除项,子控件作为选项
-     * @param  {Object} element 子控件
+     * \u5220\u9664\u9879,\u5b50\u63a7\u4ef6\u4f5c\u4e3a\u9009\u9879
+     * @param  {Object} element \u5b50\u63a7\u4ef6
      */
     removeItem : function (item) {
       var _self = this,
@@ -7433,10 +7293,10 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       this.removeChild(item,true);
     },
     /**
-     * 在指定位置添加选项,此处选项指子控件
-     * @param {Object|BUI.Component.Controller} item 子控件配置项、子控件
-     * @param {Number} index 索引
-     * @return {Object|BUI.Component.Controller} 子控件
+     * \u5728\u6307\u5b9a\u4f4d\u7f6e\u6dfb\u52a0\u9009\u9879,\u6b64\u5904\u9009\u9879\u6307\u5b50\u63a7\u4ef6
+     * @param {Object|BUI.Component.Controller} item \u5b50\u63a7\u4ef6\u914d\u7f6e\u9879\u3001\u5b50\u63a7\u4ef6
+     * @param {Number} index \u7d22\u5f15
+     * @return {Object|BUI.Component.Controller} \u5b50\u63a7\u4ef6
      */
     addItemAt : function(item,index) {
       return this.addChild(item,index);
@@ -7481,16 +7341,16 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.afterSelected(item,selected,element);
     },
     /**
-     * 选项是否被选中
+     * \u9009\u9879\u662f\u5426\u88ab\u9009\u4e2d
      * @override
-     * @param  {*}  item 选项
-     * @return {Boolean}  是否选中
+     * @param  {*}  item \u9009\u9879
+     * @return {Boolean}  \u662f\u5426\u9009\u4e2d
      */
     isItemSelected : function(item){
         return item ? item.get('selected') : false;
     },
     /**
-     * 设置所有选项选中
+     * \u8bbe\u7f6e\u6240\u6709\u9009\u9879\u9009\u4e2d
      * @override
      */
     setAllSelection : function(){
@@ -7499,7 +7359,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
       _self.setSelection(items);
     },
     /**
-     * 获取选中的项的值
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u9879\u7684\u503c
      * @return {Array} 
      * @override
      * @ignore
@@ -7526,17 +7386,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
 /**
  * @ignore
  * 2013-1-22 
- *   更改显示数据的方式，使用 _uiSetItems
- *//**
- * @fileOverview 子控件的默认配置项
- * @ignore
+ *   \u66f4\u6539\u663e\u793a\u6570\u636e\u7684\u65b9\u5f0f\uff0c\u4f7f\u7528 _uiSetItems
  */
-
 define('bui/component/uibase/childcfg',function (require) {
 
   /**
    * @class BUI.Component.UIBase.ChildCfg
-   * 子控件默认配置项的扩展类
+   * \u5b50\u63a7\u4ef6\u9ed8\u8ba4\u914d\u7f6e\u9879\u7684\u6269\u5c55\u7c7b
    */
   var childCfg = function(config){
     this._init();
@@ -7544,10 +7400,10 @@ define('bui/component/uibase/childcfg',function (require) {
 
   childCfg.ATTRS = {
     /**
-     * 默认的子控件配置项,在初始化控件时配置
+     * \u9ed8\u8ba4\u7684\u5b50\u63a7\u4ef6\u914d\u7f6e\u9879,\u5728\u521d\u59cb\u5316\u63a7\u4ef6\u65f6\u914d\u7f6e
      * 
-     *  - 如果控件已经渲染过，此配置项无效，
-     *  - 控件生成后，修改此配置项无效。
+     *  - \u5982\u679c\u63a7\u4ef6\u5df2\u7ecf\u6e32\u67d3\u8fc7\uff0c\u6b64\u914d\u7f6e\u9879\u65e0\u6548\uff0c
+     *  - \u63a7\u4ef6\u751f\u6210\u540e\uff0c\u4fee\u6539\u6b64\u914d\u7f6e\u9879\u65e0\u6548\u3002
      * <pre><code>
      *   var control = new Control({
      *     defaultChildCfg : {
@@ -7589,17 +7445,13 @@ define('bui/component/uibase/childcfg',function (require) {
 
   return childCfg;
 
-});/**
- * @fileOverview 依赖扩展，用于观察者模式中的观察者
- * @ignore
- */
-
+});
 define('bui/component/uibase/depends',['bui/component/manage'],function (require) {
   
   var regexp = /^#(.*):(.*)$/,
     Manager = require('bui/component/manage');
 
-  //获取依赖信息
+  //\u83b7\u53d6\u4f9d\u8d56\u4fe1\u606f
   function getDepend(name){
 
     var arr = regexp.exec(name),
@@ -7612,7 +7464,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     };
   }
 
-  //绑定依赖
+  //\u7ed1\u5b9a\u4f9d\u8d56
   function bindDepend(self,name,action){
     var depend = getDepend(name),
       source = depend.source,
@@ -7620,9 +7472,9 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
       callbak;
     if(source && action && eventType){
 
-      if(BUI.isFunction(action)){//如果action是一个函数
+      if(BUI.isFunction(action)){//\u5982\u679caction\u662f\u4e00\u4e2a\u51fd\u6570
         callbak = action;
-      }else if(BUI.isArray(action)){//如果是一个数组，构建一个回调函数
+      }else if(BUI.isArray(action)){//\u5982\u679c\u662f\u4e00\u4e2a\u6570\u7ec4\uff0c\u6784\u5efa\u4e00\u4e2a\u56de\u8c03\u51fd\u6570
         callbak = function(){
           BUI.each(action,function(methodName){
             if(self[methodName]){
@@ -7639,7 +7491,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     }
     return null;
   }
-  //去除依赖
+  //\u53bb\u9664\u4f9d\u8d56
   function offDepend(depend){
     var source = depend.source,
       eventType = depend.eventType,
@@ -7647,7 +7499,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     source.off(eventType,callbak);
   }
 
-  //获取绑定的事件源
+  //\u83b7\u53d6\u7ed1\u5b9a\u7684\u4e8b\u4ef6\u6e90
   function getSource(id){
     var control = Manager.getComponent(id);
     if(!control){
@@ -7661,12 +7513,12 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
 
   /**
    * @class BUI.Component.UIBase.Depends
-   * 依赖事件源的扩展
+   * \u4f9d\u8d56\u4e8b\u4ef6\u6e90\u7684\u6269\u5c55
    * <pre><code>
    *       var control = new Control({
    *         depends : {
-   *           '#btn:click':['toggle'],//当点击id为'btn'的按钮时，执行 control 的toggle方法
-   *           '#checkbox1:checked':['show'],//当勾选checkbox时，显示控件
+   *           '#btn:click':['toggle'],//\u5f53\u70b9\u51fbid\u4e3a'btn'\u7684\u6309\u94ae\u65f6\uff0c\u6267\u884c control \u7684toggle\u65b9\u6cd5
+   *           '#checkbox1:checked':['show'],//\u5f53\u52fe\u9009checkbox\u65f6\uff0c\u663e\u793a\u63a7\u4ef6
    *           '#menu:click',function(){}
    *         }
    *       });
@@ -7678,23 +7530,23 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
 
   Depends.ATTRS = {
     /**
-     * 控件的依赖事件，是一个数组集合，每一条记录是一个依赖关系<br/>
-     * 一个依赖是注册一个事件，所以需要在一个依赖中提供：
+     * \u63a7\u4ef6\u7684\u4f9d\u8d56\u4e8b\u4ef6\uff0c\u662f\u4e00\u4e2a\u6570\u7ec4\u96c6\u5408\uff0c\u6bcf\u4e00\u6761\u8bb0\u5f55\u662f\u4e00\u4e2a\u4f9d\u8d56\u5173\u7cfb<br/>
+     * \u4e00\u4e2a\u4f9d\u8d56\u662f\u6ce8\u518c\u4e00\u4e2a\u4e8b\u4ef6\uff0c\u6240\u4ee5\u9700\u8981\u5728\u4e00\u4e2a\u4f9d\u8d56\u4e2d\u63d0\u4f9b\uff1a
      * <ol>
-     * <li>绑定源：为了方便配置，我们使用 #id来指定绑定源，可以使控件的ID（只支持继承{BUI.Component.Controller}的控件），也可以是DOM的id</li>
-     * <li>事件名：事件名是一个使用":"为前缀的字符串，例如 "#id:change",即监听change事件</li>
-     * <li>触发的方法：可以是一个数组，如["disable","clear"],数组里面是控件的方法名，也可以是一个回调函数</li>
+     * <li>\u7ed1\u5b9a\u6e90\uff1a\u4e3a\u4e86\u65b9\u4fbf\u914d\u7f6e\uff0c\u6211\u4eec\u4f7f\u7528 #id\u6765\u6307\u5b9a\u7ed1\u5b9a\u6e90\uff0c\u53ef\u4ee5\u4f7f\u63a7\u4ef6\u7684ID\uff08\u53ea\u652f\u6301\u7ee7\u627f{BUI.Component.Controller}\u7684\u63a7\u4ef6\uff09\uff0c\u4e5f\u53ef\u4ee5\u662fDOM\u7684id</li>
+     * <li>\u4e8b\u4ef6\u540d\uff1a\u4e8b\u4ef6\u540d\u662f\u4e00\u4e2a\u4f7f\u7528":"\u4e3a\u524d\u7f00\u7684\u5b57\u7b26\u4e32\uff0c\u4f8b\u5982 "#id:change",\u5373\u76d1\u542cchange\u4e8b\u4ef6</li>
+     * <li>\u89e6\u53d1\u7684\u65b9\u6cd5\uff1a\u53ef\u4ee5\u662f\u4e00\u4e2a\u6570\u7ec4\uff0c\u5982["disable","clear"],\u6570\u7ec4\u91cc\u9762\u662f\u63a7\u4ef6\u7684\u65b9\u6cd5\u540d\uff0c\u4e5f\u53ef\u4ee5\u662f\u4e00\u4e2a\u56de\u8c03\u51fd\u6570</li>
      * </ol>
      * <pre><code>
      *       var control = new Control({
      *         depends : {
-     *           '#btn:click':['toggle'],//当点击id为'btn'的按钮时，执行 control 的toggle方法
-     *           '#checkbox1:checked':['show'],//当勾选checkbox时，显示控件
+     *           '#btn:click':['toggle'],//\u5f53\u70b9\u51fbid\u4e3a'btn'\u7684\u6309\u94ae\u65f6\uff0c\u6267\u884c control \u7684toggle\u65b9\u6cd5
+     *           '#checkbox1:checked':['show'],//\u5f53\u52fe\u9009checkbox\u65f6\uff0c\u663e\u793a\u63a7\u4ef6
      *           '#menu:click',function(){}
      *         }
      *       });
      * </code></pre>
-     * ** 注意：** 这些依赖项是在控件渲染（render）后进行的。         
+     * ** \u6ce8\u610f\uff1a** \u8fd9\u4e9b\u4f9d\u8d56\u9879\u662f\u5728\u63a7\u4ef6\u6e32\u67d3\uff08render\uff09\u540e\u8fdb\u884c\u7684\u3002         
      * @type {Object}
      */
     depends : {
@@ -7702,7 +7554,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
     },
     /**
      * @private
-     * 依赖的映射集合
+     * \u4f9d\u8d56\u7684\u6620\u5c04\u96c6\u5408
      * @type {Object}
      */
     dependencesMap : {
@@ -7716,7 +7568,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
       this.initDependences();
     },
     /**
-     * 初始化依赖项
+     * \u521d\u59cb\u5316\u4f9d\u8d56\u9879
      * @protected
      */
     initDependences : function(){
@@ -7727,16 +7579,16 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
       });
     },
     /**
-     * 添加依赖，如果已经有同名的事件，则移除，再添加
+     * \u6dfb\u52a0\u4f9d\u8d56\uff0c\u5982\u679c\u5df2\u7ecf\u6709\u540c\u540d\u7684\u4e8b\u4ef6\uff0c\u5219\u79fb\u9664\uff0c\u518d\u6dfb\u52a0
      * <pre><code>
-     *  form.addDependence('#btn:click',['toggle']); //当按钮#btn点击时，表单交替显示隐藏
+     *  form.addDependence('#btn:click',['toggle']); //\u5f53\u6309\u94ae#btn\u70b9\u51fb\u65f6\uff0c\u8868\u5355\u4ea4\u66ff\u663e\u793a\u9690\u85cf
      *
-     *  form.addDependence('#btn:click',function(){//当按钮#btn点击时，表单交替显示隐藏
+     *  form.addDependence('#btn:click',function(){//\u5f53\u6309\u94ae#btn\u70b9\u51fb\u65f6\uff0c\u8868\u5355\u4ea4\u66ff\u663e\u793a\u9690\u85cf
      *   //TO DO
      *  }); 
      * </code></pre>
-     * @param {String} name 依赖项的名称
-     * @param {Array|Function} action 依赖项的事件
+     * @param {String} name \u4f9d\u8d56\u9879\u7684\u540d\u79f0
+     * @param {Array|Function} action \u4f9d\u8d56\u9879\u7684\u4e8b\u4ef6
      */
     addDependence : function(name,action){
       var _self = this,
@@ -7749,11 +7601,11 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
       }
     },
     /**
-     * 移除依赖
+     * \u79fb\u9664\u4f9d\u8d56
      * <pre><code>
-     *  form.removeDependence('#btn:click'); //当按钮#btn点击时，表单不在监听
+     *  form.removeDependence('#btn:click'); //\u5f53\u6309\u94ae#btn\u70b9\u51fb\u65f6\uff0c\u8868\u5355\u4e0d\u5728\u76d1\u542c
      * </code></pre>
-     * @param  {String} name 依赖名称
+     * @param  {String} name \u4f9d\u8d56\u540d\u79f0
      */
     removeDependence : function(name){
       var _self = this,
@@ -7765,7 +7617,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
       }
     },
     /**
-     * 清除所有的依赖
+     * \u6e05\u9664\u6240\u6709\u7684\u4f9d\u8d56
      * <pre><code>
      *  form.clearDependences();
      * </code></pre>
@@ -7785,11 +7637,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
   };
   
   return Depends;
-});/**
- * @fileOverview bindable extension class.
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/uibase/bindable',function(){
 	
 	/**
@@ -7809,7 +7657,7 @@ define('bui/component/uibase/bindable',function(){
 		*     store.load();
 		*   });
 		* </code></pre>
-		* 使控件绑定store，处理store的事件 {@link BUI.Data.Store}
+		* \u4f7f\u63a7\u4ef6\u7ed1\u5b9astore\uff0c\u5904\u7406store\u7684\u4e8b\u4ef6 {@link BUI.Data.Store}
 		* @class BUI.Component.UIBase.Bindable
 		*/
 	function bindable(){
@@ -7819,7 +7667,7 @@ define('bui/component/uibase/bindable',function(){
 	bindable.ATTRS = 
 	{
 		/**
-		* 绑定 {@link BUI.Data.Store}的事件
+		* \u7ed1\u5b9a {@link BUI.Data.Store}\u7684\u4e8b\u4ef6
 		* <pre><code>
 		*  var store = new Data.Store({
 		*   url : 'data/xx.json',
@@ -7836,7 +7684,7 @@ define('bui/component/uibase/bindable',function(){
 		* @cfg {BUI.Data.Store} store
 		*/
 		/**
-		* 绑定 {@link BUI.Data.Store}的事件
+		* \u7ed1\u5b9a {@link BUI.Data.Store}\u7684\u4e8b\u4ef6
 		* <pre><code>
 		*  var store = list.get('store');
 		* </code></pre>
@@ -7846,7 +7694,7 @@ define('bui/component/uibase/bindable',function(){
 			
 		},
 		/**
-		* 加载数据时，是否显示等待加载的屏蔽层
+		* \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u662f\u5426\u663e\u793a\u7b49\u5f85\u52a0\u8f7d\u7684\u5c4f\u853d\u5c42
 		* <pre><code>
 		*   BUI.use(['bui/list','bui/data','bui/mask'],function(List,Data,Mask){
 		*     var store = new Data.Store({
@@ -7865,7 +7713,7 @@ define('bui/component/uibase/bindable',function(){
 		* @cfg {Boolean|Object} loadMask
 		*/
 		/**
-		* 加载数据时，是否显示等待加载的屏蔽层
+		* \u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u662f\u5426\u663e\u793a\u7b49\u5f85\u52a0\u8f7d\u7684\u5c4f\u853d\u5c42
 		* @type {Boolean|Object} 
 		* @ignore
 		*/
@@ -8003,12 +7851,7 @@ define('bui/component/uibase/bindable',function(){
 	});
 
 	return bindable;
-});/**
- * @fileOverview  控件的视图层
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/component/view',['bui/component/manage','bui/component/uibase'],function(require){
 
   var win = window,
@@ -8017,7 +7860,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
     doc = document;
     
     /**
-     * 控件的视图层基类
+     * \u63a7\u4ef6\u7684\u89c6\u56fe\u5c42\u57fa\u7c7b
      * @class BUI.Component.View
      * @protected
      * @extends BUI.Component.UIBase
@@ -8062,9 +7905,9 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             return this.get('contentEl') || this.get('el');
         },
         /**
-         * 获取状态对应的css样式
-         * @param  {String} name 状态名称 例如：hover,disabled等等
-         * @return {String} 状态样式
+         * \u83b7\u53d6\u72b6\u6001\u5bf9\u5e94\u7684css\u6837\u5f0f
+         * @param  {String} name \u72b6\u6001\u540d\u79f0 \u4f8b\u5982\uff1ahover,disabled\u7b49\u7b49
+         * @return {String} \u72b6\u6001\u6837\u5f0f
          */
         getStatusCls : function(name){
             var self = this,
@@ -8076,13 +7919,13 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             return cls;
         },
         /**
-         * 渲染控件
+         * \u6e32\u67d3\u63a7\u4ef6
          * @protected
          */
         renderUI: function () {
             var self = this;
 
-            // 新建的节点才需要摆放定位,不支持srcNode模式
+            // \u65b0\u5efa\u7684\u8282\u70b9\u624d\u9700\u8981\u6446\u653e\u5b9a\u4f4d,\u4e0d\u652f\u6301srcNode\u6a21\u5f0f
             if (!self.get('srcNode')) {
                 var render = self.get('render'),
                     el = self.get('el'),
@@ -8097,9 +7940,9 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             }
         },
         /**
-         * 只负责建立节点，如果是 decorate 过来的，甚至内容会丢失
+         * \u53ea\u8d1f\u8d23\u5efa\u7acb\u8282\u70b9\uff0c\u5982\u679c\u662f decorate \u8fc7\u6765\u7684\uff0c\u751a\u81f3\u5185\u5bb9\u4f1a\u4e22\u5931
          * @protected
-         * 通过 render 来重建原有的内容
+         * \u901a\u8fc7 render \u6765\u91cd\u5efa\u539f\u6709\u7684\u5185\u5bb9
          */
         createDom: function () {
             var self = this,
@@ -8118,12 +7961,12 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             
             el.addClass(self.getComponentCssClassWithState());
             if (!contentEl) {
-                // 没取到,这里设下值, uiSet 时可以 set('content')  取到
+                // \u6ca1\u53d6\u5230,\u8fd9\u91cc\u8bbe\u4e0b\u503c, uiSet \u65f6\u53ef\u4ee5 set('content')  \u53d6\u5230
                 self.setInternal('contentEl', el);
             }
         },
         /**
-         * 设置高亮显示
+         * \u8bbe\u7f6e\u9ad8\u4eae\u663e\u793a
          * @protected
          */
         _uiSetHighlighted: function (v) {
@@ -8134,7 +7977,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         },
 
         /**
-         * 设置禁用
+         * \u8bbe\u7f6e\u7981\u7528
          * @protected
          */
         _uiSetDisabled: function (v) {
@@ -8144,18 +7987,18 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             el[v ? 'addClass' : 'removeClass'](componentCls)
                 .attr('aria-disabled', v);
       
-            //如果禁用控件时，处于hover状态，则清除
+            //\u5982\u679c\u7981\u7528\u63a7\u4ef6\u65f6\uff0c\u5904\u4e8ehover\u72b6\u6001\uff0c\u5219\u6e05\u9664
             if(v && self.get('highlighted')){
             self.set('highlighted',false);
             }
 
             if (self.get('focusable')) {
-                //不能被 tab focus 到
+                //\u4e0d\u80fd\u88ab tab focus \u5230
                 self.getKeyEventTarget().attr('tabIndex', v ? -1 : 0);
             }
         },
         /**
-         * 设置激活状态
+         * \u8bbe\u7f6e\u6fc0\u6d3b\u72b6\u6001
          * @protected
          */
         _uiSetActive: function (v) {
@@ -8165,7 +8008,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
                 .attr('aria-pressed', !!v);
         },
         /**
-         * 设置获得焦点
+         * \u8bbe\u7f6e\u83b7\u5f97\u7126\u70b9
          * @protected
          */
         _uiSetFocused: function (v) {
@@ -8175,41 +8018,41 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             el[v ? 'addClass' : 'removeClass'](componentCls);
         },
         /**
-         * 设置控件最外层DOM的属性
+         * \u8bbe\u7f6e\u63a7\u4ef6\u6700\u5916\u5c42DOM\u7684\u5c5e\u6027
          * @protected
          */
         _uiSetElAttrs: function (attrs) {
             this.get('el').attr(attrs);
         },
         /**
-         * 设置应用到控件最外层DOM的css class
+         * \u8bbe\u7f6e\u5e94\u7528\u5230\u63a7\u4ef6\u6700\u5916\u5c42DOM\u7684css class
          * @protected
          */
         _uiSetElCls: function (cls) {
             this.get('el').addClass(cls);
         },
         /**
-         * 设置应用到控件最外层DOM的css style
+         * \u8bbe\u7f6e\u5e94\u7528\u5230\u63a7\u4ef6\u6700\u5916\u5c42DOM\u7684css style
          * @protected
          */
         _uiSetElStyle: function (style) {
             this.get('el').css(style);
         },
-        //设置role
+        //\u8bbe\u7f6erole
         _uiSetRole : function(role){
             if(role){
                 this.get('el').attr('role',role);
             } 
         },
         /**
-         * 设置应用到控件宽度
+         * \u8bbe\u7f6e\u5e94\u7528\u5230\u63a7\u4ef6\u5bbd\u5ea6
          * @protected
          */
         _uiSetWidth: function (w) {
             this.get('el').width(w);
         },
         /**
-         * 设置应用到控件高度
+         * \u8bbe\u7f6e\u5e94\u7528\u5230\u63a7\u4ef6\u9ad8\u5ea6
          * @protected
          */
         _uiSetHeight: function (h) {
@@ -8217,14 +8060,14 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             self.get('el').height(h);
         },
         /**
-         * 设置应用到控件的内容
+         * \u8bbe\u7f6e\u5e94\u7528\u5230\u63a7\u4ef6\u7684\u5185\u5bb9
          * @protected
          */
         _uiSetContent: function (c) {
             var self = this, 
                 el;
-            // srcNode 时不重新渲染 content
-            // 防止内部有改变，而 content 则是老的 html 内容
+            // srcNode \u65f6\u4e0d\u91cd\u65b0\u6e32\u67d3 content
+            // \u9632\u6b62\u5185\u90e8\u6709\u6539\u53d8\uff0c\u800c content \u5219\u662f\u8001\u7684 html \u5185\u5bb9
             if (self.get('srcNode') && !self.get('rendered')) {
             } else {
                 el = self.get('contentEl');
@@ -8236,7 +8079,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             }
         },
         /**
-         * 设置应用到控件是否可见
+         * \u8bbe\u7f6e\u5e94\u7528\u5230\u63a7\u4ef6\u662f\u5426\u53ef\u89c1
          * @protected
          */
         _uiSetVisible: function (isVisible) {
@@ -8250,7 +8093,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             }
         },
         /**
-         * 析构函数
+         * \u6790\u6784\u51fd\u6570
          * @protected
          */
         destructor : function () {
@@ -8268,7 +8111,7 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
     View.ATTRS = 
     {   
         /**
-         * 控件根节点
+         * \u63a7\u4ef6\u6839\u8282\u70b9
          * @readOnly
          * see {@link BUI.Component.Controller#property-el}
          */
@@ -8282,38 +8125,38 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         },
 
         /**
-         * 控件根节点样式
+         * \u63a7\u4ef6\u6839\u8282\u70b9\u6837\u5f0f
          * see {@link BUI.Component.Controller#property-elCls}
          */
         elCls: {
         },
         /**
-         * 控件根节点样式属性
+         * \u63a7\u4ef6\u6839\u8282\u70b9\u6837\u5f0f\u5c5e\u6027
          * see {@link BUI.Component.Controller#property-elStyle}
          */
         elStyle: {
         },
         /**
-         * ARIA 标准中的role
+         * ARIA \u6807\u51c6\u4e2d\u7684role
          * @type {String}
          */
         role : {
             
         },
         /**
-         * 控件宽度
+         * \u63a7\u4ef6\u5bbd\u5ea6
          * see {@link BUI.Component.Controller#property-width}
          */
         width: {
         },
         /**
-         * 控件高度
+         * \u63a7\u4ef6\u9ad8\u5ea6
          * see {@link BUI.Component.Controller#property-height}
          */
         height: {
         },
         /**
-         * 状态相关的样式,默认情况下会使用 前缀名 + xclass + '-' + 状态名
+         * \u72b6\u6001\u76f8\u5173\u7684\u6837\u5f0f,\u9ed8\u8ba4\u60c5\u51b5\u4e0b\u4f1a\u4f7f\u7528 \u524d\u7f00\u540d + xclass + '-' + \u72b6\u6001\u540d
          * see {@link BUI.Component.Controller#property-statusCls}
          * @type {Object}
          */
@@ -8321,48 +8164,48 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             value : {}
         },
         /**
-         * 控件根节点使用的标签
+         * \u63a7\u4ef6\u6839\u8282\u70b9\u4f7f\u7528\u7684\u6807\u7b7e
          * @type {String}
          */
         elTagName: {
-            // 生成标签名字
+            // \u751f\u6210\u6807\u7b7e\u540d\u5b57
             value: 'div'
         },
         /**
-         * 控件根节点属性
+         * \u63a7\u4ef6\u6839\u8282\u70b9\u5c5e\u6027
          * see {@link BUI.Component.Controller#property-elAttrs}
          * @ignore
          */
         elAttrs: {
         },
         /**
-         * 控件内容，html,文本等
+         * \u63a7\u4ef6\u5185\u5bb9\uff0chtml,\u6587\u672c\u7b49
          * see {@link BUI.Component.Controller#property-content}
          */
         content: {
         },
         /**
-         * 控件插入到指定元素前
+         * \u63a7\u4ef6\u63d2\u5165\u5230\u6307\u5b9a\u5143\u7d20\u524d
          * see {@link BUI.Component.Controller#property-tpl}
          */
         elBefore: {
             // better named to renderBefore, too late !
         },
         /**
-         * 控件在指定元素内部渲染
+         * \u63a7\u4ef6\u5728\u6307\u5b9a\u5143\u7d20\u5185\u90e8\u6e32\u67d3
          * see {@link BUI.Component.Controller#property-render}
          * @ignore
          */
         render: {},
         /**
-         * 是否可见
+         * \u662f\u5426\u53ef\u89c1
          * see {@link BUI.Component.Controller#property-visible}
          */
         visible: {
             value: true
         },
         /**
-         * 可视模式
+         * \u53ef\u89c6\u6a21\u5f0f
          * see {@link BUI.Component.Controller#property-visibleMode}
          */
         visibleMode: {
@@ -8370,14 +8213,14 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
         },
         /**
          * @private
-         * 缓存隐藏时的位置，对应visibleMode = 'visiblity' 的场景
+         * \u7f13\u5b58\u9690\u85cf\u65f6\u7684\u4f4d\u7f6e\uff0c\u5bf9\u5e94visibleMode = 'visiblity' \u7684\u573a\u666f
          * @type {Object}
          */
         cachePosition : {
 
         },
         /**
-         * content 设置的内容节点,默认根节点
+         * content \u8bbe\u7f6e\u7684\u5185\u5bb9\u8282\u70b9,\u9ed8\u8ba4\u6839\u8282\u70b9
          * @type {jQuery}
          * @default  el
          */
@@ -8387,14 +8230,14 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             }
         },
         /**
-         * 样式前缀
+         * \u6837\u5f0f\u524d\u7f00
          * see {@link BUI.Component.Controller#property-prefixCls}
          */
         prefixCls: {
             value: BUI.prefix
         },
         /**
-         * 可以获取焦点
+         * \u53ef\u4ee5\u83b7\u53d6\u7126\u70b9
          * @protected
          * see {@link BUI.Component.Controller#property-focusable}
          */
@@ -8402,465 +8245,31 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
             value: true
         },
         /**
-         * 获取焦点
+         * \u83b7\u53d6\u7126\u70b9
          * see {@link BUI.Component.Controller#property-focused}
          */
         focused: {},
         /**
-         * 激活
+         * \u6fc0\u6d3b
          * see {@link BUI.Component.Controller#property-active}
          */
         active: {},
         /**
-         * 禁用
+         * \u7981\u7528
          * see {@link BUI.Component.Controller#property-disabled}
          */
         disabled: {},
         /**
-         * 高亮显示
+         * \u9ad8\u4eae\u663e\u793a
          * see {@link BUI.Component.Controller#property-highlighted}
          */
         highlighted: {}
     };
 
     return View;
-});/**
- * @fileOverview 加载控件内容
- * @ignore
- */
-
-define('bui/component/loader',['bui/util'],function (require) {
-  'use strict';
-  var BUI = require('bui/util'),
-    Base = require('bui/base'),
-    /**
-     * @class BUI.Component.Loader
-     * @extends BUI.Base
-     * ** 控件的默认Loader属性是：**
-     * <pre><code>
-     *   
-     *   defaultLoader : {
-     *     value : {
-     *       property : 'content',
-     *       autoLoad : true
-     *     }
-     *   }
-     * </code></pre>
-     * ** 一般的控件默认读取html，作为控件的content值 **
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     *
-     * ** 可以修改Loader的默认属性，加载children **
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/children.json',
-     *       property : 'children',
-     *       dataType : 'json'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * 加载控件内容的类，一般不进行实例化
-     */
-    Loader = function(config){
-      Loader.superclass.constructor.call(this,config);
-      this._init();
-    };
-
-  Loader.ATTRS = {
-
-    /**
-     * 加载内容的地址
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {String} url
-     */
-    url : {
-
-    },
-    /**
-     * 对应的控件，加载完成后设置属性到对应的控件
-     * @readOnly
-     * @type {BUI.Component.Controller}
-     */
-    target : {
-
-    },
-    /**
-     * @private
-     * 是否load 过
-     */
-    hasLoad : {
-      value : false
-    },
-    /**
-     * 是否自动加载数据
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       autoLoad : false
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Boolean} [autoLoad = true]
-     */
-    autoLoad : {
-
-    },
-    /**
-     * 延迟加载
-     * 
-     *   - event : 触发加载的事件
-     *   - repeat ：是否重复加载
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       lazyLoad : {
-     *         event : 'show',
-     *         repeat : true
-     *       }
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Object} [lazyLoad = null]
-     */
-    lazyLoad: {
-
-    },
-    /**
-     * 加载返回的数据作为控件的那个属性
-     * <pre><code>
-     *   var control = new BUI.List.SimpleList({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       dataType : 'json',
-     *       property : 'items'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {String} property
-     */
-    property : {
-
-    },
-    /**
-     * 格式化返回的数据
-     * @cfg {Function} renderer
-     */
-    renderer : {
-      value : function(value){
-        return value;
-      }
-    },
-    /**
-     * 加载数据时是否显示屏蔽层和加载提示 {@link BUI.Mask.LoadMask}
-     * 
-     *  -  loadMask : true时使用loadMask 默认的配置信息
-     *  -  loadMask : {msg : '正在加载，请稍后。。'} LoadMask的配置信息
-     *   <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       loadMask : true
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Boolean|Object} [loadMask = false]
-     */
-    loadMask : {
-      value : false
-    },
-    /**
-     * ajax 请求返回数据的类型
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       dataType : 'json',
-     *       property : 'items'
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {String} [dataType = 'text']
-     */
-    dataType : {
-      value : 'text'
-    },
-    /**
-     * Ajax请求的配置项,会覆盖 url,dataType数据
-     * @cfg {Object} ajaxOptions
-     */
-    ajaxOptions : {
-      value : {
-        type : 'get',
-        cache : false
-      }
-    },
-    /**
-     * 初始化的请求参数
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       params : {
-     *         a : 'a',
-     *         b : 'b'
-     *       }
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Object} params
-     * @default null
-     */
-    params : {
-
-    },
-    /**
-     * 附加参数，每次请求都带的参数
-     * @cfg {Object} appendParams
-     */
-    appendParams : {
-
-    },
-    /**
-     * 最后一次请求的参数
-     * @readOnly
-     * @private
-     * @type {Object}
-     */
-    lastParams : {
-      value : {}
-    },
-    /**
-     * 加载数据，并添加属性到控件后的回调函数
-     *   - data : 加载的数据
-     *   - params : 加载的参数
-     * <pre><code>
-     *   var control = new BUI.Component.Controller({
-     *     render : '#c1',
-     *     loader : {
-     *       url : 'data/text.json',
-     *       callback : function(text){
-     *         var target = this.get('target');//control
-     *         //TO DO
-     *       }
-     *     }
-     *   });
-     *
-     *   control.render();
-     * </code></pre>
-     * @cfg {Function} callback
-     */
-    callback : {
-
-    },
-    /**
-     * 失败的回调函数
-     *   - response : 返回的错误对象
-     *   - params : 加载的参数
-     * @cfg {Function} failure
-     */
-    failure : {
-
-    }
-
-  };
-
-  BUI.extend(Loader,Base);
-
-  BUI.augment(Loader,{
-    /**
-     * @protected
-     * 是否是Loader
-     * @type {Boolean}
-     */
-    isLoader : true,
-    //初始化
-    _init : function(){
-      var _self = this,
-        autoLoad = _self.get('autoLoad'),
-        params = _self.get('params');
-
-      _self._initMask();
-      if(autoLoad){
-        _self.load(params);
-      }else{
-        _self._initParams();
-        _self._initLazyLoad();
-      }
-    },
-    //初始化延迟加载
-    _initLazyLoad : function(){
-      var _self = this,
-        target = _self.get('target'),
-        lazyLoad= _self.get('lazyLoad');
-
-      if(target && lazyLoad && lazyLoad.event){
-        target.on(lazyLoad.event,function(){
-          if(!_self.get('hasLoad') || lazyLoad.repeat){
-            _self.load();
-          }
-        });
-      }
-    },
-    /**
-     * 初始化mask
-     * @private
-     */
-    _initMask : function(){
-      var _self = this,
-        target = _self.get('target'),
-        loadMask = _self.get('loadMask');
-      if(target && loadMask){
-        BUI.use('bui/mask',function(Mask){
-          var cfg = $.isPlainObject(loadMask) ? loadMask : {};
-          loadMask = new Mask.LoadMask(BUI.mix({el : target.get('el')},cfg));
-          _self.set('loadMask',loadMask);
-        });
-      }
-    },
-    //初始化查询参数
-    _initParams : function(){
-      var _self = this,
-        lastParams = _self.get('lastParams'),
-        params = _self.get('params');
-
-      //初始化 参数
-      BUI.mix(lastParams,params);
-    },
-    /**
-     * 加载内容
-     * @param {Object} params 加载数据的参数
-     */
-    load : function(params){
-      var _self = this,
-        url = _self.get('url'),
-        ajaxOptions = _self.get('ajaxOptions'),
-        lastParams = _self.get('lastParams'),
-        appendParams = _self.get('appendParams');
-
-      //BUI.mix(true,lastParams,appendParams,params);
-      params = params || lastParams;
-      params = BUI.merge(appendParams,params); //BUI.cloneObject(lastParams);
-      _self.set('lastParams',params);
-      //未提供加载地址，阻止加载
-      if(!url){
-        return;
-      }
-
-      _self.onBeforeLoad();
-      _self.set('hasLoad',true);
-      $.ajax(BUI.mix({
-        dataType : _self.get('dataType'),
-        data : params,
-        url : url,
-        success : function(data){
-          _self.onload(data,params);
-        },
-        error : function(jqXHR, textStatus, errorThrown){
-          _self.onException({
-            jqXHR : jqXHR, 
-            textStatus : textStatus, 
-            errorThrown : errorThrown
-          },params);
-        }
-      },ajaxOptions));
-    },
-    /**
-     * @private
-     * 加载前
-     */
-    onBeforeLoad : function(){
-      var _self = this,
-        loadMask = _self.get('loadMask');
-      if(loadMask && loadMask.show){
-        loadMask.show();
-      }
-    },
-    /**
-     * @private
-     * 加载完毕
-     */
-    onload : function(data,params){
-      var _self = this,
-        loadMask = _self.get('loadMask'),
-        property = _self.get('property'),
-        callback = _self.get('callback'),
-        renderer = _self.get('renderer'),
-        target = _self.get('target');
-      target.set(property,renderer.call(_self,data));
-
-      /**/
-      if(loadMask && loadMask.hide){
-        loadMask.hide();
-      }
-      if(callback){
-        callback.call(this,data,params);
-      }
-    },
-    /**
-     * @private
-     * 加载出错
-     */
-    onException : function(response,params){
-      var _self = this,
-        failure = _self.get('failure');
-      if(failure){
-        failure.call(this,response,params);
-      }
-    }
-
-  });
-
-  return Loader;
-});/**
- * @fileOverview  控件可以实例化的基类
- * @ignore
- * @author yiminghe@gmail.com
- * copied by dxq613@gmail.com
- */
-
+});
 /**
- * jQuery 事件
+ * jQuery \u4e8b\u4ef6
  * @class jQuery.Event
  * @private
  */
@@ -8908,11 +8317,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
       * @ignore
       */
     function initChild(self, c, renderBefore) {
-        // 生成父组件的 dom 结构
+        // \u751f\u6210\u7236\u7ec4\u4ef6\u7684 dom \u7ed3\u6784
         self.create();
         var contentEl = self.getContentElement(),
             defaultCls = self.get('defaultChildClass');
-        //配置默认 xclass
+        //\u914d\u7f6e\u9ed8\u8ba4 xclass
         if(!c.xclass && !(c instanceof Controller)){
             if(!c.xtype){
                 c.xclass = defaultCls;
@@ -8924,23 +8333,23 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
         c = BUI.Component.create(c, self);
         c.setInternal('parent', self);
-        // set 通知 view 也更新对应属性
+        // set \u901a\u77e5 view \u4e5f\u66f4\u65b0\u5bf9\u5e94\u5c5e\u6027
         c.set('render', contentEl);
         c.set('elBefore', renderBefore);
-        // 如果 parent 也没渲染，子组件 create 出来和 parent 节点关联
-        // 子组件和 parent 组件一起渲染
-        // 之前设好属性，view ，logic 同步还没 bind ,create 不是 render ，还没有 bindUI
+        // \u5982\u679c parent \u4e5f\u6ca1\u6e32\u67d3\uff0c\u5b50\u7ec4\u4ef6 create \u51fa\u6765\u548c parent \u8282\u70b9\u5173\u8054
+        // \u5b50\u7ec4\u4ef6\u548c parent \u7ec4\u4ef6\u4e00\u8d77\u6e32\u67d3
+        // \u4e4b\u524d\u8bbe\u597d\u5c5e\u6027\uff0cview \uff0clogic \u540c\u6b65\u8fd8\u6ca1 bind ,create \u4e0d\u662f render \uff0c\u8fd8\u6ca1\u6709 bindUI
         c.create(undefined);
         return c;
     }
 
     /**
-     * 不使用 valueFn，
-     * 只有 render 时需要找到默认，其他时候不需要，防止莫名其妙初始化
+     * \u4e0d\u4f7f\u7528 valueFn\uff0c
+     * \u53ea\u6709 render \u65f6\u9700\u8981\u627e\u5230\u9ed8\u8ba4\uff0c\u5176\u4ed6\u65f6\u5019\u4e0d\u9700\u8981\uff0c\u9632\u6b62\u83ab\u540d\u5176\u5999\u521d\u59cb\u5316
      * @ignore
      */
     function constructView(self) {
-        // 逐层找默认渲染器
+        // \u9010\u5c42\u627e\u9ed8\u8ba4\u6e32\u67d3\u5668
         var attrs,
             attrCfg,
             attrName,
@@ -8949,28 +8358,28 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             Render = self.get('xview');
 
       
-        //将渲染层初始化所需要的属性，直接构造器设置过去
+        //\u5c06\u6e32\u67d3\u5c42\u521d\u59cb\u5316\u6240\u9700\u8981\u7684\u5c5e\u6027\uff0c\u76f4\u63a5\u6784\u9020\u5668\u8bbe\u7f6e\u8fc7\u53bb
 
         attrs = self.getAttrs();
 
-        // 整理属性，对纯属于 view 的属性，添加 getter setter 直接到 view
+        // \u6574\u7406\u5c5e\u6027\uff0c\u5bf9\u7eaf\u5c5e\u4e8e view \u7684\u5c5e\u6027\uff0c\u6dfb\u52a0 getter setter \u76f4\u63a5\u5230 view
         for (attrName in attrs) {
             if (attrs.hasOwnProperty(attrName)) {
                 attrCfg = attrs[attrName];
                 if (attrCfg.view) {
-                    // 先取后 getter
-                    // 防止死循环
+                    // \u5148\u53d6\u540e getter
+                    // \u9632\u6b62\u6b7b\u5faa\u73af
                     if (( v = self.get(attrName) ) !== undefined) {
                         cfg[attrName] = v;
                     }
 
-                    // setter 不应该有实际操作，仅用于正规化比较好
+                    // setter \u4e0d\u5e94\u8be5\u6709\u5b9e\u9645\u64cd\u4f5c\uff0c\u4ec5\u7528\u4e8e\u6b63\u89c4\u5316\u6bd4\u8f83\u597d
                     // attrCfg.setter = wrapperViewSetter(attrName);
                     self.on('after' + BUI.ucfirst(attrName) + 'Change',
                         wrapperViewSetter(attrName));
-                    // 逻辑层读值直接从 view 层读
-                    // 那么如果存在默认值也设置在 view 层
-                    // 逻辑层不要设置 getter
+                    // \u903b\u8f91\u5c42\u8bfb\u503c\u76f4\u63a5\u4ece view \u5c42\u8bfb
+                    // \u90a3\u4e48\u5982\u679c\u5b58\u5728\u9ed8\u8ba4\u503c\u4e5f\u8bbe\u7f6e\u5728 view \u5c42
+                    // \u903b\u8f91\u5c42\u4e0d\u8981\u8bbe\u7f6e getter
                     attrCfg.getter = wrapperViewGetter(attrName);
                 }
             }
@@ -8997,41 +8406,41 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
     function isMouseEventWithinElement(e, elem) {
         var relatedTarget = e.relatedTarget;
-        // 在里面或等于自身都不算 mouseenter/leave
+        // \u5728\u91cc\u9762\u6216\u7b49\u4e8e\u81ea\u8eab\u90fd\u4e0d\u7b97 mouseenter/leave
         return relatedTarget &&
             ( relatedTarget === elem[0] ||$.contains(elem,relatedTarget));
     }
 
     /**
-     * 可以实例化的控件，作为最顶层的控件类，一切用户控件都继承此控件
+     * \u53ef\u4ee5\u5b9e\u4f8b\u5316\u7684\u63a7\u4ef6\uff0c\u4f5c\u4e3a\u6700\u9876\u5c42\u7684\u63a7\u4ef6\u7c7b\uff0c\u4e00\u5207\u7528\u6237\u63a7\u4ef6\u90fd\u7ee7\u627f\u6b64\u63a7\u4ef6
      * xclass: 'controller'.
-     * ** 创建子控件 ** 
+     * ** \u521b\u5efa\u5b50\u63a7\u4ef6 ** 
      * <pre><code>
-     * var Control = Controller.extend([mixin1,mixin2],{ //原型链上的函数
-     *   renderUI : function(){ //创建DOM
+     * var Control = Controller.extend([mixin1,mixin2],{ //\u539f\u578b\u94fe\u4e0a\u7684\u51fd\u6570
+     *   renderUI : function(){ //\u521b\u5efaDOM
      *   
      *   }, 
-     *   bindUI : function(){  //绑定事件
+     *   bindUI : function(){  //\u7ed1\u5b9a\u4e8b\u4ef6
      *   
      *   },
-     *   destructor : funciton(){ //析构函数
+     *   destructor : funciton(){ //\u6790\u6784\u51fd\u6570
      *   
      *   }
      * },{
-     *   ATTRS : { //默认的属性
+     *   ATTRS : { //\u9ed8\u8ba4\u7684\u5c5e\u6027
      *       text : {
      *       
      *       }
      *   }
      * },{
-     *     xclass : 'a' //用于把对象解析成类
+     *     xclass : 'a' //\u7528\u4e8e\u628a\u5bf9\u8c61\u89e3\u6790\u6210\u7c7b
      * });
      * </code></pre>
      *
-     * ** 创建对象 **
+     * ** \u521b\u5efa\u5bf9\u8c61 **
      * <pre><code>
      * var c1 = new Control({
-     *     render : '#t1', //在t1上创建
+     *     render : '#t1', //\u5728t1\u4e0a\u521b\u5efa
      *     text : 'text1',
      *     children : [{xclass : 'a',text : 'a1'},{xclass : 'b',text : 'b1'}]
      * });
@@ -9048,13 +8457,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
     var Controller = UIBase.extend([UIBase.Decorate,UIBase.Tpl,UIBase.ChildCfg,UIBase.KeyNav,UIBase.Depends],
     {
         /**
-         * 是否是控件，标示对象是否是一个UI 控件
+         * \u662f\u5426\u662f\u63a7\u4ef6\uff0c\u6807\u793a\u5bf9\u8c61\u662f\u5426\u662f\u4e00\u4e2aUI \u63a7\u4ef6
          * @type {Boolean}
          */
         isController: true,
 
         /**
-         * 使用前缀获取类的名字
+         * \u4f7f\u7528\u524d\u7f00\u83b7\u53d6\u7c7b\u7684\u540d\u5b57
          * @param classes {String} class names without prefixCls. Separated by space.
          * @method
          * @protected
@@ -9078,9 +8487,9 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
 
         /**
-         * 返回新的唯一的Id,结果是 'xclass' + number
+         * \u8fd4\u56de\u65b0\u7684\u552f\u4e00\u7684Id,\u7ed3\u679c\u662f 'xclass' + number
          * @protected
-         * @return {String} 唯一id
+         * @return {String} \u552f\u4e00id
          */
         getNextUniqueId : function(){
             var self = this,
@@ -9142,7 +8551,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             this.on('afterVisibleChange', function (e) {
                 this.fire(e.newVal ? 'show' : 'hide');
             });
-            //处理控件事件，设置事件是否冒泡
+            //\u5904\u7406\u63a7\u4ef6\u4e8b\u4ef6\uff0c\u8bbe\u7f6e\u4e8b\u4ef6\u662f\u5426\u5192\u6ce1
             BUI.each(events, function (v,k) {
               self.publish(k, {
                   bubbles:v
@@ -9150,19 +8559,19 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             });
         },
         /**
-         * 控件是否包含指定的DOM元素,包括根节点
+         * \u63a7\u4ef6\u662f\u5426\u5305\u542b\u6307\u5b9a\u7684DOM\u5143\u7d20,\u5305\u62ec\u6839\u8282\u70b9
          * <pre><code>
          *   var control = new Control();
          *   $(document).on('click',function(ev){
          *     var target = ev.target;
          *
-         *     if(!control.containsElement(elem)){ //未点击在控件内部
+         *     if(!control.containsElement(elem)){ //\u672a\u70b9\u51fb\u5728\u63a7\u4ef6\u5185\u90e8
          *       control.hide();
          *     }
          *   });
          * </code></pre>
-         * @param  {HTMLElement} elem DOM 元素
-         * @return {Boolean}  是否包含
+         * @param  {HTMLElement} elem DOM \u5143\u7d20
+         * @return {Boolean}  \u662f\u5426\u5305\u542b
          */
         containsElement : function (elem) {
           var _self = this,
@@ -9185,9 +8594,9 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
           return result;
         },
         /**
-         * 是否是子控件的DOM元素
+         * \u662f\u5426\u662f\u5b50\u63a7\u4ef6\u7684DOM\u5143\u7d20
          * @protected
-         * @return {Boolean} 是否子控件的DOM元素
+         * @return {Boolean} \u662f\u5426\u5b50\u63a7\u4ef6\u7684DOM\u5143\u7d20
          */
         isChildrenElement : function(elem){
             var _self = this,
@@ -9202,7 +8611,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             return rst;
         },
         /**
-         * 显示控件
+         * \u663e\u793a\u63a7\u4ef6
          */
         show:function () {
             var self = this;
@@ -9212,7 +8621,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
 
         /**
-         * 隐藏控件
+         * \u9690\u85cf\u63a7\u4ef6
          */
         hide:function () {
             var self = this;
@@ -9220,11 +8629,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             return self;
         },
         /**
-         * 交替显示或者隐藏
+         * \u4ea4\u66ff\u663e\u793a\u6216\u8005\u9690\u85cf
          * <pre><code>
-         *  control.show(); //显示
-         *  control.toggle(); //隐藏
-         *  control.toggle(); //显示
+         *  control.show(); //\u663e\u793a
+         *  control.toggle(); //\u9690\u85cf
+         *  control.toggle(); //\u663e\u793a
          * </code></pre>
          */
         toggle : function(){
@@ -9291,7 +8700,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 this.getKeyEventTarget()[0].focus();
             }
         },
-        //当使用visiblity显示隐藏时，隐藏时把DOM移除出视图内，显示时回复原位置
+        //\u5f53\u4f7f\u7528visiblity\u663e\u793a\u9690\u85cf\u65f6\uff0c\u9690\u85cf\u65f6\u628aDOM\u79fb\u9664\u51fa\u89c6\u56fe\u5185\uff0c\u663e\u793a\u65f6\u56de\u590d\u539f\u4f4d\u7f6e
         _uiSetVisible : function(isVisible){
             var self = this,
                 el = self.get('el'),
@@ -9312,7 +8721,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 }
             }
         },
-        //设置children时
+        //\u8bbe\u7f6echildren\u65f6
         _uiSetChildren : function(v){
             var self = this,
                 children = BUI.cloneObject(v);
@@ -9320,17 +8729,17 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             self._initChildren(children);
         },
         /**
-         * 使控件可用
+         * \u4f7f\u63a7\u4ef6\u53ef\u7528
          */
         enable : function(){
             this.set('disabled',false);
             return this;
         },
         /**
-         * 使控件不可用，控件不可用时，点击等事件不会触发
+         * \u4f7f\u63a7\u4ef6\u4e0d\u53ef\u7528\uff0c\u63a7\u4ef6\u4e0d\u53ef\u7528\u65f6\uff0c\u70b9\u51fb\u7b49\u4e8b\u4ef6\u4e0d\u4f1a\u89e6\u53d1
          * <pre><code>
-         *  control.disable(); //禁用
-         *  control.enable(); //解除禁用
+         *  control.disable(); //\u7981\u7528
+         *  control.enable(); //\u89e3\u9664\u7981\u7528
          * </code></pre>
          */
         disable : function(){
@@ -9338,7 +8747,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             return this;
         },
         /**
-         * 控件获取焦点
+         * \u63a7\u4ef6\u83b7\u53d6\u7126\u70b9
          */
         focus : function(){
             if(this.get('focusable')){
@@ -9346,7 +8755,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
         },
         /**
-         * 子组件将要渲染到的节点，在 render 类上覆盖对应方法
+         * \u5b50\u7ec4\u4ef6\u5c06\u8981\u6e32\u67d3\u5230\u7684\u8282\u70b9\uff0c\u5728 render \u7c7b\u4e0a\u8986\u76d6\u5bf9\u5e94\u65b9\u6cd5
          * @protected
          * @ignore
          */
@@ -9355,7 +8764,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
 
         /**
-         * 焦点所在元素即键盘事件处理元素，在 render 类上覆盖对应方法
+         * \u7126\u70b9\u6240\u5728\u5143\u7d20\u5373\u952e\u76d8\u4e8b\u4ef6\u5904\u7406\u5143\u7d20\uff0c\u5728 render \u7c7b\u4e0a\u8986\u76d6\u5bf9\u5e94\u65b9\u6cd5
          * @protected
          * @ignore
          */
@@ -9364,15 +8773,15 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
 
         /**
-         * 添加控件的子控件，索引值为 0-based
+         * \u6dfb\u52a0\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6\uff0c\u7d22\u5f15\u503c\u4e3a 0-based
          * <pre><code>
-         *  control.add(new Control());//添加controller对象
-         *  control.add({xclass : 'a'});//添加xclass 为a 的一个对象
-         *  control.add({xclass : 'b'},2);//插入到第三个位置
+         *  control.add(new Control());//\u6dfb\u52a0controller\u5bf9\u8c61
+         *  control.add({xclass : 'a'});//\u6dfb\u52a0xclass \u4e3aa \u7684\u4e00\u4e2a\u5bf9\u8c61
+         *  control.add({xclass : 'b'},2);//\u63d2\u5165\u5230\u7b2c\u4e09\u4e2a\u4f4d\u7f6e
          * </code></pre>
-         * @param {BUI.Component.Controller|Object} c 子控件的实例或者配置项
-         * @param {String} [c.xclass] 如果c为配置项，设置c的xclass
-         * @param {Number} [index]  0-based  如果未指定索引值，则插在控件的最后
+         * @param {BUI.Component.Controller|Object} c \u5b50\u63a7\u4ef6\u7684\u5b9e\u4f8b\u6216\u8005\u914d\u7f6e\u9879
+         * @param {String} [c.xclass] \u5982\u679cc\u4e3a\u914d\u7f6e\u9879\uff0c\u8bbe\u7f6ec\u7684xclass
+         * @param {Number} [index]  0-based  \u5982\u679c\u672a\u6307\u5b9a\u7d22\u5f15\u503c\uff0c\u5219\u63d2\u5728\u63a7\u4ef6\u7684\u6700\u540e
          */
         addChild: function (c, index) {
             var self = this,
@@ -9382,43 +8791,43 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 index = children.length;
             }
             /**
-             * 添加子控件前触发
+             * \u6dfb\u52a0\u5b50\u63a7\u4ef6\u524d\u89e6\u53d1
              * @event beforeAddChild
              * @param {Object} e
-             * @param {Object} e.child 添加子控件时传入的配置项或者子控件
-             * @param {Number} e.index 添加的位置
+             * @param {Object} e.child \u6dfb\u52a0\u5b50\u63a7\u4ef6\u65f6\u4f20\u5165\u7684\u914d\u7f6e\u9879\u6216\u8005\u5b50\u63a7\u4ef6
+             * @param {Number} e.index \u6dfb\u52a0\u7684\u4f4d\u7f6e
              */
             self.fire('beforeAddChild',{child : c,index : index});
             renderBefore = children[index] && children[index].get('el') || null;
             c = initChild(self, c, renderBefore);
             children.splice(index, 0, c);
-            // 先 create 占位 再 render
-            // 防止 render 逻辑里读 parent.get('children') 不同步
-            // 如果 parent 已经渲染好了子组件也要立即渲染，就 创建 dom ，绑定事件
+            // \u5148 create \u5360\u4f4d \u518d render
+            // \u9632\u6b62 render \u903b\u8f91\u91cc\u8bfb parent.get('children') \u4e0d\u540c\u6b65
+            // \u5982\u679c parent \u5df2\u7ecf\u6e32\u67d3\u597d\u4e86\u5b50\u7ec4\u4ef6\u4e5f\u8981\u7acb\u5373\u6e32\u67d3\uff0c\u5c31 \u521b\u5efa dom \uff0c\u7ed1\u5b9a\u4e8b\u4ef6
             if (self.get('rendered')) {
                 c.render();
             }
 
             /**
-             * 添加子控件后触发
+             * \u6dfb\u52a0\u5b50\u63a7\u4ef6\u540e\u89e6\u53d1
              * @event afterAddChild
              * @param {Object} e
-             * @param {Object} e.child 添加子控件
-             * @param {Number} e.index 添加的位置
+             * @param {Object} e.child \u6dfb\u52a0\u5b50\u63a7\u4ef6
+             * @param {Number} e.index \u6dfb\u52a0\u7684\u4f4d\u7f6e
              */
             self.fire('afterAddChild',{child : c,index : index});
             return c;
         },
         /**
-         * 将自己从父控件中移除
+         * \u5c06\u81ea\u5df1\u4ece\u7236\u63a7\u4ef6\u4e2d\u79fb\u9664
          * <pre><code>
-         *  control.remove(); //将控件从父控件中移除，并未删除
-         *  parent.addChild(control); //还可以添加回父控件
+         *  control.remove(); //\u5c06\u63a7\u4ef6\u4ece\u7236\u63a7\u4ef6\u4e2d\u79fb\u9664\uff0c\u5e76\u672a\u5220\u9664
+         *  parent.addChild(control); //\u8fd8\u53ef\u4ee5\u6dfb\u52a0\u56de\u7236\u63a7\u4ef6
          *  
-         *  control.remove(true); //从控件中移除并调用控件的析构函数
+         *  control.remove(true); //\u4ece\u63a7\u4ef6\u4e2d\u79fb\u9664\u5e76\u8c03\u7528\u63a7\u4ef6\u7684\u6790\u6784\u51fd\u6570
          * </code></pre>
-         * @param  {Boolean} destroy 是否删除DON节点
-         * @return {BUI.Component.Controller} 删除的子对象.
+         * @param  {Boolean} destroy \u662f\u5426\u5220\u9664DON\u8282\u70b9
+         * @return {BUI.Component.Controller} \u5220\u9664\u7684\u5b50\u5bf9\u8c61.
          */
         remove : function(destroy){
             var self = this,
@@ -9431,20 +8840,20 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             return self;
         },
         /**
-         * 移除子控件，并返回移除的控件
+         * \u79fb\u9664\u5b50\u63a7\u4ef6\uff0c\u5e76\u8fd4\u56de\u79fb\u9664\u7684\u63a7\u4ef6
          *
-         * ** 如果 destroy=true,调用移除控件的 {@link BUI.Component.UIBase#destroy} 方法,
-         * 同时删除对应的DOM **
+         * ** \u5982\u679c destroy=true,\u8c03\u7528\u79fb\u9664\u63a7\u4ef6\u7684 {@link BUI.Component.UIBase#destroy} \u65b9\u6cd5,
+         * \u540c\u65f6\u5220\u9664\u5bf9\u5e94\u7684DOM **
          * <pre><code>
          *  var child = control.getChild(id);
-         *  control.removeChild(child); //仅仅移除
+         *  control.removeChild(child); //\u4ec5\u4ec5\u79fb\u9664
          *  
-         *  control.removeChild(child,true); //移除，并调用析构函数
+         *  control.removeChild(child,true); //\u79fb\u9664\uff0c\u5e76\u8c03\u7528\u6790\u6784\u51fd\u6570
          * </code></pre>
-         * @param {BUI.Component.Controller} c 要移除的子控件.
-         * @param {Boolean} [destroy=false] 如果是true,
-         * 调用控件的方法 {@link BUI.Component.UIBase#destroy} .
-         * @return {BUI.Component.Controller} 移除的子控件.
+         * @param {BUI.Component.Controller} c \u8981\u79fb\u9664\u7684\u5b50\u63a7\u4ef6.
+         * @param {Boolean} [destroy=false] \u5982\u679c\u662ftrue,
+         * \u8c03\u7528\u63a7\u4ef6\u7684\u65b9\u6cd5 {@link BUI.Component.UIBase#destroy} .
+         * @return {BUI.Component.Controller} \u79fb\u9664\u7684\u5b50\u63a7\u4ef6.
          */
         removeChild: function (c, destroy) {
             var self = this,
@@ -9455,11 +8864,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 return;
             }
             /**
-             * 删除子控件前触发
+             * \u5220\u9664\u5b50\u63a7\u4ef6\u524d\u89e6\u53d1
              * @event beforeRemoveChild
              * @param {Object} e
-             * @param {Object} e.child 子控件
-             * @param {Boolean} e.destroy 是否清除DOM
+             * @param {Object} e.child \u5b50\u63a7\u4ef6
+             * @param {Boolean} e.destroy \u662f\u5426\u6e05\u9664DOM
              */
             self.fire('beforeRemoveChild',{child : c,destroy : destroy});
 
@@ -9472,11 +8881,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 c.destroy();
             }
             /**
-             * 删除子控件前触发
+             * \u5220\u9664\u5b50\u63a7\u4ef6\u524d\u89e6\u53d1
              * @event afterRemoveChild
              * @param {Object} e
-             * @param {Object} e.child 子控件
-             * @param {Boolean} e.destroy 是否清除DOM
+             * @param {Object} e.child \u5b50\u63a7\u4ef6
+             * @param {Boolean} e.destroy \u662f\u5426\u6e05\u9664DOM
              */
             self.fire('afterRemoveChild',{child : c,destroy : destroy});
 
@@ -9484,14 +8893,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
 
         /**
-         * 删除当前控件的子控件
+         * \u5220\u9664\u5f53\u524d\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6
          * <pre><code>
-         *   control.removeChildren();//删除所有子控件
-         *   control.removeChildren(true);//删除所有子控件，并调用子控件的析构函数
+         *   control.removeChildren();//\u5220\u9664\u6240\u6709\u5b50\u63a7\u4ef6
+         *   control.removeChildren(true);//\u5220\u9664\u6240\u6709\u5b50\u63a7\u4ef6\uff0c\u5e76\u8c03\u7528\u5b50\u63a7\u4ef6\u7684\u6790\u6784\u51fd\u6570
          * </code></pre>
          * @see Component.Controller#removeChild
-         * @param {Boolean} [destroy] 如果设置 true,
-         * 调用子控件的 {@link BUI.Component.UIBase#destroy}方法.
+         * @param {Boolean} [destroy] \u5982\u679c\u8bbe\u7f6e true,
+         * \u8c03\u7528\u5b50\u63a7\u4ef6\u7684 {@link BUI.Component.UIBase#destroy}\u65b9\u6cd5.
          */
         removeChildren: function (destroy) {
             var self = this,
@@ -9503,27 +8912,27 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         },
 
         /**
-         * 根据索引获取子控件
+         * \u6839\u636e\u7d22\u5f15\u83b7\u53d6\u5b50\u63a7\u4ef6
          * <pre><code>
-         *  control.getChildAt(0);//获取第一个子控件
-         *  control.getChildAt(2); //获取第三个子控件
+         *  control.getChildAt(0);//\u83b7\u53d6\u7b2c\u4e00\u4e2a\u5b50\u63a7\u4ef6
+         *  control.getChildAt(2); //\u83b7\u53d6\u7b2c\u4e09\u4e2a\u5b50\u63a7\u4ef6
          * </code></pre>
-         * @param {Number} index 0-based 索引值.
-         * @return {BUI.Component.Controller} 子控件或者null 
+         * @param {Number} index 0-based \u7d22\u5f15\u503c.
+         * @return {BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005null 
          */
         getChildAt: function (index) {
             var children = this.get('children');
             return children[index] || null;
         },
         /**
-         * 根据Id获取子控件
+         * \u6839\u636eId\u83b7\u53d6\u5b50\u63a7\u4ef6
          * <pre><code>
-         *  control.getChild('id'); //从控件的直接子控件中查找
-         *  control.getChild('id',true);//递归查找所有子控件，包含子控件的子控件
+         *  control.getChild('id'); //\u4ece\u63a7\u4ef6\u7684\u76f4\u63a5\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
+         *  control.getChild('id',true);//\u9012\u5f52\u67e5\u627e\u6240\u6709\u5b50\u63a7\u4ef6\uff0c\u5305\u542b\u5b50\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6
          * </code></pre>
-         * @param  {String} id 控件编号
-         * @param  {Boolean} deep 是否继续查找在子控件中查找
-         * @return {BUI.Component.Controller} 子控件或者null 
+         * @param  {String} id \u63a7\u4ef6\u7f16\u53f7
+         * @param  {Boolean} deep \u662f\u5426\u7ee7\u7eed\u67e5\u627e\u5728\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
+         * @return {BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005null 
          */
         getChild : function(id,deep){
             return this.getChildBy(function(item){
@@ -9531,55 +8940,55 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },deep);
         },
         /**
-         * 通过匹配函数查找子控件，返回第一个匹配的对象
+         * \u901a\u8fc7\u5339\u914d\u51fd\u6570\u67e5\u627e\u5b50\u63a7\u4ef6\uff0c\u8fd4\u56de\u7b2c\u4e00\u4e2a\u5339\u914d\u7684\u5bf9\u8c61
          * <pre><code>
-         *  control.getChildBy(function(child){//从控件的直接子控件中查找
+         *  control.getChildBy(function(child){//\u4ece\u63a7\u4ef6\u7684\u76f4\u63a5\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
          *    return child.get('id') = '1243';
          *  }); 
          *  
-         *  control.getChild(function(child){//递归查找所有子控件，包含子控件的子控件
+         *  control.getChild(function(child){//\u9012\u5f52\u67e5\u627e\u6240\u6709\u5b50\u63a7\u4ef6\uff0c\u5305\u542b\u5b50\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6
          *    return child.get('id') = '1243';
          *  },true);
          * </code></pre>
-         * @param  {Function} math 查找的匹配函数
-         * @param  {Boolean} deep 是否继续查找在子控件中查找
-         * @return {BUI.Component.Controller} 子控件或者null 
+         * @param  {Function} math \u67e5\u627e\u7684\u5339\u914d\u51fd\u6570
+         * @param  {Boolean} deep \u662f\u5426\u7ee7\u7eed\u67e5\u627e\u5728\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
+         * @return {BUI.Component.Controller} \u5b50\u63a7\u4ef6\u6216\u8005null 
          */
         getChildBy : function(math,deep){
             return this.getChildrenBy(math,deep)[0] || null;
         },
         /**
-         * 获取控件的附加高度 = control.get('el').outerHeight() - control.get('el').height()
+         * \u83b7\u53d6\u63a7\u4ef6\u7684\u9644\u52a0\u9ad8\u5ea6 = control.get('el').outerHeight() - control.get('el').height()
          * @protected
-         * @return {Number} 附加宽度
+         * @return {Number} \u9644\u52a0\u5bbd\u5ea6
          */
         getAppendHeight : function(){
             var el = this.get('el');
             return el.outerHeight() - el.height();
         },
         /**
-         * 获取控件的附加宽度 = control.get('el').outerWidth() - control.get('el').width()
+         * \u83b7\u53d6\u63a7\u4ef6\u7684\u9644\u52a0\u5bbd\u5ea6 = control.get('el').outerWidth() - control.get('el').width()
          * @protected
-         * @return {Number} 附加宽度
+         * @return {Number} \u9644\u52a0\u5bbd\u5ea6
          */
         getAppendWidth : function(){
             var el = this.get('el');
             return el.outerWidth() - el.width();
         },
         /**
-         * 查找符合条件的子控件
+         * \u67e5\u627e\u7b26\u5408\u6761\u4ef6\u7684\u5b50\u63a7\u4ef6
          * <pre><code>
-         *  control.getChildrenBy(function(child){//从控件的直接子控件中查找
+         *  control.getChildrenBy(function(child){//\u4ece\u63a7\u4ef6\u7684\u76f4\u63a5\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e
          *    return child.get('type') = '1';
          *  }); 
          *  
-         *  control.getChildrenBy(function(child){//递归查找所有子控件，包含子控件的子控件
+         *  control.getChildrenBy(function(child){//\u9012\u5f52\u67e5\u627e\u6240\u6709\u5b50\u63a7\u4ef6\uff0c\u5305\u542b\u5b50\u63a7\u4ef6\u7684\u5b50\u63a7\u4ef6
          *    return child.get('type') = '1';
          *  },true);
          * </code></pre>
-         * @param  {Function} math 查找的匹配函数
-         * @param  {Boolean} deep 是否继续查找在子控件中查找，如果符合上面的匹配函数，则不再往下查找
-         * @return {BUI.Component.Controller[]} 子控件数组 
+         * @param  {Function} math \u67e5\u627e\u7684\u5339\u914d\u51fd\u6570
+         * @param  {Boolean} deep \u662f\u5426\u7ee7\u7eed\u67e5\u627e\u5728\u5b50\u63a7\u4ef6\u4e2d\u67e5\u627e\uff0c\u5982\u679c\u7b26\u5408\u4e0a\u9762\u7684\u5339\u914d\u51fd\u6570\uff0c\u5219\u4e0d\u518d\u5f80\u4e0b\u67e5\u627e
+         * @return {BUI.Component.Controller[]} \u5b50\u63a7\u4ef6\u6570\u7ec4 
          */
         getChildrenBy : function(math,deep){
             var self = this,
@@ -9599,13 +9008,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             return results;
         },
         /**
-         * 遍历子元素
+         * \u904d\u5386\u5b50\u5143\u7d20
          * <pre><code>
-         *  control.eachChild(function(child,index){ //遍历子控件
+         *  control.eachChild(function(child,index){ //\u904d\u5386\u5b50\u63a7\u4ef6
          *  
          *  });
          * </code></pre>
-         * @param  {Function} func 迭代函数，函数原型function(child,index)
+         * @param  {Function} func \u8fed\u4ee3\u51fd\u6570\uff0c\u51fd\u6570\u539f\u578bfunction(child,index)
          */
         eachChild : function(func){
             BUI.each(this.get('children'),func);
@@ -9698,7 +9107,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 }
 
                 if (!self.get('allowTextSelection')) {
-                    // firefox /chrome 不会引起焦点转移
+                    // firefox /chrome \u4e0d\u4f1a\u5f15\u8d77\u7126\u70b9\u8f6c\u79fb
                     n = ev.target.nodeName;
                     n = n && n.toLowerCase();
                     // do not prevent focus when click on editable element
@@ -9723,7 +9132,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         handleMouseUp: function (ev) {
             var self = this,
                 isChildrenElement = self.isChildrenElement(ev.target);
-            // 左键
+            // \u5de6\u952e
             if (self.get('active') && ev.which === 1) {
                 self.performActionInternal(ev);
                 self.set('active', false);
@@ -9811,7 +9220,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         performActionInternal: function (ev) {
         },
         /**
-         * 析构函数
+         * \u6790\u6784\u51fd\u6570
          * @protected
          */
         destructor: function () {
@@ -9832,47 +9241,47 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         ATTRS: 
         {
             /**
-             * 控件的Html 内容
+             * \u63a7\u4ef6\u7684Html \u5185\u5bb9
              * <pre><code>
              *  new Control({
-             *     content : '内容',
+             *     content : '\u5185\u5bb9',
              *     render : '#c1'
              *  });
              * </code></pre>
              * @cfg {String|jQuery} content
              */
             /**
-             * 控件的Html 内容
+             * \u63a7\u4ef6\u7684Html \u5185\u5bb9
              * @type {String|jQuery}
              */
             content:{
                 view:1
             },
 			/**
-			 * 控件根节点使用的标签
+			 * \u63a7\u4ef6\u6839\u8282\u70b9\u4f7f\u7528\u7684\u6807\u7b7e
              * <pre><code>
              *  new Control({
              *     elTagName : 'ul',
-             *      content : '<li>内容</li>',  //控件的DOM &lt;ul&gt;&lt;li&gt;内容&lt;/li&gt;&lt;/ul&gt;
+             *      content : '<li>\u5185\u5bb9</li>',  //\u63a7\u4ef6\u7684DOM &lt;ul&gt;&lt;li&gt;\u5185\u5bb9&lt;/li&gt;&lt;/ul&gt;
              *     render : '#c1'
              *  });  
              * </code></pre>
 			 * @cfg {String} elTagName
 			 */
 			elTagName: {
-				// 生成标签名字
+				// \u751f\u6210\u6807\u7b7e\u540d\u5b57
 				view : true,
 				value: 'div'
 			},
             /**
-             * 子元素的默认 xclass,配置child的时候没必要每次都填写xclass
+             * \u5b50\u5143\u7d20\u7684\u9ed8\u8ba4 xclass,\u914d\u7f6echild\u7684\u65f6\u5019\u6ca1\u5fc5\u8981\u6bcf\u6b21\u90fd\u586b\u5199xclass
              * @type {String}
              */
             defaultChildClass : {
                 
             },
             /**
-             * 如果控件未设置 xclass，同时父元素设置了 defaultChildClass，那么
+             * \u5982\u679c\u63a7\u4ef6\u672a\u8bbe\u7f6e xclass\uff0c\u540c\u65f6\u7236\u5143\u7d20\u8bbe\u7f6e\u4e86 defaultChildClass\uff0c\u90a3\u4e48
              * xclass = defaultChildClass + '-' + xtype
              * <pre><code>
              *  A.ATTRS = {
@@ -9880,12 +9289,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              *        value : 'b'
              *    }
              *  }
-             *  //类B 的xclass = 'b'类 B1的xclass = 'b-1',类 B2的xclass = 'b-2',那么
+             *  //\u7c7bB \u7684xclass = 'b'\u7c7b B1\u7684xclass = 'b-1',\u7c7b B2\u7684xclass = 'b-2',\u90a3\u4e48
              *  var a = new A({
              *    children : [
-             *        {content : 'b'}, //B类
-             *        {content : 'b1',xtype:'1'}, //B1类
-             *        {content : 'b2',xtype:'2'}, //B2类
+             *        {content : 'b'}, //B\u7c7b
+             *        {content : 'b1',xtype:'1'}, //B1\u7c7b
+             *        {content : 'b2',xtype:'2'}, //B2\u7c7b
              *    ]
              *  });
              * </code></pre>
@@ -9895,18 +9304,18 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
             },
             /**
-             * 标示控件的唯一编号，默认会自动生成
+             * \u6807\u793a\u63a7\u4ef6\u7684\u552f\u4e00\u7f16\u53f7\uff0c\u9ed8\u8ba4\u4f1a\u81ea\u52a8\u751f\u6210
              * @cfg {String} id
              */
             /**
-             * 标示控件的唯一编号，默认会自动生成
+             * \u6807\u793a\u63a7\u4ef6\u7684\u552f\u4e00\u7f16\u53f7\uff0c\u9ed8\u8ba4\u4f1a\u81ea\u52a8\u751f\u6210
              * @type {String}
              */
             id : {
                 view : true
             },
             /**
-             * 控件宽度
+             * \u63a7\u4ef6\u5bbd\u5ea6
              * <pre><code>
              * new Control({
              *   width : 200 // 200,'200px','20%'
@@ -9915,7 +9324,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @cfg {Number|String} width
              */
             /**
-             * 控件宽度
+             * \u63a7\u4ef6\u5bbd\u5ea6
              * <pre><code>
              *  control.set('width',200);
              *  control.set('width','200px');
@@ -9927,7 +9336,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view:1
             },
             /**
-             * 控件宽度
+             * \u63a7\u4ef6\u5bbd\u5ea6
              * <pre><code>
              * new Control({
              *   height : 200 // 200,'200px','20%'
@@ -9936,7 +9345,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @cfg {Number|String} height
              */
             /**
-             * 控件宽度
+             * \u63a7\u4ef6\u5bbd\u5ea6
              * <pre><code>
              *  control.set('height',200);
              *  control.set('height','200px');
@@ -9948,18 +9357,18 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view:1
             },
             /**
-             * 控件根节点应用的样式
+             * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u6837\u5f0f
              * <pre><code>
              *  new Control({
              *   elCls : 'test',
-             *   content : '内容',
-             *   render : '#t1'   //&lt;div id='t1'&gt;&lt;div class="test"&gt;内容&lt;/div&gt;&lt;/div&gt;
+             *   content : '\u5185\u5bb9',
+             *   render : '#t1'   //&lt;div id='t1'&gt;&lt;div class="test"&gt;\u5185\u5bb9&lt;/div&gt;&lt;/div&gt;
              *  });
              * </code></pre>
              * @cfg {String} elCls
              */
             /**
-             * 控件根节点应用的样式 css class
+             * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u6837\u5f0f css class
              * @type {String}
              */
             elCls:{
@@ -9967,13 +9376,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * @cfg {Object} elStyle
-			 * 控件根节点应用的css属性
+			 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684css\u5c5e\u6027
              *  <pre><code>
              *    var cfg = {elStyle : {width:'100px', height:'200px'}};
              *  </code></pre>
              */
             /**
-             * 控件根节点应用的css属性，以键值对形式
+             * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684css\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f
              * @type {Object}
 			 *  <pre><code>
              *	 control.set('elStyle',	{
@@ -9987,7 +9396,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
             /**
              * @cfg {Object} elAttrs
-			 * 控件根节点应用的属性，以键值对形式:
+			 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f:
              * <pre><code>
              *  new Control({
              *    elAttrs :{title : 'tips'}   
@@ -9996,7 +9405,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             /**
              * @type {Object}
-			 * 控件根节点应用的属性，以键值对形式:
+			 * \u63a7\u4ef6\u6839\u8282\u70b9\u5e94\u7528\u7684\u5c5e\u6027\uff0c\u4ee5\u952e\u503c\u5bf9\u5f62\u5f0f:
              * { title : 'tips'}
              * @ignore
              */
@@ -10004,7 +9413,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view:1
             },
             /**
-             * 将控件插入到指定元素前
+             * \u5c06\u63a7\u4ef6\u63d2\u5165\u5230\u6307\u5b9a\u5143\u7d20\u524d
              * <pre><code>
              *  new Control({
              *      elBefore : '#t1'
@@ -10013,7 +9422,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @cfg {jQuery} elBefore
              */
             /**
-             * 将控件插入到指定元素前
+             * \u5c06\u63a7\u4ef6\u63d2\u5165\u5230\u6307\u5b9a\u5143\u7d20\u524d
              * @type {jQuery}
              * @ignore
              */
@@ -10023,123 +9432,123 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
 
             /**
-             * 只读属性，根节点DOM
+             * \u53ea\u8bfb\u5c5e\u6027\uff0c\u6839\u8282\u70b9DOM
              * @type {jQuery}
              */
             el:{
                 view:1
             },
             /**
-             * 控件支持的事件
+             * \u63a7\u4ef6\u652f\u6301\u7684\u4e8b\u4ef6
              * @type {Object}
              * @protected
              */
             events : {
                 value : {
                     /**
-                     * 点击事件，此事件会冒泡，所以可以在父元素上监听所有子元素的此事件
+                     * \u70b9\u51fb\u4e8b\u4ef6\uff0c\u6b64\u4e8b\u4ef6\u4f1a\u5192\u6ce1\uff0c\u6240\u4ee5\u53ef\u4ee5\u5728\u7236\u5143\u7d20\u4e0a\u76d1\u542c\u6240\u6709\u5b50\u5143\u7d20\u7684\u6b64\u4e8b\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'click' : true,
                     /**
-                     * 双击事件，此事件会冒泡，所以可以在父元素上监听所有子元素的此事件
+                     * \u53cc\u51fb\u4e8b\u4ef6\uff0c\u6b64\u4e8b\u4ef6\u4f1a\u5192\u6ce1\uff0c\u6240\u4ee5\u53ef\u4ee5\u5728\u7236\u5143\u7d20\u4e0a\u76d1\u542c\u6240\u6709\u5b50\u5143\u7d20\u7684\u6b64\u4e8b\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'dblclick' : true,
                     /**
-                     * 鼠标移入控件
+                     * \u9f20\u6807\u79fb\u5165\u63a7\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'mouseenter' : true,
                     /**
-                     * 鼠标移出控件
+                     * \u9f20\u6807\u79fb\u51fa\u63a7\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'mouseleave' : true,
                     /**
-                     * 键盘按下按键事件，此事件会冒泡，所以可以在父元素上监听所有子元素的此事件
+                     * \u952e\u76d8\u6309\u4e0b\u6309\u952e\u4e8b\u4ef6\uff0c\u6b64\u4e8b\u4ef6\u4f1a\u5192\u6ce1\uff0c\u6240\u4ee5\u53ef\u4ee5\u5728\u7236\u5143\u7d20\u4e0a\u76d1\u542c\u6240\u6709\u5b50\u5143\u7d20\u7684\u6b64\u4e8b\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'keydown' : true,
                     /**
-                     * 键盘按键抬起控件，此事件会冒泡，所以可以在父元素上监听所有子元素的此事件
+                     * \u952e\u76d8\u6309\u952e\u62ac\u8d77\u63a7\u4ef6\uff0c\u6b64\u4e8b\u4ef6\u4f1a\u5192\u6ce1\uff0c\u6240\u4ee5\u53ef\u4ee5\u5728\u7236\u5143\u7d20\u4e0a\u76d1\u542c\u6240\u6709\u5b50\u5143\u7d20\u7684\u6b64\u4e8b\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'keyup' : true,
                     /**
-                     * 控件获取焦点事件
+                     * \u63a7\u4ef6\u83b7\u53d6\u7126\u70b9\u4e8b\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'focus' : false,
                     /**
-                     * 控件丢失焦点事件
+                     * \u63a7\u4ef6\u4e22\u5931\u7126\u70b9\u4e8b\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'blur' : false,
                     /**
-                     * 鼠标按下控件，此事件会冒泡，所以可以在父元素上监听所有子元素的此事件
+                     * \u9f20\u6807\u6309\u4e0b\u63a7\u4ef6\uff0c\u6b64\u4e8b\u4ef6\u4f1a\u5192\u6ce1\uff0c\u6240\u4ee5\u53ef\u4ee5\u5728\u7236\u5143\u7d20\u4e0a\u76d1\u542c\u6240\u6709\u5b50\u5143\u7d20\u7684\u6b64\u4e8b\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'mousedown' : true,
                     /**
-                     * 鼠标抬起控件，此事件会冒泡，所以可以在父元素上监听所有子元素的此事件
+                     * \u9f20\u6807\u62ac\u8d77\u63a7\u4ef6\uff0c\u6b64\u4e8b\u4ef6\u4f1a\u5192\u6ce1\uff0c\u6240\u4ee5\u53ef\u4ee5\u5728\u7236\u5143\u7d20\u4e0a\u76d1\u542c\u6240\u6709\u5b50\u5143\u7d20\u7684\u6b64\u4e8b\u4ef6
                      * @event
-                     * @param {Object} e 事件对象
-                     * @param {BUI.Component.Controller} e.target 触发事件的对象
-                     * @param {jQuery.Event} e.domEvent DOM触发的事件
-                     * @param {HTMLElement} e.domTarget 触发事件的DOM节点
+                     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+                     * @param {BUI.Component.Controller} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+                     * @param {jQuery.Event} e.domEvent DOM\u89e6\u53d1\u7684\u4e8b\u4ef6
+                     * @param {HTMLElement} e.domTarget \u89e6\u53d1\u4e8b\u4ef6\u7684DOM\u8282\u70b9
                      */
                     'mouseup' : true,
                     /**
-                     * 控件显示
+                     * \u63a7\u4ef6\u663e\u793a
                      * @event
                      */
                     'show' : false,
                     /**
-                     * 控件隐藏
+                     * \u63a7\u4ef6\u9690\u85cf
                      * @event
                      */
                     'hide' : false
                 }
             },
             /**
-             * 指定控件的容器
+             * \u6307\u5b9a\u63a7\u4ef6\u7684\u5bb9\u5668
              * <pre><code>
              *  new Control({
              *    render : '#t1',
@@ -10150,7 +9559,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @cfg {jQuery} render
              */
             /**
-             * 指定控件的容器
+             * \u6307\u5b9a\u63a7\u4ef6\u7684\u5bb9\u5668
              * @type {jQuery}
              * @ignore
              */
@@ -10158,7 +9567,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view:1
             },
             /**
-             * ARIA 标准中的role,不要更改此属性
+             * ARIA \u6807\u51c6\u4e2d\u7684role,\u4e0d\u8981\u66f4\u6539\u6b64\u5c5e\u6027
              * @type {String}
              * @protected
              */
@@ -10166,7 +9575,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view : 1
             },
             /**
-             * 状态相关的样式,默认情况下会使用 前缀名 + xclass + '-' + 状态名
+             * \u72b6\u6001\u76f8\u5173\u7684\u6837\u5f0f,\u9ed8\u8ba4\u60c5\u51b5\u4e0b\u4f1a\u4f7f\u7528 \u524d\u7f00\u540d + xclass + '-' + \u72b6\u6001\u540d
              * <ol>
              *     <li>hover</li>
              *     <li>focused</li>
@@ -10182,7 +9591,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 }
             },
             /**
-             * 控件的可视方式,值为：
+             * \u63a7\u4ef6\u7684\u53ef\u89c6\u65b9\u5f0f,\u503c\u4e3a\uff1a
              *  - 'display' 
              *  - 'visibility'
              *  <pre><code>
@@ -10193,8 +9602,8 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @cfg {String} [visibleMode = 'display']
              */
             /**
-             * 控件的可视方式,使用 css 
-             *  - 'display' 或者 
+             * \u63a7\u4ef6\u7684\u53ef\u89c6\u65b9\u5f0f,\u4f7f\u7528 css 
+             *  - 'display' \u6216\u8005 
              *  - 'visibility'
              * <pre><code>
              *  control.set('visibleMode','display')
@@ -10206,16 +9615,16 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 value : 'display'
             },
             /**
-             * 控件是否可见
+             * \u63a7\u4ef6\u662f\u5426\u53ef\u89c1
              * <pre><code>
              *  new Control({
-             *    visible : false   //隐藏
+             *    visible : false   //\u9690\u85cf
              *  });
              * </code></pre>
              * @cfg {Boolean} [visible = true]
              */
             /**
-             * 控件是否可见
+             * \u63a7\u4ef6\u662f\u5426\u53ef\u89c1
              * <pre><code>
              *  control.set('visible',true); //control.show();
              *  control.set('visible',false); //control.hide();
@@ -10228,7 +9637,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view:1
             },
             /**
-             * 是否允许处理鼠标事件
+             * \u662f\u5426\u5141\u8bb8\u5904\u7406\u9f20\u6807\u4e8b\u4ef6
              * @default true.
              * @type {Boolean}
              * @protected
@@ -10238,7 +9647,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
 
             /**
-             * 控件是否可以获取焦点
+             * \u63a7\u4ef6\u662f\u5426\u53ef\u4ee5\u83b7\u53d6\u7126\u70b9
              * @default true.
              * @protected
              * @type {Boolean}
@@ -10248,7 +9657,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view: 1
             },
             /**
-             * 一旦使用loader的默认配置
+             * \u4e00\u65e6\u4f7f\u7528loader\u7684\u9ed8\u8ba4\u914d\u7f6e
              * @protected
              * @type {Object}
              */
@@ -10259,7 +9668,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 }
             },
             /**
-             * 控件内容的加载器
+             * \u63a7\u4ef6\u5185\u5bb9\u7684\u52a0\u8f7d\u5668
              * @type {BUI.Component.Loader}
              */
             loader : {
@@ -10288,13 +9697,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              * @ignore
              */
             allowTextSelection: {
-                // 和 focusable 分离
-                // grid 需求：容器允许选择里面内容
+                // \u548c focusable \u5206\u79bb
+                // grid \u9700\u6c42\uff1a\u5bb9\u5668\u5141\u8bb8\u9009\u62e9\u91cc\u9762\u5185\u5bb9
                 value: true
             },
 
             /**
-             * 控件是否可以激活
+             * \u63a7\u4ef6\u662f\u5426\u53ef\u4ee5\u6fc0\u6d3b
              * @default true.
              * @type {Boolean}
              * @protected
@@ -10304,7 +9713,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
 
             /**
-             * 控件是否获取焦点
+             * \u63a7\u4ef6\u662f\u5426\u83b7\u53d6\u7126\u70b9
              * @type {Boolean}
              * @readOnly
              */
@@ -10313,7 +9722,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
 
             /**
-             * 控件是否处于激活状态，按钮按下还未抬起
+             * \u63a7\u4ef6\u662f\u5426\u5904\u4e8e\u6fc0\u6d3b\u72b6\u6001\uff0c\u6309\u94ae\u6309\u4e0b\u8fd8\u672a\u62ac\u8d77
              * @type {Boolean}
              * @default false
              * @protected
@@ -10322,12 +9731,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view: 1
             },
             /**
-             * 控件是否高亮
+             * \u63a7\u4ef6\u662f\u5426\u9ad8\u4eae
              * @cfg {Boolean} highlighted
              * @ignore
              */
             /**
-             * 控件是否高亮
+             * \u63a7\u4ef6\u662f\u5426\u9ad8\u4eae
              * @type {Boolean}
              * @protected
              */
@@ -10335,11 +9744,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 view: 1
             },
             /**
-             * 子控件集合
+             * \u5b50\u63a7\u4ef6\u96c6\u5408
              * @cfg {BUI.Component.Controller[]} children
              */
             /**
-             * 子控件集合
+             * \u5b50\u63a7\u4ef6\u96c6\u5408
              * @type {BUI.Component.Controller[]}
              */
             children: {
@@ -10347,11 +9756,11 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 value: []
             },
             /**
-             * 控件的CSS前缀
+             * \u63a7\u4ef6\u7684CSS\u524d\u7f00
              * @cfg {String} [prefixCls = BUI.prefix]
              */
             /**
-             * 控件的CSS前缀
+             * \u63a7\u4ef6\u7684CSS\u524d\u7f00
              * @type {String}
              * @default BUI.prefix
              */
@@ -10361,27 +9770,27 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             },
 
             /**
-             * 父控件
+             * \u7236\u63a7\u4ef6
              * @cfg {BUI.Component.Controller} parent
              * @ignore
              */
             /**
-             * 父控件
+             * \u7236\u63a7\u4ef6
              * @type {BUI.Component.Controller}
              */
             parent: {
                 setter: function (p) {
-                    // 事件冒泡源
+                    // \u4e8b\u4ef6\u5192\u6ce1\u6e90
                     this.addTarget(p);
                 }
             },
 
             /**
-             * 禁用控件
+             * \u7981\u7528\u63a7\u4ef6
              * @cfg {Boolean} [disabled = false]
              */
             /**
-             * 禁用控件
+             * \u7981\u7528\u63a7\u4ef6
              * <pre><code>
              *  control.set('disabled',true); //==  control.disable();
              *  control.set('disabled',false); //==  control.enable();
@@ -10394,12 +9803,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 value : false
             },
             /**
-             * 渲染控件的View类.
+             * \u6e32\u67d3\u63a7\u4ef6\u7684View\u7c7b.
              * @protected
              * @cfg {BUI.Component.View} [xview = BUI.Component.View]
              */
             /**
-             * 渲染控件的View类.
+             * \u6e32\u67d3\u63a7\u4ef6\u7684View\u7c7b.
              * @protected
              * @type {BUI.Component.View}
              */

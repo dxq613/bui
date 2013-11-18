@@ -1,8 +1,6 @@
-/**
- * @fileOverview 编辑器命名空间入口
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/editor',['bui/common','bui/form','bui/editor/editor','bui/editor/record','bui/editor/dialog'],function (require) {
   var BUI = require('bui/common'),
     Form = require('bui/form'),
@@ -14,11 +12,7 @@ define('bui/editor',['bui/common','bui/form','bui/editor/editor','bui/editor/rec
     DialogEditor : require('bui/editor/dialog')
   });
   return Editor;
-});/**
- * @fileOverview 编辑器扩展类，引入这个扩展，控件可以支持编辑器功能。
- * @ignore
- */
-
+});
 define('bui/editor/mixin',function (require) {
 
   function initEditor (self) {
@@ -31,7 +25,7 @@ define('bui/editor/mixin',function (require) {
 
   /**
    * @class BUI.Editor.Mixin
-   * 编辑器扩展类
+   * \u7f16\u8f91\u5668\u6269\u5c55\u7c7b
    */
   var Mixin = function () {
     initEditor(this);
@@ -39,7 +33,7 @@ define('bui/editor/mixin',function (require) {
 
   Mixin.ATTRS = {
     /**
-     * 接受更改的事件
+     * \u63a5\u53d7\u66f4\u6539\u7684\u4e8b\u4ef6
      * @protected
      * @type {String}
      */
@@ -47,21 +41,21 @@ define('bui/editor/mixin',function (require) {
       value : 'autohide'
     },
     /**
-     * 当发生错误时是否阻止编辑器消失
+     * \u5f53\u53d1\u751f\u9519\u8bef\u65f6\u662f\u5426\u963b\u6b62\u7f16\u8f91\u5668\u6d88\u5931
      * @type {Boolean}
      */
     preventHide : {
       value : true
     },
     /**
-     * 重置数据时的事件
+     * \u91cd\u7f6e\u6570\u636e\u65f6\u7684\u4e8b\u4ef6
      * @type {String}
      */
     changeSourceEvent : {
       value : 'show triggerchange'
     },
     /**
-     * 是否忽略掉输入框之类的键盘事件
+     * \u662f\u5426\u5ffd\u7565\u6389\u8f93\u5165\u6846\u4e4b\u7c7b\u7684\u952e\u76d8\u4e8b\u4ef6
      * @protected
      * @type {Boolean}
      */
@@ -69,7 +63,7 @@ define('bui/editor/mixin',function (require) {
       value :true
     },
     /**
-     * 内部控件的代表Value的字段
+     * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
      * @protected
      * @type {String}
      */
@@ -77,7 +71,7 @@ define('bui/editor/mixin',function (require) {
 
     },
     /**
-     * 空值的数据，清空编辑器时使用
+     * \u7a7a\u503c\u7684\u6570\u636e\uff0c\u6e05\u7a7a\u7f16\u8f91\u5668\u65f6\u4f7f\u7528
      * @protected
      * @type {*}
      */
@@ -85,7 +79,7 @@ define('bui/editor/mixin',function (require) {
 
     },
     /**
-     * 内部控件配置项的字段
+     * \u5185\u90e8\u63a7\u4ef6\u914d\u7f6e\u9879\u7684\u5b57\u6bb5
      * @protected
      * @type {String}
      */
@@ -102,12 +96,12 @@ define('bui/editor/mixin',function (require) {
       value : {
         /**
          * @event
-         * 接受更改
+         * \u63a5\u53d7\u66f4\u6539
          */
         accept : false,
         /**
          * @event
-         * 取消更改
+         * \u53d6\u6d88\u66f4\u6539
          */
         cancel : false
       }
@@ -115,7 +109,7 @@ define('bui/editor/mixin',function (require) {
   };
 
   Mixin.prototype = {
-    //绑定事件
+    //\u7ed1\u5b9a\u4e8b\u4ef6
     __bindUI : function(){
       var _self = this,
       acceptEvent = _self.get('acceptEvent'),
@@ -143,8 +137,8 @@ define('bui/editor/mixin',function (require) {
     },
     /**
      * @protected
-     * 获取编辑器的内部控件
-     * @return {BUI.Component.Controller} 用于编辑数据的内部数据
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u5185\u90e8\u63a7\u4ef6
+     * @return {BUI.Component.Controller} \u7528\u4e8e\u7f16\u8f91\u6570\u636e\u7684\u5185\u90e8\u6570\u636e
      */
     getInnerControl : function(){
       var _self = this,
@@ -152,9 +146,9 @@ define('bui/editor/mixin',function (require) {
       return children[0];
     },
     /**
-     * 设置值，值的类型取决于编辑器编辑的数据
-     * @param {String|Object} value 编辑器显示的值
-     * @param {Boolean} [hideError=false] 设置值时是否隐藏错误
+     * \u8bbe\u7f6e\u503c\uff0c\u503c\u7684\u7c7b\u578b\u53d6\u51b3\u4e8e\u7f16\u8f91\u5668\u7f16\u8f91\u7684\u6570\u636e
+     * @param {String|Object} value \u7f16\u8f91\u5668\u663e\u793a\u7684\u503c
+     * @param {Boolean} [hideError=false] \u8bbe\u7f6e\u503c\u65f6\u662f\u5426\u9690\u85cf\u9519\u8bef
      */
     setValue : function(value,hideError){
       var _self = this,
@@ -162,7 +156,7 @@ define('bui/editor/mixin',function (require) {
       _self.set('editValue',value);
       _self.clearControlValue();
       innerControl.set(_self.get('innerValueField'),value);
-      if(!value){//编辑的值等于空，则可能不会触发验证
+      if(!value){//\u7f16\u8f91\u7684\u503c\u7b49\u4e8e\u7a7a\uff0c\u5219\u53ef\u80fd\u4e0d\u4f1a\u89e6\u53d1\u9a8c\u8bc1
         _self.valid();
       }
       if(hideError){
@@ -170,8 +164,8 @@ define('bui/editor/mixin',function (require) {
       }
     },
     /**
-     * 获取编辑器的值
-     * @return {String|Object} 编辑器的值
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u503c
+     * @return {String|Object} \u7f16\u8f91\u5668\u7684\u503c
      */
     getValue :function(){
       var _self = this,
@@ -179,8 +173,8 @@ define('bui/editor/mixin',function (require) {
       return innerControl.get(_self.get('innerValueField'));
     },
     /**
-     * 编辑的内容是否通过验证
-     * @return {Boolean} 是否通过验证
+     * \u7f16\u8f91\u7684\u5185\u5bb9\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
+     * @return {Boolean} \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     isValid : function(){
       var _self = this,
@@ -188,7 +182,7 @@ define('bui/editor/mixin',function (require) {
       return innerControl.isValid ? innerControl.isValid() : true;
     },
     /**
-     * 验证内容是否通过验证
+     * \u9a8c\u8bc1\u5185\u5bb9\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     valid : function(){
       var _self = this,
@@ -196,8 +190,8 @@ define('bui/editor/mixin',function (require) {
       innerControl.valid && innerControl.valid();
     },
     /**
-     * 获取错误信息
-     * @return {Array} 错误信息
+     * \u83b7\u53d6\u9519\u8bef\u4fe1\u606f
+     * @return {Array} \u9519\u8bef\u4fe1\u606f
      */
     getErrors : function(){
        var _self = this,
@@ -205,7 +199,7 @@ define('bui/editor/mixin',function (require) {
       return innerControl.getErrors ? innerControl.getErrors() : [];
     },
     /**
-     * 编辑的内容是否发生改变
+     * \u7f16\u8f91\u7684\u5185\u5bb9\u662f\u5426\u53d1\u751f\u6539\u53d8
      * @return {Boolean}
      */
     isChange : function(){
@@ -215,14 +209,14 @@ define('bui/editor/mixin',function (require) {
       return editValue !== value;
     },
     /**
-     * 清除编辑的值
+     * \u6e05\u9664\u7f16\u8f91\u7684\u503c
      */
     clearValue : function(){
       this.clearControlValue();
       this.clearErrors();
     },
     /**
-     * 清除编辑的控件的值
+     * \u6e05\u9664\u7f16\u8f91\u7684\u63a7\u4ef6\u7684\u503c
      * @protected
      * @template
      */
@@ -232,7 +226,7 @@ define('bui/editor/mixin',function (require) {
       innerControl.set(_self.get('innerValueField'),_self.get('emptyValue'));
     },
     /**
-     * 清除错误
+     * \u6e05\u9664\u9519\u8bef
      */
     clearErrors : function(){
       var _self = this,
@@ -242,7 +236,7 @@ define('bui/editor/mixin',function (require) {
     /**
      * @protected
      * @template
-     * 获取编辑的源数据
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u6e90\u6570\u636e
      */
     getSourceValue : function(){
 
@@ -250,7 +244,7 @@ define('bui/editor/mixin',function (require) {
     /**
      * @protected
      * @template
-     * 更新编辑的源数据
+     * \u66f4\u65b0\u7f16\u8f91\u7684\u6e90\u6570\u636e
      */
     updateSource : function(){
 
@@ -258,7 +252,7 @@ define('bui/editor/mixin',function (require) {
     /**
      * @protected
      * @override
-     * 处理esc键
+     * \u5904\u7406esc\u952e
      */
     handleNavEsc : function(){
       this.cancel();
@@ -266,11 +260,11 @@ define('bui/editor/mixin',function (require) {
     /**
      * @protected
      * @override
-     * 处理enter键
+     * \u5904\u7406enter\u952e
      */
     handleNavEnter : function(ev){
       var sender = ev.target;
-      if(sender.tagName === 'TEXTAREA'){ //文本输入框，不确定隐藏
+      if(sender.tagName === 'TEXTAREA'){ //\u6587\u672c\u8f93\u5165\u6846\uff0c\u4e0d\u786e\u5b9a\u9690\u85cf
         return;
       }
       if(sender.tagName === 'BUTTON'){
@@ -279,7 +273,7 @@ define('bui/editor/mixin',function (require) {
       this.accept();
     },
     /**
-     * 设置获取焦点
+     * \u8bbe\u7f6e\u83b7\u53d6\u7126\u70b9
      */
     focus : function(){
       var _self = this,
@@ -287,8 +281,8 @@ define('bui/editor/mixin',function (require) {
       innerControl.focus && innerControl.focus()
     },
     /**
-     * 接受编辑器的编辑结果
-     * @return {Boolean} 是否成功接受编辑
+     * \u63a5\u53d7\u7f16\u8f91\u5668\u7684\u7f16\u8f91\u7ed3\u679c
+     * @return {Boolean} \u662f\u5426\u6210\u529f\u63a5\u53d7\u7f16\u8f91
      */
     accept : function(){
       var _self = this,
@@ -310,7 +304,7 @@ define('bui/editor/mixin',function (require) {
       return true;
     },
     /**
-     * 取消编辑
+     * \u53d6\u6d88\u7f16\u8f91
      */
     cancel : function(){
       this.fire('cancel');
@@ -320,12 +314,7 @@ define('bui/editor/mixin',function (require) {
   };
 
   return Mixin;
-});/**
- * @ignore
- * @fileOverview 编辑器
- * @author dxq613@gmail.com
- */
-
+});
 define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],function (require) {
   var BUI = require('bui/common'),
     Overlay = require('bui/overlay').Overlay
@@ -336,7 +325,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
    * @class BUI.Editor.Editor
    * @extends BUI.Overlay.Overlay
    * @mixins BUI.Editor.Mixin
-   * 编辑器
+   * \u7f16\u8f91\u5668
    * <p>
    * <img src="../assets/img/class-editor.jpg"/>
    * </p>
@@ -375,7 +364,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
       _self.set('overlay',overlay);
       return overlay;
     },
-    //获取显示错误列表
+    //\u83b7\u53d6\u663e\u793a\u9519\u8bef\u5217\u8868
     _getErrorList : function(){
       var _self = this,
         overlay = _self.get('overlay');
@@ -394,7 +383,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
       overlay.set('align',align);
       overlay.show();
     },
-    //隐藏错误
+    //\u9690\u85cf\u9519\u8bef
     _hideError : function(){
       var _self = this,
         overlay = _self.get('overlay');
@@ -403,8 +392,8 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
     /**
      * @protected
      * @override
-     * 获取编辑的源数据
-     * @return {String} 返回需要编辑的文本
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u6e90\u6570\u636e
+     * @return {String} \u8fd4\u56de\u9700\u8981\u7f16\u8f91\u7684\u6587\u672c
      */
     getSourceValue : function(){
       var _self = this,
@@ -413,8 +402,8 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
     },
     /**
      * @protected
-     * 更新文本
-     * @param  {String} text 编辑器的值
+     * \u66f4\u65b0\u6587\u672c
+     * @param  {String} text \u7f16\u8f91\u5668\u7684\u503c
      */
     updateSource : function(text){
       var _self = this,
@@ -435,7 +424,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
   },{
     ATTRS : {
       /**
-       * 内部控件的代表Value的字段
+       * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
        * @protected
        * @override
        * @type {String}
@@ -444,7 +433,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
         value : 'value'
       },
       /**
-       * 空值的数据，清空编辑器时使用
+       * \u7a7a\u503c\u7684\u6570\u636e\uff0c\u6e05\u7a7a\u7f16\u8f91\u5668\u65f6\u4f7f\u7528
        * @protected
        * @type {*}
        */
@@ -452,7 +441,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
         value : ''
       },
       /**
-       * 是否自动隐藏
+       * \u662f\u5426\u81ea\u52a8\u9690\u85cf
        * @override
        * @type {Boolean}
        */
@@ -460,7 +449,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
         value : true
       },
       /**
-       * 内部控件配置项的字段
+       * \u5185\u90e8\u63a7\u4ef6\u914d\u7f6e\u9879\u7684\u5b57\u6bb5
        * @protected
        * @type {String}
        */
@@ -468,7 +457,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
         value : 'field'
       },
       /**
-       * 默认的字段域配置项
+       * \u9ed8\u8ba4\u7684\u5b57\u6bb5\u57df\u914d\u7f6e\u9879
        * @type {Object}
        */
       defaultChildCfg : {
@@ -487,7 +476,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
         }
       },
       /**
-       * 错误信息的对齐方式
+       * \u9519\u8bef\u4fe1\u606f\u7684\u5bf9\u9f50\u65b9\u5f0f
        * @type {Object}
        */
       errorAlign : {
@@ -497,14 +486,14 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
         }
       },
       /**
-       * 显示错误的弹出层
+       * \u663e\u793a\u9519\u8bef\u7684\u5f39\u51fa\u5c42
        * @type {BUI.Overlay.Overlay}
        */
       overlay : {
 
       },
       /**
-       * 编辑器中默认使用文本字段域来编辑数据
+       * \u7f16\u8f91\u5668\u4e2d\u9ed8\u8ba4\u4f7f\u7528\u6587\u672c\u5b57\u6bb5\u57df\u6765\u7f16\u8f91\u6570\u636e
        * @type {Array}
        */
       field : {
@@ -516,11 +505,7 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
   });
 
   return editor;
-});/**
- * @fileOverview 对象编辑器
- * @ignore
- */
-
+});
 define('bui/editor/record',['bui/common','bui/editor/editor'],function (require) {
   var BUI = require('bui/common'),
     Editor = require('bui/editor/editor');
@@ -528,22 +513,22 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
   /**
    * @class BUI.Editor.RecordEditor
    * @extends BUI.Editor.Editor
-   * 编辑器
+   * \u7f16\u8f91\u5668
    */
   var editor = Editor.extend({
     /**
      * @protected
      * @override
-     * 获取编辑的源数据
-     * @return {String} 返回需要编辑的文本
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u6e90\u6570\u636e
+     * @return {String} \u8fd4\u56de\u9700\u8981\u7f16\u8f91\u7684\u6587\u672c
      */
     getSourceValue : function(){
       return this.get('record');
     },
     /**
      * @protected
-     * 更新文本
-     * @param  {Object} value 编辑器的值
+     * \u66f4\u65b0\u6587\u672c
+     * @param  {Object} value \u7f16\u8f91\u5668\u7684\u503c
      */
     updateSource : function(value){
       var _self = this,
@@ -557,7 +542,7 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
     ATTRS : {
 
       /**
-       * 内部控件的代表Value的字段
+       * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
        * @protected
        * @override
        * @type {String}
@@ -566,14 +551,14 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
         value : 'record'
       },
       /**
-       * 接受更改的事件
+       * \u63a5\u53d7\u66f4\u6539\u7684\u4e8b\u4ef6
        * @type {String}
        */
       acceptEvent : {
         value : ''
       },
       /**
-       * 空值的数据，清空编辑器时使用
+       * \u7a7a\u503c\u7684\u6570\u636e\uff0c\u6e05\u7a7a\u7f16\u8f91\u5668\u65f6\u4f7f\u7528
        * @protected
        * @type {*}
        */
@@ -581,7 +566,7 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
         value : {}
       },
       /**
-       * 是否自动隐藏
+       * \u662f\u5426\u81ea\u52a8\u9690\u85cf
        * @override
        * @type {Boolean}
        */
@@ -589,14 +574,14 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
         value : false
       },
       /**
-       * 编辑的记录
+       * \u7f16\u8f91\u7684\u8bb0\u5f55
        * @type {Object}
        */
       record : {
         value : {}
       },
       /**
-       * 内部控件配置项的字段
+       * \u5185\u90e8\u63a7\u4ef6\u914d\u7f6e\u9879\u7684\u5b57\u6bb5
        * @protected
        * @type {String}
        */
@@ -604,14 +589,14 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
         value : 'form'
       },
       /**
-       * 编辑器内表单的配置项
+       * \u7f16\u8f91\u5668\u5185\u8868\u5355\u7684\u914d\u7f6e\u9879
        * @type {Object}
        */
       form : {
         value : {}
       },
       /**
-       * 错误信息的对齐方式
+       * \u9519\u8bef\u4fe1\u606f\u7684\u5bf9\u9f50\u65b9\u5f0f
        * @type {Object}
        */
       errorAlign : {
@@ -621,7 +606,7 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
         }
       },
       /**
-       * 默认的字段域配置项
+       * \u9ed8\u8ba4\u7684\u5b57\u6bb5\u57df\u914d\u7f6e\u9879
        * @type {Object}
        */
       defaultChildCfg : {
@@ -640,14 +625,14 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
             buttons : [
             {
               btnCls : 'button button-primary',
-              text : '确定',
+              text : '\u786e\u5b9a',
               handler : function(){
                 _self.accept();
               }
             },
             {
               btnCls : 'button',
-              text : '取消',
+              text : '\u53d6\u6d88',
               handler : function(){
                 _self.cancel();
               }
@@ -661,11 +646,7 @@ define('bui/editor/record',['bui/common','bui/editor/editor'],function (require)
   });
 
   return editor;
-});/**
- * @fileOverview 使用弹出框作为编辑器
- * @ignore
- */
-
+});
 define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require) {
   var Dialog = require('bui/overlay').Dialog,
     Mixin = require('bui/editor/mixin');
@@ -674,14 +655,14 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
    * @class BUI.Editor.DialogEditor
    * @extends BUI.Overlay.Dialog
    * @mixins BUI.Editor.Mixin
-   * 编辑器
+   * \u7f16\u8f91\u5668
    */
   var editor = Dialog.extend([Mixin],{
     /**
      * @protected
      * @override
-     * 获取编辑的源数据
-     * @return {String} 返回需要编辑的文本
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u6e90\u6570\u636e
+     * @return {String} \u8fd4\u56de\u9700\u8981\u7f16\u8f91\u7684\u6587\u672c
      */
     getSourceValue : function(){
       return this.get('record');
@@ -689,13 +670,13 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
     /**
      * @protected
      * @override
-     * 处理enter键
+     * \u5904\u7406enter\u952e
      */
     handleNavEnter : function(ev){
       var _self = this,
         success = _self.get('success'),
         sender = ev.target;
-      if(sender.tagName === 'TEXTAREA'){ //文本输入框，不确定隐藏
+      if(sender.tagName === 'TEXTAREA'){ //\u6587\u672c\u8f93\u5165\u6846\uff0c\u4e0d\u786e\u5b9a\u9690\u85cf
         return;
       }
       if(sender.tagName === 'BUTTON'){
@@ -708,7 +689,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
       }
     },
     /**
-     * 取消编辑
+     * \u53d6\u6d88\u7f16\u8f91
      */
     cancel : function(){
       //if(this.onCancel()!== false){
@@ -719,8 +700,8 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
     },
     /**
      * @protected
-     * 更新文本
-     * @param  {Object} value 编辑器的值
+     * \u66f4\u65b0\u6587\u672c
+     * @param  {Object} value \u7f16\u8f91\u5668\u7684\u503c
      */
     updateSource : function(value){
       var _self = this,
@@ -736,7 +717,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
         value : false
       },*/
       /**
-       * 内部控件的代表Value的字段
+       * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
        * @protected
        * @override
        * @type {String}
@@ -745,21 +726,21 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
         value : 'record'
       },
       /**
-       * 接受更改的事件
+       * \u63a5\u53d7\u66f4\u6539\u7684\u4e8b\u4ef6
        * @type {String}
        */
       acceptEvent : {
         value : ''
       },
       /**
-       * 编辑的记录
+       * \u7f16\u8f91\u7684\u8bb0\u5f55
        * @type {Object}
        */
       record : {
         value : {}
       },
       /**
-       * 空值的数据，清空编辑器时使用
+       * \u7a7a\u503c\u7684\u6570\u636e\uff0c\u6e05\u7a7a\u7f16\u8f91\u5668\u65f6\u4f7f\u7528
        * @protected
        * @type {*}
        */
@@ -767,7 +748,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
         value : {}
       },
       /**
-       * 内部控件配置项的字段
+       * \u5185\u90e8\u63a7\u4ef6\u914d\u7f6e\u9879\u7684\u5b57\u6bb5
        * @protected
        * @type {String}
        */
@@ -775,7 +756,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
         value : 'form'
       },
       /**
-       * dialog 编辑器一般由按钮触发，在触发时设置数据源
+       * dialog \u7f16\u8f91\u5668\u4e00\u822c\u7531\u6309\u94ae\u89e6\u53d1\uff0c\u5728\u89e6\u53d1\u65f6\u8bbe\u7f6e\u6570\u636e\u6e90
        * @override
        * @type {String}
        */
@@ -783,7 +764,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
         value : ''
       },
       /**
-       * 默认的字段域配置项
+       * \u9ed8\u8ba4\u7684\u5b57\u6bb5\u57df\u914d\u7f6e\u9879
        * @type {Object}
        */
       defaultChildCfg : {
@@ -792,7 +773,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
         }
       },
       /**
-       * 设置可以获取交单
+       * \u8bbe\u7f6e\u53ef\u4ee5\u83b7\u53d6\u4ea4\u5355
        * @type {Boolean}
        */
       focusable : {
@@ -809,7 +790,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
         }
       },
       /**
-       * 编辑器内表单的配置项
+       * \u7f16\u8f91\u5668\u5185\u8868\u5355\u7684\u914d\u7f6e\u9879
        * @type {Object}
        */
       form : {

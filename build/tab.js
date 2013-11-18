@@ -1,8 +1,6 @@
-/**
- * @fileOverview 切换标签入口
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/tab',['bui/common','bui/tab/tab','bui/tab/tabitem','bui/tab/navtabitem','bui/tab/navtab','bui/tab/tabpanel','bui/tab/tabpanelitem'],function (require) {
   var BUI = require('bui/common'),
     Tab = BUI.namespace('Tab');
@@ -17,273 +15,7 @@ define('bui/tab',['bui/common','bui/tab/tab','bui/tab/tabitem','bui/tab/navtabit
   });
 
   return Tab;
-});/**
- * @fileOverview 拥有内容的标签项的扩展类，每个标签项都有一个分离的容器作为面板
- * @ignore
- */
-
-define('bui/tab/panelitem',function (requrie) {
-
-  /**
-   * @class BUI.Tab.PanelItem
-   * 包含面板的标签项的扩展
-   */
-  var PanelItem = function(){
-
-  };
-
-  PanelItem.ATTRS = {
-
-    /**
-     * 标签项对应的面板容器，当标签选中时，面板显示
-     * @cfg {String|HTMLElement|jQuery} panel
-     * @internal 面板属性一般由 tabPanel设置而不应该由用户手工设置
-     */
-    /**
-     * 标签项对应的面板容器，当标签选中时，面板显示
-     * @type {String|HTMLElement|jQuery}
-     * @readOnly
-     */
-    panel : {
-
-    },
-    /**
-     * 面板的内容
-     * @type {String}
-     */
-    panelContent : {
-
-    },
-    /**
-     * 关联面板显示隐藏的属性名
-     * @protected
-     * @type {string}
-     */
-    panelVisibleStatus : {
-      value : 'selected'
-    },
-    /**
-       * 默认的加载控件内容的配置,默认值：
-       * <pre>
-       *  {
-       *   property : 'panelContent',
-       *   lazyLoad : {
-       *       event : 'active'
-       *   },
-       *     loadMask : {
-       *       el : _self.get('panel')
-       *   }
-       * }
-       * </pre>
-       * @type {Object}
-       */
-      defaultLoaderCfg  : {
-        valueFn :function(){
-          var _self = this,
-            eventName = _self._getVisibleEvent();
-          return {
-            property : 'panelContent',
-            autoLoad : false,
-            lazyLoad : {
-              event : eventName
-            },
-            loadMask : {
-              el : _self.get('panel')
-            }
-          }
-        } 
-      },
-    /**
-     * 面板是否跟随标签一起释放
-     * @type {Boolean}
-     */
-    panelDestroyable : {
-      value : true
-    }
-  }
-
-
-  BUI.augment(PanelItem,{
-
-    __renderUI : function(){
-      this._resetPanelVisible();
-    },
-    __bindUI : function(){
-      var _self = this,
-      eventName = _self._getVisibleEvent();
-
-      _self.on(eventName,function(ev){
-        _self._setPanelVisible(ev.newVal);
-      });
-    },
-    _resetPanelVisible : function(){
-      var _self = this,
-        status = _self.get('panelVisibleStatus'),
-        visible = _self.get(status);
-      _self._setPanelVisible(visible);
-    },
-    //获取显示隐藏的事件
-    _getVisibleEvent : function(){
-      var _self = this,
-        status = _self.get('panelVisibleStatus');
-
-      return 'after' + BUI.ucfirst(status) + 'Change';;
-    },
-    /**
-     * @private
-     * 设置面板的可见
-     * @param {Boolean} visible 显示或者隐藏
-     */
-    _setPanelVisible : function(visible){
-      var _self = this,
-        panel = _self.get('panel'),
-        method = visible ? 'show' : 'hide';
-      if(panel){
-        $(panel)[method]();
-      }
-    },
-    __destructor : function(){
-      var _self = this,
-        panel = _self.get('panel');
-      if(panel && _self.get('panelDestroyable')){
-        $(panel).remove();
-      }
-    },
-    _setPanelContent : function(panel,content){
-      var panelEl = $(panel);
-      $(panel).html(content);
-    },
-    _uiSetPanelContent : function(v){
-      var _self = this,
-        panel = _self.get('panel');
-      //$(panel).html(v);
-      _self._setPanelContent(panel,v);
-    },
-    //设置panel
-    _uiSetPanel : function(v){
-      var _self = this,
-        content = _self.get('panelContent');
-      if(content){
-        _self._setPanelContent(v,content);
-      }
-      _self._resetPanelVisible();
-    }
-  });
-
-  return PanelItem;
-
-});/**
- * @fileOverview 拥有多个面板的容器
- * @ignore
- */
-
-define('bui/tab/panels',function (require) {
-  
-  /**
-   * @class BUI.Tab.Panels
-   * 包含面板的标签的扩展类
-   */
-  var Panels = function(){
-    //this._initPanels();
-  };
-
-  Panels.ATTRS = {
-
-    /**
-     * 面板的模板
-     * @type {String}
-     */
-    panelTpl : {
-
-    },
-    /**
-     * 面板的容器，如果是id直接通过id查找，如果是非id，那么从el开始查找,例如：
-     *   -#id ： 通过$('#id')查找
-     *   -.cls : 通过 this.get('el').find('.cls') 查找
-     *   -DOM/jQuery ：不需要查找
-     * @type {String|HTMLElement|jQuery}
-     */
-    panelContainer : {
-      
-    },
-    /**
-     * panel 面板使用的样式，如果初始化时，容器内已经存在有该样式的DOM，则作为面板使用
-     * 对应同一个位置的标签项,如果为空，默认取面板容器的子元素
-     * @type {String}
-     */
-    panelCls : {
-
-    }
-  };
-
-  BUI.augment(Panels,{
-
-    __renderUI : function(){
-      var _self = this,
-        children = _self.get('children'),
-        panelContainer = _self._initPanelContainer(),
-        panelCls = _self.get('panelCls'),
-        panels = panelCls ? panelContainer.find('.' + panels) : panelContainer.children();
-
-      BUI.each(children,function(item,index){
-        var panel = panels[index];
-        _self._initPanelItem(item,panel);
-      });
-    },
-
-    __bindUI : function(){
-      var _self = this;
-      _self.on('beforeAddChild',function(ev){
-        var item = ev.child;
-        _self._initPanelItem(item);
-      });
-    },
-    //初始化容器
-    _initPanelContainer : function(){
-      var _self = this,
-        panelContainer = _self.get('panelContainer');
-      if(panelContainer && BUI.isString(panelContainer)){
-        if(panelContainer.indexOf('#') == 0){ //如果是id
-          panelContainer = $(panelContainer);
-        }else{
-          panelContainer = _self.get('el').find(panelContainer);
-        }
-        _self.setInternal('panelContainer',panelContainer);
-      }
-      return panelContainer;
-    },
-    //初始化面板配置信息
-    _initPanelItem : function(item,panel){
-      var _self = this;
-
-      if(item.set){
-        if(!item.get('panel')){
-          panel = panel || _self._getPanel(item.get('userConfig'));
-          item.set('panel',panel);
-        }
-      }else{
-        if(!item.panel){
-          panel = panel || _self._getPanel(item);
-          item.panel = panel;
-        }
-      }
-    },
-    //获取面板
-    _getPanel : function(item){
-      var _self = this,
-        panelContainer = _self.get('panelContainer'),
-        panelTpl = BUI.substitute(_self.get('panelTpl'),item);
-      
-      return $(panelTpl).appendTo(panelContainer);
-    }
-  });
-
-  return Panels;
-});/**
- * @fileOverview 导航项
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/tab/navtabitem',['bui/common'],function(requrie){
 
   var BUI = requrie('bui/common'),
@@ -295,7 +27,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     CLS_CONTENT = 'tab-content';
 
   /**
-   * 导航标签项的视图类
+   * \u5bfc\u822a\u6807\u7b7e\u9879\u7684\u89c6\u56fe\u7c7b
    * @class BUI.Tab.NavTabItemView
    * @extends BUI.Component.View
    * @private
@@ -310,7 +42,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
         _self.set('tabContentEl',tabContentEl);
       }
     },
-    //设置链接地址
+    //\u8bbe\u7f6e\u94fe\u63a5\u5730\u5740
     _uiSetHref : function(v){
       this._setHref(v);
     },
@@ -325,7 +57,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     resetHref : function(){
       this._setHref();
     },
-    //设置标题
+    //\u8bbe\u7f6e\u6807\u9898
     _uiSetTitle : function(v){
       var _self = this,
         el = _self.get('el');
@@ -344,7 +76,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       }
 
     },
-    //析构函数
+    //\u6790\u6784\u51fd\u6570
     destructor : function(){
       var _self = this,
         tabContentEl = _self.get('tabContentEl');
@@ -352,7 +84,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
         tabContentEl.remove();
       }
     },
-    //设置标签内容是否可见
+    //\u8bbe\u7f6e\u6807\u7b7e\u5185\u5bb9\u662f\u5426\u53ef\u89c1
     setTabContentVisible : function(v){
       var _self = this,
         tabContentEl = _self.get('tabContentEl');
@@ -386,7 +118,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
   });
 
   /**
-   * 导航标签项
+   * \u5bfc\u822a\u6807\u7b7e\u9879
    * xclass : 'nav-tab-item'
    * @class BUI.Tab.NavTabItem
    * @extends BUI.Component.Controller
@@ -398,7 +130,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
    */
   {
     /**
-     * 创建DOM
+     * \u521b\u5efaDOM
      * @protected
      */
     createDom : function(){
@@ -409,7 +141,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       }
     },
     /**
-     * 绑定事件
+     * \u7ed1\u5b9a\u4e8b\u4ef6
      * @protected
      */
     bindUI : function(){
@@ -427,7 +159,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       });
     },
     /**
-     * 处理双击
+     * \u5904\u7406\u53cc\u51fb
      * @protected
      */
     handleDblClick:function(ev){
@@ -439,7 +171,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       _self.fire('dblclick',{domTarget : ev.target,domEvent : ev});
     },
     /**
-     * 处理右键
+     * \u5904\u7406\u53f3\u952e
      * @protected
      */
     handleContextMenu:function(ev){
@@ -447,20 +179,20 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       this.fire('showmenu',{position:{x:ev.pageX,y:ev.pageY}});
     },
     /**
-     * 设置标题
-     * @param {String} title 标题
+     * \u8bbe\u7f6e\u6807\u9898
+     * @param {String} title \u6807\u9898
      */
     setTitle : function(title){
       this.set('title',title);
     },
     /**
-    * 关闭
+    * \u5173\u95ed
     */
     close:function(){
       this.fire('closed');
     },
     /**
-     * 重新加载页面
+     * \u91cd\u65b0\u52a0\u8f7d\u9875\u9762
      */
     reload : function(){
       this.get('view').resetHref();
@@ -515,7 +247,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
         value: 'li'
       },
       /**
-       * 标签是否选中
+       * \u6807\u7b7e\u662f\u5426\u9009\u4e2d
        * @type {Boolean}
        */
       actived : {
@@ -523,7 +255,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
         value : false
       }, 
       /**
-       * 是否可关闭
+       * \u662f\u5426\u53ef\u5173\u95ed
        * @type {Boolean}
        */
       closeable : {
@@ -536,34 +268,34 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       events:{
         value : {
           /**
-           * 点击菜单项
+           * \u70b9\u51fb\u83dc\u5355\u9879
            * @name BUI.Tab.NavTabItem#click
            * @event 
-           * @param {Object} e 事件对象
-           * @param {BUI.Tab.NavTabItem} e.target 正在点击的标签
+           * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {BUI.Tab.NavTabItem} e.target \u6b63\u5728\u70b9\u51fb\u7684\u6807\u7b7e
            */
           'click' : true,
           /**
-           * 正在关闭，返回false可以阻止关闭事件发生
+           * \u6b63\u5728\u5173\u95ed\uff0c\u8fd4\u56defalse\u53ef\u4ee5\u963b\u6b62\u5173\u95ed\u4e8b\u4ef6\u53d1\u751f
            * @name BUI.Tab.NavTabItem#closing
            * @event 
-           * @param {Object} e 事件对象
-           * @param {BUI.Tab.NavTabItem} e.target 正在关闭的标签
+           * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {BUI.Tab.NavTabItem} e.target \u6b63\u5728\u5173\u95ed\u7684\u6807\u7b7e
            */
           'closing' : true,
           /**
-           * 关闭事件
+           * \u5173\u95ed\u4e8b\u4ef6
            * @name BUI.Tab.NavTabItem#closed
            * @event 
-           * @param {Object} e 事件对象
-           * @param {BUI.Tab.NavTabItem} e.target 关闭的标签
+           * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {BUI.Tab.NavTabItem} e.target \u5173\u95ed\u7684\u6807\u7b7e
            */
           'closed' : true,
           /**
            * @name BUI.Tab.NavTabItem#showmenu
            * @event
-           * @param {Object} e 事件对象
-           * @param {BUI.Tab.NavTabItem} e.target 显示菜单的标签
+           * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {BUI.Tab.NavTabItem} e.target \u663e\u793a\u83dc\u5355\u7684\u6807\u7b7e
            */
           'showmenu' : true,
           'afterVisibleChange' : true
@@ -585,11 +317,11 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
         value : '<div class="' + CLS_CONTENT + '" style="display:none;"><iframe src="" width="100%" height="100%" frameborder="0"></iframe></div>'
       },
       /**
-       * 标签页指定的URL
+       * \u6807\u7b7e\u9875\u6307\u5b9a\u7684URL
        * @cfg {String} href
        */
       /**
-       * 标签页指定的URL
+       * \u6807\u7b7e\u9875\u6307\u5b9a\u7684URL
        * @type {String}
        */
       href : {
@@ -601,11 +333,11 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
         value:true
       },
       /**
-       * 标签文本
+       * \u6807\u7b7e\u6587\u672c
        * @cfg {String} title
        */
       /**
-       * 标签文本
+       * \u6807\u7b7e\u6587\u672c
        * tab.getItem('id').set('title','new title');
        * @type {String}
        * @default ''
@@ -629,11 +361,7 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
 
   navTabItem.View = navTabItemView;
   return navTabItem;
-});/**
- * @fileOverview 导航标签
- * @author dxq613@gmail.com
- * @ignore              
- */
+});
 define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
 
   var BUI = require('bui/common'),
@@ -647,7 +375,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     ITEM_WIDTH = 140;
 
   /**
-   * 导航标签的视图类
+   * \u5bfc\u822a\u6807\u7b7e\u7684\u89c6\u56fe\u7c7b
    * @class BUI.Tab.NavTabView
    * @extends BUI.Component.View
    * @private
@@ -678,7 +406,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       }
       el.height(v);
     },
-    //设置自动适应宽度
+    //\u8bbe\u7f6e\u81ea\u52a8\u9002\u5e94\u5bbd\u5ea6
     _uiSetForceFit : function(v){
       var _self = this,
         el = _self.get('el');
@@ -697,7 +425,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     priority:0
   });
   /**
-   * 导航标签
+   * \u5bfc\u822a\u6807\u7b7e
    * @class BUI.Tab.NavTab
    * @extends BUI.Component.Controller
    */
@@ -708,9 +436,9 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
      */
     {
       /**
-       * 添加标签项
-       * @param {Object} config 菜单项的配置项
-       * @param {Boolean} reload 如果标签页已存在，则重新加载
+       * \u6dfb\u52a0\u6807\u7b7e\u9879
+       * @param {Object} config \u83dc\u5355\u9879\u7684\u914d\u7f6e\u9879
+       * @param {Boolean} reload \u5982\u679c\u6807\u7b7e\u9875\u5df2\u5b58\u5728\uff0c\u5219\u91cd\u65b0\u52a0\u8f7d
        */
       addTab:function(config,reload){
         var _self = this,
@@ -747,13 +475,13 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         return item;
       },
       /**
-       * 获取导航标签，存放内容的节点
-       * @return {jQuery} 导航内容的容器
+       * \u83b7\u53d6\u5bfc\u822a\u6807\u7b7e\uff0c\u5b58\u653e\u5185\u5bb9\u7684\u8282\u70b9
+       * @return {jQuery} \u5bfc\u822a\u5185\u5bb9\u7684\u5bb9\u5668
        */
       getTabContentContainer : function(){
         return this.get('view').getTabContentContainer();
       },
-      //绑定事件
+      //\u7ed1\u5b9a\u4e8b\u4ef6
       bindUI: function(){
         var _self = this,
           forceFit = _self.get('forceFit');
@@ -767,7 +495,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           });
         }
 
-        //监听点击标签
+        //\u76d1\u542c\u70b9\u51fb\u6807\u7b7e
         _self.on('click',function(ev){
           var item = ev.target;
           if(item != _self){
@@ -776,7 +504,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           }
         });
 
-        //关闭标签
+        //\u5173\u95ed\u6807\u7b7e
         _self.on('closed',function(ev){
           var item = ev.target;
           _self._closeItem(item);
@@ -788,7 +516,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
 
         
       },
-      //绑定滚动事件
+      //\u7ed1\u5b9a\u6eda\u52a8\u4e8b\u4ef6
       _bindScrollEvent : function(){
         var _self = this,
           el = _self.get('el');
@@ -821,8 +549,8 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         }
       },
       /**
-       * 通过id,设置选中的标签项
-       * @param {String} id 标签编号
+       * \u901a\u8fc7id,\u8bbe\u7f6e\u9009\u4e2d\u7684\u6807\u7b7e\u9879
+       * @param {String} id \u6807\u7b7e\u7f16\u53f7
        */
       setActived : function(id){
         var _self = this,
@@ -830,8 +558,8 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         _self._setItemActived(item);
       },
       /**
-       * 获取当前选中的标签项
-       * @return {BUI.Tab.NavTabItem} 选中的标签对象
+       * \u83b7\u53d6\u5f53\u524d\u9009\u4e2d\u7684\u6807\u7b7e\u9879
+       * @return {BUI.Tab.NavTabItem} \u9009\u4e2d\u7684\u6807\u7b7e\u5bf9\u8c61
        */
       getActivedItem : function(){
         var _self = this,
@@ -846,9 +574,9 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         return result;
       },
       /**
-       * 通过编号获取标签项
-       * @param  {String} id 标签项的编号
-       * @return {BUI.Tab.NavTabItem} 标签项对象
+       * \u901a\u8fc7\u7f16\u53f7\u83b7\u53d6\u6807\u7b7e\u9879
+       * @param  {String} id \u6807\u7b7e\u9879\u7684\u7f16\u53f7
+       * @return {BUI.Tab.NavTabItem} \u6807\u7b7e\u9879\u5bf9\u8c61
        */
       getItemById : function(id){
         var _self = this,
@@ -875,7 +603,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
 
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-refresh',
-                text : '刷新',
+                text : '\u5237\u65b0',
                 listeners:{
                   'click':function(){
                     var item = _self.get('showMenuItem');
@@ -889,7 +617,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
                 id : ID_CLOSE,
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-remove',
-                text: '关闭',
+                text: '\u5173\u95ed',
                 listeners:{
                   'click':function(){
                     var item = _self.get('showMenuItem');
@@ -902,7 +630,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
               {
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-remove-sign',
-                text : '关闭其他',
+                text : '\u5173\u95ed\u5176\u4ed6',
                 listeners:{
                   'click':function(){
                     var item = _self.get('showMenuItem');
@@ -915,7 +643,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
               {
                 xclass : 'context-menu-item',
                 iconCls:'icon icon-remove-sign',
-                text : '关闭所有',
+                text : '\u5173\u95ed\u6240\u6709',
                 listeners:{
                   'click':function(){
                     _self.closeAll();
@@ -929,7 +657,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         _self.set('menu',menu);
         return menu;
       },
-      //关闭标签项
+      //\u5173\u95ed\u6807\u7b7e\u9879
       _closeItem : function(item){
         var _self = this,
           index = _self._getIndex(item),
@@ -946,7 +674,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
             }else{
               _self._setItemActived(nextItem);
             }
-          }else{//删除标签项时，可能会引起滚动按钮状态的改变
+          }else{//\u5220\u9664\u6807\u7b7e\u9879\u65f6\uff0c\u53ef\u80fd\u4f1a\u5f15\u8d77\u6eda\u52a8\u6309\u94ae\u72b6\u6001\u7684\u6539\u53d8
             _self._scrollToItem(activedItem);;
           }
           _self.forceFit();
@@ -970,19 +698,19 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           
         });
       },
-      //通过位置查找标签项
+      //\u901a\u8fc7\u4f4d\u7f6e\u67e5\u627e\u6807\u7b7e\u9879
       _getItemByIndex : function(index){
         var _self = this,
           children = _self.get('children');  
         return children[index];
       },
-      //获取标签项的位置
+      //\u83b7\u53d6\u6807\u7b7e\u9879\u7684\u4f4d\u7f6e
       _getIndex : function(item){
         var _self = this,
           children = _self.get('children');    
         return BUI.Array.indexOf(item,children);
       },
-      //重新计算标签项容器的宽度位置
+      //\u91cd\u65b0\u8ba1\u7b97\u6807\u7b7e\u9879\u5bb9\u5668\u7684\u5bbd\u5ea6\u4f4d\u7f6e
       _resetItemList : function(){
         if(this.get('forceFit')){
           return;
@@ -993,7 +721,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         container.width(_self._getTotalWidth());
 
       },
-      //获取选项的总宽度，以默认宽度为基数
+      //\u83b7\u53d6\u9009\u9879\u7684\u603b\u5bbd\u5ea6\uff0c\u4ee5\u9ed8\u8ba4\u5bbd\u5ea6\u4e3a\u57fa\u6570
       _getTotalWidth : function(){
         var _self = this,
           children = _self.get('children');
@@ -1015,7 +743,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         var _self = this;
         _self._forceItemWidth(_self._getForceItemWidth());
       },
-      //设置平均宽度
+      //\u8bbe\u7f6e\u5e73\u5747\u5bbd\u5ea6
       _forceItemWidth : function(width){
         width = width || this.get('itemWidth');
         var _self = this,
@@ -1024,29 +752,29 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           item.set('width',width);
         });
       },
-      //使指定标签项在用户可视区域内
+      //\u4f7f\u6307\u5b9a\u6807\u7b7e\u9879\u5728\u7528\u6237\u53ef\u89c6\u533a\u57df\u5185
       _scrollToItem : function(item){
-        if(this.get('forceFit')){ //自适应后，不进行滚动
+        if(this.get('forceFit')){ //\u81ea\u9002\u5e94\u540e\uff0c\u4e0d\u8fdb\u884c\u6eda\u52a8
           return;
         }
         var _self = this,
           container = _self.getContentElement(),
           containerPosition = container.position(),
           disWidth = _self._getDistanceToEnd(item,container,containerPosition),
-          disBegin = _self._getDistanceToBegin(item,containerPosition); //当前活动的项距离最右端的距离
+          disBegin = _self._getDistanceToBegin(item,containerPosition); //\u5f53\u524d\u6d3b\u52a8\u7684\u9879\u8ddd\u79bb\u6700\u53f3\u7aef\u7684\u8ddd\u79bb
 
-        //如果标签项列表小于整个标签容器的大小，则左对齐
+        //\u5982\u679c\u6807\u7b7e\u9879\u5217\u8868\u5c0f\u4e8e\u6574\u4e2a\u6807\u7b7e\u5bb9\u5668\u7684\u5927\u5c0f\uff0c\u5219\u5de6\u5bf9\u9f50
         if(container.width() < container.parent().width()){
           _self._scrollTo(container,0);  
-        }else if(disBegin < 0){//如果左边被遮挡，向右移动
+        }else if(disBegin < 0){//\u5982\u679c\u5de6\u8fb9\u88ab\u906e\u6321\uff0c\u5411\u53f3\u79fb\u52a8
 
           _self._scrollTo(container,containerPosition.left - (disBegin));
 
-        }else if(disWidth > 0){//如果当前节点被右端遮挡，则向左滚动到显示位置
+        }else if(disWidth > 0){//\u5982\u679c\u5f53\u524d\u8282\u70b9\u88ab\u53f3\u7aef\u906e\u6321\uff0c\u5219\u5411\u5de6\u6eda\u52a8\u5230\u663e\u793a\u4f4d\u7f6e
         
           _self._scrollTo(container,containerPosition.left + (disWidth) * -1);
 
-        }else if(containerPosition.left < 0){//将左边移动，使最后一个标签项离右边最近
+        }else if(containerPosition.left < 0){//\u5c06\u5de6\u8fb9\u79fb\u52a8\uff0c\u4f7f\u6700\u540e\u4e00\u4e2a\u6807\u7b7e\u9879\u79bb\u53f3\u8fb9\u6700\u8fd1
           var lastDistance = _self._getLastDistance(container,containerPosition),
             toLeft = 0;
           if(lastDistance < 0){
@@ -1056,15 +784,15 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           }
         }
       },
-      //获取标签到最左端的距离
+      //\u83b7\u53d6\u6807\u7b7e\u5230\u6700\u5de6\u7aef\u7684\u8ddd\u79bb
       _getDistanceToBegin : function(item,containerPosition){
         var position = item.get('el').position();
 
         return position.left + containerPosition.left;
       },
       /**
-       * 获取标签到最右端的距离
-       * @return  {Number} 像素
+       * \u83b7\u53d6\u6807\u7b7e\u5230\u6700\u53f3\u7aef\u7684\u8ddd\u79bb
+       * @return  {Number} \u50cf\u7d20
        * @private
        */
       _getDistanceToEnd : function(item,container,containerPosition){
@@ -1076,7 +804,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           disWidth = offsetLeft + _self.get('itemWidth') - wraperWidth; 
         return disWidth;
       },
-      //获取最后一个标签项离右边的间距
+      //\u83b7\u53d6\u6700\u540e\u4e00\u4e2a\u6807\u7b7e\u9879\u79bb\u53f3\u8fb9\u7684\u95f4\u8ddd
       _getLastDistance : function(container,containerPosition){
         var _self = this,
           children = _self.get('children'),
@@ -1105,7 +833,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         }
 
       },
-      //向右滚动
+      //\u5411\u53f3\u6eda\u52a8
       _scrllRight : function(){
         var _self = this,
           container = _self.getContentElement(),
@@ -1117,7 +845,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           _self._scrollTo(container,toRight);
         }
       },
-      //设置向左，向右的箭头是否可用
+      //\u8bbe\u7f6e\u5411\u5de6\uff0c\u5411\u53f3\u7684\u7bad\u5934\u662f\u5426\u53ef\u7528
       _setArrowStatus : function(container,containerPosition){
 
         container = container || this.getContentElement();
@@ -1126,7 +854,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           position = containerPosition || container.position(),
           disWidth = _self._getLastDistance(container,containerPosition);
 
-        //可以向左边滚动
+        //\u53ef\u4ee5\u5411\u5de6\u8fb9\u6eda\u52a8
         if(position.left < 0){
           wapperEl.addClass(CLS_ARROW_RIGHT+'-active');
         }else{
@@ -1139,7 +867,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           wapperEl.removeClass(CLS_ARROW_LEFT+'-active');
         }
       },
-      //设置当前选中的标签
+      //\u8bbe\u7f6e\u5f53\u524d\u9009\u4e2d\u7684\u6807\u7b7e
       _setItemActived:function(item){
         var _self = this,
           preActivedItem = _self.getActivedItem();
@@ -1155,7 +883,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           if(!item.get('actived')){
             item.set('actived',true);
           }
-          //当标签项可见时，否则无法计算位置信息
+          //\u5f53\u6807\u7b7e\u9879\u53ef\u89c1\u65f6\uff0c\u5426\u5219\u65e0\u6cd5\u8ba1\u7b97\u4f4d\u7f6e\u4fe1\u606f
           if(item.get('visible')){
             _self._scrollToItem(item);
           }
@@ -1178,14 +906,14 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         },
         /**
          * @private
-         * 右键菜单
+         * \u53f3\u952e\u83dc\u5355
          * @type {Object}
          */
         menu : {
 
         },
         /**
-         * 设置此参数时，标签选项的宽度会进行自适应
+         * \u8bbe\u7f6e\u6b64\u53c2\u6570\u65f6\uff0c\u6807\u7b7e\u9009\u9879\u7684\u5bbd\u5ea6\u4f1a\u8fdb\u884c\u81ea\u9002\u5e94
          * @cfg {Boolean} forceFit
          */
         forceFit : {
@@ -1193,14 +921,14 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           value : false
         },
         /**
-         * 标签的默认宽度,140px，设置forceFit:true后，此宽度为最宽宽度
+         * \u6807\u7b7e\u7684\u9ed8\u8ba4\u5bbd\u5ea6,140px\uff0c\u8bbe\u7f6eforceFit:true\u540e\uff0c\u6b64\u5bbd\u5ea6\u4e3a\u6700\u5bbd\u5bbd\u5ea6
          * @type {Number}
          */
         itemWidth : {
           value : ITEM_WIDTH
         },
         /**
-         * 渲染标签的模版
+         * \u6e32\u67d3\u6807\u7b7e\u7684\u6a21\u7248
          * @type {String}
          */
         tpl : {
@@ -1217,10 +945,10 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
                 
           value : {
             /**
-             * 点击标签项
+             * \u70b9\u51fb\u6807\u7b7e\u9879
              * @event
-             * @param {Object} e 事件对象
-             * @param {BUI.Tab.NavTabItem} e.item 标签项
+             * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+             * @param {BUI.Tab.NavTabItem} e.item \u6807\u7b7e\u9879
              */
             'itemclick' : false
           }
@@ -1235,11 +963,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
   );
 
   return navTab;
-});/**
- * @fileOverview 
- * @ignore
- */
-
+});
 define('bui/tab/tabitem',['bui/common'],function (require) {
   
 
@@ -1252,7 +976,7 @@ define('bui/tab/tabitem',['bui/common'],function (require) {
    * @class BUI.Tab.TabItemView
    * @extends BUI.Component.View
    * @mixins BUI.Component.UIBase.ListItemView
-   * 标签项的视图层对象
+   * \u6807\u7b7e\u9879\u7684\u89c6\u56fe\u5c42\u5bf9\u8c61
    */
   var itemView = Component.View.extend([UIBase.ListItemView],{
   },{
@@ -1261,7 +985,7 @@ define('bui/tab/tabitem',['bui/common'],function (require) {
 
 
   /**
-   * 标签项
+   * \u6807\u7b7e\u9879
    * @class BUI.Tab.TabItem
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ListItem
@@ -1291,11 +1015,7 @@ define('bui/tab/tabitem',['bui/common'],function (require) {
   
   item.View = itemView;
   return item;
-});/**
- * @fileOverview 切换标签
- * @ignore
- */
-
+});
 define('bui/tab/tab',['bui/common'],function (require) {
   
 
@@ -1304,7 +1024,7 @@ define('bui/tab/tab',['bui/common'],function (require) {
     UIBase = Component.UIBase;
 
   /**
-   * 列表
+   * \u5217\u8868
    * xclass:'tab'
    * <pre><code>
    * BUI.use('bui/tab',function(Tab){
@@ -1314,16 +1034,16 @@ define('bui/tab/tab',['bui/common'],function (require) {
    *         elCls : 'nav-tabs',
    *         autoRender: true,
    *         children:[
-   *           {text:'标签一',value:'1'},
-   *           {text:'标签二',value:'2'},
-   *           {text:'标签三',value:'3'}
+   *           {text:'\u6807\u7b7e\u4e00',value:'1'},
+   *           {text:'\u6807\u7b7e\u4e8c',value:'2'},
+   *           {text:'\u6807\u7b7e\u4e09',value:'3'}
    *         ]
    *       });
    *     tab.on('selectedchange',function (ev) {
    *       var item = ev.item;
    *       $('#log').text(item.get('text') + ' ' + item.get('value'));
    *     });
-   *     tab.setSelected(tab.getItemAt(0)); //设置选中第一个
+   *     tab.setSelected(tab.getItemAt(0)); //\u8bbe\u7f6e\u9009\u4e2d\u7b2c\u4e00\u4e2a
    *   
    *   });
    *  </code></pre>
@@ -1340,7 +1060,7 @@ define('bui/tab/tab',['bui/common'],function (require) {
         value:'ul'
       },
       /**
-       * 子类的默认类名，即类的 xclass
+       * \u5b50\u7c7b\u7684\u9ed8\u8ba4\u7c7b\u540d\uff0c\u5373\u7c7b\u7684 xclass
        * @type {String}
        * @override
        * @default 'tab-item'
@@ -1355,11 +1075,7 @@ define('bui/tab/tab',['bui/common'],function (require) {
 
   return tab;
 
-});/**
- * @fileOverview 
- * @ignore
- */
-
+});
 define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem'],function (require) {
   
 
@@ -1372,7 +1088,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
    * @private
    * @class BUI.Tab.TabPanelItemView
    * @extends BUI.Tab.TabItemView
-   * 存在面板的标签项视图层对象
+   * \u5b58\u5728\u9762\u677f\u7684\u6807\u7b7e\u9879\u89c6\u56fe\u5c42\u5bf9\u8c61
    */
   var itemView = TabItem.View.extend([Component.UIBase.Close.View],{
   },{
@@ -1381,7 +1097,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
 
 
   /**
-   * 标签项
+   * \u6807\u7b7e\u9879
    * @class BUI.Tab.TabPanelItem
    * @extends BUI.Tab.TabItem
    * @mixins BUI.Tab.PanelItem
@@ -1393,7 +1109,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
     ATTRS : 
     {
       /**
-       * 关闭时直接销毁标签项，执行remove方法
+       * \u5173\u95ed\u65f6\u76f4\u63a5\u9500\u6bc1\u6807\u7b7e\u9879\uff0c\u6267\u884cremove\u65b9\u6cd5
        * @type {String}
        */
       closeAction : {
@@ -1415,11 +1131,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
   item.View = itemView;
   return item;
 
-});/**
- * @fileOverview 每个标签对应一个面板
- * @ignore
- */
-
+});
 define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function (require) {
   
   var BUI = require('bui/common'),
@@ -1427,7 +1139,7 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function
     Panels = require('bui/tab/panels');
 
   /**
-   * 带有面板的切换标签
+   * \u5e26\u6709\u9762\u677f\u7684\u5207\u6362\u6807\u7b7e
    * <pre><code>
    * BUI.use('bui/tab',function(Tab){
    *   
@@ -1437,7 +1149,7 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function
    *       panelContainer : '#panel',
    *       autoRender: true,
    *       children:[
-   *         {text:'源代码',value:'1'},
+   *         {text:'\u6e90\u4ee3\u7801',value:'1'},
    *         {text:'HTML',value:'2'},
    *         {text:'JS',value:'3'}
    *       ]
@@ -1453,15 +1165,15 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function
 
     bindUI : function(){
       var _self = this;
-      //关闭标签
+      //\u5173\u95ed\u6807\u7b7e
       _self.on('beforeclosed',function(ev){
         var item = ev.target;
         _self._beforeClosedItem(item);
       });
     },
-    //关闭标签选项前
+    //\u5173\u95ed\u6807\u7b7e\u9009\u9879\u524d
     _beforeClosedItem : function(item){
-      if(!item.get('selected')){ //如果未选中不执行下面的选中操作
+      if(!item.get('selected')){ //\u5982\u679c\u672a\u9009\u4e2d\u4e0d\u6267\u884c\u4e0b\u9762\u7684\u9009\u4e2d\u64cd\u4f5c
         return;
       }
 
@@ -1470,7 +1182,7 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function
         count = _self.getItemCount(),
         preItem,
         nextItem;
-      if(index !== count - 1){ //不是最后一个，则激活最后一个
+      if(index !== count - 1){ //\u4e0d\u662f\u6700\u540e\u4e00\u4e2a\uff0c\u5219\u6fc0\u6d3b\u6700\u540e\u4e00\u4e2a
         nextItem = _self.getItemAt(index + 1);
         _self.setSelected(nextItem);
       }else if(index !== 0){
@@ -1494,14 +1206,14 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function
         value : '<div></div>'
       },
       /**
-       * 默认的面板容器
+       * \u9ed8\u8ba4\u7684\u9762\u677f\u5bb9\u5668
        * @cfg {String} [panelContainer='.tab-panels']
        */
       panelContainer : {
         value : '.tab-panels'
       },
       /**
-       * 默认子控件的xclass
+       * \u9ed8\u8ba4\u5b50\u63a7\u4ef6\u7684xclass
        * @type {String}
        */
       defaultChildClass:{

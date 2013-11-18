@@ -1,8 +1,6 @@
-/**
- * @fileOverview 表格命名空间入口
- * @ignore
- */
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 define('bui/grid',['bui/common','bui/grid/simplegrid','bui/grid/grid','bui/grid/column','bui/grid/header','bui/grid/format','bui/grid/plugins'],function (require) {
 
   var BUI = require('bui/common'),
@@ -19,11 +17,7 @@ define('bui/grid',['bui/common','bui/grid/simplegrid','bui/grid/grid','bui/grid/
 
   return Grid;
 
-});/**
- * @fileOverview 简单表格,仅用于展示数据
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   
   var BUI = require('bui/common'),
@@ -40,37 +34,37 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
 
 
   /**
-   * 简单表格的视图类
+   * \u7b80\u5355\u8868\u683c\u7684\u89c6\u56fe\u7c7b
    * @class BUI.Grid.SimpleGridView
    * @extends BUI.List.SimpleListView
    * @private
    */
   var simpleGridView = List.SimpleListView.extend({
     /**
-     * 设置列
+     * \u8bbe\u7f6e\u5217
      * @internal 
-     * @param {Array} columns 列集合
+     * @param {Array} columns \u5217\u96c6\u5408
      */
     setColumns : function(columns){
       var _self = this,
         headerRowEl = _self.get('headerRowEl');
 
       columns = columns || _self.get('columns');
-      //清空表头
+      //\u6e05\u7a7a\u8868\u5934
       headerRowEl.empty();
 
       BUI.each(columns,function(column){
         _self._createColumn(column,headerRowEl);
       });
     },
-    //创建列
+    //\u521b\u5efa\u5217
     _createColumn : function(column,parent){
       var _self = this,
         columnTpl = BUI.substitute(_self.get('columnTpl'),column);
       $(columnTpl).appendTo(parent);
     },
     /**
-     * 获取行模板
+     * \u83b7\u53d6\u884c\u6a21\u677f
      * @ignore
      */
     getItemTpl : function  (record,index) {
@@ -98,7 +92,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
         return BUI.substitute(cellTpl,{elCls : column.elCls,text:text});    
     },
     /**
-     * 清除数据
+     * \u6e05\u9664\u6570\u636e
      * @ignore
      */
     clearData : function(){
@@ -113,7 +107,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
         _self._createRow(record,index);
       });
     },
-    //设置单元格边框
+    //\u8bbe\u7f6e\u5355\u5143\u683c\u8fb9\u6846
     _uiSetInnerBorder : function(v){
         var _self = this,
             el = _self.get('el');
@@ -160,22 +154,22 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   });
 
   /**
-   * 简单表格
+   * \u7b80\u5355\u8868\u683c
    * xclass:'simple-grid'
    * <pre><code>
    *  BUI.use('bui/grid',function(Grid){
    *     
    *    var columns = [{
-   *             title : '表头1(10%)',
+   *             title : '\u8868\u59341(10%)',
    *             dataIndex :'a',
    *             width:'10%'
    *           },{
    *             id: '123',
-   *             title : '表头2(20%)',
+   *             title : '\u8868\u59342(20%)',
    *             dataIndex :'b',
    *             width:'20%'
    *           },{
-   *             title : '表头3(70%)',
+   *             title : '\u8868\u59343(70%)',
    *             dataIndex : 'c',
    *             width:'70%'
    *         }],
@@ -204,7 +198,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
       this.get('view').setColumns();
     },
     /**
-     * 绑定事件
+     * \u7ed1\u5b9a\u4e8b\u4ef6
      * @protected
      */
     bindUI : function(){
@@ -222,15 +216,15 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
       });
     },
     /**
-     * 显示数据
+     * \u663e\u793a\u6570\u636e
      * <pre><code>
      *   var data = [{},{}];
      *   grid.showData(data);
      *
-     *   //等同
+     *   //\u7b49\u540c
      *   grid.set('items',data);
      * </code></pre>
-     * @param  {Array} data 要显示的数据
+     * @param  {Array} data \u8981\u663e\u793a\u7684\u6570\u636e
      */
     showData : function(data){
       this.clearData();
@@ -238,7 +232,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
       this.set('items',data);
     },
     /**
-     * 清除数据
+     * \u6e05\u9664\u6570\u636e
      */
     clearData : function(){
       this.get('view').clearData();
@@ -246,7 +240,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
     _uiSetColumns : function(columns){
       var _self = this;
 
-      //重置列，先清空数据
+      //\u91cd\u7f6e\u5217\uff0c\u5148\u6e05\u7a7a\u6570\u636e
       _self.clearData();
       _self.get('view').setColumns(columns);
     }
@@ -258,7 +252,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
      */
     {
       /**
-       * 表格可点击项的样式
+       * \u8868\u683c\u53ef\u70b9\u51fb\u9879\u7684\u6837\u5f0f
        * @protected
        * @type {String}
        */
@@ -267,7 +261,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
         value : CLS_GRID_ROW
       },
       /**
-       * 表格应用的样式，更改此值，则不应用默认表格样式
+       * \u8868\u683c\u5e94\u7528\u7684\u6837\u5f0f\uff0c\u66f4\u6539\u6b64\u503c\uff0c\u5219\u4e0d\u5e94\u7528\u9ed8\u8ba4\u8868\u683c\u6837\u5f0f
        * <pre><code>
        * grid = new Grid.SimpleGrid({
        *   render:'#grid',
@@ -284,19 +278,19 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
         value : CLS_GRID + '-table'
       },
       /**
-       * 列信息
+       * \u5217\u4fe1\u606f
        * @cfg {Array} columns
        */
       /**
-       * 列信息，仅支持以下配置项：
+       * \u5217\u4fe1\u606f\uff0c\u4ec5\u652f\u6301\u4ee5\u4e0b\u914d\u7f6e\u9879\uff1a
        * <ol>
-       *   <li>title：标题</li>
-       *   <li>elCls: 应用到本列的样式</li>
-       *   <li>width：宽度，数字或者百分比</li>
-       *   <li>dataIndex: 字段名</li>
-       *   <li>renderer: 渲染函数</li>
+       *   <li>title\uff1a\u6807\u9898</li>
+       *   <li>elCls: \u5e94\u7528\u5230\u672c\u5217\u7684\u6837\u5f0f</li>
+       *   <li>width\uff1a\u5bbd\u5ea6\uff0c\u6570\u5b57\u6216\u8005\u767e\u5206\u6bd4</li>
+       *   <li>dataIndex: \u5b57\u6bb5\u540d</li>
+       *   <li>renderer: \u6e32\u67d3\u51fd\u6570</li>
        * </ol>
-       * 具体字段的解释清参看 ： {@link BUI.Grid.Column}
+       * \u5177\u4f53\u5b57\u6bb5\u7684\u89e3\u91ca\u6e05\u53c2\u770b \uff1a {@link BUI.Grid.Column}
        * @type {Array}
        */
       columns : {
@@ -305,7 +299,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
         value : []
       },
       /**
-       * 模板
+       * \u6a21\u677f
        * @protected
        */
       tpl:{
@@ -313,7 +307,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
         value:'<table cellspacing="0" class="{tableCls}" cellpadding="0"><thead><tr></tr></thead><tbody></tbody></table>'
       },
       /**
-       * 单元格左右之间是否出现边框
+       * \u5355\u5143\u683c\u5de6\u53f3\u4e4b\u95f4\u662f\u5426\u51fa\u73b0\u8fb9\u6846
        * <pre><code>
        * <pre><code>
        * grid = new Grid.SimpleGrid({
@@ -327,7 +321,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
        * @cfg {Boolean} [innerBorder=true]
        */
       /**
-       * 单元格左右之间是否出现边框
+       * \u5355\u5143\u683c\u5de6\u53f3\u4e4b\u95f4\u662f\u5426\u51fa\u73b0\u8fb9\u6846
        * @type {Boolean}
        * @default true
        */
@@ -336,7 +330,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
           value : true
       },
       /**
-       * 行模版
+       * \u884c\u6a21\u7248
        * @type {Object}
        */
       rowTpl:{
@@ -344,7 +338,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
         value:'<tr class="' + CLS_GRID_ROW + ' {oddCls}">{cellsTpl}</tr>'
       },
       /**
-       * 单元格的模版
+       * \u5355\u5143\u683c\u7684\u6a21\u7248
        * @type {String}
        */
       cellTpl:{
@@ -352,7 +346,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
         value:'<td class="' + CLS_GRID + '-cell {elCls}"><div class="' + CLS_GRID + '-cell-inner"><span class="' + CLS_GRID + '-cell-text">{text}</span></div></td>'
       },
       /**
-       * 列的配置模版
+       * \u5217\u7684\u914d\u7f6e\u6a21\u7248
        * @type {String}
        */
       columnTpl : {
@@ -378,12 +372,7 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
   
   simpleGrid.View = simpleGridView;
   return  simpleGrid;
-});/**
- * @fileOverview This class specifies the definition for a column of a grid.
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/grid/column',['bui/common'],function (require) {
 
     var	BUI = require('bui/common'),
@@ -397,7 +386,7 @@ define('bui/grid/column',['bui/common'],function (require) {
         CLS_HD_TRIGGER = 'grid-hd-menu-trigger';
 
     /**
-    * 表格列的视图类
+    * \u8868\u683c\u5217\u7684\u89c6\u56fe\u7c7b
     * @class BUI.Grid.ColumnView
     * @extends BUI.Component.View
     * @private
@@ -479,7 +468,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                 el.addClass(desCls);
             }
         },
-        //展开表头
+        //\u5c55\u5f00\u8868\u5934
         _uiSetOpen : function (v) {
             var _self = this,
                 el = _self.get('el');
@@ -512,20 +501,20 @@ define('bui/grid/column',['bui/common'],function (require) {
     });
 
     /**
-     * 表格的列对象，存储列信息，此对象不会由用户创建，而是配置在Grid中
+     * \u8868\u683c\u7684\u5217\u5bf9\u8c61\uff0c\u5b58\u50a8\u5217\u4fe1\u606f\uff0c\u6b64\u5bf9\u8c61\u4e0d\u4f1a\u7531\u7528\u6237\u521b\u5efa\uff0c\u800c\u662f\u914d\u7f6e\u5728Grid\u4e2d
      * xclass:'grid-column'
      * <pre><code>
      * columns = [{
-     *        title : '表头1',
+     *        title : '\u8868\u59341',
      *        dataIndex :'a',
      *        width:100
      *      },{
-     *        title : '表头2',
+     *        title : '\u8868\u59342',
      *        dataIndex :'b',
-     *        visible : false, //隐藏
+     *        visible : false, //\u9690\u85cf
      *        width:200
      *      },{
-     *        title : '表头3',
+     *        title : '\u8868\u59343',
      *        dataIndex : 'c',
      *        width:200
      *    }];
@@ -582,7 +571,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:'th'
                 },
                 /**
-                 * 表头展开显示菜单，
+                 * \u8868\u5934\u5c55\u5f00\u663e\u793a\u83dc\u5355\uff0c
                  * @type {Boolean}
                  * @protected
                  */
@@ -591,18 +580,18 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value : false
                 },
                 /**
-                 * 此列对应显示数据的字段名称
+                 * \u6b64\u5217\u5bf9\u5e94\u663e\u793a\u6570\u636e\u7684\u5b57\u6bb5\u540d\u79f0
                  * <pre><code>
                  * {
-                 *     title : '表头1',
-                 *     dataIndex :'a', //对应的数据的字段名称，如 ： {a:'123',b:'456'}
+                 *     title : '\u8868\u59341',
+                 *     dataIndex :'a', //\u5bf9\u5e94\u7684\u6570\u636e\u7684\u5b57\u6bb5\u540d\u79f0\uff0c\u5982 \uff1a {a:'123',b:'456'}
                  *     width:100
                  * }
                  * </code></pre>
                  * @cfg {String} dataIndex
                  */
                 /**
-                 * 此列对应显示数据的字段名称
+                 * \u6b64\u5217\u5bf9\u5e94\u663e\u793a\u6570\u636e\u7684\u5b57\u6bb5\u540d\u79f0
                  * @type {String}
                  * @default {String} empty string
                  */
@@ -611,7 +600,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:''
                 },
                 /**
-                 * 是否可拖拽，暂时未支持
+                 * \u662f\u5426\u53ef\u62d6\u62fd\uff0c\u6682\u65f6\u672a\u652f\u6301
                  * @private
                  * @type {Boolean}
                  * @defalut true
@@ -622,17 +611,17 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:true
                 },
                 /**
-                 * 编辑器,用于可编辑表格中<br>
-                 * ** 常用编辑器 **
-                 *  - xtype 指的是表单字段的类型 {@link BUI.Form.Field}
-                 *  - 其他的配置项对应于表单字段的配置项
+                 * \u7f16\u8f91\u5668,\u7528\u4e8e\u53ef\u7f16\u8f91\u8868\u683c\u4e2d<br>
+                 * ** \u5e38\u7528\u7f16\u8f91\u5668 **
+                 *  - xtype \u6307\u7684\u662f\u8868\u5355\u5b57\u6bb5\u7684\u7c7b\u578b {@link BUI.Form.Field}
+                 *  - \u5176\u4ed6\u7684\u914d\u7f6e\u9879\u5bf9\u5e94\u4e8e\u8868\u5355\u5b57\u6bb5\u7684\u914d\u7f6e\u9879
                  * <pre><code>
                  * columns = [
-                 *   {title : '文本',dataIndex :'a',editor : {xtype : 'text'}}, 
-                 *   {title : '数字', dataIndex :'b',editor : {xtype : 'number',rules : {required : true}}},
-                 *   {title : '日期',dataIndex :'c', editor : {xtype : 'date'},renderer : Grid.Format.dateRenderer},
-                 *   {title : '单选',dataIndex : 'd', editor : {xtype :'select',items : enumObj},renderer : Grid.Format.enumRenderer(enumObj)},
-                 *   {title : '多选',dataIndex : 'e', editor : {xtype :'select',select:{multipleSelect : true},items : enumObj},
+                 *   {title : '\u6587\u672c',dataIndex :'a',editor : {xtype : 'text'}}, 
+                 *   {title : '\u6570\u5b57', dataIndex :'b',editor : {xtype : 'number',rules : {required : true}}},
+                 *   {title : '\u65e5\u671f',dataIndex :'c', editor : {xtype : 'date'},renderer : Grid.Format.dateRenderer},
+                 *   {title : '\u5355\u9009',dataIndex : 'd', editor : {xtype :'select',items : enumObj},renderer : Grid.Format.enumRenderer(enumObj)},
+                 *   {title : '\u591a\u9009',dataIndex : 'e', editor : {xtype :'select',select:{multipleSelect : true},items : enumObj},
                  *       renderer : Grid.Format.multipleItemsRenderer(enumObj)
                  *   }
                  * ]
@@ -643,32 +632,32 @@ define('bui/grid/column',['bui/common'],function (require) {
 
                 },
                 /**
-                 * 是否可以获取焦点
+                 * \u662f\u5426\u53ef\u4ee5\u83b7\u53d6\u7126\u70b9
                  * @protected
                  */
                 focusable:{
                     value:false
                 },
                 /**
-                 * 固定列,主要用于在首行显示一些特殊内容，如单选框，复选框，序号等。插件不能对此列进行特殊操作，如：移动位置，隐藏等
+                 * \u56fa\u5b9a\u5217,\u4e3b\u8981\u7528\u4e8e\u5728\u9996\u884c\u663e\u793a\u4e00\u4e9b\u7279\u6b8a\u5185\u5bb9\uff0c\u5982\u5355\u9009\u6846\uff0c\u590d\u9009\u6846\uff0c\u5e8f\u53f7\u7b49\u3002\u63d2\u4ef6\u4e0d\u80fd\u5bf9\u6b64\u5217\u8fdb\u884c\u7279\u6b8a\u64cd\u4f5c\uff0c\u5982\uff1a\u79fb\u52a8\u4f4d\u7f6e\uff0c\u9690\u85cf\u7b49
                  * @cfg {Boolean} fixed
                  */
                 fixed : {
                     value : false
                 },
                 /**
-                 * 控件的编号
+                 * \u63a7\u4ef6\u7684\u7f16\u53f7
                  * @cfg {String} id
                  */
                 id:{
 
                 },
                 /**
-                 * 渲染表格单元格的格式化函数
+                 * \u6e32\u67d3\u8868\u683c\u5355\u5143\u683c\u7684\u683c\u5f0f\u5316\u51fd\u6570
                  * "function(value,obj,index){return value;}"
                  * <pre><code>
-                 * {title : '操作',renderer : function(){
-                 *     return '<span class="grid-command btn-edit">编辑</span>'
+                 * {title : '\u64cd\u4f5c',renderer : function(){
+                 *     return '<span class="grid-command btn-edit">\u7f16\u8f91</span>'
                  *   }}
                  * </code></pre>
                  * @cfg {Function} renderer
@@ -677,7 +666,7 @@ define('bui/grid/column',['bui/common'],function (require) {
 
                 },
                 /**
-                 * 是否可以调整宽度，应用于拖拽或者自适应宽度时
+                 * \u662f\u5426\u53ef\u4ee5\u8c03\u6574\u5bbd\u5ea6\uff0c\u5e94\u7528\u4e8e\u62d6\u62fd\u6216\u8005\u81ea\u9002\u5e94\u5bbd\u5ea6\u65f6
                  * @type {Boolean}
                  * @protected
                  * @default true
@@ -685,9 +674,9 @@ define('bui/grid/column',['bui/common'],function (require) {
                 resizable:{
                     value:true
                 },
-                /* 是否可以按照此列排序，如果设置true,那么点击列头时
+                /* \u662f\u5426\u53ef\u4ee5\u6309\u7167\u6b64\u5217\u6392\u5e8f\uff0c\u5982\u679c\u8bbe\u7f6etrue,\u90a3\u4e48\u70b9\u51fb\u5217\u5934\u65f6
                  * <pre><code>
-                 *     {title : '数字', dataIndex :'b',sortable : false},
+                 *     {title : '\u6570\u5b57', dataIndex :'b',sortable : false},
                  * </code></pre>
                  * @cfg {Boolean} [sortable=true]
                  */
@@ -697,7 +686,7 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:true
                 },
                 /**
-                 * 排序状态，当前排序是按照升序、降序。有3种值 null, 'ASC','DESC'
+                 * \u6392\u5e8f\u72b6\u6001\uff0c\u5f53\u524d\u6392\u5e8f\u662f\u6309\u7167\u5347\u5e8f\u3001\u964d\u5e8f\u3002\u67093\u79cd\u503c null, 'ASC','DESC'
                  * @type {String}
                  * @protected
                  * @default null
@@ -707,11 +696,11 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:null
                 },
                 /**
-                 * 列标题
+                 * \u5217\u6807\u9898
                  * @cfg {String} [title=&#160;]
                  */
                 /**
-                 * 列标题
+                 * \u5217\u6807\u9898
                  * <pre><code>
                  * var column = grid.findColumn('id');
                  * column.get('title');
@@ -727,17 +716,17 @@ define('bui/grid/column',['bui/common'],function (require) {
                 },
 
                 /**
-                 * 列的宽度,可以使数字或者百分比,不要使用 width : '100'或者width : '100px'
+                 * \u5217\u7684\u5bbd\u5ea6,\u53ef\u4ee5\u4f7f\u6570\u5b57\u6216\u8005\u767e\u5206\u6bd4,\u4e0d\u8981\u4f7f\u7528 width : '100'\u6216\u8005width : '100px'
                  * <pre><code>
-                 *  {title : '文本',width:100,dataIndex :'a',editor : {xtype : 'text'}}
+                 *  {title : '\u6587\u672c',width:100,dataIndex :'a',editor : {xtype : 'text'}}
                  *  
-                 *  {title : '文本',width:'10%',dataIndex :'a',editor : {xtype : 'text'}}
+                 *  {title : '\u6587\u672c',width:'10%',dataIndex :'a',editor : {xtype : 'text'}}
                  * </code></pre>
                  * @cfg {Number} [width = 80]
                  */
                 
                 /**
-                 * 列宽度
+                 * \u5217\u5bbd\u5ea6
                  * <pre><code>
                  *  grid.findColumn(id).set('width',200);
                  * </code></pre>
@@ -748,11 +737,11 @@ define('bui/grid/column',['bui/common'],function (require) {
                     value:100
                 },
                 /**
-                 * 是否显示菜单
+                 * \u662f\u5426\u663e\u793a\u83dc\u5355
                  * @cfg {Boolean} [showMenu=false]
                  */
                 /**
-                 * 是否显示菜单
+                 * \u662f\u5426\u663e\u793a\u83dc\u5355
                  * @type {Boolean}
                  * @default false
                  */
@@ -783,11 +772,11 @@ define('bui/grid/column',['bui/common'],function (require) {
                         '</div>'
                 },
                 /**
-                 * 单元格的模板，在列上设置单元格的模板，可以在渲染单元格时使用，更改单元格的内容
+                 * \u5355\u5143\u683c\u7684\u6a21\u677f\uff0c\u5728\u5217\u4e0a\u8bbe\u7f6e\u5355\u5143\u683c\u7684\u6a21\u677f\uff0c\u53ef\u4ee5\u5728\u6e32\u67d3\u5355\u5143\u683c\u65f6\u4f7f\u7528\uff0c\u66f4\u6539\u5355\u5143\u683c\u7684\u5185\u5bb9
                  * @cfg {String} cellTpl
                  */
                 /**
-                 * 单元格的模板，在列上设置单元格的模板，可以在渲染单元格时使用，更改单元格的内容
+                 * \u5355\u5143\u683c\u7684\u6a21\u677f\uff0c\u5728\u5217\u4e0a\u8bbe\u7f6e\u5355\u5143\u683c\u7684\u6a21\u677f\uff0c\u53ef\u4ee5\u5728\u6e32\u67d3\u5355\u5143\u683c\u65f6\u4f7f\u7528\uff0c\u66f4\u6539\u5355\u5143\u683c\u7684\u5185\u5bb9
                  * @type {String}
                  */
                 cellTpl:{
@@ -890,11 +879,6 @@ define('bui/grid/column',['bui/common'],function (require) {
 
 });
 	
-/**
- * @fileOverview 表格的头部
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
 
 define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
@@ -908,7 +892,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 	  UA = BUI.UA;
 
   /**
-  * 表格控件中表头的视图类
+  * \u8868\u683c\u63a7\u4ef6\u4e2d\u8868\u5934\u7684\u89c6\u56fe\u7c7b
   * @class BUI.Grid.HeaderView
   * @extends BUI.Component.View
   * @private
@@ -1074,9 +1058,9 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
         return result;
       },
       /**
-       * 查找列
-       * @param  {Function} func 匹配函数，function(column){}
-       * @return {BUI.Grid.Column}  查找到的列
+       * \u67e5\u627e\u5217
+       * @param  {Function} func \u5339\u914d\u51fd\u6570\uff0cfunction(column){}
+       * @return {BUI.Grid.Column}  \u67e5\u627e\u5230\u7684\u5217
        */
       getColumn:function (func) {
         var _self = this,
@@ -1236,9 +1220,9 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
               colWidth = Math.floor((originWidth + borderWidth) * ratio);
                  /* parseInt(columnEl.css('border-left-width')) || 0 +
                       parseInt(columnEl.css('border-right-width')) || 0;*/
-              // ！ note
+              // \uff01 note
               //
-              // 会再调用 setTableWidth， 循环调用 || 
+              // \u4f1a\u518d\u8c03\u7528 setTableWidth\uff0c \u5faa\u73af\u8c03\u7528 || 
               setColoumnWidthSilent(column,colWidth - borderWidth);
 							realWidth += colWidth;
 							lastShowColumn = column;
@@ -1255,8 +1239,8 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
       },
       _getColumnBorderWith : function(column,index){
-        //chrome 下border-left-width取的值不小数，所以暂时使用固定边框
-        //第一个边框无宽度，ie 下仍然存在Bug，所以做ie 的兼容
+        //chrome \u4e0bborder-left-width\u53d6\u7684\u503c\u4e0d\u5c0f\u6570\uff0c\u6240\u4ee5\u6682\u65f6\u4f7f\u7528\u56fa\u5b9a\u8fb9\u6846
+        //\u7b2c\u4e00\u4e2a\u8fb9\u6846\u65e0\u5bbd\u5ea6\uff0cie \u4e0b\u4ecd\u7136\u5b58\u5728Bug\uff0c\u6240\u4ee5\u505aie \u7684\u517c\u5bb9
         var columnEl = column.get('el'),
           borderWidth = Math.round(parseFloat(columnEl.css('border-left-width')) || 0)  + 
                Math.round(parseFloat(columnEl.css('border-right-width')) || 0);
@@ -1308,7 +1292,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
       * */
       {
         /**
-         * 列集合
+         * \u5217\u96c6\u5408
          * @type {Array}
          */
         columns:{
@@ -1321,7 +1305,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
         },
         /**
-         * 是否可以获取焦点
+         * \u662f\u5426\u53ef\u4ee5\u83b7\u53d6\u7126\u70b9
          * @protected
          */
         focusable:{
@@ -1339,7 +1323,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
             value:false
         },
         /**
-         * 表头的模版
+         * \u8868\u5934\u7684\u6a21\u7248
          * @type {String}
          */
         tpl : {
@@ -1350,7 +1334,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
           '</table>'
         },
         /**
-         * 表格应用的样式.
+         * \u8868\u683c\u5e94\u7528\u7684\u6837\u5f0f.
          */
         tableCls:{
             view:true
@@ -1370,7 +1354,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
           value:{
           /**
            * @event
-           * 添加列时触发
+           * \u6dfb\u52a0\u5217\u65f6\u89e6\u53d1
            * @param {jQuery.Event} e the event object
            * @param {BUI.Grid.Column} e.column which column added
            * @param {Number} index the add column's index in this header
@@ -1379,7 +1363,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
               'add' : false,
           /**
            * @event
-           * 移除列时触发
+           * \u79fb\u9664\u5217\u65f6\u89e6\u53d1
            * @param {jQuery.Event} e the event object
            * @param {BUI.Grid.Column} e.column which column removed
            * @param {Number} index the removed column's index in this header
@@ -1394,12 +1378,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
     });
   
   return header;
-});/**
- * @fileOverview 表格
- * @ignore
- * @author dxq613@gmail.com
- */
-
+});
 define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/grid/header','bui/grid/column'],function (require) {
 
   var BUI = require('bui/common'),
@@ -1455,11 +1434,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    * @class BUI.Grid.GridView
    * @private
    * @extends BUI.List.SimpleListView
-   * 表格的视图层
+   * \u8868\u683c\u7684\u89c6\u56fe\u5c42
    */
   var gridView = List.SimpleListView.extend({
 
-    //设置 body和table的标签
+    //\u8bbe\u7f6e body\u548ctable\u7684\u6807\u7b7e
     renderUI : function(){
       var _self = this,
         el = _self.get('el'),
@@ -1468,7 +1447,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       _self._setTableTpl();
     },
     /**
-     * 获取行模板
+     * \u83b7\u53d6\u884c\u6a21\u677f
      * @ignore
      */
     getItemTpl : function  (record,index) {
@@ -1512,7 +1491,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         return rowEl.find('.' + cls);
     },
     /**
-     * 重新创建表格的首行，一般在表格初始化完成后，或者列发生改变时
+     * \u91cd\u65b0\u521b\u5efa\u8868\u683c\u7684\u9996\u884c\uff0c\u4e00\u822c\u5728\u8868\u683c\u521d\u59cb\u5316\u5b8c\u6210\u540e\uff0c\u6216\u8005\u5217\u53d1\u751f\u6539\u53d8\u65f6
      */
     resetHeaderRow:function () {
       if(!this.get('useHeaderRow')){
@@ -1554,7 +1533,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         tableEl = _self.get('tableEl'),
         forceFit = _self.get('forceFit'),
         headerRowEl = _self.get('headerRowEl');
-      //使用百分比的宽度，不进行计算
+      //\u4f7f\u7528\u767e\u5206\u6bd4\u7684\u5bbd\u5ea6\uff0c\u4e0d\u8fdb\u884c\u8ba1\u7b97
       if(!isPercent(columnsWidth)){
         
         columnsWidth = columnsWidth || _self._getColumnsWidth();
@@ -1573,8 +1552,8 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       tableEl.width(columnsWidth);
     },
     /**
-     * 表格表体的宽度
-     * @param {Number} width 宽度
+     * \u8868\u683c\u8868\u4f53\u7684\u5bbd\u5ea6
+     * @param {Number} width \u5bbd\u5ea6
      */
     setBodyWidth : function(width){
       var _self = this,
@@ -1584,8 +1563,8 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
 
     },
     /**
-     * 设置表体高度
-     * @param {Number} height 高度
+     * \u8bbe\u7f6e\u8868\u4f53\u9ad8\u5ea6
+     * @param {Number} height \u9ad8\u5ea6
      */
     setBodyHeight : function(height){
       var _self = this,
@@ -1614,8 +1593,8 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       }
     },
     /**
-     * 更新数据
-     * @param  {Object} record 更新的数据
+     * \u66f4\u65b0\u6570\u636e
+     * @param  {Object} record \u66f4\u65b0\u7684\u6570\u636e
      */
     updateItem : function(record){
       var _self = this, 
@@ -1637,7 +1616,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       }
     },
     /**
-     * 显示没有数据时的提示信息
+     * \u663e\u793a\u6ca1\u6709\u6570\u636e\u65f6\u7684\u63d0\u793a\u4fe1\u606f
      */
     showEmptyText : function(){
       var _self = this,
@@ -1651,7 +1630,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       _self.set('emptyEl',emptyEl);
     },
     /**
-     * 清除没有数据时的提示信息
+     * \u6e05\u9664\u6ca1\u6709\u6570\u636e\u65f6\u7684\u63d0\u793a\u4fe1\u606f
      */
     clearEmptyText : function(){
        var _self = this,
@@ -1660,7 +1639,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         emptyEl.remove();
       }
     },
-    //设置第一行空白行，不显示任何数据，仅用于设置列的宽度
+    //\u8bbe\u7f6e\u7b2c\u4e00\u884c\u7a7a\u767d\u884c\uff0c\u4e0d\u663e\u793a\u4efb\u4f55\u6570\u636e\uff0c\u4ec5\u7528\u4e8e\u8bbe\u7f6e\u5217\u7684\u5bbd\u5ea6
     _createHeaderRow:function () {
       var _self = this,
           columns = _self._getColumns(),
@@ -1694,7 +1673,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       });
       return totalWidth;
     },
-    //获取列集合
+    //\u83b7\u53d6\u5217\u96c6\u5408
     _getColumns : function(){
       return this.get('columns');
     },
@@ -1707,7 +1686,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         return BUI.substitute(textTpl,{text:text, tips:_self._getTips(column, dataIndex, record)});
     },
     _getCellInnerText : function(column,dataIndex, record,index){
-      //renderer 时发生错误可能性很高
+      //renderer \u65f6\u53d1\u751f\u9519\u8bef\u53ef\u80fd\u6027\u5f88\u9ad8
       try{
         var _self = this,
           renderer = column.get('renderer'),
@@ -1730,11 +1709,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         hideCls:!column.get('visible') ? CLS_HIDE : ''
       });
     },
-    //获取空白单元格的模板
+    //\u83b7\u53d6\u7a7a\u767d\u5355\u5143\u683c\u7684\u6a21\u677f
     _getEmptyCellTpl:function () {
       return '<td class="' + CLS_GRID_CELL + ' ' + CLS_CELL_EMPTY + '">&nbsp;</td>';
     },
-    //获取空白行单元格模板
+    //\u83b7\u53d6\u7a7a\u767d\u884c\u5355\u5143\u683c\u6a21\u677f
     _getHeaderCellTpl:function (column) {
       var _self = this,
         headerCellTpl = _self.get('headerCellTpl');
@@ -1744,7 +1723,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         hideCls:!column.get('visible') ? CLS_HIDE : ''
       });
     },
-    //获取表格内宽度
+    //\u83b7\u53d6\u8868\u683c\u5185\u5bbd\u5ea6
     _getInnerWidth : function(){
       return getInnerWidth(this.get('width'));
     },
@@ -1760,7 +1739,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       }
       return value;
     },
-    //设置单元格边框
+    //\u8bbe\u7f6e\u5355\u5143\u683c\u8fb9\u6846
     _uiSetInnerBorder : function(v){
       var _self = this,
         el = _self.get('el');
@@ -1770,7 +1749,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         el.removeClass(CLS_GRID_BORDER);
       }
     },
-    //设置表格模板
+    //\u8bbe\u7f6e\u8868\u683c\u6a21\u677f
     _setTableTpl : function(tpl){
       var _self = this,
         bodyEl = _self.get('bodyEl');
@@ -1787,7 +1766,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       _self.set('itemContainer',tbodyEl);
       _self._setTableCls(_self.get('tableCls'));
     },
-    //设置table上的样式
+    //\u8bbe\u7f6etable\u4e0a\u7684\u6837\u5f0f
     _uiSetTableCls : function(v){
       this._setTableCls(v);
     },
@@ -1832,11 +1811,11 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
   /**
    * @class BUI.Grid.Grid
    *
-   * 表格控件,表格控件类图，一般情况下配合{@link BUI.Data.Store} 一起使用
+   * \u8868\u683c\u63a7\u4ef6,\u8868\u683c\u63a7\u4ef6\u7c7b\u56fe\uff0c\u4e00\u822c\u60c5\u51b5\u4e0b\u914d\u5408{@link BUI.Data.Store} \u4e00\u8d77\u4f7f\u7528
    * <p>
    * <img src="../assets/img/class-grid.jpg"/>
    * </p>
-   * <p>表格插件的类图：</p>
+   * <p>\u8868\u683c\u63d2\u4ef6\u7684\u7c7b\u56fe\uff1a</p>
    * <p>
    * <img src="../assets/img/class-grid-plugins.jpg"/>
    * </p>
@@ -1845,21 +1824,21 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    *  BUI.use(['bui/grid','bui/data'],function(Grid,Data){
    *    var Grid = Grid,
    *      Store = Data.Store,
-   *      columns = [{  //声明列模型
-   *          title : '表头1(20%)',
+   *      columns = [{  //\u58f0\u660e\u5217\u6a21\u578b
+   *          title : '\u8868\u59341(20%)',
    *          dataIndex :'a',
    *          width:'20%'
    *        },{
    *          id: '123',
-   *          title : '表头2(30%)',
+   *          title : '\u8868\u59342(30%)',
    *          dataIndex :'b',
    *          width:'30%'
    *        },{
-   *          title : '表头3(50%)',
+   *          title : '\u8868\u59343(50%)',
    *          dataIndex : 'c',
    *          width:'50%'
    *      }],
-   *      data = [{a:'123'},{a:'cdd',b:'edd'},{a:'1333',c:'eee',d:2}]; //显示的数据
+   *      data = [{a:'123'},{a:'cdd',b:'edd'},{a:'1333',c:'eee',d:2}]; //\u663e\u793a\u7684\u6570\u636e
    *
    *    var store = new Store({
    *        data : data,
@@ -1867,7 +1846,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    *      }),
    *       grid = new Grid.Grid({
    *         render:'#grid',
-   *         width:'100%',//这个属性一定要设置
+   *         width:'100%',//\u8fd9\u4e2a\u5c5e\u6027\u4e00\u5b9a\u8981\u8bbe\u7f6e
    *         columns : columns,
    *         idField : 'a',
    *         store : store
@@ -1881,7 +1860,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
   var grid = List.SimpleList.extend({
     
     /**
-     * 初始化，如果未设置宽度，则使用表格容器的宽度
+     * \u521d\u59cb\u5316\uff0c\u5982\u679c\u672a\u8bbe\u7f6e\u5bbd\u5ea6\uff0c\u5219\u4f7f\u7528\u8868\u683c\u5bb9\u5668\u7684\u5bbd\u5ea6
      * @protected
      * @ignore
      */
@@ -1900,7 +1879,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     createDom:function () {
       var _self = this;
 
-      // 提前,中途设置宽度时会失败！！
+      // \u63d0\u524d,\u4e2d\u9014\u8bbe\u7f6e\u5bbd\u5ea6\u65f6\u4f1a\u5931\u8d25\uff01\uff01
       if (_self.get('width')) {
           _self.get('el').addClass(CLS_GRID_WITH);
       }
@@ -1909,7 +1888,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         _self.get('el').addClass(CLS_GRID_HEIGHT);
       }
 
-      //因为内部的边距影响header的forceFit计算，所以必须在header计算forceFit前置此项
+      //\u56e0\u4e3a\u5185\u90e8\u7684\u8fb9\u8ddd\u5f71\u54cdheader\u7684forceFit\u8ba1\u7b97\uff0c\u6240\u4ee5\u5fc5\u987b\u5728header\u8ba1\u7b97forceFit\u524d\u7f6e\u6b64\u9879
       if(_self.get('innerBorder')){
           _self.get('el').addClass(CLS_GRID_BORDER);
       } 
@@ -1935,15 +1914,15 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       _self._bindItemsEvent();
     },
     /**
-     * 添加列
+     * \u6dfb\u52a0\u5217
      * <pre><code>
-     *   //添加到最后
+     *   //\u6dfb\u52a0\u5230\u6700\u540e
      *   grid.addColumn({title : 'new column',dataIndex : 'new',width:100});
-     *   //添加到最前
+     *   //\u6dfb\u52a0\u5230\u6700\u524d
      *   grid.addColumn({title : 'new column',dataIndex : 'new',width:100},0);
      * </code></pre>
-     * @param {Object|BUI.Grid.Column} column 列的配置，列类的定义 {@link BUI.Grid.Column}
-     * @param {Number} index 添加到的位置
+     * @param {Object|BUI.Grid.Column} column \u5217\u7684\u914d\u7f6e\uff0c\u5217\u7c7b\u7684\u5b9a\u4e49 {@link BUI.Grid.Column}
+     * @param {Number} index \u6dfb\u52a0\u5230\u7684\u4f4d\u7f6e
      * @return {BUI.Grid.Column}
      */
     addColumn : function(column, index){
@@ -1959,7 +1938,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       return column;
     },
     /**
-     * 清除显示的数据
+     * \u6e05\u9664\u663e\u793a\u7684\u6570\u636e
      * <pre><code>
      *   grid.clearData();
      * </code></pre>       
@@ -1968,24 +1947,24 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       this.clearItems();
     },
     /**
-     * 当前显示在表格中的数据
-     * @return {Array} 纪录集合
+     * \u5f53\u524d\u663e\u793a\u5728\u8868\u683c\u4e2d\u7684\u6570\u636e
+     * @return {Array} \u7eaa\u5f55\u96c6\u5408
      * @private
      */
     getRecords : function(){
       return this.getItems();
     },
     /**
-     * 使用索引或者id查找列
+     * \u4f7f\u7528\u7d22\u5f15\u6216\u8005id\u67e5\u627e\u5217
      * <pre><code>
-     *  //设置列的id,否则会自动生成
-     *  {id : '1',title : '表头',dataIndex : 'a'}
-     *  //获取列
+     *  //\u8bbe\u7f6e\u5217\u7684id,\u5426\u5219\u4f1a\u81ea\u52a8\u751f\u6210
+     *  {id : '1',title : '\u8868\u5934',dataIndex : 'a'}
+     *  //\u83b7\u53d6\u5217
      *  var column = grid.findColumn('id');
-     *  //操作列
+     *  //\u64cd\u4f5c\u5217
      *  column.set('visible',false);
      * </code></pre>
-     * @param {String|Number} id|index  文本值代表编号，数字代表索引
+     * @param {String|Number} id|index  \u6587\u672c\u503c\u4ee3\u8868\u7f16\u53f7\uff0c\u6570\u5b57\u4ee3\u8868\u7d22\u5f15
      */
     findColumn : function(id){
       var _self = this,
@@ -1997,16 +1976,16 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       }
     },
     /**
-     * 使用字段名查找列
+     * \u4f7f\u7528\u5b57\u6bb5\u540d\u67e5\u627e\u5217
      * <pre><code>
-     * //设置列dataIndex
-     *  {id : '1',title : '表头',dataIndex : 'a'}
-     *  //获取列
+     * //\u8bbe\u7f6e\u5217dataIndex
+     *  {id : '1',title : '\u8868\u5934',dataIndex : 'a'}
+     *  //\u83b7\u53d6\u5217
      *  var column = grid.findColumnByField('a');
-     *  //操作列
+     *  //\u64cd\u4f5c\u5217
      *  column.set('visible',false);
      * </code></pre>
-     * @param {String} field 列的字段名 dataIndex
+     * @param {String} field \u5217\u7684\u5b57\u6bb5\u540d dataIndex
      */
     findColumnByField : function(field){
       var _self = this,
@@ -2016,9 +1995,9 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       });
     },
     /**
-     * 根据列的Id查找对应的单元格
-     * @param {String|Number} id 列id
-     * @param {Object|jQuery} record 本行对应的记录，或者是本行的ＤＯＭ对象
+     * \u6839\u636e\u5217\u7684Id\u67e5\u627e\u5bf9\u5e94\u7684\u5355\u5143\u683c
+     * @param {String|Number} id \u5217id
+     * @param {Object|jQuery} record \u672c\u884c\u5bf9\u5e94\u7684\u8bb0\u5f55\uff0c\u6216\u8005\u662f\u672c\u884c\u7684\uff24\uff2f\uff2d\u5bf9\u8c61
      * @protected
      * @return  {jQuery}
      */
@@ -2046,31 +2025,31 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         return _self.get('view').findRow(record);
     },
     /**
-     * 移除列
+     * \u79fb\u9664\u5217
      * <pre><code>
      *   var column = grid.findColumn('id');
      *   grid.removeColumn(column);
      * </code></pre>
-     * @param {BUI.Grid.Column} column 要移除的列
+     * @param {BUI.Grid.Column} column \u8981\u79fb\u9664\u7684\u5217
      */
     removeColumn:function (column) {
       var _self = this;
         _self.get('header').removeColumn(column);
     },
     /**
-     * 显示数据,当不使用store时，可以单独显示数据
+     * \u663e\u793a\u6570\u636e,\u5f53\u4e0d\u4f7f\u7528store\u65f6\uff0c\u53ef\u4ee5\u5355\u72ec\u663e\u793a\u6570\u636e
      * <pre><code>
      *   var data = [{},{}];
      *   grid.showData(data);
      * </code></pre>
-     * @param  {Array} data 显示的数据集合
+     * @param  {Array} data \u663e\u793a\u7684\u6570\u636e\u96c6\u5408
      */
     showData : function(data){
       var _self = this;
       _self.set('items',data);
     },
     /**
-     * 重置列，当列发生改变时同步DOM和数据
+     * \u91cd\u7f6e\u5217\uff0c\u5f53\u5217\u53d1\u751f\u6539\u53d8\u65f6\u540c\u6b65DOM\u548c\u6570\u636e
      * @protected
      */
     resetColumns:function () {
@@ -2159,7 +2138,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       var _self = this;
       _self._bindScrollEvent();       
     },
-    //绑定记录DOM相关的事件
+    //\u7ed1\u5b9a\u8bb0\u5f55DOM\u76f8\u5173\u7684\u4e8b\u4ef6
     _bindItemsEvent : function(){
       var _self = this,
         store = _self.get('store');
@@ -2177,7 +2156,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
           record = ev.item,
           cell = $(target).closest('.' + CLS_GRID_CELL),
           rowEl = $(target).closest('.' + CLS_GRID_ROW),
-          rst; //用于是否阻止事件触发
+          rst; //\u7528\u4e8e\u662f\u5426\u963b\u6b62\u4e8b\u4ef6\u89e6\u53d1
 
         if(cell.length){
           rst = _self.fire('cellclick', {record:record, row:rowEl[0], cell:cell[0], field:cell.attr(ATTR_COLUMN_FIELD), domTarget:target,domEvent:ev.domEvent});
@@ -2215,8 +2194,8 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         return {record : ev.item, row : ev.domTarget, domTarget : ev.domTarget};
       }
     },
-    //获取表格内部的宽度，受边框的影响，
-    //内部的宽度不能等于表格宽度
+    //\u83b7\u53d6\u8868\u683c\u5185\u90e8\u7684\u5bbd\u5ea6\uff0c\u53d7\u8fb9\u6846\u7684\u5f71\u54cd\uff0c
+    //\u5185\u90e8\u7684\u5bbd\u5ea6\u4e0d\u80fd\u7b49\u4e8e\u8868\u683c\u5bbd\u5ea6
     _getInnerWidth : function(width){
       width = width || this.get('width');
       return getInnerWidth(width);
@@ -2239,7 +2218,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         _self.set('header', header);
       }
     },
-    //初始化 上下工具栏
+    //\u521d\u59cb\u5316 \u4e0a\u4e0b\u5de5\u5177\u680f
     _initBars:function () {
       var _self = this,
           bbar = _self.get('bbar'),
@@ -2253,7 +2232,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         store = null,
         pagingBarCfg = null;
       if (bar) {
-        //未指定xclass,同时不是Controller时
+        //\u672a\u6307\u5b9axclass,\u540c\u65f6\u4e0d\u662fController\u65f6
         if(!bar.xclass && !(bar instanceof Component.Controller)){
           bar.xclass = 'bar';
           bar.children = bar.children || [];
@@ -2304,7 +2283,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         _self.set('loadMask', loadMask);
       }
     },
-    //调整宽度时，调整内部控件宽度
+    //\u8c03\u6574\u5bbd\u5ea6\u65f6\uff0c\u8c03\u6574\u5185\u90e8\u63a7\u4ef6\u5bbd\u5ea6
     _uiSetWidth:function (w) {
       var _self = this;
       if (_self.get('rendered')) {
@@ -2317,7 +2296,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       }
       _self.get('view').setTableWidth();
     },
-    //设置自适应宽度
+    //\u8bbe\u7f6e\u81ea\u9002\u5e94\u5bbd\u5ea6
     _uiSetForceFit:function (v) {
       var _self = this;
       _self.get('header').set('forceFit', v);
@@ -2330,7 +2309,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       if (_self.get('rendered')) {
         if (_self.get('forceFit') && !obj.prevVal) {
           header.forceFitColumns();
-          //强迫对齐时，由未设置高度改成设置高度，增加了17像素的滚动条宽度，所以重置表格宽度
+          //\u5f3a\u8feb\u5bf9\u9f50\u65f6\uff0c\u7531\u672a\u8bbe\u7f6e\u9ad8\u5ea6\u6539\u6210\u8bbe\u7f6e\u9ad8\u5ea6\uff0c\u589e\u52a0\u4e8617\u50cf\u7d20\u7684\u6eda\u52a8\u6761\u5bbd\u5ea6\uff0c\u6240\u4ee5\u91cd\u7f6e\u8868\u683c\u5bbd\u5ea6
           _self.get('view').setTableWidth();
         }
         header.setTableWidth();
@@ -2338,14 +2317,14 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       
     },
     /**
-     * 加载数据
+     * \u52a0\u8f7d\u6570\u636e
      * @protected
      */
     onLoad : function(){
       var _self = this,
         store = _self.get('store');
       grid.superclass.onLoad.call(this);
-      if(_self.get('emptyDataTpl')){ //初始化的时候不显示空白数据的文本
+      if(_self.get('emptyDataTpl')){ //\u521d\u59cb\u5316\u7684\u65f6\u5019\u4e0d\u663e\u793a\u7a7a\u767d\u6570\u636e\u7684\u6587\u672c
         if(store && store.getCount() == 0){
           _self.get('view').showEmptyText();
         }else{
@@ -2356,7 +2335,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
   },{
     ATTRS : {
       /**
-       * 表头对象
+       * \u8868\u5934\u5bf9\u8c61
        * @type {BUI.Grid.Header}
        * @protected
        */
@@ -2371,17 +2350,17 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
        *    columns : columns,
        *    width : 700,
        *    forceFit : true,
-       *    tbar:{ //添加、删除
+       *    tbar:{ //\u6dfb\u52a0\u3001\u5220\u9664
        *        items : [{
        *          btnCls : 'button button-small',
-       *          text : '<i class="icon-plus"></i>添加',
+       *          text : '<i class="icon-plus"></i>\u6dfb\u52a0',
        *          listeners : {
        *            'click' : addFunction
        *          }
        *        },
        *        {
        *          btnCls : 'button button-small',
-       *          text : '<i class="icon-remove"></i>删除',
+       *          text : '<i class="icon-remove"></i>\u5220\u9664',
        *          listeners : {
        *            'click' : delFunction
        *          }
@@ -2406,7 +2385,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value : CLS_GRID_ROW
       },
       /**
-       * 列的配置 用来配置 表头 和 表内容。{@link BUI.Grid.Column}
+       * \u5217\u7684\u914d\u7f6e \u7528\u6765\u914d\u7f6e \u8868\u5934 \u548c \u8868\u5185\u5bb9\u3002{@link BUI.Grid.Column}
        * @cfg {Array} columns
        */
       columns:{
@@ -2414,20 +2393,20 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:[]
       },
       /**
-       * 强迫列自适应宽度，如果列宽度大于Grid整体宽度，等比例缩减，否则等比例增加
+       * \u5f3a\u8feb\u5217\u81ea\u9002\u5e94\u5bbd\u5ea6\uff0c\u5982\u679c\u5217\u5bbd\u5ea6\u5927\u4e8eGrid\u6574\u4f53\u5bbd\u5ea6\uff0c\u7b49\u6bd4\u4f8b\u7f29\u51cf\uff0c\u5426\u5219\u7b49\u6bd4\u4f8b\u589e\u52a0
        * <pre><code>
        *  var grid = new Grid.Grid({
        *    render:'#grid',
        *    columns : columns,
        *    width : 700,
-       *    forceFit : true, //自适应宽度
+       *    forceFit : true, //\u81ea\u9002\u5e94\u5bbd\u5ea6
        *    store : store
        *  });
        * </code></pre>
        * @cfg {Boolean} [forceFit= false]
        */
       /**
-       * 强迫列自适应宽度，如果列宽度大于Grid整体宽度，等比例缩减，否则等比例增加
+       * \u5f3a\u8feb\u5217\u81ea\u9002\u5e94\u5bbd\u5ea6\uff0c\u5982\u679c\u5217\u5bbd\u5ea6\u5927\u4e8eGrid\u6574\u4f53\u5bbd\u5ea6\uff0c\u7b49\u6bd4\u4f8b\u7f29\u51cf\uff0c\u5426\u5219\u7b49\u6bd4\u4f8b\u589e\u52a0
        * <pre><code>
        *  grid.set('forceFit',true);
        * </code></pre>
@@ -2439,13 +2418,13 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:false
       },
       /**
-       * 数据为空时，显示的提示内容
+       * \u6570\u636e\u4e3a\u7a7a\u65f6\uff0c\u663e\u793a\u7684\u63d0\u793a\u5185\u5bb9
        * <pre><code>
        *  var grid = new Grid({
        *   render:'#J_Grid4',
        *   columns : columns,
        *   store : store,
-       *   emptyDataTpl : '&lt;div class="centered"&gt;&lt;img alt="Crying" src="http://img03.taobaocdn.com/tps/i3/T1amCdXhXqXXXXXXXX-60-67.png"&gt;&lt;h2&gt;查询的数据不存在&lt;/h2&gt;&lt;/div&gt;',
+       *   emptyDataTpl : '&lt;div class="centered"&gt;&lt;img alt="Crying" src="http://img03.taobaocdn.com/tps/i3/T1amCdXhXqXXXXXXXX-60-67.png"&gt;&lt;h2&gt;\u67e5\u8be2\u7684\u6570\u636e\u4e0d\u5b58\u5728&lt;/h2&gt;&lt;/div&gt;',
        *   width:'100%'
        *
        * });
@@ -2458,7 +2437,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         view : true
       },
       /**
-       * 表格首行记录模板，首行记录，隐藏显示，用于确定表格各列的宽度
+       * \u8868\u683c\u9996\u884c\u8bb0\u5f55\u6a21\u677f\uff0c\u9996\u884c\u8bb0\u5f55\uff0c\u9690\u85cf\u663e\u793a\uff0c\u7528\u4e8e\u786e\u5b9a\u8868\u683c\u5404\u5217\u7684\u5bbd\u5ea6
        * @type {String}
        * @protected
        */
@@ -2467,7 +2446,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:'<tr class="' + PREFIX + 'grid-header-row">{cellsTpl}</tr>'
       },
       /**
-       * 表格首行记录的单元格模板
+       * \u8868\u683c\u9996\u884c\u8bb0\u5f55\u7684\u5355\u5143\u683c\u6a21\u677f
        * @protected
        * @type {String}
        */
@@ -2476,7 +2455,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:'<td class="{hideCls} ' + CLS_TD_PREFIX + '{id}" width="{width}" style="height:0"></td>'
       },
       /**
-       * 表格数据行的模板
+       * \u8868\u683c\u6570\u636e\u884c\u7684\u6a21\u677f
        * @type {String}
        * @default  <pre>'&lt;tr class="' + CLS_GRID_ROW + ' {{oddCls}}"&gt;{{cellsTpl}}&lt;/tr&gt;'</pre>
        */
@@ -2485,7 +2464,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:'<tr class="' + CLS_GRID_ROW + ' {oddCls}">{cellsTpl}</tr>'
       },
       /**
-       * 单元格的模板
+       * \u5355\u5143\u683c\u7684\u6a21\u677f
        * @type {String}
        * <pre>
        *     '&lt;td  class="' + CLS_GRID_CELL + ' grid-td-{{id}}" data-column-id="{{id}}" data-column-field = {{dataIndex}}&gt;'+
@@ -2501,7 +2480,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
 
       },
       /**
-       * 单元格文本的模板
+       * \u5355\u5143\u683c\u6587\u672c\u7684\u6a21\u677f
        * @default &lt;span class="' + CLS_CELL_TEXT + ' " title = "{{tips}}"&gt;{{text}}&lt;/span&gt;
        * @type {String}
        */
@@ -2510,100 +2489,100 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:'<span class="' + CLS_CELL_TEXT + ' " title = "{tips}">{text}</span>'
       },
       /**
-       * 事件集合
+       * \u4e8b\u4ef6\u96c6\u5408
        * @type {Object}
        */
       events:{
         value:{
           /**
-           * 显示完数据触发
+           * \u663e\u793a\u5b8c\u6570\u636e\u89e6\u53d1
            * @event
            */
           'aftershow' : false,
            /**
-           * 表格的数据清理完成后
+           * \u8868\u683c\u7684\u6570\u636e\u6e05\u7406\u5b8c\u6210\u540e
            * @event
            */
           'clear' : false,
           /**
-           * 点击单元格时触发,如果return false,则会阻止 'rowclick' ,'rowselected','rowunselected'事件
+           * \u70b9\u51fb\u5355\u5143\u683c\u65f6\u89e6\u53d1,\u5982\u679creturn false,\u5219\u4f1a\u963b\u6b62 'rowclick' ,'rowselected','rowunselected'\u4e8b\u4ef6
            * @event
-           * @param {jQuery.Event} e  事件对象
-           * @param {Object} e.record 此行的记录
-           * @param {String} e.field 点击单元格列对应的字段名称
-           * @param {HTMLElement} e.row 点击行对应的DOM
-           * @param {HTMLElement} e.cell 点击对应的单元格的DOM
-           * @param {HTMLElement} e.domTarget 点击的DOM
-           * @param {jQuery.Event} e.domEvent 点击的jQuery事件
+           * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Object} e.record \u6b64\u884c\u7684\u8bb0\u5f55
+           * @param {String} e.field \u70b9\u51fb\u5355\u5143\u683c\u5217\u5bf9\u5e94\u7684\u5b57\u6bb5\u540d\u79f0
+           * @param {HTMLElement} e.row \u70b9\u51fb\u884c\u5bf9\u5e94\u7684DOM
+           * @param {HTMLElement} e.cell \u70b9\u51fb\u5bf9\u5e94\u7684\u5355\u5143\u683c\u7684DOM
+           * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684DOM
+           * @param {jQuery.Event} e.domEvent \u70b9\u51fb\u7684jQuery\u4e8b\u4ef6
            */
           'cellclick' : false,
           /**
-           * 点击表头
+           * \u70b9\u51fb\u8868\u5934
            * @event 
-           * @param {jQuery.Event} e 事件对象
-           * @param {BUI.Grid.Column} e.column 列对象
-           * @param {HTMLElement} e.domTarget 点击的DOM
+           * @param {jQuery.Event} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {BUI.Grid.Column} e.column \u5217\u5bf9\u8c61
+           * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684DOM
            */
           'columnclick' : false,
           /**
-           * 点击行时触发，如果return false,则会阻止'rowselected','rowunselected'事件
+           * \u70b9\u51fb\u884c\u65f6\u89e6\u53d1\uff0c\u5982\u679creturn false,\u5219\u4f1a\u963b\u6b62'rowselected','rowunselected'\u4e8b\u4ef6
            * @event
-           * @param {jQuery.Event} e  事件对象
-           * @param {Object} e.record 此行的记录
-           * @param {HTMLElement} e.row 点击行对应的DOM
-           * @param {HTMLElement} e.domTarget 点击的DOM
+           * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Object} e.record \u6b64\u884c\u7684\u8bb0\u5f55
+           * @param {HTMLElement} e.row \u70b9\u51fb\u884c\u5bf9\u5e94\u7684DOM
+           * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684DOM
            */
           'rowclick' : false,
           /**
-           * 当一行数据显示在表格中后触发
+           * \u5f53\u4e00\u884c\u6570\u636e\u663e\u793a\u5728\u8868\u683c\u4e2d\u540e\u89e6\u53d1
            * @event
-           * @param {jQuery.Event} e  事件对象
-           * @param {Object} e.record 此行的记录
-           * @param {HTMLElement} e.row 行对应的DOM
-           * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
+           * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Object} e.record \u6b64\u884c\u7684\u8bb0\u5f55
+           * @param {HTMLElement} e.row \u884c\u5bf9\u5e94\u7684DOM
+           * @param {HTMLElement} e.domTarget \u6b64\u4e8b\u4ef6\u4e2d\u7b49\u4e8e\u884c\u5bf9\u5e94\u7684DOM
            */
           'rowcreated' : false,
           /**
-           * 移除一行的DOM后触发
+           * \u79fb\u9664\u4e00\u884c\u7684DOM\u540e\u89e6\u53d1
            * @event
-           * @param {jQuery.Event} e  事件对象
-           * @param {Object} e.record 此行的记录
-           * @param {HTMLElement} e.row 行对应的DOM
-           * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
+           * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Object} e.record \u6b64\u884c\u7684\u8bb0\u5f55
+           * @param {HTMLElement} e.row \u884c\u5bf9\u5e94\u7684DOM
+           * @param {HTMLElement} e.domTarget \u6b64\u4e8b\u4ef6\u4e2d\u7b49\u4e8e\u884c\u5bf9\u5e94\u7684DOM
            */
           'rowremoved' : false,
           /**
-           * 选中一行时触发
+           * \u9009\u4e2d\u4e00\u884c\u65f6\u89e6\u53d1
            * @event
-           * @param {jQuery.Event} e  事件对象
-           * @param {Object} e.record 此行的记录
-           * @param {HTMLElement} e.row 行对应的DOM
-           * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
+           * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Object} e.record \u6b64\u884c\u7684\u8bb0\u5f55
+           * @param {HTMLElement} e.row \u884c\u5bf9\u5e94\u7684DOM
+           * @param {HTMLElement} e.domTarget \u6b64\u4e8b\u4ef6\u4e2d\u7b49\u4e8e\u884c\u5bf9\u5e94\u7684DOM
            */
           'rowselected' : false,
           /**
-           * 清除选中一行时触发，只有多选情况下触发
+           * \u6e05\u9664\u9009\u4e2d\u4e00\u884c\u65f6\u89e6\u53d1\uff0c\u53ea\u6709\u591a\u9009\u60c5\u51b5\u4e0b\u89e6\u53d1
            * @event
-           * @param {jQuery.Event} e  事件对象
-           * @param {Object} e.record 此行的记录
-           * @param {HTMLElement} e.row 行对应的DOM
-           * @param {HTMLElement} e.domTarget 此事件中等于行对应的DOM
+           * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Object} e.record \u6b64\u884c\u7684\u8bb0\u5f55
+           * @param {HTMLElement} e.row \u884c\u5bf9\u5e94\u7684DOM
+           * @param {HTMLElement} e.domTarget \u6b64\u4e8b\u4ef6\u4e2d\u7b49\u4e8e\u884c\u5bf9\u5e94\u7684DOM
            */
           'rowunselected' : false,
           /**
-           * 表格内部发生滚动时触发
+           * \u8868\u683c\u5185\u90e8\u53d1\u751f\u6eda\u52a8\u65f6\u89e6\u53d1
            * @event
-           * @param {jQuery.Event} e  事件对象
-           * @param {Number} e.scrollLeft 滚动到的横坐标
-           * @param {Number} e.scrollTop 滚动到的纵坐标
-           * @param {Number} e.bodyWidth 表格内部的宽度
-           * @param {Number} e.bodyHeight 表格内部的高度
+           * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Number} e.scrollLeft \u6eda\u52a8\u5230\u7684\u6a2a\u5750\u6807
+           * @param {Number} e.scrollTop \u6eda\u52a8\u5230\u7684\u7eb5\u5750\u6807
+           * @param {Number} e.bodyWidth \u8868\u683c\u5185\u90e8\u7684\u5bbd\u5ea6
+           * @param {Number} e.bodyHeight \u8868\u683c\u5185\u90e8\u7684\u9ad8\u5ea6
            */
           'scroll' : false
         }
       },
       /**
-       * 是否奇偶行添加分割色
+       * \u662f\u5426\u5947\u5076\u884c\u6dfb\u52a0\u5206\u5272\u8272
        * @type {Boolean}
        * @default true
        */
@@ -2612,28 +2591,28 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:true
       },
       /**
-       * 顶层的工具栏，跟bbar结构一致,可以是工具栏对象@see {BUI.Toolbar.Bar},也可以是xclass形式的配置项，
-       * 还可以是包含以下字段的配置项
+       * \u9876\u5c42\u7684\u5de5\u5177\u680f\uff0c\u8ddfbbar\u7ed3\u6784\u4e00\u81f4,\u53ef\u4ee5\u662f\u5de5\u5177\u680f\u5bf9\u8c61@see {BUI.Toolbar.Bar},\u4e5f\u53ef\u4ee5\u662fxclass\u5f62\u5f0f\u7684\u914d\u7f6e\u9879\uff0c
+       * \u8fd8\u53ef\u4ee5\u662f\u5305\u542b\u4ee5\u4e0b\u5b57\u6bb5\u7684\u914d\u7f6e\u9879
        * <ol>
-       * <li>items:工具栏的项，
-       *    - 默认是按钮(xtype : button)、
-       *    - 文本(xtype : text)、
-       *    - 链接(xtype : link)、
-       *    - 分隔符(bar-item-separator)以及自定义项
+       * <li>items:\u5de5\u5177\u680f\u7684\u9879\uff0c
+       *    - \u9ed8\u8ba4\u662f\u6309\u94ae(xtype : button)\u3001
+       *    - \u6587\u672c(xtype : text)\u3001
+       *    - \u94fe\u63a5(xtype : link)\u3001
+       *    - \u5206\u9694\u7b26(bar-item-separator)\u4ee5\u53ca\u81ea\u5b9a\u4e49\u9879
        * </li>
-       * <li>pagingBar:表明包含分页栏</li>
+       * <li>pagingBar:\u8868\u660e\u5305\u542b\u5206\u9875\u680f</li>
        * </ol>
        * @type {Object|BUI.Toolbar.Bar}
        * @example
        * tbar:{
        *     items:[
        *         {
-       *             text:'命令一' //默认是按钮
+       *             text:'\u547d\u4ee4\u4e00' //\u9ed8\u8ba4\u662f\u6309\u94ae
        *             
        *         },
        *         {
        *             xtype:'text',
-       *             text:'文本'
+       *             text:'\u6587\u672c'
        *         }
        *     ],
        *     pagingBar:true
@@ -2643,7 +2622,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
 
       },
       /**
-       * 可以附加到表格上的样式.
+       * \u53ef\u4ee5\u9644\u52a0\u5230\u8868\u683c\u4e0a\u7684\u6837\u5f0f.
        * @cfg {String} tableCls
        * @default 'bui-grid-table' this css cannot be overridden
        */
@@ -2653,7 +2632,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value:PREFIX + 'grid-table'
       },
       /**
-       * 表体的模板
+       * \u8868\u4f53\u7684\u6a21\u677f
        * @protected
        * @type {String}
        */
@@ -2667,16 +2646,16 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value : '<div class="'+CLS_GRID_TBAR+'" style="display:none"></div><div class="'+CLS_GRID_HEADER_CONTAINER+'"></div><div class="'+CLS_GRID_BODY+'"></div><div style="display:none" class="' + CLS_GRID_BBAR + '"></div>'
       },
       /**
-       * 单元格左右之间是否出现边框
+       * \u5355\u5143\u683c\u5de6\u53f3\u4e4b\u95f4\u662f\u5426\u51fa\u73b0\u8fb9\u6846
        * 
        * @cfg {Boolean} [innerBorder=true]
        */
       /**
-       * 单元格左右之间是否出现边框
+       * \u5355\u5143\u683c\u5de6\u53f3\u4e4b\u95f4\u662f\u5426\u51fa\u73b0\u8fb9\u6846
        * <pre><code>
        *   var  grid = new Grid.Grid({
        *     render:'#grid',
-       *     innerBorder: false, // 默认为true
+       *     innerBorder: false, // \u9ed8\u8ba4\u4e3atrue
        *     columns : columns,
        *     store : store
        *   });
@@ -2689,7 +2668,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value : true
       },
       /**
-       * 是否使用空白单元格用于占位，使列宽等于设置的宽度
+       * \u662f\u5426\u4f7f\u7528\u7a7a\u767d\u5355\u5143\u683c\u7528\u4e8e\u5360\u4f4d\uff0c\u4f7f\u5217\u5bbd\u7b49\u4e8e\u8bbe\u7f6e\u7684\u5bbd\u5ea6
        * @type {Boolean}
        * @private
        */
@@ -2698,7 +2677,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value : true
       },
       /**
-       * 是否首行使用空白行，用以确定表格列的宽度
+       * \u662f\u5426\u9996\u884c\u4f7f\u7528\u7a7a\u767d\u884c\uff0c\u7528\u4ee5\u786e\u5b9a\u8868\u683c\u5217\u7684\u5bbd\u5ea6
        * @type {Boolean}
        * @private
        */
@@ -2707,7 +2686,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         value : true
       },
       /**
-       * Grid 的视图类型
+       * Grid \u7684\u89c6\u56fe\u7c7b\u578b
        * @type {BUI.Grid.GridView}
        */
       xview : {
@@ -2724,12 +2703,8 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
 /**
  * @ignore
  * 2013.1.18 
- *   这是一个重构的版本，将Body取消掉了，目的是为了可以将Grid和SimpleGrid联系起来，
- *   同时将selection 统一         
- *//**
- * @fileOverview this class details some util tools of grid,like loadMask, formatter for grid's cell render
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
+ *   \u8fd9\u662f\u4e00\u4e2a\u91cd\u6784\u7684\u7248\u672c\uff0c\u5c06Body\u53d6\u6d88\u6389\u4e86\uff0c\u76ee\u7684\u662f\u4e3a\u4e86\u53ef\u4ee5\u5c06Grid\u548cSimpleGrid\u8054\u7cfb\u8d77\u6765\uff0c
+ *   \u540c\u65f6\u5c06selection \u7edf\u4e00         
  */
 define('bui/grid/format',function (require) {
 
@@ -2752,14 +2727,14 @@ define('bui/grid/format',function (require) {
     */
     {
         /**
-         * 日期格式化函数
-         * @param {Number|Date} d 格式话的日期，一般为1970 年 1 月 1 日至今的毫秒数
-         * @return {String} 格式化后的日期格式为 2011-10-31
+         * \u65e5\u671f\u683c\u5f0f\u5316\u51fd\u6570
+         * @param {Number|Date} d \u683c\u5f0f\u8bdd\u7684\u65e5\u671f\uff0c\u4e00\u822c\u4e3a1970 \u5e74 1 \u6708 1 \u65e5\u81f3\u4eca\u7684\u6beb\u79d2\u6570
+         * @return {String} \u683c\u5f0f\u5316\u540e\u7684\u65e5\u671f\u683c\u5f0f\u4e3a 2011-10-31
          * @example
-         * 一般用法：<br>
-         * BUI.Grid.Format.dateRenderer(1320049890544);输出：2011-10-31 <br>
-         * 表格中用于渲染列：<br>
-         * {title:"出库日期",dataIndex:"date",renderer:BUI.Grid.Format.dateRenderer}
+         * \u4e00\u822c\u7528\u6cd5\uff1a<br>
+         * BUI.Grid.Format.dateRenderer(1320049890544);\u8f93\u51fa\uff1a2011-10-31 <br>
+         * \u8868\u683c\u4e2d\u7528\u4e8e\u6e32\u67d3\u5217\uff1a<br>
+         * {title:"\u51fa\u5e93\u65e5\u671f",dataIndex:"date",renderer:BUI.Grid.Format.dateRenderer}
          */
         dateRenderer:function (d) {
             if (!d) {
@@ -2780,9 +2755,9 @@ define('bui/grid/format',function (require) {
             return date.getFullYear() + '-' + formatTimeUnit(date.getMonth() + 1) + '-' + formatTimeUnit(date.getDate());
         },
         /**
-         * @description 日期时间格式化函数
-         * @param {Number|Date} d 格式话的日期，一般为1970 年 1 月 1 日至今的毫秒数
-         * @return {String} 格式化后的日期格式时间为 2011-10-31 16 : 41 : 02
+         * @description \u65e5\u671f\u65f6\u95f4\u683c\u5f0f\u5316\u51fd\u6570
+         * @param {Number|Date} d \u683c\u5f0f\u8bdd\u7684\u65e5\u671f\uff0c\u4e00\u822c\u4e3a1970 \u5e74 1 \u6708 1 \u65e5\u81f3\u4eca\u7684\u6beb\u79d2\u6570
+         * @return {String} \u683c\u5f0f\u5316\u540e\u7684\u65e5\u671f\u683c\u5f0f\u65f6\u95f4\u4e3a 2011-10-31 16 : 41 : 02
          */
         datetimeRenderer:function (d) {
             if (!d) {
@@ -2803,9 +2778,9 @@ define('bui/grid/format',function (require) {
             return date.getFullYear() + '-' + formatTimeUnit(date.getMonth() + 1) + '-' + formatTimeUnit(date.getDate()) + ' ' + formatTimeUnit(date.getHours()) + ':' + formatTimeUnit(date.getMinutes()) + ':' + formatTimeUnit(date.getSeconds());
         },
         /**
-         * 文本截取函数，当文本超出一定数字时，会截取文本，添加...
-         * @param {Number} length 截取多少字符
-         * @return {Function} 返回处理函数 返回截取后的字符串，如果本身小于指定的数字，返回原字符串。如果大于，则返回截断后的字符串，并附加...
+         * \u6587\u672c\u622a\u53d6\u51fd\u6570\uff0c\u5f53\u6587\u672c\u8d85\u51fa\u4e00\u5b9a\u6570\u5b57\u65f6\uff0c\u4f1a\u622a\u53d6\u6587\u672c\uff0c\u6dfb\u52a0...
+         * @param {Number} length \u622a\u53d6\u591a\u5c11\u5b57\u7b26
+         * @return {Function} \u8fd4\u56de\u5904\u7406\u51fd\u6570 \u8fd4\u56de\u622a\u53d6\u540e\u7684\u5b57\u7b26\u4e32\uff0c\u5982\u679c\u672c\u8eab\u5c0f\u4e8e\u6307\u5b9a\u7684\u6570\u5b57\uff0c\u8fd4\u56de\u539f\u5b57\u7b26\u4e32\u3002\u5982\u679c\u5927\u4e8e\uff0c\u5219\u8fd4\u56de\u622a\u65ad\u540e\u7684\u5b57\u7b26\u4e32\uff0c\u5e76\u9644\u52a0...
          */
         cutTextRenderer:function (length) {
             return function (value) {
@@ -2817,12 +2792,12 @@ define('bui/grid/format',function (require) {
             };
         },
         /**
-         * 枚举格式化函数
-         * @param {Object} enumObj 键值对的枚举对象 {"1":"大","2":"小"}
-         * @return {Function} 返回指定枚举的格式化函数
+         * \u679a\u4e3e\u683c\u5f0f\u5316\u51fd\u6570
+         * @param {Object} enumObj \u952e\u503c\u5bf9\u7684\u679a\u4e3e\u5bf9\u8c61 {"1":"\u5927","2":"\u5c0f"}
+         * @return {Function} \u8fd4\u56de\u6307\u5b9a\u679a\u4e3e\u7684\u683c\u5f0f\u5316\u51fd\u6570
          * @example
-         * //Grid 的列定义
-         *  {title:"状态",dataIndex:"status",renderer:BUI.Grid.Format.enumRenderer({"1":"入库","2":"出库"})}
+         * //Grid \u7684\u5217\u5b9a\u4e49
+         *  {title:"\u72b6\u6001",dataIndex:"status",renderer:BUI.Grid.Format.enumRenderer({"1":"\u5165\u5e93","2":"\u51fa\u5e93"})}
          */
         enumRenderer:function (enumObj) {
             return function (value) {
@@ -2830,14 +2805,14 @@ define('bui/grid/format',function (require) {
             };
         },
         /*
-         * 将多个值转换成一个字符串
-         * @param {Object} enumObj 键值对的枚举对象 {"1":"大","2":"小"}
-         * @return {Function} 返回指定枚举的格式化函数
+         * \u5c06\u591a\u4e2a\u503c\u8f6c\u6362\u6210\u4e00\u4e2a\u5b57\u7b26\u4e32
+         * @param {Object} enumObj \u952e\u503c\u5bf9\u7684\u679a\u4e3e\u5bf9\u8c61 {"1":"\u5927","2":"\u5c0f"}
+         * @return {Function} \u8fd4\u56de\u6307\u5b9a\u679a\u4e3e\u7684\u683c\u5f0f\u5316\u51fd\u6570
          * @example
          * <code>
-         *  //Grid 的列定义
-         *  {title:"状态",dataIndex:"status",renderer:BUI.Grid.Format.multipleItemsRenderer({"1":"入库","2":"出库","3":"退货"})}
-         *  //数据源是[1,2] 时，则返回 "入库,出库"
+         *  //Grid \u7684\u5217\u5b9a\u4e49
+         *  {title:"\u72b6\u6001",dataIndex:"status",renderer:BUI.Grid.Format.multipleItemsRenderer({"1":"\u5165\u5e93","2":"\u51fa\u5e93","3":"\u9000\u8d27"})}
+         *  //\u6570\u636e\u6e90\u662f[1,2] \u65f6\uff0c\u5219\u8fd4\u56de "\u5165\u5e93,\u51fa\u5e93"
          * </code>
          */
         multipleItemsRenderer:function (enumObj) {
@@ -2858,9 +2833,9 @@ define('bui/grid/format',function (require) {
             };
         },
         /*
-         * 将财务数据分转换成元
-         * @param {Number|String} enumObj 键值对的枚举对象 {"1":"大","2":"小"}
-         * @return {Number} 返回将分转换成元的数字
+         * \u5c06\u8d22\u52a1\u6570\u636e\u5206\u8f6c\u6362\u6210\u5143
+         * @param {Number|String} enumObj \u952e\u503c\u5bf9\u7684\u679a\u4e3e\u5bf9\u8c61 {"1":"\u5927","2":"\u5c0f"}
+         * @return {Number} \u8fd4\u56de\u5c06\u5206\u8f6c\u6362\u6210\u5143\u7684\u6570\u5b57
          */
         moneyCentRenderer:function (v) {
             if (BUI.isString(v)) {
@@ -2874,11 +2849,7 @@ define('bui/grid/format',function (require) {
     };
 
     return Format;
-});/**
- * @fileOverview 表格插件的入口
- * @author dxq613@gmail.com, yiminghe@gmail.com
- * @ignore
- */
+});
 ;(function(){
 var BASE = 'bui/grid/plugins/';
 define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',
@@ -2904,63 +2875,7 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 	return Plugins;
 });
 })();
-/**
- * @fileOverview 自动适应表格宽度的扩展
- * @ignore
- */
 
-define('bui/grid/plugins/autofit',['bui/common'],function (require) {
-  var BUI = require('bui/common');
-
-  /**
-   * 表格自适应宽度
-   * @class BUI.Grid.Plugins.AutoFit
-   * @extends BUI.Base
-   */
-  var AutoFit = function(cfg){
-    AutoFit.superclass.constructor.call(this,cfg);
-  };
-
-  BUI.extend(AutoFit,BUI.Base);
-
-  AutoFit.ATTRS = {
-
-  };
-
-  BUI.augment(AutoFit,{
-    //绑定事件
-    bindUI : function(grid){
-      var _self = this,
-        handler;
-      $(window).on('resize',function(){
-
-        function autoFit(){
-          clearTimeout(handler); //防止resize短时间内反复调用
-          handler = setTimeout(function(){
-            _self._autoFit(grid);
-          },100);
-        }
-        autoFit();
-      });
-    },
-    //自适应宽度
-    _autoFit : function(grid){
-      var render = grid.get('render'),
-          width;
-        grid.set('visible',false);
-        width = $(render).width();
-
-        grid.set('visible',true);
-        grid.set('width',width);
-    }
-
-  });
-
-  return AutoFit;
-});/**
- * @fileOverview Grid 菜单
- * @ignore
- */
 define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
   var BUI = require('bui/common'),
@@ -2974,7 +2889,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
   /**
    * @class BUI.Grid.Plugins.GridMenu
    * @extends BUI.Base
-   * 表格菜单插件
+   * \u8868\u683c\u83dc\u5355\u63d2\u4ef6
    */
   var gridMenu = function (config) {
     gridMenu.superclass.constructor.call(this,config);
@@ -2985,7 +2900,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
   gridMenu.ATTRS = 
   {
     /**
-     * 弹出菜单
+     * \u5f39\u51fa\u83dc\u5355
      * @type {BUI.Menu.ContextMenu}
      */
     menu : {
@@ -3001,19 +2916,19 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
       value : PREFIX + 'grid-hd-menu-trigger'
     },
     /**
-     * 菜单的配置项
+     * \u83dc\u5355\u7684\u914d\u7f6e\u9879
      * @type {Array}
      */
     items : {
       value : [
         {
           id:ID_SORT_ASC,
-          text:'升序',
+          text:'\u5347\u5e8f',
           iconCls:'icon-arrow-up'
         },
         {
           id:ID_SORT_DESC,
-          text:'降序',
+          text:'\u964d\u5e8f',
           iconCls : 'icon-arrow-down'
         },
         {
@@ -3021,7 +2936,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
         },
         {
           id : ID_COLUMNS_SET,
-          text:'设置列',
+          text:'\u8bbe\u7f6e\u5217',
           iconCls:'icon-list-alt'
         }
       ]
@@ -3030,7 +2945,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
   BUI.augment(gridMenu,{
     /**
-     * 初始化
+     * \u521d\u59cb\u5316
      * @protected
      */
     initializer : function (grid) {
@@ -3039,7 +2954,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
     },
     /**
-     * 渲染DOM
+     * \u6e32\u67d3DOM
      */
     renderUI : function(grid){
       var _self = this, 
@@ -3049,7 +2964,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
       });
     },
     /**
-     * 绑定表格
+     * \u7ed1\u5b9a\u8868\u683c
      * @protected
      */
     bindUI : function (grid){
@@ -3068,8 +2983,8 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
         if(sender.hasClass(_self.get('triggerCls'))){
           menu = _self.get('menu') || _self._initMenu();
           menu.set('align',{
-            node: sender, // 参考元素, falsy 或 window 为可视区域, 'trigger' 为触发元素, 其他为指定元素
-            points: ['bl','tl'], // ['tr', 'tl'] 表示 overlay 的 tl 与参考节点的 tr 对齐
+            node: sender, // \u53c2\u8003\u5143\u7d20, falsy \u6216 window \u4e3a\u53ef\u89c6\u533a\u57df, 'trigger' \u4e3a\u89e6\u53d1\u5143\u7d20, \u5176\u4ed6\u4e3a\u6307\u5b9a\u5143\u7d20
+            points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
             offset: [0, 0] 
           });
           menu.show();
@@ -3082,7 +2997,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
         column.set('showMenu',true);
       }
     },
-    //菜单显示后
+    //\u83dc\u5355\u663e\u793a\u540e
     _afterShow : function (column,menu) {
       var _self = this,
         grid = _self.get('grid');
@@ -3091,7 +3006,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
       _self._resetSortMenuItems(column,menu);
       _self._resetColumnsVisible(menu);
     },
-    //设置菜单项是否选中
+    //\u8bbe\u7f6e\u83dc\u5355\u9879\u662f\u5426\u9009\u4e2d
     _resetColumnsVisible : function (menu) {
       var _self = this,
         settingItem = menu.findItemById(ID_COLUMNS_SET),
@@ -3113,7 +3028,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
         }
       });
     },
-    //设置排序菜单项是否可用
+    //\u8bbe\u7f6e\u6392\u5e8f\u83dc\u5355\u9879\u662f\u5426\u53ef\u7528
     _resetSortMenuItems : function(column,menu) {
       var ascItem = menu.findItemById(ID_SORT_ASC),
         descItem = menu.findItemById(ID_SORT_DESC);
@@ -3125,7 +3040,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
         descItem.set('disabled',true);
       }
     },
-    //初始化菜单
+    //\u521d\u59cb\u5316\u83dc\u5355
     _initMenu : function () {
       var _self = this,
         menu = _self.get('menu'),
@@ -3203,11 +3118,7 @@ define('bui/grid/plugins/menu',['bui/common','bui/menu'],function (require) {
 
   return gridMenu;
 
-});/**
- * @fileOverview 级联表格
- * @ignore
- */
-
+});
 define('bui/grid/plugins/cascade',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
@@ -3221,12 +3132,12 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     CLS_CASCADE_ROW_COLLAPSE = CLS_CASCADE + '-collapse';
 
   /**
-   * 级联表格
+   * \u7ea7\u8054\u8868\u683c
    * <pre><code>
-   *  // 实例化 Grid.Plugins.Cascade 插件
+   *  // \u5b9e\u4f8b\u5316 Grid.Plugins.Cascade \u63d2\u4ef6
    *    var cascade = new Grid.Plugins.Cascade({
    *      renderer : function(record){
-   *        return '<div style="padding: 10px 20px;"><h2>详情信息</h2><p>' + record.detail + '</p></div>';
+   *        return '<div style="padding: 10px 20px;"><h2>\u8be6\u60c5\u4fe1\u606f</h2><p>' + record.detail + '</p></div>';
    *      }
    *    });
    *    var store = new Store({
@@ -3237,12 +3148,12 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
    *        render:'#grid',
    *        columns : columns,
    *        store: store,
-   *        plugins: [cascade]  // Grid.Plugins.Cascade 插件
+   *        plugins: [cascade]  // Grid.Plugins.Cascade \u63d2\u4ef6
    *      });
    *
    *    grid.render();
    *    
-   *    cascade.expandAll();//展开所有
+   *    cascade.expandAll();//\u5c55\u5f00\u6240\u6709
    * </code></pre>
    * @class BUI.Grid.Plugins.Cascade
    * @extends BUI.Base
@@ -3260,11 +3171,11 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
    */
   {
     /**
-     * 显示展开按钮列的宽度
+     * \u663e\u793a\u5c55\u5f00\u6309\u94ae\u5217\u7684\u5bbd\u5ea6
      * @cfg {Number} width
      */
     /**
-     * 显示展开按钮列的宽度
+     * \u663e\u793a\u5c55\u5f00\u6309\u94ae\u5217\u7684\u5bbd\u5ea6
      * @type {Number}
      * @default 40
      */
@@ -3272,7 +3183,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       value:40
     },
     /**
-     * 展开列的默认内容
+     * \u5c55\u5f00\u5217\u7684\u9ed8\u8ba4\u5185\u5bb9
      * @type {String}
      * @protected
      */
@@ -3280,7 +3191,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       value:'<span class="' + CLS_CASCADE + '"><i class="' + CLS_CASCADE + '-icon"></i></span>'
     },
     /**
-     * 展开行的模版
+     * \u5c55\u5f00\u884c\u7684\u6a21\u7248
      * @protected
      * @type {String}
      */
@@ -3288,11 +3199,11 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       value:'<tr class="' + CLS_CASCADE_ROW + '"><td class="'+ CLS_CASCADE_CELL + '"></td></tr>'
     },
     /**
-     * 生成级联列时需要渲染的内容
+     * \u751f\u6210\u7ea7\u8054\u5217\u65f6\u9700\u8981\u6e32\u67d3\u7684\u5185\u5bb9
      * @cfg {Function} renderer
      */
     /**
-     * 生成级联列时需要渲染的内容
+     * \u751f\u6210\u7ea7\u8054\u5217\u65f6\u9700\u8981\u6e32\u67d3\u7684\u5185\u5bb9
      * @type {Function}
      */
     renderer:{
@@ -3300,30 +3211,30 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
     },
     events : [
       /**
-       * 展开级联内容时触发
+       * \u5c55\u5f00\u7ea7\u8054\u5185\u5bb9\u65f6\u89e6\u53d1
        * @name  BUI.Grid.Plugins.Cascade#expand
        * @event
-       * @param {jQuery.Event} e  事件对象
-       * @param {Object} e.record 级联内容对应的纪录
-       * @param {HTMLElement} e.row 级联的行DOM
+       * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+       * @param {Object} e.record \u7ea7\u8054\u5185\u5bb9\u5bf9\u5e94\u7684\u7eaa\u5f55
+       * @param {HTMLElement} e.row \u7ea7\u8054\u7684\u884cDOM
        */
       'expand',
       /**
-       * 折叠级联内容时触发
+       * \u6298\u53e0\u7ea7\u8054\u5185\u5bb9\u65f6\u89e6\u53d1
        * @name  BUI.Grid.Plugins.Cascade#collapse
        * @event
-       * @param {jQuery.Event} e  事件对象
-       * @param {Object} e.record 级联内容对应的纪录
-       * @param {HTMLElement} e.row 级联的行DOM
+       * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+       * @param {Object} e.record \u7ea7\u8054\u5185\u5bb9\u5bf9\u5e94\u7684\u7eaa\u5f55
+       * @param {HTMLElement} e.row \u7ea7\u8054\u7684\u884cDOM
        */
       'collapse',
       /**
-       * 删除级联内容时触发
+       * \u5220\u9664\u7ea7\u8054\u5185\u5bb9\u65f6\u89e6\u53d1
        * @name  BUI.Grid.Plugins.Cascade#removed
        * @event
-       * @param {jQuery.Event} e  事件对象
-       * @param {Object} e.record 级联内容对应的纪录
-       * @param {HTMLElement} e.row 级联的行DOM
+       * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+       * @param {Object} e.record \u7ea7\u8054\u5185\u5bb9\u5bf9\u5e94\u7684\u7eaa\u5f55
+       * @param {HTMLElement} e.row \u7ea7\u8054\u7684\u884cDOM
        */
       'removed'
     ]
@@ -3336,14 +3247,14 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
    */
   {
     /**
-     * 初始化
+     * \u521d\u59cb\u5316
      * @protected
      */
     initializer:function(grid){
       var _self = this;
       var cfg = {
             title : '',
-            elCls:'center',//居中对齐
+            elCls:'center',//\u5c45\u4e2d\u5bf9\u9f50
             width : _self.get('width'),
             resizable:false,
             fixed : true,
@@ -3351,13 +3262,13 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
             cellTpl : _self.get('cellInner')
         },
         expandColumn = grid.addColumn(cfg,0);
-      //列之间的线去掉
+      //\u5217\u4e4b\u95f4\u7684\u7ebf\u53bb\u6389
       grid.set('innerBorder',false);
 
       _self.set('grid',grid);
     },
     /**
-     * 绑定事件
+     * \u7ed1\u5b9a\u4e8b\u4ef6
      * @protected
      */
     bindUI:function(grid){
@@ -3365,7 +3276,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       grid.on('cellclick',function(ev){
         var sender = $(ev.domTarget),
           cascadeEl = sender.closest('.' + CLS_CASCADE);
-        //如果点击展开、折叠按钮
+        //\u5982\u679c\u70b9\u51fb\u5c55\u5f00\u3001\u6298\u53e0\u6309\u94ae
         if(cascadeEl.length){
           if(!cascadeEl.hasClass(CLS_CASCADE_EXPAND)){
             _self._onExpand(ev.record,ev.row,cascadeEl);
@@ -3388,7 +3299,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       });
     },
     /**
-     * 展开所有级联数据
+     * \u5c55\u5f00\u6240\u6709\u7ea7\u8054\u6570\u636e
      * <pre><code>
      *   cascade.expandAll();
      * </code></pre>
@@ -3402,12 +3313,12 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
         });
     },
     /**
-     * 展开某条纪录
+     * \u5c55\u5f00\u67d0\u6761\u7eaa\u5f55
      * <pre><code>
      *   var record = grid.getItem('a');
      *   cascade.expand(record);
      * </code></pre>
-     * @param  {Object} record 纪录
+     * @param  {Object} record \u7eaa\u5f55
      */
     expand : function(record){
       var _self = this,
@@ -3419,12 +3330,12 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       }
     },
     /**
-     * 折叠某条纪录
+     * \u6298\u53e0\u67d0\u6761\u7eaa\u5f55
      * <pre><code>
      *   var record = grid.getItem('a');
      *   cascade.collapse(record);
      * </code></pre>
-     * @param  {Object} record 纪录
+     * @param  {Object} record \u7eaa\u5f55
      */
     collapse : function(record){
       var _self = this,
@@ -3436,7 +3347,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       }
     },
     /**
-     * 移除所有级联数据的ＤＯＭ
+     * \u79fb\u9664\u6240\u6709\u7ea7\u8054\u6570\u636e\u7684\uff24\uff2f\uff2d
      * @protected
      */
     removeAll : function(){
@@ -3449,9 +3360,9 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       });
     },
     /**
-     * 根据纪录删除级联信息
+     * \u6839\u636e\u7eaa\u5f55\u5220\u9664\u7ea7\u8054\u4fe1\u606f
      * @protected
-     * @param  {Object} record 级联信息对应的纪录
+     * @param  {Object} record \u7ea7\u8054\u4fe1\u606f\u5bf9\u5e94\u7684\u7eaa\u5f55
      */
     remove : function(record){
       var _self = this,
@@ -3462,7 +3373,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
 
     },
     /**
-     * 折叠所有级联数据
+     * \u6298\u53e0\u6240\u6709\u7ea7\u8054\u6570\u636e
      * <pre><code>
      *  cascade.collapseAll();
      * </code></pre>
@@ -3475,17 +3386,17 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
           _self.collapse(record);
         });
     },
-    //获取级联数据
+    //\u83b7\u53d6\u7ea7\u8054\u6570\u636e
     _getRowRecord : function(cascadeRow){
       return $(cascadeRow).data(DATA_RECORD);
     },
-    //移除级联行
+    //\u79fb\u9664\u7ea7\u8054\u884c
     _removeCascadeRow : function(row){
 
       this.fire('removed',{record: $(row).data(DATA_RECORD),row : row});
       $(row).remove();
     },
-    //通过纪录查找
+    //\u901a\u8fc7\u7eaa\u5f55\u67e5\u627e
     _findCascadeRow: function(record){
       var _self = this,
         rows = _self._getAllCascadeRows(),
@@ -3504,7 +3415,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
         grid = _self.get('grid');
       return grid.get('el').find('.' + CLS_CASCADE_ROW);
     },
-    //获取生成的级联行
+    //\u83b7\u53d6\u751f\u6210\u7684\u7ea7\u8054\u884c
     _getCascadeRow : function(gridRow){
       var nextRow = $(gridRow).next();
       if((nextRow).hasClass(CLS_CASCADE_ROW)){
@@ -3513,14 +3424,14 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       return null;
       //return $(gridRow).next('.' + CLS_CASCADE_ROW);
     },
-    //获取级联内容
+    //\u83b7\u53d6\u7ea7\u8054\u5185\u5bb9
     _getRowContent : function(record){
       var _self = this,
         renderer = _self.get('renderer'),
         content = renderer ? renderer(record) : '';
       return content;
     },
-    //创建级联行
+    //\u521b\u5efa\u7ea7\u8054\u884c
     _createCascadeRow : function(record,gridRow){
       var _self = this,
         rowTpl = _self.get('rowTpl'),
@@ -3531,7 +3442,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       rowEl.data(DATA_RECORD,record);
       return rowEl;
     },
-    //展开
+    //\u5c55\u5f00
     _onExpand : function(record,row,cascadeEl){
       var _self = this,
         cascadeRow = _self._getCascadeRow(row),
@@ -3549,7 +3460,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       
       _self.fire('expand',{record : record,row : cascadeRow[0]});
     },
-    //折叠
+    //\u6298\u53e0
     _onCollapse : function(record,row,cascadeEl){
 
       var _self = this,
@@ -3563,13 +3474,13 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       }
       
     },
-    //获取显示的列数
+    //\u83b7\u53d6\u663e\u793a\u7684\u5217\u6570
     _getColumnCount : function(row){
       return $(row).children().filter(function(){
         return $(this).css('display') !== 'none';
       }).length;
     },
-    //设置colspan
+    //\u8bbe\u7f6ecolspan
     _setColSpan : function(cascadeRow,gridRow){
       gridRow = gridRow || $(cascadeRow).prev();
       var _self = this,
@@ -3577,7 +3488,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
 
       $(cascadeRow).find('.' + CLS_CASCADE_CELL).attr('colspan',colspan)
     },
-    //重置所有的colspan
+    //\u91cd\u7f6e\u6240\u6709\u7684colspan
     _resetColspan : function(){
       var _self = this,
         cascadeRows =  _self._getAllCascadeRows();
@@ -3586,7 +3497,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
       });
     },
     /**
-     * 析构函数
+     * \u6790\u6784\u51fd\u6570
      */
     destructor : function(){
       var _self = this;
@@ -3597,11 +3508,7 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   });
 
   return cascade;
-});/**
- * @fileOverview 选择的插件
- * @ignore
- */
-
+});
 define('bui/grid/plugins/selection',['bui/common'],function(require){
 
   var BUI = require('bui/common'),
@@ -3611,7 +3518,7 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
     CLS_RADIO = PREFIX + 'grid-radio';
     
   /**
-  * 选择行插件
+  * \u9009\u62e9\u884c\u63d2\u4ef6
   * <pre><code>
   ** var store = new Store({
   *       data : data,
@@ -3620,13 +3527,13 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   *     grid = new Grid.Grid({
   *       render:'#grid',
   *       columns : columns,
-  *       itemStatusFields : { //设置数据跟状态的对应关系
+  *       itemStatusFields : { //\u8bbe\u7f6e\u6570\u636e\u8ddf\u72b6\u6001\u7684\u5bf9\u5e94\u5173\u7cfb
   *         selected : 'selected',
   *         disabled : 'disabled'
   *       },
   *       store : store,
-  *       plugins : [Grid.Plugins.CheckSelection] // 插件形式引入多选表格
-  *      //multiSelect: true  // 控制表格是否可以多选，但是这种方式没有前面的复选框 默认为false
+  *       plugins : [Grid.Plugins.CheckSelection] // \u63d2\u4ef6\u5f62\u5f0f\u5f15\u5165\u591a\u9009\u8868\u683c
+  *      //multiSelect: true  // \u63a7\u5236\u8868\u683c\u662f\u5426\u53ef\u4ee5\u591a\u9009\uff0c\u4f46\u662f\u8fd9\u79cd\u65b9\u5f0f\u6ca1\u6709\u524d\u9762\u7684\u590d\u9009\u6846 \u9ed8\u8ba4\u4e3afalse
   *     });
   *
   *   grid.render();
@@ -3711,7 +3618,7 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
         colEl.removeClass('checked');
       });
       
-      //清除纪录时取全选
+      //\u6e05\u9664\u7eaa\u5f55\u65f6\u53d6\u5168\u9009
       grid.on('clear',function(){
         //checkBox.attr('checked',false);
         colEl.removeClass('checked');
@@ -3720,7 +3627,7 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   });
   
   /**
-   * 表格单选插件
+   * \u8868\u683c\u5355\u9009\u63d2\u4ef6
    * @class BUI.Grid.Plugins.RadioSelection
    * @extends BUI.Base
    */
@@ -3794,7 +3701,7 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
 
   /**
   * @name BUI.Grid.Plugins
-  * @namespace 表格插件命名空间
+  * @namespace \u8868\u683c\u63d2\u4ef6\u547d\u540d\u7a7a\u95f4
   * @ignore
   */
   var Selection  = {
@@ -3804,11 +3711,7 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
 
   
   return Selection;
-});/**
- * @fileOverview 表格数据汇总
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
   var BUI = require('bui/common'),
@@ -3862,7 +3765,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
 
   /**
-   * 表格菜单插件 
+   * \u8868\u683c\u83dc\u5355\u63d2\u4ef6 
    * <pre><code>
    * var store = new Store({
    *      url : 'data/summary.json',
@@ -3874,7 +3777,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
    *      columns : columns,
    *      store: store,
    *      bbar : {pagingBar : true},
-   *      plugins : [Grid.Plugins.Summary] // 插件形式引入单选表格
+   *      plugins : [Grid.Plugins.Summary] // \u63d2\u4ef6\u5f62\u5f0f\u5f15\u5165\u5355\u9009\u8868\u683c
    *    });
    *
    *  grid.render();
@@ -3895,22 +3798,22 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
 
     },
     /**
-     * 总汇总行的标题
+     * \u603b\u6c47\u603b\u884c\u7684\u6807\u9898
      * @type {String}
-     * @default '总汇总'
+     * @default '\u603b\u6c47\u603b'
      */
     summaryTitle : {
-      value : '查询合计'
+      value : '\u67e5\u8be2\u5408\u8ba1'
     },
     /**
-     * 本页汇总的标题
+     * \u672c\u9875\u6c47\u603b\u7684\u6807\u9898
      * @type {String}
      */
     pageSummaryTitle : {
-      value : '本页合计'
+      value : '\u672c\u9875\u5408\u8ba1'
     },
     /**
-     * 在列对象中配置的字段
+     * \u5728\u5217\u5bf9\u8c61\u4e2d\u914d\u7f6e\u7684\u5b57\u6bb5
      * @type {String}
      * @default 'summary'
      */
@@ -3918,14 +3821,14 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       value : 'summary'
     },
     /**
-     * 本页汇总值的记录
+     * \u672c\u9875\u6c47\u603b\u503c\u7684\u8bb0\u5f55
      * @type {String}
      */
     pageSummaryField: {
       value : 'pageSummary'
     },
     /**
-     * 总汇总值的记录
+     * \u603b\u6c47\u603b\u503c\u7684\u8bb0\u5f55
      * @type {String}
      */
     summaryField : {
@@ -3933,7 +3836,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
     },
     /**
      * @private
-     * 本页汇总值
+     * \u672c\u9875\u6c47\u603b\u503c
      * @type {Object}
      */
     pageSummary : {
@@ -3941,7 +3844,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
     },
     /**
      * @private
-     * 总汇总
+     * \u603b\u6c47\u603b
      * @type {Object}
      */
     summary : {
@@ -3952,12 +3855,12 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
   BUI.extend(summary,BUI.Base);
 
   BUI.augment(summary,{
-    //初始化
+    //\u521d\u59cb\u5316
     initializer : function (grid) {
       var _self = this;
       _self.set('grid',grid);
     },
-    //添加DOM结构
+    //\u6dfb\u52a0DOM\u7ed3\u6784
     renderUI : function(grid){
       var _self = this,
         bodyEl = grid.get('el').find('.' + CLS_GRID_BODY),
@@ -3965,9 +3868,9 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
         footerEl = $(_self.get('footerTpl')).appendTo(bodyTable);
       _self.set('footerEl',footerEl);
     },
-    //绑定事件
+    //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(grid){
-      //绑定获取数据
+      //\u7ed1\u5b9a\u83b7\u53d6\u6570\u636e
       var _self = this,
         store = grid.get('store');
       if(store){
@@ -3992,7 +3895,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
         _self.resetSummary();
       });
     },
-    //处理汇总数据
+    //\u5904\u7406\u6c47\u603b\u6570\u636e
     _processSummary : function(data){
       var _self = this,
         footerEl = _self.get('footerEl');
@@ -4009,7 +3912,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       _self.set('summary',summary);
     },
     /**
-     * 重新设置本页汇总
+     * \u91cd\u65b0\u8bbe\u7f6e\u672c\u9875\u6c47\u603b
      */
     resetPageSummary : function(){
       var _self = this,
@@ -4030,7 +3933,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
         _self._updateFirstRow(pageEl,_self.get('pageSummaryTitle'));
       }
     },
-    //重置汇总数据
+    //\u91cd\u7f6e\u6c47\u603b\u6570\u636e
     resetSummary : function(pageSummary,summary){
       var _self = this,
         footerEl = _self.get('footerEl'),
@@ -4048,7 +3951,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       _self.set('pageEl',pageEl);
       _self._creatSummaryRow(summary,_self.get('summaryTitle'));
     },
-    //创建汇总
+    //\u521b\u5efa\u6c47\u603b
     _creatSummaryRow : function(summary,title){
       if(!summary){
         return null;
@@ -4075,14 +3978,14 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
         firstCell.html(getInnerTemplate(title + ':'));
       }
     },
-    //获取汇总模板
+    //\u83b7\u53d6\u6c47\u603b\u6a21\u677f
     _getSummaryTpl : function(summary){
       var _self = this,
         grid = _self.get('grid'),
         columns = grid.get('columns'),
         cellTempArray = [],
-        prePosition = -1, //上次汇总列的位置
-        currentPosition = -1,//当前位置
+        prePosition = -1, //\u4e0a\u6b21\u6c47\u603b\u5217\u7684\u4f4d\u7f6e
+        currentPosition = -1,//\u5f53\u524d\u4f4d\u7f6e
         rowTemplate = null;
 
       $.each(columns, function (colindex,column) {
@@ -4105,7 +4008,7 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       rowTemplate = ['<tr class="', CLS_SUMMARY_ROW,' ', CLS_GRID_ROW, '">', cellTempArray.join(''),getLastEmptyCell(), '</tr>'].join('');
       return rowTemplate;
     },
-    //获取汇总单元格内容
+    //\u83b7\u53d6\u6c47\u603b\u5355\u5143\u683c\u5185\u5bb9
     _getSummaryCellText : function(column,summary){
       var _self = this,
         val = summary[column.get('dataIndex')],
@@ -4133,17 +4036,13 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
   });
 
   return summary;
-});/**
- * @fileOverview 表格编辑插件
- * @ignore
- */
-
+});
 define('bui/grid/plugins/editing',function (require) {
 
   var CLS_CELL_INNER = BUI.prefix + 'grid-cell-inner',
     CLS_CELL_ERROR = BUI.prefix + 'grid-cell-error';
   /**
-   * 表格的编辑插件
+   * \u8868\u683c\u7684\u7f16\u8f91\u63d2\u4ef6
    * @class BUI.Grid.Plugins.Editing
    */
   function Editing(config){
@@ -4155,7 +4054,7 @@ define('bui/grid/plugins/editing',function (require) {
   Editing.ATTRS = {
     /**
      * @protected
-     * 编辑器的对齐设置
+     * \u7f16\u8f91\u5668\u7684\u5bf9\u9f50\u8bbe\u7f6e
      * @type {Object}
      */
     align : {
@@ -4164,7 +4063,7 @@ define('bui/grid/plugins/editing',function (require) {
       }
     },
     /**
-     * 是否直接在表格上显示错误信息
+     * \u662f\u5426\u76f4\u63a5\u5728\u8868\u683c\u4e0a\u663e\u793a\u9519\u8bef\u4fe1\u606f
      * @type {Boolean}
      */
     showError : {
@@ -4174,7 +4073,7 @@ define('bui/grid/plugins/editing',function (require) {
       value : '<span class="x-icon ' + CLS_CELL_ERROR + ' x-icon-mini x-icon-error" title="{error}">!</span>'
     },
     /**
-     * 是否初始化过编辑器
+     * \u662f\u5426\u521d\u59cb\u5316\u8fc7\u7f16\u8f91\u5668
      * @protected
      * @type {Boolean}
      */
@@ -4182,28 +4081,28 @@ define('bui/grid/plugins/editing',function (require) {
       value : false
     },
     /**
-     * 正在编辑的记录
+     * \u6b63\u5728\u7f16\u8f91\u7684\u8bb0\u5f55
      * @type {Object}
      */
     record : {
 
     },
     /**
-     * 当前编辑的编辑器
+     * \u5f53\u524d\u7f16\u8f91\u7684\u7f16\u8f91\u5668
      * @type {Object}
      */
     curEditor : {
 
     },
     /**
-     * 是否发生过验证
+     * \u662f\u5426\u53d1\u751f\u8fc7\u9a8c\u8bc1
      * @type {Boolean}
      */
     hasValid : {
 
     },
     /**
-     * 编辑器
+     * \u7f16\u8f91\u5668
      * @protected
      * @type {Object}
      */
@@ -4211,14 +4110,14 @@ define('bui/grid/plugins/editing',function (require) {
       value : []
     },
     /**
-     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * \u89e6\u53d1\u7f16\u8f91\u6837\u5f0f\uff0c\u4e3a\u7a7a\u65f6\u9ed8\u8ba4\u70b9\u51fb\u6574\u884c\u90fd\u4f1a\u89e6\u53d1\u7f16\u8f91
      * @type {String}
      */
     triggerCls : {
 
     },
     /**
-     * 进行编辑时是否触发选中
+     * \u8fdb\u884c\u7f16\u8f91\u65f6\u662f\u5426\u89e6\u53d1\u9009\u4e2d
      * @type {Boolean}
      */
     triggerSelected : {
@@ -4228,7 +4127,7 @@ define('bui/grid/plugins/editing',function (require) {
 
   BUI.augment(Editing,{
     /**
-     * 初始化
+     * \u521d\u59cb\u5316
      * @protected
      */
     initializer : function (grid) {
@@ -4240,7 +4139,7 @@ define('bui/grid/plugins/editing',function (require) {
     renderUI : function(){
       var _self = this,
         grid = _self.get('grid');
-      //延迟加载 editor模块
+      //\u5ef6\u8fdf\u52a0\u8f7d editor\u6a21\u5757
       BUI.use('bui/editor',function(Editor){
         _self.initEditors(Editor);
         _self._initGridEvent(grid);
@@ -4248,7 +4147,7 @@ define('bui/grid/plugins/editing',function (require) {
       });
     },
     /**
-     * 初始化插件
+     * \u521d\u59cb\u5316\u63d2\u4ef6
      * @protected
      */
     initEditing : function(grid){
@@ -4281,7 +4180,7 @@ define('bui/grid/plugins/editing',function (require) {
           _self.showEditor(editor,ev);
           //if(curEditor && curEditor.get('acceptEvent')){
           if(!_self.get('triggerSelected')){
-            return false; //此时不触发选中事件
+            return false; //\u6b64\u65f6\u4e0d\u89e6\u53d1\u9009\u4e2d\u4e8b\u4ef6
           }
             
           //}
@@ -4334,7 +4233,7 @@ define('bui/grid/plugins/editing',function (require) {
 
     },
     /**
-     * 初始化所有
+     * \u521d\u59cb\u5316\u6240\u6709
      * @protected
      */
     initEditors : function(Editor){
@@ -4360,15 +4259,15 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
-     * 获取列定义中的字段定义信息
-     * @param  {BUI.Grid.Column} column 列定义
-     * @return {Object}  字段定义
+     * \u83b7\u53d6\u5217\u5b9a\u4e49\u4e2d\u7684\u5b57\u6bb5\u5b9a\u4e49\u4fe1\u606f
+     * @param  {BUI.Grid.Column} column \u5217\u5b9a\u4e49
+     * @return {Object}  \u5b57\u6bb5\u5b9a\u4e49
      */
     getFieldConfig : function(column){
       return column.get('editor');
     },
     /**
-     * 封装验证方法
+     * \u5c01\u88c5\u9a8c\u8bc1\u65b9\u6cd5
      * @protected
      */
     wrapValidator : function(validator){
@@ -4380,31 +4279,31 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
-     * 列显示隐藏时
+     * \u5217\u663e\u793a\u9690\u85cf\u65f6
      */
     onColumnVisibleChange : function(column){
 
     },
     /**
      * @protected
-     * 获取编辑器的配置
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u914d\u7f6e
      * @template
-     * @param  {Array} fields 字段配置
-     * @return {Array} 编辑器的配置项
+     * @param  {Array} fields \u5b57\u6bb5\u914d\u7f6e
+     * @return {Array} \u7f16\u8f91\u5668\u7684\u914d\u7f6e\u9879
      */
     getEditorCfgs : function(fields){
 
     },
     /**
-     * 获取编辑器的构造函数
-     * @param  {Object} Editor 命名空间
-     * @return {Function}       构造函数
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u6784\u9020\u51fd\u6570
+     * @param  {Object} Editor \u547d\u540d\u7a7a\u95f4
+     * @return {Function}       \u6784\u9020\u51fd\u6570
      */
     getEditorConstructor : function(Editor){
       return Editor.Editor;
     },
     /**
-     * 初始化编辑器
+     * \u521d\u59cb\u5316\u7f16\u8f91\u5668
      * @private
      */
     initEidtor : function(cfg,Editor){
@@ -4418,8 +4317,8 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
-     * 绑定编辑器事件
-     * @param  {BUI.Editor.Editor} editor 编辑器
+     * \u7ed1\u5b9a\u7f16\u8f91\u5668\u4e8b\u4ef6
+     * @param  {BUI.Editor.Editor} editor \u7f16\u8f91\u5668
      */
     bindEidtor : function(editor){
       var _self = this,
@@ -4436,19 +4335,19 @@ define('bui/grid/plugins/editing',function (require) {
       });
     },
     /**
-     * 获取编辑器
+     * \u83b7\u53d6\u7f16\u8f91\u5668
      * @protected
-     * @param  {String} field 字段值
-     * @return {BUI.Editor.Editor}  编辑器
+     * @param  {String} field \u5b57\u6bb5\u503c
+     * @return {BUI.Editor.Editor}  \u7f16\u8f91\u5668
      */
     getEditor : function(options){
 
     },
     /**
      * @protected
-     * 获取对齐的节点
+     * \u83b7\u53d6\u5bf9\u9f50\u7684\u8282\u70b9
      * @template
-     * @param  {Object} options 点击单元格的事件对象
+     * @param  {Object} options \u70b9\u51fb\u5355\u5143\u683c\u7684\u4e8b\u4ef6\u5bf9\u8c61
      * @return {jQuery} 
      */
     getAlignNode : function(options){
@@ -4456,15 +4355,15 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
-     * 获取编辑的值
-     * @param  {Object} options 点击单元格的事件对象
-     * @return {*}   编辑的值
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u503c
+     * @param  {Object} options \u70b9\u51fb\u5355\u5143\u683c\u7684\u4e8b\u4ef6\u5bf9\u8c61
+     * @return {*}   \u7f16\u8f91\u7684\u503c
      */
     getEditValue : function(options){
 
     },
     /**
-     * 显示编辑器
+     * \u663e\u793a\u7f16\u8f91\u5668
      * @protected
      * @param  {BUI.Editor.Editor} editor 
      */
@@ -4488,13 +4387,13 @@ define('bui/grid/plugins/editing',function (require) {
     },
     /**
      * @protected
-     * 编辑器字段定位
+     * \u7f16\u8f91\u5668\u5b57\u6bb5\u5b9a\u4f4d
      */
     focusEditor : function(editor,field){
       editor.focus();
     },
     /**
-     * 显示编辑器前
+     * \u663e\u793a\u7f16\u8f91\u5668\u524d
      * @protected
      * @template
      * @param  {BUI.Editor.Editor} editor 
@@ -4503,7 +4402,7 @@ define('bui/grid/plugins/editing',function (require) {
     beforeShowEditor : function(editor,options){
 
     },
-    //创建编辑的配置项
+    //\u521b\u5efa\u7f16\u8f91\u7684\u914d\u7f6e\u9879
     _createEditOptions : function(record,field){
       var _self = this,
         grid = _self.get('grid'),
@@ -4518,7 +4417,7 @@ define('bui/grid/plugins/editing',function (require) {
       };
     },
     /**
-     * 验证表格是否通过验证
+     * \u9a8c\u8bc1\u8868\u683c\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     valid : function(){
       var _self = this,
@@ -4542,7 +4441,7 @@ define('bui/grid/plugins/editing',function (require) {
       return !grid.get('el').find('.' + CLS_CELL_ERROR).length;
     },
     /**
-     * 清理错误
+     * \u6e05\u7406\u9519\u8bef
      */
     clearErrors : function(){
       var _self = this,
@@ -4550,19 +4449,19 @@ define('bui/grid/plugins/editing',function (require) {
       grid.get('el').find('.' + CLS_CELL_ERROR).remove();
     },
     /**
-     * 获取编辑的字段
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u5b57\u6bb5
      * @protected
-     * @param  {Array} editors 编辑器
-     * @return {Array}  字段集合
+     * @param  {Array} editors \u7f16\u8f91\u5668
+     * @return {Array}  \u5b57\u6bb5\u96c6\u5408
      */
     getFields : function(editors){
       
     },
     /**
-     * 校验记录
+     * \u6821\u9a8c\u8bb0\u5f55
      * @protected
-     * @param  {Object} record 校验的记录
-     * @param  {Array} fields 字段的集合
+     * @param  {Object} record \u6821\u9a8c\u7684\u8bb0\u5f55
+     * @param  {Array} fields \u5b57\u6bb5\u7684\u96c6\u5408
      */
     validRecord : function(record,fields,row){
       var _self = this,
@@ -4592,10 +4491,10 @@ define('bui/grid/plugins/editing',function (require) {
       }
     },
     /**
-     * 更新数据
+     * \u66f4\u65b0\u6570\u636e
      * @protected
-     * @param  {Object} record 编辑的数据
-     * @param  {*} value  编辑值
+     * @param  {Object} record \u7f16\u8f91\u7684\u6570\u636e
+     * @param  {*} value  \u7f16\u8f91\u503c
      */
     updateRecord : function(store,record,editor){
      
@@ -4610,9 +4509,9 @@ define('bui/grid/plugins/editing',function (require) {
       $(errorTpl).appendTo(innerEl);
     },
     /**
-     * 编辑记录
-     * @param  {Object} record 需要编辑的记录
-     * @param  {String} field 编辑的字段
+     * \u7f16\u8f91\u8bb0\u5f55
+     * @param  {Object} record \u9700\u8981\u7f16\u8f91\u7684\u8bb0\u5f55
+     * @param  {String} field \u7f16\u8f91\u7684\u5b57\u6bb5
      */
     edit : function(record,field){
       var _self = this,
@@ -4621,7 +4520,7 @@ define('bui/grid/plugins/editing',function (require) {
       _self.showEditor(editor,options);
     },
     /**
-     * 取消编辑
+     * \u53d6\u6d88\u7f16\u8f91
      */
     cancel : function(){
       var _self = this,
@@ -4635,7 +4534,7 @@ define('bui/grid/plugins/editing',function (require) {
       _self.set('record',null);
     },  
     /**
-     * 析构函数
+     * \u6790\u6784\u51fd\u6570
      * @protected
      */
     destructor:function () {
@@ -4652,11 +4551,7 @@ define('bui/grid/plugins/editing',function (require) {
   });
 
   return Editing;
-});/**
- * @fileOverview 表格单元格编辑
- * @ignore
- */
-
+});
 define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (require) {
   var Editing = require('bui/grid/plugins/editing'),
     CLS_BODY = BUI.prefix + 'grid-body',
@@ -4665,7 +4560,7 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
   /**
    * @class BUI.Grid.Plugins.CellEditing
    * @extends BUI.Grid.Plugins.Editing
-   * 单元格编辑插件
+   * \u5355\u5143\u683c\u7f16\u8f91\u63d2\u4ef6
    */
   var CellEditing = function(config){
     CellEditing.superclass.constructor.call(this, config);
@@ -4673,7 +4568,7 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
 
   CellEditing.ATTRS = {
     /**
-     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * \u89e6\u53d1\u7f16\u8f91\u6837\u5f0f\uff0c\u4e3a\u7a7a\u65f6\u9ed8\u8ba4\u70b9\u51fb\u6574\u884c\u90fd\u4f1a\u89e6\u53d1\u7f16\u8f91
      * @cfg {String} [triggerCls = 'bui-grid-cell']
      */
     triggerCls : {
@@ -4686,8 +4581,8 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
   BUI.augment(CellEditing,{
     /**
      * @protected
-     * 获取编辑器的配置项
-     * @param  {Array} fields 字段配置
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u914d\u7f6e\u9879
+     * @param  {Array} fields \u5b57\u6bb5\u914d\u7f6e
      */ 
     getEditorCfgs : function(fields){
       var _self = this,
@@ -4705,10 +4600,10 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
       return rst;
     },
     /**
-     * 获取编辑器
+     * \u83b7\u53d6\u7f16\u8f91\u5668
      * @protected
-     * @param  {String} field 字段值
-     * @return {BUI.Editor.Editor}  编辑器
+     * @param  {String} field \u5b57\u6bb5\u503c
+     * @return {BUI.Editor.Editor}  \u7f16\u8f91\u5668
      */
     getEditor : function(field){
       if(!field){
@@ -4727,7 +4622,7 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
       return editor;
     },
     /**
-     * 显示编辑器前
+     * \u663e\u793a\u7f16\u8f91\u5668\u524d
      * @protected
      * @param  {BUI.Editor.Editor} editor 
      * @param  {Object} options
@@ -4761,10 +4656,10 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
       editor.set('width',width);
     },
     /**
-     * 更新数据
+     * \u66f4\u65b0\u6570\u636e
      * @protected
-     * @param  {Object} record 编辑的数据
-     * @param  {*} value  编辑值
+     * @param  {Object} record \u7f16\u8f91\u7684\u6570\u636e
+     * @param  {*} value  \u7f16\u8f91\u503c
      */
     updateRecord : function(store,record,editor){
       var _self = this,
@@ -4778,18 +4673,18 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
     },
     /**
      * @protected
-     * 获取对齐的节点
+     * \u83b7\u53d6\u5bf9\u9f50\u7684\u8282\u70b9
      * @override
-     * @param  {Object} options 点击单元格的事件对象
+     * @param  {Object} options \u70b9\u51fb\u5355\u5143\u683c\u7684\u4e8b\u4ef6\u5bf9\u8c61
      * @return {jQuery} 
      */
     getAlignNode : function(options){
       return $(options.cell);
     },
     /**
-     * 获取编辑的字段
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u5b57\u6bb5
      * @protected
-     * @return {Array}  字段集合
+     * @return {Array}  \u5b57\u6bb5\u96c6\u5408
      */
     getFields : function(){
       var rst = [],
@@ -4802,9 +4697,9 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
     },
     /**
      * @protected
-     * 获取要编辑的值
-     * @param  {Object} options 点击单元格的事件对象
-     * @return {*}   编辑的值
+     * \u83b7\u53d6\u8981\u7f16\u8f91\u7684\u503c
+     * @param  {Object} options \u70b9\u51fb\u5355\u5143\u683c\u7684\u4e8b\u4ef6\u5bf9\u8c61
+     * @return {*}   \u7f16\u8f91\u7684\u503c
      */
     getEditValue : function(options){
       if(options.record && options.field){
@@ -4816,11 +4711,7 @@ define('bui/grid/plugins/cellediting',['bui/grid/plugins/editing'],function (req
   });
 
   return CellEditing;
-});/**
- * @fileOverview 表格行编辑
- * @ignore
- */
-
+});
 define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],function (require) {
    var BUI = require('bui/common'),
     Editing = require('bui/grid/plugins/editing'),
@@ -4829,7 +4720,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
   /**
    * @class BUI.Grid.Plugins.RowEditing
    * @extends BUI.Grid.Plugins.Editing
-   * 单元格编辑插件
+   * \u5355\u5143\u683c\u7f16\u8f91\u63d2\u4ef6
    */
   var RowEditing = function(config){
     RowEditing.superclass.constructor.call(this, config);
@@ -4838,7 +4729,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
   RowEditing.ATTRS = {
      /**
      * @protected
-     * 编辑器的对齐设置
+     * \u7f16\u8f91\u5668\u7684\u5bf9\u9f50\u8bbe\u7f6e
      * @type {Object}
      */
     align : {
@@ -4848,7 +4739,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
       }
     },
     /**
-     * 触发编辑样式，为空时默认点击整行都会触发编辑
+     * \u89e6\u53d1\u7f16\u8f91\u6837\u5f0f\uff0c\u4e3a\u7a7a\u65f6\u9ed8\u8ba4\u70b9\u51fb\u6574\u884c\u90fd\u4f1a\u89e6\u53d1\u7f16\u8f91
      * @cfg {String} [triggerCls = 'bui-grid-row']
      */
     triggerCls : {
@@ -4862,8 +4753,8 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
 
     /**
      * @protected
-     * 获取编辑器的配置项
-     * @param  {Array} fields 字段配置
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u914d\u7f6e\u9879
+     * @param  {Array} fields \u5b57\u6bb5\u914d\u7f6e
      */ 
     getEditorCfgs : function(fields){
       var rst = [];
@@ -4880,7 +4771,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
       return rst;
     },
     /**
-     * 封装验证方法
+     * \u5c01\u88c5\u9a8c\u8bc1\u65b9\u6cd5
      * @protected
      */
     wrapValidator : function(validator){
@@ -4895,7 +4786,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     },
     /**
      * @protected
-     * 编辑器字段定位
+     * \u7f16\u8f91\u5668\u5b57\u6bb5\u5b9a\u4f4d
      */
     focusEditor : function(editor,field){
       var form = editor.get('form'),
@@ -4906,9 +4797,9 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     },
     /**
      * @protected
-     * 获取列定义中的字段定义信息
-     * @param  {BUI.Grid.Column} column 列定义
-     * @return {Object}  字段定义
+     * \u83b7\u53d6\u5217\u5b9a\u4e49\u4e2d\u7684\u5b57\u6bb5\u5b9a\u4e49\u4fe1\u606f
+     * @param  {BUI.Grid.Column} column \u5217\u5b9a\u4e49
+     * @return {Object}  \u5b57\u6bb5\u5b9a\u4e49
      */
     getFieldConfig : function(column){
       var editor = column.get('editor');
@@ -4926,10 +4817,10 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
       return cfg;
     },
     /**
-     * 更新数据
+     * \u66f4\u65b0\u6570\u636e
      * @protected
-     * @param  {Object} record 编辑的数据
-     * @param  {*} value  编辑值
+     * @param  {Object} record \u7f16\u8f91\u7684\u6570\u636e
+     * @param  {*} value  \u7f16\u8f91\u503c
      */
     updateRecord : function(store,record,editor){
       var _self = this,
@@ -4944,10 +4835,10 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
         store.update(record);
     },
      /**
-     * 获取编辑此单元格的编辑器
+     * \u83b7\u53d6\u7f16\u8f91\u6b64\u5355\u5143\u683c\u7684\u7f16\u8f91\u5668
      * @protected
-     * @param  {String} field 点击单元格的字段
-     * @return {BUI.Editor.Editor}  编辑器
+     * @param  {String} field \u70b9\u51fb\u5355\u5143\u683c\u7684\u5b57\u6bb5
+     * @return {BUI.Editor.Editor}  \u7f16\u8f91\u5668
      */
     getEditor : function(field){
       var _self = this,
@@ -4956,7 +4847,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     },
     /**
      * @override
-     * 列发生改变
+     * \u5217\u53d1\u751f\u6539\u53d8
      */
     onColumnVisibleChange : function(column){
       var _self = this,
@@ -4968,7 +4859,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
       }
     },
     /**
-     * 显示编辑器前
+     * \u663e\u793a\u7f16\u8f91\u5668\u524d
      * @protected
      * @template
      * @param  {BUI.Editor.Editor} editor 
@@ -4994,35 +4885,35 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     },
     /**
      * @protected
-     * 获取要编辑的值
-     * @param  {Object} options 点击单元格的事件对象
-     * @return {*}   编辑的值
+     * \u83b7\u53d6\u8981\u7f16\u8f91\u7684\u503c
+     * @param  {Object} options \u70b9\u51fb\u5355\u5143\u683c\u7684\u4e8b\u4ef6\u5bf9\u8c61
+     * @return {*}   \u7f16\u8f91\u7684\u503c
      */
     getEditValue : function(options){
       return options.record;
     },
     /**
-     * 获取编辑器的构造函数
-     * @param  {Object} Editor 命名空间
-     * @return {Function}       构造函数
+     * \u83b7\u53d6\u7f16\u8f91\u5668\u7684\u6784\u9020\u51fd\u6570
+     * @param  {Object} Editor \u547d\u540d\u7a7a\u95f4
+     * @return {Function}       \u6784\u9020\u51fd\u6570
      */
     getEditorConstructor : function(Editor){
       return Editor.RecordEditor;
     },
      /**
      * @protected
-     * 获取对齐的节点
+     * \u83b7\u53d6\u5bf9\u9f50\u7684\u8282\u70b9
      * @override
-     * @param  {Object} options 点击单元格的事件对象
+     * @param  {Object} options \u70b9\u51fb\u5355\u5143\u683c\u7684\u4e8b\u4ef6\u5bf9\u8c61
      * @return {jQuery} 
      */
     getAlignNode : function(options){
       return $(options.row);
     },
     /**
-     * 获取编辑的字段
+     * \u83b7\u53d6\u7f16\u8f91\u7684\u5b57\u6bb5
      * @protected
-     * @return {Array}  字段集合
+     * @return {Array}  \u5b57\u6bb5\u96c6\u5408
      */
     getFields : function(){
       var _self = this,
@@ -5031,18 +4922,14 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
     }
   });
   return RowEditing;
-});/**
- * @fileOverview 表格跟表单联用
- * @ignore
- */
-
+});
 define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   var BUI = require('bui/common'),
     TYPE_ADD = 'add',
     TYPE_EDIT = 'edit';
 
   /**
-   * 表格的编辑插件
+   * \u8868\u683c\u7684\u7f16\u8f91\u63d2\u4ef6
    * @class BUI.Grid.Plugins.DialogEditing
    */
   function Dialog(config){
@@ -5051,7 +4938,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
 
   Dialog.ATTRS = {
     /**
-     * 编辑的记录
+     * \u7f16\u8f91\u7684\u8bb0\u5f55
      * @type {Object}
      * @readOnly
      */
@@ -5060,25 +4947,25 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
     },
     /**
      * @private
-     * 编辑记录的index
+     * \u7f16\u8f91\u8bb0\u5f55\u7684index
      * @type {Object}
      */
     curIndex : {
 
     },
     /**
-     * Dialog的内容，内部包含表单(form)
+     * Dialog\u7684\u5185\u5bb9\uff0c\u5185\u90e8\u5305\u542b\u8868\u5355(form)
      * @cfg {String} contentId
      */
     /**
-     * Dialog的内容，内部包含表单(form)
+     * Dialog\u7684\u5185\u5bb9\uff0c\u5185\u90e8\u5305\u542b\u8868\u5355(form)
      * @type {String}
      */
     contentId:{
 
     },
     /**
-     * 编辑器
+     * \u7f16\u8f91\u5668
      * @type {BUI.Editor.DialogEditor}
      * @readOnly
      */
@@ -5086,7 +4973,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
 
     },
     /**
-     * Dialog中的表单
+     * Dialog\u4e2d\u7684\u8868\u5355
      * @type {BUI.Form.Form}
      * @readOnly
      */
@@ -5097,10 +4984,10 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       value : {
         /**
          * @event
-         * 编辑的记录发生更改
-         * @param {Object} e 事件对象
-         * @param {Object} e.record 记录
-         * @param {Object} e.editType 编辑的类型 add 或者 edit
+         * \u7f16\u8f91\u7684\u8bb0\u5f55\u53d1\u751f\u66f4\u6539
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} e.record \u8bb0\u5f55
+         * @param {Object} e.editType \u7f16\u8f91\u7684\u7c7b\u578b add \u6216\u8005 edit
          */
         recordchange : false
       }
@@ -5114,13 +5001,13 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
 
   BUI.augment(Dialog,{
     /**
-     * 初始化
+     * \u521d\u59cb\u5316
      * @protected
      */
     initializer : function (grid) {
       var _self = this;
       _self.set('grid',grid);
-      //延迟加载 editor模块
+      //\u5ef6\u8fdf\u52a0\u8f7d editor\u6a21\u5757
       BUI.use('bui/editor',function(Editor){
         _self._initEditor(Editor);
       });
@@ -5142,7 +5029,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
         });
       }
     },
-    //初始化编辑器
+    //\u521d\u59cb\u5316\u7f16\u8f91\u5668
     _initEditor : function(Editor){
       var _self = this,
         contentId = _self.get('contentId'),
@@ -5160,7 +5047,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       _self.set('editor',editor);
       _self.set('form',editor.get('form'));
     },
-    //绑定编辑器事件
+    //\u7ed1\u5b9a\u7f16\u8f91\u5668\u4e8b\u4ef6
     _bindEditor : function(editor){
       var _self = this;
       editor.on('accept',function(){
@@ -5170,8 +5057,8 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       });
     },
     /**
-     * 编辑记录
-     * @param  {Object} record 记录
+     * \u7f16\u8f91\u8bb0\u5f55
+     * @param  {Object} record \u8bb0\u5f55
      */
     edit : function(record){
       var _self = this;
@@ -5179,9 +5066,9 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       _self.showEditor(record);
     },
     /**
-     * 添加记录
-     * @param  {Object} record 记录
-     * @param {Number} [index] 添加到的位置，默认添加在最后
+     * \u6dfb\u52a0\u8bb0\u5f55
+     * @param  {Object} record \u8bb0\u5f55
+     * @param {Number} [index] \u6dfb\u52a0\u5230\u7684\u4f4d\u7f6e\uff0c\u9ed8\u8ba4\u6dfb\u52a0\u5728\u6700\u540e
      */
     add : function(record,index){
       var _self = this;
@@ -5191,7 +5078,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
     },
     /**
      * @private
-     * 保存记录
+     * \u4fdd\u5b58\u8bb0\u5f55
      */
     saveRecord : function(record){
       var _self = this,
@@ -5220,18 +5107,18 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
     },
     /**
      * @private
-     * 显示编辑器
+     * \u663e\u793a\u7f16\u8f91\u5668
      */
     showEditor : function(record){
       var _self = this,
         editor = _self.get('editor');
       editor.show();
-      editor.setValue(record,true); //设置值，并且隐藏错误
+      editor.setValue(record,true); //\u8bbe\u7f6e\u503c\uff0c\u5e76\u4e14\u9690\u85cf\u9519\u8bef
       _self.set('record',record);
       _self.fire('recordchange',{record : record,editType : _self.get('editType')});
     },
     /**
-     * 取消编辑
+     * \u53d6\u6d88\u7f16\u8f91
      */
     cancel : function(){
       var _self = this,
@@ -5249,54 +5136,4 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   });
 
   return Dialog;
-});define('bui/grid/plugins/rownumber',function (require) {
-
-  var CLS_NUMBER = 'x-grid-rownumber';
-  /**
-   * @class BUI.Grid.Plugins.RowNumber
-   * 表格显示行序号的插件
-   */
-  function RowNumber(config){
-    RowNumber.superclass.constructor.call(this, config);
-  }
-
-  BUI.extend(RowNumber,BUI.Base);
-
-  RowNumber.ATTRS = 
-  {
-    /**
-    * column's width which contains the row number
-    */
-    width : {
-      value : 40
-    },
-    /**
-    * @private
-    */
-    column : {
-      
-    }
-  };
-
-  BUI.augment(RowNumber, 
-  {
-    //创建行
-    createDom : function(grid){
-      var _self = this;
-      var cfg = {
-            title : '',
-            width : _self.get('width'),
-            fixed : true,
-            resizable:false,
-            sortable : false,
-            renderer : function(value,obj,index){return index + 1;},
-            elCls : CLS_NUMBER
-        },
-        column = grid.addColumn(cfg,0);
-      _self.set('column',column);
-    }
-  });
-  
-  return RowNumber;
-  
 });

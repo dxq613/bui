@@ -1,7 +1,6 @@
-/**
- * @fileOverview form 命名空间入口
- * @ignore
- */
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 ;(function(){
 var BASE = 'bui/form/';
 define('bui/form',['bui/common',BASE + 'fieldcontainer',BASE + 'form',BASE + 'row',BASE + 'fieldgroup',BASE + 'horizontal',BASE + 'rules',BASE + 'field',BASE + 'fieldgroup'],function (r) {
@@ -24,11 +23,6 @@ define('bui/form',['bui/common',BASE + 'fieldcontainer',BASE + 'form',BASE + 'ro
   return Form;
 });
 })();
-/**
- * @fileOverview 输入提示信息
- * @author dxq613@gmail.com
- * @ignore
- */
 
 define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
 
@@ -39,7 +33,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
     CLS_TIP_CONTAINER = prefix + 'form-tip-container';
 
   /**
-   * 表单提示信息类
+   * \u8868\u5355\u63d0\u793a\u4fe1\u606f\u7c7b
    * xclass:'form-tip'
    * @class BUI.Form.TipItem
    * @extends BUI.Overlay.Overlay
@@ -65,13 +59,13 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
       
     },
     /**
-     * 重置是否显示
+     * \u91cd\u7f6e\u662f\u5426\u663e\u793a
      */
     resetVisible : function(){
       var _self = this,
         triggerEl = $(_self.get('trigger'));
 
-      if(triggerEl.val()){//如果默认有文本则不显示，否则显示
+      if(triggerEl.val()){//\u5982\u679c\u9ed8\u8ba4\u6709\u6587\u672c\u5219\u4e0d\u663e\u793a\uff0c\u5426\u5219\u663e\u793a
         _self.set('visible',false);
       }else{
         _self.set('align',{
@@ -105,34 +99,34 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
      */
     {
       /**
-       * 提示的输入框 
+       * \u63d0\u793a\u7684\u8f93\u5165\u6846 
        * @cfg {String|HTMLElement|jQuery} trigger
        */
       /**
-       * 提示的输入框
+       * \u63d0\u793a\u7684\u8f93\u5165\u6846
        * @type {String|HTMLElement|jQuery}
        */
       trigger:{
 
       },
       /**
-       * 提示文本
+       * \u63d0\u793a\u6587\u672c
        * @cfg {String} text
        */
       /**
-       * 提示文本
+       * \u63d0\u793a\u6587\u672c
        * @type {String}
        */
       text : {
 
       },
       /**
-       * 提示文本上显示的icon样式
+       * \u63d0\u793a\u6587\u672c\u4e0a\u663e\u793a\u7684icon\u6837\u5f0f
        * @cfg {String} iconCls
        *     iconCls : icon-ok
        */
       /**
-       * 提示文本上显示的icon样式
+       * \u63d0\u793a\u6587\u672c\u4e0a\u663e\u793a\u7684icon\u6837\u5f0f
        * @type {String}
        *     iconCls : icon-ok
        */
@@ -140,7 +134,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
 
       },
       /**
-       * 默认的模版
+       * \u9ed8\u8ba4\u7684\u6a21\u7248
        * @type {String}
        * @default '<span class="{iconCls}"></span><span class="tip-text">{text}</span>'
        */
@@ -153,7 +147,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
   });
 
   /**
-   * 表单提示信息的管理类
+   * \u8868\u5355\u63d0\u793a\u4fe1\u606f\u7684\u7ba1\u7406\u7c7b
    * @class BUI.Form.Tips
    * @extends BUI.Base
    */
@@ -174,18 +168,18 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
   {
 
     /**
-     * 表单的选择器
+     * \u8868\u5355\u7684\u9009\u62e9\u5668
      * @cfg {String|HTMLElement|jQuery} form
      */
     /**
-     * 表单的选择器
+     * \u8868\u5355\u7684\u9009\u62e9\u5668
      * @type {String|HTMLElement|jQuery}
      */
     form : {
 
     },
     /**
-     * 表单提示项对象 {@link BUI.Form.TipItem}
+     * \u8868\u5355\u63d0\u793a\u9879\u5bf9\u8c61 {@link BUI.Form.TipItem}
      * @readOnly
      * @type {Array} 
      */
@@ -221,9 +215,9 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
       items.push(item);
     },
     /**
-     * 获取提示项
-     * @param {String} name 字段的名称
-     * @return {BUI.Form.TipItem} 提示项
+     * \u83b7\u53d6\u63d0\u793a\u9879
+     * @param {String} name \u5b57\u6bb5\u7684\u540d\u79f0
+     * @return {BUI.Form.TipItem} \u63d0\u793a\u9879
      */
     getItem : function(name){
       var _self = this,
@@ -241,7 +235,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
       return result;
     },
     /**
-     * 重置所有提示的可视状态
+     * \u91cd\u7f6e\u6240\u6709\u63d0\u793a\u7684\u53ef\u89c6\u72b6\u6001
      */
     resetVisible : function(){
       var _self = this,
@@ -252,7 +246,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
       });
     },
     /**
-     * 生成 表单提示
+     * \u751f\u6210 \u8868\u5355\u63d0\u793a
      */
     render:function(){
        var _self = this,
@@ -262,7 +256,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
       });
     },
     /**
-     * 删除所有提示
+     * \u5220\u9664\u6240\u6709\u63d0\u793a
      */
     destroy:function(){
       var _self = this,
@@ -277,11 +271,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
   Tips.Item = tipItem;
   return Tips;
 
-});/**
- * @fileOverview 表单元素
- * @ignore
- */
-
+});
 define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/form/remote'],function (require){
 
   var BUI = require('bui/common'),
@@ -293,12 +283,12 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     DATA_ERROR = 'data-error';
 
   /**
-   * 字段视图类
+   * \u5b57\u6bb5\u89c6\u56fe\u7c7b
    * @class BUI.Form.FieldView
    * @private
    */
   var fieldView = Component.View.extend([Remote.View,Valid.View],{
-    //渲染DOM
+    //\u6e32\u67d3DOM
     renderUI : function(){
       var _self = this,
         control = _self.get('control');
@@ -317,7 +307,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       }
     },
     /**
-     * 清理显示的错误信息
+     * \u6e05\u7406\u663e\u793a\u7684\u9519\u8bef\u4fe1\u606f
      * @protected
      */
     clearErrors : function(){
@@ -330,8 +320,8 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       _self.get('el').removeClass(CLS_FIELD_ERROR);
     },
     /**
-     * 显示错误信息
-     * @param {String} msg 错误信息
+     * \u663e\u793a\u9519\u8bef\u4fe1\u606f
+     * @param {String} msg \u9519\u8bef\u4fe1\u606f
      * @protected
      */
     showError : function(msg,errorTpl){
@@ -346,8 +336,8 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       _self.get('el').addClass(CLS_FIELD_ERROR);
     },
     /**
-     * @internal 获取控件的容器
-     * @return {jQuery} 控件容器
+     * @internal \u83b7\u53d6\u63a7\u4ef6\u7684\u5bb9\u5668
+     * @return {jQuery} \u63a7\u4ef6\u5bb9\u5668
      */
     getControlContainer : function(){
       var _self = this,
@@ -361,15 +351,15 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       return (controlContainer && controlContainer.length) ? controlContainer : el;
     },
     /**
-     * 获取显示加载状态的容器
+     * \u83b7\u53d6\u663e\u793a\u52a0\u8f7d\u72b6\u6001\u7684\u5bb9\u5668
      * @protected
      * @override
-     * @return {jQuery} 加载状态的容器
+     * @return {jQuery} \u52a0\u8f7d\u72b6\u6001\u7684\u5bb9\u5668
      */
     getLoadingContainer : function () {
       return this.getControlContainer();
     },
-    //设置名称
+    //\u8bbe\u7f6e\u540d\u79f0
     _uiSetName : function(v){
       var _self = this;
       _self.get('control').attr('name',v);
@@ -385,7 +375,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
   });
 
   /**
-   * 表单字段基类
+   * \u8868\u5355\u5b57\u6bb5\u57fa\u7c7b
    * @class BUI.Form.Field
    * @mixins BUI.Form.Remote
    * @extends BUI.Component.Controller
@@ -404,7 +394,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         }
       });
     },
-    //绑定事件
+    //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(){
       var _self = this,
         validEvent = _self.get('validEvent'),
@@ -412,17 +402,17 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         firstValidEvent = _self.get('firstValidEvent'),
         innerControl = _self.getInnerControl();
 
-      //选择框只使用 select事件
+      //\u9009\u62e9\u6846\u53ea\u4f7f\u7528 select\u4e8b\u4ef6
       if(innerControl.is('select')){
         validEvent = 'change';
       }
-      //验证事件
+      //\u9a8c\u8bc1\u4e8b\u4ef6
       innerControl.on(validEvent,function(){
         var value = _self.getControlValue(innerControl);
         _self.validControl(value);
       });
       if(firstValidEvent){
-        //未发生验证时，首次获取焦点/丢失焦点/点击，进行验证
+        //\u672a\u53d1\u751f\u9a8c\u8bc1\u65f6\uff0c\u9996\u6b21\u83b7\u53d6\u7126\u70b9/\u4e22\u5931\u7126\u70b9/\u70b9\u51fb\uff0c\u8fdb\u884c\u9a8c\u8bc1
         innerControl.on(firstValidEvent,function(){
           if(!_self.get('hasValid')){
             var value = _self.getControlValue(innerControl);
@@ -432,8 +422,8 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       }
       
 
-      //本来是监听控件的change事件，但是，如果控件还未触发change,但是通过get('value')来取值，则会出现错误，
-      //所以当通过验证时，即触发改变事件
+      //\u672c\u6765\u662f\u76d1\u542c\u63a7\u4ef6\u7684change\u4e8b\u4ef6\uff0c\u4f46\u662f\uff0c\u5982\u679c\u63a7\u4ef6\u8fd8\u672a\u89e6\u53d1change,\u4f46\u662f\u901a\u8fc7get('value')\u6765\u53d6\u503c\uff0c\u5219\u4f1a\u51fa\u73b0\u9519\u8bef\uff0c
+      //\u6240\u4ee5\u5f53\u901a\u8fc7\u9a8c\u8bc1\u65f6\uff0c\u5373\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
       _self.on(changeEvent,function(){
         _self.onValid();
       });
@@ -444,7 +434,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
 
     },
     /**
-     * 验证成功后执行的操作
+     * \u9a8c\u8bc1\u6210\u529f\u540e\u6267\u884c\u7684\u64cd\u4f5c
      * @protected
      */
     onValid : function(){
@@ -462,29 +452,29 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     },
     /**
      * @protected
-     * 是否当前值，主要用于日期等特殊值的比较，不能用 == 进行比较
-     * @param  {*}  value 进行比较的值
-     * @return {Boolean}  是否当前值
+     * \u662f\u5426\u5f53\u524d\u503c\uff0c\u4e3b\u8981\u7528\u4e8e\u65e5\u671f\u7b49\u7279\u6b8a\u503c\u7684\u6bd4\u8f83\uff0c\u4e0d\u80fd\u7528 == \u8fdb\u884c\u6bd4\u8f83
+     * @param  {*}  value \u8fdb\u884c\u6bd4\u8f83\u7684\u503c
+     * @return {Boolean}  \u662f\u5426\u5f53\u524d\u503c
      */
     isCurrentValue : function (value) {
       return value == this.get('value');
     },
-    //清理错误信息
+    //\u6e05\u7406\u9519\u8bef\u4fe1\u606f
     _clearError : function(){
       this.set('error',null);
       this.get('view').clearErrors();
     },
-    //设置错误信息
+    //\u8bbe\u7f6e\u9519\u8bef\u4fe1\u606f
     _setError : function(msg){
       this.set('error',msg);
       this.showErrors();
     },
 
     /**
-     * 获取内部表单元素的值
+     * \u83b7\u53d6\u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u503c
      * @protected
-     * @param  {jQuery} [innerControl] 内部表单元素
-     * @return {String|Boolean} 表单元素的值,checkbox，radio的返回值为 true,false
+     * @param  {jQuery} [innerControl] \u5185\u90e8\u8868\u5355\u5143\u7d20
+     * @return {String|Boolean} \u8868\u5355\u5143\u7d20\u7684\u503c,checkbox\uff0cradio\u7684\u8fd4\u56de\u503c\u4e3a true,false
      */
     getControlValue : function(innerControl){
       var _self = this;
@@ -493,16 +483,16 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     },
     /**
      * @protected
-     * 获取内部控件的容器
+     * \u83b7\u53d6\u5185\u90e8\u63a7\u4ef6\u7684\u5bb9\u5668
      */
     getControlContainer : function(){
       return this.get('view').getControlContainer();
     },
     /**
-     * 获取异步验证的参数，对于表单字段域而言，是{[name] : [value]}
+     * \u83b7\u53d6\u5f02\u6b65\u9a8c\u8bc1\u7684\u53c2\u6570\uff0c\u5bf9\u4e8e\u8868\u5355\u5b57\u6bb5\u57df\u800c\u8a00\uff0c\u662f{[name] : [value]}
      * @protected
      * @override
-     * @return {Object} 参数键值对
+     * @return {Object} \u53c2\u6570\u952e\u503c\u5bf9
      */
     getRemoteParams : function  () {
       var _self = this,
@@ -511,9 +501,9 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       return rst;
     },
     /**
-     * 设置字段的值
+     * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
      * @protected
-     * @param {*} value 字段值
+     * @param {*} value \u5b57\u6bb5\u503c
      */
     setControlValue : function(value){
       var _self = this,
@@ -521,10 +511,10 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       innerControl.val(value);
     },
     /**
-     * 将字符串等格式转换成
+     * \u5c06\u5b57\u7b26\u4e32\u7b49\u683c\u5f0f\u8f6c\u6362\u6210
      * @protected
-     * @param  {String} value 原始数据
-     * @return {*}  该字段指定的类型
+     * @param  {String} value \u539f\u59cb\u6570\u636e
+     * @return {*}  \u8be5\u5b57\u6bb5\u6307\u5b9a\u7684\u7c7b\u578b
      */
     parseValue : function(value){
       return value;
@@ -534,8 +524,8 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       _self.validControl();
     },
     /**
-     * 验证控件内容
-     * @return {Boolean} 是否通过验证
+     * \u9a8c\u8bc1\u63a7\u4ef6\u5185\u5bb9
+     * @return {Boolean} \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     validControl : function(value){
       var _self = this, 
@@ -547,13 +537,13 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       if (errorMsg) {
           _self._setError(errorMsg);
           _self.fire('error', {msg:errorMsg, value:value});
-          if(preError !== errorMsg){//验证错误信息改变，说明验证改变
+          if(preError !== errorMsg){//\u9a8c\u8bc1\u9519\u8bef\u4fe1\u606f\u6539\u53d8\uff0c\u8bf4\u660e\u9a8c\u8bc1\u6539\u53d8
             _self.fire('validchange',{ valid : false });
           }
       } else {
           _self._clearError();
           _self.fire('valid');
-          if(preError){//如果以前存在错误，那么验证结果改变
+          if(preError){//\u5982\u679c\u4ee5\u524d\u5b58\u5728\u9519\u8bef\uff0c\u90a3\u4e48\u9a8c\u8bc1\u7ed3\u679c\u6539\u53d8
             _self.fire('validchange',{ valid : true });
           }
       }
@@ -561,28 +551,28 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       return !errorMsg;
     },
     /**
-     * 字段获得焦点
+     * \u5b57\u6bb5\u83b7\u5f97\u7126\u70b9
      */
     focus : function(){
       this.getInnerControl().focus();
     },
     /**
-     * 字段发生改变
+     * \u5b57\u6bb5\u53d1\u751f\u6539\u53d8
      */
     change : function(){
       var control = this.getInnerControl();
       control.change();
     },
     /**
-     * 字段丢失焦点
+     * \u5b57\u6bb5\u4e22\u5931\u7126\u70b9
      */
     blur : function(){
       this.getInnerControl().blur();
     },
 
     /**
-     * 是否通过验证,如果未发生过校验，则进行校验，否则不进行校验，直接根据已校验的结果判断。
-     * @return {Boolean} 是否通过验证
+     * \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1,\u5982\u679c\u672a\u53d1\u751f\u8fc7\u6821\u9a8c\uff0c\u5219\u8fdb\u884c\u6821\u9a8c\uff0c\u5426\u5219\u4e0d\u8fdb\u884c\u6821\u9a8c\uff0c\u76f4\u63a5\u6839\u636e\u5df2\u6821\u9a8c\u7684\u7ed3\u679c\u5224\u65ad\u3002
+     * @return {Boolean} \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     isValid : function(){
       var _self = this;
@@ -592,15 +582,15 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       return !_self.get('error');
     },
     /**
-     * 获取验证出错信息
-     * @return {String} 出错信息
+     * \u83b7\u53d6\u9a8c\u8bc1\u51fa\u9519\u4fe1\u606f
+     * @return {String} \u51fa\u9519\u4fe1\u606f
      */
     getError : function(){
       return this.get('error');
     },
     /**
-     * 获取验证出错信息集合
-     * @return {Array} 出错信息集合
+     * \u83b7\u53d6\u9a8c\u8bc1\u51fa\u9519\u4fe1\u606f\u96c6\u5408
+     * @return {Array} \u51fa\u9519\u4fe1\u606f\u96c6\u5408
      */
     getErrors : function(){
       var error = this.getError();
@@ -610,8 +600,8 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       return [];
     },
     /**
-     * 清理出错信息，回滚到未出错状态
-     * @param {Boolean} reset 清除错误时，是否回滚上次正确的值
+     * \u6e05\u7406\u51fa\u9519\u4fe1\u606f\uff0c\u56de\u6eda\u5230\u672a\u51fa\u9519\u72b6\u6001
+     * @param {Boolean} reset \u6e05\u9664\u9519\u8bef\u65f6\uff0c\u662f\u5426\u56de\u6eda\u4e0a\u6b21\u6b63\u786e\u7684\u503c
      */
     clearErrors : function(reset){
       var _self = this;
@@ -621,7 +611,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       }
     },
     /**
-     * 获取内部的表单元素或者内部控件
+     * \u83b7\u53d6\u5185\u90e8\u7684\u8868\u5355\u5143\u7d20\u6216\u8005\u5185\u90e8\u63a7\u4ef6
      * @protected
      * @return {jQuery|BUI.Component.Controller} 
      */
@@ -629,14 +619,14 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       return this.get('view').get('control');
     },
     /**
-     * 提示信息按照此元素对齐
+     * \u63d0\u793a\u4fe1\u606f\u6309\u7167\u6b64\u5143\u7d20\u5bf9\u9f50
      * @protected
      * @return {HTMLElement}
      */
     getTipTigger : function(){
       return this.getInnerControl();
     },
-    //析构函数
+    //\u6790\u6784\u51fd\u6570
     destructor : function(){
       var _self = this,
         tip = _self.get('tip');
@@ -646,7 +636,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     },
     /**
      * @protected
-     * 设置内部元素宽度
+     * \u8bbe\u7f6e\u5185\u90e8\u5143\u7d20\u5bbd\u5ea6
      */
     setInnerWidth : function(width){
       var _self = this,
@@ -654,7 +644,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         appendWidth = innerControl.outerWidth() - innerControl.width();
       innerControl.width(width - appendWidth);
     },
-    //重置 提示信息是否可见
+    //\u91cd\u7f6e \u63d0\u793a\u4fe1\u606f\u662f\u5426\u53ef\u89c1
     _resetTip :function(){
       var _self = this,
         tip = _self.get('tip');
@@ -663,13 +653,13 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       }
     },
     /**
-     * 重置显示提示信息
+     * \u91cd\u7f6e\u663e\u793a\u63d0\u793a\u4fe1\u606f
      * field.resetTip();
      */
     resetTip : function(){
       this._resetTip();
     },
-    //设置值
+    //\u8bbe\u7f6e\u503c
     _uiSetValue : function(v){
       var _self = this;
       //v = v ? v.toString() : '';
@@ -680,17 +670,17 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       } 
       _self._resetTip();
     },
-    //禁用控件
+    //\u7981\u7528\u63a7\u4ef6
     _uiSetDisabled : function(v){
       var _self = this,
         innerControl = _self.getInnerControl(),
         children = _self.get('children');
       innerControl.attr('disabled',v);
       if(_self.get('rendered')){
-        if(v){//控件不可用，清除错误
+        if(v){//\u63a7\u4ef6\u4e0d\u53ef\u7528\uff0c\u6e05\u9664\u9519\u8bef
           _self.clearErrors();
         }
-        if(!v){//控件可用，执行重新验证
+        if(!v){//\u63a7\u4ef6\u53ef\u7528\uff0c\u6267\u884c\u91cd\u65b0\u9a8c\u8bc1
           _self.valid();
         }
       }
@@ -709,55 +699,55 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
   },{
     ATTRS : {
       /**
-       * 是否发生过校验，初始值为空时，未进行赋值，不进行校验
+       * \u662f\u5426\u53d1\u751f\u8fc7\u6821\u9a8c\uff0c\u521d\u59cb\u503c\u4e3a\u7a7a\u65f6\uff0c\u672a\u8fdb\u884c\u8d4b\u503c\uff0c\u4e0d\u8fdb\u884c\u6821\u9a8c
        * @type {Boolean}
        */
       hasValid : {
         value : false
       },
       /**
-       * 内部元素是否根据控件宽度调整宽度
+       * \u5185\u90e8\u5143\u7d20\u662f\u5426\u6839\u636e\u63a7\u4ef6\u5bbd\u5ea6\u8c03\u6574\u5bbd\u5ea6
        * @type {Boolean}
        */
       forceFit : {
         value : false
       },
       /**
-       * 是否显示提示信息
+       * \u662f\u5426\u663e\u793a\u63d0\u793a\u4fe1\u606f
        * @type {Object}
        */
       tip : {
 
       },
       /**
-       * 表单元素或者控件内容改变的事件
+       * \u8868\u5355\u5143\u7d20\u6216\u8005\u63a7\u4ef6\u5185\u5bb9\u6539\u53d8\u7684\u4e8b\u4ef6
        * @type {String}
        */
       changeEvent : {
         value : 'valid'
       },
       /**
-       * 未发生验证时，首次获取/丢失焦点，进行验证
+       * \u672a\u53d1\u751f\u9a8c\u8bc1\u65f6\uff0c\u9996\u6b21\u83b7\u53d6/\u4e22\u5931\u7126\u70b9\uff0c\u8fdb\u884c\u9a8c\u8bc1
        */
       firstValidEvent : {
         value : 'blur'
       },
       /**
-       * 表单元素或者控件触发此事件时，触发验证
+       * \u8868\u5355\u5143\u7d20\u6216\u8005\u63a7\u4ef6\u89e6\u53d1\u6b64\u4e8b\u4ef6\u65f6\uff0c\u89e6\u53d1\u9a8c\u8bc1
        * @type {String}
        */
       validEvent : {
         value : 'keyup change'
       },
       /**
-       * 字段的name值
+       * \u5b57\u6bb5\u7684name\u503c
        * @type {Object}
        */
       name : {
         view :true
       },
       /**
-       * 是否显示错误
+       * \u662f\u5426\u663e\u793a\u9519\u8bef
        * @type {Boolean}
        */
       showError : {
@@ -765,28 +755,28 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         value : true
       },
       /**
-       * 字段的值,类型根据字段类型决定
+       * \u5b57\u6bb5\u7684\u503c,\u7c7b\u578b\u6839\u636e\u5b57\u6bb5\u7c7b\u578b\u51b3\u5b9a
        * @cfg {*} value
        */
       value : {
         view : true
       },
       /**
-       * 标题
+       * \u6807\u9898
        * @type {String}
        */
       label : {
 
       },
       /**
-       * 控件容器，如果为空直接添加在控件容器上
+       * \u63a7\u4ef6\u5bb9\u5668\uff0c\u5982\u679c\u4e3a\u7a7a\u76f4\u63a5\u6dfb\u52a0\u5728\u63a7\u4ef6\u5bb9\u5668\u4e0a
        * @type {String|HTMLElement}
        */
       controlContainer : {
         view : true
       },
       /**
-       * 内部表单元素的控件
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u63a7\u4ef6
        * @protected
        * @type {jQuery}
        */
@@ -794,7 +784,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         view : true
       },
       /**
-       * 内部表单元素的容器
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
        * @type {String}
        */
       controlTpl : {
@@ -804,27 +794,27 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       events: {
         value : {
           /**
-           * 未通过验证
+           * \u672a\u901a\u8fc7\u9a8c\u8bc1
            * @event
            */
           error : false,
           /**
-           * 通过验证
+           * \u901a\u8fc7\u9a8c\u8bc1
            * @event
            */
           valid : false,
           /**
            * @event
-           * 值改变，仅当通过验证时触发
+           * \u503c\u6539\u53d8\uff0c\u4ec5\u5f53\u901a\u8fc7\u9a8c\u8bc1\u65f6\u89e6\u53d1
            */
           change : true,
 
           /**
            * @event
-           * 验证改变
-           * @param {Object} e 事件对象
-           * @param {Object} e.target 触发事件的对象
-           * @param {Boolean} e.valid 是否通过验证
+           * \u9a8c\u8bc1\u6539\u53d8
+           * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+           * @param {Object} e.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5bf9\u8c61
+           * @param {Boolean} e.valid \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
            */
           validchange : true
         }  
@@ -888,17 +878,12 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
   
   return field;
 
-});/**
- * @fileOverview 表单文本域
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/textfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
   /**
-   * 表单文本域
+   * \u8868\u5355\u6587\u672c\u57df
    * @class BUI.Form.Field.Text
    * @extends BUI.Form.Field
    */
@@ -909,16 +894,11 @@ define('bui/form/textfield',['bui/form/basefield'],function (require) {
   });
 
   return textField;
-});/**
- * @fileOverview 表单文本域
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/numberfield',['bui/form/basefield'],function (require) {
 
   /**
-   * 表单数字域
+   * \u8868\u5355\u6570\u5b57\u57df
    * @class BUI.Form.Field.Number
    * @extends BUI.Form.Field
    */
@@ -926,10 +906,10 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
     numberField = Field.extend({
 
      /**
-     * 将字符串等格式转换成数字
+     * \u5c06\u5b57\u7b26\u4e32\u7b49\u683c\u5f0f\u8f6c\u6362\u6210\u6570\u5b57
      * @protected
-     * @param  {String} value 原始数据
-     * @return {Number}  该字段指定的类型
+     * @param  {String} value \u539f\u59cb\u6570\u636e
+     * @return {Number}  \u8be5\u5b57\u6bb5\u6307\u5b9a\u7684\u7c7b\u578b
      */
     parseValue : function(value){
       if(value == '' || value == null){
@@ -955,14 +935,14 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
   },{
     ATTRS : {
       /**
-       * 最大值
+       * \u6700\u5927\u503c
        * @type {Number}
        */
       max : {
 
       },
       /**
-       * 最小值
+       * \u6700\u5c0f\u503c
        * @type {Number}
        */
       min : {
@@ -975,7 +955,7 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
         }
       },
       /**
-       * 表单元素或者控件触发此事件时，触发验证
+       * \u8868\u5355\u5143\u7d20\u6216\u8005\u63a7\u4ef6\u89e6\u53d1\u6b64\u4e8b\u4ef6\u65f6\uff0c\u89e6\u53d1\u9a8c\u8bc1
        * @type {String}
        */
       validEvent : {
@@ -987,21 +967,21 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
         }
       },
       /**
-       * 是否允许小数，如果不允许，则最终结果转换成整数
+       * \u662f\u5426\u5141\u8bb8\u5c0f\u6570\uff0c\u5982\u679c\u4e0d\u5141\u8bb8\uff0c\u5219\u6700\u7ec8\u7ed3\u679c\u8f6c\u6362\u6210\u6574\u6570
        * @type {Boolean}
        */
       allowDecimals : {
         value : true
       },
       /**
-       * 允许小数时的，小数位
+       * \u5141\u8bb8\u5c0f\u6570\u65f6\u7684\uff0c\u5c0f\u6570\u4f4d
        * @type {Number}
        */
       decimalPrecision : {
         value : 2
       },
       /**
-       * 对数字进行微调时，每次增加或减小的数字
+       * \u5bf9\u6570\u5b57\u8fdb\u884c\u5fae\u8c03\u65f6\uff0c\u6bcf\u6b21\u589e\u52a0\u6216\u51cf\u5c0f\u7684\u6570\u5b57
        * @type {Object}
        */
       step : {
@@ -1013,16 +993,11 @@ define('bui/form/numberfield',['bui/form/basefield'],function (require) {
   });
 
   return numberField;
-});/**
-* @fileOverview 隐藏字段
-* @ignore
-* @author dxq613@gmail.com
-*/
-
+});
 define('bui/form/hiddenfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
-   * 表单隐藏域
+   * \u8868\u5355\u9690\u85cf\u57df
    * @class BUI.Form.Field.Hidden
    * @extends BUI.Form.Field
    */
@@ -1031,7 +1006,7 @@ define('bui/form/hiddenfield',['bui/form/basefield'],function (require) {
   },{
     ATTRS : {
       /**
-       * 内部表单元素的容器
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
        * @type {String}
        */
       controlTpl : {
@@ -1047,16 +1022,11 @@ define('bui/form/hiddenfield',['bui/form/basefield'],function (require) {
 
   return hiddenField;
 
-});/**
-* @fileOverview 只读字段
-* @ignore
-* @author dxq613@gmail.com
-*/
-
+});
 define('bui/form/readonlyfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
   /**
-   * 表单隐藏域
+   * \u8868\u5355\u9690\u85cf\u57df
    * @class BUI.Form.Field.ReadOnly
    * @extends BUI.Form.Field
    */
@@ -1065,7 +1035,7 @@ define('bui/form/readonlyfield',['bui/form/basefield'],function (require) {
   },{
     ATTRS : {
       /**
-       * 内部表单元素的容器
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
        * @type {String}
        */
       controlTpl : {
@@ -1078,11 +1048,7 @@ define('bui/form/readonlyfield',['bui/form/basefield'],function (require) {
 
   return readonlyField;
 
-});/**
- * @fileOverview 模拟选择框在表单中
- * @ignore
- */
-
+});
 define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (require) {
 
   var BUI = require('bui/common'),
@@ -1104,17 +1070,17 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
     $(str).appendTo(select);
   }
   /**
-   * 表单选择域
+   * \u8868\u5355\u9009\u62e9\u57df
    * @class BUI.Form.Field.Select
    * @extends BUI.Form.Field
    */
   var selectField = Field.extend({
-    //生成select
+    //\u751f\u6210select
     renderUI : function(){
       var _self = this,
         innerControl = _self.getInnerControl(),
         select = _self.get('select');
-      if(_self.get('srcNode') && innerControl.is('select')){ //如果使用现有DOM生成，不使用自定义选择框控件
+      if(_self.get('srcNode') && innerControl.is('select')){ //\u5982\u679c\u4f7f\u7528\u73b0\u6709DOM\u751f\u6210\uff0c\u4e0d\u4f7f\u7528\u81ea\u5b9a\u4e49\u9009\u62e9\u6846\u63a7\u4ef6
         return;
       }
       //select = select || {};
@@ -1143,8 +1109,8 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       })
     },
     /**
-     * 重新设置选项集合
-     * @param {Array} items 选项集合
+     * \u91cd\u65b0\u8bbe\u7f6e\u9009\u9879\u96c6\u5408
+     * @param {Array} items \u9009\u9879\u96c6\u5408
      */
     setItems : function (items) {
       var _self = this,
@@ -1176,9 +1142,9 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       }
     },
     /**
-     * 设置字段的值
+     * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
      * @protected
-     * @param {*} value 字段值
+     * @param {*} value \u5b57\u6bb5\u503c
      */
     setControlValue : function(value){
       var _self = this,
@@ -1190,8 +1156,8 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       }
     },
     /**
-     * 获取选中的文本
-     * @return {String} 选中的文本
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u6587\u672c
+     * @return {String} \u9009\u4e2d\u7684\u6587\u672c
      */
     getSelectedText : function(){
       var _self = this,
@@ -1206,7 +1172,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       }
     },
     /**
-     * 获取tip显示对应的元素
+     * \u83b7\u53d6tip\u663e\u793a\u5bf9\u5e94\u7684\u5143\u7d20
      * @protected
      * @override
      * @return {HTMLElement} 
@@ -1219,7 +1185,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       }
       return _self.get('el');
     },
-    //设置选项
+    //\u8bbe\u7f6e\u9009\u9879
     _uiSetItems : function(v){
       if(v){
         this.setItems(v);
@@ -1227,7 +1193,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
     },
     /**
      * @protected
-     * 设置内部元素宽度
+     * \u8bbe\u7f6e\u5185\u90e8\u5143\u7d20\u5bbd\u5ea6
      */
     setInnerWidth : function(width){
       var _self = this,
@@ -1242,32 +1208,32 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   },{
     ATTRS : {
       /**
-       * 选项
+       * \u9009\u9879
        * @type {Array}
        */
       items : {
 
       },
       /**
-       * 内部表单元素的容器
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
        * @type {String}
        */
       controlTpl : {
         value : '<input type="hidden"/>'
       },
       /**
-       * 是否显示为空的文本
+       * \u662f\u5426\u663e\u793a\u4e3a\u7a7a\u7684\u6587\u672c
        * @type {Boolean}
        */
       showBlank : {
         value : true
       },
       /**
-       * 选择为空时的文本
+       * \u9009\u62e9\u4e3a\u7a7a\u65f6\u7684\u6587\u672c
        * @type {String}
        */
       emptyText : {
-        value : '请选择'
+        value : '\u8bf7\u9009\u62e9'
       },
       select : {
         value : {}
@@ -1291,12 +1257,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   });
 
   return selectField;
-});/**
- * @fileOverview 表单日历域
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],function (require) {
 
   var BUI = require('bui/common'),
@@ -1305,12 +1266,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     DatePicker = require('bui/calendar').DatePicker;
 
   /**
-   * 表单文本域
+   * \u8868\u5355\u6587\u672c\u57df
    * @class BUI.Form.Field.Date
    * @extends BUI.Form.Field
    */
   var dateField = Field.extend({
-    //生成日期控件
+    //\u751f\u6210\u65e5\u671f\u63a7\u4ef6
     renderUI : function(){
       
       var _self = this,
@@ -1339,9 +1300,9 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       });*/
     },
     /**
-     * 设置字段的值
+     * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
      * @protected
-     * @param {Date} value 字段值
+     * @param {Date} value \u5b57\u6bb5\u503c
      */
     setControlValue : function(value){
       var _self = this,
@@ -1351,7 +1312,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       }
       innerControl.val(value);
     },
-    //获取格式化函数
+    //\u83b7\u53d6\u683c\u5f0f\u5316\u51fd\u6570
     _getFormatMask : function(){
       var _self = this,
         datePicker = _self.get('datePicker');
@@ -1362,11 +1323,11 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       return 'yyyy-mm-dd';
     },
      /**
-     * 将字符串等格式转换成日期
+     * \u5c06\u5b57\u7b26\u4e32\u7b49\u683c\u5f0f\u8f6c\u6362\u6210\u65e5\u671f
      * @protected
      * @override
-     * @param  {String} value 原始数据
-     * @return {Date}  该字段指定的类型
+     * @param  {String} value \u539f\u59cb\u6570\u636e
+     * @return {Date}  \u8be5\u5b57\u6bb5\u6307\u5b9a\u7684\u7c7b\u578b
      */
     parseValue : function(value){
       if(BUI.isNumber(value)){
@@ -1377,12 +1338,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     /**
      * @override
      * @protected
-     * 是否当前值
+     * \u662f\u5426\u5f53\u524d\u503c
      */
     isCurrentValue : function (value) {
       return DateUtil.isEquals(value,this.get('value'));
     },
-    //设置最大值
+    //\u8bbe\u7f6e\u6700\u5927\u503c
     _uiSetMax : function(v){
       this.addRule('max',v);
       var _self = this,
@@ -1391,7 +1352,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
         datePicker.set('maxDate',v);
       }
     },
-    //设置最小值
+    //\u8bbe\u7f6e\u6700\u5c0f\u503c
     _uiSetMin : function(v){
       this.addRule('min',v);
       var _self = this,
@@ -1403,7 +1364,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
   },{
     ATTRS : {
       /**
-       * 内部表单元素的容器
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
        * @type {String}
        */
       controlTpl : {
@@ -1415,14 +1376,14 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
         }
       },
       /**
-       * 最大值
+       * \u6700\u5927\u503c
        * @type {Date|String}
        */
       max : {
 
       },
       /**
-       * 最小值
+       * \u6700\u5c0f\u503c
        * @type {Date|String}
        */
       min : {
@@ -1430,14 +1391,14 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       },
       value : {
         setter : function(v){
-          if(BUI.isNumber(v)){//将数字转换成日期类型
+          if(BUI.isNumber(v)){//\u5c06\u6570\u5b57\u8f6c\u6362\u6210\u65e5\u671f\u7c7b\u578b
             return new Date(v);
           }
           return v;
         }
       },
       /**
-       * 时间选择控件
+       * \u65f6\u95f4\u9009\u62e9\u63a7\u4ef6
        * @type {Object|BUI.Calendar.DatePicker}
        */
       datePicker : {
@@ -1446,7 +1407,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
         }
       },
       /**
-       * 时间选择器是否是由此控件创建
+       * \u65f6\u95f4\u9009\u62e9\u5668\u662f\u5426\u662f\u7531\u6b64\u63a7\u4ef6\u521b\u5efa
        * @type {Boolean}
        * @readOnly
        */
@@ -1469,22 +1430,18 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
   });
 
   return dateField;
-});/**
- * @fileOverview  可勾选字段
- * @ignore
- */
-
+});
 define('bui/form/checkfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
   /**
-   * 可选中菜单域
+   * \u53ef\u9009\u4e2d\u83dc\u5355\u57df
    * @class BUI.Form.Field.Check
    * @extends BUI.Form.Field
    */
   var checkField = Field.extend({
     /**
-     * 验证成功后执行的操作
+     * \u9a8c\u8bc1\u6210\u529f\u540e\u6267\u884c\u7684\u64cd\u4f5c
      * @protected
      */
     onValid : function(){
@@ -1498,27 +1455,27 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
         _self.fire('unchecked');
       }
     },
-    //设置是否勾选
+    //\u8bbe\u7f6e\u662f\u5426\u52fe\u9009
     _setControlChecked : function(checked){
       var _self = this,
         innerControl = _self.getInnerControl();
       innerControl.attr('checked',!!checked);
     },
-    //获取是否勾选
+    //\u83b7\u53d6\u662f\u5426\u52fe\u9009
     _getControlChecked : function(){
       var _self = this,
         innerControl = _self.getInnerControl();
       return !!innerControl.attr('checked');
     },
-    //覆盖 设置值的方法
+    //\u8986\u76d6 \u8bbe\u7f6e\u503c\u7684\u65b9\u6cd5
     _uiSetValue : function(v){
 
     },
-    //覆盖不设置宽度
+    //\u8986\u76d6\u4e0d\u8bbe\u7f6e\u5bbd\u5ea6
     _uiSetWidth : function(v){
 
     },
-    //设置是否勾选
+    //\u8bbe\u7f6e\u662f\u5426\u52fe\u9009
     _uiSetChecked : function(v){
       var _self = this;
       _self._setControlChecked(v);
@@ -1529,7 +1486,7 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
   },{
     ATTRS : {
       /**
-       * 触发验证事件，进而引起change事件
+       * \u89e6\u53d1\u9a8c\u8bc1\u4e8b\u4ef6\uff0c\u8fdb\u800c\u5f15\u8d77change\u4e8b\u4ef6
        * @override
        * @type {String}
        */
@@ -1537,11 +1494,11 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
         value : 'click'
       },
       /**
-       * 是否选中
+       * \u662f\u5426\u9009\u4e2d
        * @cfg {String} checked
        */
       /**
-       * 是否选中
+       * \u662f\u5426\u9009\u4e2d
        * @type {String}
        */
       checked : {
@@ -1551,12 +1508,12 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
         value : {
           /**
            * @event
-           * 选中事件
+           * \u9009\u4e2d\u4e8b\u4ef6
            */
           'checked' : false,
           /**
            * @event
-           * 取消选中事件
+           * \u53d6\u6d88\u9009\u4e2d\u4e8b\u4ef6
            */
           'unchecked' : false
         }
@@ -1572,17 +1529,13 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
   });
 
   return checkField;
-});/**
- * @fileOverview  复选框表单域
- * @ignore
- */
-
+});
 define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
 
    /**
-   * 表单复选域
+   * \u8868\u5355\u590d\u9009\u57df
    * @class BUI.Form.Field.Checkbox
    * @extends BUI.Form.Field.Check
    */
@@ -1591,7 +1544,7 @@ define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
   },{
     ATTRS : {
       /**
-       * 内部表单元素的容器
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
        * @type {String}
        */
       controlTpl : {
@@ -1599,7 +1552,7 @@ define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
         value : '<input type="checkbox"/>'
       },
        /**
-       * 控件容器，如果为空直接添加在控件容器上
+       * \u63a7\u4ef6\u5bb9\u5668\uff0c\u5982\u679c\u4e3a\u7a7a\u76f4\u63a5\u6dfb\u52a0\u5728\u63a7\u4ef6\u5bb9\u5668\u4e0a
        * @type {String|HTMLElement}
        */
       controlContainer : {
@@ -1614,17 +1567,13 @@ define('bui/form/checkboxfield',['bui/form/checkfield'],function (required) {
   });
 
   return CheckBoxField;
-});/**
- * @fileOverview  单选框表单域
- * @ignore
- */
-
+});
 define('bui/form/radiofield',['bui/form/checkfield'],function (required) {
   
   var CheckField = required('bui/form/checkfield');
 
   /**
-   * 表单单选域
+   * \u8868\u5355\u5355\u9009\u57df
    * @class BUI.Form.Field.Radio
    * @extends BUI.Form.Field.Check
    */
@@ -1648,7 +1597,7 @@ define('bui/form/radiofield',['bui/form/checkfield'],function (required) {
   },{
     ATTRS : {
       /**
-       * 内部表单元素的容器
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
        * @type {String}
        */
       controlTpl : {
@@ -1656,7 +1605,7 @@ define('bui/form/radiofield',['bui/form/checkfield'],function (required) {
         value : '<input type="radio"/>'
       },
       /**
-       * 控件容器，如果为空直接添加在控件容器上
+       * \u63a7\u4ef6\u5bb9\u5668\uff0c\u5982\u679c\u4e3a\u7a7a\u76f4\u63a5\u6dfb\u52a0\u5728\u63a7\u4ef6\u5bb9\u5668\u4e0a
        * @type {String|HTMLElement}
        */
       controlContainer : {
@@ -1671,11 +1620,7 @@ define('bui/form/radiofield',['bui/form/checkfield'],function (required) {
   });
 
   return RadioField;
-});/**
- * @fileOverview 仅仅用于显示文本，不能编辑的字段
- * @ignore
- */
-
+});
 define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   var Field = require('bui/form/basefield');
 
@@ -1713,7 +1658,7 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   /**
-   * 表单文本域，不能编辑
+   * \u8868\u5355\u6587\u672c\u57df\uff0c\u4e0d\u80fd\u7f16\u8f91
    * @class BUI.Form.Field.Plain
    * @extends BUI.Form.Field
    */
@@ -1722,14 +1667,14 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   },{
     ATTRS : {
       /**
-       * 内部表单元素的容器
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
        * @type {String}
        */
       controlTpl : {
         value : '<input type="hidden"/>'
       },
       /**
-       * 显示文本的模板
+       * \u663e\u793a\u6587\u672c\u7684\u6a21\u677f
        * @type {String}
        */
       textTpl : {
@@ -1737,7 +1682,7 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
         value : '<span class="x-form-text">{text}</span>'
       },
       /**
-       * 将字段的值格式化输出
+       * \u5c06\u5b57\u6bb5\u7684\u503c\u683c\u5f0f\u5316\u8f93\u51fa
        * @type {Function}
        */
       renderer : {
@@ -1758,323 +1703,7 @@ define('bui/form/plainfield',['bui/form/basefield'],function (require) {
   });
 
   return PlainField;
-});/**
- * @fileOverview 表单中的列表，每个列表后有个隐藏域用来存储数据
- * @ignore
- */
-
-define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],function (require) {
-  var BUI = require('bui/common'),
-    List = require('bui/list'),
-    Field = require('bui/form/basefield');
-
-  function parseItems(items){
-    var rst = items;
-    if($.isPlainObject(items)){
-      rst = [];
-      BUI.each(items,function(v,k){
-        rst.push({text : v,value : k});
-      });
-    }
-    return rst;
-  }
-
-  /**
-   * @class BUI.Form.Field.List
-   * 表单中的列表
-   * @extends BUI.Form.Field
-   */
-  var List = Field.extend({
-
-    initializer : function(){
-      var _self = this;
-      //if(!_self.get('srcNode')){
-        _self._initList();
-      //}
-    },
-    _getList : function(){
-      var _self = this,
-        children = _self.get('children');
-      return children[0];
-    },
-    bindUI : function(){
-      var _self = this,
-        list = _self._getList();
-      if(list){
-        list.on('selectedchange',function(){
-          var value = _self._getListValue(list);
-          _self.set('value',value);
-        });
-      }
-    },
-    //获取列表值
-    _getListValue : function(list){
-      var _self = this;
-      list = list || _self._getList();
-      return list.getSelectionValues().join(',');
-    },
-    /**
-     * 设置字段的值
-     * @protected
-     * @param {*} value 字段值
-     */
-    setControlValue : function(value){
-      var _self = this,
-        innerControl = _self.getInnerControl(),
-        list = _self._getList();
-      innerControl.val(value);
-      if(_self._getListValue(list) !== value && list.getCount()){
-        if(list.get('multipleSelect')){
-          list.clearSelection();
-        }
-        list.setSelectionByField(value.split(','));
-      }
-    },
-    //同步数据
-    syncUI : function(){
-       this.set('list',this._getList());
-    },
-    //初始化列表
-    _initList : function(){
-      var _self = this,
-        defaultListCfg = _self.get('defaultListCfg'),
-        children = _self.get('children'),
-        list = _self.get('list') || {};
-      if(children[0]){
-        return;
-      }
-      if($.isPlainObject(list)){
-        BUI.mix(list,defaultListCfg);
-      }
-      children.push(list);
-    },
-    /**
-     * 设置选项
-     * @param {Array} items 选项记录
-     */
-    setItems : function(items){
-      var _self = this,
-        value = _self.get('value'),
-        list = _self._getList();
-      list.set('items',parseItems(items));
-      list.setSelectionByField(value.split(','));
-    },
-    //设置选项集合
-    _uiSetItems : function(v){
-      if(v){
-        this.setItems(v);
-      }
-    }
-  },{
-    ATTRS : {
-      /**
-       * 内部表单元素的容器
-       * @type {String}
-       */
-      controlTpl : {
-        value : '<input type="hidden"/>'
-      },
-      /**
-       * @protected
-       * 默认的列表配置
-       * @type {Object}
-       */
-      defaultListCfg : {
-        value : {
-          xclass : 'simple-list'
-        }
-      },
-      /**
-       * 选项
-       * @type {Array}
-       */
-      items : {
-        setter : function(v){
-          if($.isPlainObject(v)){
-            var rst = [];
-            BUI.each(v,function(v,k){
-              rst.push({value : k,text :v});
-            });
-            v = rst;
-          }
-          return v;
-        }
-      },
-      /**
-       * 列表
-       * @type {BUI.List.SimpleList}
-       */
-      list : {
-
-      }
-    },
-    PARSER : {
-      list : function(el){
-        var listEl = el.find('.bui-simple-list');
-        if(listEl.length){
-          return {
-            srcNode : listEl
-          };
-        }
-      }
-    }
-  },{
-    xclass : 'form-field-list'
-  });
-
-  return List;
-});/**
- * @fileOverview 模拟选择框在表单中
- * @ignore
- */
-
-define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (require) {
-
-  var BUI = require('bui/common'),
-    JSON = BUI.JSON,
-    Field = require('bui/form/basefield');
-
-  /**
-   * 表单上传域
-   * @class BUI.Form.Field.Upload
-   * @extends BUI.Form.Field
-   */
-  var uploaderField = Field.extend({
-    //生成upload
-    renderUI : function(){
-      var _self = this,
-        innerControl = _self.getInnerControl();
-      if(_self.get('srcNode') && innerControl.get(0).type === 'file'){ //如果使用现有DOM生成，不使用上传组件
-        return;
-      }
-      _self._initUpload();
-    },
-    _initUpload: function(){
-      var _self = this,
-        children = _self.get('children'),
-        uploader = _self.get('uploader') || {};
-
-      BUI.use('bui/uploader', function(Uploader){
-        uploader.render = _self.getControlContainer();
-        uploader.autoRender = true;
-        uploader = new Uploader.Uploader(uploader);
-        _self.set('uploader', uploader);
-        _self.set('isCreate',true);
-        _self.get('children').push(uploader);
-        uploader.get('uploaderType').on('success', function(ev){
-          var items = uploader.get('queue').getItems();
-          _self.setControlValue(items);
-        });
-      });
-    },
-    setControlValue: function(items){
-      var _self = this,
-        innerControl = _self.getInnerControl(),
-        result = [];
-      BUI.each(items, function(item){
-        result.push(item.result);
-      })
-      innerControl.val(JSON.stringify(result));
-    }
-  },{
-    ATTRS : {
-      /**
-       * 内部表单元素的容器
-       * @type {String}
-       */
-      controlTpl : {
-        value : '<input type="hidden"/>'
-      },
-      uploader: {
-      },
-      value:{
-        value: []
-      }
-    }
-  },{
-    xclass : 'form-field-uploader'
-  });
-
-  return uploaderField;
-});/**
- * @fileOverview 可勾选的列表，模拟多个checkbox
- * @ignore
- */
-
-define('bui/form/checklistfield',['bui/common','bui/form/listfield'],function (require) {
-  'use strict';
-  var BUI = require('bui/common'),
-    ListField = require('bui/form/listfield');
-
-  /**
-   * @class BUI.Form.Field.CheckList
-   * 可勾选的列表，模拟多个checkbox
-   * @extends BUI.Form.Field.List
-   */
-  var CheckList = ListField.extend({
-
-  },{
-    ATTRS : {
-      /**
-       * @protected
-       * 默认的列表配置
-       * @type {Object}
-       */
-      defaultListCfg : {
-        value : {
-          itemTpl : '<li><span class="x-checkbox"></span>{text}</li>',
-          multipleSelect : true,
-          allowTextSelection : false
-        }
-      }
-    }
-  },{
-    xclass : 'form-field-checklist'
-  });
-
-  return CheckList;
-
-});/**
- * @fileOverview 可勾选的列表，模拟多个radio
- * @ignore
- */
-
-define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (require) {
-  'use strict';
-  var BUI = require('bui/common'),
-    ListField = require('bui/form/listfield');
-
-  /**
-   * @class BUI.Form.Field.RadioList
-   * 可勾选的列表，模拟多个radio
-   * @extends BUI.Form.Field.List
-   */
-  var RadioList = ListField.extend({
-
-  },{
-    ATTRS : {
-      /**
-       * @protected
-       * 默认的列表配置
-       * @type {Object}
-       */
-      defaultListCfg : {
-        value : {
-          itemTpl : '<li><span class="x-radio"></span>{text}</li>',
-          allowTextSelection : false
-        }
-      }
-    }
-  },{
-    xclass : 'form-field-radiolist'
-  });
-
-  return RadioList;
-
-});/**
- * @fileOverview 表单域的入口文件
- * @ignore
- */
+});
 ;(function(){
 var BASE = 'bui/form/';
 define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
@@ -2103,10 +1732,6 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
 });
 
 })();
-/**
- * @fileOverview 表单验证
- * @ignore
- */
 
 define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
@@ -2116,7 +1741,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
   /**
    * @class BUI.Form.ValidView
    * @private
-   * 对控件内的字段域进行验证的视图
+   * \u5bf9\u63a7\u4ef6\u5185\u7684\u5b57\u6bb5\u57df\u8fdb\u884c\u9a8c\u8bc1\u7684\u89c6\u56fe
    */
   var ValidView = function(){
 
@@ -2124,7 +1749,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
   ValidView.prototype = {
     /**
-     * 获取错误信息的容器
+     * \u83b7\u53d6\u9519\u8bef\u4fe1\u606f\u7684\u5bb9\u5668
      * @protected
      * @return {jQuery} 
      */
@@ -2140,7 +1765,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       return _self.getContentElement();
     },
     /**
-     * 显示错误
+     * \u663e\u793a\u9519\u8bef
      */
     showErrors : function(errors){
       var _self = this,
@@ -2151,7 +1776,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       if(!_self.get('showError')){
         return ;
       }
-      //如果仅显示第一条错误记录
+      //\u5982\u679c\u4ec5\u663e\u793a\u7b2c\u4e00\u6761\u9519\u8bef\u8bb0\u5f55
       if(_self.get('showOneError')){
         if(errors && errors.length){
           _self.showError(errors[0],errorTpl,errorsContainer);
@@ -2166,10 +1791,10 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       });
     },
     /**
-     * 显示一条错误
+     * \u663e\u793a\u4e00\u6761\u9519\u8bef
      * @protected
      * @template
-     * @param  {String} msg 错误信息
+     * @param  {String} msg \u9519\u8bef\u4fe1\u606f
      */
     showError : function(msg,errorTpl,container){
 
@@ -2177,14 +1802,14 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * @protected
      * @template
-     * 清除错误
+     * \u6e05\u9664\u9519\u8bef
      */
     clearErrors : function(){
 
     }
   };
   /**
-   * 对控件内的字段域进行验证
+   * \u5bf9\u63a7\u4ef6\u5185\u7684\u5b57\u6bb5\u57df\u8fdb\u884c\u9a8c\u8bc1
    * @class  BUI.Form.Valid
    */
   var Valid = function(){
@@ -2194,7 +1819,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
   Valid.ATTRS = {
 
     /**
-     * 控件固有的验证规则，例如，日期字段域，有的date类型的验证
+     * \u63a7\u4ef6\u56fa\u6709\u7684\u9a8c\u8bc1\u89c4\u5219\uff0c\u4f8b\u5982\uff0c\u65e5\u671f\u5b57\u6bb5\u57df\uff0c\u6709\u7684date\u7c7b\u578b\u7684\u9a8c\u8bc1
      * @protected
      * @type {Object}
      */
@@ -2202,7 +1827,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       value : {}
     },
     /**
-     * 控件固有的验证出错信息，例如，日期字段域，不是有效日期的验证字段
+     * \u63a7\u4ef6\u56fa\u6709\u7684\u9a8c\u8bc1\u51fa\u9519\u4fe1\u606f\uff0c\u4f8b\u5982\uff0c\u65e5\u671f\u5b57\u6bb5\u57df\uff0c\u4e0d\u662f\u6709\u6548\u65e5\u671f\u7684\u9a8c\u8bc1\u5b57\u6bb5
      * @protected
      * @type {Object}
      */
@@ -2210,28 +1835,28 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       value : {}
     },
     /**
-     * 验证规则
+     * \u9a8c\u8bc1\u89c4\u5219
      * @type {Object}
      */
     rules : {
       value : {}
     },
     /**
-     * 验证信息集合
+     * \u9a8c\u8bc1\u4fe1\u606f\u96c6\u5408
      * @type {Object}
      */
     messages : {
       value : {}
     },
     /**
-     * 验证器 验证容器内的表单字段是否通过验证
+     * \u9a8c\u8bc1\u5668 \u9a8c\u8bc1\u5bb9\u5668\u5185\u7684\u8868\u5355\u5b57\u6bb5\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      * @type {Function}
      */
     validator : {
 
     },
     /**
-     * 存放错误信息容器的选择器，如果未提供则默认显示在控件中
+     * \u5b58\u653e\u9519\u8bef\u4fe1\u606f\u5bb9\u5668\u7684\u9009\u62e9\u5668\uff0c\u5982\u679c\u672a\u63d0\u4f9b\u5219\u9ed8\u8ba4\u663e\u793a\u5728\u63a7\u4ef6\u4e2d
      * @private
      * @type {String}
      */
@@ -2239,7 +1864,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       view : true
     },
     /**
-     * 显示错误信息的模板
+     * \u663e\u793a\u9519\u8bef\u4fe1\u606f\u7684\u6a21\u677f
      * @type {Object}
      */
     errorTpl : {
@@ -2247,7 +1872,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       value : '<span class="x-field-error"><span class="x-icon x-icon-mini x-icon-error">!</span><label class="x-field-error-text">{error}</label></span>'
     },
     /**
-     * 显示错误
+     * \u663e\u793a\u9519\u8bef
      * @type {Boolean}
      */
     showError : {
@@ -2255,14 +1880,14 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       value : true
     },
     /**
-     * 是否仅显示一个错误
+     * \u662f\u5426\u4ec5\u663e\u793a\u4e00\u4e2a\u9519\u8bef
      * @type {Boolean}
      */
     showOneError: {
 
     },
     /**
-     * 错误信息，这个验证错误不包含子控件的验证错误
+     * \u9519\u8bef\u4fe1\u606f\uff0c\u8fd9\u4e2a\u9a8c\u8bc1\u9519\u8bef\u4e0d\u5305\u542b\u5b50\u63a7\u4ef6\u7684\u9a8c\u8bc1\u9519\u8bef
      * @type {String}
      */
     error : {
@@ -2274,7 +1899,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
     __bindUI : function(){
       var _self = this;
-      //监听是否禁用
+      //\u76d1\u542c\u662f\u5426\u7981\u7528
       _self.on('afterDisabledChange',function(ev){
         var disabled = ev.newVal;
         if(disabled){
@@ -2285,15 +1910,15 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       });
     },
     /**
-     * 是否通过验证
+     * \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      * @template
-     * @return {Boolean} 是否通过验证
+     * @return {Boolean} \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     isValid : function(){
 
     },
     /**
-     * 进行验证
+     * \u8fdb\u884c\u9a8c\u8bc1
      */
     valid : function(){
 
@@ -2301,12 +1926,12 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * @protected
      * @template
-     * 验证自身的规则和验证器
+     * \u9a8c\u8bc1\u81ea\u8eab\u7684\u89c4\u5219\u548c\u9a8c\u8bc1\u5668
      */
     validControl : function(){
 
     },
-    //验证规则
+    //\u9a8c\u8bc1\u89c4\u5219
     validRules : function(rules,value){
       var _self = this,
         messages = _self._getValidMessages(),
@@ -2323,7 +1948,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       }
       return error;
     },
-    //获取验证错误信息
+    //\u83b7\u53d6\u9a8c\u8bc1\u9519\u8bef\u4fe1\u606f
     _getValidMessages : function(){
       var _self = this,
         defaultMessages = _self.get('defaultMessages'),
@@ -2333,8 +1958,8 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * @template
      * @protected
-     * 控件本身是否通过验证，不考虑子控件
-     * @return {String} 验证的错误
+     * \u63a7\u4ef6\u672c\u8eab\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1\uff0c\u4e0d\u8003\u8651\u5b50\u63a7\u4ef6
+     * @return {String} \u9a8c\u8bc1\u7684\u9519\u8bef
      */
     getValidError : function(value){
       var _self = this,
@@ -2353,15 +1978,15 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       return error;
     },
     /**
-     * 获取验证出错信息，包括自身和子控件的验证错误信息
-     * @return {Array} 出错信息
+     * \u83b7\u53d6\u9a8c\u8bc1\u51fa\u9519\u4fe1\u606f\uff0c\u5305\u62ec\u81ea\u8eab\u548c\u5b50\u63a7\u4ef6\u7684\u9a8c\u8bc1\u9519\u8bef\u4fe1\u606f
+     * @return {Array} \u51fa\u9519\u4fe1\u606f
      */
     getErrors : function(){
 
     },
     /**
-     * 显示错误
-     * @param {Array} 显示错误
+     * \u663e\u793a\u9519\u8bef
+     * @param {Array} \u663e\u793a\u9519\u8bef
      */
     showErrors : function(errors){
       var _self = this,
@@ -2369,7 +1994,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       _self.get('view').showErrors(errors);
     },
     /**
-     * 清除错误
+     * \u6e05\u9664\u9519\u8bef
      */
     clearErrors : function(deep){
       deep = deep == null ? true : deep;
@@ -2385,18 +2010,18 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       _self.get('view').clearErrors();
     },
     /**
-     * 添加验证规则
-     * @param {String} name 规则名称
-     * @param {*} [value] 规则进行校验的进行对比的值，如max : 10 
-     * @param {String} [message] 出错信息,可以使模板
+     * \u6dfb\u52a0\u9a8c\u8bc1\u89c4\u5219
+     * @param {String} name \u89c4\u5219\u540d\u79f0
+     * @param {*} [value] \u89c4\u5219\u8fdb\u884c\u6821\u9a8c\u7684\u8fdb\u884c\u5bf9\u6bd4\u7684\u503c\uff0c\u5982max : 10 
+     * @param {String} [message] \u51fa\u9519\u4fe1\u606f,\u53ef\u4ee5\u4f7f\u6a21\u677f
      * <ol>
-     *   <li>如果 value 是单个值，例如最大值 value = 10,那么模板可以写成： '输入值不能大于{0}!'</li>
-     *   <li>如果 value 是个复杂对象，数组时，按照索引，对象时按照 key 阻止。如：value= {max:10,min:5} ，则'输入值不能大于{max},不能小于{min}'</li>
+     *   <li>\u5982\u679c value \u662f\u5355\u4e2a\u503c\uff0c\u4f8b\u5982\u6700\u5927\u503c value = 10,\u90a3\u4e48\u6a21\u677f\u53ef\u4ee5\u5199\u6210\uff1a '\u8f93\u5165\u503c\u4e0d\u80fd\u5927\u4e8e{0}!'</li>
+     *   <li>\u5982\u679c value \u662f\u4e2a\u590d\u6742\u5bf9\u8c61\uff0c\u6570\u7ec4\u65f6\uff0c\u6309\u7167\u7d22\u5f15\uff0c\u5bf9\u8c61\u65f6\u6309\u7167 key \u963b\u6b62\u3002\u5982\uff1avalue= {max:10,min:5} \uff0c\u5219'\u8f93\u5165\u503c\u4e0d\u80fd\u5927\u4e8e{max},\u4e0d\u80fd\u5c0f\u4e8e{min}'</li>
      * </ol>
      *         var field = form.getField('name');
      *         field.addRule('required',true);
      *
-     *         field.addRule('max',10,'不能大于{0}');
+     *         field.addRule('max',10,'\u4e0d\u80fd\u5927\u4e8e{0}');
      */
     addRule : function(name,value,message){
       var _self = this,
@@ -2409,9 +2034,9 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       
     },
     /**
-     * 添加多个验证规则
-     * @param {Object} rules 多个验证规则
-     * @param {Object} [messages] 验证规则的出错信息
+     * \u6dfb\u52a0\u591a\u4e2a\u9a8c\u8bc1\u89c4\u5219
+     * @param {Object} rules \u591a\u4e2a\u9a8c\u8bc1\u89c4\u5219
+     * @param {Object} [messages] \u9a8c\u8bc1\u89c4\u5219\u7684\u51fa\u9519\u4fe1\u606f
      *         var field = form.getField('name');
      *         field.addRules({
      *           required : true,
@@ -2427,8 +2052,8 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       });
     },
     /**
-     * 移除指定名称的验证规则
-     * @param  {String} name 验证规则名称
+     * \u79fb\u9664\u6307\u5b9a\u540d\u79f0\u7684\u9a8c\u8bc1\u89c4\u5219
+     * @param  {String} name \u9a8c\u8bc1\u89c4\u5219\u540d\u79f0
      *         var field = form.getField('name');
      *         field.remove('required');   
      */
@@ -2438,7 +2063,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       delete rules[name];
     },
     /**
-     * 清理验证规则
+     * \u6e05\u7406\u9a8c\u8bc1\u89c4\u5219
      */
     clearRules : function(){
       var _self = this;
@@ -2448,11 +2073,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
   Valid.View = ValidView;
   return Valid;
-});/**
- * @fileOverview 表单分组验证
- * @ignore
- */
-
+});
 define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   
   var CLS_ERROR = 'x-form-error',
@@ -2461,7 +2082,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
    /**
    * @class BUI.Form.GroupValidView
    * @private
-   * 表单分组验证视图
+   * \u8868\u5355\u5206\u7ec4\u9a8c\u8bc1\u89c6\u56fe
    * @extends BUI.Form.ValidView
    */
   function GroupValidView(){
@@ -2470,9 +2091,9 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
 
   BUI.augment(GroupValidView,Valid.View,{
     /**
-     * 显示一条错误
+     * \u663e\u793a\u4e00\u6761\u9519\u8bef
      * @private
-     * @param  {String} msg 错误信息
+     * @param  {String} msg \u9519\u8bef\u4fe1\u606f
      */
     showError : function(msg,errorTpl,container){
       var errorMsg = BUI.substitute(errorTpl,{error : msg}),
@@ -2481,7 +2102,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         el.addClass(CLS_ERROR);
     },
     /**
-     * 清除错误
+     * \u6e05\u9664\u9519\u8bef
      */
     clearErrors : function(){
       var _self = this,
@@ -2492,7 +2113,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
 
   /**
    * @class BUI.Form.GroupValid
-   * 表单分组验证
+   * \u8868\u5355\u5206\u7ec4\u9a8c\u8bc1
    * @extends BUI.Form.Valid
    */
   function GroupValid(){
@@ -2513,7 +2134,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       var _self = this,
         validEvent =  'validchange change';
 
-      //当不需要显示子控件错误时，仅需要监听'change'事件即可
+      //\u5f53\u4e0d\u9700\u8981\u663e\u793a\u5b50\u63a7\u4ef6\u9519\u8bef\u65f6\uff0c\u4ec5\u9700\u8981\u76d1\u542c'change'\u4e8b\u4ef6\u5373\u53ef
       _self.on(validEvent,function(ev){
         var sender = ev.target;
         if(sender != this && _self.get('showError')){
@@ -2531,10 +2152,10 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       });
     },
     /**
-     * 是否通过验证
+     * \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     isValid : function(){
-      if(this.get('disabled')){ //如果被禁用，则不进行验证，并且认为true
+      if(this.get('disabled')){ //\u5982\u679c\u88ab\u7981\u7528\uff0c\u5219\u4e0d\u8fdb\u884c\u9a8c\u8bc1\uff0c\u5e76\u4e14\u8ba4\u4e3atrue
         return true;
       }
       var _self = this,
@@ -2542,12 +2163,12 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       return isValid && _self.isSelfValid();
     },
     /**
-     * 进行验证
+     * \u8fdb\u884c\u9a8c\u8bc1
      */
     valid : function(){
       var _self = this,
         children = _self.get('children');
-      if(_self.get('disabled')){ //禁用时不进行验证
+      if(_self.get('disabled')){ //\u7981\u7528\u65f6\u4e0d\u8fdb\u884c\u9a8c\u8bc1
         return;
       }
       BUI.each(children,function(item){
@@ -2557,9 +2178,9 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       });
     },
     /**
-     * 所有子控件是否通过验证
+     * \u6240\u6709\u5b50\u63a7\u4ef6\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      * @protected
-     * @return {Boolean} 所有子控件是否通过验证
+     * @return {Boolean} \u6240\u6709\u5b50\u63a7\u4ef6\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     isChildrenValid : function(){
       var _self = this,
@@ -2578,9 +2199,9 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       return !this.get('error');
     },
     /**
-     * 验证控件内容
+     * \u9a8c\u8bc1\u63a7\u4ef6\u5185\u5bb9
      * @protected
-     * @return {Boolean} 是否通过验证
+     * @return {Boolean} \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     validControl : function (record) {
       var _self = this,
@@ -2588,8 +2209,8 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       _self.set('error',error);
     },
     /**
-     * 获取验证出错信息，包括自身和子控件的验证错误信息
-     * @return {Array} 出错信息
+     * \u83b7\u53d6\u9a8c\u8bc1\u51fa\u9519\u4fe1\u606f\uff0c\u5305\u62ec\u81ea\u8eab\u548c\u5b50\u63a7\u4ef6\u7684\u9a8c\u8bc1\u9519\u8bef\u4fe1\u606f
+     * @return {Array} \u51fa\u9519\u4fe1\u606f
      */
     getErrors : function(){
       var _self = this,
@@ -2604,7 +2225,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
           }
         });
       }
-      //如果所有子控件通过验证，才显示自己的错误
+      //\u5982\u679c\u6240\u6709\u5b50\u63a7\u4ef6\u901a\u8fc7\u9a8c\u8bc1\uff0c\u624d\u663e\u793a\u81ea\u5df1\u7684\u9519\u8bef
       if(_self.isChildrenValid()){
         validError = _self.get('error');
         if(validError){
@@ -2614,7 +2235,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       
       return rst;
     },  
-    //设置错误模板时，覆盖子控件设置的错误模板
+    //\u8bbe\u7f6e\u9519\u8bef\u6a21\u677f\u65f6\uff0c\u8986\u76d6\u5b50\u63a7\u4ef6\u8bbe\u7f6e\u7684\u9519\u8bef\u6a21\u677f
     _uiSetErrorTpl : function(v){
       var _self = this,
         children = _self.get('children');
@@ -2628,10 +2249,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   GroupValid.View = GroupValidView;
 
   return GroupValid;
-});/**
- * @fileOverview 表单字段的容器扩展
- * @ignore
- */
+});
 define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupvalid'],function (require) {
   var BUI = require('bui/common'),
     Field = require('bui/form/field'),
@@ -2647,7 +2265,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
     return node.is(FIELD_TAGS);
   }
   /**
-   * 获取节点需要封装的子节点
+   * \u83b7\u53d6\u8282\u70b9\u9700\u8981\u5c01\u88c5\u7684\u5b50\u8282\u70b9
    * @ignore
    */
   function getDecorateChilds(node,srcNode){
@@ -2673,14 +2291,14 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
   var containerView = BUI.Component.View.extend([GroupValid.View]);
 
   /**
-   * 表单字段容器的扩展类
+   * \u8868\u5355\u5b57\u6bb5\u5bb9\u5668\u7684\u6269\u5c55\u7c7b
    * @class BUI.Form.FieldContainer
    * @extends BUI.Component.Controller
    * @mixins BUI.Form.GroupValid
    */
   var container = BUI.Component.Controller.extend([GroupValid],
     {
-      //同步数据
+      //\u540c\u6b65\u6570\u636e
       syncUI : function(){
         var _self = this,
           fields = _self.getFields(),
@@ -2693,7 +2311,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           }
         });
         BUI.each(validators,function(item,key){
-          //按照ID查找
+          //\u6309\u7167ID\u67e5\u627e
           if(key.indexOf('#') == 0){
             var id = key.replace('#',''),
               child = _self.getChild(id,true);
@@ -2704,7 +2322,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         });
       },
       /**
-       * 获取封装的子控件节点
+       * \u83b7\u53d6\u5c01\u88c5\u7684\u5b50\u63a7\u4ef6\u8282\u70b9
        * @protected
        * @override
        */
@@ -2715,7 +2333,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         return items;
       },
       /**
-       * 根据子节点获取对应的子控件 xclass
+       * \u6839\u636e\u5b50\u8282\u70b9\u83b7\u53d6\u5bf9\u5e94\u7684\u5b50\u63a7\u4ef6 xclass
        * @protected
        * @override
        */
@@ -2749,8 +2367,8 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         return BUI.Component.Controller.prototype.findXClassByNode.call(this,childNode, ignoreError);
       },
       /**
-       * 获取表单编辑的对象
-       * @return {Object} 编辑的对象
+       * \u83b7\u53d6\u8868\u5355\u7f16\u8f91\u7684\u5bf9\u8c61
+       * @return {Object} \u7f16\u8f91\u7684\u5bf9\u8c61
        */
       getRecord : function(){
         var _self = this,
@@ -2760,11 +2378,11 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           var name = field.get('name'),
             value = _self._getFieldValue(field);
 
-          if(!rst[name]){//没有值，直接赋值
+          if(!rst[name]){//\u6ca1\u6709\u503c\uff0c\u76f4\u63a5\u8d4b\u503c
             rst[name] = value;
-          }else if(BUI.isArray(rst[name]) && value != null){//已经存在值，并且是数组，加入数组
+          }else if(BUI.isArray(rst[name]) && value != null){//\u5df2\u7ecf\u5b58\u5728\u503c\uff0c\u5e76\u4e14\u662f\u6570\u7ec4\uff0c\u52a0\u5165\u6570\u7ec4
             rst[name].push(value);
-          }else if(value != null){          //否则封装成数组，并加入数组
+          }else if(value != null){          //\u5426\u5219\u5c01\u88c5\u6210\u6570\u7ec4\uff0c\u5e76\u52a0\u5165\u6570\u7ec4
             var arr = [rst[name]]
             arr.push(value);
             rst[name] = arr; 
@@ -2773,8 +2391,8 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         return rst;
       },
       /**
-       * 获取表单字段
-       * @return {Array} 表单字段
+       * \u83b7\u53d6\u8868\u5355\u5b57\u6bb5
+       * @return {Array} \u8868\u5355\u5b57\u6bb5
        */
       getFields : function(name){
         var _self = this,
@@ -2792,9 +2410,9 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         return rst;
       },
       /**
-       * 根据name 获取表单字段
-       * @param  {String} name 字段名
-       * @return {BUI.Form.Field}  表单字段或者 null
+       * \u6839\u636ename \u83b7\u53d6\u8868\u5355\u5b57\u6bb5
+       * @param  {String} name \u5b57\u6bb5\u540d
+       * @return {BUI.Form.Field}  \u8868\u5355\u5b57\u6bb5\u6216\u8005 null
        */
       getField : function(name){
         var _self = this,
@@ -2810,17 +2428,17 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         return rst;
       },
       /**
-       * 根据索引获取字段的name
-       * @param  {Number} index 字段的索引
-       * @return {String}   字段名称
+       * \u6839\u636e\u7d22\u5f15\u83b7\u53d6\u5b57\u6bb5\u7684name
+       * @param  {Number} index \u5b57\u6bb5\u7684\u7d22\u5f15
+       * @return {String}   \u5b57\u6bb5\u540d\u79f0
        */
       getFieldAt : function (index) {
         return this.getFields()[index];
       },
       /**
-       * 根据字段名
-       * @param {String} name 字段名
-       * @param {*} value 字段值
+       * \u6839\u636e\u5b57\u6bb5\u540d
+       * @param {String} name \u5b57\u6bb5\u540d
+       * @param {*} value \u5b57\u6bb5\u503c
        */
       setFieldValue : function(name,value){
         var _self = this,
@@ -2829,13 +2447,13 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
             _self._setFieldValue(field,value);
           });
       },
-      //设置字段域的值
+      //\u8bbe\u7f6e\u5b57\u6bb5\u57df\u7684\u503c
       _setFieldValue : function(field,value){
-        //如果字段不可用，则不能设置值
+        //\u5982\u679c\u5b57\u6bb5\u4e0d\u53ef\u7528\uff0c\u5219\u4e0d\u80fd\u8bbe\u7f6e\u503c
         if(field.get('disabled')){
           return;
         }
-        //如果是可勾选的
+        //\u5982\u679c\u662f\u53ef\u52fe\u9009\u7684
         if(field instanceof Field.Check){
           var fieldValue = field.get('value');
           if(value && (fieldValue === value || (BUI.isArray(value) && BUI.Array.contains(fieldValue,value)))){
@@ -2851,9 +2469,9 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         }
       },
       /**
-       * 获取字段值,不存在字段时返回null,多个同名字段时，checkbox返回一个数组
-       * @param  {String} name 字段名
-       * @return {*}  字段值
+       * \u83b7\u53d6\u5b57\u6bb5\u503c,\u4e0d\u5b58\u5728\u5b57\u6bb5\u65f6\u8fd4\u56denull,\u591a\u4e2a\u540c\u540d\u5b57\u6bb5\u65f6\uff0ccheckbox\u8fd4\u56de\u4e00\u4e2a\u6570\u7ec4
+       * @param  {String} name \u5b57\u6bb5\u540d
+       * @return {*}  \u5b57\u6bb5\u503c
        */
       getFieldValue : function(name){
         var _self = this,
@@ -2874,7 +2492,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         }
         return rst;
       },
-      //获取字段域的值
+      //\u83b7\u53d6\u5b57\u6bb5\u57df\u7684\u503c
       _getFieldValue : function(field){
         if(!(field instanceof Field.Check) || field.get('checked')){
           return field.get('value');
@@ -2882,15 +2500,15 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         return null;
       },
       /**
-       * 清除所有表单域的值
+       * \u6e05\u9664\u6240\u6709\u8868\u5355\u57df\u7684\u503c
        */
       clearFields : function(){
         this.clearErrors();
         this.setRecord({})
       },
       /**
-       * 设置表单编辑的对象
-       * @param {Object} record 编辑的对象
+       * \u8bbe\u7f6e\u8868\u5355\u7f16\u8f91\u7684\u5bf9\u8c61
+       * @param {Object} record \u7f16\u8f91\u7684\u5bf9\u8c61
        */
       setRecord : function(record){
         var _self = this,
@@ -2902,8 +2520,8 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         });
       },
       /**
-       * 更新表单编辑的对象
-       * @param  {Object} record 编辑的对象
+       * \u66f4\u65b0\u8868\u5355\u7f16\u8f91\u7684\u5bf9\u8c61
+       * @param  {Object} record \u7f16\u8f91\u7684\u5bf9\u8c61
        */
       updateRecord : function(record){
         var _self = this,
@@ -2917,7 +2535,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
         });
       },
       /**
-       * 设置控件获取焦点，设置第一个子控件获取焦点
+       * \u8bbe\u7f6e\u63a7\u4ef6\u83b7\u53d6\u7126\u70b9\uff0c\u8bbe\u7f6e\u7b2c\u4e00\u4e2a\u5b50\u63a7\u4ef6\u83b7\u53d6\u7126\u70b9
        */
       focus : function(){
         var _self = this,
@@ -2927,7 +2545,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           firstField.focus();
         }
       },
-      //禁用控件
+      //\u7981\u7528\u63a7\u4ef6
       _uiSetDisabled : function(v){
         var _self = this,
           children = _self.get('children');
@@ -2940,7 +2558,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
     {
       ATTRS : {
         /**
-         * 表单的数据记录，以键值对的形式存在
+         * \u8868\u5355\u7684\u6570\u636e\u8bb0\u5f55\uff0c\u4ee5\u952e\u503c\u5bf9\u7684\u5f62\u5f0f\u5b58\u5728
          * @type {Object}
          */
         record : {
@@ -2952,10 +2570,10 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           }
         },
         /**
-         * 内部元素的验证函数，可以使用2中选择器
+         * \u5185\u90e8\u5143\u7d20\u7684\u9a8c\u8bc1\u51fd\u6570\uff0c\u53ef\u4ee5\u4f7f\u75282\u4e2d\u9009\u62e9\u5668
          * <ol>
-         *   <li>id: 使用以'#'为前缀的选择器，可以查找字段或者分组，添加联合校验</li>
-         *   <li>name: 不使用任何前缀，没查找表单字段</li>
+         *   <li>id: \u4f7f\u7528\u4ee5'#'\u4e3a\u524d\u7f00\u7684\u9009\u62e9\u5668\uff0c\u53ef\u4ee5\u67e5\u627e\u5b57\u6bb5\u6216\u8005\u5206\u7ec4\uff0c\u6dfb\u52a0\u8054\u5408\u6821\u9a8c</li>
+         *   <li>name: \u4e0d\u4f7f\u7528\u4efb\u4f55\u524d\u7f00\uff0c\u6ca1\u67e5\u627e\u8868\u5355\u5b57\u6bb5</li>
          * </ol>
          * @type {Object}
          */
@@ -2965,7 +2583,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           }
         },
         /**
-         * 默认的加载控件内容的配置,默认值：
+         * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
          * <pre>
          *  {
          *   property : 'children',
@@ -2997,19 +2615,14 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
   container.View = containerView;
   return container;
   
-});/**
- * @fileOverview 表单文本域组，可以包含一个至多个字段
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/group/base',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
 
   /**
    * @class BUI.Form.Group
-   * 表单字段分组
+   * \u8868\u5355\u5b57\u6bb5\u5206\u7ec4
    * @extends BUI.Form.FieldContainer
    */
   var Group = FieldContainer.extend({
@@ -3017,7 +2630,7 @@ define('bui/form/group/base',['bui/common','bui/form/fieldcontainer'],function (
   },{
     ATTRS : {
       /**
-       * 标题
+       * \u6807\u9898
        * @type {String}
        */
       label : {
@@ -3032,11 +2645,7 @@ define('bui/form/group/base',['bui/common','bui/form/fieldcontainer'],function (
   });
 
   return Group;
-});/**
- * @fileOverview 范围的字段组，比如日期范围等
- * @ignore
- */
-
+});
 define('bui/form/group/range',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
@@ -3051,7 +2660,7 @@ define('bui/form/group/range',['bui/form/group/base'],function (require) {
   }
   /**
    * @class BUI.Form.Group.Range
-   * 字段范围分组，用于日期范围，数字范围等场景
+   * \u5b57\u6bb5\u8303\u56f4\u5206\u7ec4\uff0c\u7528\u4e8e\u65e5\u671f\u8303\u56f4\uff0c\u6570\u5b57\u8303\u56f4\u7b49\u573a\u666f
    * @extends BUI.Form.Group
    */
   var Range = Group.extend({
@@ -3059,21 +2668,21 @@ define('bui/form/group/range',['bui/form/group/base'],function (require) {
   },{
     ATTRS : {
       /**
-       * 默认的验证函数失败后显示的文本。
+       * \u9ed8\u8ba4\u7684\u9a8c\u8bc1\u51fd\u6570\u5931\u8d25\u540e\u663e\u793a\u7684\u6587\u672c\u3002
        * @type {Object}
        */
       rangeText : {
-        value : '开始不能大于结束！'
+        value : '\u5f00\u59cb\u4e0d\u80fd\u5927\u4e8e\u7ed3\u675f\uff01'
       },
       /**
-       * 是否允许前后相等
+       * \u662f\u5426\u5141\u8bb8\u524d\u540e\u76f8\u7b49
        * @type {Boolean}
        */
       allowEqual : {
         value : true
       },
       /**
-       * 验证器
+       * \u9a8c\u8bc1\u5668
        * @override
        * @type {Function}
        */
@@ -3108,11 +2717,7 @@ define('bui/form/group/range',['bui/form/group/base'],function (require) {
   });
 
   return Range;
-});/**
- * @fileOverview 选择分组，包含，checkbox,radio
- * @ignore
- */
-
+});
 define('bui/form/group/check',['bui/form/group/base'],function (require) {
   var Group = require('bui/form/group/base');
 
@@ -3125,7 +2730,7 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
   }
   /**
    * @class BUI.Form.Group.Check
-   * 单选，复选分组，只能包含同name的checkbox,radio
+   * \u5355\u9009\uff0c\u590d\u9009\u5206\u7ec4\uff0c\u53ea\u80fd\u5305\u542b\u540cname\u7684checkbox,radio
    * @extends BUI.Form.Group
    */
   var Check = Group.extend({
@@ -3165,11 +2770,11 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
   },{
     ATTRS : {
       /**
-       * 需要选中的字段,
+       * \u9700\u8981\u9009\u4e2d\u7684\u5b57\u6bb5,
        * <ol>
-       *   <li>如果 range:1，range:2 最少勾选1个，2个。</li>
-       *   <li>如果 range :0,可以全部不选中。</li>
-       *   <li>如果 range:[1,2],则必须选中1-2个。</li>
+       *   <li>\u5982\u679c range:1\uff0crange:2 \u6700\u5c11\u52fe\u90091\u4e2a\uff0c2\u4e2a\u3002</li>
+       *   <li>\u5982\u679c range :0,\u53ef\u4ee5\u5168\u90e8\u4e0d\u9009\u4e2d\u3002</li>
+       *   <li>\u5982\u679c range:[1,2],\u5219\u5fc5\u987b\u9009\u4e2d1-2\u4e2a\u3002</li>
        * </ol>
        * @type {Array|Number}
        */
@@ -3188,11 +2793,7 @@ define('bui/form/group/check',['bui/form/group/base'],function (require) {
 
   return Check;
 
-});/**
- * @fileOverview 选择框分组
- * @ignore
- */
-
+});
 define('bui/form/group/select',['bui/form/group/base','bui/data'],function (require) {
   var Group = require('bui/form/group/base'),
     Data = require('bui/data'),
@@ -3211,7 +2812,7 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
 
   /**
    * @class BUI.Form.Group.Select
-   * 级联选择框分组
+   * \u7ea7\u8054\u9009\u62e9\u6846\u5206\u7ec4
    * @extends BUI.Form.Group
    * @mixins BUI.Component.UIBase.Bindable
    */
@@ -3246,7 +2847,7 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
         node = e ? e.node : _self.get('store').get('root');
       _self._setFieldItems(node.level,node.children); 
     },
-    //获取store的配置项
+    //\u83b7\u53d6store\u7684\u914d\u7f6e\u9879
     _getStore : function(){
       var _self = this,
         type = _self.get('type');
@@ -3281,7 +2882,7 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
         _self._valueChange(field.get('value'),level + 1);
       }
     },
-    //获取字段的索引位置
+    //\u83b7\u53d6\u5b57\u6bb5\u7684\u7d22\u5f15\u4f4d\u7f6e
     _getFieldIndex : function (field) {
       var _self = this,
         fields = _self.getFields();
@@ -3290,8 +2891,8 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
   },{
     ATTRS : {
       /**
-       * 级联选择框的类型,目前仅内置了 'city'一个类型，用于选择省、市、县,
-       * 可以自定义添加类型
+       * \u7ea7\u8054\u9009\u62e9\u6846\u7684\u7c7b\u578b,\u76ee\u524d\u4ec5\u5185\u7f6e\u4e86 'city'\u4e00\u4e2a\u7c7b\u578b\uff0c\u7528\u4e8e\u9009\u62e9\u7701\u3001\u5e02\u3001\u53bf,
+       * \u53ef\u4ee5\u81ea\u5b9a\u4e49\u6dfb\u52a0\u7c7b\u578b
        *         Select.addType('city',{
        *           proxy : {
        *             url : 'http://lp.taobao.com/go/rgn/citydistrictdata.php',
@@ -3318,10 +2919,10 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
   var TypeMap = {};
 
   /**
-   * 添加一个类型的级联选择框，目前仅内置了 'city'一个类型，用于选择省、市、县
+   * \u6dfb\u52a0\u4e00\u4e2a\u7c7b\u578b\u7684\u7ea7\u8054\u9009\u62e9\u6846\uff0c\u76ee\u524d\u4ec5\u5185\u7f6e\u4e86 'city'\u4e00\u4e2a\u7c7b\u578b\uff0c\u7528\u4e8e\u9009\u62e9\u7701\u3001\u5e02\u3001\u53bf
    * @static
-   * @param {String} name 类型名称
-   * @param {Object} cfg  配置项，详细信息请参看： @see{BUI.Data.TreeStore}
+   * @param {String} name \u7c7b\u578b\u540d\u79f0
+   * @param {Object} cfg  \u914d\u7f6e\u9879\uff0c\u8be6\u7ec6\u4fe1\u606f\u8bf7\u53c2\u770b\uff1a @see{BUI.Data.TreeStore}
    */
   Select.addType = function(name,cfg){
     TypeMap[name] = cfg;
@@ -3340,12 +2941,7 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
 
 
   return Select;
-});/**
- * @fileOverview 表单文本域组，可以包含一个至多个字段
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/form/fieldgroup',['bui/common','bui/form/group/base','bui/form/group/range','bui/form/group/check','bui/form/group/select'],function (require) {
   var BUI = require('bui/common'),
     Group = require('bui/form/group/base');
@@ -3356,11 +2952,7 @@ define('bui/form/fieldgroup',['bui/common','bui/form/group/base','bui/form/group
     Select : require('bui/form/group/select')
   });
   return Group;
-});/**
- * @fileOverview 创建表单
- * @ignore
- */
-
+});
 define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],function (require) {
   
   var BUI = require('bui/common'),
@@ -3391,7 +2983,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
 
   /**
    * @class BUI.Form.Form
-   * 表单控件,表单相关的类图：
+   * \u8868\u5355\u63a7\u4ef6,\u8868\u5355\u76f8\u5173\u7684\u7c7b\u56fe\uff1a
    * <img src="../assets/img/class-form.jpg"/>
    * @extends BUI.Form.FieldContainer
    */
@@ -3425,7 +3017,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       });
     },
     /**
-     * 获取按钮栏默认的配置项
+     * \u83b7\u53d6\u6309\u94ae\u680f\u9ed8\u8ba4\u7684\u914d\u7f6e\u9879
      * @protected
      * @return {Object} 
      */
@@ -3441,7 +3033,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       };
     },
     /**
-     * 表单提交，如果未通过验证，则阻止提交
+     * \u8868\u5355\u63d0\u4ea4\uff0c\u5982\u679c\u672a\u901a\u8fc7\u9a8c\u8bc1\uff0c\u5219\u963b\u6b62\u63d0\u4ea4
      */
     submit : function(options){
       var _self = this,
@@ -3459,7 +3051,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       }
     },
     /**
-     * 异步提交表单
+     * \u5f02\u6b65\u63d0\u4ea4\u8868\u5355
      */
     ajaxSubmit : function(options){
       var _self = this,
@@ -3467,9 +3059,9 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         action = _self.get('action'),
         callback = _self.get('callback'),
         submitMask = _self.get('submitMask'),
-        data = _self.serializeToObject(), //获取表单数据
+        data = _self.serializeToObject(), //\u83b7\u53d6\u8868\u5355\u6570\u636e
         success,
-        ajaxParams = BUI.merge(true,{ //合并请求参数
+        ajaxParams = BUI.merge(true,{ //\u5408\u5e76\u8bf7\u6c42\u53c2\u6570
           url : action,
           type : method,
           dataType : 'json',
@@ -3479,7 +3071,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       if(options && options.success){
         success = options.success;
       }
-      ajaxParams.success = function(data){ //封装success方法
+      ajaxParams.success = function(data){ //\u5c01\u88c5success\u65b9\u6cd5
         if(submitMask && submitMask.hide){
           submitMask.hide();
         }
@@ -3493,7 +3085,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       }
       $.ajax(ajaxParams); 
     },
-    //获取提交的屏蔽层
+    //\u83b7\u53d6\u63d0\u4ea4\u7684\u5c4f\u853d\u5c42
     _initSubmitMask : function(){
       var _self = this,
         submitType = _self.get('submitType'),
@@ -3507,22 +3099,22 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       }
     },
     /**
-     * 序列化表单成对象
-     * @return {Object} 序列化成对象
+     * \u5e8f\u5217\u5316\u8868\u5355\u6210\u5bf9\u8c61
+     * @return {Object} \u5e8f\u5217\u5316\u6210\u5bf9\u8c61
      */
     serializeToObject : function(){
       return BUI.FormHelper.serializeToObject(this.get('el')[0]);
     },
     /**
-     * 表单提交前
+     * \u8868\u5355\u63d0\u4ea4\u524d
      * @protected
-     * @return {Boolean} 是否取消提交
+     * @return {Boolean} \u662f\u5426\u53d6\u6d88\u63d0\u4ea4
      */
     onBeforeSubmit : function(){
       return this.fire('beforesubmit');
     },
     /**
-     * 表单恢复初始值
+     * \u8868\u5355\u6062\u590d\u521d\u59cb\u503c
      */
     reset : function(){
       var _self = this,
@@ -3530,7 +3122,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       _self.setRecord(initRecord);
     },
     /**
-     * 重置提示信息，因为在表单隐藏状态下，提示信息定位错误
+     * \u91cd\u7f6e\u63d0\u793a\u4fe1\u606f\uff0c\u56e0\u4e3a\u5728\u8868\u5355\u9690\u85cf\u72b6\u6001\u4e0b\uff0c\u63d0\u793a\u4fe1\u606f\u5b9a\u4f4d\u9519\u8bef
      * <pre><code>
      * dialog.on('show',function(){
      *   form.resetTips();
@@ -3560,7 +3152,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         submitMask.destroy();
       }
     },
-    //设置表单的初始数据
+    //\u8bbe\u7f6e\u8868\u5355\u7684\u521d\u59cb\u6570\u636e
     _uiSetInitRecord : function(v){
       //if(v){
         this.setRecord(v);
@@ -3570,7 +3162,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
   },{
     ATTRS : {
       /**
-       * 提交的路径
+       * \u63d0\u4ea4\u7684\u8def\u5f84
        * @type {String}
        */
       action : {
@@ -3584,13 +3176,13 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         value : {
           /**
            * @event
-           * 表单提交前触发，如果返回false会阻止表单提交
+           * \u8868\u5355\u63d0\u4ea4\u524d\u89e6\u53d1\uff0c\u5982\u679c\u8fd4\u56defalse\u4f1a\u963b\u6b62\u8868\u5355\u63d0\u4ea4
            */
           beforesubmit : false
         }
       },
       /**
-       * 提交的方式
+       * \u63d0\u4ea4\u7684\u65b9\u5f0f
        * @type {String}
        */
       method : {
@@ -3598,7 +3190,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         value : 'get'
       },
       /**
-       * 默认的loader配置
+       * \u9ed8\u8ba4\u7684loader\u914d\u7f6e
        * <pre>
        * {
        *   autoLoad : true,
@@ -3616,27 +3208,27 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         }
       },
       /**
-       * 异步提交表单时的屏蔽
+       * \u5f02\u6b65\u63d0\u4ea4\u8868\u5355\u65f6\u7684\u5c4f\u853d
        * @type {BUI.Mask.LoadMask|Object}
        */
       submitMask : {
         value : {
-          msg : '正在提交。。。'
+          msg : '\u6b63\u5728\u63d0\u4ea4\u3002\u3002\u3002'
         }
       },
       /**
-       * 提交表单的方式
+       * \u63d0\u4ea4\u8868\u5355\u7684\u65b9\u5f0f
        *
-       *  - normal 普通方式，直接提交表单
-       *  - ajax 异步提交方式，在submit指定参数
-       *  - iframe 使用iframe提交,开发中。。。
+       *  - normal \u666e\u901a\u65b9\u5f0f\uff0c\u76f4\u63a5\u63d0\u4ea4\u8868\u5355
+       *  - ajax \u5f02\u6b65\u63d0\u4ea4\u65b9\u5f0f\uff0c\u5728submit\u6307\u5b9a\u53c2\u6570
+       *  - iframe \u4f7f\u7528iframe\u63d0\u4ea4,\u5f00\u53d1\u4e2d\u3002\u3002\u3002
        * @cfg {String} [submitType='normal']
        */
       submitType : {
         value : 'normal'
       },
       /**
-       * 表单提交成功后的回调函数，普通提交方式 submitType = 'normal'，不会调用
+       * \u8868\u5355\u63d0\u4ea4\u6210\u529f\u540e\u7684\u56de\u8c03\u51fd\u6570\uff0c\u666e\u901a\u63d0\u4ea4\u65b9\u5f0f submitType = 'normal'\uff0c\u4e0d\u4f1a\u8c03\u7528
        * @type {Object}
        */
       callback : {
@@ -3649,28 +3241,28 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         }
       },
       /**
-       * 默认的子控件时文本域
+       * \u9ed8\u8ba4\u7684\u5b50\u63a7\u4ef6\u65f6\u6587\u672c\u57df
        * @type {String}
        */
       defaultChildClass : {
         value : 'form-field'
       },
       /**
-       * 使用的标签，为form
+       * \u4f7f\u7528\u7684\u6807\u7b7e\uff0c\u4e3aform
        * @type {String}
        */
       elTagName : {
         value : 'form'
       },
       /**
-       * 表单按钮
+       * \u8868\u5355\u6309\u94ae
        * @type {Array}
        */
       buttons : {
 
       },
       /**
-       * 按钮栏
+       * \u6309\u94ae\u680f
        * @type {BUI.Toolbar.Bar}
        */
       buttonBar : {
@@ -3682,14 +3274,14 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         value : '.x-form-fields'
       },
       /**
-       * 表单初始化的数据，用于初始化或者表单回滚
+       * \u8868\u5355\u521d\u59cb\u5316\u7684\u6570\u636e\uff0c\u7528\u4e8e\u521d\u59cb\u5316\u6216\u8005\u8868\u5355\u56de\u6eda
        * @type {Object}
        */
       initRecord : {
 
       },
       /**
-       * 表单默认不显示错误，不影响表单分组和表单字段
+       * \u8868\u5355\u9ed8\u8ba4\u4e0d\u663e\u793a\u9519\u8bef\uff0c\u4e0d\u5f71\u54cd\u8868\u5355\u5206\u7ec4\u548c\u8868\u5355\u5b57\u6bb5
        * @type {Boolean}
        */
       showError : {
@@ -3708,24 +3300,20 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
   
   Form.View = FormView;
   return Form;
-});/**
- * @fileOverview 垂直表单
- * @ignore
- */
-
+});
 define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
   var BUI = require('bui/common'),
     Form = require('bui/form/form');
 
   /**
    * @class BUI.Form.Horizontal
-   * 水平表单，字段水平排列
+   * \u6c34\u5e73\u8868\u5355\uff0c\u5b57\u6bb5\u6c34\u5e73\u6392\u5217
    * @extends BUI.Form.Form
    * 
    */
   var Horizontal = Form.extend({
     /**
-     * 获取按钮栏默认的配置项
+     * \u83b7\u53d6\u6309\u94ae\u680f\u9ed8\u8ba4\u7684\u914d\u7f6e\u9879
      * @protected
      * @return {Object} 
      */
@@ -3761,18 +3349,14 @@ define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
     xclass : 'form-horizontal'
   });
   return Horizontal;
-});/**
- * @fileOverview 表单里的一行元素
- * @ignore
- */
-
+});
 define('bui/form/row',['bui/common','bui/form/fieldcontainer'],function (require) {
   var BUI = require('bui/common'),
     FieldContainer = require('bui/form/fieldcontainer');
 
   /**
    * @class BUI.Form.Row
-   * 表单行
+   * \u8868\u5355\u884c
    * @extends BUI.Form.FieldContainer
    */
   var Row = FieldContainer.extend({
@@ -3804,17 +3388,13 @@ define('bui/form/row',['bui/common','bui/form/fieldcontainer'],function (require
   });
 
   return Row;
-});/**
- * @fileOverview 验证规则
- * @ignore
- */
-
+});
 define('bui/form/rule',['bui/common'],function (require) {
 
   var BUI = require('bui/common');
   /**
    * @class BUI.Form.Rule
-   * 验证规则
+   * \u9a8c\u8bc1\u89c4\u5219
    * @extends BUI.Base
    */
   var Rule = function (config){
@@ -3825,21 +3405,21 @@ define('bui/form/rule',['bui/common'],function (require) {
 
   Rule.ATTRS = {
     /**
-     * 规则名称
+     * \u89c4\u5219\u540d\u79f0
      * @type {String}
      */
     name : {
 
     },
     /**
-     * 验证失败信息
+     * \u9a8c\u8bc1\u5931\u8d25\u4fe1\u606f
      * @type {String}
      */
     msg : {
 
     },
     /**
-     * 验证函数
+     * \u9a8c\u8bc1\u51fd\u6570
      * @type {Function}
      */
     validator : {
@@ -3849,7 +3429,7 @@ define('bui/form/rule',['bui/common'],function (require) {
     }
   }
 
-  //是否通过验证
+  //\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
   function valid(self,value,baseValue,msg,control){
     if(BUI.isArray(baseValue) && BUI.isString(baseValue[1])){
       if(baseValue[1]){
@@ -3897,20 +3477,20 @@ define('bui/form/rule',['bui/common'],function (require) {
   BUI.augment(Rule,{
 
     /**
-     * 是否通过验证，该函数可以接收多个参数
-     * @param  {*}  [value] 验证的值
-     * @param  {*} [baseValue] 跟传入值相比较的值
-     * @param {String} [msg] 验证失败后的错误信息，显示的错误中可以显示 baseValue中的信息
-     * @param {BUI.Form.Field|BUI.Form.Group} [control] 发生验证的控件
-     * @return {String}   通过验证返回 null ,未通过验证返回错误信息
+     * \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1\uff0c\u8be5\u51fd\u6570\u53ef\u4ee5\u63a5\u6536\u591a\u4e2a\u53c2\u6570
+     * @param  {*}  [value] \u9a8c\u8bc1\u7684\u503c
+     * @param  {*} [baseValue] \u8ddf\u4f20\u5165\u503c\u76f8\u6bd4\u8f83\u7684\u503c
+     * @param {String} [msg] \u9a8c\u8bc1\u5931\u8d25\u540e\u7684\u9519\u8bef\u4fe1\u606f\uff0c\u663e\u793a\u7684\u9519\u8bef\u4e2d\u53ef\u4ee5\u663e\u793a baseValue\u4e2d\u7684\u4fe1\u606f
+     * @param {BUI.Form.Field|BUI.Form.Group} [control] \u53d1\u751f\u9a8c\u8bc1\u7684\u63a7\u4ef6
+     * @return {String}   \u901a\u8fc7\u9a8c\u8bc1\u8fd4\u56de null ,\u672a\u901a\u8fc7\u9a8c\u8bc1\u8fd4\u56de\u9519\u8bef\u4fe1\u606f
      * 
-     *         var msg = '输入数据必须在{0}和{1}之间！',
+     *         var msg = '\u8f93\u5165\u6570\u636e\u5fc5\u987b\u5728{0}\u548c{1}\u4e4b\u95f4\uff01',
      *           rangeRule = new Rule({
      *             name : 'range',
      *             msg : msg,
      *             validator :function(value,range,msg){
-     *               var min = range[0], //此处我们把range定义为数组，也可以定义为{min:0,max:200},那么在传入校验时跟此处一致即可
-     *                 max = range[1];   //在错误信息中，使用用 '输入数据必须在{min}和{max}之间！',验证函数中的字符串已经进行格式化
+     *               var min = range[0], //\u6b64\u5904\u6211\u4eec\u628arange\u5b9a\u4e49\u4e3a\u6570\u7ec4\uff0c\u4e5f\u53ef\u4ee5\u5b9a\u4e49\u4e3a{min:0,max:200},\u90a3\u4e48\u5728\u4f20\u5165\u6821\u9a8c\u65f6\u8ddf\u6b64\u5904\u4e00\u81f4\u5373\u53ef
+     *                 max = range[1];   //\u5728\u9519\u8bef\u4fe1\u606f\u4e2d\uff0c\u4f7f\u7528\u7528 '\u8f93\u5165\u6570\u636e\u5fc5\u987b\u5728{min}\u548c{max}\u4e4b\u95f4\uff01',\u9a8c\u8bc1\u51fd\u6570\u4e2d\u7684\u5b57\u7b26\u4e32\u5df2\u7ecf\u8fdb\u884c\u683c\u5f0f\u5316
      *               if(value < min || value > max){
      *                 return false;
      *               }
@@ -3919,7 +3499,7 @@ define('bui/form/rule',['bui/common'],function (require) {
      *           });
      *         var range = [0,200],
      *           val = 100,
-     *           error = rangeRule.valid(val,range);//msg可以在此处重新传入
+     *           error = rangeRule.valid(val,range);//msg\u53ef\u4ee5\u5728\u6b64\u5904\u91cd\u65b0\u4f20\u5165
      *         
      */
     valid : function(value,baseValue,msg,control){
@@ -3931,11 +3511,7 @@ define('bui/form/rule',['bui/common'],function (require) {
   return Rule;
 
 
-});/**
- * @fileOverview 验证集合
- * @ignore
- */
-
+});
 define('bui/form/rules',['bui/form/rule'],function (require) {
 
   var Rule = require('bui/form/rule');
@@ -3955,13 +3531,13 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   /**
    * @class BUI.Form.Rules
    * @singleton
-   * 表单验证的验证规则管理器
+   * \u8868\u5355\u9a8c\u8bc1\u7684\u9a8c\u8bc1\u89c4\u5219\u7ba1\u7406\u5668
    */
   var rules = {
     /**
-     * 添加验证规则
-     * @param {Object|BUI.Form.Rule} rule 验证规则配置项或者验证规则对象
-     * @param  {String} name 规则名称
+     * \u6dfb\u52a0\u9a8c\u8bc1\u89c4\u5219
+     * @param {Object|BUI.Form.Rule} rule \u9a8c\u8bc1\u89c4\u5219\u914d\u7f6e\u9879\u6216\u8005\u9a8c\u8bc1\u89c4\u5219\u5bf9\u8c61
+     * @param  {String} name \u89c4\u5219\u540d\u79f0
      */
     add : function(rule){
       var name;
@@ -3975,28 +3551,28 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
       return ruleMap[name];
     },
     /**
-     * 删除验证规则
-     * @param  {String} name 规则名称
+     * \u5220\u9664\u9a8c\u8bc1\u89c4\u5219
+     * @param  {String} name \u89c4\u5219\u540d\u79f0
      */
     remove : function(name){
       delete ruleMap[name];
     },
     /**
-     * 获取验证规则
-     * @param  {String} name 规则名称
-     * @return {BUI.Form.Rule}  验证规则
+     * \u83b7\u53d6\u9a8c\u8bc1\u89c4\u5219
+     * @param  {String} name \u89c4\u5219\u540d\u79f0
+     * @return {BUI.Form.Rule}  \u9a8c\u8bc1\u89c4\u5219
      */
     get : function(name){
       return ruleMap[name];
     },
     /**
-     * 验证指定的规则
-     * @param  {String} name 规则类型
-     * @param  {*} value 验证值
-     * @param  {*} [baseValue] 用于验证的基础值
-     * @param  {String} [msg] 显示错误的模板
-     * @param  {BUI.Form.Field|BUI.Form.Group} [control] 显示错误的模板
-     * @return {String} 通过验证返回 null,否则返回错误信息
+     * \u9a8c\u8bc1\u6307\u5b9a\u7684\u89c4\u5219
+     * @param  {String} name \u89c4\u5219\u7c7b\u578b
+     * @param  {*} value \u9a8c\u8bc1\u503c
+     * @param  {*} [baseValue] \u7528\u4e8e\u9a8c\u8bc1\u7684\u57fa\u7840\u503c
+     * @param  {String} [msg] \u663e\u793a\u9519\u8bef\u7684\u6a21\u677f
+     * @param  {BUI.Form.Field|BUI.Form.Group} [control] \u663e\u793a\u9519\u8bef\u7684\u6a21\u677f
+     * @return {String} \u901a\u8fc7\u9a8c\u8bc1\u8fd4\u56de null,\u5426\u5219\u8fd4\u56de\u9519\u8bef\u4fe1\u606f
      */
     valid : function(name,value,baseValue,msg,control){
       var rule = rules.get(name);
@@ -4006,12 +3582,12 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
       return null;
     },
     /**
-     * 验证指定的规则
-     * @param  {String} name 规则类型
-     * @param  {*} values 验证值
-     * @param  {*} [baseValue] 用于验证的基础值
-     * @param  {BUI.Form.Field|BUI.Form.Group} [control] 显示错误的模板
-     * @return {Boolean} 是否通过验证
+     * \u9a8c\u8bc1\u6307\u5b9a\u7684\u89c4\u5219
+     * @param  {String} name \u89c4\u5219\u7c7b\u578b
+     * @param  {*} values \u9a8c\u8bc1\u503c
+     * @param  {*} [baseValue] \u7528\u4e8e\u9a8c\u8bc1\u7684\u57fa\u7840\u503c
+     * @param  {BUI.Form.Field|BUI.Form.Group} [control] \u663e\u793a\u9519\u8bef\u7684\u6a21\u677f
+     * @return {Boolean} \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
      */
     isValid : function(name,value,baseValue,control){
       return rules.valid(name,value,baseValue,control) == null;
@@ -4019,18 +3595,18 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   };
   
   /**
-   * 非空验证,会对值去除空格
+   * \u975e\u7a7a\u9a8c\u8bc1,\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c
    * <ol>
    *  <li>name: required</li>
-   *  <li>msg: 不能为空！</li>
-   *  <li>required: boolean 类型</li>
+   *  <li>msg: \u4e0d\u80fd\u4e3a\u7a7a\uff01</li>
+   *  <li>required: boolean \u7c7b\u578b</li>
    * </ol>
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}
    */
   var required = rules.add({
     name : 'required',
-    msg : '不能为空！',
+    msg : '\u4e0d\u80fd\u4e3a\u7a7a\uff01',
     validator : function(value,required,formatedMsg){
       if(required !== false && /^\s*$/.test(value)){
         return formatedMsg;
@@ -4039,16 +3615,16 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 相等验证
+   * \u76f8\u7b49\u9a8c\u8bc1
    * <ol>
    *  <li>name: equalTo</li>
-   *  <li>msg: 两次输入不一致！</li>
-   *  <li>equalTo: 一个字符串，id（#id_name) 或者 name</li>
+   *  <li>msg: \u4e24\u6b21\u8f93\u5165\u4e0d\u4e00\u81f4\uff01</li>
+   *  <li>equalTo: \u4e00\u4e2a\u5b57\u7b26\u4e32\uff0cid\uff08#id_name) \u6216\u8005 name</li>
    * </ol>
    *         {
    *           equalTo : '#password'
    *         }
-   *         //或者
+   *         //\u6216\u8005
    *         {
    *           equalTo : 'password'
    *         } 
@@ -4057,7 +3633,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    */
   var equalTo = rules.add({
     name : 'equalTo',
-    msg : '两次输入不一致！',
+    msg : '\u4e24\u6b21\u8f93\u5165\u4e0d\u4e00\u81f4\uff01',
     validator : function(value,equalTo,formatedMsg){
       var el = $(equalTo);
       if(el.length){
@@ -4069,22 +3645,22 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
 
 
   /**
-   * 不小于验证
+   * \u4e0d\u5c0f\u4e8e\u9a8c\u8bc1
    * <ol>
    *  <li>name: min</li>
-   *  <li>msg: 输入值不能小于{0}！</li>
-   *  <li>min: 数字，字符串</li>
+   *  <li>msg: \u8f93\u5165\u503c\u4e0d\u80fd\u5c0f\u4e8e{0}\uff01</li>
+   *  <li>min: \u6570\u5b57\uff0c\u5b57\u7b26\u4e32</li>
    * </ol>
    *         {
    *           min : 5
    *         }
-   *         //字符串
+   *         //\u5b57\u7b26\u4e32
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}
    */
   var min = rules.add({
     name : 'min',
-    msg : '输入值不能小于{0}！',
+    msg : '\u8f93\u5165\u503c\u4e0d\u80fd\u5c0f\u4e8e{0}\uff01',
     validator : function(value,min,formatedMsg){
       if(value !== '' && toNumber(value) < toNumber(min)){
         return formatedMsg;
@@ -4093,16 +3669,16 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 不小于验证,用于数值比较
+   * \u4e0d\u5c0f\u4e8e\u9a8c\u8bc1,\u7528\u4e8e\u6570\u503c\u6bd4\u8f83
    * <ol>
    *  <li>name: max</li>
-   *  <li>msg: 输入值不能大于{0}！</li>
-   *  <li>max: 数字、字符串</li>
+   *  <li>msg: \u8f93\u5165\u503c\u4e0d\u80fd\u5927\u4e8e{0}\uff01</li>
+   *  <li>max: \u6570\u5b57\u3001\u5b57\u7b26\u4e32</li>
    * </ol>
    *         {
    *           max : 100
    *         }
-   *         //字符串
+   *         //\u5b57\u7b26\u4e32
    *         {
    *           max : '100'
    *         }
@@ -4111,7 +3687,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    */
   var max = rules.add({
     name : 'max',
-    msg : '输入值不能大于{0}！',
+    msg : '\u8f93\u5165\u503c\u4e0d\u80fd\u5927\u4e8e{0}\uff01',
     validator : function(value,max,formatedMsg){
       if(value !== '' && toNumber(value) > toNumber(max)){
         return formatedMsg;
@@ -4120,18 +3696,18 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 输入长度验证，必须是指定的长度
+   * \u8f93\u5165\u957f\u5ea6\u9a8c\u8bc1\uff0c\u5fc5\u987b\u662f\u6307\u5b9a\u7684\u957f\u5ea6
    * <ol>
    *  <li>name: length</li>
-   *  <li>msg: 输入值长度为{0}！</li>
-   *  <li>length: 数字</li>
+   *  <li>msg: \u8f93\u5165\u503c\u957f\u5ea6\u4e3a{0}\uff01</li>
+   *  <li>length: \u6570\u5b57</li>
    * </ol>
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}
    */
   var length = rules.add({
     name : 'length',
-    msg : '输入值长度为{0}！',
+    msg : '\u8f93\u5165\u503c\u957f\u5ea6\u4e3a{0}\uff01',
     validator : function(value,len,formatedMsg){
       if(value != null){
         value = $.trim(value.toString());
@@ -4142,11 +3718,11 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     }
   });
   /**
-   * 最短长度验证,会对值去除空格
+   * \u6700\u77ed\u957f\u5ea6\u9a8c\u8bc1,\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c
    * <ol>
    *  <li>name: minlength</li>
-   *  <li>msg: 输入值长度不小于{0}！</li>
-   *  <li>minlength: 数字</li>
+   *  <li>msg: \u8f93\u5165\u503c\u957f\u5ea6\u4e0d\u5c0f\u4e8e{0}\uff01</li>
+   *  <li>minlength: \u6570\u5b57</li>
    * </ol>
    *         {
    *           minlength : 5
@@ -4156,7 +3732,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    */
   var minlength = rules.add({
     name : 'minlength',
-    msg : '输入值长度不小于{0}！',
+    msg : '\u8f93\u5165\u503c\u957f\u5ea6\u4e0d\u5c0f\u4e8e{0}\uff01',
     validator : function(value,min,formatedMsg){
       if(value != null){
         value = $.trim(value.toString());
@@ -4169,11 +3745,11 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 最短长度验证,会对值去除空格
+   * \u6700\u77ed\u957f\u5ea6\u9a8c\u8bc1,\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c
    * <ol>
    *  <li>name: maxlength</li>
-   *  <li>msg: 输入值长度不大于{0}！</li>
-   *  <li>maxlength: 数字</li>
+   *  <li>msg: \u8f93\u5165\u503c\u957f\u5ea6\u4e0d\u5927\u4e8e{0}\uff01</li>
+   *  <li>maxlength: \u6570\u5b57</li>
    * </ol>
    *         {
    *           maxlength : 10
@@ -4183,7 +3759,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    */
   var maxlength = rules.add({
     name : 'maxlength',
-    msg : '输入值长度不大于{0}！',
+    msg : '\u8f93\u5165\u503c\u957f\u5ea6\u4e0d\u5927\u4e8e{0}\uff01',
     validator : function(value,max,formatedMsg){
       if(value){
         value = $.trim(value.toString());
@@ -4196,18 +3772,18 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 正则表达式验证,如果正则表达式为空，则不进行校验
+   * \u6b63\u5219\u8868\u8fbe\u5f0f\u9a8c\u8bc1,\u5982\u679c\u6b63\u5219\u8868\u8fbe\u5f0f\u4e3a\u7a7a\uff0c\u5219\u4e0d\u8fdb\u884c\u6821\u9a8c
    * <ol>
    *  <li>name: regexp</li>
-   *  <li>msg: 输入值不符合{0}！</li>
-   *  <li>regexp: 正则表达式</li>
+   *  <li>msg: \u8f93\u5165\u503c\u4e0d\u7b26\u5408{0}\uff01</li>
+   *  <li>regexp: \u6b63\u5219\u8868\u8fbe\u5f0f</li>
    * </ol> 
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}
    */
   var regexp = rules.add({
     name : 'regexp',
-    msg : '输入值不符合{0}！',
+    msg : '\u8f93\u5165\u503c\u4e0d\u7b26\u5408{0}\uff01',
     validator : function(value,regexp,formatedMsg){
       if(regexp){
         return regexp.test(value) ? undefined : formatedMsg;
@@ -4216,17 +3792,17 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 邮箱验证,会对值去除空格，无数据不进行校验
+   * \u90ae\u7bb1\u9a8c\u8bc1,\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c\uff0c\u65e0\u6570\u636e\u4e0d\u8fdb\u884c\u6821\u9a8c
    * <ol>
    *  <li>name: email</li>
-   *  <li>msg: 不是有效的邮箱地址！</li>
+   *  <li>msg: \u4e0d\u662f\u6709\u6548\u7684\u90ae\u7bb1\u5730\u5740\uff01</li>
    * </ol>
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}
    */
   var email = rules.add({
     name : 'email',
-    msg : '不是有效的邮箱地址！',
+    msg : '\u4e0d\u662f\u6709\u6548\u7684\u90ae\u7bb1\u5730\u5740\uff01',
     validator : function(value,baseValue,formatedMsg){
       value = $.trim(value);
       if(value){
@@ -4236,20 +3812,20 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 日期验证，会对值去除空格，无数据不进行校验，
-   * 如果传入的值不是字符串，而是数字，则认为是有效值
+   * \u65e5\u671f\u9a8c\u8bc1\uff0c\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c\uff0c\u65e0\u6570\u636e\u4e0d\u8fdb\u884c\u6821\u9a8c\uff0c
+   * \u5982\u679c\u4f20\u5165\u7684\u503c\u4e0d\u662f\u5b57\u7b26\u4e32\uff0c\u800c\u662f\u6570\u5b57\uff0c\u5219\u8ba4\u4e3a\u662f\u6709\u6548\u503c
    * <ol>
    *  <li>name: date</li>
-   *  <li>msg: 不是有效的日期！</li>
+   *  <li>msg: \u4e0d\u662f\u6709\u6548\u7684\u65e5\u671f\uff01</li>
    * </ol>
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}
    */
   var date = rules.add({
     name : 'date',
-    msg : '不是有效的日期！',
+    msg : '\u4e0d\u662f\u6709\u6548\u7684\u65e5\u671f\uff01',
     validator : function(value,baseValue,formatedMsg){
-      if(BUI.isNumber(value)){ //数字认为是日期
+      if(BUI.isNumber(value)){ //\u6570\u5b57\u8ba4\u4e3a\u662f\u65e5\u671f
         return;
       }
       if(BUI.isDate(value)){
@@ -4263,22 +3839,22 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 不小于验证
+   * \u4e0d\u5c0f\u4e8e\u9a8c\u8bc1
    * <ol>
    *  <li>name: minDate</li>
-   *  <li>msg: 输入日期不能小于{0}！</li>
-   *  <li>minDate: 日期，字符串</li>
+   *  <li>msg: \u8f93\u5165\u65e5\u671f\u4e0d\u80fd\u5c0f\u4e8e{0}\uff01</li>
+   *  <li>minDate: \u65e5\u671f\uff0c\u5b57\u7b26\u4e32</li>
    * </ol>
    *         {
    *           minDate : '2001-01-01';
    *         }
-   *         //字符串
+   *         //\u5b57\u7b26\u4e32
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}
    */
   var minDate = rules.add({
     name : 'minDate',
-    msg : '输入日期不能小于{0}！',
+    msg : '\u8f93\u5165\u65e5\u671f\u4e0d\u80fd\u5c0f\u4e8e{0}\uff01',
     validator : function(value,minDate,formatedMsg){
       if(value){
         var date = toDate(value);
@@ -4290,16 +3866,16 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 不小于验证,用于数值比较
+   * \u4e0d\u5c0f\u4e8e\u9a8c\u8bc1,\u7528\u4e8e\u6570\u503c\u6bd4\u8f83
    * <ol>
    *  <li>name: maxDate</li>
-   *  <li>msg: 输入值不能大于{0}！</li>
-   *  <li>maxDate: 日期、字符串</li>
+   *  <li>msg: \u8f93\u5165\u503c\u4e0d\u80fd\u5927\u4e8e{0}\uff01</li>
+   *  <li>maxDate: \u65e5\u671f\u3001\u5b57\u7b26\u4e32</li>
    * </ol>
    *         {
    *           maxDate : '2001-01-01';
    *         }
-   *         //或日期
+   *         //\u6216\u65e5\u671f
    *         {
    *           maxDate : new Date('2001-01-01');
    *         }
@@ -4308,7 +3884,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    */
   var maxDate = rules.add({
     name : 'maxDate',
-    msg : '输入日期不能大于{0}！',
+    msg : '\u8f93\u5165\u65e5\u671f\u4e0d\u80fd\u5927\u4e8e{0}\uff01',
     validator : function(value,maxDate,formatedMsg){
       if(value){
         var date = toDate(value);
@@ -4319,18 +3895,18 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     }
   });
   /**
-   * 数字验证，会对值去除空格，无数据不进行校验
-   * 允许千分符，例如： 12,000,000的格式
+   * \u6570\u5b57\u9a8c\u8bc1\uff0c\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c\uff0c\u65e0\u6570\u636e\u4e0d\u8fdb\u884c\u6821\u9a8c
+   * \u5141\u8bb8\u5343\u5206\u7b26\uff0c\u4f8b\u5982\uff1a 12,000,000\u7684\u683c\u5f0f
    * <ol>
    *  <li>name: number</li>
-   *  <li>msg: 不是有效的数字！</li>
+   *  <li>msg: \u4e0d\u662f\u6709\u6548\u7684\u6570\u5b57\uff01</li>
    * </ol>
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}
    */
   var number = rules.add({
     name : 'number',
-    msg : '不是有效的数字！',
+    msg : '\u4e0d\u662f\u6709\u6548\u7684\u6570\u5b57\uff01',
     validator : function(value,baseValue,formatedMsg){
       if(BUI.isNumber(value)){
         return;
@@ -4340,7 +3916,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     }
   });
 
-  //测试范围
+  //\u6d4b\u8bd5\u8303\u56f4
   function testRange (baseValue,curVal,prevVal) {
     var allowEqual = baseValue && (baseValue.equals !== false);
 
@@ -4353,7 +3929,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   function isEmpty(value){
     return value == '' || value == null;
   }
-  //测试是否后面的数据大于前面的
+  //\u6d4b\u8bd5\u662f\u5426\u540e\u9762\u7684\u6570\u636e\u5927\u4e8e\u524d\u9762\u7684
   function rangeValid(value,baseValue,formatedMsg,group){
     var fields = group.getFields(),
       valid = true;
@@ -4377,11 +3953,11 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     return null;
   }
   /**
-   * 起始结束日期验证，前面的日期不能大于后面的日期
+   * \u8d77\u59cb\u7ed3\u675f\u65e5\u671f\u9a8c\u8bc1\uff0c\u524d\u9762\u7684\u65e5\u671f\u4e0d\u80fd\u5927\u4e8e\u540e\u9762\u7684\u65e5\u671f
    * <ol>
    *  <li>name: dateRange</li>
-   *  <li>msg: 起始日期不能大于结束日期！</li>
-   *  <li>dateRange: 可以使true或者{equals : fasle}，标示是否允许相等</li>
+   *  <li>msg: \u8d77\u59cb\u65e5\u671f\u4e0d\u80fd\u5927\u4e8e\u7ed3\u675f\u65e5\u671f\uff01</li>
+   *  <li>dateRange: \u53ef\u4ee5\u4f7ftrue\u6216\u8005{equals : fasle}\uff0c\u6807\u793a\u662f\u5426\u5141\u8bb8\u76f8\u7b49</li>
    * </ol>
    *         {
    *           dateRange : true
@@ -4394,16 +3970,16 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    */
   var dateRange = rules.add({
     name : 'dateRange',
-    msg : '结束日期不能小于起始日期！',
+    msg : '\u7ed3\u675f\u65e5\u671f\u4e0d\u80fd\u5c0f\u4e8e\u8d77\u59cb\u65e5\u671f\uff01',
     validator : rangeValid
   });
 
   /**
-   * 数字范围
+   * \u6570\u5b57\u8303\u56f4
    * <ol>
    *  <li>name: numberRange</li>
-   *  <li>msg: 起始数字不能大于结束数字！</li>
-   *  <li>numberRange: 可以使true或者{equals : fasle}，标示是否允许相等</li>
+   *  <li>msg: \u8d77\u59cb\u6570\u5b57\u4e0d\u80fd\u5927\u4e8e\u7ed3\u675f\u6570\u5b57\uff01</li>
+   *  <li>numberRange: \u53ef\u4ee5\u4f7ftrue\u6216\u8005{equals : fasle}\uff0c\u6807\u793a\u662f\u5426\u5141\u8bb8\u76f8\u7b49</li>
    * </ol>
    *         {
    *           numberRange : true
@@ -4416,7 +3992,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    */
   var numberRange = rules.add({
     name : 'numberRange',
-    msg : '结束数字不能小于开始数字！',
+    msg : '\u7ed3\u675f\u6570\u5b57\u4e0d\u80fd\u5c0f\u4e8e\u5f00\u59cb\u6570\u5b57\uff01',
     validator : rangeValid
   });
 
@@ -4432,15 +4008,15 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     if(!BUI.isArray(range)){
       range = [range];
     }
-    //不存在值
+    //\u4e0d\u5b58\u5728\u503c
     if(!value || !range.length){
       return false;
     }
     var len = !value ? 0 : !BUI.isArray(value) ? 1 : value.length;
-    //如果只有一个限定值
+    //\u5982\u679c\u53ea\u6709\u4e00\u4e2a\u9650\u5b9a\u503c
     if(range.length == 1){
       var number = range [0];
-      if(!number){//range = [0],则不必选
+      if(!number){//range = [0],\u5219\u4e0d\u5fc5\u9009
         return true;
       }
       if(number > len){
@@ -4457,21 +4033,21 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   }
 
   /**
-   * 勾选的范围
+   * \u52fe\u9009\u7684\u8303\u56f4
    * <ol>
    *  <li>name: checkRange</li>
-   *  <li>msg: 必须选中{0}项！</li>
-   *  <li>checkRange: 勾选的项范围</li>
+   *  <li>msg: \u5fc5\u987b\u9009\u4e2d{0}\u9879\uff01</li>
+   *  <li>checkRange: \u52fe\u9009\u7684\u9879\u8303\u56f4</li>
    * </ol>
-   *         //至少勾选一项
+   *         //\u81f3\u5c11\u52fe\u9009\u4e00\u9879
    *         {
    *           checkRange : 1
    *         }
-   *         //只能勾选两项
+   *         //\u53ea\u80fd\u52fe\u9009\u4e24\u9879
    *         {
    *           checkRange : [2,2]
    *         }
-   *         //可以勾选2-4项
+   *         //\u53ef\u4ee5\u52fe\u90092-4\u9879
    *         {
    *           checkRange : [2,4
    *           ]
@@ -4481,7 +4057,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    */
   var checkRange = rules.add({
     name : 'checkRange',
-    msg : '必须选中{0}项！',
+    msg : '\u5fc5\u987b\u9009\u4e2d{0}\u9879\uff01',
     validator : function(record,baseValue,formatedMsg,group){
       var name = getFieldName(group),
         value,
@@ -4499,18 +4075,14 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   
 
   return rules;
-});/**
- * @fileOverview 表单异步请求，异步校验、远程获取数据
- * @ignore
- */
-
+});
 define('bui/form/remote',['bui/common'],function(require) {
   var BUI = require('bui/common');
 
   /**
    * @class BUI.Form.RemoteView
    * @private
-   * 表单异步请求类的视图类
+   * \u8868\u5355\u5f02\u6b65\u8bf7\u6c42\u7c7b\u7684\u89c6\u56fe\u7c7b
    */
   var RemoteView = function () {
     // body...
@@ -4524,10 +4096,10 @@ define('bui/form/remote',['bui/common'],function(require) {
   RemoteView.prototype = {
 
     /**
-     * 获取显示加载状态的容器
+     * \u83b7\u53d6\u663e\u793a\u52a0\u8f7d\u72b6\u6001\u7684\u5bb9\u5668
      * @protected
      * @template
-     * @return {jQuery} 加载状态的容器
+     * @return {jQuery} \u52a0\u8f7d\u72b6\u6001\u7684\u5bb9\u5668
      */
     getLoadingContainer : function () {
       // body...
@@ -4561,7 +4133,7 @@ define('bui/form/remote',['bui/common'],function(require) {
 
   /**
    * @class  BUI.Form.Remote
-   * 表单异步请求，所有需要实现异步校验、异步请求的类可以使用。
+   * \u8868\u5355\u5f02\u6b65\u8bf7\u6c42\uff0c\u6240\u6709\u9700\u8981\u5b9e\u73b0\u5f02\u6b65\u6821\u9a8c\u3001\u5f02\u6b65\u8bf7\u6c42\u7684\u7c7b\u53ef\u4ee5\u4f7f\u7528\u3002
    */
   var Remote = function(){
 
@@ -4570,7 +4142,7 @@ define('bui/form/remote',['bui/common'],function(require) {
   Remote.ATTRS = {
 
     /**
-     * 默认的异步请求配置项：
+     * \u9ed8\u8ba4\u7684\u5f02\u6b65\u8bf7\u6c42\u914d\u7f6e\u9879\uff1a
      * method : 'GET',
      * cache : true,
      * dataType : 'text'
@@ -4587,8 +4159,8 @@ define('bui/form/remote',['bui/common'],function(require) {
       }
     },
     /**
-     * 异步请求延迟的时间，当字段验证通过后，不马上进行异步请求，等待继续输入，
-     * 300（默认）毫秒后，发送请求，在这个过程中，继续输入，则取消异步请求。
+     * \u5f02\u6b65\u8bf7\u6c42\u5ef6\u8fdf\u7684\u65f6\u95f4\uff0c\u5f53\u5b57\u6bb5\u9a8c\u8bc1\u901a\u8fc7\u540e\uff0c\u4e0d\u9a6c\u4e0a\u8fdb\u884c\u5f02\u6b65\u8bf7\u6c42\uff0c\u7b49\u5f85\u7ee7\u7eed\u8f93\u5165\uff0c
+     * 300\uff08\u9ed8\u8ba4\uff09\u6beb\u79d2\u540e\uff0c\u53d1\u9001\u8bf7\u6c42\uff0c\u5728\u8fd9\u4e2a\u8fc7\u7a0b\u4e2d\uff0c\u7ee7\u7eed\u8f93\u5165\uff0c\u5219\u53d6\u6d88\u5f02\u6b65\u8bf7\u6c42\u3002
      * @type {Object}
      */
     remoteDaly : {
@@ -4596,7 +4168,7 @@ define('bui/form/remote',['bui/common'],function(require) {
     },
     /**
      * @private
-     * 缓存验证结果，如果验证过对应的值，则直接返回
+     * \u7f13\u5b58\u9a8c\u8bc1\u7ed3\u679c\uff0c\u5982\u679c\u9a8c\u8bc1\u8fc7\u5bf9\u5e94\u7684\u503c\uff0c\u5219\u76f4\u63a5\u8fd4\u56de
      * @type {Object}
      */
     cacheMap : {
@@ -4605,7 +4177,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       }
     },
     /**
-     * 加载的模板
+     * \u52a0\u8f7d\u7684\u6a21\u677f
      * @type {String}
      */
     loadingTpl : {
@@ -4613,7 +4185,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       value : '<img src="http://img02.taobaocdn.com/tps/i2/T1NU8nXCVcXXaHNz_X-16-16.gif" alt="loading"/>'
     },
     /**
-     * 是否正在等待异步请求结果
+     * \u662f\u5426\u6b63\u5728\u7b49\u5f85\u5f02\u6b65\u8bf7\u6c42\u7ed3\u679c
      * @type {Boolean}
      */
     isLoading : {
@@ -4621,18 +4193,18 @@ define('bui/form/remote',['bui/common'],function(require) {
       value : false
     },
     /**
-     * 异步请求的配置项，参考jQuery的 ajax配置项，如果为字符串则为 url。
-     * 请不要覆盖success属性，如果需要回调则使用 callback 属性
+     * \u5f02\u6b65\u8bf7\u6c42\u7684\u914d\u7f6e\u9879\uff0c\u53c2\u8003jQuery\u7684 ajax\u914d\u7f6e\u9879\uff0c\u5982\u679c\u4e3a\u5b57\u7b26\u4e32\u5219\u4e3a url\u3002
+     * \u8bf7\u4e0d\u8981\u8986\u76d6success\u5c5e\u6027\uff0c\u5982\u679c\u9700\u8981\u56de\u8c03\u5219\u4f7f\u7528 callback \u5c5e\u6027
      *
      *        {
      *          remote : {
      *            url : 'test.php',
-     *            dataType:'json',//默认为字符串
+     *            dataType:'json',//\u9ed8\u8ba4\u4e3a\u5b57\u7b26\u4e32
      *            callback : function(data){
-     *              if(data.success){ //data为默认返回的值
-     *                return ''  //返回值为空时，验证成功
+     *              if(data.success){ //data\u4e3a\u9ed8\u8ba4\u8fd4\u56de\u7684\u503c
+     *                return ''  //\u8fd4\u56de\u503c\u4e3a\u7a7a\u65f6\uff0c\u9a8c\u8bc1\u6210\u529f
      *              }else{
-     *                return '验证失败，XX错误！' //显示返回的字符串为错误
+     *                return '\u9a8c\u8bc1\u5931\u8d25\uff0cXX\u9519\u8bef\uff01' //\u663e\u793a\u8fd4\u56de\u7684\u5b57\u7b26\u4e32\u4e3a\u9519\u8bef
      *              }
      *            }
      *          }
@@ -4648,7 +4220,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       }
     },
     /**
-     * 异步请求的函数指针，仅内部使用
+     * \u5f02\u6b65\u8bf7\u6c42\u7684\u51fd\u6570\u6307\u9488\uff0c\u4ec5\u5185\u90e8\u4f7f\u7528
      * @private
      * @type {Number}
      */
@@ -4658,17 +4230,17 @@ define('bui/form/remote',['bui/common'],function(require) {
     events : {
       value : {
         /**
-         * 异步请求结束
+         * \u5f02\u6b65\u8bf7\u6c42\u7ed3\u675f
          * @event
-         * @param {Object} e 事件对象
-         * @param {*} e.error 是否验证成功
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {*} e.error \u662f\u5426\u9a8c\u8bc1\u6210\u529f
          */
         remotecomplete : false,
         /**
-         * 异步请求开始
+         * \u5f02\u6b65\u8bf7\u6c42\u5f00\u59cb
          * @event
-         * @param {Object} e 事件对象
-         * @param {Object} e.data 发送的对象，是一个键值对，可以修改此对象，附加信息
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} e.data \u53d1\u9001\u7684\u5bf9\u8c61\uff0c\u662f\u4e00\u4e2a\u952e\u503c\u5bf9\uff0c\u53ef\u4ee5\u4fee\u6539\u6b64\u5bf9\u8c61\uff0c\u9644\u52a0\u4fe1\u606f
          */
         remotestart : false
       }
@@ -4695,21 +4267,21 @@ define('bui/form/remote',['bui/common'],function(require) {
       });
 
     },
-    //开始异步请求
+    //\u5f00\u59cb\u5f02\u6b65\u8bf7\u6c42
     _startRemote : function(data,value){
       var _self = this,
         remoteHandler = _self.get('remoteHandler'),
         cacheMap = _self.get('cacheMap'),
         remoteDaly = _self.get('remoteDaly');
       if(remoteHandler){
-        //如果前面已经发送过异步请求，取消掉
+        //\u5982\u679c\u524d\u9762\u5df2\u7ecf\u53d1\u9001\u8fc7\u5f02\u6b65\u8bf7\u6c42\uff0c\u53d6\u6d88\u6389
         _self._cancelRemote(remoteHandler);
       }
       if(cacheMap[value] != null){
         _self._validResult(_self._getCallback(),cacheMap[value]);
         return;
       }
-      //使用闭包进行异步请求
+      //\u4f7f\u7528\u95ed\u5305\u8fdb\u884c\u5f02\u6b65\u8bf7\u6c42
       function dalayFunc(){
         _self._remoteValid(data,remoteHandler,value);
         _self.set('isLoading',true);
@@ -4725,7 +4297,7 @@ define('bui/form/remote',['bui/common'],function(require) {
     },
     onRemoteComplete : function(error,data,remoteHandler){
       var _self = this;
-      //确认当前返回的错误是当前请求的结果，防止覆盖后面的请求
+      //\u786e\u8ba4\u5f53\u524d\u8fd4\u56de\u7684\u9519\u8bef\u662f\u5f53\u524d\u8bf7\u6c42\u7684\u7ed3\u679c\uff0c\u9632\u6b62\u8986\u76d6\u540e\u9762\u7684\u8bf7\u6c42
       if(remoteHandler == _self.get('remoteHandler')){
           _self.fire('remotecomplete',{error : error,data : data});
           _self.set('isLoading',false);
@@ -4742,7 +4314,7 @@ define('bui/form/remote',['bui/common'],function(require) {
     _getCallback : function(){
       return this._getOptions().callback;
     },
-    //异步请求
+    //\u5f02\u6b65\u8bf7\u6c42
     _remoteValid : function(data,remoteHandler,value){
       var _self = this,
         cacheMap = _self.get('cacheMap'),
@@ -4750,7 +4322,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       options.success = function (data) {
         var callback = options.callback,
           error = callback(data);
-        cacheMap[value] = data; //缓存异步结果
+        cacheMap[value] = data; //\u7f13\u5b58\u5f02\u6b65\u7ed3\u679c
         _self.onRemoteComplete(error,data,remoteHandler);
       };
 
@@ -4762,15 +4334,15 @@ define('bui/form/remote',['bui/common'],function(require) {
       $.ajax(options);
     },
     /**
-     * 获取异步请求的键值对
+     * \u83b7\u53d6\u5f02\u6b65\u8bf7\u6c42\u7684\u952e\u503c\u5bf9
      * @template
      * @protected
-     * @return {Object} 远程验证的参数，键值对
+     * @return {Object} \u8fdc\u7a0b\u9a8c\u8bc1\u7684\u53c2\u6570\uff0c\u952e\u503c\u5bf9
      */
     getRemoteParams : function() {
 
     },
-    //取消异步请求
+    //\u53d6\u6d88\u5f02\u6b65\u8bf7\u6c42
     _cancelRemote : function(remoteHandler){
       var _self = this;
 

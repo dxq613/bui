@@ -1,8 +1,6 @@
-/*
-Copyright 2011, KISSY UI Library v1.1.5
-MIT Licensed
-build time: Sep 11 10:29
-*/
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 /**
  * AJBridge Class
  * @author kingfo oicuicu@gmail.com
@@ -20,9 +18,9 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
 
   BUI.mix(AJBridge, {
     /**
-     * 处理来自 AJBridge 已定义的事件
-     * @param {String} id            swf传出的自身ID
-     * @param {Object} event        swf传出的事件
+     * \u5904\u7406\u6765\u81ea AJBridge \u5df2\u5b9a\u4e49\u7684\u4e8b\u4ef6
+     * @param {String} id            swf\u4f20\u51fa\u7684\u81ea\u8eabID
+     * @param {Object} event        swf\u4f20\u51fa\u7684\u4e8b\u4ef6
      */
     eventHandler: function(id, event) {
       var instance = instances[id];
@@ -31,7 +29,7 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
       }
     },
     /**
-     * 批量注册 SWF 公开的方法
+     * \u6279\u91cf\u6ce8\u518c SWF \u516c\u5f00\u7684\u65b9\u6cd5
      * @param {Class} C
      * @param {String|Array} methods
      */
@@ -46,7 +44,7 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
         C.prototype[methodName] = function() {
           try {
             return this.callSWF(methodName, Array.prototype.slice.call(arguments, 0));
-          } catch(e) { // 当 swf 异常时，进一步捕获信息
+          } catch(e) { // \u5f53 swf \u5f02\u5e38\u65f6\uff0c\u8fdb\u4e00\u6b65\u6355\u83b7\u4fe1\u606f
             this.fire('error', { message: e });
           }
         }
@@ -71,7 +69,7 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
       var _self = this,
         type = event.type;
     
-      event.id = id;   // 弥补后期 id 使用
+      event.id = id;   // \u5f25\u8865\u540e\u671f id \u4f7f\u7528
       switch(type){
         case "log":
           BUI.log(event.message);
@@ -87,8 +85,8 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
     }
   });
 
-  // 为静态方法动态注册
-  // 注意，只有在 S.ready() 后进行 AJBridge 注册才有效。
+  // \u4e3a\u9759\u6001\u65b9\u6cd5\u52a8\u6001\u6ce8\u518c
+  // \u6ce8\u610f\uff0c\u53ea\u6709\u5728 S.ready() \u540e\u8fdb\u884c AJBridge \u6ce8\u518c\u624d\u6709\u6548\u3002
   AJBridge.augment(AJBridge, [
     'activate',
     'getReady',
@@ -110,15 +108,16 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
     'clear'
   ]);
 
-  //flash里面要调用全局方法BUI.AJBridge.eventHandler,所以挂在BUI下面
+  //flash\u91cc\u9762\u8981\u8c03\u7528\u5168\u5c40\u65b9\u6cd5BUI.AJBridge.eventHandler,\u6240\u4ee5\u6302\u5728BUI\u4e0b\u9762
   BUI.AJBridge = AJBridge;
 
   return AJBridge;
 });
 /**
  * NOTES:
- * 20130904 从kissy ajbridge模块移植成bui的模块（索丘修改）
+ * 20130904 \u4ecekissy ajbridge\u6a21\u5757\u79fb\u690d\u6210bui\u7684\u6a21\u5757\uff08\u7d22\u4e18\u4fee\u6539\uff09
  */
+
 define('bui/uploader/button/filter', function(require){
 
   var BUI = require('bui/common');
@@ -214,8 +213,8 @@ define('bui/uploader/button/filter', function(require){
 });
 
 /**
- * @fileoverview 文件上传按钮的基类
- * @author: 索丘 zengyue.yezy@alibaba-inc.com
+ * @fileoverview \u6587\u4ef6\u4e0a\u4f20\u6309\u94ae\u7684\u57fa\u7c7b
+ * @author: \u7d22\u4e18 zengyue.yezy@alibaba-inc.com
  **/
 
 define('bui/uploader/button/base', function(require) {
@@ -229,8 +228,8 @@ define('bui/uploader/button/base', function(require) {
     CLS_UPLOADER_BUTTON_TEXT = CLS_UPLOADER_BUTTON + '-text';
 
   /**
-   * 获取文件名称
-   * @param {String} path 文件路径
+   * \u83b7\u53d6\u6587\u4ef6\u540d\u79f0
+   * @param {String} path \u6587\u4ef6\u8def\u5f84
    * @return {String}
    */
   function getFileName (path) {
@@ -238,8 +237,8 @@ define('bui/uploader/button/base', function(require) {
   }
 
   /**
-   * 获取文件扩展名
-   * @param {String} filename 文件名
+   * \u83b7\u53d6\u6587\u4ef6\u6269\u5c55\u540d
+   * @param {String} filename \u6587\u4ef6\u540d
    * @return {String}
    */
   function getFileExtName(filename){
@@ -248,9 +247,9 @@ define('bui/uploader/button/base', function(require) {
   }
 
   /**
-   * 转换文件大小字节数
-   * @param {Number} bytes 文件大小字节数
-   * @return {String} 文件大小
+   * \u8f6c\u6362\u6587\u4ef6\u5927\u5c0f\u5b57\u8282\u6570
+   * @param {Number} bytes \u6587\u4ef6\u5927\u5c0f\u5b57\u8282\u6570
+   * @return {String} \u6587\u4ef6\u5927\u5c0f
    */
   function convertByteSize(bytes) {
     var i = -1;
@@ -298,14 +297,14 @@ define('bui/uploader/button/base', function(require) {
     },
     text: {
       view: true,
-      value: '上传文件'
+      value: '\u4e0a\u4f20\u6587\u4ef6'
     },
     tpl: {
       view: true,
       value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '"><span class="' + CLS_UPLOADER_BUTTON_TEXT + '">{text}</span></a>'
     },
     /**
-     * 是否可用,false为可用
+     * \u662f\u5426\u53ef\u7528,false\u4e3a\u53ef\u7528
      * @type Boolean
      * @default false
      */
@@ -317,7 +316,7 @@ define('bui/uploader/button/base', function(require) {
       }
     },
     /**
-     * 是否开启多选支持
+     * \u662f\u5426\u5f00\u542f\u591a\u9009\u652f\u6301
      * @type Boolean
      * @default true
      */
@@ -329,7 +328,7 @@ define('bui/uploader/button/base', function(require) {
       }
     },
     /**
-     * 文件过滤
+     * \u6587\u4ef6\u8fc7\u6ee4
      * @type Array
      * @default []
      */
@@ -343,7 +342,7 @@ define('bui/uploader/button/base', function(require) {
   };
 
   base.prototype = {
-    //设置文件的扩展信息
+    //\u8bbe\u7f6e\u6587\u4ef6\u7684\u6269\u5c55\u4fe1\u606f
     getExtFileData: function(file){
       var filename = getFileName(file.name),
         textSize = convertByteSize(file.size || 0),
@@ -393,11 +392,6 @@ define('bui/uploader/button/base', function(require) {
   return base;
 
 });
-/**
- * @fileoverview 文件上传按钮,使用input[type=file]
- * @author: 索丘 zengyue.yezy@alibaba-inc.com
- **/
-
 
 define('bui/uploader/button/htmlButton', function(require) {
 
@@ -417,7 +411,7 @@ define('bui/uploader/button/htmlButton', function(require) {
 
   /**
    * @name HtmlButton
-   * @class 文件上传按钮，ajax和iframe上传方式使用
+   * @class \u6587\u4ef6\u4e0a\u4f20\u6309\u94ae\uff0cajax\u548ciframe\u4e0a\u4f20\u65b9\u5f0f\u4f7f\u7528
    * @constructor
    */
   var HtmlButton = Component.Controller.extend([ButtonBase], {
@@ -429,8 +423,8 @@ define('bui/uploader/button/htmlButton', function(require) {
 
     },
     /**
-     * 创建隐藏的表单上传域
-     * @return {HTMLElement} 文件上传域容器
+     * \u521b\u5efa\u9690\u85cf\u7684\u8868\u5355\u4e0a\u4f20\u57df
+     * @return {HTMLElement} \u6587\u4ef6\u4e0a\u4f20\u57df\u5bb9\u5668
      */
     _createInput: function() {
       var _self = this,
@@ -448,7 +442,7 @@ define('bui/uploader/button/htmlButton', function(require) {
 
       fileInput = buttonEl.find('input');
 
-      //TODO:IE6下只有通过脚本和内联样式才能控制按钮大小
+      //TODO:IE6\u4e0b\u53ea\u6709\u901a\u8fc7\u811a\u672c\u548c\u5185\u8054\u6837\u5f0f\u624d\u80fd\u63a7\u5236\u6309\u94ae\u5927\u5c0f
       if(UA.ie == 6){
         fileInput.css('fontSize','400px');
       }
@@ -463,13 +457,13 @@ define('bui/uploader/button/htmlButton', function(require) {
 
     _bindChangeHandler: function(fileInput) {
       var _self = this;
-      //上传框的值改变后触发
+      //\u4e0a\u4f20\u6846\u7684\u503c\u6539\u53d8\u540e\u89e6\u53d1
       $(fileInput).on('change', function(ev){
         var value = $(this).val(),
           oFiles = ev.target.files,
           files = [];
           
-        //IE取不到files
+        //IE\u53d6\u4e0d\u5230files
         if(oFiles){
           BUI.each(oFiles, function(v){
             files.push(_self.getExtFileData({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput[0]}));
@@ -488,16 +482,16 @@ define('bui/uploader/button/htmlButton', function(require) {
       var _self = this,
         fileInput = _self.get('fileInput');
 
-      //移除表单上传域容器
+      //\u79fb\u9664\u8868\u5355\u4e0a\u4f20\u57df\u5bb9\u5668
       fileInput.parent().remove();
       _self.set('fileInput', null);
-      //重新创建表单上传域
+      //\u91cd\u65b0\u521b\u5efa\u8868\u5355\u4e0a\u4f20\u57df
       _self._createInput();
       return _self;
     },
     /**
-     * 设置上传组件的禁用
-     * @param {Boolean} multiple 是否禁用
+     * \u8bbe\u7f6e\u4e0a\u4f20\u7ec4\u4ef6\u7684\u7981\u7528
+     * @param {Boolean} multiple \u662f\u5426\u7981\u7528
      * @return {Boolean}
      */
     setMultiple : function(multiple){
@@ -516,8 +510,8 @@ define('bui/uploader/button/htmlButton', function(require) {
       return multiple;
     },
     /**
-     * 设置上传文件的类型
-     * @param {[type]} filter 可上传文件的类型
+     * \u8bbe\u7f6e\u4e0a\u4f20\u6587\u4ef6\u7684\u7c7b\u578b
+     * @param {[type]} filter \u53ef\u4e0a\u4f20\u6587\u4ef6\u7684\u7c7b\u578b
      */
     setFilter: function(v){
       var _self = this,
@@ -526,14 +520,14 @@ define('bui/uploader/button/htmlButton', function(require) {
       if(!fileInput || !fileInput.length){
         return false;
       };
-      //accept是html5的属性，所以ie8以下是不支持的
+      //accept\u662fhtml5\u7684\u5c5e\u6027\uff0c\u6240\u4ee5ie8\u4ee5\u4e0b\u662f\u4e0d\u652f\u6301\u7684
       filter.type && fileInput.attr('accept', filter.type);
       return filter;
     }
   },{
     ATTRS: {
       /**
-       * 隐藏的表单上传域的模板
+       * \u9690\u85cf\u7684\u8868\u5355\u4e0a\u4f20\u57df\u7684\u6a21\u677f
        * @type String
        */
       inputTpl: {
@@ -541,14 +535,14 @@ define('bui/uploader/button/htmlButton', function(require) {
         value: '<div class="file-input-wrapper"><input type="file" name="{name}" hidefocus="true" class="file-input" /></div>'
       },
       /**
-       * 对应的表单上传域
+       * \u5bf9\u5e94\u7684\u8868\u5355\u4e0a\u4f20\u57df
        * @type KISSY.Node
        * @default ""
        */
       fileInput: {
       },
       /**
-       * 隐藏的表单上传域的name值
+       * \u9690\u85cf\u7684\u8868\u5355\u4e0a\u4f20\u57df\u7684name\u503c
        * @type String
        * @default "Filedata"
        */
@@ -571,10 +565,7 @@ define('bui/uploader/button/htmlButton', function(require) {
   return HtmlButton;
 
 });
-/**
- * @fileoverview flash上传按钮
- * @author: zengyue.yezy
- **/
+
 define('bui/uploader/button/swfButton', function (require) {
 
   var BUI = require('bui/common'),
@@ -638,7 +629,7 @@ define('bui/uploader/button/swfButton', function (require) {
       var _self = this,
         swfUploader = _self.get('swfUploader'),
         filter = _self.getFilter(v);
-      //flash里需要一个数组
+      //flash\u91cc\u9700\u8981\u4e00\u4e2a\u6570\u7ec4
       swfUploader && swfUploader.filter([v]);
       return v;
     }
@@ -654,9 +645,9 @@ define('bui/uploader/button/swfButton', function (require) {
             bgcolor:"#fff",
             wmode:"transparent",
             flashvars: {
-              //手型
+              //\u624b\u578b
               hand:true,
-              //启用按钮模式,激发鼠标事件
+              //\u542f\u7528\u6309\u94ae\u6a21\u5f0f,\u6fc0\u53d1\u9f20\u6807\u4e8b\u4ef6
               btn:true,
               jsEntry: 'BUI.AJBridge.eventHandler'
             }
@@ -676,38 +667,35 @@ define('bui/uploader/button/swfButton', function (require) {
   });
 
   return SwfButton;
-});/**
- * @fileoverview 上传方式类的基类
- * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
- **/
+});
 define('bui/uploader/type/base',function(require) {
   /**
    * @name UploadType
-   * @class 上传方式类的基类，定义通用的事件和方法，一般不直接监听此类的事件
+   * @class \u4e0a\u4f20\u65b9\u5f0f\u7c7b\u7684\u57fa\u7c7b\uff0c\u5b9a\u4e49\u901a\u7528\u7684\u4e8b\u4ef6\u548c\u65b9\u6cd5\uff0c\u4e00\u822c\u4e0d\u76f4\u63a5\u76d1\u542c\u6b64\u7c7b\u7684\u4e8b\u4ef6
    * @constructor
    */
   function UploadType(config) {
     var _self = this;
-    //调用父类构造函数
+    //\u8c03\u7528\u7236\u7c7b\u6784\u9020\u51fd\u6570
     UploadType.superclass.constructor.call(_self, config);
   }
 
   UploadType.ATTRS = {
     /**
-     * 当前处理的文件
+     * \u5f53\u524d\u5904\u7406\u7684\u6587\u4ef6
      * @type {Object}
      */
     file: {
     },
     /**
-     * 服务器端路径
+     * \u670d\u52a1\u5668\u7aef\u8def\u5f84
      * @type String
      * @default ""
      */
     url: {
     },
     /**
-     * 传送给服务器端的参数集合（会被转成hidden元素post到服务器端）
+     * \u4f20\u9001\u7ed9\u670d\u52a1\u5668\u7aef\u7684\u53c2\u6570\u96c6\u5408\uff08\u4f1a\u88ab\u8f6c\u6210hidden\u5143\u7d20post\u5230\u670d\u52a1\u5668\u7aef\uff09
      * @type Object
      * @default {}
      */
@@ -720,68 +708,68 @@ define('bui/uploader/type/base',function(require) {
 
   BUI.mix(UploadType, /** @lends UploadType*/{
     /**
-     * 事件列表
+     * \u4e8b\u4ef6\u5217\u8868
      */
     event : {
-      //开始上传后触发
+      //\u5f00\u59cb\u4e0a\u4f20\u540e\u89e6\u53d1
       START : 'start',
-      //停止上传后触发
+      //\u505c\u6b62\u4e0a\u4f20\u540e\u89e6\u53d1
       CANCEL : 'cancel',
-      //成功请求
+      //\u6210\u529f\u8bf7\u6c42
       SUCCESS : 'success',
-      //上传失败后触发
+      //\u4e0a\u4f20\u5931\u8d25\u540e\u89e6\u53d1
       ERROR : 'error'
     }
   });
 
   /**
    * @name UploadType#start
-   * @desc  开始上传后触发
+   * @desc  \u5f00\u59cb\u4e0a\u4f20\u540e\u89e6\u53d1
    * @event
    */
   /**
    * @name UploadType#stop
-   * @desc  停止上传后触发
+   * @desc  \u505c\u6b62\u4e0a\u4f20\u540e\u89e6\u53d1
    * @event
    */
   /**
    * @name UploadType#success
-   * @desc  上传成功后触发
+   * @desc  \u4e0a\u4f20\u6210\u529f\u540e\u89e6\u53d1
    * @event
    */
   /**
    * @name UploadType#error
-   * @desc  上传失败后触发
+   * @desc  \u4e0a\u4f20\u5931\u8d25\u540e\u89e6\u53d1
    * @event
    */
-  //继承于Base，属性getter和setter委托于Base处理
+  //\u7ee7\u627f\u4e8eBase\uff0c\u5c5e\u6027getter\u548csetter\u59d4\u6258\u4e8eBase\u5904\u7406
   BUI.extend(UploadType, BUI.Base, /** @lends UploadType.prototype*/{
     /**
-     * 上传文件
-     * @param {Object} File 数据对像
+     * \u4e0a\u4f20\u6587\u4ef6
+     * @param {Object} File \u6570\u636e\u5bf9\u50cf
      * @description
-     * 因为每种上传类型需要的数据都不一样，
-     * Ajax需要File对像，
-     * Iframe需要input[type=file]对像
-     * 所以为了保持接口的一致性，这里的File对像不是浏览器原生的File对像，而是包含File和input的对像
-     * 类似{name: 'test.jpg', size: 1024, textSize: '1K', input: {}, file: File}
+     * \u56e0\u4e3a\u6bcf\u79cd\u4e0a\u4f20\u7c7b\u578b\u9700\u8981\u7684\u6570\u636e\u90fd\u4e0d\u4e00\u6837\uff0c
+     * Ajax\u9700\u8981File\u5bf9\u50cf\uff0c
+     * Iframe\u9700\u8981input[type=file]\u5bf9\u50cf
+     * \u6240\u4ee5\u4e3a\u4e86\u4fdd\u6301\u63a5\u53e3\u7684\u4e00\u81f4\u6027\uff0c\u8fd9\u91cc\u7684File\u5bf9\u50cf\u4e0d\u662f\u6d4f\u89c8\u5668\u539f\u751f\u7684File\u5bf9\u50cf\uff0c\u800c\u662f\u5305\u542bFile\u548cinput\u7684\u5bf9\u50cf
+     * \u7c7b\u4f3c{name: 'test.jpg', size: 1024, textSize: '1K', input: {}, file: File}
      */
     upload: function(File) {
     },
     /** 
-     * 停止上传
+     * \u505c\u6b62\u4e0a\u4f20
      */
     cancel: function(){
     },
     /**
-     * 处理服务器端返回的结果集
+     * \u5904\u7406\u670d\u52a1\u5668\u7aef\u8fd4\u56de\u7684\u7ed3\u679c\u96c6
      * @private
      */
     _processResponse: function(responseText){
       var _self = this,
         file = _self.get('file'),
         result;
-      //格式化成json数据
+      //\u683c\u5f0f\u5316\u6210json\u6570\u636e
       if(BUI.isString(responseText)){
         try{
           result = BUI.JSON.parse(responseText);
@@ -792,11 +780,11 @@ define('bui/uploader/type/base',function(require) {
       }else if(BUI.isObject(responseText)){
         result = _self._fromUnicode(responseText);
       }
-      BUI.log('服务器端输出：' + BUI.JSON.stringify(result));
+      BUI.log('\u670d\u52a1\u5668\u7aef\u8f93\u51fa\uff1a' + BUI.JSON.stringify(result));
       return result;
     },
     /**
-     * 将unicode的中文转换成正常显示的文字，（为了修复flash的中文乱码问题）
+     * \u5c06unicode\u7684\u4e2d\u6587\u8f6c\u6362\u6210\u6b63\u5e38\u663e\u793a\u7684\u6587\u5b57\uff0c\uff08\u4e3a\u4e86\u4fee\u590dflash\u7684\u4e2d\u6587\u4e71\u7801\u95ee\u9898\uff09
      * @private
      */
     _fromUnicode:function(data){
@@ -818,10 +806,7 @@ define('bui/uploader/type/base',function(require) {
   });
 
   return UploadType;
-});/**
- * @fileoverview ajax方案上传
- * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
- **/
+});
 define('bui/uploader/type/ajax',function(require) {
     var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:',
         win = window,
@@ -840,35 +825,35 @@ define('bui/uploader/type/ajax',function(require) {
 
     /**
      * @name AjaxType
-     * @class ajax方案上传
+     * @class ajax\u65b9\u6848\u4e0a\u4f20
      * @constructor
      * @requires UploadType
      */
     function AjaxType(config) {
         var self = this;
-        //调用父类构造函数
+        //\u8c03\u7528\u7236\u7c7b\u6784\u9020\u51fd\u6570
         AjaxType.superclass.constructor.call(self, config);
     }
 
     BUI.mix(AjaxType, /** @lends AjaxType.prototype*/{
         /**
-         * 事件列表
+         * \u4e8b\u4ef6\u5217\u8868
          */
         event : BUI.merge(UploadType.event, {
             PROGRESS : 'progress'
         })
     });
-    //继承于Base，属性getter和setter委托于Base处理
+    //\u7ee7\u627f\u4e8eBase\uff0c\u5c5e\u6027getter\u548csetter\u59d4\u6258\u4e8eBase\u5904\u7406
     BUI.extend(AjaxType, UploadType, /** @lends AjaxType.prototype*/{
         /**
-         * 上传文件
+         * \u4e0a\u4f20\u6587\u4ef6
          * @param {Object} File
          * @return {AjaxType}
          */
         upload : function(file) {
-            //不存在文件信息集合直接退出
+            //\u4e0d\u5b58\u5728\u6587\u4ef6\u4fe1\u606f\u96c6\u5408\u76f4\u63a5\u9000\u51fa
             if (!file || !file.file) {
-                BUI.log(LOG_PREFIX + 'upload()，fileData参数有误！');
+                BUI.log(LOG_PREFIX + 'upload()\uff0cfileData\u53c2\u6570\u6709\u8bef\uff01');
                 return false;
             }
             var self = this;
@@ -880,14 +865,14 @@ define('bui/uploader/type/ajax',function(require) {
             return self;
         },
         /**
-         * 停止上传
+         * \u505c\u6b62\u4e0a\u4f20
          * @return {AjaxType}
          */
         cancel : function() {
             var self = this,
                 xhr = self.get('xhr'),
                 file = self.get('file');
-            //中止ajax请求，会触发error事件
+            //\u4e2d\u6b62ajax\u8bf7\u6c42\uff0c\u4f1a\u89e6\u53d1error\u4e8b\u4ef6
             if(xhr){
                 xhr.abort();
                 self.fire(AjaxType.event.CANCEL, {file: file});
@@ -896,17 +881,17 @@ define('bui/uploader/type/ajax',function(require) {
             return self;
         },
         /**
-         * 发送ajax请求
+         * \u53d1\u9001ajax\u8bf7\u6c42
          * @return {AjaxType}
          */
         send : function() {
             var self = this,
-                //服务器端处理文件上传的路径
+                //\u670d\u52a1\u5668\u7aef\u5904\u7406\u6587\u4ef6\u4e0a\u4f20\u7684\u8def\u5f84
                 url = self.get('url'),
                 data = self.get('formData'),
                 file = self.get('file');
             var xhr = new XMLHttpRequest();
-            //TODO:如果使用onProgress存在第二次上传不触发progress事件的问题
+            //TODO:\u5982\u679c\u4f7f\u7528onProgress\u5b58\u5728\u7b2c\u4e8c\u6b21\u4e0a\u4f20\u4e0d\u89e6\u53d1progress\u4e8b\u4ef6\u7684\u95ee\u9898
             xhr.upload.addEventListener('progress',function(ev){
                 self.fire(AjaxType.event.PROGRESS, { 'loaded': ev.loaded, 'total': ev.total });
             });
@@ -920,7 +905,7 @@ define('bui/uploader/type/ajax',function(require) {
             xhr.open("POST", url, true);
             data.append("type", "ajax");
             xhr.send(data);
-            // 重置FormData
+            // \u91cd\u7f6eFormData
             self._setFormData();
             self.set('xhr',xhr);
             return self;
@@ -928,7 +913,7 @@ define('bui/uploader/type/ajax',function(require) {
         clear: function(){
         },
         /**
-         * 设置FormData数据
+         * \u8bbe\u7f6eFormData\u6570\u636e
          */
         _setFormData:function(){
             var self = this;
@@ -941,24 +926,24 @@ define('bui/uploader/type/ajax',function(require) {
            }
         },
         /**
-         * 处理传递给服务器端的参数
+         * \u5904\u7406\u4f20\u9012\u7ed9\u670d\u52a1\u5668\u7aef\u7684\u53c2\u6570
          */
         _processData : function() {
             var self = this,data = self.get('data'),
                 formData = self.get('formData');
-            //将参数添加到FormData的实例内
+            //\u5c06\u53c2\u6570\u6dfb\u52a0\u5230FormData\u7684\u5b9e\u4f8b\u5185
             BUI.each(data, function(val, key) {
                 formData.append(key, val);
             });
             self.set('formData', formData);
         },
         /**
-         * 将文件信息添加到FormData内
-         * @param {Object} file 文件信息
+         * \u5c06\u6587\u4ef6\u4fe1\u606f\u6dfb\u52a0\u5230FormData\u5185
+         * @param {Object} file \u6587\u4ef6\u4fe1\u606f
          */
         _addFileData : function(file) {
             if (!file) {
-                BUI.log(LOG_PREFIX + '_addFileData()，file参数有误！');
+                BUI.log(LOG_PREFIX + '_addFileData()\uff0cfile\u53c2\u6570\u6709\u8bef\uff01');
                 return false;
             }
             var self = this,
@@ -969,7 +954,7 @@ define('bui/uploader/type/ajax',function(require) {
         }
     }, {ATTRS : /** @lends AjaxType*/{
         /**
-         * 表单数据对象
+         * \u8868\u5355\u6570\u636e\u5bf9\u8c61
          */
         formData: {
         },
@@ -985,10 +970,7 @@ define('bui/uploader/type/ajax',function(require) {
     }
     });
     return AjaxType;
-});/**
- * @fileoverview flash上传方案，基于龙藏写的ajbridge内的uploader
- * @author 剑平（明河）<minghe36@126.com>
- **/
+});
 define('bui/uploader/type/flash', function (require) {
     var LOG_PREFIX = '[uploader-FlashType]:';
 
@@ -996,68 +978,68 @@ define('bui/uploader/type/flash', function (require) {
 
     /**
      * @name FlashType
-     * @class flash上传方案，基于龙藏写的ajbridge内的uploader
+     * @class flash\u4e0a\u4f20\u65b9\u6848\uff0c\u57fa\u4e8e\u9f99\u85cf\u5199\u7684ajbridge\u5185\u7684uploader
      * @constructor
      * @extends UploadType
      * @requires Node
      */
     function FlashType(config) {
         var _self = this;
-        //调用父类构造函数
+        //\u8c03\u7528\u7236\u7c7b\u6784\u9020\u51fd\u6570
         FlashType.superclass.constructor.call(_self, config);
         _self.isHasCrossdomain();
     }
 
     BUI.mix(FlashType, /** @lends FlashType.prototype*/{
         /**
-         * 事件列表
+         * \u4e8b\u4ef6\u5217\u8868
          */
         event:BUI.merge(UploadType.event, {
-            //swf文件已经准备就绪
+            //swf\u6587\u4ef6\u5df2\u7ecf\u51c6\u5907\u5c31\u7eea
             SWF_READY: 'swfReady',
-            //正在上传
+            //\u6b63\u5728\u4e0a\u4f20
             PROGRESS:'progress'
         })
     });
 
     BUI.extend(FlashType, UploadType, /** @lends FlashType.prototype*/{
         /**
-         * 初始化
+         * \u521d\u59cb\u5316
          */
         _initSwfUploader:function () {
             var _self = this, swfUploader = _self.get('swfUploader');
             if(!swfUploader){
-                BUI.log(LOG_PREFIX + 'swfUploader对象为空！');
+                BUI.log(LOG_PREFIX + 'swfUploader\u5bf9\u8c61\u4e3a\u7a7a\uff01');
                 return false;
             }
-            //SWF 内容准备就绪
+            //SWF \u5185\u5bb9\u51c6\u5907\u5c31\u7eea
             swfUploader.on('contentReady', function(ev){
                 _self.fire(FlashType.event.SWF_READY);
             });
-            //监听开始上传事件
+            //\u76d1\u542c\u5f00\u59cb\u4e0a\u4f20\u4e8b\u4ef6
             swfUploader.on('uploadStart', function(ev){
                 var file = _self.get('file');
                 _self.fire(UploadType.event.START, {file: file});
             });
-            //监听文件正在上传事件
+            //\u76d1\u542c\u6587\u4ef6\u6b63\u5728\u4e0a\u4f20\u4e8b\u4ef6
             swfUploader.on('uploadProgress', function(ev){
                 BUI.mix(ev, {
-                    //已经读取的文件字节数
+                    //\u5df2\u7ecf\u8bfb\u53d6\u7684\u6587\u4ef6\u5b57\u8282\u6570
                     loaded:ev.bytesLoaded,
-                    //文件总共字节数
+                    //\u6587\u4ef6\u603b\u5171\u5b57\u8282\u6570
                     total : ev.bytesTotal
                 });
-                BUI.log(LOG_PREFIX + '已经上传字节数为：' + ev.bytesLoaded);
+                BUI.log(LOG_PREFIX + '\u5df2\u7ecf\u4e0a\u4f20\u5b57\u8282\u6570\u4e3a\uff1a' + ev.bytesLoaded);
                 _self.fire(FlashType.event.PROGRESS, { 'loaded':ev.loaded, 'total':ev.total });
             });
-            //监听文件上传完成事件
+            //\u76d1\u542c\u6587\u4ef6\u4e0a\u4f20\u5b8c\u6210\u4e8b\u4ef6
             swfUploader.on('uploadCompleteData', function(ev){
                 var file = _self.get('file'),
                     result = _self._processResponse(ev.data);
                 _self.fire('complete', {result: result, file: file});
                 _self.set('file', null);
             });
-            //监听文件失败事件
+            //\u76d1\u542c\u6587\u4ef6\u5931\u8d25\u4e8b\u4ef6
             swfUploader.on('uploadError',function(){
                 var file = _self.get('file');
                 _self.fire(FlashType.event.ERROR, {file: file});
@@ -1065,8 +1047,8 @@ define('bui/uploader/type/flash', function (require) {
             });
         },
         /**
-         * 上传文件
-         * @param {String} id 文件id
+         * \u4e0a\u4f20\u6587\u4ef6
+         * @param {String} id \u6587\u4ef6id
          * @return {FlashType}
          */
         upload:function (file) {
@@ -1084,7 +1066,7 @@ define('bui/uploader/type/flash', function (require) {
             return _self;
         },
         /**
-         * 停止上传文件
+         * \u505c\u6b62\u4e0a\u4f20\u6587\u4ef6
          * @return {FlashType}
          */
         cancel: function () {
@@ -1102,7 +1084,7 @@ define('bui/uploader/type/flash', function (require) {
 
         },
         /**
-         * 应用是否有flash跨域策略文件
+         * \u5e94\u7528\u662f\u5426\u6709flash\u8de8\u57df\u7b56\u7565\u6587\u4ef6
          */
         isHasCrossdomain:function(){
             var domain = location.hostname;
@@ -1110,7 +1092,7 @@ define('bui/uploader/type/flash', function (require) {
                  url:'http://' + domain + '/crossdomain.xml',
                  dataType:"xml",
                  error:function(){
-                     BUI.log('缺少crossdomain.xml文件或该文件不合法！');
+                     BUI.log('\u7f3a\u5c11crossdomain.xml\u6587\u4ef6\u6216\u8be5\u6587\u4ef6\u4e0d\u5408\u6cd5\uff01');
                  }
              });
         }
@@ -1128,12 +1110,12 @@ define('bui/uploader/type/flash', function (require) {
             }
         },
         /**
-         * 服务器端路径，留意flash必须是绝对路径
+         * \u670d\u52a1\u5668\u7aef\u8def\u5f84\uff0c\u7559\u610fflash\u5fc5\u987b\u662f\u7edd\u5bf9\u8def\u5f84
          */
         url:{
             getter:function(v){
                 var reg = /^http/;
-                //不是绝对路径拼接成绝对路径
+                //\u4e0d\u662f\u7edd\u5bf9\u8def\u5f84\u62fc\u63a5\u6210\u7edd\u5bf9\u8def\u5f84
                 if(!reg.test(v)){
                      var href = location.href,uris = href.split('/'),newUris;
                     newUris  = BUI.Array.filter(uris,function(item,i){
@@ -1148,19 +1130,16 @@ define('bui/uploader/type/flash', function (require) {
             value: 'Filedata'
         },
         /**
-         * ajbridge的uploader组件的实例，必须参数
+         * ajbridge\u7684uploader\u7ec4\u4ef6\u7684\u5b9e\u4f8b\uff0c\u5fc5\u987b\u53c2\u6570
          */
         swfUploader:{},
         /**
-         * 正在上传的文件id
+         * \u6b63\u5728\u4e0a\u4f20\u7684\u6587\u4ef6id
          */
         uploadingId : {}
     }});
     return FlashType;
-});/**
- * @fileoverview 文件上传队列列表显示和处理
- * @author 索丘 <zengyue.yezy@alibaba-inc.com>
- **/
+});
 define('bui/uploader/queue', ['bui/list'], function (require) {
 
   var BUI = require('bui/common'),
@@ -1184,7 +1163,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       });
     },
     /**
-     * 由于一个文件只能处理一种状态，所以在更新状态前要把所有的文件状态去掉
+     * \u7531\u4e8e\u4e00\u4e2a\u6587\u4ef6\u53ea\u80fd\u5904\u7406\u4e00\u79cd\u72b6\u6001\uff0c\u6240\u4ee5\u5728\u66f4\u65b0\u72b6\u6001\u524d\u8981\u628a\u6240\u6709\u7684\u6587\u4ef6\u72b6\u6001\u53bb\u6389
      * @param  {[type]} item    [description]
      * @param  {[type]} status  [description]
      * @param  {[type]} element [description]
@@ -1205,7 +1184,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   }, {
     ATTRS: {
       itemTpl: {
-        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
+        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">\u5220\u9664</div></li>'
       },
       itemCls: {
         value: CLS_QUEUE_ITEM
@@ -1229,10 +1208,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   });
   return Queue;
 
-});/**
- * @fileoverview 文件上传主题的处理
- * @author 索丘 <zengyue.yezy@alibaba-inc.com>
- **/
+});
 define('bui/uploader/theme', function (require) {
 
   var BUI = require('bui/common');
@@ -1244,7 +1220,7 @@ define('bui/uploader/theme', function (require) {
       themes[name] = config;
     },
     getTheme: function(name){
-      //不能覆盖主题设置的
+      //\u4e0d\u80fd\u8986\u76d6\u4e3b\u9898\u8bbe\u7f6e\u7684
       return BUI.cloneObject(themes[name]);
     }
   };
@@ -1260,10 +1236,7 @@ define('bui/uploader/theme', function (require) {
 
   return Theme;
 
-});/**
- * @fileoverview 文件上传的工厂类
- * @author 索丘 <zengyue.yezy@alibaba-inc.com>
- **/
+});
 define('bui/uploader/factory', function (require) {
 
   var BUI = require('bui/common'),
@@ -1300,10 +1273,7 @@ define('bui/uploader/factory', function (require) {
 
   return new Factory();
 
-});/**
- * @fileoverview 异步文件上传组件
- * @author 索丘 zengyue.yezy@alibaba-inc.com
- **/
+});
 define('bui/uploader/uploader', function (require) {
 
   var BUI = require('bui/common'),
@@ -1316,7 +1286,7 @@ define('bui/uploader/uploader', function (require) {
   var win = window;
 
   /**
-   * Uploader的视图层
+   * Uploader\u7684\u89c6\u56fe\u5c42
    * @type {[type]}
    */
   var UploaderView = Component.View.extend({
@@ -1343,14 +1313,14 @@ define('bui/uploader/uploader', function (require) {
       _self._bindQueue();
     },
     /**
-     * 检测浏览器是否支持ajax类型上传方式
+     * \u68c0\u6d4b\u6d4f\u89c8\u5668\u662f\u5426\u652f\u6301ajax\u7c7b\u578b\u4e0a\u4f20\u65b9\u5f0f
      * @return {Boolean}
      */
     isSupportAjax: function(){
       return !!win['FormData'];
     },
     /**
-     * 检测浏览器是否支持flash类型上传方式
+     * \u68c0\u6d4b\u6d4f\u89c8\u5668\u662f\u5426\u652f\u6301flash\u7c7b\u578b\u4e0a\u4f20\u65b9\u5f0f
      * @return {Boolean}
      */
     isSupportFlash: function(){
@@ -1371,15 +1341,15 @@ define('bui/uploader/uploader', function (require) {
       });
     },
     /**
-     * 初始化上传类型
+     * \u521d\u59cb\u5316\u4e0a\u4f20\u7c7b\u578b
      * @private
-     * @description 默认按最优处理
+     * @description \u9ed8\u8ba4\u6309\u6700\u4f18\u5904\u7406
      */
     _initType: function(){
       var _self = this,
         types = _self.get('types'),
         type = _self.get('type')
-      //没有设置时按最优处理，有则按设定的处理
+      //\u6ca1\u6709\u8bbe\u7f6e\u65f6\u6309\u6700\u4f18\u5904\u7406\uff0c\u6709\u5219\u6309\u8bbe\u5b9a\u7684\u5904\u7406
       if(!type){
         if(_self.isSupportAjax()){
           type = types.AJAX;
@@ -1394,7 +1364,7 @@ define('bui/uploader/uploader', function (require) {
       _self.set('type', type);
     },
     /**
-     * 获取用户的配置信息
+     * \u83b7\u53d6\u7528\u6237\u7684\u914d\u7f6e\u4fe1\u606f
      */
     _getUserConfig: function(keys){
       var attrVals = this.getAttrVals(),
@@ -1416,7 +1386,7 @@ define('bui/uploader/uploader', function (require) {
       _self.set('uploaderType', uploaderType);
     },
     /**
-     * 初始化Button
+     * \u521d\u59cb\u5316Button
      * @return {[type]} [description]
      */
     _renderButton: function(){
@@ -1433,7 +1403,7 @@ define('bui/uploader/uploader', function (require) {
       button.set('uploader', _self);
     },
     /**
-     * 初始化上传的对列
+     * \u521d\u59cb\u5316\u4e0a\u4f20\u7684\u5bf9\u5217
      * @return {[type]} [description]
      */
     _renderQueue: function(){
@@ -1456,7 +1426,7 @@ define('bui/uploader/uploader', function (require) {
         uploaderType = _self.get('uploaderType');
       button.on('change', function(ev) {
 
-        //对添加的文件添加等待状态
+        //\u5bf9\u6dfb\u52a0\u7684\u6587\u4ef6\u6dfb\u52a0\u7b49\u5f85\u72b6\u6001
         BUI.each(ev.files, function(file){
           BUI.mix(file, {
             wait: true
@@ -1471,10 +1441,10 @@ define('bui/uploader/uploader', function (require) {
       queue.on('itemrendered itemupdated', function(ev) {
         var items = queue.getItemsByStatus('wait');
 
-        //如果有等待的文件则上传第1个
+        //\u5982\u679c\u6709\u7b49\u5f85\u7684\u6587\u4ef6\u5219\u4e0a\u4f20\u7b2c1\u4e2a
         if (items && items.length) {
           _self.uploadFile(items[0]);
-          //如果文件被置为等等状态，则要进行重新上传
+          //\u5982\u679c\u6587\u4ef6\u88ab\u7f6e\u4e3a\u7b49\u7b49\u72b6\u6001\uff0c\u5219\u8981\u8fdb\u884c\u91cd\u65b0\u4e0a\u4f20
         }
       });
     },
@@ -1503,7 +1473,7 @@ define('bui/uploader/uploader', function (require) {
           loadedPercent: loaded * 100 / total
         });
 
-        //设置当前正处于的状态
+        //\u8bbe\u7f6e\u5f53\u524d\u6b63\u5904\u4e8e\u7684\u72b6\u6001
         queue.updateFileStatus(curUploadItem, 'progress');
 
         _self.fire('progress', {item: curUploadItem, total: total, loaded: loaded});
@@ -1513,7 +1483,7 @@ define('bui/uploader/uploader', function (require) {
         var curUploadItem = _self.get('curUploadItem'),
           errorFn = _self.get('error'),
           completeFn = _self.get('complete');
-        //设置对列中完成的文件
+        //\u8bbe\u7f6e\u5bf9\u5217\u4e2d\u5b8c\u6210\u7684\u6587\u4ef6
         queue.updateFileStatus(curUploadItem, 'error');
 
         errorFn && BUI.isFunction(errorFn) && errorFn.call(_self);
@@ -1550,7 +1520,7 @@ define('bui/uploader/uploader', function (require) {
         _self.fire('complete', {item: curUploadItem, result: result});
         _self.set('curUploadItem', null);
 
-        //重新上传其他等待的文件
+        //\u91cd\u65b0\u4e0a\u4f20\u5176\u4ed6\u7b49\u5f85\u7684\u6587\u4ef6
         _self.uploadFiles();
       });
     },
@@ -1560,27 +1530,27 @@ define('bui/uploader/uploader', function (require) {
         uploaderType = _self.get('uploaderType'),
         curUploadItem = _self.get('curUploadItem');
 
-      //如果有文件正等侍上传，而且上传组件当前处理空闲状态，才进行上传
+      //\u5982\u679c\u6709\u6587\u4ef6\u6b63\u7b49\u4f8d\u4e0a\u4f20\uff0c\u800c\u4e14\u4e0a\u4f20\u7ec4\u4ef6\u5f53\u524d\u5904\u7406\u7a7a\u95f2\u72b6\u6001\uff0c\u624d\u8fdb\u884c\u4e0a\u4f20
       if (item && !curUploadItem) {
-        //设置正在上传的状态
+        //\u8bbe\u7f6e\u6b63\u5728\u4e0a\u4f20\u7684\u72b6\u6001
         _self.set('curUploadItem', item);
-        //更新文件的状态
+        //\u66f4\u65b0\u6587\u4ef6\u7684\u72b6\u6001
         queue.updateFileStatus(item, 'start');
         uploaderType.upload(item);
       }
     },
     /**
-     * 上传文件，只对对列中所有wait状态的文件
+     * \u4e0a\u4f20\u6587\u4ef6\uff0c\u53ea\u5bf9\u5bf9\u5217\u4e2d\u6240\u6709wait\u72b6\u6001\u7684\u6587\u4ef6
      * @return {[type]} [description]
      */
     uploadFiles: function () {
       var _self = this,
         queue = _self.get('queue'),
-        //所有文件只有在wait状态才可以上传
+        //\u6240\u6709\u6587\u4ef6\u53ea\u6709\u5728wait\u72b6\u6001\u624d\u53ef\u4ee5\u4e0a\u4f20
         items = queue.getItemsByStatus('wait');
 
       if (items && items.length) {
-        //开始进行对列中的上传
+        //\u5f00\u59cb\u8fdb\u884c\u5bf9\u5217\u4e2d\u7684\u4e0a\u4f20
         _self.uploadFile(items[0]);
       }
     },
@@ -1596,7 +1566,7 @@ define('bui/uploader/uploader', function (require) {
   }, {
     ATTRS: /** @lends Uploader.prototype*/{
       /**
-       * 上传的类型，有ajax,flash,iframe四种
+       * \u4e0a\u4f20\u7684\u7c7b\u578b\uff0c\u6709ajax,flash,iframe\u56db\u79cd
        * @type {String}
        */
       types: {
@@ -1607,7 +1577,7 @@ define('bui/uploader/uploader', function (require) {
         }
       },
       /**
-       * 当前使用的上传类型
+       * \u5f53\u524d\u4f7f\u7528\u7684\u4e0a\u4f20\u7c7b\u578b
        * @type {String}
        */
       type: {
@@ -1620,13 +1590,13 @@ define('bui/uploader/uploader', function (require) {
       queue: {
       },
       /**
-       * 当前上传的状
+       * \u5f53\u524d\u4e0a\u4f20\u7684\u72b6
        * @type {Object}
        */
       uploadStatus: {
       },
       /**
-       * 判断上传是否已经成功
+       * \u5224\u65ad\u4e0a\u4f20\u662f\u5426\u5df2\u7ecf\u6210\u529f
        * @type {Function}
        */
       isSuccess: {
@@ -1653,10 +1623,7 @@ define('bui/uploader/uploader', function (require) {
 
   return Uploader;
 
-});/**
- * @fileoverview 异步文件上传组件入口文件
- * @author 索丘 zengyue.yezy@alibaba-inc.com
- **/
+});
 define('bui/uploader', function (require) {
 
   var BUI = require('bui/common'),

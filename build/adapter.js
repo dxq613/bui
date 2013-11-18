@@ -1,12 +1,12 @@
 /**
- * @fileOverview 兼容kissy 和 jQuery 的适配器
+ * @fileOverview \u517c\u5bb9kissy \u548c jQuery \u7684\u9002\u914d\u5668
  * @ignore
  */
 
 /**
  * @private
  * @class jQuery
- * 原生的jQuery对象或者使用kissy时适配出来的对象
+ * \u539f\u751f\u7684jQuery\u5bf9\u8c61\u6216\u8005\u4f7f\u7528kissy\u65f6\u9002\u914d\u51fa\u6765\u7684\u5bf9\u8c61
  */
 
 var S = KISSY,
@@ -93,7 +93,7 @@ var jQuery = jQuery || (function () {
     bind : NLP.on,
     off : NLP.detach,
     trigger : NLP.fire,
-    //返回的结果不一致
+    //\u8fd4\u56de\u7684\u7ed3\u679c\u4e0d\u4e00\u81f4
     /*children : function(selector){
       return new wrapNode(DOM.children(this[0],selector));
     },*/
@@ -125,12 +125,12 @@ var jQuery = jQuery || (function () {
       });
       return new wrapNode(rst);
     },
-    //返回的结果不一致
+    //\u8fd4\u56de\u7684\u7ed3\u679c\u4e0d\u4e00\u81f4
     find : function(selector){
       return new wrapNode(DOM.query(selector,this[0]));
     },
     /**
-     * 判断是否符合指定的选择器
+     * \u5224\u65ad\u662f\u5426\u7b26\u5408\u6307\u5b9a\u7684\u9009\u62e9\u5668
      */
     is : function(selector){
       var splits = selector.split(','),
@@ -142,43 +142,43 @@ var jQuery = jQuery || (function () {
       };
       return rst;
     },
-    //复写delegate，更改参数顺序
+    //\u590d\u5199delegate\uff0c\u66f4\u6539\u53c2\u6570\u987a\u5e8f
     delegate : function(selector,eventType,fn){
      return wrapNode.superclass.delegate.call(this,eventType,selector,fn);
     },
-    //更改 便遍历函数的顺序
-    //修改this,和对象
+    //\u66f4\u6539 \u4fbf\u904d\u5386\u51fd\u6570\u7684\u987a\u5e8f
+    //\u4fee\u6539this,\u548c\u5bf9\u8c61
     each : function(fn){
       return wrapNode.superclass.each.call(this,function(value,index){
         return fn.call(this[0],index,value[0]);
       });
     },
-    //第一个子元素
+    //\u7b2c\u4e00\u4e2a\u5b50\u5143\u7d20
     first : function(){
       return new wrapNode(this[0]);
     },
-    //查找父节点，jQuery 的parent 和parents 有差异
+    //\u67e5\u627e\u7236\u8282\u70b9\uff0cjQuery \u7684parent \u548cparents \u6709\u5dee\u5f02
     parents : function(selector){
       return this.parent(selector);
     },
-    //最后一个子元素
+    //\u6700\u540e\u4e00\u4e2a\u5b50\u5143\u7d20
     last : function(){
       var length = this.length;
       return new wrapNode(this[length-1]);
     },
     /**
-     * kissy 未提供此方法
+     * kissy \u672a\u63d0\u4f9b\u6b64\u65b9\u6cd5
      */
     offsetParent : function(){
       return new wrapNode(getOffsetParent(this[0]));
     },
-    //参数顺序不一致
+    //\u53c2\u6570\u987a\u5e8f\u4e0d\u4e00\u81f4
     animate : function(properties,speed, easing,callback){
       var params = getDurationParams(speed, easing,callback);
       wrapNode.superclass.animate.call(this,properties,params.duration,params.easing,params.complete);
     },
     /**
-     * kissy 未提供此方法
+     * kissy \u672a\u63d0\u4f9b\u6b64\u65b9\u6cd5
      */
     position : function(){
       var _self = this,
@@ -192,8 +192,8 @@ var jQuery = jQuery || (function () {
       return offset;
     },
     /**
-    * 将表单数据序列化成对象
-    * @return {Object} 表单元素的
+    * \u5c06\u8868\u5355\u6570\u636e\u5e8f\u5217\u5316\u6210\u5bf9\u8c61
+    * @return {Object} \u8868\u5355\u5143\u7d20\u7684
     */
     serializeArray:function(){
       var form = this[0],
@@ -212,7 +212,7 @@ var jQuery = jQuery || (function () {
           (item.checked || /select|textarea/i.test(item.nodeName) ||
             /text|hidden|password/i.test(item.type));
       });
-      //checkbox 做特殊处理，如果所有checkbox都未选中时,设置字段为空
+      //checkbox \u505a\u7279\u6b8a\u5904\u7406\uff0c\u5982\u679c\u6240\u6709checkbox\u90fd\u672a\u9009\u4e2d\u65f6,\u8bbe\u7f6e\u5b57\u6bb5\u4e3a\u7a7a
       checkboxElements = S.filter(originElements,function(item){
         return (item.id ||item.name) && !item.disabled &&(/checkbox/i.test(item.type));
       });
@@ -232,14 +232,14 @@ var jQuery = jQuery || (function () {
     }
   });
 
-  //由于 kissy的动画单位和参数位置跟 jquery的不一致
+  //\u7531\u4e8e kissy\u7684\u52a8\u753b\u5355\u4f4d\u548c\u53c2\u6570\u4f4d\u7f6e\u8ddf jquery\u7684\u4e0d\u4e00\u81f4
   var durationMethods = ['fadeIn','fadeOut','fadeToggle','slideDown','slideUp','slideToggle','show','hide'];
   S.each(durationMethods,function(fnName){
     wrapNode.prototype[fnName] = function(speed, easing,callback){
       excuteDuration(this,NLP[fnName],speed,easing,callback);
     };
   });
-  //jquery上的很多DOM的方法在kissy的Node上不支持
+  //jquery\u4e0a\u7684\u5f88\u591aDOM\u7684\u65b9\u6cd5\u5728kissy\u7684Node\u4e0a\u4e0d\u652f\u6301
   var domMethods = ['change','blur','focus','select'];
   S.each(domMethods,function(fnName){
     wrapNode.prototype[fnName] = function(){
@@ -255,7 +255,7 @@ var jQuery = jQuery || (function () {
     }
   });
 
-  //由于返回的对象的类型是S.Node，所以要更改类型
+  //\u7531\u4e8e\u8fd4\u56de\u7684\u5bf9\u8c61\u7684\u7c7b\u578b\u662fS.Node\uff0c\u6240\u4ee5\u8981\u66f4\u6539\u7c7b\u578b
   var nodeMethods = ['children','parent','next','prev','siblings','closest'];
   S.each(nodeMethods,function(fnName){
     wrapNode.prototype[fnName] = function(selector){
@@ -266,14 +266,14 @@ var jQuery = jQuery || (function () {
   S.mix(wrapNode,S);
   S.mix(wrapNode,{
     /**
-     * 是否包含指定DOM
+     * \u662f\u5426\u5305\u542b\u6307\u5b9aDOM
      */
     contains : function(container, contained){
       return S.DOM.contains(container, contained);
     },
     /**
-     * 实现$.extend
-     * @return {Object} 结果
+     * \u5b9e\u73b0$.extend
+     * @return {Object} \u7ed3\u679c
      */
     extend : function(){
       var args = S.makeArray(arguments),
@@ -291,7 +291,7 @@ var jQuery = jQuery || (function () {
       return obj;
     },
     /**
-     * kissy 的此方法跟 jQuery的接口不一致
+     * kissy \u7684\u6b64\u65b9\u6cd5\u8ddf jQuery\u7684\u63a5\u53e3\u4e0d\u4e00\u81f4
      */
     each : function(elements,fn){
       S.each(elements,function(value,index){
@@ -299,13 +299,13 @@ var jQuery = jQuery || (function () {
       });
     },
     /**
-     * 返回结果不一致
+     * \u8fd4\u56de\u7ed3\u679c\u4e0d\u4e00\u81f4
      */
     inArray : function(elem,arr){
       return S.indexOf(elem,arr);
     },
     /**
-     * jQuery 的map函数将返回为 null 和 undefined的项不返回
+     * jQuery \u7684map\u51fd\u6570\u5c06\u8fd4\u56de\u4e3a null \u548c undefined\u7684\u9879\u4e0d\u8fd4\u56de
      */
     map : function(arr,callback){
       var rst = [];
@@ -319,7 +319,7 @@ var jQuery = jQuery || (function () {
     },
 
     /**
-     * 空操作
+     * \u7a7a\u64cd\u4f5c
      */
     noop : function(){},
     

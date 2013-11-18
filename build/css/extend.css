@@ -564,39 +564,6 @@ ul.bui-select-list {
   margin: 0;
   list-style: none;
 }
-.bui-select .icon {
-  display: inline-block;
-  *display: inline;
-  /* IE7 inline-block hack */
-
-  *zoom: 1;
-  width: 14px;
-  height: 14px;
-  line-height: 14px;
-  vertical-align: text-top;
-  background: url("../img/sprite-469-300.png") no-repeat 14px 14px transparent;
-  *margin-right: .3em;
-}
-.bui-select .icon:last-child {
-  *margin-left: 0;
-}
-.bui-select .icon-white {
-  background-image: url("../img/white_sprite-469-300.png");
-}
-.bui-select .icon-caret-left {
-  background-position: -1px -227px;
-}
-.bui-select .icon-caret-right {
-  background-position: -1px -235px;
-}
-.bui-select .icon-caret-down {
-  background-position: -1px -218px;
-}
-.bui-select .icon-caret {
-  width: 8px;
-  height: 8px;
-  display: inline-block;
-}
 .bui-select .icon-caret {
   vertical-align: middle;
 }

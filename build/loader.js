@@ -1,9 +1,6 @@
-/**
- * @preserve SeaJS - A Module Loader for the Web
- * v1.3.0 | seajs.org | MIT Licensed
- */
-
-
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 /**
  * Base namespace for the framework.
  */
@@ -1501,6 +1498,7 @@ seajs._config = {
   delete seajs._seajs
 
 })(seajs, seajs._config, this)
+
 
 
 var loaderPath = seajs.pluginSDK.util.loaderDir;

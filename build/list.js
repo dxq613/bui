@@ -1,7 +1,6 @@
-/**
- * @fileOverview 列表模块入口文件
- * @ignore
- */
+/*! BUI - v0.1.0 - 2013-11-18
+* https://github.com/dxq613/bui
+* Copyright (c) 2013 dxq613; Licensed MIT */
 ;(function(){
 var BASE = 'bui/list/';
 define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simplelist',BASE + 'listbox'],function (r) {
@@ -23,11 +22,6 @@ define('bui/list',['bui/common',BASE + 'list',BASE + 'listitem',BASE + 'simpleli
   return List;
 });  
 })();
-/**
- * @fileOverview 使用DOM元素作为选项的扩展类
- * @author dxq613@gmail.com
- * @ignore
- */
 
 define('bui/list/domlist',['bui/common'],function (require) {
   'use strict';
@@ -49,7 +43,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
   }
 
   /**
-   * 选项是DOM的列表的视图类
+   * \u9009\u9879\u662fDOM\u7684\u5217\u8868\u7684\u89c6\u56fe\u7c7b
    * @private
    * @class BUI.List.DomList.View
    */
@@ -64,7 +58,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
   domListView.prototype = {
     /**
      * @protected
-     * 清除者列表项的DOM
+     * \u6e05\u9664\u8005\u5217\u8868\u9879\u7684DOM
      */
     clearControl : function(){
       var _self = this,
@@ -73,16 +67,16 @@ define('bui/list/domlist',['bui/common'],function (require) {
       listEl.find('.'+itemCls).remove();
     },
     /**
-     * 添加选项
-     * @param {Object} item  选项值
-     * @param {Number} index 索引
+     * \u6dfb\u52a0\u9009\u9879
+     * @param {Object} item  \u9009\u9879\u503c
+     * @param {Number} index \u7d22\u5f15
      */
     addItem : function(item,index){
       return this._createItem(item,index);
     },
     /**
-     * 获取所有的记录
-     * @return {Array} 记录集合
+     * \u83b7\u53d6\u6240\u6709\u7684\u8bb0\u5f55
+     * @return {Array} \u8bb0\u5f55\u96c6\u5408
      */
     getItems : function(){
       var _self = this,
@@ -94,8 +88,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return rst;
     },
     /**
-     * 更新列表项
-     * @param  {Object} item 选项值
+     * \u66f4\u65b0\u5217\u8868\u9879
+     * @param  {Object} item \u9009\u9879\u503c
      * @ignore
      */
     updateItem : function(item){
@@ -114,7 +108,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return element;
     },
     /**
-     * 移除选项
+     * \u79fb\u9664\u9009\u9879
      * @param  {jQuery} element
      * @ignore
      */
@@ -123,8 +117,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
       $(element).remove();
     },
     /**
-     * 获取列表项的容器
-     * @return {jQuery} 列表项容器
+     * \u83b7\u53d6\u5217\u8868\u9879\u7684\u5bb9\u5668
+     * @return {jQuery} \u5217\u8868\u9879\u5bb9\u5668
      * @protected
      */
     getItemContainer : function  () {
@@ -135,7 +129,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return this.get('el');
     },
     /**
-     * 获取记录的模板,itemTpl 和 数据item 合并产生的模板
+     * \u83b7\u53d6\u8bb0\u5f55\u7684\u6a21\u677f,itemTpl \u548c \u6570\u636eitem \u5408\u5e76\u4ea7\u751f\u7684\u6a21\u677f
      * @protected 
      */
     getItemTpl : function  (item,index) {
@@ -148,7 +142,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       
       return BUI.substitute(itemTpl,item);
     },
-    //创建项
+    //\u521b\u5efa\u9879
     _createItem : function(item,index){
       var _self = this,
         listEl = _self.getItemContainer(),
@@ -171,19 +165,19 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return node;
     },
     /**
-     * 获取列表项对应状态的样式
-     * @param  {String} name 状态名称
-     * @return {String} 状态的样式
+     * \u83b7\u53d6\u5217\u8868\u9879\u5bf9\u5e94\u72b6\u6001\u7684\u6837\u5f0f
+     * @param  {String} name \u72b6\u6001\u540d\u79f0
+     * @return {String} \u72b6\u6001\u7684\u6837\u5f0f
      */
     getItemStatusCls : function(name){
       return getItemStatusCls(name,this);
     },
     /**
-     * 设置列表项选中
+     * \u8bbe\u7f6e\u5217\u8868\u9879\u9009\u4e2d
      * @protected
-     * @param {*} name 状态名称
-     * @param {HTMLElement} element DOM结构
-     * @param {Boolean} value 设置或取消此状态
+     * @param {*} name \u72b6\u6001\u540d\u79f0
+     * @param {HTMLElement} element DOM\u7ed3\u6784
+     * @param {Boolean} value \u8bbe\u7f6e\u6216\u53d6\u6d88\u6b64\u72b6\u6001
      */
     setItemStatusCls : function(name,element,value){
       var _self = this,
@@ -194,10 +188,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
       }
     },
     /**
-     * 是否有某个状态
-     * @param {*} name 状态名称
-     * @param {HTMLElement} element DOM结构
-     * @return {Boolean} 是否具有状态
+     * \u662f\u5426\u6709\u67d0\u4e2a\u72b6\u6001
+     * @param {*} name \u72b6\u6001\u540d\u79f0
+     * @param {HTMLElement} element DOM\u7ed3\u6784
+     * @return {Boolean} \u662f\u5426\u5177\u6709\u72b6\u6001
      */
     hasStatus : function(name,element){
       var _self = this,
@@ -205,10 +199,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return $(element).hasClass(cls);
     },
     /**
-     * 设置列表项选中
-     * @param {*} item   记录
-     * @param {Boolean} selected 是否选中
-     * @param {HTMLElement} element DOM结构
+     * \u8bbe\u7f6e\u5217\u8868\u9879\u9009\u4e2d
+     * @param {*} item   \u8bb0\u5f55
+     * @param {Boolean} selected \u662f\u5426\u9009\u4e2d
+     * @param {HTMLElement} element DOM\u7ed3\u6784
      */
     setItemSelected: function(item,selected,element){
       var _self = this;
@@ -217,8 +211,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
       _self.setItemStatusCls('selected',element,selected);
     },
     /**
-     * 获取所有列表项的DOM结构
-     * @return {Array} DOM列表
+     * \u83b7\u53d6\u6240\u6709\u5217\u8868\u9879\u7684DOM\u7ed3\u6784
+     * @return {Array} DOM\u5217\u8868
      */
     getAllElements : function(){
       var _self = this,
@@ -227,9 +221,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return el.find('.' + itemCls);
     },
     /**
-     * 获取DOM结构中的数据
-     * @param {HTMLElement} element DOM 结构
-     * @return {Object} 该项对应的值
+     * \u83b7\u53d6DOM\u7ed3\u6784\u4e2d\u7684\u6570\u636e
+     * @param {HTMLElement} element DOM \u7ed3\u6784
+     * @return {Object} \u8be5\u9879\u5bf9\u5e94\u7684\u503c
      */
     getItemByElement : function(element){
       var _self = this,
@@ -237,9 +231,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return $(element).data(dataField);
     },
     /**
-     * 根据状态获取第一个DOM 节点
-     * @param {String} name 状态名称
-     * @return {HTMLElement} Dom 节点
+     * \u6839\u636e\u72b6\u6001\u83b7\u53d6\u7b2c\u4e00\u4e2aDOM \u8282\u70b9
+     * @param {String} name \u72b6\u6001\u540d\u79f0
+     * @return {HTMLElement} Dom \u8282\u70b9
      */
     getFirstElementByStatus : function(name){
       var _self = this,
@@ -248,8 +242,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return el.find('.' + cls)[0];
     },
     /**
-     * 根据状态获取DOM
-     * @return {Array} DOM数组
+     * \u6839\u636e\u72b6\u6001\u83b7\u53d6DOM
+     * @return {Array} DOM\u6570\u7ec4
      */
     getElementsByStatus : function(status){
       var _self = this,
@@ -258,9 +252,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return el.find('.' + cls);
     },
     /**
-     * 通过样式查找DOM元素
-     * @param {String} css样式
-     * @return {jQuery} DOM元素的数组对象
+     * \u901a\u8fc7\u6837\u5f0f\u67e5\u627eDOM\u5143\u7d20
+     * @param {String} css\u6837\u5f0f
+     * @return {jQuery} DOM\u5143\u7d20\u7684\u6570\u7ec4\u5bf9\u8c61
      */
     getSelectedElements : function(){
       var _self = this,
@@ -269,7 +263,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return el.find('.' + cls);
     },
     /**
-     * 查找指定的项的DOM结构
+     * \u67e5\u627e\u6307\u5b9a\u7684\u9879\u7684DOM\u7ed3\u6784
      * @param  {Object} item 
      * @return {HTMLElement} element
      */
@@ -287,9 +281,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return result;
     },
     /**
-     * 列表项是否选中
-     * @param  {HTMLElement}  element 是否选中
-     * @return {Boolean}  是否选中
+     * \u5217\u8868\u9879\u662f\u5426\u9009\u4e2d
+     * @param  {HTMLElement}  element \u662f\u5426\u9009\u4e2d
+     * @return {Boolean}  \u662f\u5426\u9009\u4e2d
      */
     isElementSelected : function(element){
       var _self = this,
@@ -298,7 +292,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
     }
   };
 
-  //转换成Object
+  //\u8f6c\u6362\u6210Object
   function parseItem(element,self){
     var attrs = element.attributes,
       itemStatusFields = self.get('itemStatusFields'),
@@ -312,7 +306,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       }
     });
     item.text = $(element).text();
-    //获取状态对应的值
+    //\u83b7\u53d6\u72b6\u6001\u5bf9\u5e94\u7684\u503c
     BUI.each(itemStatusFields,function(v,k){
       var cls = getItemStatusCls(k,self);
       if($(element).hasClass(cls)){
@@ -324,7 +318,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
 
   /**
    * @class BUI.List.DomList
-   * 选项是DOM结构的列表
+   * \u9009\u9879\u662fDOM\u7ed3\u6784\u7684\u5217\u8868
    * @extends BUI.Component.UIBase.List
    * @mixins BUI.Component.UIBase.Selection
    */
@@ -335,7 +329,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
   domList.ATTRS =BUI.merge(true,List.ATTRS,Selection.ATTRS,{
 
     /**
-     * 在DOM节点上存储数据的字段
+     * \u5728DOM\u8282\u70b9\u4e0a\u5b58\u50a8\u6570\u636e\u7684\u5b57\u6bb5
      * @type {String}
      * @protected
      */
@@ -344,7 +338,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         value:'data-item'
     },
     /**
-     * 选项所在容器，如果未设定，使用 el
+     * \u9009\u9879\u6240\u5728\u5bb9\u5668\uff0c\u5982\u679c\u672a\u8bbe\u5b9a\uff0c\u4f7f\u7528 el
      * @type {jQuery}
      * @protected
      */
@@ -352,23 +346,23 @@ define('bui/list/domlist',['bui/common'],function (require) {
         view : true
     },
     /**
-     * 选项状态对应的选项值
+     * \u9009\u9879\u72b6\u6001\u5bf9\u5e94\u7684\u9009\u9879\u503c
      * 
-     *   - 此字段用于将选项记录的值跟显示的DOM状态相对应
-     *   - 例如：下面记录中 <code> checked : true </code>，可以使得此记录对应的DOM上应用对应的状态(默认为 'list-item-checked')
+     *   - \u6b64\u5b57\u6bb5\u7528\u4e8e\u5c06\u9009\u9879\u8bb0\u5f55\u7684\u503c\u8ddf\u663e\u793a\u7684DOM\u72b6\u6001\u76f8\u5bf9\u5e94
+     *   - \u4f8b\u5982\uff1a\u4e0b\u9762\u8bb0\u5f55\u4e2d <code> checked : true </code>\uff0c\u53ef\u4ee5\u4f7f\u5f97\u6b64\u8bb0\u5f55\u5bf9\u5e94\u7684DOM\u4e0a\u5e94\u7528\u5bf9\u5e94\u7684\u72b6\u6001(\u9ed8\u8ba4\u4e3a 'list-item-checked')
      *     <pre><code>{id : '1',text : 1,checked : true}</code></pre>
-     *   - 当更改DOM的状态时，记录中对应的字段属性也会跟着变化
+     *   - \u5f53\u66f4\u6539DOM\u7684\u72b6\u6001\u65f6\uff0c\u8bb0\u5f55\u4e2d\u5bf9\u5e94\u7684\u5b57\u6bb5\u5c5e\u6027\u4e5f\u4f1a\u8ddf\u7740\u53d8\u5316
      * <pre><code>
      *   var list = new List.SimpleList({
      *   render : '#t1',
-     *   idField : 'id', //自定义样式名称
+     *   idField : 'id', //\u81ea\u5b9a\u4e49\u6837\u5f0f\u540d\u79f0
      *   itemStatusFields : {
      *     checked : 'checked',
      *     disabled : 'disabled'
      *   },
      *   items : [{id : '1',text : '1',checked : true},{id : '2',text : '2',disabled : true}]
      * });
-     * list.render(); //列表渲染后，会自动带有checked,和disabled对应的样式
+     * list.render(); //\u5217\u8868\u6e32\u67d3\u540e\uff0c\u4f1a\u81ea\u52a8\u5e26\u6709checked,\u548cdisabled\u5bf9\u5e94\u7684\u6837\u5f0f
      *
      * var item = list.getItem('1');
      * list.hasStatus(item,'checked'); //true
@@ -378,22 +372,22 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * item.checked;                    //false
      * 
      * </code></pre>
-     * ** 注意 **
-     * 此字段跟 {@link #itemStatusCls} 一起使用效果更好，可以自定义对应状态的样式
+     * ** \u6ce8\u610f **
+     * \u6b64\u5b57\u6bb5\u8ddf {@link #itemStatusCls} \u4e00\u8d77\u4f7f\u7528\u6548\u679c\u66f4\u597d\uff0c\u53ef\u4ee5\u81ea\u5b9a\u4e49\u5bf9\u5e94\u72b6\u6001\u7684\u6837\u5f0f
      * @cfg {Object} itemStatusFields
      */
     itemStatusFields : {
       value : {}
     },
     /**
-     * 项的样式，用来获取子项
+     * \u9879\u7684\u6837\u5f0f\uff0c\u7528\u6765\u83b7\u53d6\u5b50\u9879
      * @cfg {Object} itemCls
      */
     itemCls : {
       view : true
     },        
     /**
-     * 获取项的文本，默认获取显示的文本
+     * \u83b7\u53d6\u9879\u7684\u6587\u672c\uff0c\u9ed8\u8ba4\u83b7\u53d6\u663e\u793a\u7684\u6587\u672c
      * @type {Object}
      * @protected
      */
@@ -401,7 +395,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
 
     },
     /**
-     * 默认的加载控件内容的配置,默认值：
+     * \u9ed8\u8ba4\u7684\u52a0\u8f7d\u63a7\u4ef6\u5185\u5bb9\u7684\u914d\u7f6e,\u9ed8\u8ba4\u503c\uff1a
      * <pre>
      *  {
      *   property : 'items',
@@ -419,55 +413,55 @@ define('bui/list/domlist',['bui/common'],function (require) {
     events : {
       value : {
         /**
-         * 选项对应的DOM创建完毕
+         * \u9009\u9879\u5bf9\u5e94\u7684DOM\u521b\u5efa\u5b8c\u6bd5
          * @event
-         * @param {Object} e 事件对象
-         * @param {Object} e.item 渲染DOM对应的选项
-         * @param {HTMLElement} e.element 渲染的DOM对象
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} e.item \u6e32\u67d3DOM\u5bf9\u5e94\u7684\u9009\u9879
+         * @param {HTMLElement} e.element \u6e32\u67d3\u7684DOM\u5bf9\u8c61
          */
         'itemrendered' : true,
         /**
          * @event
-         * 删除选项
-         * @param {Object} e 事件对象
-         * @param {Object} e.item 删除DOM对应的选项
-         * @param {HTMLElement} e.element 删除的DOM对象
+         * \u5220\u9664\u9009\u9879
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} e.item \u5220\u9664DOM\u5bf9\u5e94\u7684\u9009\u9879
+         * @param {HTMLElement} e.element \u5220\u9664\u7684DOM\u5bf9\u8c61
          */
         'itemremoved' : true,
         /**
          * @event
-         * 更新选项
-         * @param {Object} e 事件对象
-         * @param {Object} e.item 更新DOM对应的选项
-         * @param {HTMLElement} e.element 更新的DOM对象
+         * \u66f4\u65b0\u9009\u9879
+         * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} e.item \u66f4\u65b0DOM\u5bf9\u5e94\u7684\u9009\u9879
+         * @param {HTMLElement} e.element \u66f4\u65b0\u7684DOM\u5bf9\u8c61
          */
         'itemupdated' : true,
         /**
-        * 设置记录时，所有的记录显示完毕后触发
+        * \u8bbe\u7f6e\u8bb0\u5f55\u65f6\uff0c\u6240\u6709\u7684\u8bb0\u5f55\u663e\u793a\u5b8c\u6bd5\u540e\u89e6\u53d1
         * @event
         */
         'itemsshow' : false,
         /**
-        * 设置记录后，所有的记录显示前触发
+        * \u8bbe\u7f6e\u8bb0\u5f55\u540e\uff0c\u6240\u6709\u7684\u8bb0\u5f55\u663e\u793a\u524d\u89e6\u53d1
         * @event:
         */
         'beforeitemsshow' : false,
         /**
-        * 清空所有记录，DOM清理完成后
+        * \u6e05\u7a7a\u6240\u6709\u8bb0\u5f55\uff0cDOM\u6e05\u7406\u5b8c\u6210\u540e
         * @event
         */
         'itemsclear' : false,
         /**
-         * 双击是触发
+         * \u53cc\u51fb\u662f\u89e6\u53d1
         * @event
-        * @param {Object} e 事件对象
-        * @param {Object} e.item DOM对应的选项
-        * @param {HTMLElement} e.element 选项的DOM对象
-        * @param {HTMLElement} e.domTarget 点击的元素
+        * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+        * @param {Object} e.item DOM\u5bf9\u5e94\u7684\u9009\u9879
+        * @param {HTMLElement} e.element \u9009\u9879\u7684DOM\u5bf9\u8c61
+        * @param {HTMLElement} e.domTarget \u70b9\u51fb\u7684\u5143\u7d20
         */
         'itemdblclick' : false,
         /**
-        * 清空所有Dom前触发
+        * \u6e05\u7a7a\u6240\u6709Dom\u524d\u89e6\u53d1
         * @event
         */
         'beforeitemsclear' : false
@@ -499,10 +493,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
 
   BUI.augment(domList,List,Selection,{
      
-    //设置记录
+    //\u8bbe\u7f6e\u8bb0\u5f55
     _uiSetItems : function (items) {
       var _self = this;
-      //使用srcNode 的方式，不同步
+      //\u4f7f\u7528srcNode \u7684\u65b9\u5f0f\uff0c\u4e0d\u540c\u6b65
       if(_self.get('srcNode') && !_self.get('rendered')){
         return;
       }
@@ -515,12 +509,12 @@ define('bui/list/domlist',['bui/common'],function (require) {
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'click',function(ev){
-        if(_self.get('disabled')){ //控件禁用后，阻止事件
+        if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
           return;
         }
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
-        if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
+        if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
           return;
         }
         var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target});
@@ -528,14 +522,14 @@ define('bui/list/domlist',['bui/common'],function (require) {
           setItemSelectedStatus(item,itemEl); 
         }
       });
-      if(selectedEvent !== 'click'){ //如果选中事件不等于click，则进行监听选中
+      if(selectedEvent !== 'click'){ //\u5982\u679c\u9009\u4e2d\u4e8b\u4ef6\u4e0d\u7b49\u4e8eclick\uff0c\u5219\u8fdb\u884c\u76d1\u542c\u9009\u4e2d
         itemContainer.delegate('.'+itemCls,selectedEvent,function(ev){
-          if(_self.get('disabled')){ //控件禁用后，阻止事件
+          if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
             return;
           }
           var itemEl = $(ev.currentTarget),
             item = _self.getItemByElement(itemEl);
-          if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
+          if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
             return;
           }
           if(_self.isItemSelectable(item)){
@@ -546,12 +540,12 @@ define('bui/list/domlist',['bui/common'],function (require) {
       }
 
       itemContainer.delegate('.' + itemCls,'dblclick',function(ev){
-        if(_self.get('disabled')){ //控件禁用后，阻止事件
+        if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
           return;
         }
         var itemEl = $(ev.currentTarget),
           item = _self.getItemByElement(itemEl);
-        if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
+        if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
           return;
         }
         _self.fire('itemdblclick',{item:item,element : itemEl[0],domTarget:ev.target});
@@ -576,11 +570,11 @@ define('bui/list/domlist',['bui/common'],function (require) {
         _self._syncItemStatus(item,element);
       });
     },
-    //获取值，通过字段
+    //\u83b7\u53d6\u503c\uff0c\u901a\u8fc7\u5b57\u6bb5
     getValueByField : function(item,field){
       return item && item[field];
     }, 
-    //同步选项状态
+    //\u540c\u6b65\u9009\u9879\u72b6\u6001
     _syncItemStatus : function(item,element){
       var _self = this,
         itemStatusFields = _self.get('itemStatusFields');
@@ -592,9 +586,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
     },
     /**
      * @protected
-     * 获取记录中的状态值，未定义则为undefined
-     * @param  {Object} item  记录
-     * @param  {String} status 状态名
+     * \u83b7\u53d6\u8bb0\u5f55\u4e2d\u7684\u72b6\u6001\u503c\uff0c\u672a\u5b9a\u4e49\u5219\u4e3aundefined
+     * @param  {Object} item  \u8bb0\u5f55
+     * @param  {String} status \u72b6\u6001\u540d
      * @return {Boolean|undefined}  
      */
     getStatusValue : function(item,status){
@@ -604,18 +598,18 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return item[field];
     },
     /**
-     * 获取选项数量
-     * @return {Number} 选项数量
+     * \u83b7\u53d6\u9009\u9879\u6570\u91cf
+     * @return {Number} \u9009\u9879\u6570\u91cf
      */
     getCount : function(){
       var items = this.getItems();
       return items ? items.length : 0;
     },
     /**
-     * 更改状态值对应的字段
+     * \u66f4\u6539\u72b6\u6001\u503c\u5bf9\u5e94\u7684\u5b57\u6bb5
      * @protected
-     * @param  {String} status 状态名
-     * @return {String} 状态对应的字段
+     * @param  {String} status \u72b6\u6001\u540d
+     * @return {String} \u72b6\u6001\u5bf9\u5e94\u7684\u5b57\u6bb5
      */
     getStatusField : function(status){
       var _self = this,
@@ -623,11 +617,11 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return itemStatusFields[status];
     },
     /**
-     * 设置记录状态值
+     * \u8bbe\u7f6e\u8bb0\u5f55\u72b6\u6001\u503c
      * @protected
-     * @param  {Object} item  记录
-     * @param  {String} status 状态名
-     * @param {Boolean} value 状态值
+     * @param  {Object} item  \u8bb0\u5f55
+     * @param  {String} status \u72b6\u6001\u540d
+     * @param {Boolean} value \u72b6\u6001\u503c
      */
     setStatusValue : function(item,status,value){
       var _self = this,
@@ -639,7 +633,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
     },
     /**
      * @ignore
-     * 获取选项文本
+     * \u83b7\u53d6\u9009\u9879\u6587\u672c
      */
     getItemText : function(item){
       var _self = this,
@@ -655,8 +649,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
       }
     },
     /**
-     * 删除项
-     * @param  {Object} item 选项记录
+     * \u5220\u9664\u9879
+     * @param  {Object} item \u9009\u9879\u8bb0\u5f55
      * @ignore
      */
     removeItem : function (item) {
@@ -672,9 +666,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       _self.fire('itemremoved',{item:item,domTarget: $(element)[0],element : element});
     },
     /**
-     * 在指定位置添加选项,选项值为一个对象
-     * @param {Object} item 选项
-     * @param {Number} index 索引
+     * \u5728\u6307\u5b9a\u4f4d\u7f6e\u6dfb\u52a0\u9009\u9879,\u9009\u9879\u503c\u4e3a\u4e00\u4e2a\u5bf9\u8c61
+     * @param {Object} item \u9009\u9879
+     * @param {Number} index \u7d22\u5f15
      * @ignore
      */
     addItemAt : function(item,index) {
@@ -689,9 +683,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
     }, 
     /**
      * @protected
-     * 直接在View上显示
-     * @param {Object} item 选项
-     * @param {Number} index 索引
+     * \u76f4\u63a5\u5728View\u4e0a\u663e\u793a
+     * @param {Object} item \u9009\u9879
+     * @param {Number} index \u7d22\u5f15
      * 
      */
     addItemToView : function(item,index){
@@ -701,8 +695,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return element;
     },
     /**
-     * 更新列表项
-     * @param  {Object} item 选项值
+     * \u66f4\u65b0\u5217\u8868\u9879
+     * @param  {Object} item \u9009\u9879\u503c
      * @ignore
      */
     updateItem : function(item){
@@ -711,20 +705,20 @@ define('bui/list/domlist',['bui/common'],function (require) {
       _self.fire('itemupdated',{item : item,domTarget : $(element)[0],element : element});
     },
     /**
-     * 设置列表记录
+     * \u8bbe\u7f6e\u5217\u8868\u8bb0\u5f55
      * <pre><code>
      *   list.setItems(items);
-     *   //等同 
+     *   //\u7b49\u540c 
      *   list.set('items',items);
      * </code></pre>
-     * @param {Array} items 列表记录
+     * @param {Array} items \u5217\u8868\u8bb0\u5f55
      */
     setItems : function(items){
       var _self = this;
       if(items != _self.getItems()){
         _self.setInternal('items',items);
       }
-      //清理子控件
+      //\u6e05\u7406\u5b50\u63a7\u4ef6
       _self.clearControl();
       _self.fire('beforeitemsshow');
       BUI.each(items,function(item,index){
@@ -733,8 +727,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
       _self.fire('itemsshow');
     },
     /**
-     * 获取所有选项
-     * @return {Array} 选项集合
+     * \u83b7\u53d6\u6240\u6709\u9009\u9879
+     * @return {Array} \u9009\u9879\u96c6\u5408
      * @override
      * @ignore
      */
@@ -743,37 +737,37 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return this.get('items');
     },
      /**
-     * 获取DOM结构中的数据
+     * \u83b7\u53d6DOM\u7ed3\u6784\u4e2d\u7684\u6570\u636e
      * @protected
-     * @param {HTMLElement} element DOM 结构
-     * @return {Object} 该项对应的值
+     * @param {HTMLElement} element DOM \u7ed3\u6784
+     * @return {Object} \u8be5\u9879\u5bf9\u5e94\u7684\u503c
      */
     getItemByElement : function(element){
       return this.get('view').getItemByElement(element);
     },
     /**
-     * 获取选中的第一项,
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u7b2c\u4e00\u9879,
      * <pre><code>
-     * var item = list.getSelected(); //多选模式下第一条
+     * var item = list.getSelected(); //\u591a\u9009\u6a21\u5f0f\u4e0b\u7b2c\u4e00\u6761
      * </code></pre>
-     * @return {Object} 选中的第一项或者为null
+     * @return {Object} \u9009\u4e2d\u7684\u7b2c\u4e00\u9879\u6216\u8005\u4e3anull
      */
-    getSelected : function(){ //this.getSelection()[0] 的方式效率太低
+    getSelected : function(){ //this.getSelection()[0] \u7684\u65b9\u5f0f\u6548\u7387\u592a\u4f4e
       var _self = this,
         element = _self.get('view').getFirstElementByStatus('selected');
         return _self.getItemByElement(element) || null;
     },
     /**
-     * 根据状态获取选项
+     * \u6839\u636e\u72b6\u6001\u83b7\u53d6\u9009\u9879
      * <pre><code>
-     *   //设置状态
+     *   //\u8bbe\u7f6e\u72b6\u6001
      *   list.setItemStatus(item,'active');
      *   
-     *   //获取'active'状态的选项
+     *   //\u83b7\u53d6'active'\u72b6\u6001\u7684\u9009\u9879
      *   list.getItemsByStatus('active');
      * </code></pre>
-     * @param  {String} status 状态名
-     * @return {Array}  选项组集合
+     * @param  {String} status \u72b6\u6001\u540d
+     * @return {Array}  \u9009\u9879\u7ec4\u96c6\u5408
      */
     getItemsByStatus : function(status){
       var _self = this,
@@ -785,9 +779,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return rst;
     },
     /**
-     * 查找指定的项的DOM结构
+     * \u67e5\u627e\u6307\u5b9a\u7684\u9879\u7684DOM\u7ed3\u6784
      * <pre><code>
-     *   var item = list.getItem('2'); //获取选项
+     *   var item = list.getItem('2'); //\u83b7\u53d6\u9009\u9879
      *   var element = list.findElement(item);
      *   $(element).addClass('xxx');
      * </code></pre>
@@ -826,7 +820,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       //_self.afterSelected(item,selected,element);
     },
     /**
-     * 设置所有选项选中
+     * \u8bbe\u7f6e\u6240\u6709\u9009\u9879\u9009\u4e2d
      * @ignore
      */
     setAllSelection : function(){
@@ -835,7 +829,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       _self.setSelection(items);
     },
     /**
-     * 选项是否被选中
+     * \u9009\u9879\u662f\u5426\u88ab\u9009\u4e2d
      * <pre><code>
      *   var item = list.getItem('2');
      *   if(list.isItemSelected(item)){
@@ -843,8 +837,8 @@ define('bui/list/domlist',['bui/common'],function (require) {
      *   }
      * </code></pre>
      * @override
-     * @param  {Object}  item 选项
-     * @return {Boolean}  是否选中
+     * @param  {Object}  item \u9009\u9879
+     * @return {Boolean}  \u662f\u5426\u9009\u4e2d
      */
     isItemSelected : function(item,element){
       var _self = this;
@@ -853,39 +847,39 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return _self.get('view').isElementSelected(element);
     },
     /**
-     * 是否选项被禁用
+     * \u662f\u5426\u9009\u9879\u88ab\u7981\u7528
      * <pre><code>
      * var item = list.getItem('2');
-     * if(list.isItemDisabled(item)){ //如果选项禁用
+     * if(list.isItemDisabled(item)){ //\u5982\u679c\u9009\u9879\u7981\u7528
      *   //do something
      * }
      * </code></pre>
-     * @param {Object} item 选项
-     * @return {Boolean} 选项是否禁用
+     * @param {Object} item \u9009\u9879
+     * @return {Boolean} \u9009\u9879\u662f\u5426\u7981\u7528
      */
     isItemDisabled : function(item,element){
       return this.hasStatus(item,'disabled',element);
     },
     /**
-     * 设置选项禁用
+     * \u8bbe\u7f6e\u9009\u9879\u7981\u7528
      * <pre><code>
      * var item = list.getItem('2');
-     * list.setItemDisabled(item,true);//设置选项禁用，会在DOM上添加 itemCls + 'disabled'的样式
-     * list.setItemDisabled(item,false); //取消禁用，可以用{@link #itemStatusCls} 来替换样式
+     * list.setItemDisabled(item,true);//\u8bbe\u7f6e\u9009\u9879\u7981\u7528\uff0c\u4f1a\u5728DOM\u4e0a\u6dfb\u52a0 itemCls + 'disabled'\u7684\u6837\u5f0f
+     * list.setItemDisabled(item,false); //\u53d6\u6d88\u7981\u7528\uff0c\u53ef\u4ee5\u7528{@link #itemStatusCls} \u6765\u66ff\u6362\u6837\u5f0f
      * </code></pre>
-     * @param {Object} item 选项
+     * @param {Object} item \u9009\u9879
      */
     setItemDisabled : function(item,disabled){
       
       var _self = this;
       /*if(disabled){
-        //清除选择
+        //\u6e05\u9664\u9009\u62e9
         _self.setItemSelected(item,false);
       }*/
       _self.setItemStatus(item,'disabled',disabled);
     },
     /**
-     * 获取选中的项的值
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u9879\u7684\u503c
      * @override
      * @return {Array} 
      * @ignore
@@ -902,7 +896,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
     /**
      * @protected
      * @override
-     * 清除者列表项的DOM
+     * \u6e05\u9664\u8005\u5217\u8868\u9879\u7684DOM
      */
     clearControl : function(){
       this.fire('beforeitemsclear');
@@ -910,7 +904,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       this.fire('itemsclear');
     },
     /**
-     * 选项是否存在某种状态
+     * \u9009\u9879\u662f\u5426\u5b58\u5728\u67d0\u79cd\u72b6\u6001
      * <pre><code>
      * var item = list.getItem('2');
      * list.setItemStatus(item,'active',true);
@@ -919,10 +913,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * list.setItemStatus(item,'active',false);
      * list.hasStatus(item,'false'); //true
      * </code></pre>
-     * @param {*} item 选项
-     * @param {String} status 状态名称，如selected,hover,open等等
-     * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
-     * @return {Boolean} 是否具有某种状态
+     * @param {*} item \u9009\u9879
+     * @param {String} status \u72b6\u6001\u540d\u79f0\uff0c\u5982selected,hover,open\u7b49\u7b49
+     * @param {HTMLElement} [element] \u9009\u9879\u5bf9\u5e94\u7684Dom\uff0c\u653e\u7f6e\u53cd\u590d\u67e5\u627e
+     * @return {Boolean} \u662f\u5426\u5177\u6709\u67d0\u79cd\u72b6\u6001
      */
     hasStatus : function(item,status,element){
       if(!item){
@@ -937,7 +931,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
       return _self.get('view').hasStatus(status,element);
     },
     /**
-     * 设置选项状态,可以设置任何自定义状态
+     * \u8bbe\u7f6e\u9009\u9879\u72b6\u6001,\u53ef\u4ee5\u8bbe\u7f6e\u4efb\u4f55\u81ea\u5b9a\u4e49\u72b6\u6001
      * <pre><code>
      * var item = list.getItem('2');
      * list.setItemStatus(item,'active',true);
@@ -946,10 +940,10 @@ define('bui/list/domlist',['bui/common'],function (require) {
      * list.setItemStatus(item,'active',false);
      * list.hasStatus(item,'false'); //true
      * </code></pre>
-     * @param {*} item 选项
-     * @param {String} status 状态名称
-     * @param {Boolean} value 状态值，true,false
-     * @param {HTMLElement} [element] 选项对应的Dom，放置反复查找
+     * @param {*} item \u9009\u9879
+     * @param {String} status \u72b6\u6001\u540d\u79f0
+     * @param {Boolean} value \u72b6\u6001\u503c\uff0ctrue,false
+     * @param {HTMLElement} [element] \u9009\u9879\u5bf9\u5e94\u7684Dom\uff0c\u653e\u7f6e\u53cd\u590d\u67e5\u627e
      */
     setItemStatus : function(item,status,value,element){
       var _self = this;
@@ -957,9 +951,9 @@ define('bui/list/domlist',['bui/common'],function (require) {
         element = element || _self.findElement(item);
       }
       
-      if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //禁用后，阻止添加任何状态变化
+      if(!_self.isItemDisabled(item,element) || status === 'disabled'){ //\u7981\u7528\u540e\uff0c\u963b\u6b62\u6dfb\u52a0\u4efb\u4f55\u72b6\u6001\u53d8\u5316
         if(item){
-          if(status === 'disabled' && value){ //禁用，同时清理其他状态
+          if(status === 'disabled' && value){ //\u7981\u7528\uff0c\u540c\u65f6\u6e05\u7406\u5176\u4ed6\u72b6\u6001
             _self.clearItemStatus(item);
           }
           _self.setStatusValue(item,status,value);
@@ -967,15 +961,15 @@ define('bui/list/domlist',['bui/common'],function (require) {
           _self.fire('itemstatuschange',{item : item,status : status,value : value,element : element});
         }
         
-        if(status === 'selected'){ //处理选中
+        if(status === 'selected'){ //\u5904\u7406\u9009\u4e2d
           _self.afterSelected(item,value,element);
         }
       }
       
     },
     /**
-     * 清除所有选项状态,如果指定清除的状态名，则清除指定的，否则清除所有状态
-     * @param {Object} item 选项
+     * \u6e05\u9664\u6240\u6709\u9009\u9879\u72b6\u6001,\u5982\u679c\u6307\u5b9a\u6e05\u9664\u7684\u72b6\u6001\u540d\uff0c\u5219\u6e05\u9664\u6307\u5b9a\u7684\uff0c\u5426\u5219\u6e05\u9664\u6240\u6709\u72b6\u6001
+     * @param {Object} item \u9009\u9879
      */
     clearItemStatus : function(item,status,element){
       var _self = this,
@@ -991,7 +985,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         if(!itemStatusFields['selected']){
           _self.setItemSelected(item,false);
         }
-        //移除hover状态
+        //\u79fb\u9664hover\u72b6\u6001
         _self.setItemStatus(item,'hover',false);
       }
       
@@ -1001,23 +995,18 @@ define('bui/list/domlist',['bui/common'],function (require) {
   domList.View = domListView;
 
   return domList;
-});/**
- * @fileOverview 列表选项，使用键盘导航
- * @author dxq613@gmail.com
- * @ignore
- */
-
+});
 define('bui/list/keynav',function () {
   'use strict';
   /**
    * @class BUI.List.KeyNav
-   * 列表导航扩展类
+   * \u5217\u8868\u5bfc\u822a\u6269\u5c55\u7c7b
    */
   var  KeyNav = function(){};
 
   KeyNav.ATTRS = {
     /**
-     * 选项高亮使用的状态,有些场景下，使用selected更合适
+     * \u9009\u9879\u9ad8\u4eae\u4f7f\u7528\u7684\u72b6\u6001,\u6709\u4e9b\u573a\u666f\u4e0b\uff0c\u4f7f\u7528selected\u66f4\u5408\u9002
      * @cfg {String} [highlightedStatus='hover']
      */
     highlightedStatus : {
@@ -1028,9 +1017,9 @@ define('bui/list/keynav',function () {
   BUI.augment(KeyNav,{
 
     /**
-     * 设置选项高亮，默认使用 'hover' 状态
-     * @param  {Object} item 选项
-     * @param  {Boolean} value 状态值，true,false
+     * \u8bbe\u7f6e\u9009\u9879\u9ad8\u4eae\uff0c\u9ed8\u8ba4\u4f7f\u7528 'hover' \u72b6\u6001
+     * @param  {Object} item \u9009\u9879
+     * @param  {Boolean} value \u72b6\u6001\u503c\uff0ctrue,false
      * @protected
      */
     setHighlighted : function(item,element){
@@ -1055,7 +1044,7 @@ define('bui/list/keynav',function () {
       return element;
     },
     /**
-     * 获取高亮的选项
+     * \u83b7\u53d6\u9ad8\u4eae\u7684\u9009\u9879
      * @return {Object} item
      * @protected
      */
@@ -1066,8 +1055,8 @@ define('bui/list/keynav',function () {
       return _self.getItemByElement(element) || null;
     },
     /**
-     * 获取列数
-     * @return {Number} 选项的列数,默认为1列
+     * \u83b7\u53d6\u5217\u6570
+     * @return {Number} \u9009\u9879\u7684\u5217\u6570,\u9ed8\u8ba4\u4e3a1\u5217
      * @protected
      */
     getColumnCount : function(){
@@ -1081,9 +1070,9 @@ define('bui/list/keynav',function () {
       return 1;
     },
     /**
-     * 获取选项的行数 ，总数/列数 = list.getCount / column
+     * \u83b7\u53d6\u9009\u9879\u7684\u884c\u6570 \uff0c\u603b\u6570/\u5217\u6570 = list.getCount / column
      * @protected
-     * @return {Number} 选项行数
+     * @return {Number} \u9009\u9879\u884c\u6570
      */
     getRowCount : function(columns){
       var _self = this;
@@ -1092,7 +1081,7 @@ define('bui/list/keynav',function () {
     },
     _getNextItem : function(forward,skip,count){
       var _self = this,
-        currentIndx = _self._getCurrentIndex(),//默认第一行
+        currentIndx = _self._getCurrentIndex(),//\u9ed8\u8ba4\u7b2c\u4e00\u884c
         itemCount = _self.getCount(),
         factor = forward ? 1 : -1,
         nextIndex; 
@@ -1103,7 +1092,7 @@ define('bui/list/keynav',function () {
         skip = skip * factor;
       }
       nextIndex = (currentIndx + skip + count) % count;
-      if(nextIndex > itemCount - 1){ //如果位置超出索引位置
+      if(nextIndex > itemCount - 1){ //\u5982\u679c\u4f4d\u7f6e\u8d85\u51fa\u7d22\u5f15\u4f4d\u7f6e
         if(forward){
           nextIndex = nextIndex -  (itemCount - 1);
         }else{
@@ -1113,61 +1102,61 @@ define('bui/list/keynav',function () {
       }
       return _self.getItemAt(nextIndex);
     },
-    //获取左边一项
+    //\u83b7\u53d6\u5de6\u8fb9\u4e00\u9879
     _getLeftItem : function(){
       var _self = this,
         count = _self.getCount(),
         column = _self.getColumnCount();
-      if(!count || column <= 1){ //单列时,或者为0时
+      if(!count || column <= 1){ //\u5355\u5217\u65f6,\u6216\u8005\u4e3a0\u65f6
         return null;
       }
       return _self._getNextItem(false,1,count);
     },
-    //获取当前项
+    //\u83b7\u53d6\u5f53\u524d\u9879
     _getCurrentItem : function(){
       return this.getHighlighted();
     },
-    //获取当前项
+    //\u83b7\u53d6\u5f53\u524d\u9879
     _getCurrentIndex : function(){
       var _self = this,
         item = _self._getCurrentItem();
       return this.indexOfItem(item);
     },
-    //获取右边一项
+    //\u83b7\u53d6\u53f3\u8fb9\u4e00\u9879
     _getRightItem : function(){
       var _self = this,
         count = _self.getCount(),
         column = _self.getColumnCount();
-      if(!count || column <= 1){ //单列时,或者为0时
+      if(!count || column <= 1){ //\u5355\u5217\u65f6,\u6216\u8005\u4e3a0\u65f6
         return null;
       }
       return this._getNextItem(true,1,count);
     },
-    //获取下面一项
+    //\u83b7\u53d6\u4e0b\u9762\u4e00\u9879
     _getDownItem : function(){
       var _self = this,
         columns = _self.getColumnCount(),
         rows = _self.getRowCount(columns);
-      if(rows <= 1){ //单行或者为0时
+      if(rows <= 1){ //\u5355\u884c\u6216\u8005\u4e3a0\u65f6
         return null;
       }
       return  this._getNextItem(true,columns,columns * rows);
 
     },
-    //获取上面一项
+    //\u83b7\u53d6\u4e0a\u9762\u4e00\u9879
     _getUpperItem : function(){
       var _self = this,
         columns = _self.getColumnCount(),
         rows = _self.getRowCount(columns);
-      if(rows <= 1){ //单行或者为0时
+      if(rows <= 1){ //\u5355\u884c\u6216\u8005\u4e3a0\u65f6
         return null;
       }
       return this._getNextItem(false,columns,columns * rows);
     },
     /**
-     * 处理向上导航
+     * \u5904\u7406\u5411\u4e0a\u5bfc\u822a
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavUp : function (ev) {
 
@@ -1176,35 +1165,35 @@ define('bui/list/keynav',function () {
       _self.setHighlighted(upperItem);
     },
     /**
-     * 处理向下导航
+     * \u5904\u7406\u5411\u4e0b\u5bfc\u822a
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavDown : function (ev) {
       
       this.setHighlighted(this._getDownItem());
     },
     /**
-     * 处理向左导航
+     * \u5904\u7406\u5411\u5de6\u5bfc\u822a
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavLeft : function (ev) {
       this.setHighlighted(this._getLeftItem());
     },
     
     /**
-     * 处理向右导航
+     * \u5904\u7406\u5411\u53f3\u5bfc\u822a
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavRight : function (ev) {
       this.setHighlighted(this._getRightItem());
     },
     /**
-     * 处理确认键
+     * \u5904\u7406\u786e\u8ba4\u952e
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavEnter : function (ev) {
       var _self = this,
@@ -1217,16 +1206,16 @@ define('bui/list/keynav',function () {
       }
     },
     /**
-     * 处理 esc 键
+     * \u5904\u7406 esc \u952e
      * @protected
-     * @param  {jQuery.Event} ev 事件对象
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavEsc : function (ev) {
-      this.setHighlighted(null); //移除
+      this.setHighlighted(null); //\u79fb\u9664
     },
     /**
-     * 处理Tab键
-     * @param  {jQuery.Event} ev 事件对象
+     * \u5904\u7406Tab\u952e
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
      */
     handleNavTab : function(ev){
       this.setHighlighted(this._getRightItem());
@@ -1235,96 +1224,12 @@ define('bui/list/keynav',function () {
   });
 
   return KeyNav;
-});/**
- * @fileOverview 列表排序
- * @ignore
- */
-
-define('bui/list/sortable',['bui/common','bui/data'],function (require) {
-
-  var BUI = require('bui/common'),
-    DataSortable = require('bui/data').Sortable;
-
-  /**
-   * @class BUI.List.Sortable
-   * 列表排序的扩展
-   * @extends BUI.Data.Sortable
-   */
-  var Sortable = function(){
-
-  };
-
-
-
-  Sortable.ATTRS = BUI.merge(true,DataSortable.ATTRS, {
-
-  });
-
-  BUI.augment(Sortable,DataSortable,{
-    
-    /**
-     * @protected
-     * @override
-     * @ignore
-     * 覆写比较方法
-     */
-    compare : function(obj1,obj2,field,direction){
-      var _self = this,
-        dir;
-      field = field || _self.get('sortField');
-      direction = direction || _self.get('sortDirection');
-      //如果未指定排序字段，或方向，则按照默认顺序
-      if(!field || !direction){
-        return 1;
-      }
-      dir = direction === 'ASC' ? 1 : -1;
-      if(!$.isPlainObject(obj1)){
-        obj1 = _self.getItemByElement(obj1);
-      }
-      if(!$.isPlainObject(obj2)){
-        obj2 = _self.getItemByElement(obj2);
-      }
-
-      return _self.get('compareFunction')(obj1[field],obj2[field]) * dir;
-    },
-    /**
-     * 获取排序的集合
-     * @protected
-     * @return {Array} 排序集合
-     */
-    getSortData : function(){
-      return this.get('view').getAllElements();
-    },
-    /**
-     * 列表排序
-     * @param  {string} field  字段名
-     * @param  {string} direction 排序方向 ASC,DESC
-     */
-    sort : function(field,direction){
-      var _self = this,
-        sortedElements = _self.sortData(field,direction),
-        itemContainer = _self.get('view').getItemContainer();
-      if(!_self.get('store')){
-        _self.sortData(field,direction,_self.get('items'));
-      }
-      BUI.each(sortedElements,function(el){
-        $(el).appendTo(itemContainer);
-      });
-    }
-
-  });
-
-  return Sortable;
-});/**
- * @fileOverview 简单列表，直接使用DOM作为列表项
- * @ignore
- */
-
+});
 define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav','bui/list/sortable'],function (require) {
 
   /**
    * @name BUI.List
-   * @namespace 列表命名空间
+   * @namespace \u5217\u8868\u547d\u540d\u7a7a\u95f4
    * @ignore
    */
   var BUI = require('bui/common'),
@@ -1336,7 +1241,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
   
   /**
    * @class BUI.List.SimpleListView
-   * 简单列表视图类
+   * \u7b80\u5355\u5217\u8868\u89c6\u56fe\u7c7b
    * @extends BUI.Component.View
    */
   var simpleListView = BUI.Component.View.extend([DomList.View],{
@@ -1360,14 +1265,14 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
   });
 
   /**
-   * 简单列表，用于显示简单数据
+   * \u7b80\u5355\u5217\u8868\uff0c\u7528\u4e8e\u663e\u793a\u7b80\u5355\u6570\u636e
    * <p>
    * <img src="../assets/img/class-list.jpg"/>
    * </p>
    * xclass:'simple-list'
-   * ## 显示静态数组的数据
+   * ## \u663e\u793a\u9759\u6001\u6570\u7ec4\u7684\u6570\u636e
    * 
-   * ** 最简单的列表 **
+   * ** \u6700\u7b80\u5355\u7684\u5217\u8868 **
    * <pre><code>
    * 
    * BUI.use('bui/list',function(List){
@@ -1380,7 +1285,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    * 
    * </code></pre>
    *
-   * ** 自定义模板的列表 **
+   * ** \u81ea\u5b9a\u4e49\u6a21\u677f\u7684\u5217\u8868 **
    *<pre><code>
    * 
    * BUI.use('bui/list',function(List){
@@ -1415,12 +1320,12 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
         itemContainer = _self.get('view').getItemContainer();
 
       itemContainer.delegate('.'+itemCls,'mouseover',function(ev){
-        if(_self.get('disabled')){ //控件禁用后，阻止事件
+        if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
           return;
         }
         var element = ev.currentTarget,
           item = _self.getItemByElement(element);
-        if(_self.isItemDisabled(ev.item,ev.currentTarget)){ //如果禁用
+        if(_self.isItemDisabled(ev.item,ev.currentTarget)){ //\u5982\u679c\u7981\u7528
           return;
         }
         
@@ -1430,7 +1335,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           _self.setItemStatus(item,'hover',true,element);
         }
       }).delegate('.'+itemCls,'mouseout',function(ev){
-        if(_self.get('disabled')){ //控件禁用后，阻止事件
+        if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
           return;
         }
         var sender = $(ev.currentTarget);
@@ -1438,14 +1343,14 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
       });
     },
     /**
-     * 添加
+     * \u6dfb\u52a0
      * @protected
      */
     onAdd : function(e){
       var _self = this,
         store = _self.get('store'),
         item = e.record;
-      if(_self.getCount() == 0){ //初始为空时，列表跟Store不同步
+      if(_self.getCount() == 0){ //\u521d\u59cb\u4e3a\u7a7a\u65f6\uff0c\u5217\u8868\u8ddfStore\u4e0d\u540c\u6b65
         _self.setItems(store.getResult());
       }else{
         _self.addItemToView(item,e.index);
@@ -1453,7 +1358,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
       
     },
     /**
-     * 删除
+     * \u5220\u9664
     * @protected
     */
     onRemove : function(e){
@@ -1462,14 +1367,14 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
       _self.removeItem(item);
     },
     /**
-     * 更新
+     * \u66f4\u65b0
     * @protected
     */
     onUpdate : function(e){
       this.updateItem(e.record);
     },
     /**
-    * 本地排序
+    * \u672c\u5730\u6392\u5e8f
     * @protected
     */
     onLocalSort : function(e){
@@ -1477,7 +1382,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
       this.sort(e.field ,e.direction);
     },
     /**
-     * 加载数据
+     * \u52a0\u8f7d\u6570\u636e
      * @protected
      */
     onLoad:function(){
@@ -1494,7 +1399,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      */
     {
       /**
-       * 选项集合
+       * \u9009\u9879\u96c6\u5408
        * @protected
        * @type {Array}
        */
@@ -1503,11 +1408,11 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
         value : []
       },
       /**
-       * 选项的样式，用来获取子项
+       * \u9009\u9879\u7684\u6837\u5f0f\uff0c\u7528\u6765\u83b7\u53d6\u5b50\u9879
        * <pre><code>
        * var list = new List.SimpleList({
        *   render : '#t1',
-       *   itemCls : 'my-item', //自定义样式名称
+       *   itemCls : 'my-item', //\u81ea\u5b9a\u4e49\u6837\u5f0f\u540d\u79f0
        *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
        * });
        * list.render();
@@ -1519,16 +1424,16 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
         value : CLS_ITEM
       },
       /**
-       * 选项的默认id字段
+       * \u9009\u9879\u7684\u9ed8\u8ba4id\u5b57\u6bb5
        * <pre><code>
        * var list = new List.SimpleList({
        *   render : '#t1',
-       *   idField : 'id', //自定义选项 id 字段
+       *   idField : 'id', //\u81ea\u5b9a\u4e49\u9009\u9879 id \u5b57\u6bb5
        *   items : [{id : '1',text : '1',type : '0'},{id : '2',text : '2',type : '1'}]
        * });
        * list.render();
        *
-       * list.getItem('1'); //使用idField指定的字段进行查找
+       * list.getItem('1'); //\u4f7f\u7528idField\u6307\u5b9a\u7684\u5b57\u6bb5\u8fdb\u884c\u67e5\u627e
        * </code></pre>
        * @cfg {String} [idField = 'value']
        */
@@ -1536,7 +1441,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
         value : 'value'
       },
       /**
-       * 列表的选择器，将列表项附加到此节点
+       * \u5217\u8868\u7684\u9009\u62e9\u5668\uff0c\u5c06\u5217\u8868\u9879\u9644\u52a0\u5230\u6b64\u8282\u70b9
        * @protected
        * @type {Object}
        */
@@ -1545,10 +1450,10 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
         value:'ul'
       },
       /**
-       * 列表项的默认模板。
+       * \u5217\u8868\u9879\u7684\u9ed8\u8ba4\u6a21\u677f\u3002
        *<pre><code>
        * var list = new List.SimpleList({
-       *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;', //列表项的模板
+       *   itemTpl : '&lt;li id="{value}"&gt;{text}&lt;/li&gt;', //\u5217\u8868\u9879\u7684\u6a21\u677f
        *   idField : 'value',
        *   render : '#t1',
        *   items : [{value : '1',text : '1'},{value : '2',text : '2'}]
@@ -1576,16 +1481,11 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
 
   simpleList.View = simpleListView;
   return simpleList;
-});/**
- * @fileOverview 可选择的列表
- * @author dengbin
- * @ignore
- */
-
+});
 define('bui/list/listbox',['bui/list/simplelist'],function (require) {
   var SimpleList = require('bui/list/simplelist');
   /**
-   * 列表选择框
+   * \u5217\u8868\u9009\u62e9\u6846
    * @extends BUI.List.SimpleList
    * @class BUI.List.Listbox
    */
@@ -1605,7 +1505,7 @@ define('bui/list/listbox',['bui/list/simplelist'],function (require) {
   },{
     ATTRS : {
       /**
-       * 选项模板
+       * \u9009\u9879\u6a21\u677f
        * @override
        * @type {String}
        */
@@ -1613,7 +1513,7 @@ define('bui/list/listbox',['bui/list/simplelist'],function (require) {
         value : '<li><span class="x-checkbox"></span>{text}</li>'
       },
       /**
-       * 选项模板
+       * \u9009\u9879\u6a21\u677f
        * @override
        * @type {Boolean}
        */
@@ -1626,11 +1526,7 @@ define('bui/list/listbox',['bui/list/simplelist'],function (require) {
   });
 
   return listbox;
-});/**
- * @fileOverview 列表项
- * @author dxq613@gmail.com
- * @ignore
- */
+});
 define('bui/list/listitem',function ($) {
 
 
@@ -1643,13 +1539,13 @@ define('bui/list/listitem',function ($) {
    * @extends BUI.Component.View
    * @extends BUI.Component.View
    * @mixins BUI.Component.UIBase.ListItemView
-   * 列表项的视图层对象
+   * \u5217\u8868\u9879\u7684\u89c6\u56fe\u5c42\u5bf9\u8c61
    */
   var itemView = Component.View.extend([UIBase.ListItemView],{
   });
 
   /**
-   * 列表项
+   * \u5217\u8868\u9879
    * @private
    * @class BUI.List.ListItem
    * @extends BUI.Component.Controller
@@ -1683,17 +1579,14 @@ define('bui/list/listitem',function ($) {
   item.View = itemView;
   
   return item;
-});/**
- * @fileOverview 列表
- * @ignore
- */
+});
 define('bui/list/list',function (require) {
   
   var Component = BUI.Component,
     UIBase = Component.UIBase;
 
   /**
-   * 列表
+   * \u5217\u8868
    * <p>
    * <img src="../assets/img/class-list.jpg"/>
    * </p>
@@ -1719,7 +1612,7 @@ define('bui/list/list',function (require) {
         value:'id'
       },
       /**
-       * 子类的默认类名，即类的 xclass
+       * \u5b50\u7c7b\u7684\u9ed8\u8ba4\u7c7b\u540d\uff0c\u5373\u7c7b\u7684 xclass
        * @type {String}
        * @override
        * @default 'list-item'
