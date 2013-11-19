@@ -92,6 +92,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * @type {Array}
      */
     deletedRecords : {
+      shared : false,
       value:[]
     },
     /**
@@ -167,6 +168,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * @readOnly
      */
     modifiedRecords : {
+      shared : false,
       value:[]
     },
     /**
@@ -176,6 +178,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * @readOnly
      */
     newRecords : {
+      shared : false,
       value : []
     },
     /**
@@ -199,6 +202,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * @readOnly
      */
     resultMap : {
+      shared : false,
       value : {}
     },
     /**

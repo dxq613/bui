@@ -747,10 +747,7 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
     priority : 0
   });
   
-  var singlelon = new message({
-      icon:'info',
-      title:''
-  });
+  var singlelon;
       
   function messageFun(buttons,defaultIcon){
    
@@ -772,6 +769,12 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
   }
 
   function showMessage(config){
+    if(!singlelon){
+      singlelon = new message({
+          icon:'info',
+          title:''
+      });
+    }
     singlelon.set(config);
       
     singlelon.show();

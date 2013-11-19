@@ -45,6 +45,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
      * @readOnly
      */
     lastParams : {
+      shared : false,
       value : {}
     },
     /**
@@ -79,6 +80,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
      * @cfg {Object|BUI.Data.Proxy} proxy
      */
     proxy : {
+      shared : false,
       value : {
         
       }

@@ -107,7 +107,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * @type {Object}
      */
     depends : {
-      value : {}
+
     },
     /**
      * @private
@@ -115,6 +115,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * @type {Object}
      */
     dependencesMap : {
+      shared : false,
       value : {}
     }
   };

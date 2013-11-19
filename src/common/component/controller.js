@@ -976,27 +976,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             self.get('view').destroy();
             Manager.removeComponent(id);
-        }/*,
-        set : function(name,value){
-            var _self = this,
-                view = _self.__view,
-                attr = _self.__attrs[name];
-
-            Controller.superclass.set.call(this,name,value);
-            if(view && attr && attr.view){
-                view.set(name,value);
-                //return _self;
-            }
-            
-
-            return _self;
-        }*/,
+        },
         get : function(name){
             var _self = this,
                 view = _self.__view,
                 attr = _self.__attrs[name],
                 value = Controller.superclass.get.call(this,name);
-            if(value != null){
+            if(value !== undefined){
                 return value;
             }
             if(view && attr && attr.view){
@@ -1522,6 +1508,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             children: {
                 sync : false,
+                shared : false,
                 value: []/**/
             },
             /**

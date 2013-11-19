@@ -803,6 +803,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
        * @private
        */
       dataCache:{
+        shared:false,
         value:{}
       },
       /**

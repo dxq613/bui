@@ -3,10 +3,9 @@
  * @ignore
  */
 
-define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],function (require) {
+define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (require) {
   
   var BUI = require('bui/common'),
-    Bar = require('bui/toolbar').Bar,
     TYPE_SUBMIT = {
       NORMAL : 'normal',
       AJAX : 'ajax',
@@ -44,10 +43,16 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         cfg;
       if($.isPlainObject(buttonBar) && _self.get('buttons')){
         cfg = BUI.merge(_self.getDefaultButtonBarCfg(),buttonBar);
-        buttonBar = new Bar(cfg);
-        _self.set('buttonBar',buttonBar);
+        _self._initButtonBar(cfg);
       }
       _self._initSubmitMask();
+    },
+    _initButtonBar : function(cfg){
+      var _self = this;
+      BUI.use('bui/toolbar',function(Toolbar){
+        buttonBar = new Toolbar.Bar(cfg);
+        _self.set('buttonBar',buttonBar);
+      });
     },
     bindUI : function(){
       var _self = this,
@@ -316,9 +321,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
        * @type {BUI.Toolbar.Bar}
        */
       buttonBar : {
-        value : {
-
-        }
+        
       },
       childContainer : {
         value : '.x-form-fields'

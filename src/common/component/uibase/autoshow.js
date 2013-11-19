@@ -101,9 +101,7 @@ define('bui/component/uibase/autoshow',function () {
      * @ignore
      */
     triggerCallback : {
-      value : function (ev) {
-        
-      }
+      
     },
     /**
      * 显示菜单的事件
@@ -193,13 +191,6 @@ define('bui/component/uibase/autoshow',function () {
         }
         _self.set('align',align);
         _self.show();
-        /*if(_self.get('autoFocused')){
-          try{ //元素隐藏的时候，ie下经常会报错
-            _self.focus();
-          }catch(ev){
-            BUI.log(ev);
-          }
-        }*/
         
         
         triggerCallback && triggerCallback(ev);

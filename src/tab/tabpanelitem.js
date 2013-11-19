@@ -42,6 +42,9 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
       closeAction : {
         value : 'remove'
       },
+      closeable : {
+        value : false
+      },
       events : {
         value : {
           beforeclosed : true

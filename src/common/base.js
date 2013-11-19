@@ -195,7 +195,8 @@ define('bui/base',['bui/observable'],function(require){
       for (var p in attrs) {
         if(attrs.hasOwnProperty(p)){
           var attr = attrs[p];
-          if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){
+          /*if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){*/
+          if(attr.shared === false || attr.valueFn){
             __attrs[p] = {};
             BUI.mixAttr(__attrs[p], attrs[p]); 
           }else{

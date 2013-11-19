@@ -101,6 +101,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
        * @type {*}
        */
       emptyValue : {
+        shared : false,
         value : {}
       },
       /**

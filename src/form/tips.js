@@ -164,7 +164,9 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
      * @type {Array} 
      */
     items : {
-      value:[]
+      valueFn:function(){
+        return [];
+      }
     }
   };
 

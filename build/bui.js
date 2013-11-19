@@ -3968,7 +3968,8 @@ define('bui/base',['bui/observable'],function(require){
       for (var p in attrs) {
         if(attrs.hasOwnProperty(p)){
           var attr = attrs[p];
-          if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){
+          /*if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){*/
+          if(attr.shared === false || attr.valueFn){
             __attrs[p] = {};
             BUI.mixAttr(__attrs[p], attrs[p]); 
           }else{
@@ -5606,9 +5607,7 @@ define('bui/component/uibase/autoshow',function () {
      * @ignore
      */
     triggerCallback : {
-      value : function (ev) {
-        
-      }
+      
     },
     /**
      * \u663e\u793a\u83dc\u5355\u7684\u4e8b\u4ef6
@@ -5698,13 +5697,6 @@ define('bui/component/uibase/autoshow',function () {
         }
         _self.set('align',align);
         _self.show();
-        /*if(_self.get('autoFocused')){
-          try{ //\u5143\u7d20\u9690\u85cf\u7684\u65f6\u5019\uff0cie\u4e0b\u7ecf\u5e38\u4f1a\u62a5\u9519
-            _self.focus();
-          }catch(ev){
-            BUI.log(ev);
-          }
-        }*/
         
         
         triggerCallback && triggerCallback(ev);
@@ -8475,6 +8467,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @type {Array}
      */
     items:{
+      shared : false,
       view : true
     },
     /**
@@ -9268,7 +9261,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * @type {Object}
      */
     depends : {
-      value : {}
+
     },
     /**
      * @private
@@ -9276,6 +9269,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * @type {Object}
      */
     dependencesMap : {
+      shared : false,
       value : {}
     }
   };
@@ -11400,27 +11394,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             self.get('view').destroy();
             Manager.removeComponent(id);
-        }/*,
-        set : function(name,value){
-            var _self = this,
-                view = _self.__view,
-                attr = _self.__attrs[name];
-
-            Controller.superclass.set.call(this,name,value);
-            if(view && attr && attr.view){
-                view.set(name,value);
-                //return _self;
-            }
-            
-
-            return _self;
-        }*/,
+        },
         get : function(name){
             var _self = this,
                 view = _self.__view,
                 attr = _self.__attrs[name],
                 value = Controller.superclass.get.call(this,name);
-            if(value != null){
+            if(value !== undefined){
                 return value;
             }
             if(view && attr && attr.view){
@@ -11946,6 +11926,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             children: {
                 sync : false,
+                shared : false,
                 value: []/**/
             },
             /**
@@ -12679,6 +12660,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
      * @readOnly
      */
     lastParams : {
+      shared : false,
       value : {}
     },
     /**
@@ -12713,6 +12695,7 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
      * @cfg {Object|BUI.Data.Proxy} proxy
      */
     proxy : {
+      shared : false,
       value : {
         
       }
@@ -13883,6 +13866,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * @type {Array}
      */
     deletedRecords : {
+      shared : false,
       value:[]
     },
     /**
@@ -13958,6 +13942,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * @readOnly
      */
     modifiedRecords : {
+      shared : false,
       value:[]
     },
     /**
@@ -13967,6 +13952,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * @readOnly
      */
     newRecords : {
+      shared : false,
       value : []
     },
     /**
@@ -13990,6 +13976,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
      * @readOnly
      */
     resultMap : {
+      shared : false,
       value : {}
     },
     /**
@@ -15325,10 +15312,7 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
     priority : 0
   });
   
-  var singlelon = new message({
-      icon:'info',
-      title:''
-  });
+  var singlelon;
       
   function messageFun(buttons,defaultIcon){
    
@@ -15350,6 +15334,12 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
   }
 
   function showMessage(config){
+    if(!singlelon){
+      singlelon = new message({
+          icon:'info',
+          title:''
+      });
+    }
     singlelon.set(config);
       
     singlelon.show();
@@ -17806,7 +17796,9 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
      * @type {Array} 
      */
     items : {
-      value:[]
+      valueFn:function(){
+        return [];
+      }
     }
   };
 
@@ -18917,8 +18909,8 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield'),
-    DateUtil = BUI.Date,
-    DatePicker = require('bui/calendar').DatePicker;
+    DateUtil = BUI.Date;/*,
+    DatePicker = require('bui/calendar').DatePicker*/
 
   /**
    * \u8868\u5355\u6587\u672c\u57df
@@ -18932,27 +18924,25 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       var _self = this,
         datePicker = _self.get('datePicker');
       if($.isPlainObject(datePicker)){
-        datePicker.trigger = _self.getInnerControl();
-        datePicker.autoRender = true;
-        datePicker = new DatePicker(datePicker);
-        _self.set('datePicker',datePicker);
-        _self.set('isCreatePicker',true);
-        _self.get('children').push(datePicker);
+        _self.initDatePicker(datePicker);
       }
-      if(datePicker.get('showTime')){
+      if((datePicker.get && datePicker.get('showTime'))|| datePicker.showTime){
         _self.getInnerControl().addClass('calendar-time');
       }
 
     },
-    bindUI : function(){
-      var _self = this,
-        datePicker = _self.get('datePicker');
-      /*datePicker.on('selectedchange',function(ev){
-        var curTrigger = ev.curTrigger;
-        if(curTrigger[0] == _self.getInnerControl()[0]){
-          _self.set('value',ev.value);
-        }
-      });*/
+    //\u521d\u59cb\u5316\u65e5\u5386\u63a7\u4ef6
+    initDatePicker : function(datePicker){
+      var _self = this;
+
+      BUI.use('bui/calendar',function(Calendar){
+        datePicker.trigger = _self.getInnerControl();
+        datePicker.autoRender = true;
+        datePicker = new Calendar.DatePicker(datePicker);
+        _self.set('datePicker',datePicker);
+        _self.set('isCreatePicker',true);
+        _self.get('children').push(datePicker);
+      });
     },
     /**
      * \u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
@@ -19003,8 +18993,13 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       this.addRule('max',v);
       var _self = this,
         datePicker = _self.get('datePicker');
-      if(datePicker && datePicker.set){
-        datePicker.set('maxDate',v);
+      if(datePicker){
+        if(datePicker.set){
+          datePicker.set('maxDate',v);
+        }else{
+          datePicker.maxDate = v;
+        }
+        
       }
     },
     //\u8bbe\u7f6e\u6700\u5c0f\u503c
@@ -19012,8 +19007,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       this.addRule('min',v);
       var _self = this,
         datePicker = _self.get('datePicker');
-      if(datePicker && datePicker.set){
-        datePicker.set('minDate',v);
+      if(datePicker){
+        if(datePicker.set){
+          datePicker.set('minDate',v);
+        }else{
+          datePicker.minDate = v;
+        }
       }
     }
   },{
@@ -19057,6 +19056,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
        * @type {Object|BUI.Calendar.DatePicker}
        */
       datePicker : {
+        shared : false,
         value : {
           
         }
@@ -19830,6 +19830,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      * @type {Object}
      */
     rules : {
+      shared : false,
       value : {}
     },
     /**
@@ -19837,6 +19838,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      * @type {Object}
      */
     messages : {
+      shared : false,
       value : {}
     },
     /**
@@ -19924,6 +19926,9 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     },
     //\u9a8c\u8bc1\u89c4\u5219
     validRules : function(rules,value){
+      if(!rules){
+        return;
+      }
       var _self = this,
         messages = _self._getValidMessages(),
         error = null;
@@ -20977,10 +20982,9 @@ define('bui/form/fieldgroup',['bui/common','bui/form/group/base','bui/form/group
  * @ignore
  */
 
-define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],function (require) {
+define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (require) {
   
   var BUI = require('bui/common'),
-    Bar = require('bui/toolbar').Bar,
     TYPE_SUBMIT = {
       NORMAL : 'normal',
       AJAX : 'ajax',
@@ -21018,10 +21022,16 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         cfg;
       if($.isPlainObject(buttonBar) && _self.get('buttons')){
         cfg = BUI.merge(_self.getDefaultButtonBarCfg(),buttonBar);
-        buttonBar = new Bar(cfg);
-        _self.set('buttonBar',buttonBar);
+        _self._initButtonBar(cfg);
       }
       _self._initSubmitMask();
+    },
+    _initButtonBar : function(cfg){
+      var _self = this;
+      BUI.use('bui/toolbar',function(Toolbar){
+        buttonBar = new Toolbar.Bar(cfg);
+        _self.set('buttonBar',buttonBar);
+      });
     },
     bindUI : function(){
       var _self = this,
@@ -21290,9 +21300,7 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
        * @type {BUI.Toolbar.Bar}
        */
       buttonBar : {
-        value : {
-
-        }
+        
       },
       childContainer : {
         value : '.x-form-fields'
@@ -23207,6 +23215,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
        * @private
        */
       dataCache:{
+        shared:false,
         value:{}
       },
       /**
@@ -25663,6 +25672,9 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
        */
       closeAction : {
         value : 'remove'
+      },
+      closeable : {
+        value : false
       },
       events : {
         value : {
@@ -29580,6 +29592,7 @@ define('bui/editor/dialog',['bui/overlay','bui/editor/mixin'],function (require)
        * @type {*}
        */
       emptyValue : {
+        shared : false,
         value : {}
       },
       /**
@@ -33847,6 +33860,7 @@ define('bui/grid/plugins/editing',function (require) {
      * @type {Object}
      */
     editors : {
+      shared:false,
       value : []
     },
     /**

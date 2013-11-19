@@ -2431,7 +2431,8 @@ define('bui/base',['bui/observable'],function(require){
       for (var p in attrs) {
         if(attrs.hasOwnProperty(p)){
           var attr = attrs[p];
-          if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){
+          /*if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){*/
+          if(attr.shared === false || attr.valueFn){
             __attrs[p] = {};
             BUI.mixAttr(__attrs[p], attrs[p]); 
           }else{
@@ -4069,9 +4070,7 @@ define('bui/component/uibase/autoshow',function () {
      * @ignore
      */
     triggerCallback : {
-      value : function (ev) {
-        
-      }
+      
     },
     /**
      * 显示菜单的事件
@@ -4161,13 +4160,6 @@ define('bui/component/uibase/autoshow',function () {
         }
         _self.set('align',align);
         _self.show();
-        /*if(_self.get('autoFocused')){
-          try{ //元素隐藏的时候，ie下经常会报错
-            _self.focus();
-          }catch(ev){
-            BUI.log(ev);
-          }
-        }*/
         
         
         triggerCallback && triggerCallback(ev);
@@ -6938,6 +6930,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @type {Array}
      */
     items:{
+      shared : false,
       view : true
     },
     /**
@@ -7731,7 +7724,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * @type {Object}
      */
     depends : {
-      value : {}
+
     },
     /**
      * @private
@@ -7739,6 +7732,7 @@ define('bui/component/uibase/depends',['bui/component/manage'],function (require
      * @type {Object}
      */
     dependencesMap : {
+      shared : false,
       value : {}
     }
   };
@@ -9863,27 +9857,13 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             self.get('view').destroy();
             Manager.removeComponent(id);
-        }/*,
-        set : function(name,value){
-            var _self = this,
-                view = _self.__view,
-                attr = _self.__attrs[name];
-
-            Controller.superclass.set.call(this,name,value);
-            if(view && attr && attr.view){
-                view.set(name,value);
-                //return _self;
-            }
-            
-
-            return _self;
-        }*/,
+        },
         get : function(name){
             var _self = this,
                 view = _self.__view,
                 attr = _self.__attrs[name],
                 value = Controller.superclass.get.call(this,name);
-            if(value != null){
+            if(value !== undefined){
                 return value;
             }
             if(view && attr && attr.view){
@@ -10409,6 +10389,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             children: {
                 sync : false,
+                shared : false,
                 value: []/**/
             },
             /**

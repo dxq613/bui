@@ -41,6 +41,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @type {Array}
      */
     items:{
+      shared : false,
       view : true
     },
     /**
