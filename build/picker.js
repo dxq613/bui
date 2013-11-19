@@ -86,6 +86,12 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         _self.set('isInit',true);
       },
       /**
+       * 初始化内部控件，绑定事件
+       */
+      initControl : function(){
+        this._initControl();
+      },  
+      /**
        * @protected
        * 初始化内部控件
        */

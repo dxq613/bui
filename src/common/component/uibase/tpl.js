@@ -76,8 +76,9 @@ define('bui/component/uibase/tpl',function () {
 
         //tplEl.remove();
         if(!content && tpl){ //替换掉原先的内容
-          //el.empty();//el.html(tpl);
-          if(tplEl){
+          el.empty();
+          el.html(tpl);
+          /*if(tplEl){
             var node = $(tpl).insertBefore(tplEl);
             tplEl.remove();
             tplEl = node;
@@ -85,7 +86,7 @@ define('bui/component/uibase/tpl',function () {
             tplEl = $(tpl).appendTo(el);
           }
           _self.set('tplEl',tplEl)
-          
+          */
         }
     }
   }

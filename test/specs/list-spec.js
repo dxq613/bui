@@ -1,5 +1,5 @@
 
-/**/
+/*
 BUI.use('bui/list',function (List) {
 
   var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}],
@@ -260,7 +260,7 @@ BUI.use('bui/list',function (List) {
   });
 
 });
-
+*/
 BUI.use('bui/list',function (List) {
 
   var items = [{id:123,text:'选项1',value:'a'},{id:234,tpl:'<span>{text}</span>',text:'选项2',value:'b'},
@@ -297,7 +297,7 @@ BUI.use('bui/list',function (List) {
     });
   });
 });
-
+/*
 BUI.use('bui/list',function (List) {
 
   var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}]
@@ -386,7 +386,7 @@ BUI.use('bui/list',function (List) {
   });
 });
 
-/**/
+
 BUI.use(['bui/list','bui/data'],function (List,Data) {
   var Store = Data.Store;
     
@@ -562,7 +562,7 @@ BUI.use('bui/list',function (List) {
     
   });
 
-});
+});*/
 /*
 BUI.use('bui/list',function(List){
   describe('list srcNode',function(){

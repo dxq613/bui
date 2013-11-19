@@ -1850,6 +1850,11 @@ define('bui/util',function(){
       }
       return window[name];
     },
+
+    mixAttrs : mixAttrs,
+
+    mixAttr : mixAttr,
+
     /**
      * \u5c06\u5176\u4ed6\u7c7b\u4f5c\u4e3amixin\u96c6\u6210\u5230\u6307\u5b9a\u7c7b\u4e0a\u9762
      * @param {Function} c \u6784\u9020\u51fd\u6570
@@ -3835,6 +3840,20 @@ define('bui/base',['bui/observable'],function(require){
       return self;
   }
 
+  function initClassAttrs(c){
+    if(c._attrs || c == Base){
+      return;
+    }
+
+    var superCon = c.superclass.constructor;
+    if(superCon && !superCon._attrs){
+      initClassAttrs(superCon);
+    }
+    c._attrs =  {};
+    
+    BUI.mixAttrs(c._attrs,superCon._attrs);
+    BUI.mixAttrs(c._attrs,c.ATTRS);
+  }
   /**
    * \u57fa\u7840\u7c7b\uff0c\u6b64\u7c7b\u63d0\u4f9b\u4ee5\u4e0b\u529f\u80fd
    *  - \u63d0\u4f9b\u8bbe\u7f6e\u83b7\u53d6\u5c5e\u6027
@@ -3926,11 +3945,13 @@ define('bui/base',['bui/observable'],function(require){
             c = c.superclass ? c.superclass.constructor : null;
         }
         //\u4ee5\u5f53\u524d\u5bf9\u8c61\u7684\u5c5e\u6027\u6700\u7ec8\u6dfb\u52a0\u5230\u5c5e\u6027\u4e2d\uff0c\u8986\u76d6\u4e4b\u524d\u7684\u5c5e\u6027
-        for (var i = constructors.length - 1; i >= 0; i--) {
+        /*for (var i = constructors.length - 1; i >= 0; i--) {
           _self.addAttrs(constructors[i]['ATTRS'],true);
-        };
-        _self._initAttrs(config);
-
+        };*/
+      var con = _self.constructor;
+      initClassAttrs(con);
+      _self._initStaticAttrs(con._attrs);
+      _self._initAttrs(config);
   };
 
   Base.INVALID = INVALID;
@@ -3939,6 +3960,23 @@ define('bui/base',['bui/observable'],function(require){
 
   BUI.augment(Base,
   {
+    _initStaticAttrs : function(attrs){
+      var _self = this,
+        __attrs;
+
+      __attrs = _self.__attrs = {};
+      for (var p in attrs) {
+        if(attrs.hasOwnProperty(p)){
+          var attr = attrs[p];
+          if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){
+            __attrs[p] = {};
+            BUI.mixAttr(__attrs[p], attrs[p]); 
+          }else{
+            __attrs[p] = attrs[p];
+          }
+        }
+      };
+    },
     /**
      * \u6dfb\u52a0\u5c5e\u6027\u5b9a\u4e49
      * @protected
@@ -3950,8 +3988,7 @@ define('bui/base',['bui/observable'],function(require){
             var _self = this,
                 attrs = _self.__attrs,
                 attr = attrs[name];
-                //;//$.clone(attrConfig);
-            /**/
+            
             if(!attr){
               attr = attrs[name] = {};
             }
@@ -3973,11 +4010,6 @@ define('bui/base',['bui/observable'],function(require){
               }
 
             };
-            /*if (!attrs[name]) {
-                attrs[name] = BUI.cloneObject(attrConfig);
-            } else if(overrides){
-                BUI.mix(true,attrs[name], attrConfig);
-            }*/
             return _self;
     },
     /**
@@ -4661,8 +4693,8 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
         var listener,
             n,
-            plugins = _self.get('plugins'),
-            listeners = _self.get('listeners');
+            plugins = _self.get('plugins')/*,
+            listeners = _self.get('listeners')*/;
 
         constructPlugins(plugins);
     
@@ -4739,7 +4771,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @readOnly
      */
     plugins : {
-      value : []
+      //value : []
     },
     /**
      * \u662f\u5426\u5df2\u7ecf\u6e32\u67d3\u5b8c\u6210
@@ -7760,8 +7792,9 @@ define('bui/component/uibase/tpl',function () {
 
         //tplEl.remove();
         if(!content && tpl){ //\u66ff\u6362\u6389\u539f\u5148\u7684\u5185\u5bb9
-          //el.empty();//el.html(tpl);
-          if(tplEl){
+          el.empty();
+          el.html(tpl);
+          /*if(tplEl){
             var node = $(tpl).insertBefore(tplEl);
             tplEl.remove();
             tplEl = node;
@@ -7769,7 +7802,7 @@ define('bui/component/uibase/tpl',function () {
             tplEl = $(tpl).appendTo(el);
           }
           _self.set('tplEl',tplEl)
-          
+          */
         }
     }
   }
@@ -10503,12 +10536,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
                     // setter \u4e0d\u5e94\u8be5\u6709\u5b9e\u9645\u64cd\u4f5c\uff0c\u4ec5\u7528\u4e8e\u6b63\u89c4\u5316\u6bd4\u8f83\u597d
                     // attrCfg.setter = wrapperViewSetter(attrName);
+                    // \u4e0d\u66f4\u6539attrCfg\u7684\u5b9a\u4e49\uff0c\u53ef\u4ee5\u591a\u4e2a\u5b9e\u4f8b\u516c\u7528\u4e00\u4efdattrCfg
                     self.on('after' + BUI.ucfirst(attrName) + 'Change',
                         wrapperViewSetter(attrName));
+                    /**/
                     // \u903b\u8f91\u5c42\u8bfb\u503c\u76f4\u63a5\u4ece view \u5c42\u8bfb
                     // \u90a3\u4e48\u5982\u679c\u5b58\u5728\u9ed8\u8ba4\u503c\u4e5f\u8bbe\u7f6e\u5728 view \u5c42
                     // \u903b\u8f91\u5c42\u4e0d\u8981\u8bbe\u7f6e getter
-                    attrCfg.getter = wrapperViewGetter(attrName);
+                    //attrCfg.getter = wrapperViewGetter(attrName);
                 }
             }
         }
@@ -10611,7 +10646,9 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             Manager.addComponent(self.get('id'),self);
             // initialize view
-            self.setInternal('view', constructView(self));
+            var view = constructView(self);
+            self.setInternal('view', view);
+            self.__view = view;
         },
 
         /**
@@ -11363,6 +11400,34 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             self.get('view').destroy();
             Manager.removeComponent(id);
+        }/*,
+        set : function(name,value){
+            var _self = this,
+                view = _self.__view,
+                attr = _self.__attrs[name];
+
+            Controller.superclass.set.call(this,name,value);
+            if(view && attr && attr.view){
+                view.set(name,value);
+                //return _self;
+            }
+            
+
+            return _self;
+        }*/,
+        get : function(name){
+            var _self = this,
+                view = _self.__view,
+                attr = _self.__attrs[name],
+                value = Controller.superclass.get.call(this,name);
+            if(value != null){
+                return value;
+            }
+            if(view && attr && attr.view){
+                return view.get(name);
+            }
+
+            return value;
         }
     },
     {
@@ -11881,7 +11946,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             children: {
                 sync : false,
-                value: []
+                value: []/**/
             },
             /**
              * \u63a7\u4ef6\u7684CSS\u524d\u7f00
@@ -17185,6 +17250,12 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
         _self.initControlEvent();
         _self.set('isInit',true);
       },
+      /**
+       * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\uff0c\u7ed1\u5b9a\u4e8b\u4ef6
+       */
+      initControl : function(){
+        this._initControl();
+      },  
       /**
        * @protected
        * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6

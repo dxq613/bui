@@ -205,8 +205,8 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
         var listener,
             n,
-            plugins = _self.get('plugins'),
-            listeners = _self.get('listeners');
+            plugins = _self.get('plugins')/*,
+            listeners = _self.get('listeners')*/;
 
         constructPlugins(plugins);
     
@@ -283,7 +283,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @readOnly
      */
     plugins : {
-      value : []
+      //value : []
     },
     /**
      * 是否已经渲染完成

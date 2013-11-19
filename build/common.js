@@ -313,6 +313,11 @@ define('bui/util',function(){
       }
       return window[name];
     },
+
+    mixAttrs : mixAttrs,
+
+    mixAttr : mixAttr,
+
     /**
      * 将其他类作为mixin集成到指定类上面
      * @param {Function} c 构造函数
@@ -2298,6 +2303,20 @@ define('bui/base',['bui/observable'],function(require){
       return self;
   }
 
+  function initClassAttrs(c){
+    if(c._attrs || c == Base){
+      return;
+    }
+
+    var superCon = c.superclass.constructor;
+    if(superCon && !superCon._attrs){
+      initClassAttrs(superCon);
+    }
+    c._attrs =  {};
+    
+    BUI.mixAttrs(c._attrs,superCon._attrs);
+    BUI.mixAttrs(c._attrs,c.ATTRS);
+  }
   /**
    * 基础类，此类提供以下功能
    *  - 提供设置获取属性
@@ -2389,11 +2408,13 @@ define('bui/base',['bui/observable'],function(require){
             c = c.superclass ? c.superclass.constructor : null;
         }
         //以当前对象的属性最终添加到属性中，覆盖之前的属性
-        for (var i = constructors.length - 1; i >= 0; i--) {
+        /*for (var i = constructors.length - 1; i >= 0; i--) {
           _self.addAttrs(constructors[i]['ATTRS'],true);
-        };
-        _self._initAttrs(config);
-
+        };*/
+      var con = _self.constructor;
+      initClassAttrs(con);
+      _self._initStaticAttrs(con._attrs);
+      _self._initAttrs(config);
   };
 
   Base.INVALID = INVALID;
@@ -2402,6 +2423,23 @@ define('bui/base',['bui/observable'],function(require){
 
   BUI.augment(Base,
   {
+    _initStaticAttrs : function(attrs){
+      var _self = this,
+        __attrs;
+
+      __attrs = _self.__attrs = {};
+      for (var p in attrs) {
+        if(attrs.hasOwnProperty(p)){
+          var attr = attrs[p];
+          if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){
+            __attrs[p] = {};
+            BUI.mixAttr(__attrs[p], attrs[p]); 
+          }else{
+            __attrs[p] = attrs[p];
+          }
+        }
+      };
+    },
     /**
      * 添加属性定义
      * @protected
@@ -2413,8 +2451,7 @@ define('bui/base',['bui/observable'],function(require){
             var _self = this,
                 attrs = _self.__attrs,
                 attr = attrs[name];
-                //;//$.clone(attrConfig);
-            /**/
+            
             if(!attr){
               attr = attrs[name] = {};
             }
@@ -2436,11 +2473,6 @@ define('bui/base',['bui/observable'],function(require){
               }
 
             };
-            /*if (!attrs[name]) {
-                attrs[name] = BUI.cloneObject(attrConfig);
-            } else if(overrides){
-                BUI.mix(true,attrs[name], attrConfig);
-            }*/
             return _self;
     },
     /**
@@ -3124,8 +3156,8 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
         var listener,
             n,
-            plugins = _self.get('plugins'),
-            listeners = _self.get('listeners');
+            plugins = _self.get('plugins')/*,
+            listeners = _self.get('listeners')*/;
 
         constructPlugins(plugins);
     
@@ -3202,7 +3234,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @readOnly
      */
     plugins : {
-      value : []
+      //value : []
     },
     /**
      * 是否已经渲染完成
@@ -6223,8 +6255,9 @@ define('bui/component/uibase/tpl',function () {
 
         //tplEl.remove();
         if(!content && tpl){ //替换掉原先的内容
-          //el.empty();//el.html(tpl);
-          if(tplEl){
+          el.empty();
+          el.html(tpl);
+          /*if(tplEl){
             var node = $(tpl).insertBefore(tplEl);
             tplEl.remove();
             tplEl = node;
@@ -6232,7 +6265,7 @@ define('bui/component/uibase/tpl',function () {
             tplEl = $(tpl).appendTo(el);
           }
           _self.set('tplEl',tplEl)
-          
+          */
         }
     }
   }
@@ -8966,12 +8999,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
                     // setter 不应该有实际操作，仅用于正规化比较好
                     // attrCfg.setter = wrapperViewSetter(attrName);
+                    // 不更改attrCfg的定义，可以多个实例公用一份attrCfg
                     self.on('after' + BUI.ucfirst(attrName) + 'Change',
                         wrapperViewSetter(attrName));
+                    /**/
                     // 逻辑层读值直接从 view 层读
                     // 那么如果存在默认值也设置在 view 层
                     // 逻辑层不要设置 getter
-                    attrCfg.getter = wrapperViewGetter(attrName);
+                    //attrCfg.getter = wrapperViewGetter(attrName);
                 }
             }
         }
@@ -9074,7 +9109,9 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             Manager.addComponent(self.get('id'),self);
             // initialize view
-            self.setInternal('view', constructView(self));
+            var view = constructView(self);
+            self.setInternal('view', view);
+            self.__view = view;
         },
 
         /**
@@ -9826,6 +9863,34 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             self.get('view').destroy();
             Manager.removeComponent(id);
+        }/*,
+        set : function(name,value){
+            var _self = this,
+                view = _self.__view,
+                attr = _self.__attrs[name];
+
+            Controller.superclass.set.call(this,name,value);
+            if(view && attr && attr.view){
+                view.set(name,value);
+                //return _self;
+            }
+            
+
+            return _self;
+        }*/,
+        get : function(name){
+            var _self = this,
+                view = _self.__view,
+                attr = _self.__attrs[name],
+                value = Controller.superclass.get.call(this,name);
+            if(value != null){
+                return value;
+            }
+            if(view && attr && attr.view){
+                return view.get(name);
+            }
+
+            return value;
         }
     },
     {
@@ -10344,7 +10409,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             children: {
                 sync : false,
-                value: []
+                value: []/**/
             },
             /**
              * 控件的CSS前缀

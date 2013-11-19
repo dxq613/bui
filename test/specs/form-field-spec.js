@@ -351,6 +351,7 @@ BUI.use('bui/form/datefield',function  (DateField) {
   dateField.render();
   var el = dateField.get('el'),
     datePicker = dateField.get('datePicker');
+    datePicker._initControl();
   describe('测试日期域的生成',function(){
 
     it('验证日期控件的生成',function(){

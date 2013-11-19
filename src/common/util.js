@@ -297,6 +297,11 @@ define('bui/util',function(){
       }
       return window[name];
     },
+
+    mixAttrs : mixAttrs,
+
+    mixAttr : mixAttr,
+
     /**
      * 将其他类作为mixin集成到指定类上面
      * @param {Function} c 构造函数

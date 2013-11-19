@@ -67,6 +67,20 @@ define('bui/base',['bui/observable'],function(require){
       return self;
   }
 
+  function initClassAttrs(c){
+    if(c._attrs || c == Base){
+      return;
+    }
+
+    var superCon = c.superclass.constructor;
+    if(superCon && !superCon._attrs){
+      initClassAttrs(superCon);
+    }
+    c._attrs =  {};
+    
+    BUI.mixAttrs(c._attrs,superCon._attrs);
+    BUI.mixAttrs(c._attrs,c.ATTRS);
+  }
   /**
    * 基础类，此类提供以下功能
    *  - 提供设置获取属性
@@ -158,11 +172,13 @@ define('bui/base',['bui/observable'],function(require){
             c = c.superclass ? c.superclass.constructor : null;
         }
         //以当前对象的属性最终添加到属性中，覆盖之前的属性
-        for (var i = constructors.length - 1; i >= 0; i--) {
+        /*for (var i = constructors.length - 1; i >= 0; i--) {
           _self.addAttrs(constructors[i]['ATTRS'],true);
-        };
-        _self._initAttrs(config);
-
+        };*/
+      var con = _self.constructor;
+      initClassAttrs(con);
+      _self._initStaticAttrs(con._attrs);
+      _self._initAttrs(config);
   };
 
   Base.INVALID = INVALID;
@@ -171,6 +187,23 @@ define('bui/base',['bui/observable'],function(require){
 
   BUI.augment(Base,
   {
+    _initStaticAttrs : function(attrs){
+      var _self = this,
+        __attrs;
+
+      __attrs = _self.__attrs = {};
+      for (var p in attrs) {
+        if(attrs.hasOwnProperty(p)){
+          var attr = attrs[p];
+          if(BUI.isObject(attr.value) || BUI.isArray(attr.value) || attr.valueFn){
+            __attrs[p] = {};
+            BUI.mixAttr(__attrs[p], attrs[p]); 
+          }else{
+            __attrs[p] = attrs[p];
+          }
+        }
+      };
+    },
     /**
      * 添加属性定义
      * @protected
@@ -182,8 +215,7 @@ define('bui/base',['bui/observable'],function(require){
             var _self = this,
                 attrs = _self.__attrs,
                 attr = attrs[name];
-                //;//$.clone(attrConfig);
-            /**/
+            
             if(!attr){
               attr = attrs[name] = {};
             }
@@ -205,11 +237,6 @@ define('bui/base',['bui/observable'],function(require){
               }
 
             };
-            /*if (!attrs[name]) {
-                attrs[name] = BUI.cloneObject(attrConfig);
-            } else if(overrides){
-                BUI.mix(true,attrs[name], attrConfig);
-            }*/
             return _self;
     },
     /**

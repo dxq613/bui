@@ -41,7 +41,8 @@
     <?php $url = 'bui/common'?>
     <?php include("./templates/script.php"); ?>
    
-    <script type="text/javascript" src="specs/util-spec.js"></script>
-    <script type="text/javascript" src="specs/common-loader-spec.js"></script>
-    <!-- <script type="text/javascript" src="specs/tpl-spec.js"></script> -->
+   <script type="text/javascript" src="specs/util-spec.js"></script>
+   
+     <!-- <script type="text/javascript" src="specs/tpl-spec.js"></script> -->
+     <script type="text/javascript" src="specs/common-loader-spec.js"></script>
 <?php include("./templates/footer.php"); ?>

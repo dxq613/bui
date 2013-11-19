@@ -112,12 +112,14 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
 
                     // setter 不应该有实际操作，仅用于正规化比较好
                     // attrCfg.setter = wrapperViewSetter(attrName);
+                    // 不更改attrCfg的定义，可以多个实例公用一份attrCfg
                     self.on('after' + BUI.ucfirst(attrName) + 'Change',
                         wrapperViewSetter(attrName));
+                    /**/
                     // 逻辑层读值直接从 view 层读
                     // 那么如果存在默认值也设置在 view 层
                     // 逻辑层不要设置 getter
-                    attrCfg.getter = wrapperViewGetter(attrName);
+                    //attrCfg.getter = wrapperViewGetter(attrName);
                 }
             }
         }
@@ -220,7 +222,9 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             Manager.addComponent(self.get('id'),self);
             // initialize view
-            self.setInternal('view', constructView(self));
+            var view = constructView(self);
+            self.setInternal('view', view);
+            self.__view = view;
         },
 
         /**
@@ -972,6 +976,34 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             }
             self.get('view').destroy();
             Manager.removeComponent(id);
+        }/*,
+        set : function(name,value){
+            var _self = this,
+                view = _self.__view,
+                attr = _self.__attrs[name];
+
+            Controller.superclass.set.call(this,name,value);
+            if(view && attr && attr.view){
+                view.set(name,value);
+                //return _self;
+            }
+            
+
+            return _self;
+        }*/,
+        get : function(name){
+            var _self = this,
+                view = _self.__view,
+                attr = _self.__attrs[name],
+                value = Controller.superclass.get.call(this,name);
+            if(value != null){
+                return value;
+            }
+            if(view && attr && attr.view){
+                return view.get(name);
+            }
+
+            return value;
         }
     },
     {
@@ -1490,7 +1522,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
              */
             children: {
                 sync : false,
-                value: []
+                value: []/**/
             },
             /**
              * 控件的CSS前缀
