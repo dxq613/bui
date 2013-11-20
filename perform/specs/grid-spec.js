@@ -1,6 +1,6 @@
 Perform.start('grid');
 BUI.use(['bui/grid','bui/data'],function(Grid,Data){
-       
+       /*列，33行  
       var Grid = Grid,
           Store = Data.Store,
           columns = [{
@@ -31,7 +31,7 @@ BUI.use(['bui/grid','bui/data'],function(Grid,Data){
           });
  
         grid.render();
-     /*3列，3行 */
+    */
      
      /* 10列，30行
       var Grid = Grid,
@@ -76,7 +76,7 @@ BUI.use(['bui/grid','bui/data'],function(Grid,Data){
       
      */
     
-    /* 可编辑表格
+    /* 可编辑表格*/
     var Grid = Grid,
           Store = Data.Store,
           enumObj = {"1" : "选项一","2" : "选项二","3" : "选项三"},
@@ -149,7 +149,7 @@ BUI.use(['bui/grid','bui/data'],function(Grid,Data){
           store.remove(selections);
         }      
 
-        */
+        
 
         Perform.end('grid');
         Perform.log('grid');

@@ -137,7 +137,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @ignore
      */
     function bindUI(self) {
-        var attrs = self.getAttrs(),
+        /*var attrs = self.getAttrs(),
             attr,
             m;
 
@@ -157,6 +157,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
                 }
             }
         }
+        */
     }
 
         /**
@@ -346,7 +347,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             if (!_self.get('rendered')) {
                 var plugins = _self.get('plugins');
                 _self.create(undefined);
-
+                _self.set('created',true);
                 /**
                  * @event beforeRenderUI
                  * fired when root node is ready
@@ -373,7 +374,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
                 _self.fire('beforeBindUI');
                 bindUI(_self);
                 callMethodByHierarchy(_self, 'bindUI', '__bindUI');
-
+                _self.set('binded',true);
                 /**
                  * @event afterBindUI
                  * fired when UIBase 's internal event is bind.

@@ -458,6 +458,7 @@ define('bui/base',['bui/observable'],function(require){
             
             // finally set
             _self.__attrVals[name] = value;
+      return _self;
     },
     //初始化属性
     _initAttrs : function(config){

@@ -4231,6 +4231,7 @@ define('bui/base',['bui/observable'],function(require){
             
             // finally set
             _self.__attrVals[name] = value;
+      return _self;
     },
     //\u521d\u59cb\u5316\u5c5e\u6027
     _initAttrs : function(config){
@@ -4626,7 +4627,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @ignore
      */
     function bindUI(self) {
-        var attrs = self.getAttrs(),
+        /*var attrs = self.getAttrs(),
             attr,
             m;
 
@@ -4646,6 +4647,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
                 }
             }
         }
+        */
     }
 
         /**
@@ -4835,7 +4837,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             if (!_self.get('rendered')) {
                 var plugins = _self.get('plugins');
                 _self.create(undefined);
-
+                _self.set('created',true);
                 /**
                  * @event beforeRenderUI
                  * fired when root node is ready
@@ -4862,7 +4864,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
                 _self.fire('beforeBindUI');
                 bindUI(_self);
                 callMethodByHierarchy(_self, 'bindUI', '__bindUI');
-
+                _self.set('binded',true);
                 /**
                  * @event afterBindUI
                  * fired when UIBase 's internal event is bind.
@@ -9813,6 +9815,37 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
                 el.css('display', isVisible ? '' : 'none');
             }
         },
+        set : function(name,value){
+             var _self = this,
+                attr = _self.__attrs[name],
+                ev,
+                ucName,
+                m;
+
+            if(!attr || !_self.get('binded')){ //\u672a\u521d\u59cb\u5316view\u6216\u8005\u6ca1\u7528\u5b9a\u4e49\u5c5e\u6027
+                View.superclass.set.call(this,name,value);
+                return _self;
+            }
+
+            var prevVal = View.superclass.get.call(this,name);
+
+            //\u5982\u679c\u672a\u6539\u53d8\u503c\u4e0d\u8fdb\u884c\u4fee\u6539
+            if(!$.isPlainObject(value) && !BUI.isArray(value) && prevVal === value){
+                return _self;
+            }
+            View.superclass.set.call(this,name,value);
+
+            value = _self.__attrVals[name];
+            ev = {attrName: name,prevVal: prevVal,newVal: value};
+            ucName = BUI.ucfirst(name);
+            m = '_uiSet' + ucName;
+            if(_self[m]){
+                _self[m](value,ev);
+            }
+
+            return _self;
+
+        },
         /**
          * \u6790\u6784\u51fd\u6570
          * @protected
@@ -10531,9 +10564,9 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     // setter \u4e0d\u5e94\u8be5\u6709\u5b9e\u9645\u64cd\u4f5c\uff0c\u4ec5\u7528\u4e8e\u6b63\u89c4\u5316\u6bd4\u8f83\u597d
                     // attrCfg.setter = wrapperViewSetter(attrName);
                     // \u4e0d\u66f4\u6539attrCfg\u7684\u5b9a\u4e49\uff0c\u53ef\u4ee5\u591a\u4e2a\u5b9e\u4f8b\u516c\u7528\u4e00\u4efdattrCfg
-                    self.on('after' + BUI.ucfirst(attrName) + 'Change',
+                    /*self.on('after' + BUI.ucfirst(attrName) + 'Change',
                         wrapperViewSetter(attrName));
-                    /**/
+                    */
                     // \u903b\u8f91\u5c42\u8bfb\u503c\u76f4\u63a5\u4ece view \u5c42\u8bfb
                     // \u90a3\u4e48\u5982\u679c\u5b58\u5728\u9ed8\u8ba4\u503c\u4e5f\u8bbe\u7f6e\u5728 view \u5c42
                     // \u903b\u8f91\u5c42\u4e0d\u8981\u8bbe\u7f6e getter
@@ -11395,6 +11428,52 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             self.get('view').destroy();
             Manager.removeComponent(id);
         },
+        //\u8986\u5199set\u65b9\u6cd5
+        set : function(name,value,opt){
+            var _self = this,
+                view = _self.__view,
+                attr = _self.__attrs[name],
+                ucName,
+                ev,
+                m;
+
+            if(!view || !attr || (opt && opt.silent)){ //\u672a\u521d\u59cb\u5316view\u6216\u8005\u6ca1\u7528\u5b9a\u4e49\u5c5e\u6027
+                Controller.superclass.set.call(this,name,value,opt);
+                return _self;
+            }
+
+            var prevVal = Controller.superclass.get.call(this,name);
+
+            //\u5982\u679c\u672a\u6539\u53d8\u503c\u4e0d\u8fdb\u884c\u4fee\u6539
+            if(!$.isPlainObject(value) && !BUI.isArray(value) && prevVal === value){
+                return _self;
+            }
+            ucName = BUI.ucfirst(name);
+            m = '_uiSet' + ucName;
+            //\u89e6\u53d1before\u4e8b\u4ef6
+            _self.fire('before' + ucName + 'Change', {
+              attrName: name,
+              prevVal: prevVal,
+              newVal: value
+            });
+
+            _self.setInternal(name, value);
+
+            value = _self.__attrVals[name];
+            if(view && attr.view){
+                view.set(name,value);
+                //return _self;
+            }
+            ev = {attrName: name,prevVal: prevVal,newVal: value};
+
+            //\u89e6\u53d1before\u4e8b\u4ef6
+            _self.fire('after' + ucName + 'Change', ev);
+            if(_self.get('binded') && _self[m]){
+                _self[m](value,ev);
+            }
+            return _self;
+        },
+        //\u8986\u5199get\u65b9\u6cd5\uff0c\u6539\u53d8\u65f6\u540c\u65f6\u6539\u53d8view\u7684\u503c
         get : function(name){
             var _self = this,
                 view = _self.__view,

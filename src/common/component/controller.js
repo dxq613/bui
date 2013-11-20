@@ -113,9 +113,9 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     // setter 不应该有实际操作，仅用于正规化比较好
                     // attrCfg.setter = wrapperViewSetter(attrName);
                     // 不更改attrCfg的定义，可以多个实例公用一份attrCfg
-                    self.on('after' + BUI.ucfirst(attrName) + 'Change',
+                    /*self.on('after' + BUI.ucfirst(attrName) + 'Change',
                         wrapperViewSetter(attrName));
-                    /**/
+                    */
                     // 逻辑层读值直接从 view 层读
                     // 那么如果存在默认值也设置在 view 层
                     // 逻辑层不要设置 getter
@@ -977,6 +977,52 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
             self.get('view').destroy();
             Manager.removeComponent(id);
         },
+        //覆写set方法
+        set : function(name,value,opt){
+            var _self = this,
+                view = _self.__view,
+                attr = _self.__attrs[name],
+                ucName,
+                ev,
+                m;
+
+            if(!view || !attr || (opt && opt.silent)){ //未初始化view或者没用定义属性
+                Controller.superclass.set.call(this,name,value,opt);
+                return _self;
+            }
+
+            var prevVal = Controller.superclass.get.call(this,name);
+
+            //如果未改变值不进行修改
+            if(!$.isPlainObject(value) && !BUI.isArray(value) && prevVal === value){
+                return _self;
+            }
+            ucName = BUI.ucfirst(name);
+            m = '_uiSet' + ucName;
+            //触发before事件
+            _self.fire('before' + ucName + 'Change', {
+              attrName: name,
+              prevVal: prevVal,
+              newVal: value
+            });
+
+            _self.setInternal(name, value);
+
+            value = _self.__attrVals[name];
+            if(view && attr.view){
+                view.set(name,value);
+                //return _self;
+            }
+            ev = {attrName: name,prevVal: prevVal,newVal: value};
+
+            //触发before事件
+            _self.fire('after' + ucName + 'Change', ev);
+            if(_self.get('binded') && _self[m]){
+                _self[m](value,ev);
+            }
+            return _self;
+        },
+        //覆写get方法，改变时同时改变view的值
         get : function(name){
             var _self = this,
                 view = _self.__view,
