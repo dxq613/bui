@@ -321,7 +321,8 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
        * @type {BUI.Toolbar.Bar}
        */
       buttonBar : {
-        
+        shared : false,
+        value : {}
       },
       childContainer : {
         value : '.x-form-fields'

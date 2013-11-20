@@ -43,12 +43,13 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
           hideEvent = _self.get('hideEvent'),
           trigger = $(_self.get('trigger'));
 
-        trigger.on(_self.get('triggerEvent'),function(e){
+        _self.on('show',function(ev){
+        //trigger.on(_self.get('triggerEvent'),function(e){
           if(!_self.get('isInit')){
             _self._initControl();
           }
           if(_self.get('autoSetValue')){
-            var valueField = _self.get('valueField') || _self.get('textField') || this,
+            var valueField = _self.get('valueField') || _self.get('textField') || _self.get('curTrigger'),
               val = $(valueField).val();
             _self.setSelectedValue(val);
           }

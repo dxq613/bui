@@ -5303,6 +5303,7 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
          * </code>
          */
         align:{
+            shared : false,
             value:{}
         }
     };
