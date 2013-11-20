@@ -11436,7 +11436,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 ucName,
                 ev,
                 m;
-
+            if(BUI.isObject(name)){
+                opt = value;
+                BUI.each(name,function(v,k){
+                    _self.set(k,v,opt);
+                });
+            }
             if(!view || !attr || (opt && opt.silent)){ //未初始化view或者没用定义属性
                 Controller.superclass.set.call(this,name,value,opt);
                 return _self;

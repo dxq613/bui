@@ -11436,7 +11436,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                 ucName,
                 ev,
                 m;
-
+            if(BUI.isObject(name)){
+                opt = value;
+                BUI.each(name,function(v,k){
+                    _self.set(k,v,opt);
+                });
+            }
             if(!view || !attr || (opt && opt.silent)){ //\u672a\u521d\u59cb\u5316view\u6216\u8005\u6ca1\u7528\u5b9a\u4e49\u5c5e\u6027
                 Controller.superclass.set.call(this,name,value,opt);
                 return _self;

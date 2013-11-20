@@ -1,5 +1,32 @@
 
 BUI.use('bui/overlay',function () {  
+
+  describe('测试显示信息',function(){
+    it('显示提示信息',function(){
+      var msg = '这只是简单的提示信息',
+        icon = 'info';
+        
+      BUI.Message.Alert(msg,icon);
+      waits(100);
+      runs(function(){
+        var el = $('.bui-message-content');
+        expect(el.text()).toBe(msg);
+      });
+      
+      //expect(BUI.Message)
+    });
+
+    it('显示成功信息',function(){
+      var msg = '这只是简单的成功信息',
+        icon = 'success';
+      BUI.Message.Alert(msg,icon);
+      waits(100);
+      runs(function(){
+        var el = $('.bui-message-content');
+        expect(el.text()).toBe(msg);
+      });
+    });
+  });
   $('#J_MsgInfo').on('click',function(){
     BUI.Message.Alert('这只是简单的提示信息','info');
   });
