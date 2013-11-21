@@ -26,7 +26,7 @@
   BUI.use('bui/menu',function(Menu){
     var frameEl = $('#J_Frame');
     var files = ['seajs','array','bar','calendar','common','dialog','depend','editor','form','form-field','form-group','form-panel','form-remote','form-rules','grid','grid-plugin',
-      'grid-editor','header','keynav','list','loader','mask','menu','message','mixins','progressbar','picker','select','simple-grid',
+      'grid-editor','header','keynav','list','loader','mask','menu','message','mixins','progressbar','picker','select','slider','simple-grid',
       'store','tab','treestore','tips','uploader','tree','treemenu','treegrid'],
       curIndex = 0,
       items;

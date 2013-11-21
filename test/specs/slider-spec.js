@@ -1,4 +1,4 @@
-/*
+/**/
 BUI.use('bui/slider/slider',function (Slider) {
 
   var slider = new Slider({
@@ -187,7 +187,7 @@ BUI.use('bui/slider/slider',function (Slider) {
     });
   });
 });
-*/
+
 BUI.use('bui/slider/slider',function (Slider) {
 
   var slider = new Slider({
