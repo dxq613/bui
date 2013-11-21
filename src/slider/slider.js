@@ -297,8 +297,10 @@ define('bui/slider/slider',['bui/common'],function (require) {
         total = max - min,
         start,
         end;
-
-      if(BUI.isNumber(value)){
+      if(min == max){
+        start = 0;
+        end = 100;
+      }else if(BUI.isNumber(value)){
         start = 0;
         end = parsePercet(value - min,total);
       }else if(BUI.isArray(value)){
