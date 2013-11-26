@@ -806,7 +806,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         items = _self.get('items'),
         result = null;
       BUI.each(items,function(item){
-        if(item[field] === value){
+        if(item[field] != null && item[field] == value){//会出现false == '','0' == false的情况
             result = item;
             return false;
         }
@@ -1424,11 +1424,13 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           return;
         }
         
-        if(_self.get('highlightedStatus') === 'hover'){
+        /*if(_self.get('highlightedStatus') === 'hover'){
           _self.setHighlighted(item,element)
         }else{
           _self.setItemStatus(item,'hover',true,element);
-        }
+        }*/
+        _self.get('view').setElementHover(element,true);
+
       }).delegate('.'+itemCls,'mouseout',function(ev){
         if(_self.get('disabled')){ //控件禁用后，阻止事件
           return;

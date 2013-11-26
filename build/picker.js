@@ -203,7 +203,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       },
       _uiSetValueField : function(v){
         var _self = this;
-        if(v){
+        if(v != null && v !== ''){ //if(v)问题太多
           _self.setSelectedValue($(v).val());
         }
       },

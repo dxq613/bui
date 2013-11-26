@@ -107,11 +107,13 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           return;
         }
         
-        if(_self.get('highlightedStatus') === 'hover'){
+        /*if(_self.get('highlightedStatus') === 'hover'){
           _self.setHighlighted(item,element)
         }else{
           _self.setItemStatus(item,'hover',true,element);
-        }
+        }*/
+        _self.get('view').setElementHover(element,true);
+
       }).delegate('.'+itemCls,'mouseout',function(ev){
         if(_self.get('disabled')){ //控件禁用后，阻止事件
           return;

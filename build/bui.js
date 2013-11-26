@@ -13781,7 +13781,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       var _self = this,
         resultMap = _self.get('resultMap'),
         total = _self.get('totalProperty');
-      return resultMap[total] || 0;
+      return parseInt(resultMap[total],10) || 0;
     },
     /**
      * \u83b7\u53d6\u5f53\u524d\u7f13\u5b58\u7684\u7eaa\u5f55
@@ -15745,7 +15745,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         items = _self.get('items'),
         result = null;
       BUI.each(items,function(item){
-        if(item[field] === value){
+        if(item[field] != null && item[field] == value){//\u4f1a\u51fa\u73b0false == '','0' == false\u7684\u60c5\u51b5
             result = item;
             return false;
         }
@@ -16363,11 +16363,13 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           return;
         }
         
-        if(_self.get('highlightedStatus') === 'hover'){
+        /*if(_self.get('highlightedStatus') === 'hover'){
           _self.setHighlighted(item,element)
         }else{
           _self.setItemStatus(item,'hover',true,element);
-        }
+        }*/
+        _self.get('view').setElementHover(element,true);
+
       }).delegate('.'+itemCls,'mouseout',function(ev){
         if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
           return;
@@ -16877,7 +16879,7 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
       },
       _uiSetValueField : function(v){
         var _self = this;
-        if(v){
+        if(v != null && v !== ''){ //if(v)\u95ee\u9898\u592a\u591a
           _self.setSelectedValue($(v).val());
         }
       },

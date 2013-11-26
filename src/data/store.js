@@ -488,7 +488,7 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       var _self = this,
         resultMap = _self.get('resultMap'),
         total = _self.get('totalProperty');
-      return resultMap[total] || 0;
+      return parseInt(resultMap[total],10) || 0;
     },
     /**
      * 获取当前缓存的纪录
