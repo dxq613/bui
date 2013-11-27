@@ -5,6 +5,7 @@ BUI.use(['bui/list/simplelist','bui/data'],function (List,Data) {
     var items = [{text:'选项1',value:'a'},{text:'选项2',value:'c'},{text:'选项3',value:'b'},{text:"数字值",value:3}],
       list = new List({
       elCls:'bui-select-list',
+      frontSortable:true,
       render : '#ls1',
       items : items,
       itemTpl : '<li><a href="#" title="{value}">{text}</a></li>'
@@ -40,6 +41,8 @@ BUI.use(['bui/list/simplelist','bui/data'],function (List,Data) {
       }),
       list = new List({
       elCls:'bui-select-list',
+      frontSortable:true,
+
       render : '#ls2',
       store : store,
       itemTpl : '<li><a href="#" title="{value}">{text}</a></li>'

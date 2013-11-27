@@ -158,8 +158,11 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
     * @protected
     */
     onLocalSort : function(e){
-      //this.onLoad(e);
-      this.sort(e.field ,e.direction);
+      if(this.get('frontSortable')){
+        this.sort(e.field ,e.direction);
+      }else{
+        this.onLoad(e);
+      }
     },
     /**
      * 加载数据
@@ -178,6 +181,16 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      * @ignore
      */
     {
+
+      /**
+       * 排序的时候是否直接进行DOM的排序，不重新生成DOM，<br>
+       * 在可展开的表格插件，TreeGrid等控件中不要使用此属性
+       * @type {Boolean}
+       * cfg {Boolean} frontSortable
+       */
+      frontSortable : {
+        value : false
+      },
       /**
        * 选项集合
        * @protected

@@ -16414,8 +16414,11 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
     * @protected
     */
     onLocalSort : function(e){
-      //this.onLoad(e);
-      this.sort(e.field ,e.direction);
+      if(this.get('frontSortable')){
+        this.sort(e.field ,e.direction);
+      }else{
+        this.onLoad(e);
+      }
     },
     /**
      * \u52a0\u8f7d\u6570\u636e
@@ -16434,6 +16437,16 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      * @ignore
      */
     {
+
+      /**
+       * \u6392\u5e8f\u7684\u65f6\u5019\u662f\u5426\u76f4\u63a5\u8fdb\u884cDOM\u7684\u6392\u5e8f\uff0c\u4e0d\u91cd\u65b0\u751f\u6210DOM\uff0c<br>
+       * \u5728\u53ef\u5c55\u5f00\u7684\u8868\u683c\u63d2\u4ef6\uff0cTreeGrid\u7b49\u63a7\u4ef6\u4e2d\u4e0d\u8981\u4f7f\u7528\u6b64\u5c5e\u6027
+       * @type {Boolean}
+       * cfg {Boolean} frontSortable
+       */
+      frontSortable : {
+        value : false
+      },
       /**
        * \u9009\u9879\u96c6\u5408
        * @protected
