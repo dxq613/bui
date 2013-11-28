@@ -25176,6 +25176,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
   var BUI = require('bui/common'),
     TabItem = require('bui/tab/tabitem'),
     PanelItem = require('bui/tab/panelitem'),
+    CLS_TITLE = 'bui-tab-item-text',
     Component = BUI.Component;
 
   /**
@@ -25185,6 +25186,12 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
    * \u5b58\u5728\u9762\u677f\u7684\u6807\u7b7e\u9879\u89c6\u56fe\u5c42\u5bf9\u8c61
    */
   var itemView = TabItem.View.extend([Component.UIBase.Close.View],{
+    _uiSetTitle : function(v){
+      var _self = this,
+        el = _self.get('el'),
+        titleEl = el.find('.' + CLS_TITLE);
+      titleEl.text(v);
+    }
   },{
     xclass:'tab-panel-item-view'
   });
@@ -25208,6 +25215,29 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
        */
       closeAction : {
         value : 'remove'
+      },
+      /**
+       * \u6807\u9898
+       * @type {String} title 
+       */
+      /**
+       * \u6807\u9898
+       * @type {String}
+       * <code>
+       *   tab.getItem('id').set('title','new title');
+       * </code>
+       */
+      title : {
+        view : true,
+        sync : false
+
+      },
+      /**
+       * \u6807\u7b7e\u9879\u7684\u6a21\u677f,\u56e0\u4e3a\u4e4b\u524d\u6ca1\u6709title\u5c5e\u6027\uff0c\u6240\u4ee5\u9ed8\u8ba4\u7528text\uff0c\u6240\u4ee5\u4e5f\u517c\u5bb9text\uff0c\u4f46\u662f\u5728\u6700\u597d\u76f4\u63a5\u4f7f\u7528title\uff0c\u65b9\u4fbf\u66f4\u6539
+       * @type {String}
+       */
+      tpl : {
+        value : '<span class="' + CLS_TITLE + '">{text}{title}</span>'
       },
       closeable : {
         value : false

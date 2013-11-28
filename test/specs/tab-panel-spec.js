@@ -3,11 +3,11 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
   var tab = new TabPanel({
       render : '#p1',
       elCls : 'nav-tabs',
-      panelTpl : '<div class="panel">{text}:{value}</div>',
+      panelTpl : '<div class="panel">{title}:{value}</div>',
       children:[
-        {text:'标签一',value:'1'},
-        {text:'标签二',value:'2',panelContent :'<p>自定义内容</p>',selected : true},
-        {text:'标签三',value:'3',loader : {url : 'data/text.php'}}
+        {title:'标签一',value:'1'},
+        {title:'标签二',value:'2',panelContent :'<p>自定义内容</p>',selected : true},
+        {title:'标签三',value:'3',loader : {url : 'data/text.php'}}
       ]
     });
 
@@ -50,7 +50,7 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
     it('增加item',function(){
       var item = tab.addItem({
         id: 'a',
-        text : 'a',
+        title : 'a',
         value : '1'
       }),
       panel = item.get('panel');
@@ -69,7 +69,7 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
       var text = 'new text',
         item = tab.getFirstItem();
 
-      item.set('text',text);
+      item.set('title',text);
       item.updateContent();
       expect(item.get('el').find('.bui-tab-item-text').text()).toBe(text);
     });
@@ -89,7 +89,11 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
       itemStatusCls : {
         'selected' : 'active'
       },
-      closeable : true,
+      defaultChildCfg : {
+        closeable : true,
+        closeTpl : '<span class="x-icon x-icon-small x-icon-hover">×</span>'
+      },
+      
       panelContainer : '#tc'
     });
 
@@ -115,7 +119,7 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
   describe('测试操作',function(){
     it('插入',function(){
       var item = tab.addChild({
-        text : '插入项',panelContent : '<p>插入内容！</p>',id:'new'
+        title : '插入项',panelContent : '<p>插入内容！</p>',id:'new'
       },1);
 
       expect(tab.indexOfItem(item)).toBe(1);
