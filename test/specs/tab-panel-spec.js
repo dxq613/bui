@@ -4,10 +4,14 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
       render : '#p1',
       elCls : 'nav-tabs',
       panelTpl : '<div class="panel">{title}:{value}</div>',
+      defaultChildCfg : {
+        closeable : true,
+        closeTpl : '<span class="x-icon x-icon-small x-icon-hover">×</span>'
+      },
       children:[
         {title:'标签一',value:'1'},
         {title:'标签二',value:'2',panelContent :'<p>自定义内容</p>',selected : true},
-        {title:'标签三',value:'3',loader : {url : 'data/text.php'}}
+        {title:'标签三',value:'3',loader : {url : 'data/text.php'},closeable : false}
       ]
     });
 
@@ -41,6 +45,12 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
     });
     it('测试替换内容',function(){
       expect(items[1].get('panel').text()).toBe('自定义内容');
+    });
+
+    it('测试可以关闭',function(){
+      var items = tab.getItems();
+      expect(items[0].get('closeable')).toBe(true);
+      expect(items[2].get('closeable')).toBe(false);
     });
 
   });
@@ -81,7 +91,7 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
     });
   });
 });
-
+/*
 BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
   var tab = new TabPanel({
       srcNode : '#p2',
@@ -137,3 +147,4 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel) {
 
 });
 
+*/

@@ -3527,11 +3527,18 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
       }
     },
     /**
-     * 序列化表单成对象
+     * 序列化表单成对象，所有的键值都是字符串
      * @return {Object} 序列化成对象
      */
     serializeToObject : function(){
       return BUI.FormHelper.serializeToObject(this.get('el')[0]);
+    },
+    /**
+     * serializeToObject 的缩写，所有的键值都是字符串
+     * @return {Object} 序列化成对象
+     */
+    toObject : function(){
+      return this.serializeToObject();
     },
     /**
      * 表单提交前

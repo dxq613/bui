@@ -8576,7 +8576,7 @@ define('bui/component/uibase/childcfg',function (require) {
           var child = ev.child;
           if($.isPlainObject(child)){
             BUI.each(defaultChildCfg,function(v,k){
-              if(!child[k]){
+              if(child[k] == null){ //\u5982\u679c\u672a\u5728\u914d\u7f6e\u9879\u4e2d\u8bbe\u7f6e\uff0c\u5219\u4f7f\u7528\u9ed8\u8ba4\u503c
                 child[k] = v;
               }
             });
@@ -20668,11 +20668,18 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
       }
     },
     /**
-     * \u5e8f\u5217\u5316\u8868\u5355\u6210\u5bf9\u8c61
+     * \u5e8f\u5217\u5316\u8868\u5355\u6210\u5bf9\u8c61\uff0c\u6240\u6709\u7684\u952e\u503c\u90fd\u662f\u5b57\u7b26\u4e32
      * @return {Object} \u5e8f\u5217\u5316\u6210\u5bf9\u8c61
      */
     serializeToObject : function(){
       return BUI.FormHelper.serializeToObject(this.get('el')[0]);
+    },
+    /**
+     * serializeToObject \u7684\u7f29\u5199\uff0c\u6240\u6709\u7684\u952e\u503c\u90fd\u662f\u5b57\u7b26\u4e32
+     * @return {Object} \u5e8f\u5217\u5316\u6210\u5bf9\u8c61
+     */
+    toObject : function(){
+      return this.serializeToObject();
     },
     /**
      * \u8868\u5355\u63d0\u4ea4\u524d

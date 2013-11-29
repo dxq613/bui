@@ -8576,7 +8576,7 @@ define('bui/component/uibase/childcfg',function (require) {
           var child = ev.child;
           if($.isPlainObject(child)){
             BUI.each(defaultChildCfg,function(v,k){
-              if(!child[k]){
+              if(child[k] == null){ //如果未在配置项中设置，则使用默认值
                 child[k] = v;
               }
             });
