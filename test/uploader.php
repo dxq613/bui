@@ -26,6 +26,9 @@
         <div id="J_UploaderIframe"></div>
       </div>
     </div>
+    <div class="row">
+      <div class="span24" id="J_Foreach"></div>
+    </div>
   </div>
   
     <?php $url = 'bui/uploader'?>

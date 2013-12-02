@@ -132,14 +132,23 @@ define('bui/uploader/button/base', function(require) {
     getExtFileData: function(file){
       var filename = getFileName(file.name),
         textSize = convertByteSize(file.size || 0),
-        extName = getFileExtName(file.name);
+        extName = getFileExtName(file.name),
+        fileAttrs = {
+          name: filename,
+          size: file.size,
+          type: file.type,
+          textSize: textSize,
+          ext: extName,
+          id: getFileId(file)
+        };
+      return fileAttrs;
+    },
+    _getFile: function(file){
+      var _self = this,
+        fileAttrs = _self.getExtFileData(file);
+      BUI.mix(file, fileAttrs);
+      file.result = fileAttrs;
 
-      BUI.mix(file, {
-        name: filename,
-        textSize: textSize,
-        ext: extName,
-        id: getFileId(file)
-      });
       return file;
     },
     setMultiple: function(v){

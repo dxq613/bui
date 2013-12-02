@@ -111,7 +111,7 @@ define('bui/uploader/type/flash', function (require) {
             }
             return _self;
         },
-        clear: function(){
+        reset: function(){
 
         },
         /**

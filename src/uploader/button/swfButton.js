@@ -32,7 +32,7 @@ define('bui/uploader/button/swfButton', function (require) {
           var fileList = ev.fileList,
             files = [];
           BUI.each(fileList, function(file){
-            files.push(_self.getExtFileData(file));
+            files.push(_self._getFile(file));
           });
           _self.fire('change', {files: files});
         });

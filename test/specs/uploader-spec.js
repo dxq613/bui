@@ -125,3 +125,17 @@ BUI.use(['bui/uploader'], function (Uploader) {
     });
   });
 });
+
+BUI.use(['bui/uploader'], function (Uploader) {
+  for(var i = 0; i < 100; i++){
+    new Uploader.Uploader({
+        render: '#J_Foreach',
+        type: 'flash',
+        url: 'upload/upload.php',
+        button: {
+          filter: {desc:"jpg,jpeg",ext:".jpg,.jpeg"},
+          flashUrl: 'https://martini.alitest.net:5000/av/uploader.swf'
+        }
+      }).render();
+  }
+});

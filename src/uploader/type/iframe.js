@@ -54,15 +54,13 @@ define('bui/uploader/type/iframe',function(require) {
                 return false
             };
             _self.fire(IframeType.event.START, {file: file});
+            _self.set('file', file);
             _self.set('fileInput', input);
             //创建iframe和form
             _self._create();
             form = _self.get('form');
-            if(!form){
-                return false;
-            }
             //提交表单到iframe内
-            form.getDOMNode().submit();
+            form && form[0].submit();
         },
         /**
          * 停止上传
@@ -71,7 +69,7 @@ define('bui/uploader/type/iframe',function(require) {
         stop : function() {
             var self = this,iframe = self.get('iframe');
             iframe.attr('src', 'javascript:"<html></html>";');
-            self._remove();
+            self.reset();
             self.fire(IframeType.event.STOP);
             self.fire(IframeType.event.ERROR, {status : 'abort',msg : '上传失败，原因：abort'});
             return self;
@@ -83,14 +81,15 @@ define('bui/uploader/type/iframe',function(require) {
          */
         dataToHidden : function(data) {
             if (!$.isPlainObject(data) || $.isEmptyObject(data)) return '';
-            var self = this,hiddenInputHtml = EMPTY,
+            var self = this,
+                hiddenInputHtml = [],
                 //hidden元素模板
                 tpl = self.get('tpl'),hiddenTpl = tpl.HIDDEN_INPUT;
             if (!BUI.isString(hiddenTpl)) return '';
             for (var k in data) {
-                hiddenInputHtml += BUI.substitute(hiddenTpl, {'name' : k,'value' : data[k]});
+                hiddenInputHtml.push(BUI.substitute(hiddenTpl, {'name' : k,'value' : data[k]}));
             }
-            return hiddenInputHtml;
+            return hiddenInputHtml.join();
         },
         /**
          * 创建一个空的iframe，用于文件上传表单提交后返回服务器端数据
@@ -111,10 +110,10 @@ define('bui/uploader/type/iframe',function(require) {
             //创建处理上传的iframe
             iframe = $(BUI.substitute(tpl.IFRAME, { 'id' : id }));
             //监听iframe的load事件
+            $('body').append(iframe);
             iframe.on('load', function(ev){
                 self._iframeLoadHandler(ev);
             });
-            $('body').append(iframe);
             self.set('id',id);
             self.set('iframe', iframe);
             return iframe;
@@ -133,10 +132,14 @@ define('bui/uploader/type/iframe',function(require) {
             }
             var response = doc.body.innerHTML;
             //输出为直接退出
-            if(response == '') return false;
+            if(response == ''){
+                self.fire('error');
+                return;
+            };
             result = self._processResponse(response);
-            self.fire(IframeType.event.SUCCESS, {result : result});
-            self._remove();
+
+            self.fire('complete', {result: result, file: self.get('file')});
+            self.reset();
         },
         /**
          * 创建文件上传表单
@@ -151,9 +154,10 @@ define('bui/uploader/type/iframe',function(require) {
                 //想要传送给服务器端的数据
                 data = self.get('data'),
                 //服务器端处理文件上传的路径
-                action = self.get('action'),
+                action = self.get('url'),
                 fileInput = self.get('fileInput'),
-                hiddens,$form,form;
+                hiddens,
+                form;
             if (!BUI.isString(formTpl)) {
                 return false;
             }
@@ -161,13 +165,13 @@ define('bui/uploader/type/iframe',function(require) {
                 return false;
             }
             hiddens = self.dataToHidden(data);
-           hiddens += self.dataToHidden({"type":"iframe"});
+            hiddens += self.dataToHidden({"type":"iframe"});
             form = BUI.substitute(formTpl, {'action' : action,'target' : id,'hiddenInputs' : hiddens});
             //克隆文件域，并添加到form中
-            $form = $(form).append(fileInput);
-            $('body').append($form);
-            self.set('form', $form);
-            return $form;
+            form = $(form).append(fileInput);
+            $('body').append(form);
+            self.set('form', form);
+            return form;
         },
         /**
          * 创建iframe和form
@@ -176,6 +180,7 @@ define('bui/uploader/type/iframe',function(require) {
             var _self = this,
                 iframe = _self._createIframe(),
                 form = _self._createForm();
+
             _self.fire(IframeType.event.CREATE, {iframe : iframe,form : form});
         },
         /**
@@ -187,8 +192,13 @@ define('bui/uploader/type/iframe',function(require) {
             //移除表单
             form.remove();
             //重置form属性
-            self.reset('form');
+            self.set('form', null);
             self.fire(IframeType.event.REMOVE, {form : form});
+        },
+        reset: function(){
+            var _self = this;
+            _self._remove();
+            _self.set('file', null);
         }
     }, {ATTRS : /** @lends IframeType.prototype*/{
         /**

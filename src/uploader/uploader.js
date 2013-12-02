@@ -153,13 +153,11 @@ define('bui/uploader/uploader', function (require) {
         queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
       button.on('change', function(ev) {
-        //对添加的文件添加等待状态
-        BUI.each(ev.files, function(file){
-          BUI.mix(file, {
-            wait: true
-          });
-        });
         var files = ev.files;
+        //对添加的文件添加等待状态
+        BUI.each(files, function(file){
+          file.wait = true;
+        });
         _self.fire('beforechange', {items: files});
         queue.addItems(files);
         _self.fire('change', {items: files});
@@ -233,7 +231,7 @@ define('bui/uploader/uploader', function (require) {
           errorFn = _self.get('error'),
           completeFn = _self.get('complete');
 
-        curUploadItem.result = result;
+        BUI.mix(curUploadItem.result, result);
 
         if(isSuccess.call(_self, result)){
           queue.updateFileStatus(curUploadItem, 'success');
