@@ -34,7 +34,7 @@
       <path path="${comp.dir}/uibase/stdmod.js"/>
 	  <path path="${comp.dir}/uibase/decorate.js"/>
       <path path="${comp.dir}/uibase/tpl.js"/> 
-	  <path path="${comp.dir}/uibase/collapseable.js"/> 
+	  <path path="${comp.dir}/uibase/collapsable.js"/> 
       <path path="${comp.dir}/uibase/selection.js"/> 
       <path path="${comp.dir}/uibase/list.js"/> 
       <path path="${comp.dir}/uibase/childcfg.js"/> 

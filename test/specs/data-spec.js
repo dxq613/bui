@@ -383,4 +383,31 @@ BUI.use('bui/data',function(Data){
       store.load();
     });
   });
+
+  describe('修改链接',function(){
+    var store = new Data.Store({
+      url : 'data/store-a.json',
+      pageSize:10
+      
+    });
+    it('测试初始链接',function(){
+      store.load();
+      waits(100);
+      runs(function(){
+        expect(store.getCount()).toBe(1);
+      });
+    })
+    it('更改链接',function(){
+      store.get('proxy').set('url','data/store-b.json');
+      store.load();
+       waits(100);
+      runs(function(){
+        expect(store.getCount()).toBe(3);
+      });
+    });
+  });
+
+  describe('修改pageSize',function(){
+
+  });
 });

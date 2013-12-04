@@ -2718,6 +2718,8 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
     xclass : 'grid'
   });
 
+  grid.View = gridView;
+
   return grid;
 });
 

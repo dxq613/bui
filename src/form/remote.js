@@ -269,6 +269,13 @@ define('bui/form/remote',['bui/common'],function(require) {
     getRemoteParams : function() {
 
     },
+    /**
+     * 清楚异步验证的缓存
+     * @return {[type]} [description]
+     */
+    clearCache : function(){
+      this.set('cacheMap',{});
+    },
     //取消异步请求
     _cancelRemote : function(remoteHandler){
       var _self = this;

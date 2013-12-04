@@ -5,7 +5,7 @@
 ;(function(){
 var BASE = 'bui/component/uibase/';
 define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BASE + 'autohide',
-    BASE + 'close',BASE + 'collapseable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
+    BASE + 'close',BASE + 'collapsable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
     BASE + 'listitem',BASE + 'mask',BASE + 'position',BASE + 'selection',BASE + 'stdmod',
     BASE + 'decorate',BASE + 'tpl',BASE + 'childcfg',BASE + 'bindable',BASE + 'depends'],function(r){
 
@@ -16,7 +16,7 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
     AutoShow : r(BASE + 'autoshow'),
     AutoHide : r(BASE + 'autohide'),
     Close : r(BASE + 'close'),
-    Collapseable : r(BASE + 'collapseable'),
+    Collapsable : r(BASE + 'collapsable'),
     Drag : r(BASE + 'drag'),
     KeyNav : r(BASE + 'keynav'),
     List : r(BASE + 'list'),
@@ -34,7 +34,7 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
 
   BUI.mix(UIBase,{
     CloseView : UIBase.Close.View,
-    CollapseableView : UIBase.Collapseable.View,
+    CollapsableView : UIBase.Collapsable.View,
     ChildList : UIBase.List.ChildList,
     /*DomList : UIBase.List.DomList,
     DomListView : UIBase.List.DomList.View,*/

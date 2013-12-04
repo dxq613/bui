@@ -17,10 +17,10 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @private
    * @class BUI.Menu.MenuItemView
    * @mixins BUI.Component.UIBase.ListItemView
-   * @mixins BUI.Component.UIBase.CollapseableView
+   * @mixins BUI.Component.UIBase.collapsableView
    * 菜单项的视图类
    */
-  var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapseableView],{
+  var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapsableView],{
 
     _uiSetOpen : function (v) {
       var _self = this,
@@ -44,7 +44,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ListItem
    */
-  var menuItem = Component.Controller.extend([UIBase.ListItem,UIBase.Collapseable],{
+  var menuItem = Component.Controller.extend([UIBase.ListItem,UIBase.Collapsable],{
     /**
      * 渲染
      * @protected

@@ -1038,7 +1038,8 @@ define('bui/util',function(){
             BUI.mix(/*true,*/attr[p], attrConfig[p]); 
           }else if(BUI.isArray(attrConfig[p])){
             attr[p] = attr[p] || [];
-            BUI.mix(/*true,*/attr[p], attrConfig[p]); 
+            //BUI.mix(/*true,*/attr[p], attrConfig[p]); 
+            attr[p] = attr[p].concat(attrConfig[p]);
           }else{
             attr[p] = attrConfig[p];
           }
@@ -3880,7 +3881,7 @@ define('bui/component/manage',function(require){
 ;(function(){
 var BASE = 'bui/component/uibase/';
 define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BASE + 'autohide',
-    BASE + 'close',BASE + 'collapseable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
+    BASE + 'close',BASE + 'collapsable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
     BASE + 'listitem',BASE + 'mask',BASE + 'position',BASE + 'selection',BASE + 'stdmod',
     BASE + 'decorate',BASE + 'tpl',BASE + 'childcfg',BASE + 'bindable',BASE + 'depends'],function(r){
 
@@ -3891,7 +3892,7 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
     AutoShow : r(BASE + 'autoshow'),
     AutoHide : r(BASE + 'autohide'),
     Close : r(BASE + 'close'),
-    Collapseable : r(BASE + 'collapseable'),
+    Collapsable : r(BASE + 'collapsable'),
     Drag : r(BASE + 'drag'),
     KeyNav : r(BASE + 'keynav'),
     List : r(BASE + 'list'),
@@ -3909,7 +3910,7 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
 
   BUI.mix(UIBase,{
     CloseView : UIBase.Close.View,
-    CollapseableView : UIBase.Collapseable.View,
+    CollapsableView : UIBase.Collapsable.View,
     ChildList : UIBase.List.ChildList,
     /*DomList : UIBase.List.DomList,
     DomListView : UIBase.List.DomList.View,*/
@@ -5884,19 +5885,19 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       
       switch(code){
         case KeyCode.UP :
-          ev.preventDefault();
+          //ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
-          ev.preventDefault();
+          //ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
-          ev.preventDefault();
+          //ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
-          ev.preventDefault();
+          //ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 
@@ -7354,22 +7355,22 @@ define('bui/component/uibase/tpl',function () {
  * @ignore
  */
 
-define('bui/component/uibase/collapseable',function () {
+define('bui/component/uibase/collapsable',function () {
 
   /**
   * \u63a7\u4ef6\u5c55\u5f00\u6298\u53e0\u7684\u89c6\u56fe\u7c7b
-  * @class BUI.Component.UIBase.CollapseableView
+  * @class BUI.Component.UIBase.CollapsableView
   * @private
   */
-  var collapseableView = function(){
+  var collapsableView = function(){
   
   };
 
-  collapseableView.ATTRS = {
+  collapsableView.ATTRS = {
     collapsed : {}
   }
 
-  collapseableView.prototype = {
+  collapsableView.prototype = {
     //\u8bbe\u7f6e\u6536\u7f29\u6837\u5f0f
     _uiSetCollapsed : function(v){
       var _self = this,
@@ -7384,18 +7385,18 @@ define('bui/component/uibase/collapseable',function () {
   }
   /**
    * \u63a7\u4ef6\u5c55\u5f00\u6298\u53e0\u7684\u6269\u5c55
-   * @class BUI.Component.UIBase.Collapseable
+   * @class BUI.Component.UIBase.Collapsable
    */
-  var collapseable = function(){
+  var collapsable = function(){
     
   };
 
-  collapseable.ATTRS = {
+  collapsable.ATTRS = {
     /**
      * \u662f\u5426\u53ef\u6298\u53e0
      * @type {Boolean}
      */
-    collapseable: {
+    collapsable: {
       value : false
     },
     /**
@@ -7430,7 +7431,7 @@ define('bui/component/uibase/collapseable',function () {
     }
   };
 
-  collapseable.prototype = {
+  collapsable.prototype = {
     _uiSetCollapsed : function(v){
       var _self = this;
       if(v){
@@ -7441,9 +7442,9 @@ define('bui/component/uibase/collapseable',function () {
     }
   };
 
-  collapseable.View = collapseableView;
+  collapsable.View = collapsableView;
   
-  return collapseable;
+  return collapsable;
 });/**
  * @fileOverview \u5355\u9009\u6216\u8005\u591a\u9009
  * @author  dxq613@gmail.com
@@ -20885,7 +20886,7 @@ define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
     Form = require('bui/form/form');
 
   /**
-   * @class BUI.Form.Horizontal
+   * @class BUI.Form.HForm
    * \u6c34\u5e73\u8868\u5355\uff0c\u5b57\u6bb5\u6c34\u5e73\u6392\u5217
    * @extends BUI.Form.Form
    * 
@@ -21936,6 +21937,13 @@ define('bui/form/remote',['bui/common'],function(require) {
      */
     getRemoteParams : function() {
 
+    },
+    /**
+     * \u6e05\u695a\u5f02\u6b65\u9a8c\u8bc1\u7684\u7f13\u5b58
+     * @return {[type]} [description]
+     */
+    clearCache : function(){
+      this.set('cacheMap',{});
     },
     //\u53d6\u6d88\u5f02\u6b65\u8bf7\u6c42
     _cancelRemote : function(remoteHandler){
@@ -23117,10 +23125,10 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @private
    * @class BUI.Menu.MenuItemView
    * @mixins BUI.Component.UIBase.ListItemView
-   * @mixins BUI.Component.UIBase.CollapseableView
+   * @mixins BUI.Component.UIBase.collapsableView
    * \u83dc\u5355\u9879\u7684\u89c6\u56fe\u7c7b
    */
-  var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapseableView],{
+  var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapsableView],{
 
     _uiSetOpen : function (v) {
       var _self = this,
@@ -23144,7 +23152,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ListItem
    */
-  var menuItem = Component.Controller.extend([UIBase.ListItem,UIBase.Collapseable],{
+  var menuItem = Component.Controller.extend([UIBase.ListItem,UIBase.Collapsable],{
     /**
      * \u6e32\u67d3
      * @protected
@@ -31942,6 +31950,8 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
   },{
     xclass : 'grid'
   });
+
+  grid.View = gridView;
 
   return grid;
 });

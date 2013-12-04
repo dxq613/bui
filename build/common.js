@@ -67,7 +67,8 @@ define('bui/util',function(){
             BUI.mix(/*true,*/attr[p], attrConfig[p]); 
           }else if(BUI.isArray(attrConfig[p])){
             attr[p] = attr[p] || [];
-            BUI.mix(/*true,*/attr[p], attrConfig[p]); 
+            //BUI.mix(/*true,*/attr[p], attrConfig[p]); 
+            attr[p] = attr[p].concat(attrConfig[p]);
           }else{
             attr[p] = attrConfig[p];
           }
@@ -2909,7 +2910,7 @@ define('bui/component/manage',function(require){
 ;(function(){
 var BASE = 'bui/component/uibase/';
 define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BASE + 'autohide',
-    BASE + 'close',BASE + 'collapseable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
+    BASE + 'close',BASE + 'collapsable',BASE + 'drag',BASE + 'keynav',BASE + 'list',
     BASE + 'listitem',BASE + 'mask',BASE + 'position',BASE + 'selection',BASE + 'stdmod',
     BASE + 'decorate',BASE + 'tpl',BASE + 'childcfg',BASE + 'bindable',BASE + 'depends'],function(r){
 
@@ -2920,7 +2921,7 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
     AutoShow : r(BASE + 'autoshow'),
     AutoHide : r(BASE + 'autohide'),
     Close : r(BASE + 'close'),
-    Collapseable : r(BASE + 'collapseable'),
+    Collapsable : r(BASE + 'collapsable'),
     Drag : r(BASE + 'drag'),
     KeyNav : r(BASE + 'keynav'),
     List : r(BASE + 'list'),
@@ -2938,7 +2939,7 @@ define('bui/component/uibase',[BASE + 'base',BASE + 'align',BASE + 'autoshow',BA
 
   BUI.mix(UIBase,{
     CloseView : UIBase.Close.View,
-    CollapseableView : UIBase.Collapseable.View,
+    CollapsableView : UIBase.Collapsable.View,
     ChildList : UIBase.List.ChildList,
     /*DomList : UIBase.List.DomList,
     DomListView : UIBase.List.DomList.View,*/
@@ -4913,19 +4914,19 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       
       switch(code){
         case KeyCode.UP :
-          ev.preventDefault();
+          //ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
-          ev.preventDefault();
+          //ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
-          ev.preventDefault();
+          //ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
-          ev.preventDefault();
+          //ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 
@@ -6383,22 +6384,22 @@ define('bui/component/uibase/tpl',function () {
  * @ignore
  */
 
-define('bui/component/uibase/collapseable',function () {
+define('bui/component/uibase/collapsable',function () {
 
   /**
   * 控件展开折叠的视图类
-  * @class BUI.Component.UIBase.CollapseableView
+  * @class BUI.Component.UIBase.CollapsableView
   * @private
   */
-  var collapseableView = function(){
+  var collapsableView = function(){
   
   };
 
-  collapseableView.ATTRS = {
+  collapsableView.ATTRS = {
     collapsed : {}
   }
 
-  collapseableView.prototype = {
+  collapsableView.prototype = {
     //设置收缩样式
     _uiSetCollapsed : function(v){
       var _self = this,
@@ -6413,18 +6414,18 @@ define('bui/component/uibase/collapseable',function () {
   }
   /**
    * 控件展开折叠的扩展
-   * @class BUI.Component.UIBase.Collapseable
+   * @class BUI.Component.UIBase.Collapsable
    */
-  var collapseable = function(){
+  var collapsable = function(){
     
   };
 
-  collapseable.ATTRS = {
+  collapsable.ATTRS = {
     /**
      * 是否可折叠
      * @type {Boolean}
      */
-    collapseable: {
+    collapsable: {
       value : false
     },
     /**
@@ -6459,7 +6460,7 @@ define('bui/component/uibase/collapseable',function () {
     }
   };
 
-  collapseable.prototype = {
+  collapsable.prototype = {
     _uiSetCollapsed : function(v){
       var _self = this;
       if(v){
@@ -6470,9 +6471,9 @@ define('bui/component/uibase/collapseable',function () {
     }
   };
 
-  collapseable.View = collapseableView;
+  collapsable.View = collapsableView;
   
-  return collapseable;
+  return collapsable;
 });/**
  * @fileOverview 单选或者多选
  * @author  dxq613@gmail.com
