@@ -26774,11 +26774,11 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 	        * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61\uff0c\u5305\u542b\u52a0\u8f7d\u6570\u636e\u65f6\u7684\u53c2\u6570
 	        */
 			events : {
-				value : [
+				/*value : [
 					'start',
 					'loadchange',
 					'completed'
-				]
+				]*/
 			}
 		}
 	},{
