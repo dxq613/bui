@@ -80,14 +80,13 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins/rowediting','bui/grid/form
 
   describe('测试编辑器生成',function(){
     it('测试初始化',function(){
-      waits(500);
+      waits(1000);
       runs(function(){
         editor = editing.getEditor('b'),
         form = editor.get('form');
 
         var editors = editing.get('editors');
         expect(editors.length).toBe(1);
-
         expect(grid.get('columns').length).toBe(editor.get('form').get('children').length);
       });
     });

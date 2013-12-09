@@ -109,6 +109,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      * @type {Object}
      */
     rules : {
+      shared : false,
       value : {}
     },
     /**
@@ -116,6 +117,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      * @type {Object}
      */
     messages : {
+      shared : false,
       value : {}
     },
     /**
@@ -203,6 +205,9 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     },
     //验证规则
     validRules : function(rules,value){
+      if(!rules){
+        return;
+      }
       var _self = this,
         messages = _self._getValidMessages(),
         error = null;

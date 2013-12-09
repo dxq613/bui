@@ -27,6 +27,8 @@
     <?php include("./templates/script.php"); ?>
     <script type="text/javascript" src="../src/tab/tabitem.js"></script>
     <script type="text/javascript" src="../src/tab/tab.js"></script>
+    <script type="text/javascript" src="../src/tab/panels.js"></script>
+    <script type="text/javascript" src="../src/tab/panelitem.js"></script>
     <script type="text/javascript" src="../src/tab/navtabitem.js"></script>
 		<script type="text/javascript" src="../src/tab/navtab.js"></script>
     <script type="text/javascript" src="../src/tab/tabpanelitem.js"></script>

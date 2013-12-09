@@ -41,6 +41,9 @@
       <div id="s4" class="span8">
         
       </div>
+      <div id="s5" class="span8">
+        
+      </div>
     </div>
   </div>
     <?php $url = 'bui/slider/slider'?>

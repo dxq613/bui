@@ -73,6 +73,7 @@ define('bui/grid/plugins/editing',function (require) {
      * @type {Object}
      */
     editors : {
+      shared:false,
       value : []
     },
     /**

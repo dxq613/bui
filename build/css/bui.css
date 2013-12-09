@@ -2313,6 +2313,12 @@ input.x-datepicker-time {
   left: -9999px;
   top: -9999px;
 }
+.x-relative {
+  position: relative;
+}
+.x-absolute {
+  position: absolute;
+}
 .bui-clear {
   *zoom: 1;
 }

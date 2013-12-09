@@ -86,7 +86,7 @@ BUI.use('bui/picker/listpicker',function (Picker) {
       }
     ]
   });
-  picker.show();
+  picker.render();
   var el = picker.get('el');
 
   describe('测试选择器生成',function(){

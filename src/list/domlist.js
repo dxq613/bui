@@ -781,7 +781,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         items = _self.get('items'),
         result = null;
       BUI.each(items,function(item){
-        if(item[field] === value){
+        if(item[field] != null && item[field] == value){//会出现false == '','0' == false的情况
             result = item;
             return false;
         }

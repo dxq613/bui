@@ -137,7 +137,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @ignore
      */
     function bindUI(self) {
-        var attrs = self.getAttrs(),
+        /*var attrs = self.getAttrs(),
             attr,
             m;
 
@@ -157,6 +157,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
                 }
             }
         }
+        */
     }
 
         /**
@@ -205,8 +206,8 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
 
         var listener,
             n,
-            plugins = _self.get('plugins'),
-            listeners = _self.get('listeners');
+            plugins = _self.get('plugins')/*,
+            listeners = _self.get('listeners')*/;
 
         constructPlugins(plugins);
     
@@ -283,7 +284,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      * @readOnly
      */
     plugins : {
-      value : []
+      //value : []
     },
     /**
      * 是否已经渲染完成
@@ -346,7 +347,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
             if (!_self.get('rendered')) {
                 var plugins = _self.get('plugins');
                 _self.create(undefined);
-
+                _self.set('created',true);
                 /**
                  * @event beforeRenderUI
                  * fired when root node is ready
@@ -373,7 +374,7 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
                 _self.fire('beforeBindUI');
                 bindUI(_self);
                 callMethodByHierarchy(_self, 'bindUI', '__bindUI');
-
+                _self.set('binded',true);
                 /**
                  * @event afterBindUI
                  * fired when UIBase 's internal event is bind.
@@ -457,6 +458,24 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
         return _self;
     } 
   });
+    
+  //延时处理构造函数
+  function initConstuctor(c){
+    var constructors = [];
+    while(c.base){
+        constructors.push(c);
+        c = c.base;
+    }
+    for(var i = constructors.length - 1; i >=0 ; i--){
+        var C = constructors[i];
+        //BUI.extend(C,C.base,C.px,C.sx);
+        BUI.mix(C.prototype,C.px);
+        BUI.mix(C,C.sx);
+        C.base = null;
+        C.px = null;
+        C.sx = null;
+    }
+  }
   
   BUI.mix(UIBase,
     {
@@ -477,11 +496,22 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
           }
 
           function C() {
-              UIBase.apply(this, arguments);
+            var c = this.constructor;
+            if(c.base){
+                initConstuctor(c);
+            }
+            UIBase.apply(this, arguments);
           }
 
-          BUI.extend(C, base, px, sx);
-          BUI.mixin(C,extensions);
+          BUI.extend(C, base);  //无法延迟
+          C.base = base;
+          C.px = px;//延迟复制原型链上的函数
+          C.sx = sx;//延迟复制静态属性
+
+          //BUI.mixin(C,extensions);
+          if(extensions.length){ //延迟执行mixin
+            C.extensions = extensions;
+          }
          
           return C;
     },

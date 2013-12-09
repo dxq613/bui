@@ -21,6 +21,8 @@
 	<target name="combine.js" depends="prepare">
         <concat destfile="${des.dir}/tab.js" encoding="${charset}" outputencoding="${charset}">
 			<path path="base.js"/>
+      <path path="panelitem.js"/>
+      <path path="panels.js"/>
 			<path path="navtabitem.js"/>
 			<path path="navtab.js"/>
 			<path path="tabitem.js"/>

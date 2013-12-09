@@ -1,5 +1,5 @@
 
-BUI.use('bui/form/form',function (Form) {
+BUI.use(['bui/form/form','bui/toolbar'],function (Form) {
 
   var record = {a:'123',b:'256',c:'222',d:'1'},
     buttons = [

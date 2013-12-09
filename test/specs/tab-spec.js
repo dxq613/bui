@@ -1,5 +1,5 @@
 
-
+/**/
 BUI.use('bui/tab',function (Tab){
   
   var CLS_ITEM_TITLE = 'tab-item-title',
@@ -49,7 +49,7 @@ BUI.use('bui/tab',function (Tab){
   });
   
 });
-/**/
+
 BUI.use('bui/tab',function(Tab){
 
   var CLS_NAV_LIST = 'tab-nav-list';
@@ -194,7 +194,11 @@ BUI.use(['bui/tab/tabpanel','bui/tab/tabpanelitem'],function(TabPanel){
     });
   describe('测试标签选中跟面板显示',function(){
     it('测试生成',function(){
-
+      var items = tab.getItems();
+      BUI.each(items,function(item){
+        var panel = item.get('panel');
+        expect(panel).not.toBe(null);
+      });
     });
     it('测试初始面板隐藏',function(){
       var items = tab.getItems();

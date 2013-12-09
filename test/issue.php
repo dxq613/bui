@@ -9,6 +9,7 @@
 
 
     <script type="text/javascript" src="specs/issue-62-spec.js"></script>
+    <script type="text/javascript" src="specs/issue-67-spec.js"></script>
     <!---->
     
 <?php include("./templates/footer.php"); ?>

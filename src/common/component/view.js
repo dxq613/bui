@@ -244,6 +244,37 @@ define('bui/component/view',['bui/component/manage','bui/component/uibase'],func
                 el.css('display', isVisible ? '' : 'none');
             }
         },
+        set : function(name,value){
+             var _self = this,
+                attr = _self.__attrs[name],
+                ev,
+                ucName,
+                m;
+
+            if(!attr || !_self.get('binded')){ //未初始化view或者没用定义属性
+                View.superclass.set.call(this,name,value);
+                return _self;
+            }
+
+            var prevVal = View.superclass.get.call(this,name);
+
+            //如果未改变值不进行修改
+            if(!$.isPlainObject(value) && !BUI.isArray(value) && prevVal === value){
+                return _self;
+            }
+            View.superclass.set.call(this,name,value);
+
+            value = _self.__attrVals[name];
+            ev = {attrName: name,prevVal: prevVal,newVal: value};
+            ucName = BUI.ucfirst(name);
+            m = '_uiSet' + ucName;
+            if(_self[m]){
+                _self[m](value,ev);
+            }
+
+            return _self;
+
+        },
         /**
          * 析构函数
          * @protected

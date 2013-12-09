@@ -8,7 +8,7 @@ define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
     Form = require('bui/form/form');
 
   /**
-   * @class BUI.Form.Horizontal
+   * @class BUI.Form.HForm
    * 水平表单，字段水平排列
    * @extends BUI.Form.Form
    * 

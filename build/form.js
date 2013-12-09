@@ -190,7 +190,9 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
      * @type {Array} 
      */
     items : {
-      value:[]
+      valueFn:function(){
+        return [];
+      }
     }
   };
 
@@ -611,11 +613,12 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     },
     /**
      * 清理出错信息，回滚到未出错状态
+     * @param {Boolean} reset 清除错误时，是否回滚上次正确的值
      */
-    clearErrors : function(){
+    clearErrors : function(reset){
       var _self = this;
       _self._clearError();
-      if(_self.getControlValue()!= _self.get('value')){
+      if(reset && _self.getControlValue()!= _self.get('value')){
         _self.setControlValue(_self.get('value'));
       }
     },
@@ -1300,8 +1303,8 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield'),
-    DateUtil = BUI.Date,
-    DatePicker = require('bui/calendar').DatePicker;
+    DateUtil = BUI.Date;/*,
+    DatePicker = require('bui/calendar').DatePicker*/
 
   /**
    * 表单文本域
@@ -1315,27 +1318,25 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       var _self = this,
         datePicker = _self.get('datePicker');
       if($.isPlainObject(datePicker)){
-        datePicker.trigger = _self.getInnerControl();
-        datePicker.autoRender = true;
-        datePicker = new DatePicker(datePicker);
-        _self.set('datePicker',datePicker);
-        _self.set('isCreatePicker',true);
-        _self.get('children').push(datePicker);
+        _self.initDatePicker(datePicker);
       }
-      if(datePicker.get('showTime')){
+      if((datePicker.get && datePicker.get('showTime'))|| datePicker.showTime){
         _self.getInnerControl().addClass('calendar-time');
       }
 
     },
-    bindUI : function(){
-      var _self = this,
-        datePicker = _self.get('datePicker');
-      /*datePicker.on('selectedchange',function(ev){
-        var curTrigger = ev.curTrigger;
-        if(curTrigger[0] == _self.getInnerControl()[0]){
-          _self.set('value',ev.value);
-        }
-      });*/
+    //初始化日历控件
+    initDatePicker : function(datePicker){
+      var _self = this;
+
+      BUI.use('bui/calendar',function(Calendar){
+        datePicker.trigger = _self.getInnerControl();
+        datePicker.autoRender = true;
+        datePicker = new Calendar.DatePicker(datePicker);
+        _self.set('datePicker',datePicker);
+        _self.set('isCreatePicker',true);
+        _self.get('children').push(datePicker);
+      });
     },
     /**
      * 设置字段的值
@@ -1386,8 +1387,13 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       this.addRule('max',v);
       var _self = this,
         datePicker = _self.get('datePicker');
-      if(datePicker && datePicker.set){
-        datePicker.set('maxDate',v);
+      if(datePicker){
+        if(datePicker.set){
+          datePicker.set('maxDate',v);
+        }else{
+          datePicker.maxDate = v;
+        }
+        
       }
     },
     //设置最小值
@@ -1395,8 +1401,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       this.addRule('min',v);
       var _self = this,
         datePicker = _self.get('datePicker');
-      if(datePicker && datePicker.set){
-        datePicker.set('minDate',v);
+      if(datePicker){
+        if(datePicker.set){
+          datePicker.set('minDate',v);
+        }else{
+          datePicker.minDate = v;
+        }
       }
     }
   },{
@@ -1440,6 +1450,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
        * @type {Object|BUI.Calendar.DatePicker}
        */
       datePicker : {
+        shared : false,
         value : {
           
         }
@@ -2265,6 +2276,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      * @type {Object}
      */
     rules : {
+      shared : false,
       value : {}
     },
     /**
@@ -2272,6 +2284,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      * @type {Object}
      */
     messages : {
+      shared : false,
       value : {}
     },
     /**
@@ -2359,6 +2372,9 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     },
     //验证规则
     validRules : function(rules,value){
+      if(!rules){
+        return;
+      }
       var _self = this,
         messages = _self._getValidMessages(),
         error = null;
@@ -3412,10 +3428,9 @@ define('bui/form/fieldgroup',['bui/common','bui/form/group/base','bui/form/group
  * @ignore
  */
 
-define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],function (require) {
+define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (require) {
   
   var BUI = require('bui/common'),
-    Bar = require('bui/toolbar').Bar,
     TYPE_SUBMIT = {
       NORMAL : 'normal',
       AJAX : 'ajax',
@@ -3453,10 +3468,16 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
         cfg;
       if($.isPlainObject(buttonBar) && _self.get('buttons')){
         cfg = BUI.merge(_self.getDefaultButtonBarCfg(),buttonBar);
-        buttonBar = new Bar(cfg);
-        _self.set('buttonBar',buttonBar);
+        _self._initButtonBar(cfg);
       }
       _self._initSubmitMask();
+    },
+    _initButtonBar : function(cfg){
+      var _self = this;
+      BUI.use('bui/toolbar',function(Toolbar){
+        buttonBar = new Toolbar.Bar(cfg);
+        _self.set('buttonBar',buttonBar);
+      });
     },
     bindUI : function(){
       var _self = this,
@@ -3558,11 +3579,18 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
       }
     },
     /**
-     * 序列化表单成对象
+     * 序列化表单成对象，所有的键值都是字符串
      * @return {Object} 序列化成对象
      */
     serializeToObject : function(){
       return BUI.FormHelper.serializeToObject(this.get('el')[0]);
+    },
+    /**
+     * serializeToObject 的缩写，所有的键值都是字符串
+     * @return {Object} 序列化成对象
+     */
+    toObject : function(){
+      return this.serializeToObject();
     },
     /**
      * 表单提交前
@@ -3725,9 +3753,8 @@ define('bui/form/form',['bui/common','bui/toolbar','bui/form/fieldcontainer'],fu
        * @type {BUI.Toolbar.Bar}
        */
       buttonBar : {
-        value : {
-
-        }
+        shared : false,
+        value : {}
       },
       childContainer : {
         value : '.x-form-fields'
@@ -3769,7 +3796,7 @@ define('bui/form/horizontal',['bui/common','bui/form/form'],function (require) {
     Form = require('bui/form/form');
 
   /**
-   * @class BUI.Form.Horizontal
+   * @class BUI.Form.HForm
    * 水平表单，字段水平排列
    * @extends BUI.Form.Form
    * 
@@ -4820,6 +4847,13 @@ define('bui/form/remote',['bui/common'],function(require) {
      */
     getRemoteParams : function() {
 
+    },
+    /**
+     * 清楚异步验证的缓存
+     * @return {[type]} [description]
+     */
+    clearCache : function(){
+      this.set('cacheMap',{});
     },
     //取消异步请求
     _cancelRemote : function(remoteHandler){

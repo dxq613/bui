@@ -203,11 +203,11 @@ define('bui/progressbar/load',['bui/progressbar/base'],function(require){
 	        * @param {jQuery.Event} e  事件对象，包含加载数据时的参数
 	        */
 			events : {
-				value : [
+				/*value : [
 					'start',
 					'loadchange',
 					'completed'
-				]
+				]*/
 			}
 		}
 	},{

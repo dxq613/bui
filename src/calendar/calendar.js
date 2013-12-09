@@ -84,8 +84,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         children = _self.get('children'),
         header = new Header(),
         panel = new Panel(),
-        footer = _self.get('footer') || _self._createFooter(),
-        monthPicker = _self.get('monthPicker') || _self._createMonthPicker();
+        footer = _self.get('footer') || _self._createFooter();/*,
+        monthPicker = _self.get('monthPicker') || _self._createMonthPicker();*/
 
 
       //添加头
@@ -93,12 +93,12 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       //添加panel
       children.push(panel);
       children.push(footer);
-      children.push(monthPicker);
+      //children.push(monthPicker);
 
       _self.set('header',header);
       _self.set('panel',panel);
       _self.set('footer',footer);
-      _self.set('monthPicker',monthPicker);
+      //_self.set('monthPicker',monthPicker);
     },
     renderUI : function(){
       var _self = this,
@@ -134,7 +134,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       });
 
       header.on('headerclick',function(){
-        var monthPicker = _self.get('monthPicker');
+        var monthPicker = _self.get('monthpicker') || _self._createMonthPicker();
         monthPicker.set('year',header.get('year'));
         monthPicker.set('month',header.get('month'));
         monthPicker.show();
@@ -211,9 +211,10 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     },
     //创建选择月的控件
     _createMonthPicker: function(){
-      var _self = this;
-
-      return new MonthPicker({
+      var _self = this,
+        monthpicker;
+      monthpicker = new MonthPicker({
+        render : _self.get('el'),
         effect : {
           effect:'slide',
           duration:300
@@ -228,6 +229,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           this.hide();
         }
       });
+      _self.set('monthpicker',monthpicker);
+      _self.get('children').push(monthpicker);
+      return monthpicker;
     },
     //创建底部按钮栏
     _createFooter : function(){
@@ -254,7 +258,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           xclass:'bar-item-button',
           text:'今天',
           btnCls: 'button button-small',
-		  id:'todayBtn',
+		      id:'todayBtn',
           listeners:{
             click:function(){
               var day = today();

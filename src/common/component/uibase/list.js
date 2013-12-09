@@ -41,6 +41,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @type {Array}
      */
     items:{
+      shared : false,
       view : true
     },
     /**
@@ -435,6 +436,13 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * @type {Boolean}
      */
     autoInitItems : {
+      value : true
+    },
+    /**
+     * 使用srcNode时，是否将内部的DOM转换成子控件
+     * @type {Boolean}
+     */
+    isDecorateChild : {
       value : true
     },
     /**

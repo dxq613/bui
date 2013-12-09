@@ -1,3 +1,4 @@
+/**/
 BUI.use('bui/slider/slider',function (Slider) {
 
   var slider = new Slider({
@@ -185,4 +186,37 @@ BUI.use('bui/slider/slider',function (Slider) {
       });
     });
   });
+});
+
+BUI.use('bui/slider/slider',function (Slider) {
+
+  var slider = new Slider({
+    render : '#s5',
+    elCls : 'progress',
+    min : 1000,
+    max : 1000,
+    value : 1000,
+    backTpl : '<div class="bar"></div>'
+  });
+
+  slider.render();
+
+  var el = slider.get('el')
+
+  describe('最小值等于最大值，初始化',function(){
+    it('测试滑块生成',function(){
+      expect(el.find('.x-slider-handle').length).not.toBe(0);
+    });
+    it('测试背景生成',function(){
+      expect(el.find('.x-slider-back').length).not.toBe(0);
+    });
+    it('测试初始值',function(){
+      waits(400);
+      runs(function(){
+        expect(el.find('.x-slider-back')[0].style.width).toBe('100%');
+        expect(el.find('.x-slider-handle')[0].style.left).toBe('100%');
+      });  
+    });
+  });
+
 });

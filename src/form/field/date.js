@@ -8,8 +8,8 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
 
   var BUI = require('bui/common'),
     Field = require('bui/form/basefield'),
-    DateUtil = BUI.Date,
-    DatePicker = require('bui/calendar').DatePicker;
+    DateUtil = BUI.Date;/*,
+    DatePicker = require('bui/calendar').DatePicker*/
 
   /**
    * 表单文本域
@@ -23,27 +23,25 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       var _self = this,
         datePicker = _self.get('datePicker');
       if($.isPlainObject(datePicker)){
-        datePicker.trigger = _self.getInnerControl();
-        datePicker.autoRender = true;
-        datePicker = new DatePicker(datePicker);
-        _self.set('datePicker',datePicker);
-        _self.set('isCreatePicker',true);
-        _self.get('children').push(datePicker);
+        _self.initDatePicker(datePicker);
       }
-      if(datePicker.get('showTime')){
+      if((datePicker.get && datePicker.get('showTime'))|| datePicker.showTime){
         _self.getInnerControl().addClass('calendar-time');
       }
 
     },
-    bindUI : function(){
-      var _self = this,
-        datePicker = _self.get('datePicker');
-      /*datePicker.on('selectedchange',function(ev){
-        var curTrigger = ev.curTrigger;
-        if(curTrigger[0] == _self.getInnerControl()[0]){
-          _self.set('value',ev.value);
-        }
-      });*/
+    //初始化日历控件
+    initDatePicker : function(datePicker){
+      var _self = this;
+
+      BUI.use('bui/calendar',function(Calendar){
+        datePicker.trigger = _self.getInnerControl();
+        datePicker.autoRender = true;
+        datePicker = new Calendar.DatePicker(datePicker);
+        _self.set('datePicker',datePicker);
+        _self.set('isCreatePicker',true);
+        _self.get('children').push(datePicker);
+      });
     },
     /**
      * 设置字段的值
@@ -94,8 +92,13 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       this.addRule('max',v);
       var _self = this,
         datePicker = _self.get('datePicker');
-      if(datePicker && datePicker.set){
-        datePicker.set('maxDate',v);
+      if(datePicker){
+        if(datePicker.set){
+          datePicker.set('maxDate',v);
+        }else{
+          datePicker.maxDate = v;
+        }
+        
       }
     },
     //设置最小值
@@ -103,8 +106,12 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       this.addRule('min',v);
       var _self = this,
         datePicker = _self.get('datePicker');
-      if(datePicker && datePicker.set){
-        datePicker.set('minDate',v);
+      if(datePicker){
+        if(datePicker.set){
+          datePicker.set('minDate',v);
+        }else{
+          datePicker.minDate = v;
+        }
       }
     }
   },{
@@ -148,6 +155,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
        * @type {Object|BUI.Calendar.DatePicker}
        */
       datePicker : {
+        shared : false,
         value : {
           
         }

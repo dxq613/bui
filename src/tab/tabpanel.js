@@ -3,10 +3,11 @@
  * @ignore
  */
 
-define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
+define('bui/tab/tabpanel',['bui/common','bui/tab/tab','bui/tab/panels'],function (require) {
   
   var BUI = require('bui/common'),
-    Tab = require('bui/tab/tab');
+    Tab = require('bui/tab/tab'),
+    Panels = require('bui/tab/panels');
 
   /**
    * 带有面板的切换标签
@@ -29,47 +30,65 @@ define('bui/tab/tabpanel',['bui/common','bui/tab/tab'],function (require) {
    * </code></pre>
    * @class BUI.Tab.TabPanel
    * @extends BUI.Tab.Tab
+   * @mixins BUI.Tab.Panels
    */
-  var tabPanel = Tab.extend({
-    initializer : function(){
-      var _self = this,
-        children = _self.get('children'),
-        panelContainer = $(_self.get('panelContainer')),
-        panelCls = _self.get('panelCls'),
-        panels = panelCls ? panelContainer.find('.' + panels) : panelContainer.children();
+  var tabPanel = Tab.extend([Panels],{
 
-      BUI.each(children,function(item,index){
-        if(item.set){
-          item.set('panel',panels[index]);
-        }else{
-          item.panel = panels[index];
-        }
+    bindUI : function(){
+      var _self = this;
+      //关闭标签
+      _self.on('beforeclosed',function(ev){
+        var item = ev.target;
+        _self._beforeClosedItem(item);
       });
+    },
+    //关闭标签选项前
+    _beforeClosedItem : function(item){
+      if(!item.get('selected')){ //如果未选中不执行下面的选中操作
+        return;
+      }
+
+      var _self = this,
+        index = _self.indexOfItem(item),
+        count = _self.getItemCount(),
+        preItem,
+        nextItem;
+      if(index !== count - 1){ //不是最后一个，则激活最后一个
+        nextItem = _self.getItemAt(index + 1);
+        _self.setSelected(nextItem);
+      }else if(index !== 0){
+        preItem = _self.getItemAt(index - 1);
+        _self.setSelected(preItem);
+      }
     }
+
   },{
     ATTRS : {
-
+      elTagName : {
+        value : 'div'
+      },
+      childContainer : {
+        value : 'ul'
+      },
+      tpl : {
+        value : '<div class="tab-panel-inner"><ul></ul><div class="tab-panels"></div></div>'
+      },
+      panelTpl : {
+        value : '<div></div>'
+      },
+      /**
+       * 默认的面板容器
+       * @cfg {String} [panelContainer='.tab-panels']
+       */
+      panelContainer : {
+        value : '.tab-panels'
+      },
       /**
        * 默认子控件的xclass
        * @type {String}
        */
       defaultChildClass:{
         value : 'tab-panel-item'
-      },
-      /**
-       * 面板的容器
-       * @type {String|HTMLElement|jQuery}
-       */
-      panelContainer : {
-        
-      },
-      /**
-       * panel 面板使用的样式，如果初始化时，容器内已经存在有该样式的DOM，则作为面板使用
-       * 对应同一个位置的标签项,如果为空，默认取面板容器的子元素
-       * @type {String}
-       */
-      panelCls : {
-
       }
     }
   },{

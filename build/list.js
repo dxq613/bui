@@ -806,7 +806,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         items = _self.get('items'),
         result = null;
       BUI.each(items,function(item){
-        if(item[field] === value){
+        if(item[field] != null && item[field] == value){//会出现false == '','0' == false的情况
             result = item;
             return false;
         }
@@ -1424,11 +1424,13 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           return;
         }
         
-        if(_self.get('highlightedStatus') === 'hover'){
+        /*if(_self.get('highlightedStatus') === 'hover'){
           _self.setHighlighted(item,element)
         }else{
           _self.setItemStatus(item,'hover',true,element);
-        }
+        }*/
+        _self.get('view').setElementHover(element,true);
+
       }).delegate('.'+itemCls,'mouseout',function(ev){
         if(_self.get('disabled')){ //控件禁用后，阻止事件
           return;
@@ -1473,8 +1475,11 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
     * @protected
     */
     onLocalSort : function(e){
-      //this.onLoad(e);
-      this.sort(e.field ,e.direction);
+      if(this.get('frontSortable')){
+        this.sort(e.field ,e.direction);
+      }else{
+        this.onLoad(e);
+      }
     },
     /**
      * 加载数据
@@ -1493,6 +1498,16 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      * @ignore
      */
     {
+
+      /**
+       * 排序的时候是否直接进行DOM的排序，不重新生成DOM，<br>
+       * 在可展开的表格插件，TreeGrid等控件中不要使用此属性
+       * @type {Boolean}
+       * cfg {Boolean} frontSortable
+       */
+      frontSortable : {
+        value : false
+      },
       /**
        * 选项集合
        * @protected

@@ -1,7 +1,5 @@
 
-var 
-    
-    CLS_DATE = 'x-datepicker-date',
+var CLS_DATE = 'x-datepicker-date',
     CLS_TEXT_YEAR= 'year-text',
     CLS_PREV = 'x-datepicker-prev',
     CLS_NEXT = 'x-datepicker-next';
@@ -333,6 +331,7 @@ BUI.use('bui/calendar/datepicker',function(DatePicker){
   }),
   DateUtil = BUI.Date;
   datepicker.render();
+  datepicker._initControl();
   var calendar = datepicker.get('calendar'),
     dtInput = $('#dt1'),
     el = calendar.get('el');
@@ -373,6 +372,7 @@ BUI.use('bui/calendar/datepicker',function(DatePicker){
     lockTime : lockTime
   });
   datepicker.render();
+  datepicker._initControl();
   var calendar = datepicker.get('calendar'),
     dtInput = $('#lt1'),
     el = calendar.get('el');
