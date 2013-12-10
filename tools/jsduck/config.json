@@ -17,6 +17,7 @@
 	"../../src/tab",
 	"../../src/grid",
 	"../../src/editor",
-	"../../src/progressbar"
+	"../../src/progressbar",
+	"../../src/module"
     ]
 }
