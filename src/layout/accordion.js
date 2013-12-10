@@ -25,7 +25,7 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
 
 		/**
 		 * 子项对应的构造函数
-		 * @type {Class}
+		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item

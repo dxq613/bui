@@ -271,7 +271,6 @@ define('bui/form/remote',['bui/common'],function(require) {
     },
     /**
      * 清楚异步验证的缓存
-     * @return {[type]} [description]
      */
     clearCache : function(){
       this.set('cacheMap',{});

@@ -1,6 +1,6 @@
 /**
  * @fileOverview 经典的边框布局
- * @ignoreig
+ * @ignore
  */
 define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/layout/collapsable'],function(require) {
 

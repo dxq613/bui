@@ -314,6 +314,7 @@ define('bui/layout/baseitem',function (require) {
 		},
 		/**
 		 * @protected
+		 * 获取布局相关的属性
 		 * @return {Object} 获取布局相关的属性
 		 */
 		getLayoutAttrs : function(){
