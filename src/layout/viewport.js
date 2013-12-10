@@ -6,6 +6,8 @@
 define('bui/layout/viewport',function (require) {
 
 	var BUI = require('bui/common'),
+		CLS_VIEW_CONTAINER = 'x-viewport-container',
+		UA = BUI.UA,
 		win = window;
 
 	/**
@@ -16,6 +18,9 @@ define('bui/layout/viewport',function (require) {
 	var Viewport = BUI.Component.Controller.extend({
 		renderUI : function(){
 			this.reset();
+			var _self = this,
+				render = _self.get('render');
+			$(render).addClass(CLS_VIEW_CONTAINER);
 		},
 		bindUI : function(){
 			var _self = this;
@@ -30,12 +35,13 @@ define('bui/layout/viewport',function (require) {
 		reset : function(){
 			var _self = this,
 				el = _self.get('el'),
-				viewportHeight = BUI.viewportHeight(),
+				viewportHeight = BUI.viewportHeight(), //ie6,7下问题
 				viewportWidth = BUI.viewportWidth(),
 				appendWidth = _self.getAppendWidth(),
 				appendHeight = _self.getAppendHeight();
 			_self.set('width',viewportWidth - appendWidth);
 			_self.set('height',viewportHeight - appendHeight);
+
 		},
 		destructor : function(){
 			$(win).off('resize',BUI.getWrapBehavior(this,'onResize'));

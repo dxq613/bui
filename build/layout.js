@@ -6,8 +6,8 @@
 	var BASE = 'bui/layout/';
 	define('bui/layout',['bui/common',BASE + 'abstract',BASE + 'absolute',BASE + 'anchor', BASE + 'flow',BASE + 'columns',BASE + 'table',
 		BASE + 'border', BASE + 'accordion',BASE + 'viewport'],function (r) {
-			
-		var BUI = require('bui/common');
+
+		var BUI = r('bui/common');
 
 		var Layout = BUI.namespace('Layout');
 
@@ -1016,9 +1016,15 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 				container = _self.get('container'),
 				totalHeight = container.height(),
 				middleEl = _self.get('middleEl'),
+				topEl = _self.get('topEl'),
 				appendHeight,
 				middleHeight;
-			middleHeight = totalHeight - _self.get('topEl').outerHeight() - _self.get('bottomEl').outerHeight();
+			if(topEl.children().length){
+				middleHeight = totalHeight - topEl.outerHeight() - _self.get('bottomEl').outerHeight();
+			}else{
+				middleHeight = totalHeight - _self.get('bottomEl').outerHeight();
+			}
+			 
 			appendHeight = middleEl.outerHeight() - middleEl.height();
 
 			return middleHeight - appendHeight;
@@ -1079,6 +1085,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 		beforeExpanded : function(item,range){
 			this.beforeCollapsedChange(item,range,false);
 		},
+		//收缩展开前
 		beforeCollapsedChange : function(item,range,collapsed){
 			var _self = this,
 				property = item.getCollapseProperty(),
@@ -1089,6 +1096,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 			}else{
 				_self._setCenterWidth(item.get('region'),range * factor * -1,duration);
 			}
+
 		},
 		//设置中间的高度
 		_setMiddleHeight : function(range,duration){
@@ -1128,6 +1136,19 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 		 */
 		beforeCollapsed : function(item,range){
 			this.beforeCollapsedChange(item,range,true);
+		},
+		/**/
+		afterExpanded : function(){
+			if(BUI.UA.ie == 6){
+				return;
+			}
+			this._fitMiddleControl();
+		},
+		afterCollapsed : function(){
+			if(BUI.UA.ie == 6){
+				return;
+			}
+			this._fitMiddleControl();
 		},
 		/**
 		 * @protected
@@ -1294,6 +1315,8 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
 define('bui/layout/viewport',function (require) {
 
 	var BUI = require('bui/common'),
+		CLS_VIEW_CONTAINER = 'x-viewport-container',
+		UA = BUI.UA,
 		win = window;
 
 	/**
@@ -1304,6 +1327,9 @@ define('bui/layout/viewport',function (require) {
 	var Viewport = BUI.Component.Controller.extend({
 		renderUI : function(){
 			this.reset();
+			var _self = this,
+				render = _self.get('render');
+			$(render).addClass(CLS_VIEW_CONTAINER);
 		},
 		bindUI : function(){
 			var _self = this;
@@ -1318,12 +1344,13 @@ define('bui/layout/viewport',function (require) {
 		reset : function(){
 			var _self = this,
 				el = _self.get('el'),
-				viewportHeight = BUI.viewportHeight(),
+				viewportHeight = BUI.viewportHeight(), //ie6,7下问题
 				viewportWidth = BUI.viewportWidth(),
 				appendWidth = _self.getAppendWidth(),
 				appendHeight = _self.getAppendHeight();
 			_self.set('width',viewportWidth - appendWidth);
 			_self.set('height',viewportHeight - appendHeight);
+
 		},
 		destructor : function(){
 			$(win).off('resize',BUI.getWrapBehavior(this,'onResize'));
@@ -1649,7 +1676,10 @@ define('bui/layout/baseitem',function (require) {
 			}
 			siblings = bodyEl.siblings(); //获取外层容器减去兄弟元素的高度
 			BUI.each(siblings,function(elem){
-				height -= $(elem).outerHeight();
+				var node = $(elem);
+				if(node.css('position') !== 'absolute'){
+					height -= node.outerHeight();
+				}
 			});
 			return height;
 		},

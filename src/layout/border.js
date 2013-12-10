@@ -127,9 +127,15 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 				container = _self.get('container'),
 				totalHeight = container.height(),
 				middleEl = _self.get('middleEl'),
+				topEl = _self.get('topEl'),
 				appendHeight,
 				middleHeight;
-			middleHeight = totalHeight - _self.get('topEl').outerHeight() - _self.get('bottomEl').outerHeight();
+			if(topEl.children().length){
+				middleHeight = totalHeight - topEl.outerHeight() - _self.get('bottomEl').outerHeight();
+			}else{
+				middleHeight = totalHeight - _self.get('bottomEl').outerHeight();
+			}
+			 
 			appendHeight = middleEl.outerHeight() - middleEl.height();
 
 			return middleHeight - appendHeight;
@@ -190,6 +196,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 		beforeExpanded : function(item,range){
 			this.beforeCollapsedChange(item,range,false);
 		},
+		//收缩展开前
 		beforeCollapsedChange : function(item,range,collapsed){
 			var _self = this,
 				property = item.getCollapseProperty(),
@@ -200,6 +207,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 			}else{
 				_self._setCenterWidth(item.get('region'),range * factor * -1,duration);
 			}
+
 		},
 		//设置中间的高度
 		_setMiddleHeight : function(range,duration){
@@ -239,6 +247,19 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 		 */
 		beforeCollapsed : function(item,range){
 			this.beforeCollapsedChange(item,range,true);
+		},
+		/**/
+		afterExpanded : function(){
+			if(BUI.UA.ie == 6){
+				return;
+			}
+			this._fitMiddleControl();
+		},
+		afterCollapsed : function(){
+			if(BUI.UA.ie == 6){
+				return;
+			}
+			this._fitMiddleControl();
 		},
 		/**
 		 * @protected
