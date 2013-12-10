@@ -1071,7 +1071,7 @@ define('bui/util',function(){
      * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
-    subVersion : 59,
+    subVersion : 60,
 
     /**
      * \u662f\u5426\u4e3a\u51fd\u6570
