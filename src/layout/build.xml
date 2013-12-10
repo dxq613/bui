@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project name="lpmodule.build" default="build" basedir=".">
+	
+    <property name="tools.dir" location="../../../tools/"/>
+    <property name="build.dir" location="./"/>
+    <property name="des.dir" location="../../build/"/>
+    <property name="component.files" value="*"/>
+    <property name="charset" value="utf-8"/>
+	
+	<target name="build" depends="prepare,combine.js">
+    </target>
+	
+	<!-- 删除 build 目录下的 -min 样式和脚本 --> 
+    <target name="prepare">
+        <delete>
+            <fileset dir="${des.dir}" includes="layout.js"/>
+        </delete>
+    </target>
+
+	<!-- 合并js --> 
+	<target name="combine.js" depends="prepare">
+    <concat destfile="${des.dir}/layout.js" encoding="${charset}" outputencoding="${charset}">
+      <path path="base.js"/>
+			<path path="abstract.js"/>
+			<path path="collapsable.js"/>
+			<path path="absolute.js"/>
+			<path path="anchor.js"/>
+			<path path="columns.js"/>
+			<path path="flow.js"/>
+			<path path="table.js"/>
+
+			<path path="border.js"/>
+			<path path="accordion.js"/>
+			<path path="viewport.js"/>
+			
+			<path path="item/base.js"/>
+			<path path="item/absolute.js"/>
+			<path path="item/anchor.js"/>
+			<path path="item/border.js"/>
+			<path path="item/cell.js"/>
+			<path path="item/tab.js"/>
+
+		</concat>
+  </target>
+  
+</project>

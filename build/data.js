@@ -332,6 +332,20 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'GET'
     },
     /**
+     * 异步请求的所有自定义参数，开放的其他属性用于快捷使用，如果有特殊参数配置，可以使用这个属性,<br>
+     * 不要使用success和error的回调函数，会覆盖默认的处理数据的函数
+     * @cfg {Object} ajaxOptions 
+     */
+    /**
+     * 异步请求的所有自定义参数
+     * @type {Object}
+     */
+    ajaxOptions  : {
+      value : {
+
+      }
+    },
+    /**
      * 是否使用Cache
      * @type {Boolean}
      */
@@ -376,12 +390,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
      * @private
      */
     _read : function(params,callback){
-      var _self = this;
+      var _self = this,
+        ajaxOptions  = _self.get('ajaxOptions'),
+        cfg;
 
       params = BUI.cloneObject(params);
       _self._processParams(params);
-
-      $.ajax({
+      cfg = BUI.merge({
         url: _self.get('url'),
         type : _self.get('method'),
         dataType: _self.get('dataType'),
@@ -400,7 +415,8 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
           };
           callback(result);
         }
-      });
+      },ajaxOptions);
+      $.ajax(cfg);
     }
   });
 

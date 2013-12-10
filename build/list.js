@@ -523,7 +523,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         if(_self.isItemDisabled(item,itemEl)){ //禁用状态下阻止选中
           return;
         }
-        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target});
+        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent : ev});
         if(rst !== false && selectedEvent == 'click' && _self.isItemSelectable(item)){
           setItemSelectedStatus(item,itemEl); 
         }

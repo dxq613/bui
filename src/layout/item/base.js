@@ -31,6 +31,17 @@ define('bui/layout/baseitem',function (require) {
 	Item.ATTRS = {
 
 		/**
+		 * 自适应内部控件,自适应的类型：
+		 *   - none : 内部控件不自适应（默认）
+		 *   - width : 内部控件自适应宽度，当layout重新布局时宽度自适应
+		 *   - height : 内部控件自适应高度，当layout重新布局时高度自适应
+		 *   - both : 内部控件自适应宽高，当layout重新布局时宽度、高度自适应
+		 * @type {String}
+		 */
+		fit : {
+			value : 'none'
+		},
+		/**
 		 * 所属的layout
 		 * @type {BUI.Layout.Abstract}
 		 */
@@ -46,10 +57,24 @@ define('bui/layout/baseitem',function (require) {
 
 		},
 		/**
+		 * 封装控件的容器的样式，默认为空
+		 * @type {string}
+		 */
+		wraperCls : {
+
+		},
+		/**
 		 * 容器
 		 * @type {jQuery}
 		 */
 		container : {
+
+		},
+		/**
+		 * 如果srcNode指定，那么不会使用container属性，也不会生成DOM
+		 * @type {jQuery}
+		 */
+		srcNode : {
 
 		},
 		/**
@@ -68,7 +93,20 @@ define('bui/layout/baseitem',function (require) {
 		attrProperties : {
 
 		},
+		/**
+		 * 状态相关的字段
+		 * @type {Array}
+		 */
+		statusProperties : {
 
+		},
+		/**
+		 * 附加模板
+		 * @type {Object}
+		 */
+		tplProperties : {
+
+		},
 		/**
 		 * 当前项的DOM
 		 * @type {jQuery}
@@ -114,24 +152,41 @@ define('bui/layout/baseitem',function (require) {
 		},
 		//封装控件
 		_wrapControl : function(){
+	
 			var _self = this,
 				control = _self.get('control'),
 				controlEl = control.get('el'),
 				elCls = _self.get('elCls'),
 				container = _self._getContainer(controlEl),
-				tpl = _self.get('tpl'),
-				node = $(tpl).appendTo(container);
+				tpl = BUI.substitute(_self.get('tpl'),_self.getLayoutAttrs()) ,
+				node = $(tpl).appendTo(container),
+				bodyEl;
 			if(elCls){
 				node.addClass(elCls);
 			}
-			controlEl.appendTo(node);
+			bodyEl = _self.getControlContainer(node);
+			controlEl.appendTo(bodyEl);
+			_self.set('bodyEl',bodyEl);
+
 			return node;
+		},
+		/**
+		 * 获取内部控件的容器
+		 * @return {jQuery} 容器
+		 */
+		getControlContainer : function(el){
+			var _self = this,
+				wraperCls = _self.get('wraperCls');
+			if(wraperCls){
+				return el.find('.' + wraperCls);
+			}
+			return el;
 		},
 		/**
 		 * 同步属性到子项,同步css和attr
 		 */
 		syncItem : function(attrs){
-			attrs = attrs || this.getAttrVals();
+			attrs = attrs || this.getLayoutAttrs();
 			var _self = this,
 				el = _self.get('el'),
 				css = _self._getSyncCss(attrs),
@@ -139,6 +194,127 @@ define('bui/layout/baseitem',function (require) {
 			
 			el.css(css);
 			el.attr(attr);
+			_self.syncStatus(el,attrs); //同步状态
+			_self.syncElements(el,attrs); //同步DOM元素
+			_self.syncFit(); //同步内部控件的宽高
+		},
+		/**
+		 * 根据属性附加一些元素
+		 * @protected
+		 */
+		syncElements : function(el,attrs){
+			var _self = this,
+				tplProperties = _self.get('tplProperties');
+
+			if(tplProperties){
+				BUI.each(tplProperties,function(item){
+					_self.synTpl(el,item,attrs);
+				});
+			}
+		},
+		/**
+		 * @protected
+		 * 同步选项
+		 */
+		synTpl : function(el,item,attrs){
+			var _self = this,
+				name = item.name,
+				elName = '_'+name + 'El', //title 使用_titleEl作为临时变量存储对应的DOM 
+				tpl,
+				m, //使用的附加方法
+				tplEl = _self.get(elName);
+			if(attrs[name]){
+				if(!tplEl){
+					tpl = _self.get(item.value);
+					tpl = BUI.substitute(tpl,attrs);
+					m = item.prev ? 'prependTo' : 'appendTo';
+					tplEl = $(tpl)[m](el);
+					_self.set(elName,tplEl);
+				}
+			}else if(tplEl){
+				tplEl.remove();
+			}
+		},
+		/**
+		 * @protected
+		 * 同步状态
+		 */
+    syncStatus : function(el,attrs){
+    	el = el || this.get('el');
+    	attrs = attrs || this.getLayoutAttrs();
+    	var _self = this,
+    		statusProperties = _self.get('statusProperties');
+    	if(statusProperties){
+    		BUI.each(statusProperties,function(status){
+    			var value = _self.get(status);
+    			if(value != null){
+    				var m = value ? 'addClass' : 'removeClass',
+    					cls = 'x-' + status;
+    				el[m](cls);
+    			}
+    		});
+    	}
+		},
+		/**
+		 * 同步自适应
+		 */
+		syncFit : function(){
+			var _self = this,
+				control = _self.get('control'),
+				fit = _self.get('fit');
+			if(fit === 'none'){
+				return;
+			}
+			if(fit === 'width'){
+				_self._syncControlWidth(control);
+				return;
+			}
+			if(fit === 'height'){
+				_self._syncControlHeight(control);
+				return;
+			}
+			if(fit === 'both'){
+				_self._syncControlWidth(control);
+				_self._syncControlHeight(control);
+			}
+		},
+		//同步控件的宽度
+		_syncControlWidth : function(control){
+			var _self = this,
+				width = _self.get('el').width(),
+				appendWidth = control.getAppendWidth();
+			control.set('width',width - appendWidth);
+
+		},
+		//同步控件的高度
+		_syncControlHeight : function(control){
+			var _self = this,
+				height = _self._getFitHeight(),
+				appendHeight = control.getAppendHeight();
+			control.set('height',height - appendHeight);
+		},
+		_getFitHeight : function(){
+			var _self = this,
+				el = _self.get('el'),
+				bodyEl = _self.get('bodyEl'),
+				siblings,
+				outerHeight = el.height(),
+				height = outerHeight;
+			if(bodyEl[0] == el[0]){ //如果控件的容器等于外层容器
+				return outerHeight;
+			}
+			siblings = bodyEl.siblings(); //获取外层容器减去兄弟元素的高度
+			BUI.each(siblings,function(elem){
+				height -= $(elem).outerHeight();
+			});
+			return height;
+		},
+		/**
+		 * @protected
+		 * @return {Object} 获取布局相关的属性
+		 */
+		getLayoutAttrs : function(){
+			return this.getAttrVals();
 		},
 		//获取需要同步的css属性
 		_getSyncCss : function(attrs){
@@ -180,17 +356,7 @@ define('bui/layout/baseitem',function (require) {
 				return container;
 			}
 			return controlEl.parent();
-		},
-		/**
-		 * 获取封装的控件的属性
-		 * @param  {String} name 控件属性
-		 * @return {*} 属性值
-		 */
-		getInner : function(name){
-			var _self = this,
-				control = _self.get('control');
-			return control.get(name);
-		},
+		},	
 		/**
 		 * 释放
 		 */

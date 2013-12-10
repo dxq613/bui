@@ -54,6 +54,10 @@
 		  <arg line="${tools.dir}/less/bin/lessc ${less.dir}/single/grid.less ${build.dir}/grid.css"/>
 		</exec>
 
+		<exec executable="node" failonerror="true">
+		  <arg line="${tools.dir}/less/bin/lessc ${less.dir}/single/layout.less ${build.dir}/layout.css"/>
+		</exec>
+
 	<!--		-->
 	</target>
 	

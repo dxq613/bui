@@ -529,7 +529,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
             _self._scrollToItem(item);
           }
           
-          _self.fire('activeChange',{item:item});
+          _self.fire('activedchange',{item:item});
         }
       }
 
