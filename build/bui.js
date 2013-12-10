@@ -9660,6 +9660,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @cfg {Object} ajaxOptions
      */
     ajaxOptions : {
+      //shared : false,
       value : {
         type : 'get',
         cache : false
@@ -9701,6 +9702,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @type {Object}
      */
     lastParams : {
+      shared : false,
       value : {}
     },
     /**
@@ -21956,7 +21958,6 @@ define('bui/form/remote',['bui/common'],function(require) {
     },
     /**
      * \u6e05\u695a\u5f02\u6b65\u9a8c\u8bc1\u7684\u7f13\u5b58
-     * @return {[type]} [description]
      */
     clearCache : function(){
       this.set('cacheMap',{});
@@ -23141,7 +23142,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @private
    * @class BUI.Menu.MenuItemView
    * @mixins BUI.Component.UIBase.ListItemView
-   * @mixins BUI.Component.UIBase.collapsableView
+   * @mixins BUI.Component.UIBase.CollapsableView
    * \u83dc\u5355\u9879\u7684\u89c6\u56fe\u7c7b
    */
   var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapsableView],{
@@ -25249,7 +25250,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
       },
       /**
        * \u6807\u9898
-       * @type {String} title 
+       * @cfg {String} title 
        */
       /**
        * \u6807\u9898

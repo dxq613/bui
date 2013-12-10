@@ -50,7 +50,7 @@ define('bui/layout/abstract',['bui/layout/baseitem'],function(require){
 
 		/**
 		 * 子项对应的构造函数
-		 * @type {Class}
+		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item
@@ -325,7 +325,7 @@ define('bui/layout/abstract',['bui/layout/baseitem'],function(require){
 		},
 		/**
 		 * 获取布局选项
-		 * @param {Objet} controlChild 子控件
+		 * @param {Object} controlChild 子控件
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
 		getItem : function(control){
@@ -889,7 +889,7 @@ define('bui/layout/table',['bui/layout/abstract','bui/layout/cellitem'],function
 
 });/**
  * @fileOverview 经典的边框布局
- * @ignoreig
+ * @ignore
  */
 define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/layout/collapsable'],function(require) {
 
@@ -1192,7 +1192,7 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
 
 		/**
 		 * 子项对应的构造函数
-		 * @type {Class}
+		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item
@@ -1685,6 +1685,7 @@ define('bui/layout/baseitem',function (require) {
 		},
 		/**
 		 * @protected
+		 * 获取布局相关的属性
 		 * @return {Object} 获取布局相关的属性
 		 */
 		getLayoutAttrs : function(){
@@ -1753,6 +1754,11 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem');
 
+	/**
+	* @class BUI.Layout.Item.Absolute
+	* 绝对布局的布局项
+	* @extends BUI.Layout.Item
+	*/
 	var AbsoluteItem = function(config){
 		AbsoluteItem.superclass.constructor.call(this,config);
 	};
@@ -1761,7 +1767,7 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 
 	AbsoluteItem.ATTRS = {
 
-		/**s
+		/**
 		 * @protected
 		 * 同步的css属性
 		 * @type {Array}
@@ -1771,22 +1777,22 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 		}
 		
 		/**
-		 * top
+		 * top 位置
 		 * @cfg {Number} top
 		 */
 		
 		/**
-		 * left
+		 * left 位置
 		 * @cfg {Number} left
 		 */
 		
 		/**
-		 * bottom
+		 * bottom 位置
 		 * @cfg {Number} bottom
 		 */
 		
 		/**
-		 * right
+		 * right 位置
 		 * @cfg {Number} right
 		 */
 		

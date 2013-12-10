@@ -11,6 +11,16 @@
       html{
         overflow: hidden;
       }
+
+      .doc-title{
+        background-color: #3892d3;
+        color: white;
+      }
+
+      .doc-title h2{
+        line-height: 30px;
+        padding-left: 10px;
+      }
     </style>
   </head>
   <body>
@@ -95,6 +105,13 @@
       children : [{
         xclass : 'controller',
         layout : {
+          region : 'north'
+        },
+        elCls : 'doc-title',
+        content : '<h2>BUI 单元测试</h2>'
+      },{
+        xclass : 'controller',
+        layout : {
           region : 'west',
           title : '测试文件列表',
           collapsable : true,
@@ -102,6 +119,7 @@
           width : 200
         },
         xclass : 'tree-menu',
+        expandAnimate : true,
         nodes : nodes,
         id : 'menu',
         elCls : 'bui-tree-list'
