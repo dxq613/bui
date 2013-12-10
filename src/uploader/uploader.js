@@ -62,7 +62,7 @@ define('bui/uploader/uploader', function (require) {
         if(attrVals[name] === undefined){
           _self.set(name, value);
         }
-        else if(BUI.isObject(value)){
+        else if($.isPlainObject(value)){
           BUI.mix(value, attrVals[name]);
           _self.set(name, value);
         }
@@ -121,8 +121,8 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         type = _self.get('type'),
         el = _self.get('el'),
-        button = _self.get('button') || {};
-      if(!(button instanceof Component.Controller)){
+        button = _self.get('button');
+      if(!button.isController){
         button.render = el;
         button.autoRender = true;
         button = Factory.createButton(type, button);
@@ -138,7 +138,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         el = _self.get('el'),
         queue = _self.get('queue') || {};
-      if (!(queue instanceof Component.Controller)) {
+      if (!queue.isController) {
         queue.render = el;
         queue.autoRender = true;
         //queue.uploader = _self;
@@ -153,14 +153,14 @@ define('bui/uploader/uploader', function (require) {
         queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
       button.on('change', function(ev) {
-
+        var files = ev.files;
         //对添加的文件添加等待状态
-        BUI.each(ev.files, function(file){
-          BUI.mix(file, {
-            wait: true
-          });
+        BUI.each(files, function(file){
+          file.wait = true;
         });
-        queue.addItems(ev.files);
+        _self.fire('beforechange', {items: files});
+        queue.addItems(files);
+        _self.fire('change', {items: files});
       });
     },
     _bindQueue: function () {
@@ -231,7 +231,7 @@ define('bui/uploader/uploader', function (require) {
           errorFn = _self.get('error'),
           completeFn = _self.get('complete');
 
-        curUploadItem.result = result;
+        BUI.mix(curUploadItem.result, result);
 
         if(isSuccess.call(_self, result)){
           queue.updateFileStatus(curUploadItem, 'success');
@@ -290,6 +290,15 @@ define('bui/uploader/uploader', function (require) {
       _self.fire('cancel', {item: curUploadItem});
       uploaderType.cancel();
       _self.set('curUploadItem', null);
+    },
+    /**
+     * 校验是否通过
+     * @description 判断成功的数量和列表中的数量是否一致
+     */
+    isValid: function(){
+      var _self = this,
+        queue = _self.get('queue');
+      return queue.getItemsByStatus('success').length === queue.getItems().length;
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{
@@ -314,6 +323,21 @@ define('bui/uploader/uploader', function (require) {
         value: 'default'
       },
       button: {
+        setter: function(v){
+          var disabled = this.get('disabled');
+          if(v && v.isController){
+            v.set('disabled', disabled);
+          }
+          return v;
+        }
+      },
+      disabled: {
+        value: false,
+        setter: function(v){
+          var _self = this,
+            button = _self.get('button');
+          button && button.isController && button.set('disabled', true);
+        }
       },
       queue: {
       },

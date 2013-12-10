@@ -62,8 +62,8 @@ define('bui/uploader/button/htmlButton', function(require) {
       _self.set('fileInput', fileInput);
 
       _self.setMultiple(_self.get('multiple'));
+      _self.setDisabled(_self.get('disabled'));
       _self.setFilter(_self.get('filter'));
-      //_self._setDisabled(_self.get('disabled'));
     },
 
     _bindChangeHandler: function(fileInput) {
@@ -77,10 +77,10 @@ define('bui/uploader/button/htmlButton', function(require) {
         //IE取不到files
         if(oFiles){
           BUI.each(oFiles, function(v){
-            files.push(_self.getExtFileData({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput[0]}));
+            files.push(_self._getFile({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput}));
           });
         }else{
-          files.push(_self.getExtFileData({'name': value, input: fileInput[0]}));
+          files.push(_self._getFile({'name': value, input: fileInput}));
         }
         _self.fire('change', {
           files: files,
@@ -119,6 +119,16 @@ define('bui/uploader/button/htmlButton', function(require) {
         fileInput.removeAttr('multiple');
       }
       return multiple;
+    },
+    setDisabled: function(v){
+      var _self = this,
+        fileInput = _self.get('fileInput');
+      if (v) {
+        fileInput.hide();
+      }
+      else{
+        fileInput.show();
+      }
     },
     /**
      * 设置上传文件的类型

@@ -21,7 +21,6 @@ define('bui/uploader/button/swfButton', function (require) {
   var SwfButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
       var _self = this;
-
       _self._initSwfUploader();
     },
     bindUI: function(){
@@ -34,7 +33,7 @@ define('bui/uploader/button/swfButton', function (require) {
           var fileList = ev.fileList,
             files = [];
           BUI.each(fileList, function(file){
-            files.push(_self.getExtFileData(file));
+            files.push(_self._getFile(file));
           });
           _self.fire('change', {files: files});
         });
@@ -48,13 +47,16 @@ define('bui/uploader/button/swfButton', function (require) {
         buttonCls = _self.get('buttonCls'),
         buttonEl = _self.get('el').find('.' + buttonCls),
         flashCfg = _self.get('flash'),
+        flashUrl = _self.get('flashUrl'),
         swfTpl = _self.get('swfTpl'),
+        swfEl = $(swfTpl),
         swfUploader;
-
       BUI.mix(flashCfg, {
-        render: $(swfTpl).appendTo(buttonEl)
+        render: swfEl.appendTo(buttonEl),
+        src: flashUrl
       });
       swfUploader = new SWF(flashCfg);
+      _self.set('swfEl', swfEl);
       _self.set('swfUploader', swfUploader);
     },
     setMultiple: function(v){
@@ -62,21 +64,42 @@ define('bui/uploader/button/swfButton', function (require) {
         swfUploader = _self.get('swfUploader');
       swfUploader && swfUploader.multifile(v);
     },
+    setDisabled: function(v){
+      var _self = this,
+        swfEl = _self.get('swfEl');
+      if(v){
+        swfEl.hide();
+      }
+      else{
+         swfEl.show();
+      }
+    },
+    _convertFilter: function(v){
+      var desc = v.desc,
+        ext = [];
+      BUI.each(v.ext.split(','), function(item){
+        item && ext.push('*' + item);
+      });
+      v.ext = ext.join(';');
+      return v;
+    },
     setFilter: function(v){
       var _self = this,
         swfUploader = _self.get('swfUploader'),
-        filter = _self.getFilter(v);
+        filter = _self._convertFilter(_self.getFilter(v));
       //flash里需要一个数组
-      swfUploader && swfUploader.filter([v]);
+      swfUploader && swfUploader.filter([filter]);
       return v;
     }
   },{
     ATTRS: {
       swfUploader:{
       },
+      flashUrl:{
+        value: seajs.pluginSDK.config.base + 'uploader/uploader.swf'
+      },
       flash:{
         value:{
-          src:baseUrl + 'uploader/uploader.swf',
           params:{
             allowscriptaccess: 'always',
             bgcolor:"#fff",

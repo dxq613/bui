@@ -793,4 +793,12 @@ BUI.use('bui/form/uploaderfield',function(UploaderField){
   });
   field.render();
 
+  describe('测试disabled状态', function(){
+    it('设置disabled', function(){
+      waits(100);
+      field.set('disabled', true);
+      
+    });
+  })
+
 });
