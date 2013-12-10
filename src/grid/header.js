@@ -79,7 +79,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
        */
       addColumn:function (c, index) {
         var _self = this,
-          insertIndex = 0,
+          insertIndex = index,
           columns = _self.get('columns');
         c = _self._createColumn(c);
         if (index === undefined) {

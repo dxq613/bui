@@ -11975,6 +11975,20 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : 'GET'
     },
     /**
+     * \u5f02\u6b65\u8bf7\u6c42\u7684\u6240\u6709\u81ea\u5b9a\u4e49\u53c2\u6570\uff0c\u5f00\u653e\u7684\u5176\u4ed6\u5c5e\u6027\u7528\u4e8e\u5feb\u6377\u4f7f\u7528\uff0c\u5982\u679c\u6709\u7279\u6b8a\u53c2\u6570\u914d\u7f6e\uff0c\u53ef\u4ee5\u4f7f\u7528\u8fd9\u4e2a\u5c5e\u6027,<br>
+     * \u4e0d\u8981\u4f7f\u7528success\u548cerror\u7684\u56de\u8c03\u51fd\u6570\uff0c\u4f1a\u8986\u76d6\u9ed8\u8ba4\u7684\u5904\u7406\u6570\u636e\u7684\u51fd\u6570
+     * @cfg {Object} ajaxOptions 
+     */
+    /**
+     * \u5f02\u6b65\u8bf7\u6c42\u7684\u6240\u6709\u81ea\u5b9a\u4e49\u53c2\u6570
+     * @type {Object}
+     */
+    ajaxOptions  : {
+      value : {
+
+      }
+    },
+    /**
      * \u662f\u5426\u4f7f\u7528Cache
      * @type {Boolean}
      */
@@ -12019,12 +12033,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
      * @private
      */
     _read : function(params,callback){
-      var _self = this;
+      var _self = this,
+        ajaxOptions  = _self.get('ajaxOptions'),
+        cfg;
 
       params = BUI.cloneObject(params);
       _self._processParams(params);
-
-      $.ajax({
+      cfg = BUI.merge({
         url: _self.get('url'),
         type : _self.get('method'),
         dataType: _self.get('dataType'),
@@ -12043,7 +12058,8 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
           };
           callback(result);
         }
-      });
+      },ajaxOptions);
+      $.ajax(cfg);
     }
   });
 
@@ -15463,7 +15479,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
         if(_self.isItemDisabled(item,itemEl)){ //\u7981\u7528\u72b6\u6001\u4e0b\u963b\u6b62\u9009\u4e2d
           return;
         }
-        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target});
+        var rst = _self.fire('itemclick',{item:item,element : itemEl[0],domTarget:ev.target,domEvent : ev});
         if(rst !== false && selectedEvent == 'click' && _self.isItemSelectable(item)){
           setItemSelectedStatus(item,itemEl); 
         }
@@ -24985,7 +25001,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
             _self._scrollToItem(item);
           }
           
-          _self.fire('activeChange',{item:item});
+          _self.fire('activedchange',{item:item});
         }
       }
 
@@ -30204,7 +30220,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
        */
       addColumn:function (c, index) {
         var _self = this,
-          insertIndex = 0,
+          insertIndex = index,
           columns = _self.get('columns');
         c = _self._createColumn(c);
         if (index === undefined) {
