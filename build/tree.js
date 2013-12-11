@@ -1638,9 +1638,9 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],functi
       },
 
       itemStatusFields  : {
-        value : {
+        /*value : {
           selected : 'selected'
-        }
+        }*/
       },
       /**
        * 节点折叠的事件

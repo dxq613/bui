@@ -1,6 +1,6 @@
 /**
  * @fileOverview 经典的边框布局
- * @ignoreig
+ * @ignore
  */
 define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/layout/collapsable'],function(require) {
 
@@ -17,6 +17,72 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 	 * @class BUI.Layout.Border
 	 * 边框布局
 	 * @extends BUI.Layout.Abstract
+	 * <pre>
+	 * 	<code>
+	 * 	var layout = new Border(),
+				control = new BUI.Component.Controller({
+				width:600,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'ext-border-layout',
+				children : [{
+					layout : {
+						title : 'north',
+						region : 'north',
+						height : 50
+					},
+					width : 100,
+					height :15,
+					elCls : 'red',
+					xclass : 'controller',
+					content : "一 无自适应"
+				},{
+					xclass : 'controller',
+					elCls : 'red',
+					layout : {
+						region : 'south',
+						title : 'south',
+						fit : 'height',
+						
+						height : 50
+					},
+					width : 250,
+					content : '二 自适应高，但是不自适应宽'
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'east',
+						fit : 'both',
+						title : 'east',
+						width : 150
+					},
+					elCls : 'red',
+					content : "三 自适应宽高"
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'west',
+						fit : 'width',
+						width : 100
+					},
+					elCls : 'red',
+					content : "四 自适应宽"
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'center',
+						fit : 'both'
+					},
+					
+					elCls : 'blue',
+					content : '居中 自适应宽高'
+				}],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * 	</code>
+	 * </pre>
 	 */
 	var Border = function(config){
 		Border.superclass.constructor.call(this,config);
@@ -127,9 +193,15 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 				container = _self.get('container'),
 				totalHeight = container.height(),
 				middleEl = _self.get('middleEl'),
+				topEl = _self.get('topEl'),
 				appendHeight,
 				middleHeight;
-			middleHeight = totalHeight - _self.get('topEl').outerHeight() - _self.get('bottomEl').outerHeight();
+			if(topEl.children().length){
+				middleHeight = totalHeight - topEl.outerHeight() - _self.get('bottomEl').outerHeight();
+			}else{
+				middleHeight = totalHeight - _self.get('bottomEl').outerHeight();
+			}
+			 
 			appendHeight = middleEl.outerHeight() - middleEl.height();
 
 			return middleHeight - appendHeight;
@@ -190,6 +262,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 		beforeExpanded : function(item,range){
 			this.beforeCollapsedChange(item,range,false);
 		},
+		//收缩展开前
 		beforeCollapsedChange : function(item,range,collapsed){
 			var _self = this,
 				property = item.getCollapseProperty(),
@@ -200,6 +273,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 			}else{
 				_self._setCenterWidth(item.get('region'),range * factor * -1,duration);
 			}
+
 		},
 		//设置中间的高度
 		_setMiddleHeight : function(range,duration){
@@ -239,6 +313,19 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 		 */
 		beforeCollapsed : function(item,range){
 			this.beforeCollapsedChange(item,range,true);
+		},
+		/**/
+		afterExpanded : function(){
+			if(BUI.UA.ie == 6){
+				return;
+			}
+			this._fitMiddleControl();
+		},
+		afterCollapsed : function(){
+			if(BUI.UA.ie == 6){
+				return;
+			}
+			this._fitMiddleControl();
 		},
 		/**
 		 * @protected

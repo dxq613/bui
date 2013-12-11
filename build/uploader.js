@@ -691,6 +691,7 @@ define('bui/uploader/button/swfButton', function (require) {
         swfUploader = _self.get('swfUploader'),
         filter = _self._convertFilter(_self.getFilter(v));
       //flash里需要一个数组
+      // console.log(BUI.JSON.stringify(filter));
       swfUploader && swfUploader.filter([filter]);
       return v;
     }
@@ -1488,7 +1489,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       });
 
       _self.setItemStatus(item,status,true,element);
-      _self._setItemTpl(status);
+      _self._setItemTpl(item, status);
       _self.updateItem(item);
     },
     /**
@@ -1496,11 +1497,11 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
      * @private
      * @param {String} 状态名称
      */
-    _setItemTpl: function(status){
+    _setItemTpl: function(item, status){
       var _self = this,
         resultTpl = _self.get('resultTpl'),
         itemTpl = resultTpl[status] || resultTpl['default'];
-      _self.set('itemTpl', itemTpl);
+      _self.set('itemTpl', BUI.substitute(itemTpl, item.result));
     }
   }, {
     ATTRS: {
@@ -1512,9 +1513,9 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
        */
       resultTpl:{
         value: {
-          default: '<li><span data-url="{url}" class="filename">{name}</span><div class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></div></li>',
-          success: '<li>success</li>',
-          error: '<li>error</li>',
+          'default': '<li><span data-url="{url}" class="filename">{name}</span><div class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></div></li>',
+          success: '<li>{url}</li>',
+          error: '<li>{name} {msg}</li>',
           progress: '<li>progress</li>'
         }
       },
@@ -1608,13 +1609,34 @@ define('bui/uploader/validator', function (require) {
   Validator.ATTRS = {
     rules: {
 
+    },
+    /**
+     * 上传组件的queue对像
+     * @type {BUI.Uploader.Queue}
+     */
+    queue: {
     }
   }
 
   BUI.extend(Validator, BUI.Base);
 
   BUI.augment(Validator, {
+    valid: function(item){
+      var _self = this,
+        queue = _self.get('queue');
+      queue.updateFileStatus(item, 'error');
+      // item.error = true;
+    },
+    _validItem: function(item){
+      var _self = this,
+        rules = _self.get('rules');
+      BUI.each(rules, function(rule){
+        _self._validRule(item, rule);
+      })
+    },
+    _validRule: function(item, rule){
 
+    }
   });
 
   return Validator;
@@ -1700,7 +1722,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this;
       _self._initTheme();
       _self._initType();
-      _self._initValidator();
+      
       _self._renderButton();
       _self._renderUploaderType();
       _self._renderQueue();
@@ -1853,7 +1875,7 @@ define('bui/uploader/uploader', function (require) {
         BUI.each(files, function(file){
           file.wait = true;
         });
-        _self.fire('beforechange', {items: files});
+        // validator.valid(files);
         queue.addItems(files);
         _self.fire('change', {items: files});
       });
@@ -1864,10 +1886,11 @@ define('bui/uploader/uploader', function (require) {
      */
     _bindQueue: function () {
       var _self = this,
-        queue = _self.get('queue');
+        queue = _self.get('queue'),
+        validator = _self.get('validator');
       queue.on('itemrendered itemupdated', function(ev) {
+        // validator.valid(ev.item);
         var items = queue.getItemsByStatus('wait');
-
         //如果有等待的文件则上传第1个
         if (items && items.length) {
           _self.uploadFile(items[0]);

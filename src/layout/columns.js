@@ -16,6 +16,59 @@ define('bui/layout/columns',['bui/layout/abstract'],function (require) {
 	 * @class BUI.Layout.Columns
 	 * 列模式布局
 	 * @extends BUI.Layout.Abstract
+	 * <pre><code>
+	 * 	var layout = new Columns({
+				columns : 4
+			}),
+				control = new BUI.Component.Controller({
+				width:800,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'layout-test',
+				defaultChildClass : 'controller',
+				children : [
+					{
+						
+						content : '1'
+					},{
+						id : '2',
+						content : '2'
+					},{
+						
+						content : '3'
+					},{
+						
+						content : '4'
+					},
+
+					{
+						content : '5'
+					},{
+						
+						content : '6'
+					},
+
+					{
+						id:'7',
+						
+						content : '7'
+					},{
+						layout : {
+							col : 2 //从0开始
+						},
+						id : '8',
+						content : '8 列 3'
+					},
+					{
+						content : '9'
+					}
+
+				],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * </code></pre>
 	 */
 	var Columns = function(config){
 		Columns.superclass.constructor.call(this,config);

@@ -33,6 +33,13 @@
   *display: inline;
   *zoom: 1;
 }
+.x-viewport-container {
+  overflow: hidden;
+}
+.ext-border-layout {
+  padding: 10px;
+  background-color: #3892d3;
+}
 .ext-border-layout .x-border-north,
 .ext-border-layout .x-border-east,
 .ext-border-layout .x-border-west,

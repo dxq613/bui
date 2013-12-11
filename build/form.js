@@ -2072,8 +2072,11 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
   Rules.add({
     name : 'uploader',  //规则名称
     msg : '上传文件选择有误！',//默认显示的错误信息
-    validator : function(value, baseValue, formatMsg){ //验证函数，验证值、基准值、格式化后的错误信息
-      console.log(arguments)
+    validator : function(value, baseValue, formatMsg, field){ //验证函数，验证值、基准值、格式化后的错误信息
+      var uploader = field.get('uploader');
+      if(uploader && !uploader.isValid()){
+        return formatMsg;
+      }
     }
   }); 
 
@@ -4870,7 +4873,6 @@ define('bui/form/remote',['bui/common'],function(require) {
     },
     /**
      * 清楚异步验证的缓存
-     * @return {[type]} [description]
      */
     clearCache : function(){
       this.set('cacheMap',{});

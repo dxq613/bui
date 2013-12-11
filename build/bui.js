@@ -9660,6 +9660,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @cfg {Object} ajaxOptions
      */
     ajaxOptions : {
+      //shared : false,
       value : {
         type : 'get',
         cache : false
@@ -9701,6 +9702,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @type {Object}
      */
     lastParams : {
+      shared : false,
       value : {}
     },
     /**
@@ -19230,8 +19232,11 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
   Rules.add({
     name : 'uploader',  //\u89c4\u5219\u540d\u79f0
     msg : '\u4e0a\u4f20\u6587\u4ef6\u9009\u62e9\u6709\u8bef\uff01',//\u9ed8\u8ba4\u663e\u793a\u7684\u9519\u8bef\u4fe1\u606f
-    validator : function(value, baseValue, formatMsg){ //\u9a8c\u8bc1\u51fd\u6570\uff0c\u9a8c\u8bc1\u503c\u3001\u57fa\u51c6\u503c\u3001\u683c\u5f0f\u5316\u540e\u7684\u9519\u8bef\u4fe1\u606f
-      console.log(arguments)
+    validator : function(value, baseValue, formatMsg, field){ //\u9a8c\u8bc1\u51fd\u6570\uff0c\u9a8c\u8bc1\u503c\u3001\u57fa\u51c6\u503c\u3001\u683c\u5f0f\u5316\u540e\u7684\u9519\u8bef\u4fe1\u606f
+      var uploader = field.get('uploader');
+      if(uploader && !uploader.isValid()){
+        return formatMsg;
+      }
     }
   }); 
 
@@ -22028,7 +22033,6 @@ define('bui/form/remote',['bui/common'],function(require) {
     },
     /**
      * \u6e05\u695a\u5f02\u6b65\u9a8c\u8bc1\u7684\u7f13\u5b58
-     * @return {[type]} [description]
      */
     clearCache : function(){
       this.set('cacheMap',{});
@@ -23213,7 +23217,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @private
    * @class BUI.Menu.MenuItemView
    * @mixins BUI.Component.UIBase.ListItemView
-   * @mixins BUI.Component.UIBase.collapsableView
+   * @mixins BUI.Component.UIBase.CollapsableView
    * \u83dc\u5355\u9879\u7684\u89c6\u56fe\u7c7b
    */
   var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapsableView],{
@@ -25321,7 +25325,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
       },
       /**
        * \u6807\u9898
-       * @type {String} title 
+       * @cfg {String} title 
        */
       /**
        * \u6807\u9898
@@ -36263,9 +36267,9 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],functi
       },
 
       itemStatusFields  : {
-        value : {
+        /*value : {
           selected : 'selected'
-        }
+        }*/
       },
       /**
        * \u8282\u70b9\u6298\u53e0\u7684\u4e8b\u4ef6

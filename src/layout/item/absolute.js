@@ -8,6 +8,11 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem');
 
+	/**
+	* @class BUI.Layout.Item.Absolute
+	* 绝对布局的布局项
+	* @extends BUI.Layout.Item
+	*/
 	var AbsoluteItem = function(config){
 		AbsoluteItem.superclass.constructor.call(this,config);
 	};
@@ -16,7 +21,7 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 
 	AbsoluteItem.ATTRS = {
 
-		/**s
+		/**
 		 * @protected
 		 * 同步的css属性
 		 * @type {Array}
@@ -26,22 +31,22 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 		}
 		
 		/**
-		 * top
+		 * top 位置
 		 * @cfg {Number} top
 		 */
 		
 		/**
-		 * left
+		 * left 位置
 		 * @cfg {Number} left
 		 */
 		
 		/**
-		 * bottom
+		 * bottom 位置
 		 * @cfg {Number} bottom
 		 */
 		
 		/**
-		 * right
+		 * right 位置
 		 * @cfg {Number} right
 		 */
 		
