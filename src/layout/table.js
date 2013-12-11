@@ -13,6 +13,88 @@ define('bui/layout/table',['bui/layout/abstract','bui/layout/cellitem'],function
 	 * @class BUI.Layout.Table
 	 * 表格布局
 	 * @extends BUI.Layout.Abstract
+	 * <pre>
+	 * 	<code>
+	 * 	var layout = new Table({
+				rows : 4,
+				columns : 4
+			}),
+				control = new BUI.Component.Controller({
+				width:600,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'layout-test',
+				defaultChildClass : 'controller',
+				children : [
+					{
+						layout : {
+							row : 0,
+							height : 50
+						},
+						content : '1'
+					},{
+						layout : {
+							row : 0
+						},
+						content : '2'
+					},{
+						layout : {
+							row : 0
+						},
+						content : '3'
+					},{
+						layout : {
+							row : 0,
+							rowspan : 4
+						},
+						content : '4'
+					},
+
+					{
+						layout : {
+							row : 1,
+							colspan : 2,
+							height : 100
+						},
+						content : '5'
+					},{
+						layout : {
+							row : 1
+						},
+						content : '6'
+					},
+
+					{
+						id:'7',
+						layout : {
+							row : 2
+						},
+						content : '7'
+					},{
+						layout : {
+							row : 2,
+							colspan : 2,
+							rowspan:2
+						},
+						id : '8',
+						content : '8'
+					},
+
+					{
+						id:'9',
+						layout : {
+							row : 3
+						},
+						content : '9'
+					}
+
+				],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * 	</code>
+	 * </pre>
 	 */
 	var Table = function(config){
 		Table.superclass.constructor.call(this,config);

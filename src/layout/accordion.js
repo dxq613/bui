@@ -16,6 +16,43 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
 	 * 可折叠的布局
 	 * @extends BUI.Layout.Abstract
 	 * @mixins BUI.Layout.Collapsable
+	 * <pre><code>
+	 * 	var layout = new Accordion(),
+				control = new BUI.Component.Controller({
+				width:600,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'layout-test',
+				children : [{
+					layout : {
+						title : '标签一'
+					},
+					xclass : 'controller',
+					content : "一"
+				},{
+					xclass : 'controller',
+					layout : {
+						title : '标签二'
+					},
+					content : '二'
+				},{
+					xclass : 'controller',
+					layout : {
+						title : '标签三'
+					},
+					content : "三"
+				},{
+					xclass : 'controller',
+					layout : {
+						title : '标签四'
+					},
+					content : "四"
+				}],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * </code></pre>
 	 */
 	var Accordion = function(config){
 		Accordion.superclass.constructor.call(this,config);
@@ -25,7 +62,7 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
 
 		/**
 		 * 子项对应的构造函数
-		 * @type {Class}
+		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item

@@ -305,12 +305,16 @@ define('bui/layout/baseitem',function (require) {
 			}
 			siblings = bodyEl.siblings(); //获取外层容器减去兄弟元素的高度
 			BUI.each(siblings,function(elem){
-				height -= $(elem).outerHeight();
+				var node = $(elem);
+				if(node.css('position') !== 'absolute'){
+					height -= node.outerHeight();
+				}
 			});
 			return height;
 		},
 		/**
 		 * @protected
+		 * 获取布局相关的属性
 		 * @return {Object} 获取布局相关的属性
 		 */
 		getLayoutAttrs : function(){

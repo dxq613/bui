@@ -51,7 +51,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
       },
       /**
        * 标题
-       * @type {String} title 
+       * @cfg {String} title 
        */
       /**
        * 标题

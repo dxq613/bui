@@ -6,8 +6,8 @@
 	var BASE = 'bui/layout/';
 	define('bui/layout',['bui/common',BASE + 'abstract',BASE + 'absolute',BASE + 'anchor', BASE + 'flow',BASE + 'columns',BASE + 'table',
 		BASE + 'border', BASE + 'accordion',BASE + 'viewport'],function (r) {
-			
-		var BUI = require('bui/common');
+
+		var BUI = r('bui/common');
 
 		var Layout = BUI.namespace('Layout');
 

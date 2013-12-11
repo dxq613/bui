@@ -3,7 +3,7 @@
 "--title":"BUI docs",
 "--external":"window,HTMLDocument,HTMLElement,DocumentFragment,XMLHttpRequest,jQuery",
 "--":[
-        "../../src/common",
+    "../../src/common",
 	"../../src/bar",
 	"../../src/data",
 	"../../src/cookie",

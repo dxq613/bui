@@ -23,7 +23,7 @@ define('bui/layout/abstract',['bui/layout/baseitem'],function(require){
 
 		/**
 		 * 子项对应的构造函数
-		 * @type {Class}
+		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item
@@ -298,7 +298,7 @@ define('bui/layout/abstract',['bui/layout/baseitem'],function(require){
 		},
 		/**
 		 * 获取布局选项
-		 * @param {Objet} controlChild 子控件
+		 * @param {Object} controlChild 子控件
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
 		getItem : function(control){

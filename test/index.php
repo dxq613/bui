@@ -4,56 +4,140 @@
     <meta charset="utf-8">
     <title>控件单元测试</title>
     <link href="../assets/css/dpl.css" rel="stylesheet">
+    <link href="../assets/css/bui.css" rel="stylesheet">
+    <link href="../assets/css/layout.css" rel="stylesheet">
     <link href="assets/docs.css" rel="stylesheet">
-    
+    <style>
+      html{
+        overflow: hidden;
+      }
+
+      .doc-title{
+        background-color: #3892d3;
+        color: white;
+      }
+
+      .doc-title h2{
+        line-height: 30px;
+        padding-left: 10px;
+      }
+    </style>
   </head>
   <body>
-  
-    <div class="row-fluid">
-      <div id="menu" class="span4 span-first">
-
-      </div>
-      <div class="span20">
-        <iframe id="J_Frame" width="100%"  height="1000px" src="" frameborder="0">
-      
-        </iframe>
-      </div>
-    </div>
     
   <script type="text/javascript" src="../src/jquery-1.8.1.min.js"></script>
   <script type="text/javascript" src="../build/loader-min.js"></script>
   <script type="text/javascript">
-  BUI.use('bui/menu',function(Menu){
-    var frameEl = $('#J_Frame');
-    var files = ['seajs','array','bar','calendar','common','dialog','depend','editor','form','form-field','form-group','form-panel','form-remote','form-rules','grid','grid-plugin',
-      'grid-editor','header','issue','keynav','list','loader','mask','menu','message','mixins','progressbar','picker','select','slider','simple-grid',
-      'store','tab','treestore','tips','uploader','tree','treemenu','treegrid'],
+  BUI.setDebug(true);
+  BUI.use(['bui/tree','bui/layout'],function(Tree,Layout){
+    
+    var files = [
+      ],
+      nodes = [{
+        text : 'util类及基础类',
+        expanded : true,
+        children : [
+          {text : 'seajs'},
+          {text : 'array'},
+          {text : 'common'},
+          {text : 'mixins'},
+          {text : 'depend'},
+          {text : 'keynav'},
+          {text : 'loader'}
+        ]
+      },
+      {
+        text : '简单控件',
+        children : [
+          'bar','calendar','dialog','editor','list','mask','menu',
+          'message','progressbar','tips','picker','select','slider','tab',
+          'uploader'
+        ]
+      },{
+        text : '数据',
+        children : [
+          'store','treestore','module'
+        ]
+      },{
+        text : 'Grid',
+        children : [
+          'grid','grid-plugin','grid-editor','header','simple-grid'
+        ]
+      },{
+        text : 'form',
+        children : [
+          'form','form-field','form-group','form-panel','form-remote','form-rules'
+        ]
+      },{
+        text : 'Tree',
+        children : [
+          'treestore','tree','treemenu','treegrid'
+        ]
+      },{
+        text : 'layout',
+        children : ['layout-absolute','layout-border','layout-flow','layout-table','layout-anchor','layout-columns','layout-accordion','viewport']
+      },{
+        text : 'issue',
+        children : [
+          'issue'
+        ]
+      }],
       curIndex = 0,
       items;
 
-    function executeFile(index){
-      var file = files[index];
-      if(file){
-        frameEl.attr('src',file);
-        curIndex = index;
-      }
-    }
-
-    function initItmes(files){
-      var items = [];
-      $.each(files,function(index,file){
-        items.push({id:index,href:file+'.php'});
+    function initItmes(nodes){
+      
+      $.each(nodes,function(index,node){
+        var children = node.children;
+        $.each(children,function(index,subNode){
+          if(BUI.isString(subNode)){
+            children[index] = {text : subNode};
+          }
+          children[index].href = children[index].text + '.php'
+        });
       });
-      return items;
+      return nodes;
     }
+    initItmes(nodes);
 
-    var menu = new Menu.Menu({
-      items : initItmes(files),
-      render : '#menu',
-      elCls : 'demo-menu',
-      autoRender : true,
-      itemTpl : '<a href="{href}?t=' + new Date().getTime() + '">{href}</a>'
+    var viewport = new Layout.Viewport({
+      elCls : 'ext-border-layout',
+      children : [{
+        xclass : 'controller',
+        layout : {
+          region : 'north'
+        },
+        elCls : 'doc-title',
+        content : '<h2>BUI 单元测试</h2>'
+      },{
+        xclass : 'controller',
+        layout : {
+          region : 'west',
+          title : '测试文件列表',
+          collapsable : true,
+          fit : 'both',
+          width : 200
+        },
+        xclass : 'tree-menu',
+        //dirSelectable : false,
+        expandAnimate : true,
+        nodes : nodes,
+        id : 'menu',
+        elCls : 'bui-tree-list'
+      },{
+        xclass : 'controller',
+        layout : {
+          title : '测试内容',
+          region : 'center',
+          fit : 'both'
+        },
+        content : '<iframe id="J_Frame" width="100%"  height="100%" src="" frameborder="0"></iframe>'
+      }],
+      plugins : [Layout.Border]
     });
+    viewport.render();
+    var menu  = viewport.getChild('menu'),
+      frameEl = $('#J_Frame');;
 
     menu.get('el').delegate('a','click',function(ev){
       ev.preventDefault();
@@ -61,10 +145,11 @@
     menu.on('selectedchange',function(ev){
       var item = ev.item;
       if(item){
-        frameEl.attr('src',item.get('href'));
+        frameEl.attr('src',item.href);
       }
     });
-    menu.setSelected(menu.getItemAt(0));
+    menu.setSelected(menu.getItemAt(1));
+    
   });
     
   
