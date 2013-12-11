@@ -69,8 +69,8 @@ define('bui/module', function (require) {
      */
     modules :{
       value : {
-        
-      }
+      },
+      shared: false
     },
     events: {
       value: [
