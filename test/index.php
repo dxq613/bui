@@ -118,7 +118,8 @@
           fit : 'both',
           width : 200
         },
-        xclass : 'tree-menu',
+        xclass : 'tree-list',
+        dirSelectable : false,
         expandAnimate : true,
         nodes : nodes,
         id : 'menu',

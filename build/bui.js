@@ -36192,9 +36192,9 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],functi
       },
 
       itemStatusFields  : {
-        value : {
+        /*value : {
           selected : 'selected'
-        }
+        }*/
       },
       /**
        * \u8282\u70b9\u6298\u53e0\u7684\u4e8b\u4ef6
