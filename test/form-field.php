@@ -40,7 +40,7 @@
       </div>
 
       <div id="upload">
-        <input type="hidden" value='[{url: "aa"}]'>
+        <input type="hidden" value=''>
       </div>
     </form>
 

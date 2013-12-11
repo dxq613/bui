@@ -3,10 +3,6 @@ Copyright 2011, KISSY UI Library v1.1.5
 MIT Licensed
 build time: Sep 11 10:29
 */
-/**
- * AJBridge Class
- * @author kingfo oicuicu@gmail.com
- */
 define('bui/uploader/button/swfButton/ajbridge', function(require){
   var BUI = require('bui/common'),
     SWF = require('bui/swf');
@@ -14,6 +10,10 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
 
   var instances = {};
 
+  /**
+   * AJBridge Class
+   * @author kingfo oicuicu@gmail.com
+   */
   function AJBridge(config){
     AJBridge.superclass.constructor.call(this, config);
   }

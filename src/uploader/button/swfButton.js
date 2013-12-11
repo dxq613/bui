@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @fileoverview flash上传按钮
  * @author: zengyue.yezy
  **/
@@ -8,7 +9,7 @@ define('bui/uploader/button/swfButton', function (require) {
     Component = BUI.Component,
     ButtonBase = require('bui/uploader/button/base'),
     SwfUploader = require('bui/uploader/type/flash'),
-    baseUrl = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base,
+    baseUrl = seajs.data.base,
     SWF = require('bui/uploader/button/swfButton/ajbridge');
 
 
@@ -18,6 +19,12 @@ define('bui/uploader/button/swfButton', function (require) {
     }
   });
 
+  /**
+   * 文件上传按钮，flash上传方式使用,使用的是flash
+   * @class BUI.Uploader.Button.SwfButton
+   * @extends BUI.Component.Controller
+   * @mixins BUI.Uploader.Button
+   */
   var SwfButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
       var _self = this;
@@ -88,6 +95,7 @@ define('bui/uploader/button/swfButton', function (require) {
         swfUploader = _self.get('swfUploader'),
         filter = _self._convertFilter(_self.getFilter(v));
       //flash里需要一个数组
+      // console.log(BUI.JSON.stringify(filter));
       swfUploader && swfUploader.filter([filter]);
       return v;
     }
@@ -96,7 +104,7 @@ define('bui/uploader/button/swfButton', function (require) {
       swfUploader:{
       },
       flashUrl:{
-        value: seajs.pluginSDK.config.base + 'uploader/uploader.swf'
+        value: baseUrl + 'uploader/uploader.swf'
       },
       flash:{
         value:{

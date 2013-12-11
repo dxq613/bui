@@ -19100,7 +19100,8 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
 
   var BUI = require('bui/common'),
     JSON = BUI.JSON,
-    Field = require('bui/form/basefield');
+    Field = require('bui/form/basefield'),
+    Rules = require('bui/form/rules');
 
   /**
    * \u8868\u5355\u4e0a\u4f20\u57df
@@ -19183,7 +19184,13 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         result.push(newItem);
       });
       queue && queue.setItems(result);
-    }
+    }//,
+    // valid: function(){
+    //   var _self = this,
+    //     uploader = _self.get('uploader');
+    //   uploaderField.superclass.valid.call(_self);
+    //   uploader.valid();
+    // }
   },{
     ATTRS : {
       /**
@@ -19200,6 +19207,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
           return v;
         }
       },
+
       disabled: {
         setter: function(v){
           var _self = this,
@@ -19209,11 +19217,23 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
       },
       value:{
         value: []
+      },
+      defaultRules: function(){
+        uploader: true
       }
     }
   },{
     xclass : 'form-field-uploader'
   });
+
+  
+  Rules.add({
+    name : 'uploader',  //\u89c4\u5219\u540d\u79f0
+    msg : '\u4e0a\u4f20\u6587\u4ef6\u9009\u62e9\u6709\u8bef\uff01',//\u9ed8\u8ba4\u663e\u793a\u7684\u9519\u8bef\u4fe1\u606f
+    validator : function(value, baseValue, formatMsg){ //\u9a8c\u8bc1\u51fd\u6570\uff0c\u9a8c\u8bc1\u503c\u3001\u57fa\u51c6\u503c\u3001\u683c\u5f0f\u5316\u540e\u7684\u9519\u8bef\u4fe1\u606f
+      console.log(arguments)
+    }
+  }); 
 
   return uploaderField;
 });/**

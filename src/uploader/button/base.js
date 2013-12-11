@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @fileoverview 文件上传按钮的基类
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
@@ -54,7 +55,7 @@ define('bui/uploader/button/base', function(require) {
   function baseView() {
   }
 
-  baseView.ATTRS = /** @lends Base.prototype */{
+  baseView.ATTRS = {
   }
 
   baseView.prototype = {
@@ -67,7 +68,10 @@ define('bui/uploader/button/base', function(require) {
     }
   }
 
-
+  /**
+   * 上传组件按钮的基类
+   * @class BUI.Uploader.Button.Base
+   */
   function base(){
 
   }

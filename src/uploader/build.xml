@@ -31,6 +31,7 @@
             <path path="type/iframe.js"/>
             <path path="queue.js"/>
             <path path="theme.js"/>
+            <path path="validator.js"/>
             <path path="factory.js"/>
             <path path="uploader.js"/>
 			<path path="base.js"/>

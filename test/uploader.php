@@ -26,9 +26,7 @@
         <div id="J_UploaderIframe"></div>
       </div>
     </div>
-    <div class="row">
-      <div class="span24" id="J_Foreach"></div>
-    </div>
+
   </div>
   
     <?php $url = 'bui/uploader'?>
@@ -40,6 +38,7 @@
     <script src="../src/uploader/factory.js"></script>
     <script src="../src/uploader/queue.js"></script>
     <script src="../src/uploader/theme.js"></script>
+    <script src="../src/uploader/validator.js"></script>
     <script src="../src/uploader/button/filter.js"></script>
     <script src="../src/uploader/button/base.js"></script>
     <script src="../src/uploader/button/htmlButton.js"></script>

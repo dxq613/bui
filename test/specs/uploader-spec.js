@@ -20,6 +20,8 @@ BUI.use(['bui/uploader/button/filter'], function(Filter){
   });
 });
 
+
+
 BUI.use(['bui/uploader/button/htmlButton', 'bui/uploader/button/swfButton'], function(HtmlButton, SwfButton){
   var htmlButton = new HtmlButton({
       name: 'filedata',
@@ -30,7 +32,8 @@ BUI.use(['bui/uploader/button/htmlButton', 'bui/uploader/button/swfButton'], fun
     swfButton = new SwfButton({
       elCls: 'defaultTheme-button',
       render: '#J_SwfButton',
-      text: '请选择'
+      text: '请选择',
+      filter: {desc: 'png', ext: '.png'}
     });
 
   htmlButton.render();
@@ -66,13 +69,21 @@ BUI.use(['bui/uploader/button/htmlButton', 'bui/uploader/button/swfButton'], fun
   });
 })
 
+
+
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
-    disabled: false,
     url: 'upload/upload.php',
     button:{
-      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+      filter: {desc:'image', ext:".jpg,.jpeg,.png,.gif,.bmp"}
+    },
+    rules: {
+      type: {ext:".jpg,.jpeg,.png,.gif,.bmp"},
+      max: 5,
+      min: 1,
+      maxSize: 1000,
+      minSize: 100
     }
   });
   uploader.render();
@@ -84,58 +95,45 @@ BUI.use(['bui/uploader'], function (Uploader) {
   });
 });
 
-BUI.use(['bui/uploader'], function (Uploader) {
-  var uploader = new Uploader.Uploader({
-    render: '#J_UploaderFlash',
-    type: 'flash',
-    // disabled: true,
-    // queueTarget: '#J_UploaderQueue',
-    url: 'upload/upload.php',
-    button: {
-      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
-    }
-  });
-  uploader.render();
-  var el = uploader.get('el');
 
-  describe('测试DOM生成', function(){
-    it('render函数是否执行成功', function(){
-      //expect(el.children().length).not.toBe(0);
-    });
-  });
-});
+// BUI.use(['bui/uploader'], function (Uploader) {
+//   var uploader = new Uploader.Uploader({
+//     render: '#J_UploaderFlash',
+//     type: 'flash',
+//     // disabled: true,
+//     // queueTarget: '#J_UploaderQueue',
+//     url: 'upload/upload.php',
+//     button: {
+//       filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+//     }
+//   });
+//   uploader.render();
+//   var el = uploader.get('el');
 
-BUI.use(['bui/uploader'], function (Uploader) {
-  var uploader = new Uploader.Uploader({
-    render: '#J_UploaderIframe',
-    type: 'iframe',
-    // disabled: true,
-    // queueTarget: '#J_UploaderQueue',
-    url: 'upload/upload.php',
-    button: {
-      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
-    }
-  });
-  uploader.render();
-  var el = uploader.get('el');
+//   describe('测试DOM生成', function(){
+//     it('render函数是否执行成功', function(){
+//       //expect(el.children().length).not.toBe(0);
+//     });
+//   });
+// });
 
-  describe('测试DOM生成', function(){
-    it('render函数是否执行成功', function(){
-      //expect(el.children().length).not.toBe(0);
-    });
-  });
-});
+// BUI.use(['bui/uploader'], function (Uploader) {
+//   var uploader = new Uploader.Uploader({
+//     render: '#J_UploaderIframe',
+//     type: 'iframe',
+//     // disabled: true,
+//     // queueTarget: '#J_UploaderQueue',
+//     url: 'upload/upload.php',
+//     button: {
+//       filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+//     }
+//   });
+//   uploader.render();
+//   var el = uploader.get('el');
 
-BUI.use(['bui/uploader'], function (Uploader) {
-  for(var i = 0; i < 100; i++){
-    new Uploader.Uploader({
-        render: '#J_Foreach',
-        type: 'flash',
-        url: 'upload/upload.php',
-        button: {
-          filter: {desc:"jpg,jpeg",ext:".jpg,.jpeg"},
-          flashUrl: 'https://martini.alitest.net:5000/av/uploader.swf'
-        }
-      }).render();
-  }
-});
+//   describe('测试DOM生成', function(){
+//     it('render函数是否执行成功', function(){
+//       //expect(el.children().length).not.toBe(0);
+//     });
+//   });
+// });

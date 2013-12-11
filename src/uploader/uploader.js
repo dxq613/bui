@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @fileoverview 异步文件上传组件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
@@ -7,7 +8,8 @@ define('bui/uploader/uploader', function (require) {
   var BUI = require('bui/common'),
     Component = BUI.Component,
     Theme = require('bui/uploader/theme'),
-    Factory = require('bui/uploader/factory');//,
+    Factory = require('bui/uploader/factory'),
+    Validator = require('bui/uploader/validator');//,
     // Iframe = require('bui/uploader/type/iframe');
 
 
@@ -24,12 +26,17 @@ define('bui/uploader/uploader', function (require) {
     }
   });
 
-
-  var Uploader = Component.Controller.extend(/** @lends Uploader.prototype*/{
+  /**
+   * 文件上传组组件
+   * @class BUI.Uploader.Uploader
+   * @extends BUI.Component.Controller
+   */
+  var Uploader = Component.Controller.extend({
     renderUI: function(){
       var _self = this;
       _self._initTheme();
       _self._initType();
+      
       _self._renderButton();
       _self._renderUploaderType();
       _self._renderQueue();
@@ -54,6 +61,10 @@ define('bui/uploader/uploader', function (require) {
     isSupportFlash: function(){
       return true;
     },
+    /**
+     * @private
+     * 初始化使用的主题
+     */
     _initTheme: function(){
       var _self = this,
         theme = Theme.getTheme(_self.get('theme')),
@@ -76,7 +87,7 @@ define('bui/uploader/uploader', function (require) {
     _initType: function(){
       var _self = this,
         types = _self.get('types'),
-        type = _self.get('type')
+        type = _self.get('type');
       //没有设置时按最优处理，有则按设定的处理
       if(!type){
         if(_self.isSupportAjax()){
@@ -92,7 +103,19 @@ define('bui/uploader/uploader', function (require) {
       _self.set('type', type);
     },
     /**
+     * 初始化验证器
+     * @private
+     */
+    _initValidator: function(){
+      var _self = this,
+        validator = _self.get('validator');
+      if(!validator){
+        _self.set('validator', new Validator(_self.get('rules')));
+      }
+    },
+    /**
      * 获取用户的配置信息
+     * @private
      */
     _getUserConfig: function(keys){
       var attrVals = this.getAttrVals(),
@@ -105,6 +128,10 @@ define('bui/uploader/uploader', function (require) {
       });
       return config;
     },
+    /**
+     * 初始线上传类型的实例
+     * @private
+     */
     _renderUploaderType: function(){
       var _self = this,
         type = _self.get('type'),
@@ -115,7 +142,7 @@ define('bui/uploader/uploader', function (require) {
     },
     /**
      * 初始化Button
-     * @return {[type]} [description]
+     * @private
      */
     _renderButton: function(){
       var _self = this,
@@ -132,7 +159,7 @@ define('bui/uploader/uploader', function (require) {
     },
     /**
      * 初始化上传的对列
-     * @return {[type]} [description]
+     * @private
      */
     _renderQueue: function(){
       var _self = this,
@@ -147,6 +174,10 @@ define('bui/uploader/uploader', function (require) {
       }
       queue.set('uploader', _self);
     },
+    /**
+     * 绑定button的事件
+     * @private
+     */
     _bindButton: function () {
       var _self = this,
         button = _self.get('button'),
@@ -158,17 +189,22 @@ define('bui/uploader/uploader', function (require) {
         BUI.each(files, function(file){
           file.wait = true;
         });
-        _self.fire('beforechange', {items: files});
+        // validator.valid(files);
         queue.addItems(files);
         _self.fire('change', {items: files});
       });
     },
+    /**
+     * 绑定上传的对列
+     * @private
+     */
     _bindQueue: function () {
       var _self = this,
-        queue = _self.get('queue');
+        queue = _self.get('queue'),
+        validator = _self.get('validator');
       queue.on('itemrendered itemupdated', function(ev) {
+        // validator.valid(ev.item);
         var items = queue.getItemsByStatus('wait');
-
         //如果有等待的文件则上传第1个
         if (items && items.length) {
           _self.uploadFile(items[0]);
@@ -177,8 +213,8 @@ define('bui/uploader/uploader', function (require) {
       });
     },
     /**
-     * 
-     * @return {[type]} [description]
+     * 文件上传的处理函数
+     * @private
      */
     _bindUploaderCore: function () {
       var _self = this,
@@ -252,6 +288,10 @@ define('bui/uploader/uploader', function (require) {
         _self.uploadFiles();
       });
     },
+    /**
+     * 开始进行上传
+     * @param  {Object} item
+     */
     uploadFile: function (item) {
       var _self = this,
         queue = _self.get('queue'),
@@ -269,7 +309,6 @@ define('bui/uploader/uploader', function (require) {
     },
     /**
      * 上传文件，只对对列中所有wait状态的文件
-     * @return {[type]} [description]
      */
     uploadFiles: function () {
       var _self = this,
@@ -282,6 +321,9 @@ define('bui/uploader/uploader', function (require) {
         _self.uploadFile(items[0]);
       }
     },
+    /**
+     * 取消正在上传的文件 
+     */
     cancel: function(){
       var _self = this,
         uploaderType = _self.get('uploaderType'),
@@ -302,10 +344,6 @@ define('bui/uploader/uploader', function (require) {
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{
-      /**
-       * 上传的类型，有ajax,flash,iframe四种
-       * @type {String}
-       */
       types: {
         value: {
           AJAX: 'ajax',
@@ -314,14 +352,22 @@ define('bui/uploader/uploader', function (require) {
         }
       },
       /**
-       * 当前使用的上传类型
+       * 上传的类型，有ajax,flash,iframe四种
        * @type {String}
        */
       type: {
       },
+      /**
+       * 主题
+       * @type {BUI.Uploader.Theme}
+       */
       theme: {
         value: 'default'
       },
+      /**
+       * 上传组件的button对像
+       * @type {BUI.Uploader.Button}
+       */
       button: {
         setter: function(v){
           var disabled = this.get('disabled');
@@ -339,11 +385,15 @@ define('bui/uploader/uploader', function (require) {
           button && button.isController && button.set('disabled', true);
         }
       },
+      /**
+       * 上传组件的上传对列
+       * @type {BUI.Uploader.Queue}
+       */
       queue: {
       },
       /**
-       * 当前上传的状
-       * @type {Object}
+       * 当前上传的状态
+       * @type {String}
        */
       uploadStatus: {
       },
@@ -359,11 +409,11 @@ define('bui/uploader/uploader', function (require) {
           return false;
         }
       },
-      success: {
-      },
-      error: {
-      },
-      complete: {
+      /**
+       * uploader的验证器
+       * @type {BUI.Uploader.Validator}
+       */
+      validator: {
       },
       xview: {
         value: UploaderView

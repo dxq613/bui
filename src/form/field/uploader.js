@@ -7,7 +7,8 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
 
   var BUI = require('bui/common'),
     JSON = BUI.JSON,
-    Field = require('bui/form/basefield');
+    Field = require('bui/form/basefield'),
+    Rules = require('bui/form/rules');
 
   /**
    * 表单上传域
@@ -90,7 +91,13 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         result.push(newItem);
       });
       queue && queue.setItems(result);
-    }
+    }//,
+    // valid: function(){
+    //   var _self = this,
+    //     uploader = _self.get('uploader');
+    //   uploaderField.superclass.valid.call(_self);
+    //   uploader.valid();
+    // }
   },{
     ATTRS : {
       /**
@@ -107,6 +114,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
           return v;
         }
       },
+
       disabled: {
         setter: function(v){
           var _self = this,
@@ -116,11 +124,26 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
       },
       value:{
         value: []
+      },
+      defaultRules: function(){
+        uploader: true
       }
     }
   },{
     xclass : 'form-field-uploader'
   });
+
+  
+  Rules.add({
+    name : 'uploader',  //规则名称
+    msg : '上传文件选择有误！',//默认显示的错误信息
+    validator : function(value, baseValue, formatMsg, field){ //验证函数，验证值、基准值、格式化后的错误信息
+      var uploader = field.get('uploader');
+      if(uploader && !uploader.isValid()){
+        return formatMsg;
+      }
+    }
+  }); 
 
   return uploaderField;
 });
