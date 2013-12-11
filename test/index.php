@@ -56,7 +56,7 @@
       },{
         text : '数据',
         children : [
-          'store','treestore'
+          'store','treestore','module'
         ]
       },{
         text : 'Grid',

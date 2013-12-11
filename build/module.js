@@ -13,8 +13,9 @@ define('bui/module', function (require) {
     return 'module' + (guid++);
   }
   /**
-   * @class Module
    * 业务模块
+   * @class BUI.Module.Module
+   * @extends BUI.Base
    */
   var Module = function(config){
     Module.superclass.constructor.call(this,config);
@@ -27,8 +28,6 @@ define('bui/module', function (require) {
     Module.Manager.add(this);
   };
 
-
-
   Module.ATTRS = {
     /**
      * 模块Id，如果未设置，可以自动生成
@@ -39,7 +38,7 @@ define('bui/module', function (require) {
     },
     /**
      * 是否直接初始化
-     * @type {Object}
+     * @type {Boolean}
      */
     autoInit: {
       value: false
@@ -53,10 +52,9 @@ define('bui/module', function (require) {
     },
     /**
      * 父模块
-     * @type {Object}
+     * @type {BUI.Module.Module}
      */
     parent: {
-
     },
     /**
      * 是否释放
@@ -65,10 +63,27 @@ define('bui/module', function (require) {
     destroyed : {
       value : false
     },
+    /**
+     * 子模块
+     * @type {Object}
+     */
     modules :{
       value : {
         
       }
+    },
+    events: {
+      value: [
+        /**
+         * 当模块里触发任何事件时会同时触发方该事件
+         * @event
+         * @param {jQuery.Event} e 事件对像
+         * @param {BUI.Module.Module} e.module 触发事件的对像
+         * @param {String} e.eventType 触发事件的名称
+         * @param {Object} e.event 触发事件时传递的变量
+         */
+        'change'
+      ]
     }
   }
 
@@ -86,7 +101,7 @@ define('bui/module', function (require) {
     /**
      * @chainable
      * 初始化模块
-     * @return {Module}
+     * @return {BUI.Module.Module}
      */
     init : function(){
       if(!this.get('hasInit')){
@@ -123,39 +138,39 @@ define('bui/module', function (require) {
         Module.Manager.fire('change',{module : this,eventType: eventType, event : obj});
       }
     },
-    /**
-     * 添加子模块的缩写
-     * @param  {Module} module 添加子模块
-     */
+    // /**
+    //  * 添加子模块的缩写
+    //  * @param  {Module} module 添加子模块
+    //  */
     // add : function(module){
     //   this.addModule(module.get('id'),module);
     // },
     /**
      * 添加子模块
-     * @param  {Module} module 添加子模块
+     * @param  {BUI.Module.Module} module 添加子模块
      */
     addModule : function(module){
       module.set('parent', this);
       this.get('modules')[module.get('id')] = module;
     },
     /**
-     * 删除模块
+     * 根据id删除模块
      * @param  {String} id 模块编号
      */
-    remove : function(id){
-      this.removeModule(id);
+    removeById : function(id){
+      this.removeModule(this.getModule(id));
     },
     /**
      * 删除模块
-     * @param  {String} id 模块编号
+     * @param  {BUI.Module.Module} 模块
      */
-    removeModule : function(id){
-      delete this.get('modules')[id];
+    removeModule : function(module){
+      delete this.get('modules')[module.get('id')];
     },
     /**
      * 获取模板
      * @param  {String} id 模块编号
-     * @return {Module} 模块
+     * @return {BUI.Module.Module} 模块
      */
     getModule : function(id){
       return this.get('modules')[id];
@@ -169,7 +184,7 @@ define('bui/module', function (require) {
     },
     /**
      * 获取所有的子模块
-     * @return {Array} 子模块列表
+     * @return {Object} 子模块列表
      */
     getModules : function(){
       return this.get('modules');
@@ -230,8 +245,9 @@ define('bui/module', function (require) {
   var modulesMap = {};
 
   /**
-   * @class Module.Manager
    * 模块管理器，所有模块生成后会注册在管理器中
+   * @class BUI.Module.Manager
+   * @extends BUI.Base
    */
   var ModuleManager = function(){
 
@@ -242,7 +258,7 @@ define('bui/module', function (require) {
   BUI.augment(ModuleManager,{
     /**
      * 注册模块
-     * @param  {Module} module 模块
+     * @param  {BUI.Module.Module} module 模块
      */
     add : function(module){
       var id = module.get('id');      
@@ -250,7 +266,7 @@ define('bui/module', function (require) {
     },
     /**
      * 移除注册
-     * @param  {Module} module 模块 
+     * @param  {BUI.Module.Module} module 模块 
      */
     remove : function(module){
       var id = module.get('id');
