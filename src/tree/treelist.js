@@ -3,10 +3,11 @@
  * @ignore
  */
 
-define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
+define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin','bui/tree/selection'],function (require) {
   var BUI = require('bui/common'),
     List = require('bui/list'),
-    Mixin = require('bui/tree/treemixin');
+    Mixin = require('bui/tree/treemixin'),
+    Selection = require('bui/tree/selection');
 
   /**
    * @class BUI.Tree.TreeList
@@ -80,7 +81,7 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],functi
    * @mixin BUI.Tree.Mixin
    * @extends BUI.List.SimpleList
    */
-  var TreeList = List.SimpleList.extend([Mixin],{
+  var TreeList = List.SimpleList.extend([Mixin,Selection],{
     
   },{
     ATTRS : {
