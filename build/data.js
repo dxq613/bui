@@ -1468,22 +1468,34 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {BUI.Data.Node} 节点
      */
     findNode : function(id,parent,deep){
+      return this.findNodeBy(function(node){
+        return node.id === id;
+      },parent,deep);
+    },
+    /**
+     * 根据匹配函数查找节点
+     * @param  {Function} fn  匹配函数
+     * @param  {BUI.Data.Node} [parent] 父节点
+     * @param {Boolean} [deep = true] 是否递归查找
+     * @return {BUI.Data.Node} 节点
+     */
+    findNodeBy : function(fn,parent,deep){
       var _self = this;
       deep = deep == null ? true : deep;
       if(!parent){
         var root = _self.get('root');
-        if(root.id === id){
+        if(fn(root)){
           return root;
         }
-        return _self.findNode(id,root);
+        return _self.findNodeBy(fn,root);
       }
       var children = parent.children,
         rst = null;
       BUI.each(children,function(item){
-        if(item.id === id){
+        if(fn(item)){
           rst = item;
         }else if(deep){
-          rst = _self.findNode(id,item);
+          rst = _self.findNodeBy(fn,item);
         }
         if(rst){
           return false;

@@ -47,6 +47,7 @@
     <?php include("./templates/script.php"); ?>
 
   <script type="text/javascript" src="../src/tree/treemixin.js"></script>
+  <script type="text/javascript" src="../src/tree/selection.js"></script>
   <script type="text/javascript" src="../src/tree/treemenu.js"></script>
   <script type="text/javascript" src="specs/tree-menu-spec.js"></script>
 <?php include("./templates/footer.php"); ?>
