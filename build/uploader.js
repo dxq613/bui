@@ -345,7 +345,11 @@ define('bui/uploader/button/base', function(require) {
   };
 
   base.prototype = {
-    //设置文件的扩展信息
+    /**
+     * 获取文件的扩展信息
+     * @param  {[type]} file [description]
+     * @return {[type]}      [description]
+     */
     getExtFileData: function(file){
       var filename = getFileName(file.name),
         textSize = convertByteSize(file.size || 0),
@@ -360,12 +364,17 @@ define('bui/uploader/button/base', function(require) {
         };
       return fileAttrs;
     },
+    /**
+     * @protected
+     */
     _getFile: function(file){
       var _self = this,
         fileAttrs = _self.getExtFileData(file);
       BUI.mix(file, fileAttrs);
-      file.result = fileAttrs;
 
+      //因为在结果模板构建的时候很有可能会使用文件本身的属性，如name，size之类的
+      //所以将这些属性放到一个变量里，在渲染模板的时候和result mix一下
+      file.attr = fileAttrs;
       return file;
     },
     setMultiple: function(v){
@@ -652,10 +661,10 @@ define('bui/uploader/button/swfButton', function (require) {
         flashCfg = _self.get('flash'),
         flashUrl = _self.get('flashUrl'),
         swfTpl = _self.get('swfTpl'),
-        swfEl = $(swfTpl),
+        swfEl = $(swfTpl).appendTo(buttonEl),
         swfUploader;
       BUI.mix(flashCfg, {
-        render: swfEl.appendTo(buttonEl),
+        render: swfEl,
         src: flashUrl
       });
       swfUploader = new SWF(flashCfg);
@@ -697,6 +706,8 @@ define('bui/uploader/button/swfButton', function (require) {
     }
   },{
     ATTRS: {
+      swfEl:{
+      },
       swfUploader:{
       },
       flashUrl:{
@@ -716,7 +727,8 @@ define('bui/uploader/button/swfButton', function (require) {
               jsEntry: 'BUI.AJBridge.eventHandler'
             }
           }
-        }
+        },
+        shared: false
       },
       swfTpl:{
         view: true,
@@ -1489,7 +1501,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       });
 
       _self.setItemStatus(item,status,true,element);
-      _self._setItemTpl(item, status);
+      _self._setResultTpl(item, status);
       _self.updateItem(item);
     },
     /**
@@ -1497,15 +1509,17 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
      * @private
      * @param {String} 状态名称
      */
-    _setItemTpl: function(item, status){
+    _setResultTpl: function(item, status){
       var _self = this,
         resultTpl = _self.get('resultTpl'),
-        itemTpl = resultTpl[status] || resultTpl['default'];
-      _self.set('itemTpl', BUI.substitute(itemTpl, item.result));
+        itemTpl = resultTpl[status] || resultTpl['default'] || _self.get('itemTpl'),
+        tplData = BUI.mix({}, item.attr, item.result);
+      item.resultTpl = BUI.substitute(itemTpl, tplData);
     }
   }, {
     ATTRS: {
       itemTpl: {
+        value: '<li>{resultTpl} <span class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></span></li>'
       },
       /**
        * 上传结果的模板，可根据上传状态的不同进行设置，没有时取默认的
@@ -1513,10 +1527,10 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
        */
       resultTpl:{
         value: {
-          'default': '<li><span data-url="{url}" class="filename">{name}</span><div class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></div></li>',
-          success: '<li>{url}</li>',
-          error: '<li>{name} {msg}</li>',
-          progress: '<li>progress</li>'
+          'default': '<div class="default">{name}</div>',
+          success: '<div data-url="{url}" class="success">{name}</div>',
+          error: '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+          progress: '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
         }
       },
       itemCls: {
@@ -1578,12 +1592,7 @@ define('bui/uploader/theme', function (require) {
   };
 
   Theme.addTheme('default', {
-    button: {
-      elCls: 'defaultTheme-button'
-    },
-    queue: {
-      elCls: 'defaultTheme-queue'
-    }
+    elCls: 'defaultTheme'
   });
 
   return Theme;
@@ -1607,37 +1616,68 @@ define('bui/uploader/validator', function (require) {
   }
 
   Validator.ATTRS = {
+    /**
+     * 上传组件的校验规则
+     * @type {Object}
+     */
     rules: {
 
     },
-    /**
-     * 上传组件的queue对像
-     * @type {BUI.Uploader.Queue}
-     */
     queue: {
+
     }
   }
 
   BUI.extend(Validator, BUI.Base);
 
   BUI.augment(Validator, {
+    /**
+     * 校验文件是否符合规则，并设置文件的状态
+     * @param  {Object} item
+     * @return {[type]}      [description]
+     */
     valid: function(item){
-      var _self = this,
-        queue = _self.get('queue');
-      queue.updateFileStatus(item, 'error');
-      // item.error = true;
+      this._validItem(item);
     },
     _validItem: function(item){
       var _self = this,
         rules = _self.get('rules');
-      BUI.each(rules, function(rule){
-        _self._validRule(item, rule);
+      BUI.each(rules, function(rule, name){
+        _self._validRule(item, name, rule);
       })
     },
-    _validRule: function(item, rule){
-
+    _validRule: function(item, name, rule){
+      // var validFn = this.getRuleFn()
+      var queue = this.get('queue');
+      if(name === 'maxSize'){
+        if(item.size > rule * 1000){
+          item.result = {msg: '文件大小不能大于' + rule + 'k'};
+          queue.updateFileStatus(item, 'error');
+        }
+      }
+    },
+    testMaxSize: function(item, maxSize){
+      if(item.size > rule * 1024){
+        var result = {
+          msg: ''
+        }
+        return result;
+      }
     }
   });
+
+
+  // function ruleMap = {};
+
+  // Validator.addRule = function(name, fn){
+  //   ruleMap[name] = fn;
+  // }
+
+  // Validator.addRule('maxSize', function(value, baseValue, formatMsg){
+  //   if(value > baseValue){
+  //     return formatMsg;
+  //   }
+  // });
 
   return Validator;
 
@@ -1726,6 +1766,7 @@ define('bui/uploader/uploader', function (require) {
       _self._renderButton();
       _self._renderUploaderType();
       _self._renderQueue();
+      _self._initValidator();
     },
     bindUI: function () {
       var _self = this;
@@ -1796,7 +1837,11 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         validator = _self.get('validator');
       if(!validator){
-        _self.set('validator', new Validator(_self.get('rules')));
+        validator = new Validator({
+          queue: _self.get('queue'),
+          rules: _self.get('rules')
+        });
+        _self.set('validator', validator);
       }
     },
     /**
@@ -1888,8 +1933,10 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         queue = _self.get('queue'),
         validator = _self.get('validator');
+      // queue.on('itemrendered', function(ev){
+      //   validator.valid(ev.item);
+      // })
       queue.on('itemrendered itemupdated', function(ev) {
-        // validator.valid(ev.item);
         var items = queue.getItemsByStatus('wait');
         //如果有等待的文件则上传第1个
         if (items && items.length) {
@@ -1907,17 +1954,20 @@ define('bui/uploader/uploader', function (require) {
         queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
 
+      //start事件
       uploaderType.on('start', function(ev){
-        _self.fire('start', {item: ev.file});
+        var item = ev.file;
+        delete item.result;
+        _self.fire('start', {item: item});
       });
-
+      //上传的progress事件
       uploaderType.on('progress', function(ev){
 
         var curUploadItem = _self.get('curUploadItem'),
           loaded = ev.loaded,
           total = ev.total;
 
-        BUI.mix(curUploadItem, {
+        BUI.mix(curUploadItem.attr, {
           loaded: loaded,
           total: total,
           loadedPercent: loaded * 100 / total
@@ -1928,7 +1978,7 @@ define('bui/uploader/uploader', function (require) {
 
         _self.fire('progress', {item: curUploadItem, total: total, loaded: loaded});
       });
-
+      //上传过程中的error事件，这时一般是当校验出错是才会出现
       uploaderType.on('error', function(ev){
         var curUploadItem = _self.get('curUploadItem'),
           errorFn = _self.get('error'),
@@ -1953,7 +2003,8 @@ define('bui/uploader/uploader', function (require) {
           errorFn = _self.get('error'),
           completeFn = _self.get('complete');
 
-        BUI.mix(curUploadItem.result, result);
+        // BUI.mix(curUploadItem.result, result);
+        curUploadItem.result = result;
 
         if(isSuccess.call(_self, result)){
           queue.updateFileStatus(curUploadItem, 'success');
@@ -2084,7 +2135,7 @@ define('bui/uploader/uploader', function (require) {
       uploadStatus: {
       },
       /**
-       * 判断上传是否已经成功
+       * 判断上传是否已经成功，默认判断返回的url中是否有url这个值
        * @type {Function}
        */
       isSuccess: {
