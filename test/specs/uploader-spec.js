@@ -76,7 +76,7 @@ BUI.use(['bui/uploader'], function (Uploader) {
     render: '#J_Uploader',
     url: 'upload/upload.php',
     button:{
-      filter: {desc:'image', ext:".jpg,.jpeg,.png,.gif,.bmp"}
+      //filter: {desc:'image', ext:".jpg,.jpeg,.png,.gif,.bmp"}
     },
     rules: {
       type: {ext:".jpg,.jpeg,.png,.gif,.bmp"},

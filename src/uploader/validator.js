@@ -23,6 +23,9 @@ define('bui/uploader/validator', function (require) {
      */
     rules: {
 
+    },
+    queue: {
+
     }
   }
 
@@ -35,22 +38,47 @@ define('bui/uploader/validator', function (require) {
      * @return {[type]}      [description]
      */
     valid: function(item){
-      var _self = this,
-        queue = _self.get('queue');
-      queue.updateFileStatus(item, 'error');
-      // item.error = true;
+      this._validItem(item);
     },
     _validItem: function(item){
       var _self = this,
         rules = _self.get('rules');
-      BUI.each(rules, function(rule){
-        _self._validRule(item, rule);
+      BUI.each(rules, function(rule, name){
+        _self._validRule(item, name, rule);
       })
     },
-    _validRule: function(item, rule){
-
+    _validRule: function(item, name, rule){
+      // var validFn = this.getRuleFn()
+      var queue = this.get('queue');
+      if(name === 'maxSize'){
+        if(item.size > rule * 1000){
+          item.result = {msg: '文件大小不能大于' + rule + 'k'};
+          queue.updateFileStatus(item, 'error');
+        }
+      }
+    },
+    testMaxSize: function(item, maxSize){
+      if(item.size > rule * 1024){
+        var result = {
+          msg: ''
+        }
+        return result;
+      }
     }
   });
+
+
+  // function ruleMap = {};
+
+  // Validator.addRule = function(name, fn){
+  //   ruleMap[name] = fn;
+  // }
+
+  // Validator.addRule('maxSize', function(value, baseValue, formatMsg){
+  //   if(value > baseValue){
+  //     return formatMsg;
+  //   }
+  // });
 
   return Validator;
 

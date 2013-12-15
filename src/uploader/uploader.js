@@ -207,9 +207,9 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         queue = _self.get('queue'),
         validator = _self.get('validator');
-      queue.on('itemrendered', function(ev){
-        validator.valid(ev.item);
-      })
+      // queue.on('itemrendered', function(ev){
+      //   validator.valid(ev.item);
+      // })
       queue.on('itemrendered itemupdated', function(ev) {
         var items = queue.getItemsByStatus('wait');
         //如果有等待的文件则上传第1个
@@ -241,7 +241,7 @@ define('bui/uploader/uploader', function (require) {
           loaded = ev.loaded,
           total = ev.total;
 
-        BUI.mix(curUploadItem, {
+        BUI.mix(curUploadItem.attr, {
           loaded: loaded,
           total: total,
           loadedPercent: loaded * 100 / total
