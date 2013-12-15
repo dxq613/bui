@@ -9660,6 +9660,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @cfg {Object} ajaxOptions
      */
     ajaxOptions : {
+      //shared : false,
       value : {
         type : 'get',
         cache : false
@@ -9701,6 +9702,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @type {Object}
      */
     lastParams : {
+      shared : false,
       value : {}
     },
     /**
@@ -13111,22 +13113,34 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
      * @return {BUI.Data.Node} \u8282\u70b9
      */
     findNode : function(id,parent,deep){
+      return this.findNodeBy(function(node){
+        return node.id === id;
+      },parent,deep);
+    },
+    /**
+     * \u6839\u636e\u5339\u914d\u51fd\u6570\u67e5\u627e\u8282\u70b9
+     * @param  {Function} fn  \u5339\u914d\u51fd\u6570
+     * @param  {BUI.Data.Node} [parent] \u7236\u8282\u70b9
+     * @param {Boolean} [deep = true] \u662f\u5426\u9012\u5f52\u67e5\u627e
+     * @return {BUI.Data.Node} \u8282\u70b9
+     */
+    findNodeBy : function(fn,parent,deep){
       var _self = this;
       deep = deep == null ? true : deep;
       if(!parent){
         var root = _self.get('root');
-        if(root.id === id){
+        if(fn(root)){
           return root;
         }
-        return _self.findNode(id,root);
+        return _self.findNodeBy(fn,root);
       }
       var children = parent.children,
         rst = null;
       BUI.each(children,function(item){
-        if(item.id === id){
+        if(fn(item)){
           rst = item;
         }else if(deep){
-          rst = _self.findNode(id,item);
+          rst = _self.findNodeBy(fn,item);
         }
         if(rst){
           return false;
@@ -21956,7 +21970,6 @@ define('bui/form/remote',['bui/common'],function(require) {
     },
     /**
      * \u6e05\u695a\u5f02\u6b65\u9a8c\u8bc1\u7684\u7f13\u5b58
-     * @return {[type]} [description]
      */
     clearCache : function(){
       this.set('cacheMap',{});
@@ -23141,7 +23154,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @private
    * @class BUI.Menu.MenuItemView
    * @mixins BUI.Component.UIBase.ListItemView
-   * @mixins BUI.Component.UIBase.collapsableView
+   * @mixins BUI.Component.UIBase.CollapsableView
    * \u83dc\u5355\u9879\u7684\u89c6\u56fe\u7c7b
    */
   var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapsableView],{
@@ -25249,7 +25262,7 @@ define('bui/tab/tabpanelitem',['bui/common','bui/tab/tabitem','bui/tab/panelitem
       },
       /**
        * \u6807\u9898
-       * @type {String} title 
+       * @cfg {String} title 
        */
       /**
        * \u6807\u9898
@@ -36006,14 +36019,69 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
 
   return Mixin;
 })/**
+ * @fileOverview \u6811\u7684\u9009\u4e2d\uff0c\u8ddf\u5217\u8868\u7684\u9009\u4e2d\u6709\u6240\u5dee\u5f02
+ * @ignore
+ */
+
+define('bui/tree/selection',['bui/list'],function (require) {
+
+
+	var BUI = require('bui/common'),
+		SimpleList = require('bui/list').SimpleList;
+
+	var Selection = function(){
+
+	};
+
+	Selection.ATTRS = {};
+
+	BUI.augment(Selection,{
+		/**
+		 * \u83b7\u53d6\u9009\u4e2d\u7684\u8282\u70b9\uff0c\u4e00\u822c\u7528\u4e8e\u591a\u9009\u72b6\u6001\u4e0b
+		 * @return {Array} \u83b7\u53d6\u9009\u4e2d\u7684\u8282\u70b9
+		 */
+		getSelection : function(){
+			var _self = this,
+				field = _self.getStatusField('selected'),
+				store;
+			if(field){
+				store = _self.get('store');
+				return store.findNodesBy(function(node){
+					return node[field];
+				});
+			}
+			return SimpleList.superclass.getSelection.call(this);
+		},
+		/**
+		 * \u83b7\u53d6\u9009\u4e2d\u7684\u4e00\u4e2a\u8282\u70b9\uff0c\u5982\u679c\u662f\u591a\u9009\u5219\u8fd4\u56de\u7b2c\u4e00\u4e2a
+		 * @return {Object} \u83b7\u53d6\u9009\u4e2d\u7684\u4e00\u4e2a\u8282\u70b9
+		 */
+		getSelected : function(){
+			var _self = this,
+				field = _self.getStatusField('selected'),
+				store;
+			if(field){
+				store = _self.get('store');
+				return store.findNodeBy(function(node){
+					return node[field];
+				});
+			}
+			return SimpleList.superclass.getSelected.call(this);
+		}
+	});
+
+	return Selection;
+
+});/**
  * @fileOverview \u6811\u5f62\u5217\u8868
  * @ignore
  */
 
-define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
+define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin','bui/tree/selection'],function (require) {
   var BUI = require('bui/common'),
     List = require('bui/list'),
-    Mixin = require('bui/tree/treemixin');
+    Mixin = require('bui/tree/treemixin'),
+    Selection = require('bui/tree/selection');
 
   /**
    * @class BUI.Tree.TreeList
@@ -36087,7 +36155,7 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],functi
    * @mixin BUI.Tree.Mixin
    * @extends BUI.List.SimpleList
    */
-  var TreeList = List.SimpleList.extend([Mixin],{
+  var TreeList = List.SimpleList.extend([Mixin,Selection],{
     
   },{
     ATTRS : {
@@ -36113,10 +36181,11 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin'],functi
  * @ignore
  */
 
-define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
+define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin','bui/tree/selection'],function (require) {
   var BUI = require('bui/common'),
     List = require('bui/list'),
-    Mixin = require('bui/tree/treemixin');
+    Mixin = require('bui/tree/treemixin'),
+    Selection = require('bui/tree/selection');
 
   var TreeMenuView = List.SimpleList.View.extend({
     //\u8986\u5199\u83b7\u53d6\u6a21\u677f\u65b9\u6cd5
@@ -36168,7 +36237,7 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],functi
    * @mixin BUI.Tree.Mixin
    * @extends BUI.List.SimpleList
    */
-  var TreeMenu = List.SimpleList.extend([Mixin],{
+  var TreeMenu = List.SimpleList.extend([Mixin,Selection],{
     
   },{
     ATTRS : {
@@ -36191,6 +36260,7 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],functi
       },
 
       itemStatusFields  : {
+        /**/
         value : {
           selected : 'selected'
         }

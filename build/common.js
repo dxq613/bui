@@ -8689,6 +8689,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @cfg {Object} ajaxOptions
      */
     ajaxOptions : {
+      //shared : false,
       value : {
         type : 'get',
         cache : false
@@ -8730,6 +8731,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @type {Object}
      */
     lastParams : {
+      shared : false,
       value : {}
     },
     /**

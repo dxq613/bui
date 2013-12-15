@@ -6,8 +6,8 @@
 	var BASE = 'bui/layout/';
 	define('bui/layout',['bui/common',BASE + 'abstract',BASE + 'absolute',BASE + 'anchor', BASE + 'flow',BASE + 'columns',BASE + 'table',
 		BASE + 'border', BASE + 'accordion',BASE + 'viewport'],function (r) {
-			
-		var BUI = require('bui/common');
+
+		var BUI = r('bui/common');
 
 		var Layout = BUI.namespace('Layout');
 
@@ -50,7 +50,7 @@ define('bui/layout/abstract',['bui/layout/baseitem'],function(require){
 
 		/**
 		 * 子项对应的构造函数
-		 * @type {Class}
+		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item
@@ -325,7 +325,7 @@ define('bui/layout/abstract',['bui/layout/baseitem'],function(require){
 		},
 		/**
 		 * 获取布局选项
-		 * @param {Objet} controlChild 子控件
+		 * @param {Object} controlChild 子控件
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
 		getItem : function(control){
@@ -578,6 +578,59 @@ define('bui/layout/absolute',['bui/layout/abstract','bui/layout/absoluteitem'],f
 	 * @class BUI.Layout.Absolute
 	 * 绝对位置布局控件
 	 * @extends BUI.Layout.Abstract
+	 * <pre><code>
+	 * 	var layout = new Absolute(),
+				control = new BUI.Component.Controller({
+				width:800,
+				height:500,
+				elCls : 'layout-test',
+				children : [{
+					layout : {
+						top : 0,
+						left : 0,
+						width:'100%',
+						elCls : 'north',
+						height: 50
+					},
+					xclass : 'controller',
+					content : '一'
+				},{
+					xclass : 'controller',
+					layout : {
+						width:'20%',
+						height : '{height} - 100',
+						top:50,
+						elCls : 'east',
+						left : 0
+					},
+					content : '二'
+				},{
+					xclass : 'controller',
+					layout : {
+						width:'80%',
+						height : '{height} - 100',
+						left : '20%',
+						top:50,
+						elCls : 'center'
+					},
+					content : '中间内容区'
+				},{
+					xclass : 'controller',
+					layout : {
+						bottom : 0,
+						left : 0,
+						width: '100%',
+						height:48,
+						elCls : 'south'
+					},
+					width:'100%',
+					content : '三'
+				}],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * </code></pre>
 	 */
 	var Absolute = function(config){
 		Absolute.superclass.constructor.call(this,config);
@@ -623,6 +676,43 @@ define('bui/layout/anchor',['bui/layout/abstract','bui/layout/anchoritem'],funct
 	 * @class BUI.Layout.Anchor
 	 * 锚定布局控件
 	 * @extends BUI.Layout.Abstract
+	 * <pre><code>
+	 * var layout = new Anchor(),
+			control = new BUI.Component.Controller({
+				width:800,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'layout-test',
+				children : [{
+					layout : {
+						anchor : ['100%',50]
+					},
+					xclass : 'controller',
+					content : "一 ['100%',50]"
+				},{
+					xclass : 'controller',
+					layout : {
+						anchor : [-100,50]
+					},
+					content : '二 [-100,50]'
+				},{
+					xclass : 'controller',
+					layout : {
+						anchor : ['60%','20%']
+					},
+					content : "三 ['60%','20%']"
+				},{
+					xclass : 'controller',
+					layout : {
+						anchor : ['50%',-300]
+					},
+					content : "四 ['50%',-300]"
+				}],
+				plugins : [layout]
+			});
+
+		control.render();
+	 * </code></pre>
 	 */
 	var Anchor = function(config){
 		Anchor.superclass.constructor.call(this,config)
@@ -658,6 +748,59 @@ define('bui/layout/columns',['bui/layout/abstract'],function (require) {
 	 * @class BUI.Layout.Columns
 	 * 列模式布局
 	 * @extends BUI.Layout.Abstract
+	 * <pre><code>
+	 * 	var layout = new Columns({
+				columns : 4
+			}),
+				control = new BUI.Component.Controller({
+				width:800,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'layout-test',
+				defaultChildClass : 'controller',
+				children : [
+					{
+						
+						content : '1'
+					},{
+						id : '2',
+						content : '2'
+					},{
+						
+						content : '3'
+					},{
+						
+						content : '4'
+					},
+
+					{
+						content : '5'
+					},{
+						
+						content : '6'
+					},
+
+					{
+						id:'7',
+						
+						content : '7'
+					},{
+						layout : {
+							col : 2 //从0开始
+						},
+						id : '8',
+						content : '8 列 3'
+					},
+					{
+						content : '9'
+					}
+
+				],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * </code></pre>
 	 */
 	var Columns = function(config){
 		Columns.superclass.constructor.call(this,config);
@@ -777,6 +920,49 @@ define('bui/layout/flow',['bui/layout/abstract','bui/layout/baseitem'],function 
 	 * @class BUI.Layout.Flow
 	 * 流布局控件
 	 * @extends BUI.Layout.Abstract
+	 * <pre>
+	 * 	<code>
+	 * 		var layout = new Flow(),
+					control = new BUI.Component.Controller({
+					width:600,
+					height:500,
+					render : '#J_Layout',
+					elCls : 'layout-test',
+					children : [{
+						layout : {
+							width : 100,
+							height:100
+						},
+						xclass : 'controller',
+						content : "一"
+					},{
+						xclass : 'controller',
+						layout : {
+							width:200,
+							height:50
+						},
+						content : '二'
+					},{
+						xclass : 'controller',
+						layout : {
+							width:50,
+							height:100
+						},
+						content : "三"
+					},{
+						xclass : 'controller',
+						layout : {
+							width:200,
+							height : 200
+						},
+						content : "四"
+					}],
+					plugins : [layout]
+				});
+
+				control.render();
+	 * 	</code>
+	 * </pre>
 	 */
 	var Flow = function(config){
 		Flow.superclass.constructor.call(this,config)
@@ -809,6 +995,88 @@ define('bui/layout/table',['bui/layout/abstract','bui/layout/cellitem'],function
 	 * @class BUI.Layout.Table
 	 * 表格布局
 	 * @extends BUI.Layout.Abstract
+	 * <pre>
+	 * 	<code>
+	 * 	var layout = new Table({
+				rows : 4,
+				columns : 4
+			}),
+				control = new BUI.Component.Controller({
+				width:600,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'layout-test',
+				defaultChildClass : 'controller',
+				children : [
+					{
+						layout : {
+							row : 0,
+							height : 50
+						},
+						content : '1'
+					},{
+						layout : {
+							row : 0
+						},
+						content : '2'
+					},{
+						layout : {
+							row : 0
+						},
+						content : '3'
+					},{
+						layout : {
+							row : 0,
+							rowspan : 4
+						},
+						content : '4'
+					},
+
+					{
+						layout : {
+							row : 1,
+							colspan : 2,
+							height : 100
+						},
+						content : '5'
+					},{
+						layout : {
+							row : 1
+						},
+						content : '6'
+					},
+
+					{
+						id:'7',
+						layout : {
+							row : 2
+						},
+						content : '7'
+					},{
+						layout : {
+							row : 2,
+							colspan : 2,
+							rowspan:2
+						},
+						id : '8',
+						content : '8'
+					},
+
+					{
+						id:'9',
+						layout : {
+							row : 3
+						},
+						content : '9'
+					}
+
+				],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * 	</code>
+	 * </pre>
 	 */
 	var Table = function(config){
 		Table.superclass.constructor.call(this,config);
@@ -889,7 +1157,7 @@ define('bui/layout/table',['bui/layout/abstract','bui/layout/cellitem'],function
 
 });/**
  * @fileOverview 经典的边框布局
- * @ignoreig
+ * @ignore
  */
 define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/layout/collapsable'],function(require) {
 
@@ -906,6 +1174,72 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 	 * @class BUI.Layout.Border
 	 * 边框布局
 	 * @extends BUI.Layout.Abstract
+	 * <pre>
+	 * 	<code>
+	 * 	var layout = new Border(),
+				control = new BUI.Component.Controller({
+				width:600,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'ext-border-layout',
+				children : [{
+					layout : {
+						title : 'north',
+						region : 'north',
+						height : 50
+					},
+					width : 100,
+					height :15,
+					elCls : 'red',
+					xclass : 'controller',
+					content : "一 无自适应"
+				},{
+					xclass : 'controller',
+					elCls : 'red',
+					layout : {
+						region : 'south',
+						title : 'south',
+						fit : 'height',
+						
+						height : 50
+					},
+					width : 250,
+					content : '二 自适应高，但是不自适应宽'
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'east',
+						fit : 'both',
+						title : 'east',
+						width : 150
+					},
+					elCls : 'red',
+					content : "三 自适应宽高"
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'west',
+						fit : 'width',
+						width : 100
+					},
+					elCls : 'red',
+					content : "四 自适应宽"
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'center',
+						fit : 'both'
+					},
+					
+					elCls : 'blue',
+					content : '居中 自适应宽高'
+				}],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * 	</code>
+	 * </pre>
 	 */
 	var Border = function(config){
 		Border.superclass.constructor.call(this,config);
@@ -1016,9 +1350,15 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 				container = _self.get('container'),
 				totalHeight = container.height(),
 				middleEl = _self.get('middleEl'),
+				topEl = _self.get('topEl'),
 				appendHeight,
 				middleHeight;
-			middleHeight = totalHeight - _self.get('topEl').outerHeight() - _self.get('bottomEl').outerHeight();
+			if(topEl.children().length){
+				middleHeight = totalHeight - topEl.outerHeight() - _self.get('bottomEl').outerHeight();
+			}else{
+				middleHeight = totalHeight - _self.get('bottomEl').outerHeight();
+			}
+			 
 			appendHeight = middleEl.outerHeight() - middleEl.height();
 
 			return middleHeight - appendHeight;
@@ -1079,6 +1419,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 		beforeExpanded : function(item,range){
 			this.beforeCollapsedChange(item,range,false);
 		},
+		//收缩展开前
 		beforeCollapsedChange : function(item,range,collapsed){
 			var _self = this,
 				property = item.getCollapseProperty(),
@@ -1089,6 +1430,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 			}else{
 				_self._setCenterWidth(item.get('region'),range * factor * -1,duration);
 			}
+
 		},
 		//设置中间的高度
 		_setMiddleHeight : function(range,duration){
@@ -1129,6 +1471,19 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
 		beforeCollapsed : function(item,range){
 			this.beforeCollapsedChange(item,range,true);
 		},
+		/**/
+		afterExpanded : function(){
+			if(BUI.UA.ie == 6){
+				return;
+			}
+			this._fitMiddleControl();
+		},
+		afterCollapsed : function(){
+			if(BUI.UA.ie == 6){
+				return;
+			}
+			this._fitMiddleControl();
+		},
 		/**
 		 * @protected
 		 * 覆写重新布局方法
@@ -1162,6 +1517,43 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
 	 * 可折叠的布局
 	 * @extends BUI.Layout.Abstract
 	 * @mixins BUI.Layout.Collapsable
+	 * <pre><code>
+	 * 	var layout = new Accordion(),
+				control = new BUI.Component.Controller({
+				width:600,
+				height:500,
+				render : '#J_Layout',
+				elCls : 'layout-test',
+				children : [{
+					layout : {
+						title : '标签一'
+					},
+					xclass : 'controller',
+					content : "一"
+				},{
+					xclass : 'controller',
+					layout : {
+						title : '标签二'
+					},
+					content : '二'
+				},{
+					xclass : 'controller',
+					layout : {
+						title : '标签三'
+					},
+					content : "三"
+				},{
+					xclass : 'controller',
+					layout : {
+						title : '标签四'
+					},
+					content : "四"
+				}],
+				plugins : [layout]
+			});
+
+			control.render();
+	 * </code></pre>
 	 */
 	var Accordion = function(config){
 		Accordion.superclass.constructor.call(this,config);
@@ -1171,7 +1563,7 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
 
 		/**
 		 * 子项对应的构造函数
-		 * @type {Class}
+		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item
@@ -1294,36 +1686,98 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
 define('bui/layout/viewport',function (require) {
 
 	var BUI = require('bui/common'),
+		CLS_VIEW_CONTAINER = 'x-viewport-container',
+		UA = BUI.UA,
 		win = window;
 
 	/**
 	 * @class BUI.Layout.Viewport
-	 * 窗口试图控件，通常使用布局插件
+	 * 窗口视图控件，窗口发生改变时，自适应宽高，通常使用布局插件
 	 * @extends BUI.Component.Controller
+	 * ** 此控件通常跟布局控件一起使用： **
+	 * <pre><code>
+	 * 	var port = new Viewport({
+				elCls : 'ext-border-layout',
+				children : [{
+					layout : {
+						title : '顶部',
+						collapsable : true,
+						region : 'north',
+						height : 100
+					},
+					xclass : 'controller',
+					content : "一"
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'south',
+						title : '下部',
+						collapsable : true,
+						height : 100
+					},
+					content : '二'
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'east',
+						title : '右侧',
+						collapsable : true,
+						width : 150
+					},
+					content : "三"
+				},{
+					xclass : 'controller',
+					layout : {
+						region : 'west',
+						title : '左侧',
+						collapsable : true,
+						width : 300
+					},
+					content : "四"
+				},{
+					xclass : 'controller',
+					layout : {
+						title : '居中',
+						region : 'center'
+					},
+					content : '居中'
+				}],
+				plugins : [Border]
+			});
+		port.render();
+	 * </code></pre>
 	 */
 	var Viewport = BUI.Component.Controller.extend({
 		renderUI : function(){
 			this.reset();
+			var _self = this,
+				render = _self.get('render');
+			$(render).addClass(CLS_VIEW_CONTAINER);
 		},
 		bindUI : function(){
 			var _self = this;
 			$(win).on('resize',BUI.wrapBehavior(_self,'onResize'));
 		},
+		//窗口发生改变时
 		onResize : function(){
 			this.reset();
 		},
 		/**
-		 * 重新适应窗口大小
+		 * 重新适应窗口大小,一般场景下此控件会随着窗口的变化而变化，但是特殊场景下需要手工调用
+		 * <pre><code>
+		 * viewport.reset();
+		 * </code></pre>
 		 */
 		reset : function(){
 			var _self = this,
 				el = _self.get('el'),
-				viewportHeight = BUI.viewportHeight(),
+				viewportHeight = BUI.viewportHeight(), //ie6,7下问题
 				viewportWidth = BUI.viewportWidth(),
 				appendWidth = _self.getAppendWidth(),
 				appendHeight = _self.getAppendHeight();
 			_self.set('width',viewportWidth - appendWidth);
 			_self.set('height',viewportHeight - appendHeight);
+
 		},
 		destructor : function(){
 			$(win).off('resize',BUI.getWrapBehavior(this,'onResize'));
@@ -1649,12 +2103,16 @@ define('bui/layout/baseitem',function (require) {
 			}
 			siblings = bodyEl.siblings(); //获取外层容器减去兄弟元素的高度
 			BUI.each(siblings,function(elem){
-				height -= $(elem).outerHeight();
+				var node = $(elem);
+				if(node.css('position') !== 'absolute'){
+					height -= node.outerHeight();
+				}
 			});
 			return height;
 		},
 		/**
 		 * @protected
+		 * 获取布局相关的属性
 		 * @return {Object} 获取布局相关的属性
 		 */
 		getLayoutAttrs : function(){
@@ -1723,6 +2181,11 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem');
 
+	/**
+	* @class BUI.Layout.Item.Absolute
+	* 绝对布局的布局项
+	* @extends BUI.Layout.Item
+	*/
 	var AbsoluteItem = function(config){
 		AbsoluteItem.superclass.constructor.call(this,config);
 	};
@@ -1731,7 +2194,7 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 
 	AbsoluteItem.ATTRS = {
 
-		/**s
+		/**
 		 * @protected
 		 * 同步的css属性
 		 * @type {Array}
@@ -1741,22 +2204,22 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
 		}
 		
 		/**
-		 * top
+		 * top 位置
 		 * @cfg {Number} top
 		 */
 		
 		/**
-		 * left
+		 * left 位置
 		 * @cfg {Number} left
 		 */
 		
 		/**
-		 * bottom
+		 * bottom 位置
 		 * @cfg {Number} bottom
 		 */
 		
 		/**
-		 * right
+		 * right 位置
 		 * @cfg {Number} right
 		 */
 		
