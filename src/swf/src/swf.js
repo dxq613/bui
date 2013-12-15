@@ -251,7 +251,8 @@ define('bui/swf', function (require) {
              * @ignore
              */
             params: {
-                value: {}
+                value: {},
+                shared: false
             },
 
             /**
@@ -262,7 +263,8 @@ define('bui/swf', function (require) {
              * @ignore
              */
             attrs: {
-                value: {}
+                value: {},
+                shared: false
             },
             /**
              * container where flash will be appended.

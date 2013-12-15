@@ -3,10 +3,11 @@
  * @ignore
  */
 
-define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],function (require) {
+define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin','bui/tree/selection'],function (require) {
   var BUI = require('bui/common'),
     List = require('bui/list'),
-    Mixin = require('bui/tree/treemixin');
+    Mixin = require('bui/tree/treemixin'),
+    Selection = require('bui/tree/selection');
 
   var TreeMenuView = List.SimpleList.View.extend({
     //覆写获取模板方法
@@ -58,7 +59,7 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],functi
    * @mixin BUI.Tree.Mixin
    * @extends BUI.List.SimpleList
    */
-  var TreeMenu = List.SimpleList.extend([Mixin],{
+  var TreeMenu = List.SimpleList.extend([Mixin,Selection],{
     
   },{
     ATTRS : {
@@ -81,6 +82,7 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin'],functi
       },
 
       itemStatusFields  : {
+        /**/
         value : {
           selected : 'selected'
         }

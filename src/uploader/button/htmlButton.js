@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @fileoverview 文件上传按钮,使用input[type=file]
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
@@ -21,20 +22,19 @@ define('bui/uploader/button/htmlButton', function(require) {
   });
 
   /**
-   * @name HtmlButton
-   * @class 文件上传按钮，ajax和iframe上传方式使用
-   * @constructor
+   * 文件上传按钮，ajax和iframe上传方式使用,使用的是input[type=file]
+   * @class BUI.Uploader.Button.HtmlButton
+   * @extends BUI.Component.Controller
+   * @mixins BUI.Uploader.Button
    */
   var HtmlButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
       var _self = this;
       _self._createInput();
     },
-    bindUI: function(){
-
-    },
     /**
      * 创建隐藏的表单上传域
+     * @private
      * @return {HTMLElement} 文件上传域容器
      */
     _createInput: function() {
@@ -62,10 +62,12 @@ define('bui/uploader/button/htmlButton', function(require) {
       _self.set('fileInput', fileInput);
 
       _self.setMultiple(_self.get('multiple'));
+      _self.setDisabled(_self.get('disabled'));
       _self.setFilter(_self.get('filter'));
-      //_self._setDisabled(_self.get('disabled'));
     },
-
+    /**
+     * 绑定input[type=file]的文件选中事件
+     */
     _bindChangeHandler: function(fileInput) {
       var _self = this;
       //上传框的值改变后触发
@@ -77,10 +79,10 @@ define('bui/uploader/button/htmlButton', function(require) {
         //IE取不到files
         if(oFiles){
           BUI.each(oFiles, function(v){
-            files.push(_self.getExtFileData({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput[0]}));
+            files.push(_self._getFile({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput}));
           });
         }else{
-          files.push(_self.getExtFileData({'name': value, input: fileInput[0]}));
+          files.push(_self._getFile({'name': value, input: fileInput}));
         }
         _self.fire('change', {
           files: files,
@@ -120,6 +122,16 @@ define('bui/uploader/button/htmlButton', function(require) {
       }
       return multiple;
     },
+    setDisabled: function(v){
+      var _self = this,
+        fileInput = _self.get('fileInput');
+      if (v) {
+        fileInput.hide();
+      }
+      else{
+        fileInput.show();
+      }
+    },
     /**
      * 设置上传文件的类型
      * @param {[type]} filter 可上传文件的类型
@@ -148,7 +160,6 @@ define('bui/uploader/button/htmlButton', function(require) {
       /**
        * 对应的表单上传域
        * @type KISSY.Node
-       * @default ""
        */
       fileInput: {
       },

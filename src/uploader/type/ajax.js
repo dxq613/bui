@@ -105,7 +105,7 @@ define('bui/uploader/type/ajax',function(require) {
             self.set('xhr',xhr);
             return self;
         },
-        clear: function(){
+        reset: function(){
         },
         /**
          * 设置FormData数据

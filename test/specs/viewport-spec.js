@@ -31,7 +31,7 @@ BUI.use(['bui/layout/viewport','bui/layout/border'],function (Viewport,Border) {
 
 	describe('使用layout',function(){
 		var port = new Viewport({
-			elCls : 'test-view ext-border-layout',
+			elCls : 'ext-border-layout',
 			children : [{
 				layout : {
 					title : '顶部',

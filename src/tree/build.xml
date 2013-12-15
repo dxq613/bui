@@ -22,6 +22,7 @@
         <concat destfile="${des.dir}/tree.js" encoding="${charset}" outputencoding="${charset}">
 			<path path="base.js"/>
 			<path path="treemixin.js"/>
+			<path path="selection.js"/>
 			<path path="treelist.js"/>
 			<path path="treemenu.js"/>
 		</concat>

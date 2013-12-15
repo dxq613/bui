@@ -222,7 +222,7 @@ BUI.use(['bui/layout/border'],function(Border) {
 	});
 /**/
 });
-/*
+/**/
 
 
 BUI.use(['bui/layout/border'],function(Border) {
@@ -331,4 +331,4 @@ BUI.use(['bui/layout/border'],function(Border) {
 		});
 	});
 });
-*/
+

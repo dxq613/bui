@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @fileoverview flash上传按钮
  * @author: zengyue.yezy
  **/
@@ -8,7 +9,7 @@ define('bui/uploader/button/swfButton', function (require) {
     Component = BUI.Component,
     ButtonBase = require('bui/uploader/button/base'),
     SwfUploader = require('bui/uploader/type/flash'),
-    baseUrl = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base,
+    baseUrl = seajs.data.base,
     SWF = require('bui/uploader/button/swfButton/ajbridge');
 
 
@@ -18,10 +19,15 @@ define('bui/uploader/button/swfButton', function (require) {
     }
   });
 
+  /**
+   * 文件上传按钮，flash上传方式使用,使用的是flash
+   * @class BUI.Uploader.Button.SwfButton
+   * @extends BUI.Component.Controller
+   * @mixins BUI.Uploader.Button
+   */
   var SwfButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
       var _self = this;
-
       _self._initSwfUploader();
     },
     bindUI: function(){
@@ -34,7 +40,7 @@ define('bui/uploader/button/swfButton', function (require) {
           var fileList = ev.fileList,
             files = [];
           BUI.each(fileList, function(file){
-            files.push(_self.getExtFileData(file));
+            files.push(_self._getFile(file));
           });
           _self.fire('change', {files: files});
         });
@@ -48,13 +54,16 @@ define('bui/uploader/button/swfButton', function (require) {
         buttonCls = _self.get('buttonCls'),
         buttonEl = _self.get('el').find('.' + buttonCls),
         flashCfg = _self.get('flash'),
+        flashUrl = _self.get('flashUrl'),
         swfTpl = _self.get('swfTpl'),
+        swfEl = $(swfTpl).appendTo(buttonEl),
         swfUploader;
-
       BUI.mix(flashCfg, {
-        render: $(swfTpl).appendTo(buttonEl)
+        render: swfEl,
+        src: flashUrl
       });
       swfUploader = new SWF(flashCfg);
+      _self.set('swfEl', swfEl);
       _self.set('swfUploader', swfUploader);
     },
     setMultiple: function(v){
@@ -62,21 +71,45 @@ define('bui/uploader/button/swfButton', function (require) {
         swfUploader = _self.get('swfUploader');
       swfUploader && swfUploader.multifile(v);
     },
+    setDisabled: function(v){
+      var _self = this,
+        swfEl = _self.get('swfEl');
+      if(v){
+        swfEl.hide();
+      }
+      else{
+         swfEl.show();
+      }
+    },
+    _convertFilter: function(v){
+      var desc = v.desc,
+        ext = [];
+      BUI.each(v.ext.split(','), function(item){
+        item && ext.push('*' + item);
+      });
+      v.ext = ext.join(';');
+      return v;
+    },
     setFilter: function(v){
       var _self = this,
         swfUploader = _self.get('swfUploader'),
-        filter = _self.getFilter(v);
+        filter = _self._convertFilter(_self.getFilter(v));
       //flash里需要一个数组
-      swfUploader && swfUploader.filter([v]);
+      // console.log(BUI.JSON.stringify(filter));
+      swfUploader && swfUploader.filter([filter]);
       return v;
     }
   },{
     ATTRS: {
+      swfEl:{
+      },
       swfUploader:{
+      },
+      flashUrl:{
+        value: baseUrl + 'uploader/uploader.swf'
       },
       flash:{
         value:{
-          src:baseUrl + 'uploader/uploader.swf',
           params:{
             allowscriptaccess: 'always',
             bgcolor:"#fff",
@@ -89,7 +122,8 @@ define('bui/uploader/button/swfButton', function (require) {
               jsEntry: 'BUI.AJBridge.eventHandler'
             }
           }
-        }
+        },
+        shared: false
       },
       swfTpl:{
         view: true,

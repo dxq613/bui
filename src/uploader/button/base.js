@@ -1,98 +1,5 @@
-define('bui/uploader/button/filter', function(require){
-
-  var BUI = require('bui/common');
-
-  var filter =  {
-    msexcel: {
-      type: "application/msexcel",
-      ext: '.xls,.xlsx'
-    },
-    msword: {
-      type: "application/msword",
-      ext: '.doc,.docx'
-    },
-    // {type: "application/pdf"},
-    // {type: "application/poscript"},
-    // {type: "application/rtf"},
-    // {type: "application/x-zip-compressed"},
-    // {type: "audio/basic"},
-    // {type: "audio/x-aiff"},
-    // {type: "audio/x-mpeg"},
-    // {type: "audio/x-pn/},realaudio"
-    // {type: "audio/x-waw"},
-    // image: {
-    //   type: "image/*",
-    //   ext: '.gif,.jpg,.png,.bmp'
-    // },
-    gif: {
-      type: "image/gif",
-      ext: '.gif'
-    },
-    jpeg: {
-      type: "image/jpeg",
-      ext: '.jpg'
-    },
-    // {type: "image/tiff"},
-    bmp: {
-      type: "image/x-ms-bmp",
-      ext: '.bmp'
-    },
-    //{type: "image/x-photo-cd"},
-    png: {
-      type: "image/png",
-      ext: '.png'
-    }
-    // {type: "image/x-portablebitmap"},
-    // {type: "image/x-portable-greymap"},
-    // {type: "image/x-portable-pixmap"},
-    // {type: "image/x-rgb"},
-    // {type: "text/html"},
-    // {type: "text/plain"},
-    // {type: "video/quicktime"},
-    // {type: "video/x-mpeg2"},
-    // {type: "video/x-msvideo"}
-  }
-
-  return {
-    _getValueByDesc: function(desc, key){
-      var value = [];
-      if(BUI.isString(desc)){
-        desc = desc.split(',');
-      }
-      if(BUI.isArray(desc)){
-        BUI.each(desc, function(v, k){
-          var item = filter[v];
-          item && item[key] && value.push(item[key]);
-        });
-      }
-      return value.join(',');
-    },
-    getTypeByDesc: function(desc){
-      return this._getValueByDesc(desc, 'type');
-    },
-    getExtByDesc: function(desc){
-      return this._getValueByDesc(desc, 'ext');
-    },
-    getTypeByExt: function(ext){
-      var type = [];
-      if(BUI.isString(ext)){
-        ext = ext.split(',');
-      };
-      if(BUI.isArray(ext)){
-        BUI.each(ext, function(e){
-          BUI.each(filter, function(item, desc){
-            if(BUI.Array.indexOf(e, item.ext.split(',')) > -1){
-              type.push(item.type);
-            }
-          });
-        });
-      };
-      return type.join(',');
-    }
-  }
-});
-
 /**
+ * @ignore
  * @fileoverview 文件上传按钮的基类
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
@@ -148,7 +55,7 @@ define('bui/uploader/button/base', function(require) {
   function baseView() {
   }
 
-  baseView.ATTRS = /** @lends Base.prototype */{
+  baseView.ATTRS = {
   }
 
   baseView.prototype = {
@@ -161,7 +68,10 @@ define('bui/uploader/button/base', function(require) {
     }
   }
 
-
+  /**
+   * 上传组件按钮的基类
+   * @class BUI.Uploader.Button.Base
+   */
   function base(){
 
   }
@@ -222,22 +132,41 @@ define('bui/uploader/button/base', function(require) {
   };
 
   base.prototype = {
-    //设置文件的扩展信息
+    /**
+     * 获取文件的扩展信息
+     * @param  {[type]} file [description]
+     * @return {[type]}      [description]
+     */
     getExtFileData: function(file){
       var filename = getFileName(file.name),
         textSize = convertByteSize(file.size || 0),
-        extName = getFileExtName(file.name);
-      BUI.mix(file, {
-        name: filename,
-        textSize: textSize,
-        ext: extName,
-        id: getFileId(file)
-      });
+        extName = getFileExtName(file.name),
+        fileAttrs = {
+          name: filename,
+          size: file.size,
+          type: file.type,
+          textSize: textSize,
+          ext: extName,
+          id: getFileId(file)
+        };
+      return fileAttrs;
+    },
+    /**
+     * @protected
+     */
+    _getFile: function(file){
+      var _self = this,
+        fileAttrs = _self.getExtFileData(file);
+      BUI.mix(file, fileAttrs);
+
+      //因为在结果模板构建的时候很有可能会使用文件本身的属性，如name，size之类的
+      //所以将这些属性放到一个变量里，在渲染模板的时候和result mix一下
+      file.attr = fileAttrs;
       return file;
     },
-    setMultiple: function(){
+    setMultiple: function(v){
     },
-    setDisabled: function(){
+    setDisabled: function(v){
     },
     getFilter: function(v){
       if(v){

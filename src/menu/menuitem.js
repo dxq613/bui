@@ -17,7 +17,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
    * @private
    * @class BUI.Menu.MenuItemView
    * @mixins BUI.Component.UIBase.ListItemView
-   * @mixins BUI.Component.UIBase.collapsableView
+   * @mixins BUI.Component.UIBase.CollapsableView
    * 菜单项的视图类
    */
   var menuItemView = Component.View.extend([UIBase.ListItemView,UIBase.CollapsableView],{
