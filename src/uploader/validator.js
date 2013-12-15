@@ -17,37 +17,68 @@ define('bui/uploader/validator', function (require) {
   }
 
   Validator.ATTRS = {
+    /**
+     * 上传组件的校验规则
+     * @type {Object}
+     */
     rules: {
 
     },
-    /**
-     * 上传组件的queue对像
-     * @type {BUI.Uploader.Queue}
-     */
     queue: {
+
     }
   }
 
   BUI.extend(Validator, BUI.Base);
 
   BUI.augment(Validator, {
+    /**
+     * 校验文件是否符合规则，并设置文件的状态
+     * @param  {Object} item
+     * @return {[type]}      [description]
+     */
     valid: function(item){
-      var _self = this,
-        queue = _self.get('queue');
-      queue.updateFileStatus(item, 'error');
-      // item.error = true;
+      this._validItem(item);
     },
     _validItem: function(item){
       var _self = this,
         rules = _self.get('rules');
-      BUI.each(rules, function(rule){
-        _self._validRule(item, rule);
+      BUI.each(rules, function(rule, name){
+        _self._validRule(item, name, rule);
       })
     },
-    _validRule: function(item, rule){
-
+    _validRule: function(item, name, rule){
+      // var validFn = this.getRuleFn()
+      var queue = this.get('queue');
+      if(name === 'maxSize'){
+        if(item.size > rule * 1000){
+          item.result = {msg: '文件大小不能大于' + rule + 'k'};
+          queue.updateFileStatus(item, 'error');
+        }
+      }
+    },
+    testMaxSize: function(item, maxSize){
+      if(item.size > rule * 1024){
+        var result = {
+          msg: ''
+        }
+        return result;
+      }
     }
   });
+
+
+  // function ruleMap = {};
+
+  // Validator.addRule = function(name, fn){
+  //   ruleMap[name] = fn;
+  // }
+
+  // Validator.addRule('maxSize', function(value, baseValue, formatMsg){
+  //   if(value > baseValue){
+  //     return formatMsg;
+  //   }
+  // });
 
   return Validator;
 

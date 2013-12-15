@@ -46,7 +46,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       });
 
       _self.setItemStatus(item,status,true,element);
-      _self._setItemTpl(item, status);
+      _self._setResultTpl(item, status);
       _self.updateItem(item);
     },
     /**
@@ -54,15 +54,17 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
      * @private
      * @param {String} 状态名称
      */
-    _setItemTpl: function(item, status){
+    _setResultTpl: function(item, status){
       var _self = this,
         resultTpl = _self.get('resultTpl'),
-        itemTpl = resultTpl[status] || resultTpl['default'];
-      _self.set('itemTpl', BUI.substitute(itemTpl, item.result));
+        itemTpl = resultTpl[status] || resultTpl['default'] || _self.get('itemTpl'),
+        tplData = BUI.mix({}, item.attr, item.result);
+      item.resultTpl = BUI.substitute(itemTpl, tplData);
     }
   }, {
     ATTRS: {
       itemTpl: {
+        value: '<li>{resultTpl} <span class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></span></li>'
       },
       /**
        * 上传结果的模板，可根据上传状态的不同进行设置，没有时取默认的
@@ -70,10 +72,10 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
        */
       resultTpl:{
         value: {
-          'default': '<li><span data-url="{url}" class="filename">{name}</span><div class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></div></li>',
-          success: '<li>{url}</li>',
-          error: '<li>{name} {msg}</li>',
-          progress: '<li>progress</li>'
+          'default': '<div class="default">{name}</div>',
+          success: '<div data-url="{url}" class="success">{name}</div>',
+          error: '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+          progress: '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
         }
       },
       itemCls: {

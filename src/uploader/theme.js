@@ -35,12 +35,7 @@ define('bui/uploader/theme', function (require) {
   };
 
   Theme.addTheme('default', {
-    button: {
-      elCls: 'defaultTheme-button'
-    },
-    queue: {
-      elCls: 'defaultTheme-queue'
-    }
+    elCls: 'defaultTheme'
   });
 
   return Theme;
