@@ -57,8 +57,13 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
     _setItemTpl: function(item, status){
       var _self = this,
         resultTpl = _self.get('resultTpl'),
-        itemTpl = resultTpl[status] || resultTpl['default'];
-      _self.set('itemTpl', BUI.substitute(itemTpl, item.result));
+        itemTpl = resultTpl[status] || resultTpl['default'],
+        tplData = BUI.mix({}, item.attr, item.result);
+      /**
+       * itemTpl会使用item本身的数据去渲染，这里不希望将result的数据mix到本身上，
+       * 所以先将tpl渲染好
+       */
+      _self.set('itemTpl', BUI.substitute(itemTpl, tplData));
     }
   }, {
     ATTRS: {

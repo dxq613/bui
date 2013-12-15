@@ -17,20 +17,23 @@ define('bui/uploader/validator', function (require) {
   }
 
   Validator.ATTRS = {
+    /**
+     * 上传组件的校验规则
+     * @type {Object}
+     */
     rules: {
 
-    },
-    /**
-     * 上传组件的queue对像
-     * @type {BUI.Uploader.Queue}
-     */
-    queue: {
     }
   }
 
   BUI.extend(Validator, BUI.Base);
 
   BUI.augment(Validator, {
+    /**
+     * 校验文件是否符合规则，并设置文件的状态
+     * @param  {Object} item
+     * @return {[type]}      [description]
+     */
     valid: function(item){
       var _self = this,
         queue = _self.get('queue');
