@@ -132,7 +132,11 @@ define('bui/uploader/button/base', function(require) {
   };
 
   base.prototype = {
-    //设置文件的扩展信息
+    /**
+     * 获取文件的扩展信息
+     * @param  {[type]} file [description]
+     * @return {[type]}      [description]
+     */
     getExtFileData: function(file){
       var filename = getFileName(file.name),
         textSize = convertByteSize(file.size || 0),
@@ -147,12 +151,17 @@ define('bui/uploader/button/base', function(require) {
         };
       return fileAttrs;
     },
+    /**
+     * @protected
+     */
     _getFile: function(file){
       var _self = this,
         fileAttrs = _self.getExtFileData(file);
       BUI.mix(file, fileAttrs);
-      file.result = fileAttrs;
 
+      //因为在结果模板构建的时候很有可能会使用文件本身的属性，如name，size之类的
+      //所以将这些属性放到一个变量里，在渲染模板的时候和result mix一下
+      file.attr = fileAttrs;
       return file;
     },
     setMultiple: function(v){

@@ -2057,8 +2057,8 @@ input.x-datepicker-time {
 .tips-notice[class*=" x-align-bottom"] .x-align-arrow-inner {
   border-bottom-color: #ffffe5;
 }
-/**按钮样式**/
-.defaultTheme-button .bui-uploader-button-wrap {
+/**默认定义的样式**/
+.defaultTheme .bui-uploader-button-wrap {
   display: inline-block;
   padding: 0 5px;
   height: 24px;
@@ -2077,23 +2077,32 @@ input.x-datepicker-time {
   background: -moz-linear-gradient(top, #fdfefe, #dfe7ef);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FDFEFE', endColorstr='#DFE7EF');
 }
-.defaultTheme-button .bui-uploader-button-wrap:link,
-.defaultTheme-button .bui-uploader-button-wrap:visited {
+.defaultTheme .bui-uploader-button-wrap:link,
+.defaultTheme .bui-uploader-button-wrap:visited {
   color: #404040;
 }
-.defaultTheme-button .bui-uploader-button-wrap-hover,
-.defaultTheme-button .bui-uploader-button-wrap:hover {
+.defaultTheme .bui-uploader-button-wrap:hover {
   text-decoration: none;
   color: black;
   background: -webkit-gradient(linear, left top, left bottom, from(#dfe7ef), to(#fdfefe));
   background: -moz-linear-gradient(top, #dfe7ef, #fdfefe);
   filter: progid:dximagetransform.microsoft.gradient(startColorstr='#DFE7EF', endColorstr='#FDFEFE');
 }
-.defaultTheme-button .bui-uploader-button-wrap:active {
+.defaultTheme .bui-uploader-button-wrap:active {
   background: #DFE7EF;
   filter: none;
 }
-.defaultTheme-button .bui-uploader-button-wrap .file-input-wrapper .file-input {
+.defaultTheme .bui-uploader-button-wrap .file-input-wrapper {
+  display: block;
+  width: 200px;
+  height: 26px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  z-index: 300;
+}
+.defaultTheme .bui-uploader-button-wrap .file-input-wrapper .file-input {
   background: none repeat scroll 0 0 transparent;
   border: medium none;
   cursor: pointer;
@@ -2105,82 +2114,53 @@ input.x-datepicker-time {
   font-size: 100px;
   left: 0;
 }
-.defaultTheme-button .bui-uploader-button-wrap .file-input-wrapper {
+.defaultTheme .bui-uploader-button-wrap .uploader-button-swf {
   display: block;
   width: 200px;
   height: 26px;
   position: absolute;
   left: 0;
   top: 0;
-  margin: 0;
   overflow: hidden;
-  padding: 0;
   z-index: 300;
 }
-.defaultTheme-button .uploader-button-swf {
-  display: block;
+.defaultTheme .bui-uploader-button-wrap .uploader-button-swf .file-input {
+  background: none repeat scroll 0 0 transparent;
+  border: medium none;
+  cursor: pointer;
+  height: 200px;
   width: 200px;
-  height: 26px;
+  top: -50px;
+  opacity: 0;
   position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: 2000;
-  overflow: hidden;
+  font-size: 100px;
+  left: 0;
 }
-.bui-uploader-disabled .defaultTheme-button .bui-uploader-button-wrap {
-  cursor: default;
-  border: 1px solid #BFBFBF;
-  color: #404040;
-  background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e5e5e5));
-  background: -moz-linear-gradient(top, #fafafa, #e5e5e5);
-  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
+.defaultTheme .bui-queue-item {
+  position: relative;
 }
-.bui-uploader-disabled .defaultTheme-button .file-input-wrapper .file-input {
-  display: none;
+.defaultTheme .bui-queue-item .default,
+.defaultTheme .bui-queue-item .success,
+.defaultTheme .bui-queue-item .progress,
+.defaultTheme .bui-queue-item .error {
+  margin-right: 40px;
 }
-/**按钮样式end**/
-.defaultTheme-queue a {
-  color: #3366CC;
-  text-decoration: none;
+.defaultTheme .bui-queue-item .error .uploader-error {
+  color: #fd7316;
 }
-.defaultTheme-queue a:hover {
-  color: #FF6600;
-  text-decoration: underline;
-}
-.defaultTheme-queue {
-  color: #404040;
-  width: 400px;
-  margin: 0;
-  padding: 0;
-  margin-top: 10px;
-  font-size: 12px;
-}
-.defaultTheme-queue li {
+.defaultTheme .bui-queue-item .action {
   display: block;
-  clear: both;
-}
-.defaultTheme-queue .file-icon {
-  width: 12px;
-  height: 16px;
-  margin-right: 5px;
-  background: url("http://img04.taobaocdn.com/tps/i4/T1HCGNXexjXXXXXXXX-12-16.png") 0 0 no-repeat;
-}
-.defaultTheme-queue .loading {
-  background: url("http://img01.taobaocdn.com/tps/i1/T1F5tVXjRfXXXXXXXX-16-16.gif") no-repeat scroll 0 1px transparent;
-  width: 16px;
-  height: 16px;
-}
-.defaultTheme-queue .filename {
-  float: left;
-  padding-right: 10px;
-}
-.defaultTheme-queue .progress {
-  float: left;
-  width: 100px;
-}
-.defaultTheme-queue .action {
-  float: left;
+  position: absolute;
   padding-left: 10px;
+  width: 30px;
+  top: 0px;
+  right: 0px;
+}
+.defaultTheme .bui-queue-item .action .bui-queue-item-del {
+  cursor: pointer;
+}
+.defaultTheme .bui-queue-item .action .bui-queue-item-del:hover {
+  color: #fd7316;
 }
 .bui-slider {
   border: 1px solid #c3c3d6;

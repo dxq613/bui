@@ -56,10 +56,10 @@ define('bui/uploader/button/swfButton', function (require) {
         flashCfg = _self.get('flash'),
         flashUrl = _self.get('flashUrl'),
         swfTpl = _self.get('swfTpl'),
-        swfEl = $(swfTpl),
+        swfEl = $(swfTpl).appendTo(buttonEl),
         swfUploader;
       BUI.mix(flashCfg, {
-        render: swfEl.appendTo(buttonEl),
+        render: swfEl,
         src: flashUrl
       });
       swfUploader = new SWF(flashCfg);
@@ -101,6 +101,8 @@ define('bui/uploader/button/swfButton', function (require) {
     }
   },{
     ATTRS: {
+      swfEl:{
+      },
       swfUploader:{
       },
       flashUrl:{
@@ -120,7 +122,8 @@ define('bui/uploader/button/swfButton', function (require) {
               jsEntry: 'BUI.AJBridge.eventHandler'
             }
           }
-        }
+        },
+        shared: false
       },
       swfTpl:{
         view: true,
