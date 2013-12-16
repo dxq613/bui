@@ -1,4 +1,5 @@
 /**
+ * @ignore
  * @fileoverview 文件上传队列列表显示和处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
@@ -10,6 +11,11 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   var CLS_QUEUE = BUI.prefix + 'queue',
     CLS_QUEUE_ITEM = CLS_QUEUE + '-item';
   
+  /**
+   * 上传文件的显示队列
+   * @class BUI.Uploader.Queue
+   * @extends BUI.List.SimpleList
+   */
   var Queue = SimpleList.extend({
     bindUI: function () {
       var _self = this,
@@ -17,7 +23,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
         delCls = _self.get('delCls');
 
       el.delegate('.' + delCls, 'click', function (ev) {
-        var itemContainer = $(ev.target).parent(),
+        var itemContainer = $(ev.target).parents('.bui-queue-item'),
           uploader = _self.get('uploader'),
           item = _self.getItemByElement(itemContainer);
         uploader && uploader.cancel && uploader.cancel(item);
@@ -25,11 +31,10 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       });
     },
     /**
-     * 由于一个文件只能处理一种状态，所以在更新状态前要把所有的文件状态去掉
-     * @param  {[type]} item    [description]
-     * @param  {[type]} status  [description]
-     * @param  {[type]} element [description]
-     * @return {[type]}         [description]
+     * 更新文件上传的状态
+     * @param  {Object} item
+     * @param  {String} status  上传的状态
+     * @param  {HtmlElement} element 这一项对应的dom元素
      */
     updateFileStatus: function(item, status, element){
       var _self = this,
@@ -41,12 +46,37 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       });
 
       _self.setItemStatus(item,status,true,element);
+      _self._setResultTpl(item, status);
       _self.updateItem(item);
+    },
+    /**
+     * 根据上传的状态设置上传列表的模板
+     * @private
+     * @param {String} 状态名称
+     */
+    _setResultTpl: function(item, status){
+      var _self = this,
+        resultTpl = _self.get('resultTpl'),
+        itemTpl = resultTpl[status] || resultTpl['default'] || _self.get('itemTpl'),
+        tplData = BUI.mix({}, item.attr, item.result);
+      item.resultTpl = BUI.substitute(itemTpl, tplData);
     }
   }, {
     ATTRS: {
       itemTpl: {
-        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
+        value: '<li>{resultTpl} <span class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></span></li>'
+      },
+      /**
+       * 上传结果的模板，可根据上传状态的不同进行设置，没有时取默认的
+       * @type {Object}
+       */
+      resultTpl:{
+        value: {
+          'default': '<div class="default">{name}</div>',
+          success: '<div data-url="{url}" class="success">{name}</div>',
+          error: '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+          progress: '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+        }
       },
       itemCls: {
         value: CLS_QUEUE_ITEM

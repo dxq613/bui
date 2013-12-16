@@ -3,28 +3,47 @@
 <head>
   <meta charset="utf-8"/>
   <title>使用js传参方式上传文件</title>
-  <script type="text/javascript" src="../../jquery-1.8.1.min.js"></script>
-  <script type="text/javascript" src="../../../build/loader.js"></script>
+  <link href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css?t=201307291544" rel="stylesheet"> 
+  <link href="../../../build/css/bui.css?t=201307291544" rel="stylesheet">
+
+  <script src="http://a.tbcdn.cn/s/bui/jquery-1.8.1.min.js"></script>
+  <script src="http://g.tbcdn.cn/fi/bui/bui-min.js"></script>
+  <script src="../../uploader/base.js"></script>
+  <script src="../../uploader/uploader.js"></script>
+  <script src="../../uploader/factory.js"></script>
+  <script src="../../uploader/queue.js"></script>
+  <script src="../../uploader/theme.js"></script>
+  <script src="../../uploader/button/filter.js"></script>
+  <script src="../../uploader/button/base.js"></script>
+  <script src="../../uploader/button/htmlButton.js"></script>
+  <script src="../../uploader/button/swfButton.js"></script>
+  <script src="../../uploader/type/base.js"></script>
+  <script src="../../uploader/type/ajax.js"></script>
+  <script src="../../uploader/type/iframe.js"></script>
+  <script src="../../uploader/type/flash.js"></script>
+  <script src="../../uploader/type/flash.js"></script>
+  <script src="../../uploader/button/ajbridge.js"></script>
 </head>
 <body>
-<h2>使用js传参方式上传文件</h2>
-<div class="container">
+  
+  <style type="text/css">
+  .defaultTheme-queue .bui-queue-item-error{
+    color: #f00;
+  }
+  </style>
+  <h2>使用js传参方式上传文件</h2>
   <div class="row">
-    <div class="span12">
+    <div class="span24">
       <div id="J_Uploader"></div>
-      <div id="J_UploaderQueue"></div>
     </div>
   </div>
-</div>
 <script>
   BUI.setDebug(true);
-  BUI.use(['bui/uploader'], function(Uploader){
+  BUI.use('bui/uploader', function(Uploader){
     var uploader = new Uploader.Uploader({
-    render: '#J_Uploader',
-    // queueTarget: '#J_UploaderQueue',
-    action: '../../../test/upload/uploader.php',
-    filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
-  });
+      render: '#J_Uploader',
+      url: '../../../test/upload/upload.php'
+    });
   uploader.render();
   });
 </script>

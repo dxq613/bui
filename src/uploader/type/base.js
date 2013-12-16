@@ -135,7 +135,7 @@ define('bui/uploader/type/base',function(require) {
         }
         return data;
     },
-    clear: function(){
+    reset: function(){
     }
   });
 
