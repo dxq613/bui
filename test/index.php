@@ -26,7 +26,7 @@
   <body>
     
   <script type="text/javascript" src="../src/jquery-1.8.1.min.js"></script>
-  <script type="text/javascript" src="../build/loader-min.js"></script>
+  <script type="text/javascript" data-debug="true" src="../build/loader.js"></script>
   <script type="text/javascript">
   BUI.setDebug(true);
   BUI.use(['bui/tree','bui/layout'],function(Tree,Layout){
@@ -119,6 +119,7 @@
           width : 200
         },
         xclass : 'tree-menu',
+        accordion:true,
         //dirSelectable : false,
         expandAnimate : true,
         nodes : nodes,

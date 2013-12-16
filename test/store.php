@@ -11,6 +11,8 @@
     <script type="text/javascript" src="../src/data/treestore.js"></script>
     <script type="text/javascript" src="../src/data/store.js"></script>
     <script type="text/javascript" src="../src/data/base.js"></script>
+    <!---->
     <script type="text/javascript" src="specs/data-spec.js"></script>
 
+    <script type="text/javascript" src="specs/data-save-spec.js"></script>
 <?php include("./templates/footer.php"); ?>

@@ -1484,7 +1484,7 @@ define('bui/tree/selection',['bui/list'],function (require) {
 					return node[field];
 				});
 			}
-			return SimpleList.superclass.getSelection.call(this);
+			return SimpleList.prototype.getSelection.call(this);
 		},
 		/**
 		 * 获取选中的一个节点，如果是多选则返回第一个
@@ -1500,7 +1500,7 @@ define('bui/tree/selection',['bui/list'],function (require) {
 					return node[field];
 				});
 			}
-			return SimpleList.superclass.getSelected.call(this);
+			return SimpleList.prototype.getSelected.call(this);
 		}
 	});
 

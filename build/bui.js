@@ -916,60 +916,82 @@ seajs.config = function(configData) {
 
 
 })(this);
-
-var loaderPath = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base;
-seajs.config({
-  map : [
-    [/.js$/, '-min.js']
-  ],
-  charset: 'utf-8'
-});
+;(function(){
+  //\u83b7\u53d6\u5f53\u524d\u8def\u5f84
+  var loaderPath = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base,
+    lastIndex = loaderPath.lastIndexOf('/');
+  if(lastIndex == loaderPath.length -1){ //\u53bb\u6389\u6700\u540e\u7684 /
+    loaderPath = loaderPath.substr(0,lastIndex);
+  }
+  seajs.config({
+    charset: 'utf-8'
+  });
 
   seajs.config({
     paths : {
       'bui' : loaderPath
     }
   });
+  var BUI = window.BUI = window.BUI || {};
 
-
-
-var BUI = BUI || {};
-
-BUI.use = seajs.use;
-
-BUI.config = function(cfg){
-  if(cfg.alias){
-    cfg.paths = cfg.alias;
-    delete cfg.alias;
-  }
-  seajs.config(cfg);
-} 
-
-BUI.setDebug = function (debug) {
-  BUI.debug = debug;
-
-  if(debug){
-    var map = seajs.data.map,
-      index = -1;
-    for(var i = 0 ; i < map.length; i++){
-      var item = map[i];
-      if(item[0].toString() == /.js$/.toString() && item[1] == '-min.js'){
-        index = i;
-        break;
-      }
-    }
-    if(index != -1){
-      map.splice(index,1);
-    }
-    
+  //\u83b7\u53d6bui\u4f7f\u7528\u7684script\u6807\u7b7e
+  var scripts = document.getElementsByTagName('script'),
+    loaderScript = scripts[scripts.length - 1];
+  BUI.loaderScript = loaderScript;
+  //\u8bbe\u7f6e \u662f\u5426\u8c03\u8bd5
+  if(loaderScript.getAttribute('data-debug') == 'true'){
+    BUI.debug = true;
   }else{
-    seajs.config({
-      map : [
-        [/.js$/, '-min.js']
-      ]
-    });
+    BUI.debug = false;
   }
-}
+
+  
+
+  BUI.use = seajs.use;
+
+  BUI.config = function(cfg){
+    if(cfg.alias){
+      cfg.paths = cfg.alias;
+      delete cfg.alias;
+    }
+    seajs.config(cfg);
+  } 
+
+  BUI.setDebug = function (debug) {
+    BUI.debug = debug;
+
+    if(debug){
+      var map = seajs.data.map,
+        index = -1;
+      if(map){
+        for(var i = 0 ; i < map.length; i++){
+          var item = map[i];
+          if(item[0].toString() == /.js$/.toString() && item[1] == '-min.js'){
+            index = i;
+            break;
+          }
+        }
+        if(index != -1){
+          map.splice(index,1);
+        }
+      }      
+    }else{
+      seajs.config({
+        map : [
+          [/.js$/, '-min.js']
+        ]
+      });
+    }
+  }
+
+  
+    BUI.setDebug(BUI.debug);
+  
+
+})();
+
+
+
 define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'],function(require){
 
   var BUI = require('bui/util');
@@ -1071,7 +1093,7 @@ define('bui/util',function(){
      * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
-    subVersion : 60,
+    subVersion : 61,
 
     /**
      * \u662f\u5426\u4e3a\u51fd\u6570
@@ -11867,7 +11889,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   {
     /**
      * @protected
-     * @private
+     * \u8bfb\u53d6\u6570\u636e\u7684\u65b9\u6cd5\uff0c\u5728\u5b50\u7c7b\u4e2d\u8986\u76d6
      */
     _read : function(params,callback){
 
@@ -11887,14 +11909,36 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       });
     },
     /**
-     * \u66f4\u65b0\u6570\u636e
      * @protected
+     * \u4fdd\u5b58\u6570\u636e\u7684\u65b9\u6cd5\uff0c\u5728\u5b50\u7c7b\u4e2d\u8986\u76d6
      */
-    update : function(params,callback,scope){
+    _save : function(ype,data,callback){
 
+    },
+    /**
+     * \u4fdd\u5b58\u6570\u636e
+     * @param {String} type \u7c7b\u578b\uff0c\u5305\u62ec\uff0cadd,update,remove,all\u51e0\u79cd\u7c7b\u578b
+     * @param  {Object} saveData \u952e\u503c\u5bf9\u5f62\u5f0f\u7684\u53c2\u6570
+     * @param {Function} callback \u56de\u8c03\u51fd\u6570\uff0c\u51fd\u6570\u539f\u578b function(data){}
+     * @param {Object} scope \u56de\u8c03\u51fd\u6570\u7684\u4e0a\u4e0b\u6587
+     */
+    save : function(type,saveData,callback,scope){
+      var _self = this;
+      scope = scope || _self;
+      _self._save(type,saveData,function(data){
+        callback.call(scope,data);
+      });
     }
   });
 
+
+  var TYPE_AJAX = {
+    READ : 'read',
+    ADD : 'add',
+    UPDATE : 'update',
+    REMOVE : 'remove',
+    SAVE_ALL : 'all'
+  };
   /**
    * \u5f02\u6b65\u52a0\u8f7d\u6570\u636e\u7684\u4ee3\u7406
    * @class BUI.Data.Proxy.Ajax
@@ -11944,6 +11988,20 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
      */
     pageIndexParam : {
       value : 'pageIndex'
+    },
+    /**
+     * \u4fdd\u5b58\u7c7b\u578b\u7684\u5b57\u6bb5\u540d,\u5982\u679c\u6bcf\u79cd\u4fdd\u5b58\u7c7b\u578b\u672a\u8bbe\u7f6e\u5bf9\u5e94\u7684Url\uff0c\u5219\u9644\u52a0\u53c2\u6570
+     * @type {Object}
+     */
+    saveTypeParam : {
+      value : 'saveType'
+    },
+    /**
+     * \u4fdd\u5b58\u6570\u636e\u653e\u5230\u7684\u5b57\u6bb5\u540d\u79f0
+     * @type {String}
+     */
+    saveDataParam : {
+
     },
     /**
      * \u4f20\u9012\u5230\u540e\u53f0\uff0c\u5206\u9875\u5f00\u59cb\u7684\u9875\u7801\uff0c\u9ed8\u8ba4\u4ece0\u5f00\u59cb
@@ -11998,6 +12056,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : false
     },
     /**
+     * \u4fdd\u5b58\u6570\u636e\u7684\u914d\u7f6e\u4fe1\u606f
+     * @type {Object}
+     */
+    save : {
+
+    },
+    /**
      * \u52a0\u8f7d\u6570\u636e\u7684\u94fe\u63a5
      * @cfg {String} url
      * @required
@@ -12015,6 +12080,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.extend(ajaxProxy,proxy);
 
   BUI.augment(ajaxProxy,{
+
     _processParams : function(params){
       var _self = this,
         pageStart = _self.get('pageStart'),
@@ -12030,28 +12096,94 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         }
       });
     },
+    //\u83b7\u53d6\u5f02\u6b65\u8bf7\u6c42\u7684url
+    _getUrl : function(type){
+      var _self = this,
+        save = _self.get('save'),
+        url;
+      if(type === TYPE_AJAX.READ){ //\u83b7\u53d6\u6570\u636e\uff0c\u76f4\u63a5\u8fd4\u56de url
+        return _self.get('url');
+      }
+      
+      //\u5982\u679c\u4e0d\u5b58\u5728\u4fdd\u5b58\u53c2\u6570\uff0c\u5219\u8fd4\u56de url
+      if(!save){
+        return _self.get('url')
+      }
+
+      if(BUI.isString(save)){
+        return save;
+      }
+
+      url = save[type + 'Url'];
+      if(!url){
+        url = _self.get('url');
+      }
+
+      return url;
+
+    },
+    //\u6839\u636e\u7c7b\u578b\u9644\u52a0\u989d\u5916\u7684\u53c2\u6570
+    _getAppendParams : function(type){
+      var _self = this,
+        save,
+        saveTypeParam,
+        rst = null;
+      if(type == TYPE_AJAX.READ){
+        return rst;
+      }
+      save = _self.get('save');
+      saveTypeParam = _self.get('saveTypeParam');
+      if(save && !save[type + 'Url']){
+        rst = {};
+        rst[saveTypeParam] = type;
+      }
+      return rst;
+    },
     /**
      * @protected
      * @private
      */
     _read : function(params,callback){
       var _self = this,
-        ajaxOptions  = _self.get('ajaxOptions'),
         cfg;
 
       params = BUI.cloneObject(params);
       _self._processParams(params);
+      cfg = _self._getAjaxOptions(TYPE_AJAX.READ,params);
+
+      _self._ajax(cfg,callback);
+    },
+    //\u83b7\u53d6\u5f02\u6b65\u8bf7\u6c42\u7684\u9009\u9879
+    _getAjaxOptions : function(type,params){
+      var _self = this,
+        ajaxOptions  = _self.get('ajaxOptions'),
+        url = _self._getUrl(type),
+        cfg;
+      BUI.mix(params,_self._getAppendParams(type));
       cfg = BUI.merge({
-        url: _self.get('url'),
+        url: url,
         type : _self.get('method'),
         dataType: _self.get('dataType'),
         data : params,
-        cache : _self.get('cache'),
-        success: function(data) {
-          callback(data);
-        },
-        error : function(jqXHR, textStatus, errorThrown){
-          var result = {
+        cache : _self.get('cache')
+      },ajaxOptions);
+
+      return cfg;
+    },
+    //\u5f02\u6b65\u8bf7\u6c42
+    _ajax : function(cfg,callback){
+      var _self = this,
+        success = cfg.success,
+        error = cfg.error;
+      //\u590d\u5199success
+      cfg.success = function(data){
+        success && success(data);
+        callback(data);
+      };
+      //\u590d\u5199\u9519\u8bef
+      cfg.error = function(jqXHR, textStatus, errorThrown){
+        error && error(jqXHR, textStatus, errorThrown);
+        var result = {
             exception : {
               status : textStatus,
               errorThrown: errorThrown,
@@ -12059,10 +12191,20 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
             }
           };
           callback(result);
-        }
-      },ajaxOptions);
+      }
+
       $.ajax(cfg);
+      
+    },
+    _save : function(type,data,callback){
+      var _self = this,
+        cfg;
+
+      cfg = _self._getAjaxOptions(type,data);
+
+      _self._ajax(cfg,callback);
     }
+
   });
 
   /**
@@ -12089,6 +12231,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.mixin(memeryProxy,[Sortable]);
 
   BUI.augment(memeryProxy,{
+
     /**
      * @protected
      * @ignore
@@ -12140,6 +12283,28 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = BUI.Array.filter(data,matchFn);
       }
       return data;
+    },
+    /**
+     * @protected
+     * \u4fdd\u5b58\u4fee\u6539\u7684\u6570\u636e
+     */
+    _save : function(type,saveData,callback){
+      var _self = this,
+        data = _self.get('data');
+
+      if(type == TYPE_AJAX.ADD){
+        data.push(saveData);
+      }else if(type == TYPE_AJAX.REMOVE){
+        BUI.Array.remove(data,saveData);
+      }else if(type == TYPE_AJAX.SAVE_ALL){
+        BUI.each(saveData.add,function(item){
+          data.push(item);
+        });
+
+        BUI.each(saveData.remove,function(item){
+          BUI.Array.remove(data,item);
+        });
+      }
     }
 
   });
@@ -13395,6 +13560,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
    */
   {
     /**
+     * \u4fdd\u5b58\u6570\u636e\u65f6\uff0c\u662f\u5426\u81ea\u52a8\u66f4\u65b0\u6570\u636e\u6e90\u7684\u6570\u636e\uff0c\u5e38\u7528\u4e8e\u6dfb\u52a0\u3001\u5220\u9664\u3001\u66f4\u6539\u6570\u636e\u540e\u91cd\u65b0\u52a0\u8f7d\u6570\u636e\u3002
+     * @cfg {Boolean} autoSync
+     */
+    autoSync : {
+      value : false
+    },
+    /**
      * \u5f53\u524d\u9875\u7801
      * @cfg {Number} [currentPage=0]
      * @ignore
@@ -13888,6 +14060,130 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }); 
     },
     /**
+     * \u4fdd\u5b58\u6570\u636e\uff0c\u6709\u51e0\u79cd\u7c7b\u578b\uff1a
+     * 
+     *  - add \u4fdd\u5b58\u6dfb\u52a0\u7684\u8bb0\u5f55,
+     *  - remove \u4fdd\u5b58\u5220\u9664,
+     *  - update \u4fdd\u5b58\u66f4\u65b0,
+     *  - all \u4fdd\u5b58store\u4ece\u4e0a\u6b21\u52a0\u8f7d\u5230\u76ee\u524d\u66f4\u6539\u7684\u8bb0\u5f55
+     *
+     * 
+     * @param {String} type \u4fdd\u5b58\u7684\u7c7b\u578b
+     * @param {Object} saveData \u6570\u636e
+     * @param {Function} callback
+     */
+    save : function(type,saveData,callback){
+      var _self = this,
+        proxy = _self.get('proxy');
+
+      if(BUI.isFunction(type)){ //\u53ea\u6709\u56de\u8c03\u51fd\u6570
+        callback = type;
+        type = undefined;
+      }
+      if(BUI.isObject(type)){ //\u672a\u6307\u5b9a\u7c7b\u578b
+        callback = saveData;
+        saveData = type;
+        type = undefined;
+      }
+      if(!type){
+        type = _self._getSaveType(saveData);
+      }
+      if(type == 'all' && !saveData){//\u5982\u679c\u4fdd\u5b58\u5168\u90e8\uff0c\u540c\u65f6\u672a\u63d0\u4f9b\u4fdd\u5b58\u7684\u6570\u636e\uff0c\u81ea\u52a8\u83b7\u53d6
+        saveData = _self._getDirtyData();
+      }
+
+      _self.fire('beforesave',{type : type,saveData : saveData});
+
+      proxy.save(type,saveData,function(data){
+        _self.onSave(type,saveData,data);
+        if(callback){
+          callback(data,saveData);
+        }
+      },_self);
+
+    },
+    //\u6839\u636e\u4fdd\u5b58\u7684\u6570\u636e\u83b7\u53d6\u4fdd\u5b58\u7684\u7c7b\u578b
+    _getSaveType :function(saveData){
+      var _self = this;
+      if(!saveData){
+        return 'all';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('newRecords'))){
+        return 'add';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('modifiedRecords'))){
+        return 'update';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('deletedRecords'))){
+        return 'remove';
+      }
+      return 'custom';
+    },
+    //\u83b7\u53d6\u672a\u4fdd\u5b58\u7684\u6570\u636e
+    _getDirtyData : function(){
+      var _self = this,
+        proxy = _self.get('proxy');
+      if(proxy.get('url')){
+        return {
+          add : BUI.JSON.stringify(_self.get('newRecords')),
+          update : BUI.JSON.stringify(_self.get('modifiedRecords')),
+          remove : BUI.JSON.stringify(_self.get('deletedRecords'))
+        };
+      }else{
+        return {
+          add : _self.get('newRecords'),
+          update : _self.get('modifiedRecords'),
+          remove : _self.get('deletedRecords')
+        };
+      }
+      
+    },
+    /**
+     * \u4fdd\u5b58\u5b8c\u6210\u540e
+     * @private
+     */
+    onSave : function(type,saveData,data){
+      var _self = this,
+         hasErrorField = _self.get('hasErrorProperty');
+
+      if(data[hasErrorField] || data.exception){ //\u5982\u679c\u5931\u8d25
+        _self.onException(data);
+        return;
+      }
+      _self._clearDirty(type,saveData);
+
+      _self.fire('saved',{type : type,saveData : saveData,data : data});
+      if(_self.get('autoSync')){
+        _self.load();
+      }
+    },
+    //\u6e05\u9664\u810f\u6570\u636e
+    _clearDirty : function(type,saveData){
+      var _self = this;
+      switch(type){
+        case  'all' : 
+          _self._clearChanges();
+          break;
+        case 'add' : 
+          removeFrom(saveData,'newRecords');
+          break;
+        case 'update' : 
+          removeFrom(saveData,'modifiedRecords');
+          break;
+        case 'remove' : 
+          removeFrom(saveData,'deletedRecords');
+          break;
+        default : 
+          break;
+      }
+      function removeFrom(obj,name){
+        BUI.Array.remove(_self.get(name),obj);
+      }
+    },
+    /**
      * \u6392\u5e8f\uff0c\u5982\u679cremoteSort = true,\u53d1\u9001\u8bf7\u6c42\uff0c\u540e\u7aef\u6392\u5e8f
      * <pre><code>
      *   store.sort('id','DESC'); //\u4ee5id\u4e3a\u6392\u5e8f\u5b57\u6bb5\uff0c\u5012\u5e8f\u6392\u5e8f
@@ -13989,9 +14285,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     //\u6e05\u9664\u6539\u53d8\u7684\u6570\u636e\u8bb0\u5f55
     _clearChanges : function(){
       var _self = this;
-      _self.get('newRecords').splice(0);
-      _self.get('modifiedRecords').splice(0);
-      _self.get('deletedRecords').splice(0);
+      BUI.Array.empty(_self.get('newRecords'));
+      BUI.Array.empty(_self.get('modifiedRecords'));
+      BUI.Array.empty(_self.get('deletedRecords'));
     },
     /**
      * @protected
@@ -25013,7 +25309,8 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           if(item.get('visible')){
             _self._scrollToItem(item);
           }
-          
+          //\u4e3a\u4e86\u517c\u5bb9\u539f\u5148\u4ee3\u7801
+          _self.fire('activeChange',{item:item});
           _self.fire('activedchange',{item:item});
         }
       }
@@ -25076,7 +25373,14 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
              * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
              * @param {BUI.Tab.NavTabItem} e.item \u6807\u7b7e\u9879
              */
-            'itemclick' : false
+            'itemclick' : false,
+            /**
+             * \u6807\u7b7e\u9879\u6fc0\u6d3b\u6539\u53d8
+             * @event
+             * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+             * @param {BUI.Tab.NavTabItem} e.item \u6807\u7b7e\u9879
+             */
+            activedchange : false
           }
         }
       }
@@ -34102,6 +34406,13 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
 
   RowEditing.ATTRS = {
      /**
+     * \u662f\u5426\u81ea\u52a8\u4fdd\u5b58\u6570\u636e\u5230\u6570\u636e\u6e90\uff0c\u901a\u8fc7store\u7684save\u65b9\u6cd5\u5b9e\u73b0
+     * @cfg {Object} [autoSave=false]
+     */
+    autoSave : {
+      value : false
+    },
+     /**
      * @protected
      * \u7f16\u8f91\u5668\u7684\u5bf9\u9f50\u8bbe\u7f6e
      * @type {Object}
@@ -34207,6 +34518,9 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
         BUI.mix(record,value);
         
         store.update(record);
+        if(_self.get('autoSave')){
+          store.save(record);
+        }
     },
      /**
      * \u83b7\u53d6\u7f16\u8f91\u6b64\u5355\u5143\u683c\u7684\u7f16\u8f91\u5668
@@ -34315,6 +34629,13 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   }
 
   Dialog.ATTRS = {
+    /**
+     * \u662f\u5426\u81ea\u52a8\u4fdd\u5b58\u6570\u636e\u5230\u6570\u636e\u6e90\uff0c\u901a\u8fc7store\u7684save\u65b9\u6cd5\u5b9e\u73b0
+     * @cfg {Object} [autoSave=false]
+     */
+    autoSave : {
+      value : false
+    },
     /**
      * \u7f16\u8f91\u7684\u8bb0\u5f55
      * @type {Object}
@@ -34476,11 +34797,9 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
         }
       }else{
         store.update(curRecord);
-        /*if(store.contains(curRecord)){
-          
-        }else{
-          store.add(curRecord);
-        }*/
+      }
+      if(_self.get('autoSave')){
+        store.save(curRecord);
       }
     },
     /**
@@ -36050,7 +36369,7 @@ define('bui/tree/selection',['bui/list'],function (require) {
 					return node[field];
 				});
 			}
-			return SimpleList.superclass.getSelection.call(this);
+			return SimpleList.prototype.getSelection.call(this);
 		},
 		/**
 		 * \u83b7\u53d6\u9009\u4e2d\u7684\u4e00\u4e2a\u8282\u70b9\uff0c\u5982\u679c\u662f\u591a\u9009\u5219\u8fd4\u56de\u7b2c\u4e00\u4e2a
@@ -36066,7 +36385,7 @@ define('bui/tree/selection',['bui/list'],function (require) {
 					return node[field];
 				});
 			}
-			return SimpleList.superclass.getSelected.call(this);
+			return SimpleList.prototype.getSelected.call(this);
 		}
 	});
 
@@ -36726,9 +37045,8 @@ define('bui/tooltip/tips',['bui/common','bui/tooltip/tip'],function(require) {
 
   return Tips;
 });(function () {
-  var scripts = document.getElementsByTagName('script'),
-    loaderScript = scripts[scripts.length - 1];
-  if(loaderScript.getAttribute('data-auto-use') == 'false'){
+  
+  if(BUI.loaderScript.getAttribute('data-auto-use') == 'false'){
     return;
   }
   BUI.use(['bui/common','bui/data','bui/list','bui/picker',

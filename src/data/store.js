@@ -71,6 +71,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
    */
   {
     /**
+     * 保存数据时，是否自动更新数据源的数据，常用于添加、删除、更改数据后重新加载数据。
+     * @cfg {Boolean} autoSync
+     */
+    autoSync : {
+      value : false
+    },
+    /**
      * 当前页码
      * @cfg {Number} [currentPage=0]
      * @ignore
@@ -564,6 +571,130 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }); 
     },
     /**
+     * 保存数据，有几种类型：
+     * 
+     *  - add 保存添加的记录,
+     *  - remove 保存删除,
+     *  - update 保存更新,
+     *  - all 保存store从上次加载到目前更改的记录
+     *
+     * 
+     * @param {String} type 保存的类型
+     * @param {Object} saveData 数据
+     * @param {Function} callback
+     */
+    save : function(type,saveData,callback){
+      var _self = this,
+        proxy = _self.get('proxy');
+
+      if(BUI.isFunction(type)){ //只有回调函数
+        callback = type;
+        type = undefined;
+      }
+      if(BUI.isObject(type)){ //未指定类型
+        callback = saveData;
+        saveData = type;
+        type = undefined;
+      }
+      if(!type){
+        type = _self._getSaveType(saveData);
+      }
+      if(type == 'all' && !saveData){//如果保存全部，同时未提供保存的数据，自动获取
+        saveData = _self._getDirtyData();
+      }
+
+      _self.fire('beforesave',{type : type,saveData : saveData});
+
+      proxy.save(type,saveData,function(data){
+        _self.onSave(type,saveData,data);
+        if(callback){
+          callback(data,saveData);
+        }
+      },_self);
+
+    },
+    //根据保存的数据获取保存的类型
+    _getSaveType :function(saveData){
+      var _self = this;
+      if(!saveData){
+        return 'all';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('newRecords'))){
+        return 'add';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('modifiedRecords'))){
+        return 'update';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('deletedRecords'))){
+        return 'remove';
+      }
+      return 'custom';
+    },
+    //获取未保存的数据
+    _getDirtyData : function(){
+      var _self = this,
+        proxy = _self.get('proxy');
+      if(proxy.get('url')){
+        return {
+          add : BUI.JSON.stringify(_self.get('newRecords')),
+          update : BUI.JSON.stringify(_self.get('modifiedRecords')),
+          remove : BUI.JSON.stringify(_self.get('deletedRecords'))
+        };
+      }else{
+        return {
+          add : _self.get('newRecords'),
+          update : _self.get('modifiedRecords'),
+          remove : _self.get('deletedRecords')
+        };
+      }
+      
+    },
+    /**
+     * 保存完成后
+     * @private
+     */
+    onSave : function(type,saveData,data){
+      var _self = this,
+         hasErrorField = _self.get('hasErrorProperty');
+
+      if(data[hasErrorField] || data.exception){ //如果失败
+        _self.onException(data);
+        return;
+      }
+      _self._clearDirty(type,saveData);
+
+      _self.fire('saved',{type : type,saveData : saveData,data : data});
+      if(_self.get('autoSync')){
+        _self.load();
+      }
+    },
+    //清除脏数据
+    _clearDirty : function(type,saveData){
+      var _self = this;
+      switch(type){
+        case  'all' : 
+          _self._clearChanges();
+          break;
+        case 'add' : 
+          removeFrom(saveData,'newRecords');
+          break;
+        case 'update' : 
+          removeFrom(saveData,'modifiedRecords');
+          break;
+        case 'remove' : 
+          removeFrom(saveData,'deletedRecords');
+          break;
+        default : 
+          break;
+      }
+      function removeFrom(obj,name){
+        BUI.Array.remove(_self.get(name),obj);
+      }
+    },
+    /**
      * 排序，如果remoteSort = true,发送请求，后端排序
      * <pre><code>
      *   store.sort('id','DESC'); //以id为排序字段，倒序排序
@@ -665,9 +796,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     //清除改变的数据记录
     _clearChanges : function(){
       var _self = this;
-      _self.get('newRecords').splice(0);
-      _self.get('modifiedRecords').splice(0);
-      _self.get('deletedRecords').splice(0);
+      BUI.Array.empty(_self.get('newRecords'));
+      BUI.Array.empty(_self.get('modifiedRecords'));
+      BUI.Array.empty(_self.get('deletedRecords'));
     },
     /**
      * @protected

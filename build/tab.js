@@ -1159,7 +1159,8 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
           if(item.get('visible')){
             _self._scrollToItem(item);
           }
-          
+          //为了兼容原先代码
+          _self.fire('activeChange',{item:item});
           _self.fire('activedchange',{item:item});
         }
       }
@@ -1222,7 +1223,14 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
              * @param {Object} e 事件对象
              * @param {BUI.Tab.NavTabItem} e.item 标签项
              */
-            'itemclick' : false
+            'itemclick' : false,
+            /**
+             * 标签项激活改变
+             * @event
+             * @param {Object} e 事件对象
+             * @param {BUI.Tab.NavTabItem} e.item 标签项
+             */
+            activedchange : false
           }
         }
       }
