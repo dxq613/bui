@@ -281,6 +281,8 @@ define('bui/uploader/uploader', function (require) {
         curUploadItem.result = result;
 
         if(isSuccess.call(_self, result)){
+          //为了兼容原来只设置了itemTpl的情况
+          BUI.mix(curUploadItem, result);
           queue.updateFileStatus(curUploadItem, 'success');
           successFn && BUI.isFunction(successFn) && successFn.call(_self, result);
           _self.fire('success', {item: curUploadItem, result: result});

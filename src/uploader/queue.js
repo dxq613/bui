@@ -52,12 +52,13 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
     /**
      * 根据上传的状态设置上传列表的模板
      * @private
-     * @param {String} 状态名称
+     * @param {Object} item
+     * @param {String} status 状态名称
      */
     _setResultTpl: function(item, status){
       var _self = this,
         resultTpl = _self.get('resultTpl'),
-        itemTpl = resultTpl[status] || resultTpl['default'] || _self.get('itemTpl'),
+        itemTpl = resultTpl[status] || resultTpl['default'],
         tplData = BUI.mix({}, item.attr, item.result);
       item.resultTpl = BUI.substitute(itemTpl, tplData);
     }
