@@ -18,6 +18,13 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
 
   Dialog.ATTRS = {
     /**
+     * 是否自动保存数据到数据源，通过store的save方法实现
+     * @cfg {Object} [autoSave=false]
+     */
+    autoSave : {
+      value : false
+    },
+    /**
      * 编辑的记录
      * @type {Object}
      * @readOnly
@@ -178,11 +185,9 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
         }
       }else{
         store.update(curRecord);
-        /*if(store.contains(curRecord)){
-          
-        }else{
-          store.add(curRecord);
-        }*/
+      }
+      if(_self.get('autoSave')){
+        store.save(curRecord);
       }
     },
     /**

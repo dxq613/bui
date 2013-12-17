@@ -1,7 +1,6 @@
 (function () {
-  var scripts = document.getElementsByTagName('script'),
-    loaderScript = scripts[scripts.length - 1];
-  if(loaderScript.getAttribute('data-auto-use') == 'false'){
+  
+  if(BUI.loaderScript.getAttribute('data-auto-use') == 'false'){
     return;
   }
   BUI.use(['bui/common','bui/data','bui/list','bui/picker',

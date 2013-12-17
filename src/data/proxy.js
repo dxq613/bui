@@ -28,7 +28,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   {
     /**
      * @protected
-     * @private
+     * 读取数据的方法，在子类中覆盖
      */
     _read : function(params,callback){
 
@@ -48,14 +48,36 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       });
     },
     /**
-     * 更新数据
      * @protected
+     * 保存数据的方法，在子类中覆盖
      */
-    update : function(params,callback,scope){
+    _save : function(ype,data,callback){
 
+    },
+    /**
+     * 保存数据
+     * @param {String} type 类型，包括，add,update,remove,all几种类型
+     * @param  {Object} saveData 键值对形式的参数
+     * @param {Function} callback 回调函数，函数原型 function(data){}
+     * @param {Object} scope 回调函数的上下文
+     */
+    save : function(type,saveData,callback,scope){
+      var _self = this;
+      scope = scope || _self;
+      _self._save(type,saveData,function(data){
+        callback.call(scope,data);
+      });
     }
   });
 
+
+  var TYPE_AJAX = {
+    READ : 'read',
+    ADD : 'add',
+    UPDATE : 'update',
+    REMOVE : 'remove',
+    SAVE_ALL : 'all'
+  };
   /**
    * 异步加载数据的代理
    * @class BUI.Data.Proxy.Ajax
@@ -105,6 +127,20 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
      */
     pageIndexParam : {
       value : 'pageIndex'
+    },
+    /**
+     * 保存类型的字段名,如果每种保存类型未设置对应的Url，则附加参数
+     * @type {Object}
+     */
+    saveTypeParam : {
+      value : 'saveType'
+    },
+    /**
+     * 保存数据放到的字段名称
+     * @type {String}
+     */
+    saveDataParam : {
+
     },
     /**
      * 传递到后台，分页开始的页码，默认从0开始
@@ -159,6 +195,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : false
     },
     /**
+     * 保存数据的配置信息
+     * @type {Object}
+     */
+    save : {
+
+    },
+    /**
      * 加载数据的链接
      * @cfg {String} url
      * @required
@@ -176,6 +219,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.extend(ajaxProxy,proxy);
 
   BUI.augment(ajaxProxy,{
+
     _processParams : function(params){
       var _self = this,
         pageStart = _self.get('pageStart'),
@@ -191,28 +235,94 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         }
       });
     },
+    //获取异步请求的url
+    _getUrl : function(type){
+      var _self = this,
+        save = _self.get('save'),
+        url;
+      if(type === TYPE_AJAX.READ){ //获取数据，直接返回 url
+        return _self.get('url');
+      }
+      
+      //如果不存在保存参数，则返回 url
+      if(!save){
+        return _self.get('url')
+      }
+
+      if(BUI.isString(save)){
+        return save;
+      }
+
+      url = save[type + 'Url'];
+      if(!url){
+        url = _self.get('url');
+      }
+
+      return url;
+
+    },
+    //根据类型附加额外的参数
+    _getAppendParams : function(type){
+      var _self = this,
+        save,
+        saveTypeParam,
+        rst = null;
+      if(type == TYPE_AJAX.READ){
+        return rst;
+      }
+      save = _self.get('save');
+      saveTypeParam = _self.get('saveTypeParam');
+      if(save && !save[type + 'Url']){
+        rst = {};
+        rst[saveTypeParam] = type;
+      }
+      return rst;
+    },
     /**
      * @protected
      * @private
      */
     _read : function(params,callback){
       var _self = this,
-        ajaxOptions  = _self.get('ajaxOptions'),
         cfg;
 
       params = BUI.cloneObject(params);
       _self._processParams(params);
+      cfg = _self._getAjaxOptions(TYPE_AJAX.READ,params);
+
+      _self._ajax(cfg,callback);
+    },
+    //获取异步请求的选项
+    _getAjaxOptions : function(type,params){
+      var _self = this,
+        ajaxOptions  = _self.get('ajaxOptions'),
+        url = _self._getUrl(type),
+        cfg;
+      BUI.mix(params,_self._getAppendParams(type));
       cfg = BUI.merge({
-        url: _self.get('url'),
+        url: url,
         type : _self.get('method'),
         dataType: _self.get('dataType'),
         data : params,
-        cache : _self.get('cache'),
-        success: function(data) {
-          callback(data);
-        },
-        error : function(jqXHR, textStatus, errorThrown){
-          var result = {
+        cache : _self.get('cache')
+      },ajaxOptions);
+
+      return cfg;
+    },
+    //异步请求
+    _ajax : function(cfg,callback){
+      var _self = this,
+        success = cfg.success,
+        error = cfg.error;
+      //复写success
+      cfg.success = function(data){
+        success && success(data);
+        callback(data);
+      };
+      //复写错误
+      cfg.error = function(jqXHR, textStatus, errorThrown){
+        error && error(jqXHR, textStatus, errorThrown);
+        var result = {
             exception : {
               status : textStatus,
               errorThrown: errorThrown,
@@ -220,10 +330,20 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
             }
           };
           callback(result);
-        }
-      },ajaxOptions);
+      }
+
       $.ajax(cfg);
+      
+    },
+    _save : function(type,data,callback){
+      var _self = this,
+        cfg;
+
+      cfg = _self._getAjaxOptions(type,data);
+
+      _self._ajax(cfg,callback);
     }
+
   });
 
   /**
@@ -250,6 +370,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.mixin(memeryProxy,[Sortable]);
 
   BUI.augment(memeryProxy,{
+
     /**
      * @protected
      * @ignore
@@ -301,6 +422,28 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = BUI.Array.filter(data,matchFn);
       }
       return data;
+    },
+    /**
+     * @protected
+     * 保存修改的数据
+     */
+    _save : function(type,saveData,callback){
+      var _self = this,
+        data = _self.get('data');
+
+      if(type == TYPE_AJAX.ADD){
+        data.push(saveData);
+      }else if(type == TYPE_AJAX.REMOVE){
+        BUI.Array.remove(data,saveData);
+      }else if(type == TYPE_AJAX.SAVE_ALL){
+        BUI.each(saveData.add,function(item){
+          data.push(item);
+        });
+
+        BUI.each(saveData.remove,function(item){
+          BUI.Array.remove(data,item);
+        });
+      }
     }
 
   });

@@ -19,6 +19,13 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
 
   RowEditing.ATTRS = {
      /**
+     * 是否自动保存数据到数据源，通过store的save方法实现
+     * @cfg {Object} [autoSave=false]
+     */
+    autoSave : {
+      value : false
+    },
+     /**
      * @protected
      * 编辑器的对齐设置
      * @type {Object}
@@ -124,6 +131,9 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
         BUI.mix(record,value);
         
         store.update(record);
+        if(_self.get('autoSave')){
+          store.save(record);
+        }
     },
      /**
      * 获取编辑此单元格的编辑器

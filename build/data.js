@@ -222,7 +222,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   {
     /**
      * @protected
-     * @private
+     * 读取数据的方法，在子类中覆盖
      */
     _read : function(params,callback){
 
@@ -242,14 +242,36 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       });
     },
     /**
-     * 更新数据
      * @protected
+     * 保存数据的方法，在子类中覆盖
      */
-    update : function(params,callback,scope){
+    _save : function(ype,data,callback){
 
+    },
+    /**
+     * 保存数据
+     * @param {String} type 类型，包括，add,update,remove,all几种类型
+     * @param  {Object} saveData 键值对形式的参数
+     * @param {Function} callback 回调函数，函数原型 function(data){}
+     * @param {Object} scope 回调函数的上下文
+     */
+    save : function(type,saveData,callback,scope){
+      var _self = this;
+      scope = scope || _self;
+      _self._save(type,saveData,function(data){
+        callback.call(scope,data);
+      });
     }
   });
 
+
+  var TYPE_AJAX = {
+    READ : 'read',
+    ADD : 'add',
+    UPDATE : 'update',
+    REMOVE : 'remove',
+    SAVE_ALL : 'all'
+  };
   /**
    * 异步加载数据的代理
    * @class BUI.Data.Proxy.Ajax
@@ -299,6 +321,20 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
      */
     pageIndexParam : {
       value : 'pageIndex'
+    },
+    /**
+     * 保存类型的字段名,如果每种保存类型未设置对应的Url，则附加参数
+     * @type {Object}
+     */
+    saveTypeParam : {
+      value : 'saveType'
+    },
+    /**
+     * 保存数据放到的字段名称
+     * @type {String}
+     */
+    saveDataParam : {
+
     },
     /**
      * 传递到后台，分页开始的页码，默认从0开始
@@ -353,6 +389,13 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
       value : false
     },
     /**
+     * 保存数据的配置信息
+     * @type {Object}
+     */
+    save : {
+
+    },
+    /**
      * 加载数据的链接
      * @cfg {String} url
      * @required
@@ -370,6 +413,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.extend(ajaxProxy,proxy);
 
   BUI.augment(ajaxProxy,{
+
     _processParams : function(params){
       var _self = this,
         pageStart = _self.get('pageStart'),
@@ -385,28 +429,94 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         }
       });
     },
+    //获取异步请求的url
+    _getUrl : function(type){
+      var _self = this,
+        save = _self.get('save'),
+        url;
+      if(type === TYPE_AJAX.READ){ //获取数据，直接返回 url
+        return _self.get('url');
+      }
+      
+      //如果不存在保存参数，则返回 url
+      if(!save){
+        return _self.get('url')
+      }
+
+      if(BUI.isString(save)){
+        return save;
+      }
+
+      url = save[type + 'Url'];
+      if(!url){
+        url = _self.get('url');
+      }
+
+      return url;
+
+    },
+    //根据类型附加额外的参数
+    _getAppendParams : function(type){
+      var _self = this,
+        save,
+        saveTypeParam,
+        rst = null;
+      if(type == TYPE_AJAX.READ){
+        return rst;
+      }
+      save = _self.get('save');
+      saveTypeParam = _self.get('saveTypeParam');
+      if(save && !save[type + 'Url']){
+        rst = {};
+        rst[saveTypeParam] = type;
+      }
+      return rst;
+    },
     /**
      * @protected
      * @private
      */
     _read : function(params,callback){
       var _self = this,
-        ajaxOptions  = _self.get('ajaxOptions'),
         cfg;
 
       params = BUI.cloneObject(params);
       _self._processParams(params);
+      cfg = _self._getAjaxOptions(TYPE_AJAX.READ,params);
+
+      _self._ajax(cfg,callback);
+    },
+    //获取异步请求的选项
+    _getAjaxOptions : function(type,params){
+      var _self = this,
+        ajaxOptions  = _self.get('ajaxOptions'),
+        url = _self._getUrl(type),
+        cfg;
+      BUI.mix(params,_self._getAppendParams(type));
       cfg = BUI.merge({
-        url: _self.get('url'),
+        url: url,
         type : _self.get('method'),
         dataType: _self.get('dataType'),
         data : params,
-        cache : _self.get('cache'),
-        success: function(data) {
-          callback(data);
-        },
-        error : function(jqXHR, textStatus, errorThrown){
-          var result = {
+        cache : _self.get('cache')
+      },ajaxOptions);
+
+      return cfg;
+    },
+    //异步请求
+    _ajax : function(cfg,callback){
+      var _self = this,
+        success = cfg.success,
+        error = cfg.error;
+      //复写success
+      cfg.success = function(data){
+        success && success(data);
+        callback(data);
+      };
+      //复写错误
+      cfg.error = function(jqXHR, textStatus, errorThrown){
+        error && error(jqXHR, textStatus, errorThrown);
+        var result = {
             exception : {
               status : textStatus,
               errorThrown: errorThrown,
@@ -414,10 +524,20 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
             }
           };
           callback(result);
-        }
-      },ajaxOptions);
+      }
+
       $.ajax(cfg);
+      
+    },
+    _save : function(type,data,callback){
+      var _self = this,
+        cfg;
+
+      cfg = _self._getAjaxOptions(type,data);
+
+      _self._ajax(cfg,callback);
     }
+
   });
 
   /**
@@ -444,6 +564,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.mixin(memeryProxy,[Sortable]);
 
   BUI.augment(memeryProxy,{
+
     /**
      * @protected
      * @ignore
@@ -495,6 +616,28 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
         data = BUI.Array.filter(data,matchFn);
       }
       return data;
+    },
+    /**
+     * @protected
+     * 保存修改的数据
+     */
+    _save : function(type,saveData,callback){
+      var _self = this,
+        data = _self.get('data');
+
+      if(type == TYPE_AJAX.ADD){
+        data.push(saveData);
+      }else if(type == TYPE_AJAX.REMOVE){
+        BUI.Array.remove(data,saveData);
+      }else if(type == TYPE_AJAX.SAVE_ALL){
+        BUI.each(saveData.add,function(item){
+          data.push(item);
+        });
+
+        BUI.each(saveData.remove,function(item){
+          BUI.Array.remove(data,item);
+        });
+      }
     }
 
   });
@@ -1750,6 +1893,13 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
    */
   {
     /**
+     * 保存数据时，是否自动更新数据源的数据，常用于添加、删除、更改数据后重新加载数据。
+     * @cfg {Boolean} autoSync
+     */
+    autoSync : {
+      value : false
+    },
+    /**
      * 当前页码
      * @cfg {Number} [currentPage=0]
      * @ignore
@@ -2243,6 +2393,130 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }); 
     },
     /**
+     * 保存数据，有几种类型：
+     * 
+     *  - add 保存添加的记录,
+     *  - remove 保存删除,
+     *  - update 保存更新,
+     *  - all 保存store从上次加载到目前更改的记录
+     *
+     * 
+     * @param {String} type 保存的类型
+     * @param {Object} saveData 数据
+     * @param {Function} callback
+     */
+    save : function(type,saveData,callback){
+      var _self = this,
+        proxy = _self.get('proxy');
+
+      if(BUI.isFunction(type)){ //只有回调函数
+        callback = type;
+        type = undefined;
+      }
+      if(BUI.isObject(type)){ //未指定类型
+        callback = saveData;
+        saveData = type;
+        type = undefined;
+      }
+      if(!type){
+        type = _self._getSaveType(saveData);
+      }
+      if(type == 'all' && !saveData){//如果保存全部，同时未提供保存的数据，自动获取
+        saveData = _self._getDirtyData();
+      }
+
+      _self.fire('beforesave',{type : type,saveData : saveData});
+
+      proxy.save(type,saveData,function(data){
+        _self.onSave(type,saveData,data);
+        if(callback){
+          callback(data,saveData);
+        }
+      },_self);
+
+    },
+    //根据保存的数据获取保存的类型
+    _getSaveType :function(saveData){
+      var _self = this;
+      if(!saveData){
+        return 'all';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('newRecords'))){
+        return 'add';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('modifiedRecords'))){
+        return 'update';
+      }
+
+      if(BUI.Array.contains(saveData,_self.get('deletedRecords'))){
+        return 'remove';
+      }
+      return 'custom';
+    },
+    //获取未保存的数据
+    _getDirtyData : function(){
+      var _self = this,
+        proxy = _self.get('proxy');
+      if(proxy.get('url')){
+        return {
+          add : BUI.JSON.stringify(_self.get('newRecords')),
+          update : BUI.JSON.stringify(_self.get('modifiedRecords')),
+          remove : BUI.JSON.stringify(_self.get('deletedRecords'))
+        };
+      }else{
+        return {
+          add : _self.get('newRecords'),
+          update : _self.get('modifiedRecords'),
+          remove : _self.get('deletedRecords')
+        };
+      }
+      
+    },
+    /**
+     * 保存完成后
+     * @private
+     */
+    onSave : function(type,saveData,data){
+      var _self = this,
+         hasErrorField = _self.get('hasErrorProperty');
+
+      if(data[hasErrorField] || data.exception){ //如果失败
+        _self.onException(data);
+        return;
+      }
+      _self._clearDirty(type,saveData);
+
+      _self.fire('saved',{type : type,saveData : saveData,data : data});
+      if(_self.get('autoSync')){
+        _self.load();
+      }
+    },
+    //清除脏数据
+    _clearDirty : function(type,saveData){
+      var _self = this;
+      switch(type){
+        case  'all' : 
+          _self._clearChanges();
+          break;
+        case 'add' : 
+          removeFrom(saveData,'newRecords');
+          break;
+        case 'update' : 
+          removeFrom(saveData,'modifiedRecords');
+          break;
+        case 'remove' : 
+          removeFrom(saveData,'deletedRecords');
+          break;
+        default : 
+          break;
+      }
+      function removeFrom(obj,name){
+        BUI.Array.remove(_self.get(name),obj);
+      }
+    },
+    /**
      * 排序，如果remoteSort = true,发送请求，后端排序
      * <pre><code>
      *   store.sort('id','DESC'); //以id为排序字段，倒序排序
@@ -2344,9 +2618,9 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     //清除改变的数据记录
     _clearChanges : function(){
       var _self = this;
-      _self.get('newRecords').splice(0);
-      _self.get('modifiedRecords').splice(0);
-      _self.get('deletedRecords').splice(0);
+      BUI.Array.empty(_self.get('newRecords'));
+      BUI.Array.empty(_self.get('modifiedRecords'));
+      BUI.Array.empty(_self.get('deletedRecords'));
     },
     /**
      * @protected
