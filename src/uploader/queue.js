@@ -70,21 +70,48 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       /**
        * 上传结果的模板，可根据上传状态的不同进行设置，没有时取默认的
        * @type {Object}
+       * 
+       * ** 默认定义的模板结构 **
+       * <pre><code>
+       * 
+       * 'default': '<div class="default">{name}</div>',
+       * 'success': '<div data-url="{url}" class="success">{name}</div>',
+       * 'error': '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+       * 'progress': '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+       * 
+       * </code></pre>
        */
       resultTpl:{
         value: {
           'default': '<div class="default">{name}</div>',
-          success: '<div data-url="{url}" class="success">{name}</div>',
-          error: '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
-          progress: '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+          'success': '<div data-url="{url}" class="success">{name}</div>',
+          'error': '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+          'progress': '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+        },
+        setter: function(v){
+          return BUI.mix({}, this.get('resultTpl'), v);
         }
       },
+      /**
+       * 列表项的cls
+       * @type {String}
+       */
       itemCls: {
         value: CLS_QUEUE_ITEM
       },
+      /**
+       * 删除的cls
+       * @protected
+       * @type {String}
+       */
       delCls: {
         value: CLS_QUEUE_ITEM + '-del'
       },
+      /**
+       * 列表项的状态
+       * @protected
+       * @type {Object}
+       */
       itemStatusFields: {
         value: {
           wait: 'wait',

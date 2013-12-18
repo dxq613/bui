@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>定义主题上传文件</title>
+  <link href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css" rel="stylesheet"> 
+  <link href="../../../assets/css/bui.css" rel="stylesheet">
+
+  <script src="http://a.tbcdn.cn/s/bui/jquery-1.8.1.min.js"></script>
+  <script src="../../../build/bui-min.js"></script>
+
+</head>
+<body>
+  <div class="row">
+    <div class="span8">
+      <div id="J_Uploader">
+        <input type="hidden" />
+      </div>
+    </div>
+  </div>
+<script>
+  BUI.setDebug(true);
+  BUI.use('bui/uploader', function(Uploader){
+    
+    //添加自定义主题
+    Uploader.Theme.addTheme('imageView', {
+      elCls: 'imageViewTheme',
+      //可以设定该主题统一的上传路径
+      url: '../../../test/upload/upload.php',
+      queue:{
+        //结果的模板，可以根据不同状态进进行设置
+        resultTpl: {
+          'default': '<div class="default">{name}</div>',
+          'success': '<div class="success"><img src="../../../test/upload/{url}" /></div>',
+          'error': '<div class="error"><span class="uploader-error">{msg}</span></div>',
+          'progress': '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+        }
+      }
+    });
+
+    var uploader = new Uploader.Uploader({
+      //指定使用主题
+      theme: 'imageView',
+      render: '#J_Uploader',
+      url: '../../../test/upload/upload.php'
+    });
+    uploader.render();
+  });
+</script>
+</body>
+</html>
