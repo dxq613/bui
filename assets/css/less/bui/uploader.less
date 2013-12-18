@@ -1,6 +1,7 @@
-/**默认定义的样式**/
-.defaultTheme{
-  //按钮
+
+/** 公共的一些定义 **/
+.bui-uploader{
+
   .bui-uploader-button-wrap {
     display: inline-block;
     padding: 0 5px;
@@ -11,30 +12,9 @@
     z-index: 500;
     margin-right: 10px;
     text-decoration: none;
-    border: 1px solid #C4DAED;
     font-size: 12px;
-    text-align: center;
-    /*渐变*/
-    background: -webkit-gradient(linear, left top, left bottom, from(#FDFEFE), to(#DFE7EF));
-    background: -moz-linear-gradient(top, #FDFEFE, #DFE7EF);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FDFEFE', endColorstr = '#DFE7EF');
-
-    &:link, &:visited{
-      color:#404040;
-    }
-
-    &:hover{
-      text-decoration: none;
-      color: black;
-      background: -webkit-gradient(linear, left top, left bottom, from(#DFE7EF), to(#FDFEFE));
-      background: -moz-linear-gradient(top, #DFE7EF, #FDFEFE);
-      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#DFE7EF', endColorstr = '#FDFEFE');
-    }
-
-    &:active{
-      background: #DFE7EF;
-      filter: none;
-    }
+    text-align: center; 
+    cursor: pointer;
 
     //input的样式
     .file-input-wrapper{
@@ -65,6 +45,49 @@
     .uploader-button-swf{
       .file-input-wrapper;
     }
+  } 
+}
+
+/**默认定义的样式**/
+.defaultTheme{
+  //按钮
+  .bui-uploader-button-wrap {
+    display: inline-block;
+    padding: 0 5px;
+    height: 24px;
+    overflow: hidden;
+    line-height: 24px;
+    position: relative;
+    z-index: 500;
+    margin-right: 10px;
+    text-decoration: none;
+    font-size: 12px;
+    text-align: center;
+    border: 1px solid #C4DAED;
+    /*渐变*/
+    // #gradient > .horizontal(#FDFEFE, #DFE7EF);
+    background: -webkit-gradient(linear, left top, left bottom, from(#FDFEFE), to(#DFE7EF));
+    background: -moz-linear-gradient(top, #FDFEFE, #DFE7EF);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FDFEFE', endColorstr = '#DFE7EF');
+
+    &:link, &:visited{
+      color:#404040;
+    }
+
+    &:hover{
+      text-decoration: none;
+      color: black;
+      // #gradient > .horizontal(#DFE7EF, #FDFEFE);
+      background: -webkit-gradient(linear, left top, left bottom, from(#DFE7EF), to(#FDFEFE));
+      background: -moz-linear-gradient(top, #DFE7EF, #FDFEFE);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#DFE7EF', endColorstr = '#FDFEFE');
+    }
+
+    &:active{
+      background: #DFE7EF;
+      filter: none;
+    }
+
   }
 
   //对列
@@ -97,149 +120,94 @@
   }
 }
 
-// .defaultTheme-button{
-// 	.bui-uploader-button-wrap {
-// 		display: inline-block;
-//     padding: 0 5px;
-//     height: 24px;
-//     overflow: hidden;
-//     line-height: 24px;
-//     position: relative;
-//     z-index: 500;
-//     margin-right: 10px;
-//     text-decoration: none;
-//     border: 1px solid #C4DAED;
-//     font-size: 12px;
-//     text-align: center;
-//     /*渐变*/
-// 		background: -webkit-gradient(linear, left top, left bottom, from(#FDFEFE), to(#DFE7EF));
-// 		background: -moz-linear-gradient(top, #FDFEFE, #DFE7EF);
-// 		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FDFEFE', endColorstr = '#DFE7EF');
-// 	}
-// 	.bui-uploader-button-wrap:link,.bui-uploader-button-wrap:visited{
-// 		color:#404040;
-// 	}
 
-// 	.bui-uploader-button-wrap-hover, .bui-uploader-button-wrap:hover {
-// 		text-decoration: none;
-// 		color: black;
-// 		background: -webkit-gradient(linear, left top, left bottom, from(#DFE7EF), to(#FDFEFE));
-// 		background: -moz-linear-gradient(top, #DFE7EF, #FDFEFE);
-// 		filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#DFE7EF', endColorstr = '#FDFEFE');
-// 	}
+/**带图片预览的主题样式**/
+.imageViewTheme{
+  .bui-uploader-button-wrap{
+    color: #333;
+    border: 1px solid #ddd;
+    background-color: #fdfcfc;
+    #gradient > .horizontal(#fdfcfc, #eee);
+    .border-radius(3px);
 
-// 	.bui-uploader-button-wrap:active {
-// 		background: #DFE7EF;
-// 		filter: none;
-// 	}
-// 	.bui-uploader-button-wrap .file-input-wrapper .file-input {
-// 		background: none repeat scroll 0 0 transparent;
-// 		border: medium none;
-// 		cursor: pointer;
-// 		height: 200px;
-// 		width: 200px;
-// 		top: -50px;
-// 		opacity: 0;
-// 		position: absolute;
-// 		font-size: 100px;
-// 		left: 0;
-// 	}
-// 	.bui-uploader-button-wrap .file-input-wrapper {
-// 		display: block;
-//     width: 200px;
-// 		height: 26px;
-// 		position: absolute;
-// 		left: 0;
-// 		top: 0;
-// 		margin: 0;
-// 		overflow: hidden;
-// 		padding: 0;
-// 		z-index: 300;
-// 	}
+    &:hover{
+      border-color: #369bd7;
+      background-color: #fdfcfc;
+      #gradient > .horizontal(#fdfcfc, #e2f1fc);
+    }
+  }
 
-// 	.uploader-button-swf{
-// 	  display: block;
-//     width: 200px;
-// 	  height: 26px;
-// 	  position: absolute;
-// 	  top: 0px;
-// 	  left: 0px;
-// 	  z-index: 2000;
-// 	  overflow: hidden;
-// 	}
-// }
-// .bui-uploader-disabled{
-//   .defaultTheme-button{
-//     .bui-uploader-button-wrap{
-//       cursor: default;
-//       border: 1px solid #BFBFBF;
-//       color: #404040;
-//       background: -webkit-gradient(linear, left top, left bottom, from(#FAFAFA), to(#E5E5E5));
-//       background: -moz-linear-gradient(top, #FAFAFA, #E5E5E5);
-//       filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FAFAFA', endColorstr = '#E5E5E5');
-//     }
-//     .file-input-wrapper .file-input {
-//       display: none;
-//     }
-//   }
-// }
-// /**按钮样式end**/
+  .bui-queue{
 
+    ul{
+      .clearfix();
+    }
 
+    .bui-queue-item{
+      display: inline;
+      float: left;
+      margin: 0 10px 10px 0;
+      padding: 0;
+      width: 120px;
+      height: 120px;
+      overflow: hidden;
+      position: relative;
+      border: solid 1px #e0e0e0;
+      background-color: #fff;
+      .border-radius(4px);
+      @shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+      .box-shadow(@shadow);
 
+      .error,.progress{
+        margin-top: -10px;
+        width: 120px;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        z-index: 30;
+        color: #f00;
+        text-align: center;
+      }
+      
+      .progress{
+        // height: 10px;
+        // .bar{
+        //   background-color: #75b9f0;
+        // }
+      }
 
+      .action{
+        .bui-queue-item-del{
+          display: none;
+          color: #676767;
+          width: 60px;
+          height: 24px;
+          line-height: 24px;
+          position: absolute;
+          top: 50px;
+          left: 50px;
+          margin-left: -20px;
+          text-decoration: none;
+          z-index: 3000;
+          border: 1px solid #ddd;
+          background-color: #fff;
+          .border-radius(3px);
+          text-align: center;
+          cursor: pointer;
+        }
+      }
 
+      &:hover {
+        .action{
+          .bui-queue-item-del{
+            display: block;
+          }
+        }
+      }
+    }
 
-
-// .defaultTheme-queue a {
-//     color: #3366CC;
-//     text-decoration: none;
-// }
-
-// .defaultTheme-queue a:hover {
-//     color: #FF6600;
-//     text-decoration: underline;
-// }
-
-
-
-
-// .defaultTheme-queue {
-//     color: #404040;
-//     width: 400px;
-//     margin: 0;
-//     padding: 0;
-//     margin-top: 10px;
-//     font-size: 12px;
-
-
-//   li {
-//     display: block;
-//     clear: both;
-//   }
-
-//   .file-icon {
-//       width: 12px;
-//       height: 16px;
-//       margin-right: 5px;
-//       background: url("http://img04.taobaocdn.com/tps/i4/T1HCGNXexjXXXXXXXX-12-16.png") 0 0 no-repeat;
-//   }
-
-//   .loading {
-//       background: url("http://img01.taobaocdn.com/tps/i1/T1F5tVXjRfXXXXXXXX-16-16.gif") no-repeat scroll 0 1px transparent;
-//       width: 16px;
-//       height: 16px;
-//   }
-//   .filename{
-//     float: left;
-//     padding-right: 10px;
-//   }
-//   .progress{
-//     float: left;
-//     width: 100px;
-//   }
-//   .action{
-//     float: left;
-//     padding-left: 10px;
-//   }
-// }
+    .bui-queue-item-error{
+      border-color: #f00;
+    }
+  }
+}
