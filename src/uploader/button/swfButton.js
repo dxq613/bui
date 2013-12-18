@@ -9,7 +9,7 @@ define('bui/uploader/button/swfButton', function (require) {
     Component = BUI.Component,
     ButtonBase = require('bui/uploader/button/base'),
     SwfUploader = require('bui/uploader/type/flash'),
-    baseUrl = seajs.data.base,
+    baseUrl = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base,
     SWF = require('bui/uploader/button/swfButton/ajbridge');
 
 
