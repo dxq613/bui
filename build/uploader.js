@@ -614,7 +614,7 @@ define('bui/uploader/button/swfButton', function (require) {
     Component = BUI.Component,
     ButtonBase = require('bui/uploader/button/base'),
     SwfUploader = require('bui/uploader/type/flash'),
-    baseUrl = seajs.data.base,
+    baseUrl = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base,
     SWF = require('bui/uploader/button/swfButton/ajbridge');
 
 
@@ -985,7 +985,6 @@ define('bui/uploader/type/ajax',function(require) {
                 self.fire(AjaxType.event.ERROR, {file: file});
             }
             xhr.open("POST", url, true);
-            data.append("type", "ajax");
             xhr.send(data);
             // 重置FormData
             self._setFormData();
@@ -1507,12 +1506,13 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
     /**
      * 根据上传的状态设置上传列表的模板
      * @private
-     * @param {String} 状态名称
+     * @param {Object} item
+     * @param {String} status 状态名称
      */
     _setResultTpl: function(item, status){
       var _self = this,
         resultTpl = _self.get('resultTpl'),
-        itemTpl = resultTpl[status] || resultTpl['default'] || _self.get('itemTpl'),
+        itemTpl = resultTpl[status] || resultTpl['default'],
         tplData = BUI.mix({}, item.attr, item.result);
       item.resultTpl = BUI.substitute(itemTpl, tplData);
     }
@@ -1524,21 +1524,48 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       /**
        * 上传结果的模板，可根据上传状态的不同进行设置，没有时取默认的
        * @type {Object}
+       * 
+       * ** 默认定义的模板结构 **
+       * <pre><code>
+       * 
+       * 'default': '<div class="default">{name}</div>',
+       * 'success': '<div data-url="{url}" class="success">{name}</div>',
+       * 'error': '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+       * 'progress': '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+       * 
+       * </code></pre>
        */
       resultTpl:{
         value: {
           'default': '<div class="default">{name}</div>',
-          success: '<div data-url="{url}" class="success">{name}</div>',
-          error: '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
-          progress: '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+          'success': '<div data-url="{url}" class="success">{name}</div>',
+          'error': '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+          'progress': '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+        },
+        setter: function(v){
+          return BUI.mix({}, this.get('resultTpl'), v);
         }
       },
+      /**
+       * 列表项的cls
+       * @type {String}
+       */
       itemCls: {
         value: CLS_QUEUE_ITEM
       },
+      /**
+       * 删除的cls
+       * @protected
+       * @type {String}
+       */
       delCls: {
         value: CLS_QUEUE_ITEM + '-del'
       },
+      /**
+       * 列表项的状态
+       * @protected
+       * @type {Object}
+       */
       itemStatusFields: {
         value: {
           wait: 'wait',
@@ -1591,8 +1618,20 @@ define('bui/uploader/theme', function (require) {
     }
   };
 
+  //这个默认的主题
   Theme.addTheme('default', {
     elCls: 'defaultTheme'
+  });
+
+
+  //带图片预览的主题
+  Theme.addTheme('imageView', {
+    elCls: 'imageViewTheme',
+    queue:{
+      resultTpl: {
+        'success': '<div class="success"><img src="{url}" /></div>'
+      }
+    }
   });
 
   return Theme;
@@ -1735,8 +1774,7 @@ define('bui/uploader/uploader', function (require) {
     Component = BUI.Component,
     Theme = require('bui/uploader/theme'),
     Factory = require('bui/uploader/factory'),
-    Validator = require('bui/uploader/validator');//,
-    // Iframe = require('bui/uploader/type/iframe');
+    Validator = require('bui/uploader/validator');
 
 
   var win = window;
@@ -1879,7 +1917,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         type = _self.get('type'),
         el = _self.get('el'),
-        button = _self.get('button');
+        button = _self.get('button') || {};
       if(!button.isController){
         button.render = el;
         button.autoRender = true;
@@ -2007,6 +2045,8 @@ define('bui/uploader/uploader', function (require) {
         curUploadItem.result = result;
 
         if(isSuccess.call(_self, result)){
+          //为了兼容原来只设置了itemTpl的情况
+          BUI.mix(curUploadItem, result);
           queue.updateFileStatus(curUploadItem, 'success');
           successFn && BUI.isFunction(successFn) && successFn.call(_self, result);
           _self.fire('success', {item: curUploadItem, result: result});

@@ -98,7 +98,6 @@ define('bui/uploader/type/ajax',function(require) {
                 self.fire(AjaxType.event.ERROR, {file: file});
             }
             xhr.open("POST", url, true);
-            data.append("type", "ajax");
             xhr.send(data);
             // 重置FormData
             self._setFormData();

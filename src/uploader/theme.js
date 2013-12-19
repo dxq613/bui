@@ -34,8 +34,20 @@ define('bui/uploader/theme', function (require) {
     }
   };
 
+  //这个默认的主题
   Theme.addTheme('default', {
     elCls: 'defaultTheme'
+  });
+
+
+  //带图片预览的主题
+  Theme.addTheme('imageView', {
+    elCls: 'imageViewTheme',
+    queue:{
+      resultTpl: {
+        'success': '<div class="success"><img src="{url}" /></div>'
+      }
+    }
   });
 
   return Theme;

@@ -153,6 +153,7 @@ define('bui/swf', function (require) {
         fpvGEQ = FlashUA.fpvGEQ,
         fpvGTE = FlashUA.fpvGTE,
         OBJECT_TAG = 'object',
+        EMBED_TAG = 'embed',
         encode = encodeURIComponent,
 
     // flash player 的参数范围
@@ -629,26 +630,54 @@ define('bui/swf', function (require) {
             ie = UA.ie;
         }
 
-        // 普通属性
-        BUI.each(attrs, function (v, k) {
-            attr += stringAttr(k, v);
-        });
-
         if (ie) {
+            // 普通属性
+            BUI.each(attrs, function (v, k) {
+                attr += stringAttr(k, v);
+            });
+
             attr += stringAttr('classid', CID);
             par += stringParam('movie', src);
+
+            par += collectionParams(params);
+
+            res = LT + OBJECT_TAG + attr + GT + par;
+
         } else {
+            // 源
+            attr += stringAttr('src',src);
+
+            BUI.each(attrs, function (v, k) {
+                attr += stringAttr(k, v);
+            });
             // 源
             attr += stringAttr('data', src);
             // 特殊属性
             attr += stringAttr('type', TYPE);
+
+            // 参数属性
+            for (k in params){
+                if(k in PARAMS) par += stringAttr(k,params[k]);
+            }
+
+            // 特殊参数
+            if(params[FLASHVARS]) par += stringAttr(FLASHVARS,toFlashVars(params[FLASHVARS]));
+
+            res = LT + EMBED_TAG + attr + par  + '/'  + GT;
         }
 
-        par += collectionParams(params);
-
-        res = LT + OBJECT_TAG + attr + GT + par;
 
         return res
+    }
+
+    function _stringEmbed(src, attrs, params, ie){
+        var res,
+            attr = EMPTY,
+            par = EMPTY;
+
+        
+
+        return res;
     }
 
     // full oo 结构

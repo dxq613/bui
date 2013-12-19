@@ -9,8 +9,7 @@ define('bui/uploader/uploader', function (require) {
     Component = BUI.Component,
     Theme = require('bui/uploader/theme'),
     Factory = require('bui/uploader/factory'),
-    Validator = require('bui/uploader/validator');//,
-    // Iframe = require('bui/uploader/type/iframe');
+    Validator = require('bui/uploader/validator');
 
 
   var win = window;
@@ -153,7 +152,7 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         type = _self.get('type'),
         el = _self.get('el'),
-        button = _self.get('button');
+        button = _self.get('button') || {};
       if(!button.isController){
         button.render = el;
         button.autoRender = true;
@@ -281,6 +280,8 @@ define('bui/uploader/uploader', function (require) {
         curUploadItem.result = result;
 
         if(isSuccess.call(_self, result)){
+          //为了兼容原来只设置了itemTpl的情况
+          BUI.mix(curUploadItem, result);
           queue.updateFileStatus(curUploadItem, 'success');
           successFn && BUI.isFunction(successFn) && successFn.call(_self, result);
           _self.fire('success', {item: curUploadItem, result: result});

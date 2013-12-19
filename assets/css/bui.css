@@ -2057,6 +2057,65 @@ input.x-datepicker-time {
 .tips-notice[class*=" x-align-bottom"] .x-align-arrow-inner {
   border-bottom-color: #ffffe5;
 }
+/** 公共的一些定义 **/
+.bui-uploader .bui-uploader-button-wrap {
+  display: inline-block;
+  padding: 0 5px;
+  height: 24px;
+  overflow: hidden;
+  line-height: 24px;
+  position: relative;
+  z-index: 500;
+  margin-right: 10px;
+  text-decoration: none;
+  font-size: 12px;
+  text-align: center;
+  cursor: pointer;
+}
+.bui-uploader .bui-uploader-button-wrap .file-input-wrapper {
+  display: block;
+  width: 200px;
+  height: 26px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  z-index: 300;
+}
+.bui-uploader .bui-uploader-button-wrap .file-input-wrapper .file-input {
+  background: none repeat scroll 0 0 transparent;
+  border: medium none;
+  cursor: pointer;
+  height: 200px;
+  width: 200px;
+  top: -50px;
+  opacity: 0;
+  position: absolute;
+  font-size: 100px;
+  left: 0;
+}
+.bui-uploader .bui-uploader-button-wrap .uploader-button-swf {
+  display: block;
+  width: 200px;
+  height: 26px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
+  z-index: 300;
+}
+.bui-uploader .bui-uploader-button-wrap .uploader-button-swf .file-input {
+  background: none repeat scroll 0 0 transparent;
+  border: medium none;
+  cursor: pointer;
+  height: 200px;
+  width: 200px;
+  top: -50px;
+  opacity: 0;
+  position: absolute;
+  font-size: 100px;
+  left: 0;
+}
 /**默认定义的样式**/
 .defaultTheme .bui-uploader-button-wrap {
   display: inline-block;
@@ -2068,9 +2127,9 @@ input.x-datepicker-time {
   z-index: 500;
   margin-right: 10px;
   text-decoration: none;
-  border: 1px solid #C4DAED;
   font-size: 12px;
   text-align: center;
+  border: 1px solid #C4DAED;
   /*渐变*/
 
   background: -webkit-gradient(linear, left top, left bottom, from(#fdfefe), to(#dfe7ef));
@@ -2091,50 +2150,6 @@ input.x-datepicker-time {
 .defaultTheme .bui-uploader-button-wrap:active {
   background: #DFE7EF;
   filter: none;
-}
-.defaultTheme .bui-uploader-button-wrap .file-input-wrapper {
-  display: block;
-  width: 200px;
-  height: 26px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-  z-index: 300;
-}
-.defaultTheme .bui-uploader-button-wrap .file-input-wrapper .file-input {
-  background: none repeat scroll 0 0 transparent;
-  border: medium none;
-  cursor: pointer;
-  height: 200px;
-  width: 200px;
-  top: -50px;
-  opacity: 0;
-  position: absolute;
-  font-size: 100px;
-  left: 0;
-}
-.defaultTheme .bui-uploader-button-wrap .uploader-button-swf {
-  display: block;
-  width: 200px;
-  height: 26px;
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: hidden;
-  z-index: 300;
-}
-.defaultTheme .bui-uploader-button-wrap .uploader-button-swf .file-input {
-  background: none repeat scroll 0 0 transparent;
-  border: medium none;
-  cursor: pointer;
-  height: 200px;
-  width: 200px;
-  top: -50px;
-  opacity: 0;
-  position: absolute;
-  font-size: 100px;
-  left: 0;
 }
 .defaultTheme .bui-queue-item {
   position: relative;
@@ -2161,6 +2176,103 @@ input.x-datepicker-time {
 }
 .defaultTheme .bui-queue-item .action .bui-queue-item-del:hover {
   color: #fd7316;
+}
+/**带图片预览的主题样式**/
+.imageViewTheme .bui-uploader-button-wrap {
+  color: #333;
+  border: 1px solid #ddd;
+  background-color: #fdfcfc;
+  background-color: #eeeeee;
+  background-image: -moz-linear-gradient(left, #fdfcfc, #eeeeee);
+  background-image: -ms-linear-gradient(left, #fdfcfc, #eeeeee);
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#fdfcfc), to(#eeeeee));
+  background-image: -webkit-linear-gradient(left, #fdfcfc, #eeeeee);
+  background-image: -o-linear-gradient(left, #fdfcfc, #eeeeee);
+  background-image: linear-gradient(left, #fdfcfc, #eeeeee);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfcfc', endColorstr='#eeeeee', GradientType=1);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+}
+.imageViewTheme .bui-uploader-button-wrap:hover {
+  border-color: #369bd7;
+  background-color: #fdfcfc;
+  background-color: #e2f1fc;
+  background-image: -moz-linear-gradient(left, #fdfcfc, #e2f1fc);
+  background-image: -ms-linear-gradient(left, #fdfcfc, #e2f1fc);
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#fdfcfc), to(#e2f1fc));
+  background-image: -webkit-linear-gradient(left, #fdfcfc, #e2f1fc);
+  background-image: -o-linear-gradient(left, #fdfcfc, #e2f1fc);
+  background-image: linear-gradient(left, #fdfcfc, #e2f1fc);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfcfc', endColorstr='#e2f1fc', GradientType=1);
+}
+.imageViewTheme .bui-queue ul {
+  *zoom: 1;
+}
+.imageViewTheme .bui-queue ul:before,
+.imageViewTheme .bui-queue ul:after {
+  display: table;
+  content: "";
+}
+.imageViewTheme .bui-queue ul:after {
+  clear: both;
+}
+.imageViewTheme .bui-queue .bui-queue-item {
+  display: inline;
+  float: left;
+  margin: 0 10px 10px 0;
+  padding: 0;
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  position: relative;
+  border: solid 1px #e0e0e0;
+  background-color: #fff;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  -moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+.imageViewTheme .bui-queue .bui-queue-item .error,
+.imageViewTheme .bui-queue .bui-queue-item .progress {
+  margin-top: -10px;
+  width: 120px;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: 30;
+  color: #f00;
+  text-align: center;
+}
+.imageViewTheme .bui-queue .bui-queue-item .action .bui-queue-item-del {
+  display: none;
+  color: #676767;
+  width: 60px;
+  height: 24px;
+  line-height: 24px;
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  margin-left: -20px;
+  text-decoration: none;
+  z-index: 3000;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  text-align: center;
+  cursor: pointer;
+}
+.imageViewTheme .bui-queue .bui-queue-item:hover .action .bui-queue-item-del {
+  display: block;
+}
+.imageViewTheme .bui-queue .bui-queue-item-error {
+  border-color: #f00;
 }
 .bui-slider {
   border: 1px solid #c3c3d6;
