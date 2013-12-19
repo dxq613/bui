@@ -789,10 +789,6 @@ BUI.use('bui/form/uploaderfield',function(UploaderField){
     render : '#upload',
     label: '文件上传字段',
     uploader: {
-    },
-    rules: {
-      required: true,
-      uploader: true
     }
   });
   field.render();
