@@ -3,10 +3,6 @@ Copyright 2011, KISSY UI Library v1.1.5
 MIT Licensed
 build time: Sep 11 10:29
 */
-/**
- * AJBridge Class
- * @author kingfo oicuicu@gmail.com
- */
 define('bui/uploader/button/swfButton/ajbridge', function(require){
   var BUI = require('bui/common'),
     SWF = require('bui/swf');
@@ -14,6 +10,10 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
 
   var instances = {};
 
+  /**
+   * AJBridge Class
+   * @author kingfo oicuicu@gmail.com
+   */
   function AJBridge(config){
     AJBridge.superclass.constructor.call(this, config);
   }
@@ -211,9 +211,8 @@ define('bui/uploader/button/filter', function(require){
       return type.join(',');
     }
   }
-});
-
-/**
+});/**
+ * @ignore
  * @fileoverview 文件上传按钮的基类
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
@@ -269,7 +268,7 @@ define('bui/uploader/button/base', function(require) {
   function baseView() {
   }
 
-  baseView.ATTRS = /** @lends Base.prototype */{
+  baseView.ATTRS = {
   }
 
   baseView.prototype = {
@@ -282,7 +281,10 @@ define('bui/uploader/button/base', function(require) {
     }
   }
 
-
+  /**
+   * 上传组件按钮的基类
+   * @class BUI.Uploader.Button.Base
+   */
   function base(){
 
   }
@@ -343,22 +345,41 @@ define('bui/uploader/button/base', function(require) {
   };
 
   base.prototype = {
-    //设置文件的扩展信息
+    /**
+     * 获取文件的扩展信息
+     * @param  {[type]} file [description]
+     * @return {[type]}      [description]
+     */
     getExtFileData: function(file){
       var filename = getFileName(file.name),
         textSize = convertByteSize(file.size || 0),
-        extName = getFileExtName(file.name);
-      BUI.mix(file, {
-        name: filename,
-        textSize: textSize,
-        ext: extName,
-        id: getFileId(file)
-      });
+        extName = getFileExtName(file.name),
+        fileAttrs = {
+          name: filename,
+          size: file.size,
+          type: file.type,
+          textSize: textSize,
+          ext: extName,
+          id: getFileId(file)
+        };
+      return fileAttrs;
+    },
+    /**
+     * @protected
+     */
+    _getFile: function(file){
+      var _self = this,
+        fileAttrs = _self.getExtFileData(file);
+      BUI.mix(file, fileAttrs);
+
+      //因为在结果模板构建的时候很有可能会使用文件本身的属性，如name，size之类的
+      //所以将这些属性放到一个变量里，在渲染模板的时候和result mix一下
+      file.attr = fileAttrs;
       return file;
     },
-    setMultiple: function(){
+    setMultiple: function(v){
     },
-    setDisabled: function(){
+    setDisabled: function(v){
     },
     getFilter: function(v){
       if(v){
@@ -394,6 +415,7 @@ define('bui/uploader/button/base', function(require) {
 
 });
 /**
+ * @ignore
  * @fileoverview 文件上传按钮,使用input[type=file]
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
@@ -416,20 +438,19 @@ define('bui/uploader/button/htmlButton', function(require) {
   });
 
   /**
-   * @name HtmlButton
-   * @class 文件上传按钮，ajax和iframe上传方式使用
-   * @constructor
+   * 文件上传按钮，ajax和iframe上传方式使用,使用的是input[type=file]
+   * @class BUI.Uploader.Button.HtmlButton
+   * @extends BUI.Component.Controller
+   * @mixins BUI.Uploader.Button
    */
   var HtmlButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
       var _self = this;
       _self._createInput();
     },
-    bindUI: function(){
-
-    },
     /**
      * 创建隐藏的表单上传域
+     * @private
      * @return {HTMLElement} 文件上传域容器
      */
     _createInput: function() {
@@ -457,10 +478,12 @@ define('bui/uploader/button/htmlButton', function(require) {
       _self.set('fileInput', fileInput);
 
       _self.setMultiple(_self.get('multiple'));
+      _self.setDisabled(_self.get('disabled'));
       _self.setFilter(_self.get('filter'));
-      //_self._setDisabled(_self.get('disabled'));
     },
-
+    /**
+     * 绑定input[type=file]的文件选中事件
+     */
     _bindChangeHandler: function(fileInput) {
       var _self = this;
       //上传框的值改变后触发
@@ -472,10 +495,10 @@ define('bui/uploader/button/htmlButton', function(require) {
         //IE取不到files
         if(oFiles){
           BUI.each(oFiles, function(v){
-            files.push(_self.getExtFileData({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput[0]}));
+            files.push(_self._getFile({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput}));
           });
         }else{
-          files.push(_self.getExtFileData({'name': value, input: fileInput[0]}));
+          files.push(_self._getFile({'name': value, input: fileInput}));
         }
         _self.fire('change', {
           files: files,
@@ -515,6 +538,16 @@ define('bui/uploader/button/htmlButton', function(require) {
       }
       return multiple;
     },
+    setDisabled: function(v){
+      var _self = this,
+        fileInput = _self.get('fileInput');
+      if (v) {
+        fileInput.hide();
+      }
+      else{
+        fileInput.show();
+      }
+    },
     /**
      * 设置上传文件的类型
      * @param {[type]} filter 可上传文件的类型
@@ -543,7 +576,6 @@ define('bui/uploader/button/htmlButton', function(require) {
       /**
        * 对应的表单上传域
        * @type KISSY.Node
-       * @default ""
        */
       fileInput: {
       },
@@ -572,6 +604,7 @@ define('bui/uploader/button/htmlButton', function(require) {
 
 });
 /**
+ * @ignore
  * @fileoverview flash上传按钮
  * @author: zengyue.yezy
  **/
@@ -581,7 +614,7 @@ define('bui/uploader/button/swfButton', function (require) {
     Component = BUI.Component,
     ButtonBase = require('bui/uploader/button/base'),
     SwfUploader = require('bui/uploader/type/flash'),
-    baseUrl = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base,
+    baseUrl = seajs.data.base,
     SWF = require('bui/uploader/button/swfButton/ajbridge');
 
 
@@ -591,10 +624,15 @@ define('bui/uploader/button/swfButton', function (require) {
     }
   });
 
+  /**
+   * 文件上传按钮，flash上传方式使用,使用的是flash
+   * @class BUI.Uploader.Button.SwfButton
+   * @extends BUI.Component.Controller
+   * @mixins BUI.Uploader.Button
+   */
   var SwfButton = Component.Controller.extend([ButtonBase], {
     renderUI: function(){
       var _self = this;
-
       _self._initSwfUploader();
     },
     bindUI: function(){
@@ -607,7 +645,7 @@ define('bui/uploader/button/swfButton', function (require) {
           var fileList = ev.fileList,
             files = [];
           BUI.each(fileList, function(file){
-            files.push(_self.getExtFileData(file));
+            files.push(_self._getFile(file));
           });
           _self.fire('change', {files: files});
         });
@@ -621,13 +659,16 @@ define('bui/uploader/button/swfButton', function (require) {
         buttonCls = _self.get('buttonCls'),
         buttonEl = _self.get('el').find('.' + buttonCls),
         flashCfg = _self.get('flash'),
+        flashUrl = _self.get('flashUrl'),
         swfTpl = _self.get('swfTpl'),
+        swfEl = $(swfTpl).appendTo(buttonEl),
         swfUploader;
-
       BUI.mix(flashCfg, {
-        render: $(swfTpl).appendTo(buttonEl)
+        render: swfEl,
+        src: flashUrl
       });
       swfUploader = new SWF(flashCfg);
+      _self.set('swfEl', swfEl);
       _self.set('swfUploader', swfUploader);
     },
     setMultiple: function(v){
@@ -635,21 +676,45 @@ define('bui/uploader/button/swfButton', function (require) {
         swfUploader = _self.get('swfUploader');
       swfUploader && swfUploader.multifile(v);
     },
+    setDisabled: function(v){
+      var _self = this,
+        swfEl = _self.get('swfEl');
+      if(v){
+        swfEl.hide();
+      }
+      else{
+         swfEl.show();
+      }
+    },
+    _convertFilter: function(v){
+      var desc = v.desc,
+        ext = [];
+      BUI.each(v.ext.split(','), function(item){
+        item && ext.push('*' + item);
+      });
+      v.ext = ext.join(';');
+      return v;
+    },
     setFilter: function(v){
       var _self = this,
         swfUploader = _self.get('swfUploader'),
-        filter = _self.getFilter(v);
+        filter = _self._convertFilter(_self.getFilter(v));
       //flash里需要一个数组
-      swfUploader && swfUploader.filter([v]);
+      // console.log(BUI.JSON.stringify(filter));
+      swfUploader && swfUploader.filter([filter]);
       return v;
     }
   },{
     ATTRS: {
+      swfEl:{
+      },
       swfUploader:{
+      },
+      flashUrl:{
+        value: baseUrl + 'uploader/uploader.swf'
       },
       flash:{
         value:{
-          src:baseUrl + 'uploader/uploader.swf',
           params:{
             allowscriptaccess: 'always',
             bgcolor:"#fff",
@@ -662,7 +727,8 @@ define('bui/uploader/button/swfButton', function (require) {
               jsEntry: 'BUI.AJBridge.eventHandler'
             }
           }
-        }
+        },
+        shared: false
       },
       swfTpl:{
         view: true,
@@ -814,7 +880,7 @@ define('bui/uploader/type/base',function(require) {
         }
         return data;
     },
-    clear: function(){
+    reset: function(){
     }
   });
 
@@ -926,7 +992,7 @@ define('bui/uploader/type/ajax',function(require) {
             self.set('xhr',xhr);
             return self;
         },
-        clear: function(){
+        reset: function(){
         },
         /**
          * 设置FormData数据
@@ -1099,7 +1165,7 @@ define('bui/uploader/type/flash', function (require) {
             }
             return _self;
         },
-        clear: function(){
+        reset: function(){
 
         },
         /**
@@ -1159,6 +1225,236 @@ define('bui/uploader/type/flash', function (require) {
     }});
     return FlashType;
 });/**
+ * @fileoverview iframe方案上传
+ * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
+ **/
+define('bui/uploader/type/iframe',function(require) {
+    var ID_PREFIX = 'bui-uploader-iframe-';
+
+    var UploadType = require('bui/uploader/type/base');
+    /**
+     * @name IframeType
+     * @class iframe方案上传，全浏览器支持
+     * @constructor
+     * @extends UploadType
+     * @param {Object} config 组件配置（下面的参数为配置项，配置会写入属性，详细的配置说明请看属性部分）
+     *
+     */
+    function IframeType(config) {
+        var _self = this;
+        //调用父类构造函数
+        IframeType.superclass.constructor.call(_self, config);
+    }
+
+    BUI.mix(IframeType, /**@lends IframeType*/ {
+        /**
+         * 会用到的html模板
+         */
+        tpl : {
+            IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
+            FORM : '<form method="post" enctype="multipart/form-data" action="{action}" target="{target}" style="visibility: hidden;">{hiddenInputs}</form>',
+            HIDDEN_INPUT : '<input type="hidden" name="{name}" value="{value}" />'
+        },
+        /**
+         * 事件列表
+         */
+        event : BUI.mix(UploadType.event,{
+            //创建iframe和form后触发
+            CREATE : 'create',
+            //删除form后触发
+            REMOVE : 'remove'
+        })
+    });
+
+    //继承于Base，属性getter和setter委托于Base处理
+    BUI.extend(IframeType, UploadType, /** @lends IframeType.prototype*/{
+        /**
+         * 上传文件
+         * @param {HTMLElement} fileInput 文件input
+         */
+        upload : function(file) {
+            var _self = this,
+                input = file.input,
+                form;
+            if (!file){
+                return false
+            };
+            _self.fire(IframeType.event.START, {file: file});
+            _self.set('file', file);
+            _self.set('fileInput', input);
+            //创建iframe和form
+            _self._create();
+            form = _self.get('form');
+            //提交表单到iframe内
+            form && form[0].submit();
+        },
+        /**
+         * 停止上传
+         * @return {IframeType}
+         */
+        stop : function() {
+            var self = this,iframe = self.get('iframe');
+            iframe.attr('src', 'javascript:"<html></html>";');
+            self.reset();
+            self.fire(IframeType.event.STOP);
+            self.fire(IframeType.event.ERROR, {status : 'abort',msg : '上传失败，原因：abort'});
+            return self;
+        },
+        /**
+         * 将参数数据转换成hidden元素
+         * @param {Object} data 对象数据
+         * @return {String} hiddenInputHtml hidden元素html片段
+         */
+        dataToHidden : function(data) {
+            if (!$.isPlainObject(data) || $.isEmptyObject(data)) return '';
+            var self = this,
+                hiddenInputHtml = [],
+                //hidden元素模板
+                tpl = self.get('tpl'),hiddenTpl = tpl.HIDDEN_INPUT;
+            if (!BUI.isString(hiddenTpl)) return '';
+            for (var k in data) {
+                hiddenInputHtml.push(BUI.substitute(hiddenTpl, {'name' : k,'value' : data[k]}));
+            }
+            return hiddenInputHtml.join();
+        },
+        /**
+         * 创建一个空的iframe，用于文件上传表单提交后返回服务器端数据
+         * @return {NodeList}
+         */
+        _createIframe : function() {
+            var self = this,
+                //iframe的id
+                id = ID_PREFIX + BUI.guid(),
+                //iframe模板
+                tpl = self.get('tpl'),
+                iframeTpl = tpl.IFRAME,
+                existIframe = self.get('iframe'),
+                iframe;
+            //先判断是否已经存在iframe，存在直接返回iframe
+            if (!$.isEmptyObject(existIframe)) return existIframe;
+
+            //创建处理上传的iframe
+            iframe = $(BUI.substitute(tpl.IFRAME, { 'id' : id }));
+            //监听iframe的load事件
+            $('body').append(iframe);
+            iframe.on('load', function(ev){
+                self._iframeLoadHandler(ev);
+            });
+            self.set('id',id);
+            self.set('iframe', iframe);
+            return iframe;
+        },
+        /**
+         * iframe加载完成后触发（文件上传结束后）
+         */
+        _iframeLoadHandler : function(ev) {
+            var self = this,iframe = ev.target,
+                errorEvent = IframeType.event.ERROR,
+                doc = iframe.contentDocument || window.frames[iframe.id].document,
+                result;
+            if (!doc || !doc.body) {
+                self.fire(errorEvent, {msg : '服务器端返回数据有问题！'});
+                return false;
+            }
+            var response = doc.body.innerHTML;
+            //输出为直接退出
+            if(response == ''){
+                self.fire('error');
+                return;
+            };
+            result = self._processResponse(response);
+
+            self.fire('complete', {result: result, file: self.get('file')});
+            self.reset();
+        },
+        /**
+         * 创建文件上传表单
+         * @return {NodeList}
+         */
+        _createForm : function() {
+            var self = this,
+                //iframe的id
+                id = self.get('id'),
+                //form模板
+                tpl = self.get('tpl'),formTpl = tpl.FORM,
+                //想要传送给服务器端的数据
+                data = self.get('data'),
+                //服务器端处理文件上传的路径
+                action = self.get('url'),
+                fileInput = self.get('fileInput'),
+                hiddens,
+                form;
+            if (!BUI.isString(formTpl)) {
+                return false;
+            }
+            if (!BUI.isString(action)) {
+                return false;
+            }
+            hiddens = self.dataToHidden(data);
+            hiddens += self.dataToHidden({"type":"iframe"});
+            form = BUI.substitute(formTpl, {'action' : action,'target' : id,'hiddenInputs' : hiddens});
+            //克隆文件域，并添加到form中
+            form = $(form).append(fileInput);
+            $('body').append(form);
+            self.set('form', form);
+            return form;
+        },
+        /**
+         * 创建iframe和form
+         */
+        _create : function() {
+            var _self = this,
+                iframe = _self._createIframe(),
+                form = _self._createForm();
+
+            _self.fire(IframeType.event.CREATE, {iframe : iframe,form : form});
+        },
+        /**
+         * 移除表单
+         */
+        _remove : function() {
+            var self = this,form = self.get('form');
+            if(!form)return false;
+            //移除表单
+            form.remove();
+            //重置form属性
+            self.set('form', null);
+            self.fire(IframeType.event.REMOVE, {form : form});
+        },
+        reset: function(){
+            var _self = this;
+            _self._remove();
+            _self.set('file', null);
+        }
+    }, {ATTRS : /** @lends IframeType.prototype*/{
+        /**
+         * iframe方案会用到的html模板，一般不需要修改
+         * @type {}
+         * @default
+         * {
+         IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
+         FORM : '<form method="post" enctype="multipart/form-data" action="{action}" target="{target}">{hiddenInputs}</form>',
+         HIDDEN_INPUT : '<input type="hidden" name="{name}" value="{value}" />'
+         }
+         */
+        tpl : {value : IframeType.tpl},
+        /**
+         * 只读，创建的iframeid,id为组件自动创建
+         * @type String
+         * @default  'ks-uploader-iframe-' +随机id
+         */
+        id : {value : ID_PREFIX + BUI.guid()},
+        /**
+         * iframe
+         */
+        iframe : {value : {}},
+        form : {},
+        fileInput : {}
+    }});
+
+    return IframeType;
+});/**
+ * @ignore
  * @fileoverview 文件上传队列列表显示和处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
@@ -1170,6 +1466,11 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   var CLS_QUEUE = BUI.prefix + 'queue',
     CLS_QUEUE_ITEM = CLS_QUEUE + '-item';
   
+  /**
+   * 上传文件的显示队列
+   * @class BUI.Uploader.Queue
+   * @extends BUI.List.SimpleList
+   */
   var Queue = SimpleList.extend({
     bindUI: function () {
       var _self = this,
@@ -1177,7 +1478,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
         delCls = _self.get('delCls');
 
       el.delegate('.' + delCls, 'click', function (ev) {
-        var itemContainer = $(ev.target).parent(),
+        var itemContainer = $(ev.target).parents('.bui-queue-item'),
           uploader = _self.get('uploader'),
           item = _self.getItemByElement(itemContainer);
         uploader && uploader.cancel && uploader.cancel(item);
@@ -1185,11 +1486,10 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       });
     },
     /**
-     * 由于一个文件只能处理一种状态，所以在更新状态前要把所有的文件状态去掉
-     * @param  {[type]} item    [description]
-     * @param  {[type]} status  [description]
-     * @param  {[type]} element [description]
-     * @return {[type]}         [description]
+     * 更新文件上传的状态
+     * @param  {Object} item
+     * @param  {String} status  上传的状态
+     * @param  {HtmlElement} element 这一项对应的dom元素
      */
     updateFileStatus: function(item, status, element){
       var _self = this,
@@ -1201,12 +1501,37 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
       });
 
       _self.setItemStatus(item,status,true,element);
+      _self._setResultTpl(item, status);
       _self.updateItem(item);
+    },
+    /**
+     * 根据上传的状态设置上传列表的模板
+     * @private
+     * @param {String} 状态名称
+     */
+    _setResultTpl: function(item, status){
+      var _self = this,
+        resultTpl = _self.get('resultTpl'),
+        itemTpl = resultTpl[status] || resultTpl['default'] || _self.get('itemTpl'),
+        tplData = BUI.mix({}, item.attr, item.result);
+      item.resultTpl = BUI.substitute(itemTpl, tplData);
     }
   }, {
     ATTRS: {
       itemTpl: {
-        value: '<li><span data-url="{url}">{name}</span><div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div><div class="' + CLS_QUEUE_ITEM + '-del">删除</div></li>'
+        value: '<li>{resultTpl} <span class="action"><span class="' + CLS_QUEUE_ITEM + '-del">删除</span></span></li>'
+      },
+      /**
+       * 上传结果的模板，可根据上传状态的不同进行设置，没有时取默认的
+       * @type {Object}
+       */
+      resultTpl:{
+        value: {
+          'default': '<div class="default">{name}</div>',
+          success: '<div data-url="{url}" class="success">{name}</div>',
+          error: '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+          progress: '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+        }
       },
       itemCls: {
         value: CLS_QUEUE_ITEM
@@ -1231,6 +1556,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
   return Queue;
 
 });/**
+ * @ignore
  * @fileoverview 文件上传主题的处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
@@ -1240,10 +1566,25 @@ define('bui/uploader/theme', function (require) {
 
   var themes = {};
 
+  /**
+   * 文件上传的主题设置
+   * @class BUI.Uploader.Theme
+   * @static
+   */
   var Theme = {
+    /**
+     * 添加一个主题
+     * @param {String} name   主题名称
+     * @param {Object} 主题的配置
+     */
     addTheme: function(name, config){
       themes[name] = config;
     },
+    /**
+     * 获取一个主题
+     * @param  {String} name [description]
+     * @return {BUI.Uploader.Theme} 主题的配置
+     */
     getTheme: function(name){
       //不能覆盖主题设置的
       return BUI.cloneObject(themes[name]);
@@ -1251,15 +1592,94 @@ define('bui/uploader/theme', function (require) {
   };
 
   Theme.addTheme('default', {
-    button: {
-      elCls: 'defaultTheme-button'
-    },
-    queue: {
-      elCls: 'defaultTheme-queue'
-    }
+    elCls: 'defaultTheme'
   });
 
   return Theme;
+
+});/**
+ * @ignore
+ * @fileoverview 异步文件上传的验证器
+ * @author 索丘 zengyue.yezy@alibaba-inc.com
+ **/
+define('bui/uploader/validator', function (require) {
+
+  var BUI = require('bui/common');
+
+  /**
+   * 异步文件上传的验证器
+   * @class BUI.Uploader.Validator
+   * @extend BUI.Base
+   */
+  function Validator(config){
+    Validator.superclass.constructor.call(this, config);
+  }
+
+  Validator.ATTRS = {
+    /**
+     * 上传组件的校验规则
+     * @type {Object}
+     */
+    rules: {
+
+    },
+    queue: {
+
+    }
+  }
+
+  BUI.extend(Validator, BUI.Base);
+
+  BUI.augment(Validator, {
+    /**
+     * 校验文件是否符合规则，并设置文件的状态
+     * @param  {Object} item
+     * @return {[type]}      [description]
+     */
+    valid: function(item){
+      this._validItem(item);
+    },
+    _validItem: function(item){
+      var _self = this,
+        rules = _self.get('rules');
+      BUI.each(rules, function(rule, name){
+        _self._validRule(item, name, rule);
+      })
+    },
+    _validRule: function(item, name, rule){
+      // var validFn = this.getRuleFn()
+      var queue = this.get('queue');
+      if(name === 'maxSize'){
+        if(item.size > rule * 1000){
+          item.result = {msg: '文件大小不能大于' + rule + 'k'};
+          queue.updateFileStatus(item, 'error');
+        }
+      }
+    },
+    testMaxSize: function(item, maxSize){
+      if(item.size > rule * 1024){
+        var result = {
+          msg: ''
+        }
+        return result;
+      }
+    }
+  });
+
+
+  // function ruleMap = {};
+
+  // Validator.addRule = function(name, fn){
+  //   ruleMap[name] = fn;
+  // }
+
+  // Validator.addRule('maxSize', function(value, baseValue, formatMsg){
+  //   if(value > baseValue){
+  //     return formatMsg;
+  //   }
+  // });
+
+  return Validator;
 
 });/**
  * @fileoverview 文件上传的工厂类
@@ -1272,18 +1692,21 @@ define('bui/uploader/factory', function (require) {
     HtmlButton = require('bui/uploader/button/htmlButton'),
     SwfButton = require('bui/uploader/button/swfButton'),
     Ajax = require('bui/uploader/type/ajax'),
-    Flash = require('bui/uploader/type/flash');
+    Flash = require('bui/uploader/type/flash'),
+    Iframe = require('bui/uploader/type/iframe');
 
   function Factory(){
   }
-
   Factory.prototype = {
     createUploadType: function(type, config){
       if (type === 'ajax') {
         return new Ajax(config);
       }
-      else{
+      else if(type === 'flash'){
         return new Flash(config);
+      }
+      else{
+        return new Iframe(config);
       }
     },
     createButton: function(type, config){
@@ -1302,6 +1725,7 @@ define('bui/uploader/factory', function (require) {
   return new Factory();
 
 });/**
+ * @ignore
  * @fileoverview 异步文件上传组件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
@@ -1310,7 +1734,8 @@ define('bui/uploader/uploader', function (require) {
   var BUI = require('bui/common'),
     Component = BUI.Component,
     Theme = require('bui/uploader/theme'),
-    Factory = require('bui/uploader/factory');//,
+    Factory = require('bui/uploader/factory'),
+    Validator = require('bui/uploader/validator');//,
     // Iframe = require('bui/uploader/type/iframe');
 
 
@@ -1327,15 +1752,21 @@ define('bui/uploader/uploader', function (require) {
     }
   });
 
-
-  var Uploader = Component.Controller.extend(/** @lends Uploader.prototype*/{
+  /**
+   * 文件上传组组件
+   * @class BUI.Uploader.Uploader
+   * @extends BUI.Component.Controller
+   */
+  var Uploader = Component.Controller.extend({
     renderUI: function(){
       var _self = this;
       _self._initTheme();
       _self._initType();
+      
       _self._renderButton();
       _self._renderUploaderType();
       _self._renderQueue();
+      _self._initValidator();
     },
     bindUI: function () {
       var _self = this;
@@ -1357,6 +1788,10 @@ define('bui/uploader/uploader', function (require) {
     isSupportFlash: function(){
       return true;
     },
+    /**
+     * @private
+     * 初始化使用的主题
+     */
     _initTheme: function(){
       var _self = this,
         theme = Theme.getTheme(_self.get('theme')),
@@ -1365,7 +1800,7 @@ define('bui/uploader/uploader', function (require) {
         if(attrVals[name] === undefined){
           _self.set(name, value);
         }
-        else if(BUI.isObject(value)){
+        else if($.isPlainObject(value)){
           BUI.mix(value, attrVals[name]);
           _self.set(name, value);
         }
@@ -1379,7 +1814,7 @@ define('bui/uploader/uploader', function (require) {
     _initType: function(){
       var _self = this,
         types = _self.get('types'),
-        type = _self.get('type')
+        type = _self.get('type');
       //没有设置时按最优处理，有则按设定的处理
       if(!type){
         if(_self.isSupportAjax()){
@@ -1395,7 +1830,23 @@ define('bui/uploader/uploader', function (require) {
       _self.set('type', type);
     },
     /**
+     * 初始化验证器
+     * @private
+     */
+    _initValidator: function(){
+      var _self = this,
+        validator = _self.get('validator');
+      if(!validator){
+        validator = new Validator({
+          queue: _self.get('queue'),
+          rules: _self.get('rules')
+        });
+        _self.set('validator', validator);
+      }
+    },
+    /**
      * 获取用户的配置信息
+     * @private
      */
     _getUserConfig: function(keys){
       var attrVals = this.getAttrVals(),
@@ -1408,6 +1859,10 @@ define('bui/uploader/uploader', function (require) {
       });
       return config;
     },
+    /**
+     * 初始线上传类型的实例
+     * @private
+     */
     _renderUploaderType: function(){
       var _self = this,
         type = _self.get('type'),
@@ -1418,14 +1873,14 @@ define('bui/uploader/uploader', function (require) {
     },
     /**
      * 初始化Button
-     * @return {[type]} [description]
+     * @private
      */
     _renderButton: function(){
       var _self = this,
         type = _self.get('type'),
         el = _self.get('el'),
-        button = _self.get('button') || {};
-      if(!(button instanceof Component.Controller)){
+        button = _self.get('button');
+      if(!button.isController){
         button.render = el;
         button.autoRender = true;
         button = Factory.createButton(type, button);
@@ -1435,13 +1890,13 @@ define('bui/uploader/uploader', function (require) {
     },
     /**
      * 初始化上传的对列
-     * @return {[type]} [description]
+     * @private
      */
     _renderQueue: function(){
       var _self = this,
         el = _self.get('el'),
         queue = _self.get('queue') || {};
-      if (!(queue instanceof Component.Controller)) {
+      if (!queue.isController) {
         queue.render = el;
         queue.autoRender = true;
         //queue.uploader = _self;
@@ -1450,28 +1905,39 @@ define('bui/uploader/uploader', function (require) {
       }
       queue.set('uploader', _self);
     },
+    /**
+     * 绑定button的事件
+     * @private
+     */
     _bindButton: function () {
       var _self = this,
         button = _self.get('button'),
         queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
       button.on('change', function(ev) {
-
+        var files = ev.files;
         //对添加的文件添加等待状态
-        BUI.each(ev.files, function(file){
-          BUI.mix(file, {
-            wait: true
-          });
+        BUI.each(files, function(file){
+          file.wait = true;
         });
-        queue.addItems(ev.files);
+        // validator.valid(files);
+        queue.addItems(files);
+        _self.fire('change', {items: files});
       });
     },
+    /**
+     * 绑定上传的对列
+     * @private
+     */
     _bindQueue: function () {
       var _self = this,
-        queue = _self.get('queue');
+        queue = _self.get('queue'),
+        validator = _self.get('validator');
+      // queue.on('itemrendered', function(ev){
+      //   validator.valid(ev.item);
+      // })
       queue.on('itemrendered itemupdated', function(ev) {
         var items = queue.getItemsByStatus('wait');
-
         //如果有等待的文件则上传第1个
         if (items && items.length) {
           _self.uploadFile(items[0]);
@@ -1480,25 +1946,28 @@ define('bui/uploader/uploader', function (require) {
       });
     },
     /**
-     * 
-     * @return {[type]} [description]
+     * 文件上传的处理函数
+     * @private
      */
     _bindUploaderCore: function () {
       var _self = this,
         queue = _self.get('queue'),
         uploaderType = _self.get('uploaderType');
 
+      //start事件
       uploaderType.on('start', function(ev){
-        _self.fire('start', {item: ev.file});
+        var item = ev.file;
+        delete item.result;
+        _self.fire('start', {item: item});
       });
-
+      //上传的progress事件
       uploaderType.on('progress', function(ev){
 
         var curUploadItem = _self.get('curUploadItem'),
           loaded = ev.loaded,
           total = ev.total;
 
-        BUI.mix(curUploadItem, {
+        BUI.mix(curUploadItem.attr, {
           loaded: loaded,
           total: total,
           loadedPercent: loaded * 100 / total
@@ -1509,7 +1978,7 @@ define('bui/uploader/uploader', function (require) {
 
         _self.fire('progress', {item: curUploadItem, total: total, loaded: loaded});
       });
-
+      //上传过程中的error事件，这时一般是当校验出错是才会出现
       uploaderType.on('error', function(ev){
         var curUploadItem = _self.get('curUploadItem'),
           errorFn = _self.get('error'),
@@ -1534,6 +2003,7 @@ define('bui/uploader/uploader', function (require) {
           errorFn = _self.get('error'),
           completeFn = _self.get('complete');
 
+        // BUI.mix(curUploadItem.result, result);
         curUploadItem.result = result;
 
         if(isSuccess.call(_self, result)){
@@ -1555,6 +2025,10 @@ define('bui/uploader/uploader', function (require) {
         _self.uploadFiles();
       });
     },
+    /**
+     * 开始进行上传
+     * @param  {Object} item
+     */
     uploadFile: function (item) {
       var _self = this,
         queue = _self.get('queue'),
@@ -1572,7 +2046,6 @@ define('bui/uploader/uploader', function (require) {
     },
     /**
      * 上传文件，只对对列中所有wait状态的文件
-     * @return {[type]} [description]
      */
     uploadFiles: function () {
       var _self = this,
@@ -1585,6 +2058,9 @@ define('bui/uploader/uploader', function (require) {
         _self.uploadFile(items[0]);
       }
     },
+    /**
+     * 取消正在上传的文件 
+     */
     cancel: function(){
       var _self = this,
         uploaderType = _self.get('uploaderType'),
@@ -1593,13 +2069,18 @@ define('bui/uploader/uploader', function (require) {
       _self.fire('cancel', {item: curUploadItem});
       uploaderType.cancel();
       _self.set('curUploadItem', null);
+    },
+    /**
+     * 校验是否通过
+     * @description 判断成功的数量和列表中的数量是否一致
+     */
+    isValid: function(){
+      var _self = this,
+        queue = _self.get('queue');
+      return queue.getItemsByStatus('success').length === queue.getItems().length;
     }
   }, {
     ATTRS: /** @lends Uploader.prototype*/{
-      /**
-       * 上传的类型，有ajax,flash,iframe四种
-       * @type {String}
-       */
       types: {
         value: {
           AJAX: 'ajax',
@@ -1608,26 +2089,53 @@ define('bui/uploader/uploader', function (require) {
         }
       },
       /**
-       * 当前使用的上传类型
+       * 上传的类型，有ajax,flash,iframe四种
        * @type {String}
        */
       type: {
       },
+      /**
+       * 主题
+       * @type {BUI.Uploader.Theme}
+       */
       theme: {
         value: 'default'
       },
+      /**
+       * 上传组件的button对像
+       * @type {BUI.Uploader.Button}
+       */
       button: {
+        setter: function(v){
+          var disabled = this.get('disabled');
+          if(v && v.isController){
+            v.set('disabled', disabled);
+          }
+          return v;
+        }
       },
+      disabled: {
+        value: false,
+        setter: function(v){
+          var _self = this,
+            button = _self.get('button');
+          button && button.isController && button.set('disabled', true);
+        }
+      },
+      /**
+       * 上传组件的上传对列
+       * @type {BUI.Uploader.Queue}
+       */
       queue: {
       },
       /**
-       * 当前上传的状
-       * @type {Object}
+       * 当前上传的状态
+       * @type {String}
        */
       uploadStatus: {
       },
       /**
-       * 判断上传是否已经成功
+       * 判断上传是否已经成功，默认判断返回的url中是否有url这个值
        * @type {Function}
        */
       isSuccess: {
@@ -1638,11 +2146,11 @@ define('bui/uploader/uploader', function (require) {
           return false;
         }
       },
-      success: {
-      },
-      error: {
-      },
-      complete: {
+      /**
+       * uploader的验证器
+       * @type {BUI.Uploader.Validator}
+       */
+      validator: {
       },
       xview: {
         value: UploaderView

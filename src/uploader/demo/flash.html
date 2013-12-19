@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>使用flash上传</title>
+  <link href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css" rel="stylesheet"> 
+  <link href="../../../assets/css/bui.css" rel="stylesheet">
+
+  <script src="http://a.tbcdn.cn/s/bui/jquery-1.8.1.min.js"></script>
+  <script src="../../../build/bui-min.js"></script>
+
+</head>
+<body>
+  <div class="row">
+    <div class="span8">
+      <div id="J_Uploader">
+        <input type="hidden" />
+      </div>
+    </div>
+  </div>
+<script>
+  BUI.setDebug(true);
+  BUI.use('bui/uploader', function(Uploader){
+    //使用此类型时，需要确认assets的域名是否和上传路径的域名一致
+    //如果不一致，则需要在上传路径的根目录下主置crossdomain.xml文件
+    //或者把uploader.swf放到同域名下，然后指定flashUrl
+    var uploader = new Uploader.Uploader({
+      type:'flash',
+      render: '#J_Uploader',
+      url: '../../../test/upload/upload.php'//,
+      // button: {
+      //   flashUrl: baseUrl + 'uploader/uploader.swf'
+      // }
+    });
+    uploader.render();
+  });
+</script>
+</body>
+</html>

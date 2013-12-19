@@ -19410,7 +19410,8 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
 
   var BUI = require('bui/common'),
     JSON = BUI.JSON,
-    Field = require('bui/form/basefield');
+    Field = require('bui/form/basefield'),
+    Rules = require('bui/form/rules');
 
   /**
    * \u8868\u5355\u4e0a\u4f20\u57df
@@ -19425,6 +19426,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
       if(_self.get('srcNode') && innerControl.get(0).type === 'file'){ //\u5982\u679c\u4f7f\u7528\u73b0\u6709DOM\u751f\u6210\uff0c\u4e0d\u4f7f\u7528\u4e0a\u4f20\u7ec4\u4ef6
         return;
       }
+      _self._initControlValue();
       _self._initUpload();
     },
     _initUpload: function(){
@@ -19439,21 +19441,66 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         _self.set('uploader', uploader);
         _self.set('isCreate',true);
         _self.get('children').push(uploader);
-        uploader.get('uploaderType').on('success', function(ev){
-          var items = uploader.get('queue').getItems();
-          _self.setControlValue(items);
+
+        
+        _self._initQueue(uploader.get('queue'));
+        
+        uploader.on('success', function(ev){
+          var result = _self._getUploaderResult();
+          _self.setControlValue(result);
         });
+        uploader.get('queue').on('itemremoved', function(){
+          var result = _self._getUploaderResult();
+          _self.setControlValue(result);
+        })
       });
+    },
+    _getUploaderResult: function(){
+      var _self = this,
+        uploader = _self.get('uploader'),
+        queue = uploader.get('queue'),
+        items = queue.getItems(),
+        result = [];
+
+      BUI.each(items, function(item){
+        item.result && result.push(item.result);
+      });
+      return result;
     },
     setControlValue: function(items){
       var _self = this,
-        innerControl = _self.getInnerControl(),
+        innerControl = _self.getInnerControl();
+      // _self.fire('change');
+      innerControl.val(JSON.stringify(items));
+    },
+    _initControlValue: function(){
+      var _self = this,
+        textValue = _self.getControlValue(),
+        value;
+      if(textValue){
+        value = BUI.JSON.parse(textValue);
+        _self.set('value', value);
+      }
+    },
+    _initQueue: function(queue){
+      var _self = this,
+        value = _self.get('value'),
         result = [];
-      BUI.each(items, function(item){
-        result.push(item.result);
-      })
-      innerControl.val(JSON.stringify(result));
-    }
+      //\u521d\u59cb\u5316\u5bf9\u5217\u9ed8\u8ba4\u6210\u529f
+      BUI.each(value, function(item){
+        var newItem = BUI.cloneObject(item);
+        newItem.success = true;
+        newItem.result = item;
+        result.push(newItem);
+      });
+      queue && queue.setItems(result);
+    }//,
+    // valid: function(){
+    //   var _self = this,
+    //     uploader = _self.get('uploader');
+    //   uploaderField.superclass.valid.call(_self);
+    //   uploader.valid();
+    // }
   },{
     ATTRS : {
       /**
@@ -19464,14 +19511,42 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         value : '<input type="hidden"/>'
       },
       uploader: {
+        setter: function(v){
+          var disabled = this.get('disabled');
+          v && v.isController && v.set('disabled', disabled);
+          return v;
+        }
+      },
+
+      disabled: {
+        setter: function(v){
+          var _self = this,
+            uploader = _self.get('uploader');
+          uploader && uploader.isController && uploader.set('disabled', v);
+        }
       },
       value:{
         value: []
+      },
+      defaultRules: function(){
+        uploader: true
       }
     }
   },{
     xclass : 'form-field-uploader'
   });
+
+  
+  Rules.add({
+    name : 'uploader',  //\u89c4\u5219\u540d\u79f0
+    msg : '\u4e0a\u4f20\u6587\u4ef6\u9009\u62e9\u6709\u8bef\uff01',//\u9ed8\u8ba4\u663e\u793a\u7684\u9519\u8bef\u4fe1\u606f
+    validator : function(value, baseValue, formatMsg, field){ //\u9a8c\u8bc1\u51fd\u6570\uff0c\u9a8c\u8bc1\u503c\u3001\u57fa\u51c6\u503c\u3001\u683c\u5f0f\u5316\u540e\u7684\u9519\u8bef\u4fe1\u606f
+      var uploader = field.get('uploader');
+      if(uploader && !uploader.isValid()){
+        return formatMsg;
+      }
+    }
+  }); 
 
   return uploaderField;
 });/**
