@@ -153,7 +153,7 @@ define('bui/uploader/uploader', function (require) {
         type = _self.get('type'),
         el = _self.get('el'),
         button = _self.get('button') || {};
-      if(!button.isController){
+      if(button && !button.isController){
         button.render = el;
         button.autoRender = true;
         button = Factory.createButton(type, button);
