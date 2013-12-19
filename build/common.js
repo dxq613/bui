@@ -4007,25 +4007,34 @@ define('bui/component/uibase/autoshow',function () {
     trigger : {
 
     },
+    delegateTigger : {
+      getter : function(){
+        this.get('delegateTrigger');//兼容之前的版本
+      },
+      setter : function(v){
+        this.set('delegateTrigger',v);
+      }
+      
+    },
     /**
      * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
      * <pre><code>
      *  var overlay = new Overlay({ //点击.t1(无论创建控件时.t1是否存在)时显示，点击.t1,overlay之外的元素隐藏
      *    trigger : '.t1',
      *    autoHide : true,
-     *    delegateTigger : true, //使用委托的方式触发显示控件
+     *    delegateTrigger : true, //使用委托的方式触发显示控件
      *    content : '悬浮内容'
      *  });
      *  overlay.render();
      * </code></pre>
-     * @cfg {Boolean} [delegateTigger = false]
+     * @cfg {Boolean} [delegateTrigger = false]
      */
     /**
      * 是否使用代理的方式触发显示控件,如果tigger不是字符串，此属性无效
      * @type {Boolean}
      * @ignore
      */
-    delegateTigger : {
+    delegateTrigger : {
       value : false
     },
     /**

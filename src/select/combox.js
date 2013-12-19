@@ -9,14 +9,6 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
     Select = require('bui/select/select'),
     CLS_INPUT = BUI.prefix + 'combox-input';
 
-  function getFunction(textField,valueField,picker){
-    var list = picker.get('list'),
-      text = picker.getSelectedText();
-    if(text){
-      $(textField).val(text);
-    }
-  }
-
   /**
    * 组合框 用于提示输入
    * xclass:'combox'
@@ -40,7 +32,6 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
       var _self = this,
         picker = _self.get('picker');
       picker.set('autoFocused',false);
-      picker.set('getFunction',getFunction);
     },
     _uiSetItems : function(v){
       var _self = this;

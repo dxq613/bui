@@ -105,7 +105,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         if(_self.get('forceFit')){
           picker.set('width',el.outerWidth());
         }
-        
+        _self.set('list',picker.get('list'));
         picker.render();
       },
       //绑定事件
@@ -276,6 +276,17 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
          * @type {BUI.Picker.ListPicker}
          */
         picker:{
+
+        },
+        /**
+         * Picker中的列表
+         * <pre>
+         *   var list = select.get('list');
+         * </pre>
+         * @readOnly
+         * @type {BUI.List.SimpleList}
+         */
+        list : {
 
         },
         /**

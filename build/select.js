@@ -120,7 +120,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         if(_self.get('forceFit')){
           picker.set('width',el.outerWidth());
         }
-        
+        _self.set('list',picker.get('list'));
         picker.render();
       },
       //绑定事件
@@ -294,6 +294,17 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
 
         },
         /**
+         * Picker中的列表
+         * <pre>
+         *   var list = select.get('list');
+         * </pre>
+         * @readOnly
+         * @type {BUI.List.SimpleList}
+         */
+        list : {
+
+        },
+        /**
          * 存放值得字段，一般是一个input[type='hidden'] ,用于存放选择框的值
          * @cfg {Object} valueField
          */
@@ -454,14 +465,6 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
     Select = require('bui/select/select'),
     CLS_INPUT = BUI.prefix + 'combox-input';
 
-  function getFunction(textField,valueField,picker){
-    var list = picker.get('list'),
-      text = picker.getSelectedText();
-    if(text){
-      $(textField).val(text);
-    }
-  }
-
   /**
    * 组合框 用于提示输入
    * xclass:'combox'
@@ -485,7 +488,6 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
       var _self = this,
         picker = _self.get('picker');
       picker.set('autoFocused',false);
-      picker.set('getFunction',getFunction);
     },
     _uiSetItems : function(v){
       var _self = this;
