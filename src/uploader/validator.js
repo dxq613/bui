@@ -7,6 +7,7 @@ define('bui/uploader/validator', function (require) {
 
   var BUI = require('bui/common');
 
+
   /**
    * 异步文件上传的验证器
    * @class BUI.Uploader.Validator
@@ -38,47 +39,96 @@ define('bui/uploader/validator', function (require) {
      * @return {[type]}      [description]
      */
     valid: function(item){
-      this._validItem(item);
+      return this._validItem(item);
     },
     _validItem: function(item){
       var _self = this,
-        rules = _self.get('rules');
+        rules = _self.get('rules'),
+        isValid = true;
+
       BUI.each(rules, function(rule, name){
-        _self._validRule(item, name, rule);
+        isValid = isValid && _self._validRule(item, name, rule);
+        return isValid;
       })
+      return isValid;
     },
-    _validRule: function(item, name, rule){
-      // var validFn = this.getRuleFn()
-      var queue = this.get('queue');
-      if(name === 'maxSize'){
-        if(item.size > rule * 1000){
-          item.result = {msg: '文件大小不能大于' + rule + 'k'};
-          queue.updateFileStatus(item, 'error');
-        }
+    _validRule: function(item, name, rule, msg){
+      if(BUI.isArray(rule)){
+        msg = BUI.substitute(rule[1], rule);
+        rule = rule[0];
       }
+      var ruleFn = Validator.getRule(name),
+        validMsg = ruleFn && ruleFn.call(this, item, rule, msg),
+        result = this._getResult(validMsg);
+
+      if(result){
+        item.result = result;
+        return false;
+      }
+      return true;
     },
-    testMaxSize: function(item, maxSize){
-      if(item.size > rule * 1024){
-        var result = {
-          msg: ''
+    /**
+     * 获取校验的结果
+     * @param  {String} msg
+     */
+    _getResult: function(msg){
+      if(msg){
+        return {
+          msg: msg
         }
-        return result;
       }
     }
   });
 
 
-  // function ruleMap = {};
+  var ruleMap = {};
 
-  // Validator.addRule = function(name, fn){
-  //   ruleMap[name] = fn;
-  // }
+  Validator.addRule = function(name, fn){
+    ruleMap[name] = fn;
+  }
 
-  // Validator.addRule('maxSize', function(value, baseValue, formatMsg){
-  //   if(value > baseValue){
-  //     return formatMsg;
-  //   }
-  // });
+  Validator.getRule = function(name){
+    return ruleMap[name];
+  }
+
+  //文件最大值
+  Validator.addRule('maxSize', function(item, baseValue, formatMsg){
+    if(item.size > baseValue * 1024){
+      return formatMsg;
+    }
+  });
+
+  //文件最小值
+  Validator.addRule('minSize', function(item, baseValue, formatMsg){
+    if(item.size < baseValue * 1024){
+      return formatMsg;
+    }
+  });
+
+  //上传文件的最大个数
+  Validator.addRule('max', function(item, baseValue, formatMsg){
+    var count = this.get('queue').getCount();
+    if(count > baseValue){
+      return formatMsg;
+    }
+  });
+
+  //上传文件的最小个数
+  Validator.addRule('min', function(item, baseValue, formatMsg){
+    var count = this.get('queue').getCount();
+    if(count < baseValue){
+      return formatMsg;
+    }
+  });
+
+  //上传文件的文件类型
+  Validator.addRule('ext', function(item, baseValue, formatMsg){
+    var ext = item.ext,
+      baseValue = baseValue.split(',');
+    if($.inArray(ext, baseValue) === -1){
+      return formatMsg;
+    }
+  });
 
   return Validator;
 

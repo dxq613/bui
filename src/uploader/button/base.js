@@ -30,7 +30,7 @@ define('bui/uploader/button/base', function(require) {
    */
   function getFileExtName(filename){
     var result = /\.[^\.]+/.exec(filename) || [];
-    return result.join('');
+    return result.join('').toLowerCase();
   }
 
   /**

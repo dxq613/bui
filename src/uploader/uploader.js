@@ -189,11 +189,7 @@ define('bui/uploader/uploader', function (require) {
         uploaderType = _self.get('uploaderType');
       button.on('change', function(ev) {
         var files = ev.files;
-        //对添加的文件添加等待状态
-        BUI.each(files, function(file){
-          file.wait = true;
-        });
-        // validator.valid(files);
+        //对添加的文件添加状态
         queue.addItems(files);
         _self.fire('change', {items: files});
       });
@@ -206,10 +202,18 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         queue = _self.get('queue'),
         validator = _self.get('validator');
-      // queue.on('itemrendered', function(ev){
-      //   validator.valid(ev.item);
-      // })
-      queue.on('itemrendered itemupdated', function(ev) {
+
+      //渲染完了之后去设置文件状态
+      queue.on('itemrendered', function(ev){
+        var item = ev.item,
+          status = 'wait';
+        if(!validator.valid(item)){
+          status = 'error';
+        }
+        queue.updateFileStatus(item, status);
+      });
+
+      queue.on('itemupdated', function(ev) {
         var items = queue.getItemsByStatus('wait');
         //如果有等待的文件则上传第1个
         if (items && items.length) {
