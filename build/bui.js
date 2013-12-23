@@ -1093,7 +1093,7 @@ define('bui/util',function(){
      * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
-    subVersion : 61,
+    subVersion : 62,
 
     /**
      * \u662f\u5426\u4e3a\u51fd\u6570
@@ -18748,6 +18748,14 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       emptyText : {
         value : '\u8bf7\u9009\u62e9'
       },
+      /**
+       * \u5185\u90e8\u7684Select\u63a7\u4ef6\u7684\u914d\u7f6e\u9879
+       * @cfg {Object} select
+       */
+      /**
+       * \u5185\u90e8\u7684Select\u63a7\u4ef6
+       * @type {BUI.Select.Select}
+       */
       select : {
         value : {}
       }
@@ -22492,8 +22500,8 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         if(_self.get('forceFit')){
           picker.set('width',el.outerWidth());
         }
-        _self.set('list',picker.get('list'));
         picker.render();
+        _self.set('list',picker.get('list'));
       },
       //\u7ed1\u5b9a\u4e8b\u4ef6
       bindUI : function(){
@@ -29168,6 +29176,16 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
    * <p>
    * <img src="../assets/img/class-editor.jpg"/>
    * </p>
+   * <pre><code>
+   * var editor = new Editor.Editor({
+   *   trigger : '.edit-text',
+   *   field : {
+   *     rules : {
+   *       required : true
+   *     }
+   *   }
+   * });
+   * </code></pre>
    */
   var editor = Overlay.extend([Mixin],{
     bindUI : function(){
@@ -29192,14 +29210,9 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
     },
     _initOverlay : function(){
       var _self = this,
-        overlay = new Overlay({
-          children : [{
-            xclass : 'simple-list',
-            itemTpl : '<li><span class="x-icon x-icon-mini x-icon-error" title="{error}">!</span>&nbsp;<span>{error}</span></li>'
-          }],
-          elCls : CLS_TIPS,
-          autoRender : true
-        });
+        tooltip = _self.get('tooltip'),
+        overlay = new Overlay(tooltip);
+      overlay.render();
       _self.set('overlay',overlay);
       return overlay;
     },
@@ -29236,8 +29249,13 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
      */
     getSourceValue : function(){
       var _self = this,
-        trigger = _self.get('curTrigger');
-      return trigger.text();
+        trigger = _self.get('curTrigger'),
+        parser = _self.get('parser'),
+        text = trigger.text();
+      if(parser){
+        text = parser.call(this,text,trigger);
+      }
+      return text;
     },
     /**
      * @protected
@@ -29248,8 +29266,18 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
       var _self = this,
         trigger = _self.get('curTrigger');
       if(trigger && trigger.length){
+        text = _self._formatText(text);
         trigger.text(text);
       }
+    },
+    //\u683c\u5f0f\u5316\u6587\u672c
+    _formatText : function(text){
+      var _self = this,
+        formatter = _self.get('formatter');
+      if(formatter){
+        text = formatter.call(_self,text);
+      }
+      return text;
     },
     _uiSetWidth : function(v){
       var _self = this;
@@ -29306,13 +29334,52 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
           errorTpl : ''//
         }
       },
+      /**
+       * \u9519\u8bef\u63d0\u793a\u4fe1\u606f\u7684\u914d\u7f6e\u4fe1\u606f
+       * @cfg {Object} tooltip
+       */
+      tooltip : {
+        valueFn : function(){
+          return  {
+            children : [{
+              xclass : 'simple-list',
+              itemTpl : '<li><span class="x-icon x-icon-mini x-icon-error" title="{error}">!</span>&nbsp;<span>{error}</span></li>'
+            }],
+            elCls : CLS_TIPS
+          };
+        }
+      },
       defaultChildClass : {
         value : 'form-field'
       },
+      /**
+       * \u7f16\u8f91\u5668\u8ddf\u6240\u7f16\u8f91\u5185\u5bb9\u7684\u5bf9\u9f50\u65b9\u5f0f
+       * @type {Object}
+       */
       align : {
         value : {
           points: ['tl','tl']
         }
+      },
+      /**
+       * \u5c06\u7f16\u8f91\u7684\u6587\u672c\u8f6c\u6362\u6210\u7f16\u8f91\u5668\u9700\u8981\u7684\u683c\u5f0f,<br>
+       * \u51fd\u6570\u539f\u578b\uff1a
+       * function(text,trigger){}
+       *
+       * - text \u7f16\u8f91\u7684\u6587\u672c
+       * - trigger \u7f16\u8f91\u7684DOM\uff0c\u6709\u65f6\u5019trigger.text()\u4e0d\u7b49\u540c\u4e8e\u7f16\u8f91\u7684\u5185\u5bb9\uff0c\u53ef\u4ee5\u5728\u6b64\u5904\u4fee\u6539
+       * 
+       * @cfg {Function} parser
+       */
+      parser : {
+
+      },
+      /**
+       * \u8fd4\u56de\u6570\u636e\u7684\u683c\u5f0f\u5316\u51fd\u6570
+       * @cfg {Object} formatter
+       */
+      formatter : {
+
       },
       /**
        * \u9519\u8bef\u4fe1\u606f\u7684\u5bf9\u9f50\u65b9\u5f0f
@@ -34647,11 +34714,12 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
         row = $(options.row);
       editor.set('width',row.width());
       BUI.each(columns,function(column){
+        var fieldName = column.get('dataIndex'),
+          field = form.getField(fieldName)
         if(!column.get('visible')){
-          field.set('visible',false);
+          field && field.set('visible',false);
         }else{
-          var fieldName = column.get('dataIndex'),
-            field = form.getField(fieldName),
+          var 
             width = column.get('el').outerWidth() - field.getAppendWidth();
           field.set('width',width);
         }
@@ -36609,12 +36677,12 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin','bui/tr
   });
 
   /**
-   * @class BUI.Tree.Menu
+   * @class BUI.Tree.TreeMenu
    * \u6811\u5f62\u5217\u8868\u63a7\u4ef6
    * ** \u4f60\u53ef\u4ee5\u7b80\u5355\u7684\u4f7f\u7528\u914d\u7f6e\u6570\u636e **
    * <pre><code>
    *  BUI.use('bui/tree',function(Tree){
-   *    var tree = new Tree.Menu({
+   *    var tree = new Tree.TreeMenu({
    *      render : '#t1',
    *      nodes : [
    *        {id : '1',text : '1',children : [{id : '11',text : '11'}]},
@@ -36628,7 +36696,7 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin','bui/tr
    * ** \u4f60\u8fd8\u53ef\u4ee5\u66ff\u6362icon ** 
    * <pre><code>
    *  BUI.use('bui/tree',function(Tree){
-   *    var tree = new Tree.Menu({
+   *    var tree = new Tree.TreeMenu({
    *      render : '#t1',
    *      dirCls : 'folder', //\u66ff\u6362\u6811\u8282\u70b9\u7684\u6837\u5f0f
    *      leafCls : 'file', //\u53f6\u5b50\u8282\u70b9\u7684\u6837\u5f0f

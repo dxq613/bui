@@ -11,7 +11,13 @@
         </div>
         <div id="outer" class="bordered well" style="width:100px;height:100px"></div>
       </div>
-
+      <div class="span8">
+        <h2>选择框</h2>
+        <div>
+          <div id="s1" class="edit-sel">通过</div>
+          <div id="s2" class="edit-sel">不通过</div>
+        </div>
+      </div>
     </div>
     <div class="row">
       <div class="span8">
@@ -94,6 +100,6 @@
     <script type="text/javascript" src="../src/editor/dialog.js"></script>
     <script type="text/javascript" src="../src/editor/base.js"></script>
     <script type="text/javascript" src="specs/editor-spec.js"></script> 
-   <script type="text/javascript" src="specs/record-editor-spec.js"></script>
-    <script type="text/javascript" src="specs/editor-dialog-spec.js"></script> <!---->
+   <!--<script type="text/javascript" src="specs/record-editor-spec.js"></script>
+    <script type="text/javascript" src="specs/editor-dialog-spec.js"></script> -->
 <?php include("./templates/footer.php"); ?>

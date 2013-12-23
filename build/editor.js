@@ -340,6 +340,16 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
    * <p>
    * <img src="../assets/img/class-editor.jpg"/>
    * </p>
+   * <pre><code>
+   * var editor = new Editor.Editor({
+   *   trigger : '.edit-text',
+   *   field : {
+   *     rules : {
+   *       required : true
+   *     }
+   *   }
+   * });
+   * </code></pre>
    */
   var editor = Overlay.extend([Mixin],{
     bindUI : function(){
@@ -364,14 +374,9 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
     },
     _initOverlay : function(){
       var _self = this,
-        overlay = new Overlay({
-          children : [{
-            xclass : 'simple-list',
-            itemTpl : '<li><span class="x-icon x-icon-mini x-icon-error" title="{error}">!</span>&nbsp;<span>{error}</span></li>'
-          }],
-          elCls : CLS_TIPS,
-          autoRender : true
-        });
+        tooltip = _self.get('tooltip'),
+        overlay = new Overlay(tooltip);
+      overlay.render();
       _self.set('overlay',overlay);
       return overlay;
     },
@@ -408,8 +413,13 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
      */
     getSourceValue : function(){
       var _self = this,
-        trigger = _self.get('curTrigger');
-      return trigger.text();
+        trigger = _self.get('curTrigger'),
+        parser = _self.get('parser'),
+        text = trigger.text();
+      if(parser){
+        text = parser.call(this,text,trigger);
+      }
+      return text;
     },
     /**
      * @protected
@@ -420,8 +430,18 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
       var _self = this,
         trigger = _self.get('curTrigger');
       if(trigger && trigger.length){
+        text = _self._formatText(text);
         trigger.text(text);
       }
+    },
+    //格式化文本
+    _formatText : function(text){
+      var _self = this,
+        formatter = _self.get('formatter');
+      if(formatter){
+        text = formatter.call(_self,text);
+      }
+      return text;
     },
     _uiSetWidth : function(v){
       var _self = this;
@@ -478,13 +498,52 @@ define('bui/editor/editor',['bui/common','bui/overlay','bui/editor/mixin'],funct
           errorTpl : ''//
         }
       },
+      /**
+       * 错误提示信息的配置信息
+       * @cfg {Object} tooltip
+       */
+      tooltip : {
+        valueFn : function(){
+          return  {
+            children : [{
+              xclass : 'simple-list',
+              itemTpl : '<li><span class="x-icon x-icon-mini x-icon-error" title="{error}">!</span>&nbsp;<span>{error}</span></li>'
+            }],
+            elCls : CLS_TIPS
+          };
+        }
+      },
       defaultChildClass : {
         value : 'form-field'
       },
+      /**
+       * 编辑器跟所编辑内容的对齐方式
+       * @type {Object}
+       */
       align : {
         value : {
           points: ['tl','tl']
         }
+      },
+      /**
+       * 将编辑的文本转换成编辑器需要的格式,<br>
+       * 函数原型：
+       * function(text,trigger){}
+       *
+       * - text 编辑的文本
+       * - trigger 编辑的DOM，有时候trigger.text()不等同于编辑的内容，可以在此处修改
+       * 
+       * @cfg {Function} parser
+       */
+      parser : {
+
+      },
+      /**
+       * 返回数据的格式化函数
+       * @cfg {Object} formatter
+       */
+      formatter : {
+
       },
       /**
        * 错误信息的对齐方式

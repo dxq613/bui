@@ -1271,6 +1271,14 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
       emptyText : {
         value : '请选择'
       },
+      /**
+       * 内部的Select控件的配置项
+       * @cfg {Object} select
+       */
+      /**
+       * 内部的Select控件
+       * @type {BUI.Select.Select}
+       */
       select : {
         value : {}
       }
