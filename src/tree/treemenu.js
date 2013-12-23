@@ -26,12 +26,12 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin','bui/tr
   });
 
   /**
-   * @class BUI.Tree.Menu
+   * @class BUI.Tree.TreeMenu
    * 树形列表控件
    * ** 你可以简单的使用配置数据 **
    * <pre><code>
    *  BUI.use('bui/tree',function(Tree){
-   *    var tree = new Tree.Menu({
+   *    var tree = new Tree.TreeMenu({
    *      render : '#t1',
    *      nodes : [
    *        {id : '1',text : '1',children : [{id : '11',text : '11'}]},
@@ -45,7 +45,7 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin','bui/tr
    * ** 你还可以替换icon ** 
    * <pre><code>
    *  BUI.use('bui/tree',function(Tree){
-   *    var tree = new Tree.Menu({
+   *    var tree = new Tree.TreeMenu({
    *      render : '#t1',
    *      dirCls : 'folder', //替换树节点的样式
    *      leafCls : 'file', //叶子节点的样式

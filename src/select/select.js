@@ -105,8 +105,8 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         if(_self.get('forceFit')){
           picker.set('width',el.outerWidth());
         }
-        _self.set('list',picker.get('list'));
         picker.render();
+        _self.set('list',picker.get('list'));
       },
       //绑定事件
       bindUI : function(){

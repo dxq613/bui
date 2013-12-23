@@ -4995,11 +4995,12 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
         row = $(options.row);
       editor.set('width',row.width());
       BUI.each(columns,function(column){
+        var fieldName = column.get('dataIndex'),
+          field = form.getField(fieldName)
         if(!column.get('visible')){
-          field.set('visible',false);
+          field && field.set('visible',false);
         }else{
-          var fieldName = column.get('dataIndex'),
-            field = form.getField(fieldName),
+          var 
             width = column.get('el').outerWidth() - field.getAppendWidth();
           field.set('width',width);
         }

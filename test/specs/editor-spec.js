@@ -147,14 +147,75 @@ BUI.use('bui/editor',function (Editor) {
         expect(callback).toHaveBeenCalled();
       });
     });
-
-    it('测试Enter键',function(){
-      
-    });
-    
-    it('测试esc键',function(){
-      
-    });
   });
   
+});
+/**/
+
+BUI.use('bui/editor',function(Editor){
+
+  function getValue(obj,text){
+    var rst = text;
+    BUI.each(obj,function(v,k){
+      if(v == text){
+        rst = k;
+        return false;
+      }
+    });
+    return rst;
+  }
+  var items = {'1' : '通过','2':'不通过'},
+    editor = new Editor.Editor({
+    trigger : '.edit-sel',
+    field : {
+      xtype : 'select',
+      items : items
+    },
+    parser : function(text){
+      return getValue(items,text);
+    },
+    formatter : function(text){
+      return items[text];
+    }
+  });
+
+  editor.render();
+  var select;
+
+  describe('测试编辑器生成',function(){
+    it('测试select选项',function(){
+      waits(100);
+      runs(function(){
+        select = editor.get('field').get('select');
+        var list = select.get('list');
+        expect(list).not.toBe(undefined);
+
+        expect(list.getItemCount()).toBe(2);
+      });
+      
+    });
+
+  });
+
+  describe('操作',function(){
+    var s1El = $('#s1');
+    it('编辑文本,测试展示值',function(){
+      s1El.trigger('click');
+      waits(100);
+      runs(function(){
+        expect(editor.get('visible')).toBe(true);
+        expect(select.getSelectedText()).toBe(s1El.text());
+      });
+    });
+    it('更改选项',function(){
+      var preText = s1El.text();
+      select.setSelectedValue('2');
+      editor.accept();
+      expect(editor.get('visible')).not.toBe(true);
+      expect(s1El.text()).toBe(select.getSelectedText());
+      expect(preText).not.toBe(s1El.text());
+    });
+  });
+
+
 });
