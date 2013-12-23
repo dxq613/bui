@@ -556,18 +556,19 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return true;
       }
       
-      return node.loaded || node.leaf || (node.children && node.children.length);
+      return node.loaded || node.leaf || !!(node.children && node.children.length);
     },
     /**
      * 加载节点的子节点
      * @param  {BUI.Data.Node} node 节点
+     * @param {Boolean} forceLoad 是否强迫重新加载节点，如果设置成true，不判断是否加载过
      */
-    loadNode : function(node){
+    loadNode : function(node,forceLoad){
       var _self = this,
         pidField = _self.get('pidField'),
         params;
       //如果已经加载过，或者节点是叶子节点
-      if(_self.isLoaded(node)){
+      if(!forceLoad && _self.isLoaded(node)){
         return ;
       }
       params = {id : node.id};
@@ -585,7 +586,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       node = node || _self.get('root');
       node.loaded = false;
       //node.children = [];
-      _self.loadNode(node);
+      _self.loadNode(node,true);
     },
     /**
      * 加载节点，根据path

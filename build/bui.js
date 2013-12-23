@@ -13447,18 +13447,19 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         return true;
       }
       
-      return node.loaded || node.leaf || (node.children && node.children.length);
+      return node.loaded || node.leaf || !!(node.children && node.children.length);
     },
     /**
      * \u52a0\u8f7d\u8282\u70b9\u7684\u5b50\u8282\u70b9
      * @param  {BUI.Data.Node} node \u8282\u70b9
+     * @param {Boolean} forceLoad \u662f\u5426\u5f3a\u8feb\u91cd\u65b0\u52a0\u8f7d\u8282\u70b9\uff0c\u5982\u679c\u8bbe\u7f6e\u6210true\uff0c\u4e0d\u5224\u65ad\u662f\u5426\u52a0\u8f7d\u8fc7
      */
-    loadNode : function(node){
+    loadNode : function(node,forceLoad){
       var _self = this,
         pidField = _self.get('pidField'),
         params;
       //\u5982\u679c\u5df2\u7ecf\u52a0\u8f7d\u8fc7\uff0c\u6216\u8005\u8282\u70b9\u662f\u53f6\u5b50\u8282\u70b9
-      if(_self.isLoaded(node)){
+      if(!forceLoad && _self.isLoaded(node)){
         return ;
       }
       params = {id : node.id};
@@ -13476,7 +13477,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       node = node || _self.get('root');
       node.loaded = false;
       //node.children = [];
-      _self.loadNode(node);
+      _self.loadNode(node,true);
     },
     /**
      * \u52a0\u8f7d\u8282\u70b9\uff0c\u6839\u636epath
@@ -34552,6 +34553,12 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
    * @class BUI.Grid.Plugins.RowEditing
    * @extends BUI.Grid.Plugins.Editing
    * \u5355\u5143\u683c\u7f16\u8f91\u63d2\u4ef6
+   *
+   *  ** \u6ce8\u610f **
+   *
+   *  - \u7f16\u8f91\u5668\u7684\u5b9a\u4e49\u5728columns\u4e2d\uff0ceditor\u5c5e\u6027
+   *  - editor\u91cc\u9762\u7684\u5b9a\u4e49\u5bf9\u5e94form-field\u7684\u5b9a\u4e49\uff0cxtype\u4ee3\u8868 form-field + xtype
+   *  - validator \u51fd\u6570\u7684\u51fd\u6570\u539f\u578b function(value,newRecord,originRecord){} //\u7f16\u8f91\u7684\u5f53\u524d\u503c\uff0c\u6b63\u5728\u7f16\u8f91\u7684\u8bb0\u5f55\uff0c\u539f\u59cb\u8bb0\u5f55
    */
   var RowEditing = function(config){
     RowEditing.superclass.constructor.call(this, config);
@@ -34616,9 +34623,10 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
       var _self = this;
       return function(value){
         var editor = _self.get('curEditor'),
-          record = editor ? editor.getValue() : _self.get('record');
+          origin = _self.get('record'),
+          record = editor ? editor.getValue() : origin;
         if(record){
-          return validator(value,record);
+          return validator(value,record,origin);
         }
       };
     },

@@ -4833,6 +4833,12 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
    * @class BUI.Grid.Plugins.RowEditing
    * @extends BUI.Grid.Plugins.Editing
    * 单元格编辑插件
+   *
+   *  ** 注意 **
+   *
+   *  - 编辑器的定义在columns中，editor属性
+   *  - editor里面的定义对应form-field的定义，xtype代表 form-field + xtype
+   *  - validator 函数的函数原型 function(value,newRecord,originRecord){} //编辑的当前值，正在编辑的记录，原始记录
    */
   var RowEditing = function(config){
     RowEditing.superclass.constructor.call(this, config);
@@ -4897,9 +4903,10 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
       var _self = this;
       return function(value){
         var editor = _self.get('curEditor'),
-          record = editor ? editor.getValue() : _self.get('record');
+          origin = _self.get('record'),
+          record = editor ? editor.getValue() : origin;
         if(record){
-          return validator(value,record);
+          return validator(value,record,origin);
         }
       };
     },

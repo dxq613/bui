@@ -209,9 +209,33 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
         expect(tree.getItem('3131')).not.toBe(null);
       });
     });
+
+    it('重新加载节点',function(){
+      var node = store.findNode('11'),
+        element = tree.findElement(node);
+      expect(element).not.toBe(null);
+
+      tree.expandNode(node);
+      waits(1500);
+      runs(function(){
+        expect(node.loaded).toBe(true);
+
+        store.reloadNode(node);
+        expect(node.loaded).toBe(false);
+
+        expect($(element).hasClass('bui-tree-item-loading')).toBe(true);
+        waits(1500);
+        runs(function(){
+          expect($(element).hasClass('bui-tree-item-loading')).toBe(false);
+          expect(node.loaded).toBe(true);
+          expect(store.isLoaded(node)).toBe(true);
+        });
+      });
+    });
   });
 
 });
+
 
 BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   var data = [
@@ -257,4 +281,6 @@ BUI.use(['bui/tree/treelist','bui/data'],function (TreeList,Data) {
   });
 
 });
+/*
+*/
 
