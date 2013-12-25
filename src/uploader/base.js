@@ -2,7 +2,7 @@
  * @fileoverview 异步文件上传组件入口文件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader', function (require) {
+define('bui/uploader', ['bui/common', 'bui/uploader/uploader', 'bui/uploader/queue', 'bui/uploader/theme', 'bui/uploader/factory'], function (require) {
 
   var BUI = require('bui/common'),
     Uploader = BUI.namespace('Uploader');

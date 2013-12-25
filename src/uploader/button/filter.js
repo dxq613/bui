@@ -1,4 +1,4 @@
-define('bui/uploader/button/filter', function(require){
+define('bui/uploader/button/filter',['bui/common'], function(require){
 
   var BUI = require('bui/common');
 

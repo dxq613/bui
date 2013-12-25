@@ -75,15 +75,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
     url: 'upload/upload.php',
-    button:{
+    button: {
       //filter: {desc:'image', ext:".jpg,.jpeg,.png,.gif,.bmp"}
-    },
-    rules: {
-      type: {ext:".jpg,.jpeg,.png,.gif,.bmp"},
-      max: 5,
-      min: 1,
-      maxSize: 1000,
-      minSize: 100
     }
   });
   uploader.render();

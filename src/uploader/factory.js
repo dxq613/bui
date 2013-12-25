@@ -2,7 +2,7 @@
  * @fileoverview 文件上传的工厂类
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
-define('bui/uploader/factory', function (require) {
+define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', './button/swfButton', './type/ajax', './type/flash', './type/iframe'], function (require) {
 
   var BUI = require('bui/common'),
     Queue = require('bui/uploader/queue'),

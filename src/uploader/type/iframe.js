@@ -2,7 +2,7 @@
  * @fileoverview iframe方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  **/
-define('bui/uploader/type/iframe',function(require) {
+define('bui/uploader/type/iframe',['./base'], function(require) {
     var ID_PREFIX = 'bui-uploader-iframe-';
 
     var UploadType = require('bui/uploader/type/base');

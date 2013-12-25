@@ -3,7 +3,7 @@
  * @fileoverview 文件上传队列列表显示和处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
-define('bui/uploader/queue', ['bui/list'], function (require) {
+define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
 
   var BUI = require('bui/common'),
     SimpleList = require('bui/list/simplelist');

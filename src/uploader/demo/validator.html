@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>定义主题上传文件</title>
+  <link href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css" rel="stylesheet"> 
+  <link href="../../../assets/css/bui.css" rel="stylesheet">
+
+  <script src="http://a.tbcdn.cn/s/bui/jquery-1.8.1.min.js"></script>
+  <script src="../../../build/bui-min.js"></script>
+
+</head>
+<body>
+  <div class="row">
+    <div class="span8">
+      <div id="J_Uploader">
+        <input type="hidden" />
+      </div>
+    </div>
+  </div>
+<script>
+  BUI.setDebug(true);
+  BUI.use('bui/uploader', function(Uploader){
+    
+    var uploader = new Uploader.Uploader({
+      //指定使用主题
+      theme: 'imageView',
+      render: '#J_Uploader',
+      url: '../../../test/upload/upload.php',
+      queue: {
+        resultTpl:{
+          'success': '<div class="success"><img src="../../../test/upload/{url}" /></div>'
+        }
+      },
+      rules: {
+        ext: ['.png','文件类型只能为{0}']
+      }
+    });
+    uploader.render();
+  });
+</script>
+</body>
+</html>

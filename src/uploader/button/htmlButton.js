@@ -5,7 +5,7 @@
  **/
 
 
-define('bui/uploader/button/htmlButton', function(require) {
+define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
