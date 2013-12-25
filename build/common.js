@@ -35,8 +35,9 @@
  * </code></pre>
  * @singleton
  */  
-var BUI = BUI || {};
-if(!BUI.use && seajs){
+window.BUI = window.BUI || {};
+
+if(!BUI.use && window.seajs){
     BUI.use = seajs.use;
     BUI.config = seajs.config;
 }
