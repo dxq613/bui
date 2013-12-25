@@ -3,7 +3,7 @@
  * @fileoverview 异步文件上传的验证器
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/validator', function (require) {
+define('bui/uploader/validator',['bui/common'], function (require) {
 
   var BUI = require('bui/common');
 

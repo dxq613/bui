@@ -4,7 +4,7 @@
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
 
-define('bui/uploader/button/base', function(require) {
+define('bui/uploader/button/base', ['bui/common', './filter'], function(require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,

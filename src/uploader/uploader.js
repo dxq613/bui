@@ -3,7 +3,7 @@
  * @fileoverview 异步文件上传组件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/uploader', function (require) {
+define('bui/uploader/uploader', ['bui/common', './theme', './factory', './validator'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,

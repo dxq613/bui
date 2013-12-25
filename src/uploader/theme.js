@@ -3,7 +3,7 @@
  * @fileoverview 文件上传主题的处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
-define('bui/uploader/theme', function (require) {
+define('bui/uploader/theme',['bui/common'], function (require) {
 
   var BUI = require('bui/common');
 

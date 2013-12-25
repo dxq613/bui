@@ -2,7 +2,7 @@
  * @fileoverview flash上传方案，基于龙藏写的ajbridge内的uploader
  * @author 剑平（明河）<minghe36@126.com>
  **/
-define('bui/uploader/type/flash', function (require) {
+define('bui/uploader/type/flash',['./base'], function (require) {
     var LOG_PREFIX = '[uploader-FlashType]:';
 
     var UploadType = require('bui/uploader/type/base');

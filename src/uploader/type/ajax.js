@@ -2,7 +2,7 @@
  * @fileoverview ajax方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  **/
-define('bui/uploader/type/ajax',function(require) {
+define('bui/uploader/type/ajax', ['./base'], function(require) {
     var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:',
         win = window,
         doc = document;
