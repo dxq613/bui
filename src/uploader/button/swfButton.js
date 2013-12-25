@@ -3,14 +3,22 @@
  * @fileoverview flash上传按钮
  * @author: zengyue.yezy
  **/
-define('bui/uploader/button/swfButton', function (require) {
+define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbridge'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
     ButtonBase = require('bui/uploader/button/base'),
-    SwfUploader = require('bui/uploader/type/flash'),
-    baseUrl = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base,
+    baseUrl = getBaseUrl(),
     SWF = require('bui/uploader/button/swfButton/ajbridge');
+
+  function getBaseUrl(){
+    if(window.seajs){
+      return seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base;
+    }
+    else if(window.KISSY){
+      return KISSY.Config.packages['bui'].base + '/bui/';
+    }
+  }
 
 
   var SwfButtonView = Component.View.extend([ButtonBase.View], {

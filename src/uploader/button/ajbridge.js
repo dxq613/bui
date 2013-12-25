@@ -3,7 +3,7 @@ Copyright 2011, KISSY UI Library v1.1.5
 MIT Licensed
 build time: Sep 11 10:29
 */
-define('bui/uploader/button/swfButton/ajbridge', function(require){
+define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], function(require){
   var BUI = require('bui/common'),
     SWF = require('bui/swf');
 
