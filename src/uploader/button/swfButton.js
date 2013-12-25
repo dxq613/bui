@@ -16,7 +16,7 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
       return seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base;
     }
     else if(window.KISSY){
-      return KISSY.Config.packages['bui'].base + '/bui/';
+      return KISSY.Config.packages['bui'].base;
     }
   }
 
