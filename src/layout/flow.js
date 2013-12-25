@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/flow',['bui/layout/abstract','bui/layout/baseitem'],function (require) {
+define('bui/layout/flow',['bui/common','bui/layout/abstract','bui/layout/baseitem'],function (require) {
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract'),
 		Item = require('bui/layout/baseitem');

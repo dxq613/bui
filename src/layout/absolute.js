@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/absolute',['bui/layout/abstract','bui/layout/absoluteitem'],function (require) {
+define('bui/layout/absolute',['bui/common','bui/layout/abstract','bui/layout/absoluteitem'],function (require) {
 
 	var CLS_RELATIVE = 'x-layout-relative',
 		BUI = require('bui/common'),

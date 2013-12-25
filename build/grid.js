@@ -4964,7 +4964,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
         }
     },
      /**
-     * 获取编辑此单元格的编辑器
+     * 获取编辑此行的编辑器
      * @protected
      * @param  {String} field 点击单元格的字段
      * @return {BUI.Editor.Editor}  编辑器

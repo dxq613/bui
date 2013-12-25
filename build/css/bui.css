@@ -504,6 +504,7 @@
 }
 .bui-select .icon-caret {
   vertical-align: middle;
+  margin-top: -4px;
 }
 /** list-checkbox **/
 .x-checkbox {
@@ -1695,7 +1696,9 @@ input.x-datepicker-time {
 }
 .bui-tree-item {
   height: 20px;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
   cursor: pointer;
 }
 .bui-tree-item-hover {

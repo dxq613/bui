@@ -30,7 +30,7 @@
  * @ignore
  */
 
-define('bui/layout/abstract',['bui/layout/baseitem'],function(require){
+define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(require){
 
 	var BUI = require('bui/common'),
 		Item = require('bui/layout/baseitem');
@@ -410,8 +410,10 @@ define('bui/layout/abstract',['bui/layout/baseitem'],function(require){
  * @ignore
  */
 
-define('bui/layout/collapsable',function (require) {
+define('bui/layout/collapsable',['bui/common'],function (require) {
 
+	var BUI = require('bui/common');
+	
 	/**
 	 * @class BUI.Layout.Collapsable
 	 * 可以展开、折叠的布局的扩展类
@@ -567,7 +569,7 @@ define('bui/layout/collapsable',function (require) {
  * @ignore
  */
 
-define('bui/layout/absolute',['bui/layout/abstract','bui/layout/absoluteitem'],function (require) {
+define('bui/layout/absolute',['bui/common','bui/layout/abstract','bui/layout/absoluteitem'],function (require) {
 
 	var CLS_RELATIVE = 'x-layout-relative',
 		BUI = require('bui/common'),
@@ -667,7 +669,7 @@ define('bui/layout/absolute',['bui/layout/abstract','bui/layout/absoluteitem'],f
  * @ignore
  */
 
-define('bui/layout/anchor',['bui/layout/abstract','bui/layout/anchoritem'],function (require) {
+define('bui/layout/anchor',['bui/common','bui/layout/abstract','bui/layout/anchoritem'],function (require) {
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract'),
 		Item = require('bui/layout/anchoritem');
@@ -735,7 +737,7 @@ define('bui/layout/anchor',['bui/layout/abstract','bui/layout/anchoritem'],funct
  * @ignore
  */
 
-define('bui/layout/columns',['bui/layout/abstract'],function (require) {
+define('bui/layout/columns',['bui/common','bui/layout/abstract'],function (require) {
 	
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract');
@@ -911,7 +913,7 @@ define('bui/layout/columns',['bui/layout/abstract'],function (require) {
  * @ignore
  */
 
-define('bui/layout/flow',['bui/layout/abstract','bui/layout/baseitem'],function (require) {
+define('bui/layout/flow',['bui/common','bui/layout/abstract','bui/layout/baseitem'],function (require) {
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract'),
 		Item = require('bui/layout/baseitem');
@@ -985,7 +987,7 @@ define('bui/layout/flow',['bui/layout/abstract','bui/layout/baseitem'],function 
  * @ignore
  */
 
-define('bui/layout/table',['bui/layout/abstract','bui/layout/cellitem'],function (require) {
+define('bui/layout/table',['bui/common','bui/layout/abstract','bui/layout/cellitem'],function (require) {
 
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract'),
@@ -1159,7 +1161,7 @@ define('bui/layout/table',['bui/layout/abstract','bui/layout/cellitem'],function
  * @fileOverview 经典的边框布局
  * @ignore
  */
-define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/layout/collapsable'],function(require) {
+define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borderitem','bui/layout/collapsable'],function(require) {
 
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract'),
@@ -1504,7 +1506,7 @@ define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/l
  * @ignore
  */
 
-define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/layout/collapsable'],function (require) {
+define('bui/layout/accordion',['bui/common','bui/layout/abstract','bui/layout/tabitem','bui/layout/collapsable'],function (require) {
 	
 	var CLS_ITEM = 'x-layout-item-accordion',
 		BUI = require('bui/common'),
@@ -1683,7 +1685,7 @@ define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/l
  * @ignore
  */
 
-define('bui/layout/viewport',function (require) {
+define('bui/layout/viewport',['bui/common'],function (require) {
 
 	var BUI = require('bui/common'),
 		CLS_VIEW_CONTAINER = 'x-viewport-container',
@@ -1801,7 +1803,7 @@ define('bui/layout/viewport',function (require) {
  * @ignore
  */
 
-define('bui/layout/baseitem',function (require) {
+define('bui/layout/baseitem',['bui/common'],function (require) {
 
 	var BUI = require('bui/common');
 
@@ -2176,7 +2178,7 @@ define('bui/layout/baseitem',function (require) {
  * @ignore
  */
 
-define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
+define('bui/layout/absoluteitem',['bui/common','bui/layout/baseitem'],function (require) {
 	
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem');
@@ -2236,7 +2238,7 @@ define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
  * @ignore
  */
 
-define('bui/layout/anchoritem',['bui/layout/baseitem'],function (require) {
+define('bui/layout/anchoritem',['bui/common','bui/layout/baseitem'],function (require) {
 
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem');
@@ -2308,7 +2310,7 @@ define('bui/layout/anchoritem',['bui/layout/baseitem'],function (require) {
  * @ignore
  */
 
-define('bui/layout/borderitem',function (require) {
+define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (require) {
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem'),
 		CLS_COLLAPSED = 'x-collapsed',
@@ -2479,7 +2481,7 @@ define('bui/layout/borderitem',function (require) {
  * @ignore
  */
 
-define('bui/layout/cellitem',['bui/layout/baseitem'],function (require) {
+define('bui/layout/cellitem',['bui/common','bui/layout/baseitem'],function (require) {
 
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem');
@@ -2546,7 +2548,7 @@ define('bui/layout/cellitem',['bui/layout/baseitem'],function (require) {
  * @ignore
  */
 
-define('bui/layout/tabitem',['bui/layout/baseitem'],function(require) {
+define('bui/layout/tabitem',['bui/common','bui/layout/baseitem'],function(require) {
 
 	var BUI = require('bui/common'),
 		CLS_COLLAPSED = 'x-collapsed',

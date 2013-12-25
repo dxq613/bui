@@ -198,6 +198,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
        * @type {BUI.Select.Select}
        */
       select : {
+        shared : false,
         value : {}
       }
     },

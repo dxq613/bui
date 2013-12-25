@@ -2,7 +2,7 @@
  * @fileOverview 经典的边框布局
  * @ignore
  */
-define('bui/layout/border',['bui/layout/abstract','bui/layout/borderitem','bui/layout/collapsable'],function(require) {
+define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borderitem','bui/layout/collapsable'],function(require) {
 
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract'),

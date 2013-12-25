@@ -2,9 +2,10 @@
  * @fileOverview 列表
  * @ignore
  */
-define('bui/list/list',function (require) {
+define('bui/list/list',['bui/common'],function (require) {
   
-  var Component = BUI.Component,
+  var BUI = require('bui/common'),
+    Component = BUI.Component,
     UIBase = Component.UIBase;
 
   /**

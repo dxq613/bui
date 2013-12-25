@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/tabitem',['bui/layout/baseitem'],function(require) {
+define('bui/layout/tabitem',['bui/common','bui/layout/baseitem'],function(require) {
 
 	var BUI = require('bui/common'),
 		CLS_COLLAPSED = 'x-collapsed',

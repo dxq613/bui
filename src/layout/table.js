@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/table',['bui/layout/abstract','bui/layout/cellitem'],function (require) {
+define('bui/layout/table',['bui/common','bui/layout/abstract','bui/layout/cellitem'],function (require) {
 
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract'),

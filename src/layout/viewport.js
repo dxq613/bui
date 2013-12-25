@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/viewport',function (require) {
+define('bui/layout/viewport',['bui/common'],function (require) {
 
 	var BUI = require('bui/common'),
 		CLS_VIEW_CONTAINER = 'x-viewport-container',

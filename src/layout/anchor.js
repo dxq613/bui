@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/anchor',['bui/layout/abstract','bui/layout/anchoritem'],function (require) {
+define('bui/layout/anchor',['bui/common','bui/layout/abstract','bui/layout/anchoritem'],function (require) {
 	var BUI = require('bui/common'),
 		Abstract = require('bui/layout/abstract'),
 		Item = require('bui/layout/anchoritem');

@@ -1007,13 +1007,14 @@ define('bui/list/domlist',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/list/keynav',function () {
+define('bui/list/keynav',['bui/common'],function (require) {
   'use strict';
   /**
    * @class BUI.List.KeyNav
    * 列表导航扩展类
    */
-  var  KeyNav = function(){};
+  var  BUI = require('bui/common'),
+    KeyNav = function(){};
 
   KeyNav.ATTRS = {
     /**
@@ -1293,7 +1294,7 @@ define('bui/list/sortable',['bui/common','bui/data'],function (require) {
      * @return {Array} 排序集合
      */
     getSortData : function(){
-      return this.get('view').getAllElements();
+      return $.makeArray(this.get('view').getAllElements());
     },
     /**
      * 列表排序
@@ -1646,10 +1647,11 @@ define('bui/list/listbox',['bui/list/simplelist'],function (require) {
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/list/listitem',function ($) {
+define('bui/list/listitem',['bui/common'],function (require) {
 
 
-  var Component = BUI.Component,
+  var BUI = require('bui/common'),
+    Component = BUI.Component,
     UIBase = Component.UIBase;
     
   /**
@@ -1702,9 +1704,10 @@ define('bui/list/listitem',function ($) {
  * @fileOverview 列表
  * @ignore
  */
-define('bui/list/list',function (require) {
+define('bui/list/list',['bui/common'],function (require) {
   
-  var Component = BUI.Component,
+  var BUI = require('bui/common'),
+    Component = BUI.Component,
     UIBase = Component.UIBase;
 
   /**

@@ -991,23 +991,31 @@ seajs.config = function(configData) {
 })();
 
 
+(function(){
+  var requires = ['bui/util','bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'];
+  if(window.KISSY){ //\u5982\u679c\u662fkissy\u5219\u52a0\u8f7dcore\u6a21\u5757
+    requires.unshift('bui/adapter');
+  }
+  define('bui/common',requires,function(require){
+    if(window.KISSY){
+      require('bui/adapter');
+    }
+    var BUI = require('bui/util');
 
-define('bui/common',['bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'],function(require){
-
-  var BUI = require('bui/util');
-
-  BUI.mix(BUI,{
-    UA : require('bui/ua'),
-    JSON : require('bui/json'),
-    Date : require('bui/date'),
-    Array : require('bui/array'),
-    KeyCode : require('bui/keycode'),
-    Observable : require('bui/observable'),
-    Base : require('bui/base'),
-    Component : require('bui/component')
+    BUI.mix(BUI,{
+      UA : require('bui/ua'),
+      JSON : require('bui/json'),
+      Date : require('bui/date'),
+      Array : require('bui/array'),
+      KeyCode : require('bui/keycode'),
+      Observable : require('bui/observable'),
+      Base : require('bui/base'),
+      Component : require('bui/component')
+    });
+    return BUI;
   });
-  return BUI;
-});
+})();
+
 /**
  * @class BUI.Util
  * \u63a7\u4ef6\u5e93\u7684\u5de5\u5177\u65b9\u6cd5\uff0c\u8fd9\u4e9b\u5de5\u5177\u65b9\u6cd5\u76f4\u63a5\u7ed1\u5b9a\u5230BUI\u5bf9\u8c61\u4e0a
@@ -1025,9 +1033,9 @@ if(!BUI.use && seajs){
     BUI.use = seajs.use;
     BUI.config = seajs.config;
 }
-
-define('bui/util',function(){
-  
+    
+define('bui/util',function(require){
+    
     //\u517c\u5bb9jquery 1.6\u4ee5\u4e0b
     (function($){
       if($.fn){
@@ -1093,7 +1101,7 @@ define('bui/util',function(){
      * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
-    subVersion : 62,
+    subVersion : 63,
 
     /**
      * \u662f\u5426\u4e3a\u51fd\u6570
@@ -1139,12 +1147,12 @@ define('bui/util',function(){
      * \u51fd\u6570\u652f\u6301\u591a\u4e8e2\u4e2a\u53d8\u91cf\uff0c\u540e\u9762\u7684\u53d8\u91cf\u540cs1\u4e00\u6837\u5c06\u5176\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\u3002
      * @param  {Function} r  \u6784\u9020\u51fd\u6570
      * @param  {Object} s1 \u5c06s1 \u7684\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a
-     *			@example
-     *			BUI.augment(class1,{
-     *				method1: function(){
+     *          @example
+     *          BUI.augment(class1,{
+     *              method1: function(){
      *   
-     *				}
-     *			});
+     *              }
+     *          });
      */
     augment : function(r,s1){
       if(!BUI.isFunction(r))
@@ -1180,25 +1188,25 @@ define('bui/util',function(){
      * @param  {Function} superclass \u7236\u7c7b\u6784\u9020\u51fd\u6570
      * @param  {Object} overrides  \u5b50\u7c7b\u7684\u5c5e\u6027\u6216\u8005\u65b9\u6cd5
      * @return {Function} \u8fd4\u56de\u7684\u5b50\u7c7b\u6784\u9020\u51fd\u6570
-		 * \u793a\u4f8b:
-     *		@example
-     *		//\u7236\u7c7b
-     *		function base(){
+         * \u793a\u4f8b:
+     *      @example
+     *      //\u7236\u7c7b
+     *      function base(){
      * 
-     *		}
+     *      }
      *
-     *		function sub(){
+     *      function sub(){
      * 
-     *		}
-     *		//\u5b50\u7c7b
-     *		BUI.extend(sub,base,{
-     *			method : function(){
+     *      }
+     *      //\u5b50\u7c7b
+     *      BUI.extend(sub,base,{
+     *          method : function(){
      *    
-     *			}
-     *		});
+     *          }
+     *      });
      *
-     *		//\u6216\u8005
-     *		var sub = BUI.extend(base,{});
+     *      //\u6216\u8005
+     *      var sub = BUI.extend(base,{});
      */
     extend : function(subclass,superclass,overrides, staticOverrides){
       //\u5982\u679c\u53ea\u63d0\u4f9b\u7236\u7c7b\u6784\u9020\u51fd\u6570\uff0c\u5219\u81ea\u52a8\u751f\u6210\u5b50\u7c7b\u6784\u9020\u51fd\u6570
@@ -1269,6 +1277,15 @@ define('bui/util',function(){
       return typeof value === 'number';
     },
     /**
+     * \u662f\u5426\u662f\u5e03\u5c14\u7c7b\u578b
+     *
+     * @param {Object} \u6d4b\u8bd5\u7684\u503c
+     * @return {Boolean}
+     */
+    isBoolean: function(value) {
+        return typeof value === 'boolean';
+    },
+    /**
      * \u63a7\u5236\u53f0\u8f93\u51fa\u65e5\u5fd7
      * @param  {Object} obj \u8f93\u51fa\u7684\u6570\u636e
      */
@@ -1281,8 +1298,16 @@ define('bui/util',function(){
     * \u5c06\u591a\u4e2a\u5bf9\u8c61\u7684\u5c5e\u6027\u590d\u5236\u5230\u4e00\u4e2a\u65b0\u7684\u5bf9\u8c61
     */
     merge : function(){
-      var args = $.makeArray(arguments);
-      args.unshift({});
+      var args = $.makeArray(arguments),
+        first = args[0];
+      if(BUI.isBoolean(first)){
+        args.shift();
+        args.unshift({});
+        args.unshift(first);
+      }else{
+        args.unshift({});
+      }
+      
       return BUI.mix.apply(null,args);
 
     },
@@ -1384,8 +1409,8 @@ define('bui/util',function(){
      * @param  {String} name \u547d\u540d\u7a7a\u95f4\u7684\u540d\u79f0
      * @param  {Object} baseNS \u5728\u5df2\u6709\u7684\u547d\u540d\u7a7a\u95f4\u4e0a\u521b\u5efa\u547d\u540d\u7a7a\u95f4\uff0c\u9ed8\u8ba4\u201cBUI\u201d
      * @return {Object} \u8fd4\u56de\u7684\u547d\u540d\u7a7a\u95f4\u5bf9\u8c61
-     *		@example
-     *		BUI.namespace("Grid"); // BUI.Grid
+     *      @example
+     *      BUI.namespace("Grid"); // BUI.Grid
      */
     namespace : function(name,baseNS){
       baseNS = baseNS || BUI;
@@ -1670,7 +1695,9 @@ define('bui/util',function(){
   };
 
   return BUI;
-});/**
+});
+
+/**
  * @fileOverview \u6570\u7ec4\u5e2e\u52a9\u7c7b
  * @ignore
  */
@@ -16283,13 +16310,14 @@ define('bui/list/domlist',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/list/keynav',function () {
+define('bui/list/keynav',['bui/common'],function (require) {
   'use strict';
   /**
    * @class BUI.List.KeyNav
    * \u5217\u8868\u5bfc\u822a\u6269\u5c55\u7c7b
    */
-  var  KeyNav = function(){};
+  var  BUI = require('bui/common'),
+    KeyNav = function(){};
 
   KeyNav.ATTRS = {
     /**
@@ -16569,7 +16597,7 @@ define('bui/list/sortable',['bui/common','bui/data'],function (require) {
      * @return {Array} \u6392\u5e8f\u96c6\u5408
      */
     getSortData : function(){
-      return this.get('view').getAllElements();
+      return $.makeArray(this.get('view').getAllElements());
     },
     /**
      * \u5217\u8868\u6392\u5e8f
@@ -16922,10 +16950,11 @@ define('bui/list/listbox',['bui/list/simplelist'],function (require) {
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/list/listitem',function ($) {
+define('bui/list/listitem',['bui/common'],function (require) {
 
 
-  var Component = BUI.Component,
+  var BUI = require('bui/common'),
+    Component = BUI.Component,
     UIBase = Component.UIBase;
     
   /**
@@ -16978,9 +17007,10 @@ define('bui/list/listitem',function ($) {
  * @fileOverview \u5217\u8868
  * @ignore
  */
-define('bui/list/list',function (require) {
+define('bui/list/list',['bui/common'],function (require) {
   
-  var Component = BUI.Component,
+  var BUI = require('bui/common'),
+    Component = BUI.Component,
     UIBase = Component.UIBase;
 
   /**
@@ -18758,6 +18788,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
        * @type {BUI.Select.Select}
        */
       select : {
+        shared : false,
         value : {}
       }
     },
@@ -19544,6 +19575,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         }
       },
       value:{
+        shared : false,
         value: []
       },
       defaultRules: function(){
@@ -34684,7 +34716,7 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
         }
     },
      /**
-     * \u83b7\u53d6\u7f16\u8f91\u6b64\u5355\u5143\u683c\u7684\u7f16\u8f91\u5668
+     * \u83b7\u53d6\u7f16\u8f91\u6b64\u884c\u7684\u7f16\u8f91\u5668
      * @protected
      * @param  {String} field \u70b9\u51fb\u5355\u5143\u683c\u7684\u5b57\u6bb5
      * @return {BUI.Editor.Editor}  \u7f16\u8f91\u5668

@@ -3,10 +3,11 @@
  * @author dxq613@gmail.com
  * @ignore
  */
-define('bui/list/listitem',function ($) {
+define('bui/list/listitem',['bui/common'],function (require) {
 
 
-  var Component = BUI.Component,
+  var BUI = require('bui/common'),
+    Component = BUI.Component,
     UIBase = Component.UIBase;
     
   /**

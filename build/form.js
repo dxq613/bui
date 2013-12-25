@@ -1280,6 +1280,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
        * @type {BUI.Select.Select}
        */
       select : {
+        shared : false,
         value : {}
       }
     },
@@ -2066,6 +2067,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         }
       },
       value:{
+        shared : false,
         value: []
       },
       defaultRules: function(){

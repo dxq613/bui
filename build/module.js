@@ -4,7 +4,7 @@
  * @author dxq613
  */
 
-define('bui/module', function (require) {
+define('bui/module',['bui/common'], function (require) {
 
   var BUI = require('bui/common');
 

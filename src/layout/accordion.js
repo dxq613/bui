@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/accordion',['bui/layout/abstract','bui/layout/tabitem','bui/layout/collapsable'],function (require) {
+define('bui/layout/accordion',['bui/common','bui/layout/abstract','bui/layout/tabitem','bui/layout/collapsable'],function (require) {
 	
 	var CLS_ITEM = 'x-layout-item-accordion',
 		BUI = require('bui/common'),

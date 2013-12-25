@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/borderitem',function (require) {
+define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (require) {
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem'),
 		CLS_COLLAPSED = 'x-collapsed',

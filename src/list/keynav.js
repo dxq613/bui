@@ -4,13 +4,14 @@
  * @ignore
  */
 
-define('bui/list/keynav',function () {
+define('bui/list/keynav',['bui/common'],function (require) {
   'use strict';
   /**
    * @class BUI.List.KeyNav
    * 列表导航扩展类
    */
-  var  KeyNav = function(){};
+  var  BUI = require('bui/common'),
+    KeyNav = function(){};
 
   KeyNav.ATTRS = {
     /**

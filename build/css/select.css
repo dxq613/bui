@@ -169,6 +169,7 @@
 }
 .bui-select .icon-caret {
   vertical-align: middle;
+  margin-top: -4px;
 }
 /** list-checkbox **/
 .x-checkbox {

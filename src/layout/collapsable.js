@@ -4,8 +4,10 @@
  * @ignore
  */
 
-define('bui/layout/collapsable',function (require) {
+define('bui/layout/collapsable',['bui/common'],function (require) {
 
+	var BUI = require('bui/common');
+	
 	/**
 	 * @class BUI.Layout.Collapsable
 	 * 可以展开、折叠的布局的扩展类

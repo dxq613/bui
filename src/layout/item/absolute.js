@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/layout/absoluteitem',['bui/layout/baseitem'],function (require) {
+define('bui/layout/absoluteitem',['bui/common','bui/layout/baseitem'],function (require) {
 	
 	var BUI = require('bui/common'),
 		Base = require('bui/layout/baseitem');

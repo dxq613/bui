@@ -811,6 +811,7 @@ s {
   text-align: center;
   height: 22px;
   width: 22px;
+  overflow: hidden;
   line-height: 22px;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;

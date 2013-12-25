@@ -56,7 +56,7 @@ define('bui/list/sortable',['bui/common','bui/data'],function (require) {
      * @return {Array} 排序集合
      */
     getSortData : function(){
-      return this.get('view').getAllElements();
+      return $.makeArray(this.get('view').getAllElements());
     },
     /**
      * 列表排序

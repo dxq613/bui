@@ -16,9 +16,9 @@ if(!BUI.use && seajs){
     BUI.use = seajs.use;
     BUI.config = seajs.config;
 }
-
-define('bui/util',function(){
-  
+    
+define('bui/util',function(require){
+    
     //兼容jquery 1.6以下
     (function($){
       if($.fn){
@@ -84,7 +84,7 @@ define('bui/util',function(){
      * 子版本号
      * @type {String}
      */
-    subVersion : 62,
+    subVersion : 63,
 
     /**
      * 是否为函数
@@ -130,12 +130,12 @@ define('bui/util',function(){
      * 函数支持多于2个变量，后面的变量同s1一样将其成员复制到构造函数的原型链上。
      * @param  {Function} r  构造函数
      * @param  {Object} s1 将s1 的成员复制到构造函数的原型链上
-     *			@example
-     *			BUI.augment(class1,{
-     *				method1: function(){
+     *          @example
+     *          BUI.augment(class1,{
+     *              method1: function(){
      *   
-     *				}
-     *			});
+     *              }
+     *          });
      */
     augment : function(r,s1){
       if(!BUI.isFunction(r))
@@ -171,25 +171,25 @@ define('bui/util',function(){
      * @param  {Function} superclass 父类构造函数
      * @param  {Object} overrides  子类的属性或者方法
      * @return {Function} 返回的子类构造函数
-		 * 示例:
-     *		@example
-     *		//父类
-     *		function base(){
+         * 示例:
+     *      @example
+     *      //父类
+     *      function base(){
      * 
-     *		}
+     *      }
      *
-     *		function sub(){
+     *      function sub(){
      * 
-     *		}
-     *		//子类
-     *		BUI.extend(sub,base,{
-     *			method : function(){
+     *      }
+     *      //子类
+     *      BUI.extend(sub,base,{
+     *          method : function(){
      *    
-     *			}
-     *		});
+     *          }
+     *      });
      *
-     *		//或者
-     *		var sub = BUI.extend(base,{});
+     *      //或者
+     *      var sub = BUI.extend(base,{});
      */
     extend : function(subclass,superclass,overrides, staticOverrides){
       //如果只提供父类构造函数，则自动生成子类构造函数
@@ -260,6 +260,15 @@ define('bui/util',function(){
       return typeof value === 'number';
     },
     /**
+     * 是否是布尔类型
+     *
+     * @param {Object} 测试的值
+     * @return {Boolean}
+     */
+    isBoolean: function(value) {
+        return typeof value === 'boolean';
+    },
+    /**
      * 控制台输出日志
      * @param  {Object} obj 输出的数据
      */
@@ -272,8 +281,16 @@ define('bui/util',function(){
     * 将多个对象的属性复制到一个新的对象
     */
     merge : function(){
-      var args = $.makeArray(arguments);
-      args.unshift({});
+      var args = $.makeArray(arguments),
+        first = args[0];
+      if(BUI.isBoolean(first)){
+        args.shift();
+        args.unshift({});
+        args.unshift(first);
+      }else{
+        args.unshift({});
+      }
+      
       return BUI.mix.apply(null,args);
 
     },
@@ -375,8 +392,8 @@ define('bui/util',function(){
      * @param  {String} name 命名空间的名称
      * @param  {Object} baseNS 在已有的命名空间上创建命名空间，默认“BUI”
      * @return {Object} 返回的命名空间对象
-     *		@example
-     *		BUI.namespace("Grid"); // BUI.Grid
+     *      @example
+     *      BUI.namespace("Grid"); // BUI.Grid
      */
     namespace : function(name,baseNS){
       baseNS = baseNS || BUI;
@@ -662,3 +679,4 @@ define('bui/util',function(){
 
   return BUI;
 });
+

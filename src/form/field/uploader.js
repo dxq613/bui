@@ -123,6 +123,7 @@ define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (re
         }
       },
       value:{
+        shared : false,
         value: []
       },
       defaultRules: function(){
