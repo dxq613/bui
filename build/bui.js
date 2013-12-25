@@ -993,11 +993,11 @@ seajs.config = function(configData) {
 
 (function(){
   var requires = ['bui/util','bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'];
-  if(window.KISSY){ //\u5982\u679c\u662fkissy\u5219\u52a0\u8f7dcore\u6a21\u5757
+  if(window.KISSY && !window.KISSY.Node){ //\u5982\u679c\u662fkissy\u540c\u65f6\u672a\u52a0\u8f7dcore\u6a21\u5757
     requires.unshift('bui/adapter');
   }
   define('bui/common',requires,function(require){
-    if(window.KISSY){
+    if(window.KISSY && !window.KISSY.Node){
       require('bui/adapter');
     }
     var BUI = require('bui/util');
@@ -18639,9 +18639,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         select.render = _self.getControlContainer();
         select.valueField = _self.getInnerControl();
         select.autoRender = true;
-       /* if(items){
-          select.items = items;
-        }*/
+       
         select = new Select.Select(select);
         _self.set('select',select);
         _self.set('isCreate',true);

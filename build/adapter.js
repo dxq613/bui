@@ -16,7 +16,7 @@ window.define = window.define || function(name,depends,fun){
     fun = depends;
     depends = [];
   }
-  if(depends){
+  if(depends && !KISSY.Node){
     depends.unshift('core');
   }
 
@@ -38,11 +38,12 @@ if(!BUI.use){
     KISSY.use(modules,function(S){
       var args = KISSY.makeArray(arguments); 
       args.shift();
-      callback.apply(S,args);
+      callback && callback.apply(S,args);
     });
   };
 }
-define('bui/adapter',['core'],function(){
+
+var adapterCallback = function(){
   var S = KISSY,
     DOM = S.DOM,
     NLP = S.Node.prototype;
@@ -354,7 +355,6 @@ define('bui/adapter',['core'],function(){
         });
         return rst;
       },
-
       /**
        * 空操作
        */
@@ -367,13 +367,17 @@ define('bui/adapter',['core'],function(){
 
   window.$ = window.$ || window.jQuery;
   return KISSY;
-});
+};
 
+define('bui/adapter',['core'],adapterCallback);
+if(KISSY.Node){
+  adapterCallback();
+}
 
 KISSY.config({
   packages:[{
     name:"bui",
-    tag:"201307042102",
+    tag:"201312251606",
     path:"http://g.tbcdn.cn/fi",
     charset:'utf-8'
   }]

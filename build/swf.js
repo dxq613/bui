@@ -133,7 +133,7 @@ define('bui/swf/ua', function (require) {
  * insert swf into document in an easy way
  * @author yiminghe@gmail.com, oicuicu@gmail.com
  */
-define('bui/swf', function (require) {
+define('bui/swf',['bui/common', 'bui/swf/ua'], function (require) {
 
     var BUI = require('bui/common'),
         FlashUA = require('bui/swf/ua'),

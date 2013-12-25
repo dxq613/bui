@@ -49,9 +49,7 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
         select.render = _self.getControlContainer();
         select.valueField = _self.getInnerControl();
         select.autoRender = true;
-       /* if(items){
-          select.items = items;
-        }*/
+       
         select = new Select.Select(select);
         _self.set('select',select);
         _self.set('isCreate',true);

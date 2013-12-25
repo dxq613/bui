@@ -3,7 +3,7 @@ Copyright 2011, KISSY UI Library v1.1.5
 MIT Licensed
 build time: Sep 11 10:29
 */
-define('bui/uploader/button/swfButton/ajbridge', function(require){
+define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], function(require){
   var BUI = require('bui/common'),
     SWF = require('bui/swf');
 
@@ -119,7 +119,7 @@ define('bui/uploader/button/swfButton/ajbridge', function(require){
  * NOTES:
  * 20130904 从kissy ajbridge模块移植成bui的模块（索丘修改）
  */
-define('bui/uploader/button/filter', function(require){
+define('bui/uploader/button/filter',['bui/common'], function(require){
 
   var BUI = require('bui/common');
 
@@ -217,7 +217,7 @@ define('bui/uploader/button/filter', function(require){
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
 
-define('bui/uploader/button/base', function(require) {
+define('bui/uploader/button/base', ['bui/common', './filter'], function(require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
@@ -243,7 +243,7 @@ define('bui/uploader/button/base', function(require) {
    */
   function getFileExtName(filename){
     var result = /\.[^\.]+/.exec(filename) || [];
-    return result.join('');
+    return result.join('').toLowerCase();
   }
 
   /**
@@ -421,7 +421,7 @@ define('bui/uploader/button/base', function(require) {
  **/
 
 
-define('bui/uploader/button/htmlButton', function(require) {
+define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
@@ -608,14 +608,22 @@ define('bui/uploader/button/htmlButton', function(require) {
  * @fileoverview flash上传按钮
  * @author: zengyue.yezy
  **/
-define('bui/uploader/button/swfButton', function (require) {
+define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbridge'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
     ButtonBase = require('bui/uploader/button/base'),
-    SwfUploader = require('bui/uploader/type/flash'),
-    baseUrl = seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base,
+    baseUrl = getBaseUrl(),
     SWF = require('bui/uploader/button/swfButton/ajbridge');
+
+  function getBaseUrl(){
+    if(window.seajs){
+      return seajs.pluginSDK ? seajs.pluginSDK.util.loaderDir : seajs.data.base;
+    }
+    else if(window.KISSY){
+      return KISSY.Config.packages['bui'].base + '/bui/';
+    }
+  }
 
 
   var SwfButtonView = Component.View.extend([ButtonBase.View], {
@@ -889,7 +897,7 @@ define('bui/uploader/type/base',function(require) {
  * @fileoverview ajax方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  **/
-define('bui/uploader/type/ajax',function(require) {
+define('bui/uploader/type/ajax', ['./base'], function(require) {
     var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:',
         win = window,
         doc = document;
@@ -1055,7 +1063,7 @@ define('bui/uploader/type/ajax',function(require) {
  * @fileoverview flash上传方案，基于龙藏写的ajbridge内的uploader
  * @author 剑平（明河）<minghe36@126.com>
  **/
-define('bui/uploader/type/flash', function (require) {
+define('bui/uploader/type/flash',['./base'], function (require) {
     var LOG_PREFIX = '[uploader-FlashType]:';
 
     var UploadType = require('bui/uploader/type/base');
@@ -1227,7 +1235,7 @@ define('bui/uploader/type/flash', function (require) {
  * @fileoverview iframe方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  **/
-define('bui/uploader/type/iframe',function(require) {
+define('bui/uploader/type/iframe',['./base'], function(require) {
     var ID_PREFIX = 'bui-uploader-iframe-';
 
     var UploadType = require('bui/uploader/type/base');
@@ -1457,7 +1465,7 @@ define('bui/uploader/type/iframe',function(require) {
  * @fileoverview 文件上传队列列表显示和处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
-define('bui/uploader/queue', ['bui/list'], function (require) {
+define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
 
   var BUI = require('bui/common'),
     SimpleList = require('bui/list/simplelist');
@@ -1587,7 +1595,7 @@ define('bui/uploader/queue', ['bui/list'], function (require) {
  * @fileoverview 文件上传主题的处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
-define('bui/uploader/theme', function (require) {
+define('bui/uploader/theme',['bui/common'], function (require) {
 
   var BUI = require('bui/common');
 
@@ -1641,9 +1649,10 @@ define('bui/uploader/theme', function (require) {
  * @fileoverview 异步文件上传的验证器
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/validator', function (require) {
+define('bui/uploader/validator',['bui/common'], function (require) {
 
   var BUI = require('bui/common');
+
 
   /**
    * 异步文件上传的验证器
@@ -1676,47 +1685,96 @@ define('bui/uploader/validator', function (require) {
      * @return {[type]}      [description]
      */
     valid: function(item){
-      this._validItem(item);
+      return this._validItem(item);
     },
     _validItem: function(item){
       var _self = this,
-        rules = _self.get('rules');
+        rules = _self.get('rules'),
+        isValid = true;
+
       BUI.each(rules, function(rule, name){
-        _self._validRule(item, name, rule);
+        isValid = isValid && _self._validRule(item, name, rule);
+        return isValid;
       })
+      return isValid;
     },
-    _validRule: function(item, name, rule){
-      // var validFn = this.getRuleFn()
-      var queue = this.get('queue');
-      if(name === 'maxSize'){
-        if(item.size > rule * 1000){
-          item.result = {msg: '文件大小不能大于' + rule + 'k'};
-          queue.updateFileStatus(item, 'error');
-        }
+    _validRule: function(item, name, rule, msg){
+      if(BUI.isArray(rule)){
+        msg = BUI.substitute(rule[1], rule);
+        rule = rule[0];
       }
+      var ruleFn = Validator.getRule(name),
+        validMsg = ruleFn && ruleFn.call(this, item, rule, msg),
+        result = this._getResult(validMsg);
+
+      if(result){
+        item.result = result;
+        return false;
+      }
+      return true;
     },
-    testMaxSize: function(item, maxSize){
-      if(item.size > rule * 1024){
-        var result = {
-          msg: ''
+    /**
+     * 获取校验的结果
+     * @param  {String} msg
+     */
+    _getResult: function(msg){
+      if(msg){
+        return {
+          msg: msg
         }
-        return result;
       }
     }
   });
 
 
-  // function ruleMap = {};
+  var ruleMap = {};
 
-  // Validator.addRule = function(name, fn){
-  //   ruleMap[name] = fn;
-  // }
+  Validator.addRule = function(name, fn){
+    ruleMap[name] = fn;
+  }
 
-  // Validator.addRule('maxSize', function(value, baseValue, formatMsg){
-  //   if(value > baseValue){
-  //     return formatMsg;
-  //   }
-  // });
+  Validator.getRule = function(name){
+    return ruleMap[name];
+  }
+
+  //文件最大值
+  Validator.addRule('maxSize', function(item, baseValue, formatMsg){
+    if(item.size > baseValue * 1024){
+      return formatMsg;
+    }
+  });
+
+  //文件最小值
+  Validator.addRule('minSize', function(item, baseValue, formatMsg){
+    if(item.size < baseValue * 1024){
+      return formatMsg;
+    }
+  });
+
+  //上传文件的最大个数
+  Validator.addRule('max', function(item, baseValue, formatMsg){
+    var count = this.get('queue').getCount();
+    if(count > baseValue){
+      return formatMsg;
+    }
+  });
+
+  //上传文件的最小个数
+  Validator.addRule('min', function(item, baseValue, formatMsg){
+    var count = this.get('queue').getCount();
+    if(count < baseValue){
+      return formatMsg;
+    }
+  });
+
+  //上传文件的文件类型
+  Validator.addRule('ext', function(item, baseValue, formatMsg){
+    var ext = item.ext,
+      baseValue = baseValue.split(',');
+    if($.inArray(ext, baseValue) === -1){
+      return formatMsg;
+    }
+  });
 
   return Validator;
 
@@ -1724,7 +1782,7 @@ define('bui/uploader/validator', function (require) {
  * @fileoverview 文件上传的工厂类
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  **/
-define('bui/uploader/factory', function (require) {
+define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', './button/swfButton', './type/ajax', './type/flash', './type/iframe'], function (require) {
 
   var BUI = require('bui/common'),
     Queue = require('bui/uploader/queue'),
@@ -1768,7 +1826,7 @@ define('bui/uploader/factory', function (require) {
  * @fileoverview 异步文件上传组件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/uploader', function (require) {
+define('bui/uploader/uploader', ['bui/common', './theme', './factory', './validator'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
@@ -1954,11 +2012,7 @@ define('bui/uploader/uploader', function (require) {
         uploaderType = _self.get('uploaderType');
       button.on('change', function(ev) {
         var files = ev.files;
-        //对添加的文件添加等待状态
-        BUI.each(files, function(file){
-          file.wait = true;
-        });
-        // validator.valid(files);
+        //对添加的文件添加状态
         queue.addItems(files);
         _self.fire('change', {items: files});
       });
@@ -1971,10 +2025,18 @@ define('bui/uploader/uploader', function (require) {
       var _self = this,
         queue = _self.get('queue'),
         validator = _self.get('validator');
-      // queue.on('itemrendered', function(ev){
-      //   validator.valid(ev.item);
-      // })
-      queue.on('itemrendered itemupdated', function(ev) {
+
+      //渲染完了之后去设置文件状态
+      queue.on('itemrendered', function(ev){
+        var item = ev.item,
+          status = 'wait';
+        if(!validator.valid(item)){
+          status = 'error';
+        }
+        queue.updateFileStatus(item, status);
+      });
+
+      queue.on('itemupdated', function(ev) {
         var items = queue.getItemsByStatus('wait');
         //如果有等待的文件则上传第1个
         if (items && items.length) {
@@ -2206,7 +2268,7 @@ define('bui/uploader/uploader', function (require) {
  * @fileoverview 异步文件上传组件入口文件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader', function (require) {
+define('bui/uploader', ['bui/common', 'bui/uploader/uploader', 'bui/uploader/queue', 'bui/uploader/theme', 'bui/uploader/factory'], function (require) {
 
   var BUI = require('bui/common'),
     Uploader = BUI.namespace('Uploader');
