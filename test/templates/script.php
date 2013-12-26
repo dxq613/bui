@@ -8,7 +8,7 @@
   <script type="text/javascript">
    BUI.setDebug(true);
   </script>
-
+  
  <!--  <script type="text/javascript" src="http://g.tbcdn.cn/kissy/k/1.4.1/seed-min.js"></script>
   <script type="text/javascript" src="../src/common/adapter.js"></script>
   <script type="text/javascript">

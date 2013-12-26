@@ -51,5 +51,8 @@
     <script src="../src/uploader/button/ajbridge.js"></script>
 
     <script type="text/javascript" src="specs/uploader-spec.js"></script>
-
+    <script>
+    BUI.use('bui/uploader/factory');
+    </script>
+  
 <?php include("./templates/footer.php"); ?>

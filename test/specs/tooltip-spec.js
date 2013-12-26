@@ -28,7 +28,8 @@ BUI.use('bui/tooltip',function (Tooltip) {
         tip  = new Tip({
         title : title,
         elCls:"tips tips-warning",
-        trigger : '#t1'
+        trigger : '#t1',
+        delegateTigger : true
       });
 
       tip.render();

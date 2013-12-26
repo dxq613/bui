@@ -1407,7 +1407,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
    *   BUI.use('bui/calendar',function(Calendar){
    *      var datepicker = new Calendar.DatePicker({
    *        trigger:'.calendar',
-   *        //delegateTigger : true, //如果设置此参数，那么新增加的.calendar元素也会支持日历选择
+   *        //delegateTrigger : true, //如果设置此参数，那么新增加的.calendar元素也会支持日历选择
    *        autoRender : true
    *      });
    *    });

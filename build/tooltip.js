@@ -150,7 +150,7 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
   },{
     ATTRS : {
       //使用委托的方式显示提示信息
-      delegateTigger : {
+      delegateTrigger : {
         value : true
       },
       /**

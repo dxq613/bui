@@ -79,7 +79,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     handleMouseLeave :function (ev) {
       var _self = this,
         subMenu = _self.get('subMenu'),
-        toElement = ev.toElement;
+        toElement = ev.toElement || ev.relatedTarget;;
       if(toElement && subMenu && subMenu.containsElement(toElement)){
         _self.set('open',true);
       }else{
@@ -193,7 +193,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
        /**
        * 下级菜单和菜单项的对齐方式
        * @type {Object}
-       * @protected
        * @default 默认在下面显示
        */
       subMenuAlign : {

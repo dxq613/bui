@@ -11,7 +11,8 @@ define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], functi
   var instances = {};
 
   /**
-   * AJBridge Class
+   * @class  BUI.Uploader.AJBridge
+   * @protected
    * @author kingfo oicuicu@gmail.com
    */
   function AJBridge(config){
@@ -32,7 +33,7 @@ define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], functi
     },
     /**
      * 批量注册 SWF 公开的方法
-     * @param {Class} C
+     * @param {Function} C 构造函数
      * @param {String|Array} methods
      */
     augment: function (C, methods) {
@@ -118,6 +119,7 @@ define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], functi
 /**
  * NOTES:
  * 20130904 从kissy ajbridge模块移植成bui的模块（索丘修改）
+ * @ignore
  */
 define('bui/uploader/button/filter',['bui/common'], function(require){
 
@@ -231,6 +233,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
    * 获取文件名称
    * @param {String} path 文件路径
    * @return {String}
+   * @ignore
    */
   function getFileName (path) {
     return path.replace(/.*(\/|\\)/, "");
@@ -240,6 +243,8 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
    * 获取文件扩展名
    * @param {String} filename 文件名
    * @return {String}
+   * @private
+   * @ignore
    */
   function getFileExtName(filename){
     var result = /\.[^\.]+/.exec(filename) || [];
@@ -250,6 +255,8 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
    * 转换文件大小字节数
    * @param {Number} bytes 文件大小字节数
    * @return {String} 文件大小
+   * @private
+   * @ignore
    */
   function convertByteSize(bytes) {
     var i = -1;
@@ -283,21 +290,33 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
 
   /**
    * 上传组件按钮的基类
-   * @class BUI.Uploader.Button.Base
+   * @class BUI.Uploader.Button
    */
   function base(){
 
   }
 
   base.ATTRS = {
+    /**
+     * 按钮的样式
+     * @type {String}
+     */
     buttonCls: {
       value: CLS_UPLOADER_BUTTON + '-wrap',
       view: true
     },
+    /**
+     * 文本的样式
+     * @type {String}
+     */
     textCls: {
       value: CLS_UPLOADER_BUTTON_TEXT,
       view: true
     },
+    /**
+     * 显示的文本
+     * @type {String}
+     */
     text: {
       view: true,
       value: '上传文件'
@@ -312,11 +331,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
      * @default false
      */
     disabled : {
-      value : false,
-      setter : function(v) {
-        this.setDisabled(v);
-        return v;
-      }
+      value : false
     },
     /**
      * 是否开启多选支持
@@ -324,11 +339,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
      * @default true
      */
     multiple : {
-      value : true,
-      setter : function(v){
-        this.setMultiple(v);
-        return v;
-      }
+      value : true
     },
     /**
      * 文件过滤
@@ -336,19 +347,16 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
      * @default []
      */
     filter : {
-      value : [],
-      setter : function(v){
-        this.setFilter(v);
-        return v;
-      }
+      shared : false,
+      value : []
     }
   };
 
   base.prototype = {
     /**
      * 获取文件的扩展信息
-     * @param  {[type]} file [description]
-     * @return {[type]}      [description]
+     * @param  {Object} file 文件对象
+     * @return {Object} 返回文件扩展信息
      */
     getExtFileData: function(file){
       var filename = getFileName(file.name),
@@ -366,6 +374,9 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
     },
     /**
      * @protected
+     * 不知道含义，貌似是给file附加信息，命名有问题，无法见到名字想到含义
+     * formatFile或许更合适
+     * @ignore
      */
     _getFile: function(file){
       var _self = this,
@@ -377,8 +388,29 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
       file.attr = fileAttrs;
       return file;
     },
+    //设置多选
+    _uiSetMultiple : function (v) {
+      this.setMultiple(v);
+    },
+    /**
+     * @template
+     * @protected
+     * 设置是否多选，但是从函数含义上来看使用
+     * 更合适
+     * 模板函数，用于子类扩展，参考 模板模式
+     */
     setMultiple: function(v){
     },
+    //设置禁用
+    _uiSetDisabled : function (v) {
+      this.setDisabled(v);
+    },
+    /**
+     * @protected
+     * @template
+     * 设置禁用，其实直接替换成_uiSetDisabled更好
+     * 
+     */
     setDisabled: function(v){
     },
     getFilter: function(v){
@@ -405,6 +437,15 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
         }
       }
     },
+    //设置过滤
+    _uiSetFilter : function (v) {
+      this.setFilter(v);
+    },
+    /**
+     * @protected
+     * @template
+     * 设置过滤
+     */
     setFilter: function(v){
     }
   }
@@ -520,6 +561,7 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
     },
     /**
      * 设置上传组件的禁用
+     * @protected
      * @param {Boolean} multiple 是否禁用
      * @return {Boolean}
      */
@@ -538,6 +580,10 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
       }
       return multiple;
     },
+    /**
+     * @protected
+     * @ignore
+     */
     setDisabled: function(v){
       var _self = this,
         fileInput = _self.get('fileInput');
@@ -550,7 +596,9 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
     },
     /**
      * 设置上传文件的类型
-     * @param {[type]} filter 可上传文件的类型
+     * @ignore
+     * @protected
+     * @param {*} filter 可上传文件的类型
      */
     setFilter: function(v){
       var _self = this,
@@ -575,7 +623,7 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
       },
       /**
        * 对应的表单上传域
-       * @type KISSY.Node
+       * @type {jQuery}
        */
       fileInput: {
       },
@@ -754,12 +802,13 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
 });/**
  * @fileoverview 上传方式类的基类
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
+ * @ignore
  **/
 define('bui/uploader/type/base',function(require) {
   /**
-   * @name UploadType
-   * @class 上传方式类的基类，定义通用的事件和方法，一般不直接监听此类的事件
-   * @constructor
+   * @class BUI.Uploader.UploadType
+   *  上传方式类的基类，定义通用的事件和方法，一般不直接监听此类的事件
+   * @extends BUI.Base
    */
   function UploadType(config) {
     var _self = this;
@@ -793,44 +842,41 @@ define('bui/uploader/type/base',function(require) {
     }
   }
 
-  BUI.mix(UploadType, /** @lends UploadType*/{
+  BUI.mix(UploadType, {
     /**
      * 事件列表
      */
     event : {
-      //开始上传后触发
+      /**
+       * @event
+       * 开始上传后触发
+       *
+       */
       START : 'start',
-      //停止上传后触发
+      /**
+       * 停止上传后触发
+       * @event
+       */
       CANCEL : 'cancel',
-      //成功请求
+      /**
+       * 上传成功后触发
+       * @event
+       */
       SUCCESS : 'success',
-      //上传失败后触发
+      /**
+       * 上传失败后触发
+       * @event
+       */
       ERROR : 'error'
     }
   });
 
-  /**
-   * @name UploadType#start
-   * @desc  开始上传后触发
-   * @event
-   */
-  /**
-   * @name UploadType#stop
-   * @desc  停止上传后触发
-   * @event
-   */
-  /**
-   * @name UploadType#success
-   * @desc  上传成功后触发
-   * @event
-   */
-  /**
-   * @name UploadType#error
-   * @desc  上传失败后触发
-   * @event
-   */
+  
+  
+  
+  
   //继承于Base，属性getter和setter委托于Base处理
-  BUI.extend(UploadType, BUI.Base, /** @lends UploadType.prototype*/{
+  BUI.extend(UploadType, BUI.Base, {
     /**
      * 上传文件
      * @param {Object} File 数据对像
@@ -896,6 +942,7 @@ define('bui/uploader/type/base',function(require) {
 });/**
  * @fileoverview ajax方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
+ * @ignore
  **/
 define('bui/uploader/type/ajax', ['./base'], function(require) {
     var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:',
@@ -914,10 +961,9 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
     }
 
     /**
-     * @name AjaxType
-     * @class ajax方案上传
-     * @constructor
-     * @requires UploadType
+     * @class BUI.Uploader.AjaxType
+     * ajax方案上传
+     * @extends BUI.Uploader.UploadType
      */
     function AjaxType(config) {
         var self = this;
@@ -925,7 +971,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         AjaxType.superclass.constructor.call(self, config);
     }
 
-    BUI.mix(AjaxType, /** @lends AjaxType.prototype*/{
+    BUI.mix(AjaxType, {
         /**
          * 事件列表
          */
@@ -934,11 +980,12 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         })
     });
     //继承于Base，属性getter和setter委托于Base处理
-    BUI.extend(AjaxType, UploadType, /** @lends AjaxType.prototype*/{
+    BUI.extend(AjaxType, UploadType,{
         /**
          * 上传文件
          * @param {Object} File
-         * @return {AjaxType}
+         * @return {BUI.Uploader.AjaxType}
+         * @chainable
          */
         upload : function(file) {
             //不存在文件信息集合直接退出
@@ -956,7 +1003,8 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         },
         /**
          * 停止上传
-         * @return {AjaxType}
+         * @return {BUI.Uploader.AjaxType}
+         * @chainable
          */
         cancel : function() {
             var self = this,
@@ -972,7 +1020,8 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         },
         /**
          * 发送ajax请求
-         * @return {AjaxType}
+         * @return {BUI.Uploader.AjaxType}
+         * @chainable
          */
         send : function() {
             var self = this,
@@ -1003,6 +1052,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         },
         /**
          * 设置FormData数据
+         * @private
          */
         _setFormData:function(){
             var self = this;
@@ -1041,7 +1091,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
             formData.append(fileDataName, file);
             self.set('formData', formData);
         }
-    }, {ATTRS : /** @lends AjaxType*/{
+    }, {ATTRS :{
         /**
          * 表单数据对象
          */
@@ -1062,6 +1112,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
 });/**
  * @fileoverview flash上传方案，基于龙藏写的ajbridge内的uploader
  * @author 剑平（明河）<minghe36@126.com>
+ * @ignore
  **/
 define('bui/uploader/type/flash',['./base'], function (require) {
     var LOG_PREFIX = '[uploader-FlashType]:';
@@ -1069,11 +1120,9 @@ define('bui/uploader/type/flash',['./base'], function (require) {
     var UploadType = require('bui/uploader/type/base');
 
     /**
-     * @name FlashType
-     * @class flash上传方案，基于龙藏写的ajbridge内的uploader
-     * @constructor
-     * @extends UploadType
-     * @requires Node
+     * @class BUI.Uploader.FlashType
+     * flash上传方案，基于龙藏写的ajbridge内的uploader
+     * @extends BUI.Uploader.UploadType
      */
     function FlashType(config) {
         var _self = this;
@@ -1082,7 +1131,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         _self.isHasCrossdomain();
     }
 
-    BUI.mix(FlashType, /** @lends FlashType.prototype*/{
+    BUI.mix(FlashType,{
         /**
          * 事件列表
          */
@@ -1094,7 +1143,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         })
     });
 
-    BUI.extend(FlashType, UploadType, /** @lends FlashType.prototype*/{
+    BUI.extend(FlashType, UploadType, {
         /**
          * 初始化
          */
@@ -1141,7 +1190,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         /**
          * 上传文件
          * @param {String} id 文件id
-         * @return {FlashType}
+         * @return {BUI.Uploader.FlashType}
+         * @chainable
          */
         upload:function (file) {
             var _self = this,
@@ -1159,7 +1209,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         },
         /**
          * 停止上传文件
-         * @return {FlashType}
+         * @return {BUI.Uploader.FlashType}
+         * @chainable
          */
         cancel: function () {
             var _self = this,
@@ -1188,7 +1239,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                  }
              });
         }
-    }, {ATTRS:/** @lends FlashType*/{
+    }, {ATTRS:{
         uploader: {
             setter: function(v){
                 var _self = this;
@@ -1234,17 +1285,16 @@ define('bui/uploader/type/flash',['./base'], function (require) {
 });/**
  * @fileoverview iframe方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
+ * @ignore
  **/
 define('bui/uploader/type/iframe',['./base'], function(require) {
     var ID_PREFIX = 'bui-uploader-iframe-';
 
     var UploadType = require('bui/uploader/type/base');
     /**
-     * @name IframeType
-     * @class iframe方案上传，全浏览器支持
-     * @constructor
-     * @extends UploadType
-     * @param {Object} config 组件配置（下面的参数为配置项，配置会写入属性，详细的配置说明请看属性部分）
+     * @class BUI.Uploader.IframeType
+     * iframe方案上传，全浏览器支持
+     * @extends BUI.Uploader.UploadType
      *
      */
     function IframeType(config) {
@@ -1253,9 +1303,10 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         IframeType.superclass.constructor.call(_self, config);
     }
 
-    BUI.mix(IframeType, /**@lends IframeType*/ {
+    BUI.mix(IframeType,  {
         /**
          * 会用到的html模板
+         * @ignore
          */
         tpl : {
             IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
@@ -1264,6 +1315,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         },
         /**
          * 事件列表
+         * @ignore
          */
         event : BUI.mix(UploadType.event,{
             //创建iframe和form后触发
@@ -1274,7 +1326,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
     });
 
     //继承于Base，属性getter和setter委托于Base处理
-    BUI.extend(IframeType, UploadType, /** @lends IframeType.prototype*/{
+    BUI.extend(IframeType, UploadType,{
         /**
          * 上传文件
          * @param {HTMLElement} fileInput 文件input
@@ -1297,7 +1349,8 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         },
         /**
          * 停止上传
-         * @return {IframeType}
+         * @return {BUI.Uploader.IframeType}
+         * @chainable
          */
         stop : function() {
             var self = this,iframe = self.get('iframe');
@@ -1433,10 +1486,10 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
             _self._remove();
             _self.set('file', null);
         }
-    }, {ATTRS : /** @lends IframeType.prototype*/{
+    }, {ATTRS : {
         /**
          * iframe方案会用到的html模板，一般不需要修改
-         * @type {}
+         * @type {String}
          * @default
          * {
          IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
@@ -1447,7 +1500,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         tpl : {value : IframeType.tpl},
         /**
          * 只读，创建的iframeid,id为组件自动创建
-         * @type String
+         * @type {String}
          * @default  'ks-uploader-iframe-' +随机id
          */
         id : {value : ID_PREFIX + BUI.guid()},
@@ -1496,7 +1549,7 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
      * 更新文件上传的状态
      * @param  {Object} item
      * @param  {String} status  上传的状态
-     * @param  {HtmlElement} element 这一项对应的dom元素
+     * @param  {HTMLElement} element 这一项对应的dom元素
      */
     updateFileStatus: function(item, status, element){
       var _self = this,
@@ -1682,7 +1735,7 @@ define('bui/uploader/validator',['bui/common'], function (require) {
     /**
      * 校验文件是否符合规则，并设置文件的状态
      * @param  {Object} item
-     * @return {[type]}      [description]
+     * @return {Boolean} 校验结果
      */
     valid: function(item){
       return this._validItem(item);
@@ -1781,6 +1834,7 @@ define('bui/uploader/validator',['bui/common'], function (require) {
 });/**
  * @fileoverview 文件上传的工厂类
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
+ * @ignore
  **/
 define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', './button/swfButton', './type/ajax', './type/flash', './type/iframe'], function (require) {
 
@@ -1792,7 +1846,12 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
     Flash = require('bui/uploader/type/flash'),
     Iframe = require('bui/uploader/type/iframe');
 
+  /**
+   * @BUI.Uploader.Factory
+   * 创建上传控件的工厂类
+   */
   function Factory(){
+
   }
   Factory.prototype = {
     createUploadType: function(type, config){
@@ -1839,7 +1898,8 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
 
   /**
    * Uploader的视图层
-   * @type {[type]}
+   * @class BUI.Uploader.UploaderView
+   * @private
    */
   var UploaderView = Component.View.extend({
     }, {
@@ -2182,7 +2242,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       return queue.getItemsByStatus('success').length === queue.getItems().length;
     }
   }, {
-    ATTRS: /** @lends Uploader.prototype*/{
+    ATTRS: {
       types: {
         value: {
           AJAX: 'ajax',
@@ -2267,6 +2327,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
 });/**
  * @fileoverview 异步文件上传组件入口文件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
+ * @ignore
  **/
 define('bui/uploader', ['bui/common', 'bui/uploader/uploader', 'bui/uploader/queue', 'bui/uploader/theme', 'bui/uploader/factory'], function (require) {
 

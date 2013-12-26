@@ -98,7 +98,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     handleMouseLeave :function (ev) {
       var _self = this,
         subMenu = _self.get('subMenu'),
-        toElement = ev.toElement;
+        toElement = ev.toElement || ev.relatedTarget;;
       if(toElement && subMenu && subMenu.containsElement(toElement)){
         _self.set('open',true);
       }else{

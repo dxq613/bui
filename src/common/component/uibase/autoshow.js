@@ -181,7 +181,7 @@ define('bui/component/uibase/autoshow',function () {
         triggerHideEvent = _self.get('triggerHideEvent'),
         triggerCallback = _self.get('triggerCallback'),
         trigger = _self.get('trigger'),
-        isDelegate = _self.get('delegateTigger'),
+        isDelegate = _self.get('delegateTrigger'),
         triggerEl = $(trigger);
 
       //触发显示

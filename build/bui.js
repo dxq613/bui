@@ -5175,7 +5175,7 @@ define('bui/component/uibase/autoshow',function () {
         triggerHideEvent = _self.get('triggerHideEvent'),
         triggerCallback = _self.get('triggerCallback'),
         trigger = _self.get('trigger'),
-        isDelegate = _self.get('delegateTigger'),
+        isDelegate = _self.get('delegateTrigger'),
         triggerEl = $(trigger);
 
       //\u89e6\u53d1\u663e\u793a
@@ -23638,7 +23638,7 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     handleMouseLeave :function (ev) {
       var _self = this,
         subMenu = _self.get('subMenu'),
-        toElement = ev.toElement;
+        toElement = ev.toElement || ev.relatedTarget;;
       if(toElement && subMenu && subMenu.containsElement(toElement)){
         _self.set('open',true);
       }else{
@@ -28655,7 +28655,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
    *   BUI.use('bui/calendar',function(Calendar){
    *      var datepicker = new Calendar.DatePicker({
    *        trigger:'.calendar',
-   *        //delegateTigger : true, //\u5982\u679c\u8bbe\u7f6e\u6b64\u53c2\u6570\uff0c\u90a3\u4e48\u65b0\u589e\u52a0\u7684.calendar\u5143\u7d20\u4e5f\u4f1a\u652f\u6301\u65e5\u5386\u9009\u62e9
+   *        //delegateTrigger : true, //\u5982\u679c\u8bbe\u7f6e\u6b64\u53c2\u6570\uff0c\u90a3\u4e48\u65b0\u589e\u52a0\u7684.calendar\u5143\u7d20\u4e5f\u4f1a\u652f\u6301\u65e5\u5386\u9009\u62e9
    *        autoRender : true
    *      });
    *    });
@@ -36541,6 +36541,10 @@ define('bui/tree/selection',['bui/list'],function (require) {
 	var BUI = require('bui/common'),
 		SimpleList = require('bui/list').SimpleList;
 
+	/**
+	 * @class BUI.Tree.Selection
+	 * \u6269\u5c55\u6811\u7684\u9009\u62e9
+	 */
 	var Selection = function(){
 
 	};
@@ -36965,7 +36969,7 @@ define('bui/tooltip/tip',['bui/common','bui/overlay'],function (require) {
   },{
     ATTRS : {
       //\u4f7f\u7528\u59d4\u6258\u7684\u65b9\u5f0f\u663e\u793a\u63d0\u793a\u4fe1\u606f
-      delegateTigger : {
+      delegateTrigger : {
         value : true
       },
       /**
