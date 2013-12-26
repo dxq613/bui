@@ -2718,7 +2718,9 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         children = _self.get('children');
 
       BUI.each(children,function(item){
-        item.set('errorTpl',v);
+        if(!item.get('userConfig')['errorTpl']){ //未定义错误模板时
+          item.set('errorTpl',v);
+        }
       });
     }
   });

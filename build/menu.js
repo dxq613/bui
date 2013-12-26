@@ -212,7 +212,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
        /**
        * 下级菜单和菜单项的对齐方式
        * @type {Object}
-       * @protected
        * @default 默认在下面显示
        */
       subMenuAlign : {

@@ -69,6 +69,7 @@ BUI.use('bui/form',function (Form) {
       render : '#f2',
       initRecord : record,
       buttons : buttons,
+      errorTpl : '<span>{error}</span>',
       children : [
         {
           children : items1

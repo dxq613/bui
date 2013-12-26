@@ -20227,7 +20227,9 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         children = _self.get('children');
 
       BUI.each(children,function(item){
-        item.set('errorTpl',v);
+        if(!item.get('userConfig')['errorTpl']){ //\u672a\u5b9a\u4e49\u9519\u8bef\u6a21\u677f\u65f6
+          item.set('errorTpl',v);
+        }
       });
     }
   });
@@ -23752,7 +23754,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
        /**
        * \u4e0b\u7ea7\u83dc\u5355\u548c\u83dc\u5355\u9879\u7684\u5bf9\u9f50\u65b9\u5f0f
        * @type {Object}
-       * @protected
        * @default \u9ed8\u8ba4\u5728\u4e0b\u9762\u663e\u793a
        */
       subMenuAlign : {
