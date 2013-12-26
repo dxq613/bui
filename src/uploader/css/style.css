@@ -2,7 +2,7 @@
 .clearfix:after { content: '\20'; display: block; height: 0; clear: both; }
 .clearfix { *zoom: 1; }
 
-/**按钮样式**/
+/**按钮样式 **/
 .bui-uploader-button-wrap {
     border: 1px solid #C4DAED;
     font-size: 12px;

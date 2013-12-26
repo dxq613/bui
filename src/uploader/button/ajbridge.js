@@ -11,7 +11,8 @@ define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], functi
   var instances = {};
 
   /**
-   * AJBridge Class
+   * @class  BUI.Uploader.AJBridge
+   * @protected
    * @author kingfo oicuicu@gmail.com
    */
   function AJBridge(config){
@@ -32,7 +33,7 @@ define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], functi
     },
     /**
      * 批量注册 SWF 公开的方法
-     * @param {Class} C
+     * @param {Function} C 构造函数
      * @param {String|Array} methods
      */
     augment: function (C, methods) {
@@ -118,4 +119,5 @@ define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], functi
 /**
  * NOTES:
  * 20130904 从kissy ajbridge模块移植成bui的模块（索丘修改）
+ * @ignore
  */

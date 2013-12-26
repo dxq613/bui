@@ -16,7 +16,8 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
 
   /**
    * Uploader的视图层
-   * @type {[type]}
+   * @class BUI.Uploader.UploaderView
+   * @private
    */
   var UploaderView = Component.View.extend({
     }, {
@@ -359,7 +360,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       return queue.getItemsByStatus('success').length === queue.getItems().length;
     }
   }, {
-    ATTRS: /** @lends Uploader.prototype*/{
+    ATTRS: {
       types: {
         value: {
           AJAX: 'ajax',

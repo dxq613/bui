@@ -18,6 +18,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
    * 获取文件名称
    * @param {String} path 文件路径
    * @return {String}
+   * @ignore
    */
   function getFileName (path) {
     return path.replace(/.*(\/|\\)/, "");
@@ -27,6 +28,8 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
    * 获取文件扩展名
    * @param {String} filename 文件名
    * @return {String}
+   * @private
+   * @ignore
    */
   function getFileExtName(filename){
     var result = /\.[^\.]+/.exec(filename) || [];
@@ -37,6 +40,8 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
    * 转换文件大小字节数
    * @param {Number} bytes 文件大小字节数
    * @return {String} 文件大小
+   * @private
+   * @ignore
    */
   function convertByteSize(bytes) {
     var i = -1;
@@ -70,21 +75,33 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
 
   /**
    * 上传组件按钮的基类
-   * @class BUI.Uploader.Button.Base
+   * @class BUI.Uploader.Button
    */
   function base(){
 
   }
 
   base.ATTRS = {
+    /**
+     * 按钮的样式
+     * @type {String}
+     */
     buttonCls: {
       value: CLS_UPLOADER_BUTTON + '-wrap',
       view: true
     },
+    /**
+     * 文本的样式
+     * @type {String}
+     */
     textCls: {
       value: CLS_UPLOADER_BUTTON_TEXT,
       view: true
     },
+    /**
+     * 显示的文本
+     * @type {String}
+     */
     text: {
       view: true,
       value: '上传文件'
@@ -99,11 +116,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
      * @default false
      */
     disabled : {
-      value : false,
-      setter : function(v) {
-        this.setDisabled(v);
-        return v;
-      }
+      value : false
     },
     /**
      * 是否开启多选支持
@@ -111,11 +124,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
      * @default true
      */
     multiple : {
-      value : true,
-      setter : function(v){
-        this.setMultiple(v);
-        return v;
-      }
+      value : true
     },
     /**
      * 文件过滤
@@ -123,19 +132,16 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
      * @default []
      */
     filter : {
-      value : [],
-      setter : function(v){
-        this.setFilter(v);
-        return v;
-      }
+      shared : false,
+      value : []
     }
   };
 
   base.prototype = {
     /**
      * 获取文件的扩展信息
-     * @param  {[type]} file [description]
-     * @return {[type]}      [description]
+     * @param  {Object} file 文件对象
+     * @return {Object} 返回文件扩展信息
      */
     getExtFileData: function(file){
       var filename = getFileName(file.name),
@@ -153,6 +159,9 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
     },
     /**
      * @protected
+     * 不知道含义，貌似是给file附加信息，命名有问题，无法见到名字想到含义
+     * formatFile或许更合适
+     * @ignore
      */
     _getFile: function(file){
       var _self = this,
@@ -164,8 +173,29 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
       file.attr = fileAttrs;
       return file;
     },
+    //设置多选
+    _uiSetMultiple : function (v) {
+      this.setMultiple(v);
+    },
+    /**
+     * @template
+     * @protected
+     * 设置是否多选，但是从函数含义上来看使用
+     * 更合适
+     * 模板函数，用于子类扩展，参考 模板模式
+     */
     setMultiple: function(v){
     },
+    //设置禁用
+    _uiSetDisabled : function (v) {
+      this.setDisabled(v);
+    },
+    /**
+     * @protected
+     * @template
+     * 设置禁用，其实直接替换成_uiSetDisabled更好
+     * 
+     */
     setDisabled: function(v){
     },
     getFilter: function(v){
@@ -192,6 +222,15 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
         }
       }
     },
+    //设置过滤
+    _uiSetFilter : function (v) {
+      this.setFilter(v);
+    },
+    /**
+     * @protected
+     * @template
+     * 设置过滤
+     */
     setFilter: function(v){
     }
   }

@@ -1,6 +1,7 @@
 /**
  * @fileoverview ajax方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
+ * @ignore
  **/
 define('bui/uploader/type/ajax', ['./base'], function(require) {
     var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:',
@@ -19,10 +20,9 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
     }
 
     /**
-     * @name AjaxType
-     * @class ajax方案上传
-     * @constructor
-     * @requires UploadType
+     * @class BUI.Uploader.AjaxType
+     * ajax方案上传
+     * @extends BUI.Uploader.UploadType
      */
     function AjaxType(config) {
         var self = this;
@@ -30,7 +30,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         AjaxType.superclass.constructor.call(self, config);
     }
 
-    BUI.mix(AjaxType, /** @lends AjaxType.prototype*/{
+    BUI.mix(AjaxType, {
         /**
          * 事件列表
          */
@@ -39,11 +39,12 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         })
     });
     //继承于Base，属性getter和setter委托于Base处理
-    BUI.extend(AjaxType, UploadType, /** @lends AjaxType.prototype*/{
+    BUI.extend(AjaxType, UploadType,{
         /**
          * 上传文件
          * @param {Object} File
-         * @return {AjaxType}
+         * @return {BUI.Uploader.AjaxType}
+         * @chainable
          */
         upload : function(file) {
             //不存在文件信息集合直接退出
@@ -61,7 +62,8 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         },
         /**
          * 停止上传
-         * @return {AjaxType}
+         * @return {BUI.Uploader.AjaxType}
+         * @chainable
          */
         cancel : function() {
             var self = this,
@@ -77,7 +79,8 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         },
         /**
          * 发送ajax请求
-         * @return {AjaxType}
+         * @return {BUI.Uploader.AjaxType}
+         * @chainable
          */
         send : function() {
             var self = this,
@@ -108,6 +111,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         },
         /**
          * 设置FormData数据
+         * @private
          */
         _setFormData:function(){
             var self = this;
@@ -146,7 +150,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
             formData.append(fileDataName, file);
             self.set('formData', formData);
         }
-    }, {ATTRS : /** @lends AjaxType*/{
+    }, {ATTRS :{
         /**
          * 表单数据对象
          */

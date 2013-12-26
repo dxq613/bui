@@ -1,6 +1,7 @@
 /**
  * @fileoverview flash上传方案，基于龙藏写的ajbridge内的uploader
  * @author 剑平（明河）<minghe36@126.com>
+ * @ignore
  **/
 define('bui/uploader/type/flash',['./base'], function (require) {
     var LOG_PREFIX = '[uploader-FlashType]:';
@@ -8,11 +9,9 @@ define('bui/uploader/type/flash',['./base'], function (require) {
     var UploadType = require('bui/uploader/type/base');
 
     /**
-     * @name FlashType
-     * @class flash上传方案，基于龙藏写的ajbridge内的uploader
-     * @constructor
-     * @extends UploadType
-     * @requires Node
+     * @class BUI.Uploader.FlashType
+     * flash上传方案，基于龙藏写的ajbridge内的uploader
+     * @extends BUI.Uploader.UploadType
      */
     function FlashType(config) {
         var _self = this;
@@ -21,7 +20,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         _self.isHasCrossdomain();
     }
 
-    BUI.mix(FlashType, /** @lends FlashType.prototype*/{
+    BUI.mix(FlashType,{
         /**
          * 事件列表
          */
@@ -33,7 +32,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         })
     });
 
-    BUI.extend(FlashType, UploadType, /** @lends FlashType.prototype*/{
+    BUI.extend(FlashType, UploadType, {
         /**
          * 初始化
          */
@@ -80,7 +79,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         /**
          * 上传文件
          * @param {String} id 文件id
-         * @return {FlashType}
+         * @return {BUI.Uploader.FlashType}
+         * @chainable
          */
         upload:function (file) {
             var _self = this,
@@ -98,7 +98,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         },
         /**
          * 停止上传文件
-         * @return {FlashType}
+         * @return {BUI.Uploader.FlashType}
+         * @chainable
          */
         cancel: function () {
             var _self = this,
@@ -127,7 +128,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                  }
              });
         }
-    }, {ATTRS:/** @lends FlashType*/{
+    }, {ATTRS:{
         uploader: {
             setter: function(v){
                 var _self = this;

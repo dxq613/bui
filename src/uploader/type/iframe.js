@@ -1,17 +1,16 @@
 /**
  * @fileoverview iframe方案上传
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
+ * @ignore
  **/
 define('bui/uploader/type/iframe',['./base'], function(require) {
     var ID_PREFIX = 'bui-uploader-iframe-';
 
     var UploadType = require('bui/uploader/type/base');
     /**
-     * @name IframeType
-     * @class iframe方案上传，全浏览器支持
-     * @constructor
-     * @extends UploadType
-     * @param {Object} config 组件配置（下面的参数为配置项，配置会写入属性，详细的配置说明请看属性部分）
+     * @class BUI.Uploader.IframeType
+     * iframe方案上传，全浏览器支持
+     * @extends BUI.Uploader.UploadType
      *
      */
     function IframeType(config) {
@@ -20,9 +19,10 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         IframeType.superclass.constructor.call(_self, config);
     }
 
-    BUI.mix(IframeType, /**@lends IframeType*/ {
+    BUI.mix(IframeType,  {
         /**
          * 会用到的html模板
+         * @ignore
          */
         tpl : {
             IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
@@ -31,6 +31,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         },
         /**
          * 事件列表
+         * @ignore
          */
         event : BUI.mix(UploadType.event,{
             //创建iframe和form后触发
@@ -41,7 +42,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
     });
 
     //继承于Base，属性getter和setter委托于Base处理
-    BUI.extend(IframeType, UploadType, /** @lends IframeType.prototype*/{
+    BUI.extend(IframeType, UploadType,{
         /**
          * 上传文件
          * @param {HTMLElement} fileInput 文件input
@@ -64,7 +65,8 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         },
         /**
          * 停止上传
-         * @return {IframeType}
+         * @return {BUI.Uploader.IframeType}
+         * @chainable
          */
         stop : function() {
             var self = this,iframe = self.get('iframe');
@@ -200,10 +202,10 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
             _self._remove();
             _self.set('file', null);
         }
-    }, {ATTRS : /** @lends IframeType.prototype*/{
+    }, {ATTRS : {
         /**
          * iframe方案会用到的html模板，一般不需要修改
-         * @type {}
+         * @type {String}
          * @default
          * {
          IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
@@ -214,7 +216,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         tpl : {value : IframeType.tpl},
         /**
          * 只读，创建的iframeid,id为组件自动创建
-         * @type String
+         * @type {String}
          * @default  'ks-uploader-iframe-' +随机id
          */
         id : {value : ID_PREFIX + BUI.guid()},

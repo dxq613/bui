@@ -104,6 +104,7 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
     },
     /**
      * 设置上传组件的禁用
+     * @protected
      * @param {Boolean} multiple 是否禁用
      * @return {Boolean}
      */
@@ -122,6 +123,10 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
       }
       return multiple;
     },
+    /**
+     * @protected
+     * @ignore
+     */
     setDisabled: function(v){
       var _self = this,
         fileInput = _self.get('fileInput');
@@ -134,7 +139,9 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
     },
     /**
      * 设置上传文件的类型
-     * @param {[type]} filter 可上传文件的类型
+     * @ignore
+     * @protected
+     * @param {*} filter 可上传文件的类型
      */
     setFilter: function(v){
       var _self = this,
@@ -159,7 +166,7 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
       },
       /**
        * 对应的表单上传域
-       * @type KISSY.Node
+       * @type {jQuery}
        */
       fileInput: {
       },

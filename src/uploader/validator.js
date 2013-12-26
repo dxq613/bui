@@ -36,7 +36,7 @@ define('bui/uploader/validator',['bui/common'], function (require) {
     /**
      * 校验文件是否符合规则，并设置文件的状态
      * @param  {Object} item
-     * @return {[type]}      [description]
+     * @return {Boolean} 校验结果
      */
     valid: function(item){
       return this._validItem(item);

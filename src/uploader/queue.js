@@ -34,7 +34,7 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
      * 更新文件上传的状态
      * @param  {Object} item
      * @param  {String} status  上传的状态
-     * @param  {HtmlElement} element 这一项对应的dom元素
+     * @param  {HTMLElement} element 这一项对应的dom元素
      */
     updateFileStatus: function(item, status, element){
       var _self = this,

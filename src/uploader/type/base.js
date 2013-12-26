@@ -1,12 +1,13 @@
 /**
  * @fileoverview 上传方式类的基类
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
+ * @ignore
  **/
 define('bui/uploader/type/base',function(require) {
   /**
-   * @name UploadType
-   * @class 上传方式类的基类，定义通用的事件和方法，一般不直接监听此类的事件
-   * @constructor
+   * @class BUI.Uploader.UploadType
+   *  上传方式类的基类，定义通用的事件和方法，一般不直接监听此类的事件
+   * @extends BUI.Base
    */
   function UploadType(config) {
     var _self = this;
@@ -40,44 +41,41 @@ define('bui/uploader/type/base',function(require) {
     }
   }
 
-  BUI.mix(UploadType, /** @lends UploadType*/{
+  BUI.mix(UploadType, {
     /**
      * 事件列表
      */
     event : {
-      //开始上传后触发
+      /**
+       * @event
+       * 开始上传后触发
+       *
+       */
       START : 'start',
-      //停止上传后触发
+      /**
+       * 停止上传后触发
+       * @event
+       */
       CANCEL : 'cancel',
-      //成功请求
+      /**
+       * 上传成功后触发
+       * @event
+       */
       SUCCESS : 'success',
-      //上传失败后触发
+      /**
+       * 上传失败后触发
+       * @event
+       */
       ERROR : 'error'
     }
   });
 
-  /**
-   * @name UploadType#start
-   * @desc  开始上传后触发
-   * @event
-   */
-  /**
-   * @name UploadType#stop
-   * @desc  停止上传后触发
-   * @event
-   */
-  /**
-   * @name UploadType#success
-   * @desc  上传成功后触发
-   * @event
-   */
-  /**
-   * @name UploadType#error
-   * @desc  上传失败后触发
-   * @event
-   */
+  
+  
+  
+  
   //继承于Base，属性getter和setter委托于Base处理
-  BUI.extend(UploadType, BUI.Base, /** @lends UploadType.prototype*/{
+  BUI.extend(UploadType, BUI.Base, {
     /**
      * 上传文件
      * @param {Object} File 数据对像

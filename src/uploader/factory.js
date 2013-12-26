@@ -1,6 +1,7 @@
 /**
  * @fileoverview 文件上传的工厂类
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
+ * @ignore
  **/
 define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', './button/swfButton', './type/ajax', './type/flash', './type/iframe'], function (require) {
 
@@ -12,7 +13,12 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
     Flash = require('bui/uploader/type/flash'),
     Iframe = require('bui/uploader/type/iframe');
 
+  /**
+   * @BUI.Uploader.Factory
+   * 创建上传控件的工厂类
+   */
   function Factory(){
+
   }
   Factory.prototype = {
     createUploadType: function(type, config){

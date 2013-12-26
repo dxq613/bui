@@ -9,6 +9,10 @@ define('bui/tree/selection',['bui/list'],function (require) {
 	var BUI = require('bui/common'),
 		SimpleList = require('bui/list').SimpleList;
 
+	/**
+	 * @class BUI.Tree.Selection
+	 * 扩展树的选择
+	 */
 	var Selection = function(){
 
 	};
