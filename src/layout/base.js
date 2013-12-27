@@ -15,6 +15,7 @@
 			Abstract : r(BASE + 'abstract'),
 			Anchor : r(BASE + 'anchor'),
 			Flow : r(BASE + 'flow'),
+			Absolute : r(BASE + 'absolute'),
 			Columns : r(BASE + 'columns'),
 			Table : r(BASE + 'table'),
 			Border :r(BASE + 'border'), 
