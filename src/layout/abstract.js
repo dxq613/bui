@@ -57,6 +57,13 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 
 		},
 		/**
+		 * 布局子项的默认得配置项
+		 * @type {Object}
+		 */
+		defaultCfg : {
+			value : {}
+		},
+		/**
 		 * 放置控件的容器css
 		 * @type {string}
 		 */
@@ -78,7 +85,7 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 
 		},
 		/**
-		 * 每一个布局子项
+		 * 每一个布局子项的模板
 		 * @type {String}
 		 */
 		itemTpl : {
@@ -215,12 +222,14 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		 */
 		getItemCfg : function(controlChild){
 			var _self = this,
-				cfg = BUI.mix({},controlChild.get('layout'));
-			cfg.control = controlChild;
-			cfg.tpl = _self.get('itemTpl');
-			cfg.layout = _self;
-			cfg.wraperCls = _self.get('wraperCls');
-			cfg.container = _self.getItemContainer(cfg);
+				defaultCfg = _self.get('defaultCfg'),
+				cfg = BUI.mix({},defaultCfg,{
+					control : controlChild,
+					tpl : _self.get('itemTpl'),
+					layout : _self,
+					wraperCls : _self.get('wraperCls'),
+					container : _self.getItemContainer(cfg)
+				},controlChild.get('layout'));
 
 			return cfg;
 		},

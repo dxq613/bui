@@ -45,6 +45,7 @@ define('bui/layout/tabitem',['bui/common','bui/layout/baseitem'],function(requir
 			bodyEl.animate({height : bodyHeight},duration,function(){
 				_self.set('collapsed',false);
 				el.removeClass(CLS_COLLAPSED);
+				_self.syncFit();
 			});
 		},
 		/**

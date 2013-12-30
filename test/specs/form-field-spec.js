@@ -123,6 +123,8 @@ BUI.use(['bui/form/textfield','bui/form/rules'],function  (TextField,Rules) {
 });
 
 
+
+
 //文本域测试方法事件
 BUI.use('bui/form/textfield',function  (TextField) {
 
@@ -227,6 +229,38 @@ BUI.use('bui/form/textfield',function  (TextField) {
         expect(callback).toHaveBeenCalled();
       });
       textField.off('valid',callback);
+    });
+  });
+
+});
+
+BUI.use('bui/form/textareafield',function(TextAreaField){
+  var tpl = ' <label class="control-label">{label}</label>\
+                <div class="controls">\
+                </div>';
+      
+  var textField = new TextAreaField({
+      render : '#row',
+      label : '测试字段',
+      elCls : 'control-group span8',
+      value : '默认文本',
+      rows : 10,
+      cols : 30,
+      controlContainer : '.controls',
+      tpl : tpl
+    });
+
+  textField.render();
+
+  var inputEl = textField.getInnerControl();
+  
+  describe('测试textarea',function(){
+
+    it('测试行',function(){
+      expect(inputEl.attr('rows')).toBe('10');
+    });
+    it('测试列',function(){
+      expect(inputEl.attr('cols')).toBe('30');
     });
   });
 

@@ -9,7 +9,8 @@ BUI.use(['bui/layout/accordion'],function(Accordion) {
 		elCls : 'layout-test',
 		children : [{
 			layout : {
-				title : '标签一'
+				title : '标签一',
+				fit : 'both'
 			},
 			xclass : 'controller',
 			content : "一"
@@ -53,6 +54,15 @@ BUI.use(['bui/layout/accordion'],function(Accordion) {
 					expect(item.get('el').hasClass('x-collapsed')).toBe(true);
 				}
 			});
+		});
+
+		it('测试自适应',function(){
+			var item = layout.getItems()[0],
+				el = item.get('el'),
+				innerControl = item.get('control');
+			expect(innerControl.get('width')).toBe(el.width());
+			expect(innerControl.get('height')).toBe(el.find('.x-accordion-body').height());
+
 		});
 		
 	});

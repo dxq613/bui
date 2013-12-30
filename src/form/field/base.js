@@ -372,7 +372,13 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     setInnerWidth : function(width){
       var _self = this,
         innerControl = _self.getInnerControl(),
+        siblings = innerControl.siblings(),
         appendWidth = innerControl.outerWidth() - innerControl.width();
+
+      BUI.each(siblings,function(dom){
+        appendWidth += $(dom).outerWidth();
+      });
+      
       innerControl.width(width - appendWidth);
     },
     //重置 提示信息是否可见

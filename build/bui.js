@@ -18162,7 +18162,13 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     setInnerWidth : function(width){
       var _self = this,
         innerControl = _self.getInnerControl(),
+        siblings = innerControl.siblings(),
         appendWidth = innerControl.outerWidth() - innerControl.width();
+
+      BUI.each(siblings,function(dom){
+        appendWidth += $(dom).outerWidth();
+      });
+      
       innerControl.width(width - appendWidth);
     },
     //\u91cd\u7f6e \u63d0\u793a\u4fe1\u606f\u662f\u5426\u53ef\u89c1
@@ -18420,6 +18426,72 @@ define('bui/form/textfield',['bui/form/basefield'],function (require) {
   });
 
   return textField;
+});/**
+ * @fileOverview \u8868\u5355\u6587\u672c\u57df
+ * @author dxq613@gmail.com
+ * @ignore
+ */
+
+define('bui/form/textareafield',['bui/form/basefield'],function (require) {
+  var Field = require('bui/form/basefield');
+
+  /**
+   * \u8868\u5355\u6587\u672c\u57df
+   * @class BUI.Form.Field.TextArea
+   * @extends BUI.Form.Field
+   */
+  var TextAreaField = Field.extend({
+    //\u8bbe\u7f6e\u884c
+    _uiSetRows : function(v){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      if(v){
+        innerControl.attr('rows',v);
+      }
+    },
+    //\u8bbe\u7f6e\u5217
+    _uiSetCols : function(v){
+      var _self = this,
+        innerControl = _self.getInnerControl();
+      if(v){
+        innerControl.attr('cols',v);
+      }
+    }
+  },{
+    ATTRS : {
+      /**
+       * \u5185\u90e8\u8868\u5355\u5143\u7d20\u7684\u5bb9\u5668
+       * @type {String}
+       */
+      controlTpl : {
+        value : '<textarea></textarea>'
+      },
+      /**
+       * \u884c
+       * @type {Number}
+       */
+      rows : {
+
+      },
+      /**
+       * \u5217
+       * @type {Number}
+       */
+      cols : {
+
+      },
+      decorateCfgFields : {
+        value : {
+          'rows' : true,
+          'cols' : true
+        }
+      }
+    }
+  },{
+    xclass : 'form-field-textarea'
+  });
+
+  return TextAreaField;
 });/**
  * @fileOverview \u8868\u5355\u6587\u672c\u57df
  * @author dxq613@gmail.com
@@ -19681,7 +19753,7 @@ define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (r
 var BASE = 'bui/form/';
 define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
   BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',
-  BASE + 'checklistfield',BASE + 'radiolistfield'],function (require) {
+  BASE + 'checklistfield',BASE + 'radiolistfield', BASE + 'textareafield'],function (require) {
   var BUI = require('bui/common'),
     Field = require(BASE + 'basefield');
 
@@ -19696,6 +19768,7 @@ define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE +
     Checkbox : require(BASE + 'checkboxfield'),
     Plain : require(BASE + 'plainfield'),
     List : require(BASE + 'listfield'),
+    TextArea : require(BASE + 'textareafield'),
     Uploader : require(BASE + 'uploaderfield'),
     CheckList : require(BASE + 'checklistfield'),
     RadioList : require(BASE + 'radiolistfield')

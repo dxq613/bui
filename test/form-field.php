@@ -63,6 +63,7 @@
     <script type="text/javascript" src="../src/form/field/radio.js"></script>
     <script type="text/javascript" src="../src/form/field/plain.js"></script>
     <script type="text/javascript" src="../src/form/field/list.js"></script>
+    <script type="text/javascript" src="../src/form/field/textarea.js"></script>
     <script type="text/javascript" src="../src/form/field/uploader.js"></script>
     <script type="text/javascript" src="../src/form/field/checklist.js"></script>
     <script type="text/javascript" src="../src/form/field/radiolist.js"></script>

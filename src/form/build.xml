@@ -24,6 +24,7 @@
 			<path path="tips.js"/>
             <path path="field/base.js"/>
             <path path="field/text.js"/>
+            <path path="field/textarea.js"/>
             <path path="field/number.js"/>
             <path path="field/hidden.js"/>
             <path path="field/readonly.js"/>

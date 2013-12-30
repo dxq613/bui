@@ -289,11 +289,16 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		//同步控件的高度
 		_syncControlHeight : function(control){
 			var _self = this,
-				height = _self._getFitHeight(),
+				height = _self.getFitHeight(),
 				appendHeight = control.getAppendHeight();
 			control.set('height',height - appendHeight);
 		},
-		_getFitHeight : function(){
+		/**
+		 * @protected
+		 * 获取内部控件自适应的高度
+		 * @return {Number} 自适应的高度
+		 */
+		getFitHeight : function(){
 			var _self = this,
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl'),

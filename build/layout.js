@@ -15,6 +15,7 @@
 			Abstract : r(BASE + 'abstract'),
 			Anchor : r(BASE + 'anchor'),
 			Flow : r(BASE + 'flow'),
+			Absolute : r(BASE + 'absolute'),
 			Columns : r(BASE + 'columns'),
 			Table : r(BASE + 'table'),
 			Border :r(BASE + 'border'), 
@@ -84,6 +85,13 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 
 		},
 		/**
+		 * 布局子项的默认得配置项
+		 * @type {Object}
+		 */
+		defaultCfg : {
+			value : {}
+		},
+		/**
 		 * 放置控件的容器css
 		 * @type {string}
 		 */
@@ -105,7 +113,7 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 
 		},
 		/**
-		 * 每一个布局子项
+		 * 每一个布局子项的模板
 		 * @type {String}
 		 */
 		itemTpl : {
@@ -242,12 +250,14 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		 */
 		getItemCfg : function(controlChild){
 			var _self = this,
-				cfg = BUI.mix({},controlChild.get('layout'));
-			cfg.control = controlChild;
-			cfg.tpl = _self.get('itemTpl');
-			cfg.layout = _self;
-			cfg.wraperCls = _self.get('wraperCls');
-			cfg.container = _self.getItemContainer(cfg);
+				defaultCfg = _self.get('defaultCfg'),
+				cfg = BUI.mix({},defaultCfg,{
+					control : controlChild,
+					tpl : _self.get('itemTpl'),
+					layout : _self,
+					wraperCls : _self.get('wraperCls'),
+					container : _self.getItemContainer(cfg)
+				},controlChild.get('layout'));
 
 			return cfg;
 		},
@@ -2089,11 +2099,16 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		//同步控件的高度
 		_syncControlHeight : function(control){
 			var _self = this,
-				height = _self._getFitHeight(),
+				height = _self.getFitHeight(),
 				appendHeight = control.getAppendHeight();
 			control.set('height',height - appendHeight);
 		},
-		_getFitHeight : function(){
+		/**
+		 * @protected
+		 * 获取内部控件自适应的高度
+		 * @return {Number} 自适应的高度
+		 */
+		getFitHeight : function(){
 			var _self = this,
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl'),
@@ -2590,6 +2605,7 @@ define('bui/layout/tabitem',['bui/common','bui/layout/baseitem'],function(requir
 			bodyEl.animate({height : bodyHeight},duration,function(){
 				_self.set('collapsed',false);
 				el.removeClass(CLS_COLLAPSED);
+				_self.syncFit();
 			});
 		},
 		/**
