@@ -255,10 +255,10 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 					control : controlChild,
 					tpl : _self.get('itemTpl'),
 					layout : _self,
-					wraperCls : _self.get('wraperCls'),
-					container : _self.getItemContainer(cfg)
+					wraperCls : _self.get('wraperCls')
 				},controlChild.get('layout'));
-
+				
+				cfg.container = _self.getItemContainer(cfg)
 			return cfg;
 		},
 		/**

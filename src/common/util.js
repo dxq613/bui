@@ -85,7 +85,7 @@ define('bui/util',function(require){
      * 子版本号
      * @type {String}
      */
-    subVersion : 63,
+    subVersion : 65,
 
     /**
      * 是否为函数
