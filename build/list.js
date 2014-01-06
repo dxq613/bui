@@ -391,7 +391,14 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     itemCls : {
       view : true
-    },        
+    }, 
+    /**
+     * 是否允许取消选中，在多选情况下默认允许取消，单选情况下不允许取消,注意此属性只有单选情况下生效
+     * @type {Boolean}
+     */
+    cancelSelected : {
+      value : false
+    },   
     /**
      * 获取项的文本，默认获取显示的文本
      * @type {Object}
@@ -566,7 +573,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
             _self.clearSelected();
           }
           _self.setItemSelected(item,true,itemEl);
-        }else if(multipleSelect){
+        }else if(multipleSelect || _self.get('cancelSelected')){
           _self.setItemSelected(item,false,itemEl);
         }           
       }

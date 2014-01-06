@@ -1102,7 +1102,7 @@ define('bui/util',function(require){
      * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
-    subVersion : 65,
+    subVersion : 66,
 
     /**
      * \u662f\u5426\u4e3a\u51fd\u6570
@@ -15695,7 +15695,14 @@ define('bui/list/domlist',['bui/common'],function (require) {
      */
     itemCls : {
       view : true
-    },        
+    }, 
+    /**
+     * \u662f\u5426\u5141\u8bb8\u53d6\u6d88\u9009\u4e2d\uff0c\u5728\u591a\u9009\u60c5\u51b5\u4e0b\u9ed8\u8ba4\u5141\u8bb8\u53d6\u6d88\uff0c\u5355\u9009\u60c5\u51b5\u4e0b\u4e0d\u5141\u8bb8\u53d6\u6d88,\u6ce8\u610f\u6b64\u5c5e\u6027\u53ea\u6709\u5355\u9009\u60c5\u51b5\u4e0b\u751f\u6548
+     * @type {Boolean}
+     */
+    cancelSelected : {
+      value : false
+    },   
     /**
      * \u83b7\u53d6\u9879\u7684\u6587\u672c\uff0c\u9ed8\u8ba4\u83b7\u53d6\u663e\u793a\u7684\u6587\u672c
      * @type {Object}
@@ -15870,7 +15877,7 @@ define('bui/list/domlist',['bui/common'],function (require) {
             _self.clearSelected();
           }
           _self.setItemSelected(item,true,itemEl);
-        }else if(multipleSelect){
+        }else if(multipleSelect || _self.get('cancelSelected')){
           _self.setItemSelected(item,false,itemEl);
         }           
       }
