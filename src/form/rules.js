@@ -385,6 +385,28 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
       }
     }
   });
+
+  /**
+   * 数字验证，会对值去除空格，无数据不进行校验
+   * 允许千分符，例如： 12,000,000的格式
+   * <ol>
+   *  <li>name: number</li>
+   *  <li>msg: 不是有效的数字！</li>
+   * </ol>
+   * @member BUI.Form.Rules
+   * @type {BUI.Form.Rule}
+   */
+  var mobile = rules.add({
+    name : 'mobile',
+    msg : '不是有效的手机号码！',
+    validator : function(value,baseValue,formatedMsg){
+      value = $.trim(value);
+      if(value){
+        return /^\d{11}$/.test(value) ? undefined : formatedMsg;
+      }
+    }
+  });
+
   /**
    * 数字验证，会对值去除空格，无数据不进行校验
    * 允许千分符，例如： 12,000,000的格式

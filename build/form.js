@@ -2687,7 +2687,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       //当不需要显示子控件错误时，仅需要监听'change'事件即可
       _self.on(validEvent,function(ev){
         var sender = ev.target;
-        if(sender != this && _self.get('showError')){
+        if(sender != this && sender.isValid() && _self.get('showError')){
           var valid = _self.isChildrenValid();
           if(valid){
             _self.validControl(_self.getRecord());
@@ -4502,6 +4502,28 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
       }
     }
   });
+
+  /**
+   * 数字验证，会对值去除空格，无数据不进行校验
+   * 允许千分符，例如： 12,000,000的格式
+   * <ol>
+   *  <li>name: number</li>
+   *  <li>msg: 不是有效的数字！</li>
+   * </ol>
+   * @member BUI.Form.Rules
+   * @type {BUI.Form.Rule}
+   */
+  var mobile = rules.add({
+    name : 'mobile',
+    msg : '不是有效的手机号码！',
+    validator : function(value,baseValue,formatedMsg){
+      value = $.trim(value);
+      if(value){
+        return /^\d{11}$/.test(value) ? undefined : formatedMsg;
+      }
+    }
+  });
+
   /**
    * 数字验证，会对值去除空格，无数据不进行校验
    * 允许千分符，例如： 12,000,000的格式

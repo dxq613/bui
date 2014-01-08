@@ -66,7 +66,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       //当不需要显示子控件错误时，仅需要监听'change'事件即可
       _self.on(validEvent,function(ev){
         var sender = ev.target;
-        if(sender != this && _self.get('showError')){
+        if(sender != this && sender.isValid() && _self.get('showError')){
           var valid = _self.isChildrenValid();
           if(valid){
             _self.validControl(_self.getRecord());

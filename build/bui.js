@@ -20203,7 +20203,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       //\u5f53\u4e0d\u9700\u8981\u663e\u793a\u5b50\u63a7\u4ef6\u9519\u8bef\u65f6\uff0c\u4ec5\u9700\u8981\u76d1\u542c'change'\u4e8b\u4ef6\u5373\u53ef
       _self.on(validEvent,function(ev){
         var sender = ev.target;
-        if(sender != this && _self.get('showError')){
+        if(sender != this && sender.isValid() && _self.get('showError')){
           var valid = _self.isChildrenValid();
           if(valid){
             _self.validControl(_self.getRecord());
@@ -22018,6 +22018,28 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
       }
     }
   });
+
+  /**
+   * \u6570\u5b57\u9a8c\u8bc1\uff0c\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c\uff0c\u65e0\u6570\u636e\u4e0d\u8fdb\u884c\u6821\u9a8c
+   * \u5141\u8bb8\u5343\u5206\u7b26\uff0c\u4f8b\u5982\uff1a 12,000,000\u7684\u683c\u5f0f
+   * <ol>
+   *  <li>name: number</li>
+   *  <li>msg: \u4e0d\u662f\u6709\u6548\u7684\u6570\u5b57\uff01</li>
+   * </ol>
+   * @member BUI.Form.Rules
+   * @type {BUI.Form.Rule}
+   */
+  var mobile = rules.add({
+    name : 'mobile',
+    msg : '\u4e0d\u662f\u6709\u6548\u7684\u624b\u673a\u53f7\u7801\uff01',
+    validator : function(value,baseValue,formatedMsg){
+      value = $.trim(value);
+      if(value){
+        return /^\d{11}$/.test(value) ? undefined : formatedMsg;
+      }
+    }
+  });
+
   /**
    * \u6570\u5b57\u9a8c\u8bc1\uff0c\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c\uff0c\u65e0\u6570\u636e\u4e0d\u8fdb\u884c\u6821\u9a8c
    * \u5141\u8bb8\u5343\u5206\u7b26\uff0c\u4f8b\u5982\uff1a 12,000,000\u7684\u683c\u5f0f

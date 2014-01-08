@@ -265,5 +265,18 @@ BUI.use('bui/form/rules',function (Rules) {
         var email = 'sina.com';
         expect(Rules.isValid('email',email)).toBe(false);
     });
+
+    it('测试手机号码格式',function(){
+        var mobile = '';
+        expect(Rules.isValid('mobile',mobile)).toBe(true);
+        var mobile = '12345678901';
+        expect(Rules.isValid('mobile',mobile)).toBe(true);
+
+        var mobile = 'a12345678901';
+        expect(Rules.isValid('mobile',mobile)).toBe(false);
+
+        var mobile = 'a2345678901';
+        expect(Rules.isValid('mobile',mobile)).toBe(false);
+    });
   });
 });
