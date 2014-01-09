@@ -70,6 +70,18 @@ BUI.use(['bui/uploader/button/htmlButton', 'bui/uploader/button/swfButton'], fun
 })
 
 
+BUI.use(['bui/uploader/type/flash'], function (Flash) {
+  var flash = new Flash({
+    url: '../upload.php?p=a/b/c#a/b/c'
+  });
+
+  describe('测试flash上传类型', function(){
+    it('url的路径是否正确', function(){
+      // expect(flash.get('url')).toBe('11');
+    })
+  });
+});
+
 
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({

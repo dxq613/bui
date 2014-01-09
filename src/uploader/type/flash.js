@@ -8,6 +8,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
 
     var UploadType = require('bui/uploader/type/base');
 
+    var URI_SPLIT_REG = new RegExp('^([^?#]+)?(?:\\?([^#]*))?(?:#(.*))?$');
+
     /**
      * @class BUI.Uploader.FlashType
      * flash上传方案，基于龙藏写的ajbridge内的uploader
@@ -149,7 +151,11 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                 var reg = /^http/;
                 //不是绝对路径拼接成绝对路径
                 if(!reg.test(v)){
-                     var href = location.href,uris = href.split('/'),newUris;
+                    //获取前面url部份http://a.b.com/a.html?a=a/b/c#d/e/f => http://a.b.com/a.html
+                    var href = location.href.match(URI_SPLIT_REG) || [],
+                        path = href[1] || '',
+                        uris = path.split('/'),
+                        newUris;
                     newUris  = BUI.Array.filter(uris,function(item,i){
                         return i < uris.length - 1;
                     });

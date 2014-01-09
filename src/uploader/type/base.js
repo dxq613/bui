@@ -3,7 +3,9 @@
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  * @ignore
  **/
-define('bui/uploader/type/base',function(require) {
+define('bui/uploader/type/base',['bui/common'], function(require) {
+
+  var BUI = require('bui/common');
   /**
    * @class BUI.Uploader.UploadType
    *  上传方式类的基类，定义通用的事件和方法，一般不直接监听此类的事件
