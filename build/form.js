@@ -390,6 +390,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
    * 表单字段基类
    * @class BUI.Form.Field
    * @mixins BUI.Form.Remote
+   * @mixins BUI.Form.Valid
    * @extends BUI.Component.Controller
    */
   var field = Component.Controller.extend([Remote,Valid],{
@@ -2687,12 +2688,18 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       //当不需要显示子控件错误时，仅需要监听'change'事件即可
       _self.on(validEvent,function(ev){
         var sender = ev.target;
-        if(sender != this && sender.isValid() && _self.get('showError')){
-          var valid = _self.isChildrenValid();
-          if(valid){
-            _self.validControl(_self.getRecord());
-            valid = _self.isSelfValid();
+        if(sender != this && _self.get('showError')){
+
+          var valid = sender.isValid();
+          //是否所有的子节点都进行过验证
+          if(_self._hasAllChildrenValid()){
+            valid = valid && _self.isChildrenValid();
+            if(valid){
+              _self.validControl(_self.getRecord());
+              valid = _self.isSelfValid();
+            }
           }
+          
           if(!valid){
             _self.showErrors();
           }else{
@@ -2726,6 +2733,22 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
           item.valid();
         }
       });
+    },
+    /**
+     * 是否所有的子节点进行过校验,如果子节点
+     * @private
+     */
+    _hasAllChildrenValid : function(){
+      var _self = this,
+        children = _self.get('children'),
+        rst = true;
+      BUI.each(children,function(item){
+        if(!item.get('disabled') && item.get('hasValid') === false){
+          rst = false;
+          return false;
+        }
+      });  
+      return rst;
     },
     /**
      * 所有子控件是否通过验证
@@ -2776,7 +2799,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         });
       }
       //如果所有子控件通过验证，才显示自己的错误
-      if(_self.isChildrenValid()){
+      if(_self._hasAllChildrenValid() && _self.isChildrenValid()){
         validError = _self.get('error');
         if(validError){
           rst.push(validError);
@@ -3593,6 +3616,7 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
         _self.valid();
         if(!_self.isValid() || _self.onBeforeSubmit() === false){
           ev.preventDefault();
+          _self.focusError();
           return;
         }
         if(_self.isValid() && _self.get('submitType') === TYPE_SUBMIT.AJAX){
@@ -3619,6 +3643,25 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
       };
     },
     /**
+     * 将焦点定位到第一个错误字段
+     */
+    focusError : function(){
+      var _self = this,
+        fields = _self.getFields();
+      
+      BUI.each(fields,function(field){
+        if(field.get('visible') && !field.get('disabled') && !field.isValid()){
+          try{
+            field.focus();
+          }catch(e){
+            BUI.log(e);
+          }
+          
+          return false;
+        }
+      });
+    },
+    /**
      * 表单提交，如果未通过验证，则阻止提交
      */
     submit : function(options){
@@ -3634,6 +3677,8 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
         }else if(submitType === TYPE_SUBMIT.AJAX){
           _self.ajaxSubmit(options);
         }
+      }else{
+        _self.focusError();
       }
     },
     /**
@@ -3819,6 +3864,13 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
        */
       submitType : {
         value : 'normal'
+      },
+      /**
+       * 表单提交前，如果存在错误，是否将焦点定位到第一个错误
+       * @type {Object}
+       */
+      focusError : {
+        value : true
       },
       /**
        * 表单提交成功后的回调函数，普通提交方式 submitType = 'normal'，不会调用
@@ -4507,8 +4559,8 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    * 数字验证，会对值去除空格，无数据不进行校验
    * 允许千分符，例如： 12,000,000的格式
    * <ol>
-   *  <li>name: number</li>
-   *  <li>msg: 不是有效的数字！</li>
+   *  <li>name: mobile</li>
+   *  <li>msg: 不是有效的手机号码！</li>
    * </ol>
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}

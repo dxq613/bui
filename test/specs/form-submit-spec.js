@@ -29,6 +29,7 @@ BUI.use('bui/form',function (Form) {
         waits(100);
         runs(function(){
           expect(callback).not.toHaveBeenCalled();
+          //form.getField('id').
         });
       });
 

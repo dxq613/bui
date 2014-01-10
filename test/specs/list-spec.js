@@ -386,6 +386,28 @@ BUI.use('bui/list',function (List) {
         list.off('itemdblclick',callback);
       });
     });
+
+    it('测试点击',function(){
+      list.clearSelection();
+      var item = list.getFirstItem(),
+        element = list.findElement(item);
+      $(element).trigger('click');
+      waits(100);
+      runs(function(){
+        expect(list.isItemSelected(item)).toBe(true);
+        var callback = jasmine.createSpy();
+        list.on('selectedchange',callback);
+
+        $(element).trigger('click');
+        waits(100);
+        runs(function(){
+          expect(list.isItemSelected(item)).toBe(false);
+          expect(callback).toHaveBeenCalled();
+          list.off('selectedchange',callback);
+        });
+
+      });
+    });
   });
 });
 

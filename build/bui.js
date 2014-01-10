@@ -15877,9 +15877,11 @@ define('bui/list/domlist',['bui/common'],function (require) {
             _self.clearSelected();
           }
           _self.setItemSelected(item,true,itemEl);
-        }else if(multipleSelect || _self.get('cancelSelected')){
+        }else if(multipleSelect){
           _self.setItemSelected(item,false,itemEl);
-        }           
+        }else if(_self.get('cancelSelected')){
+          _self.setSelected(null); //\u9009\u4e2d\u7a7a\u8bb0\u5f55
+        }      
       }
       _self.on('itemrendered itemupdated',function(ev){
         var item = ev.item,
@@ -17906,6 +17908,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
    * \u8868\u5355\u5b57\u6bb5\u57fa\u7c7b
    * @class BUI.Form.Field
    * @mixins BUI.Form.Remote
+   * @mixins BUI.Form.Valid
    * @extends BUI.Component.Controller
    */
   var field = Component.Controller.extend([Remote,Valid],{
@@ -20203,12 +20206,18 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       //\u5f53\u4e0d\u9700\u8981\u663e\u793a\u5b50\u63a7\u4ef6\u9519\u8bef\u65f6\uff0c\u4ec5\u9700\u8981\u76d1\u542c'change'\u4e8b\u4ef6\u5373\u53ef
       _self.on(validEvent,function(ev){
         var sender = ev.target;
-        if(sender != this && sender.isValid() && _self.get('showError')){
-          var valid = _self.isChildrenValid();
-          if(valid){
-            _self.validControl(_self.getRecord());
-            valid = _self.isSelfValid();
+        if(sender != this && _self.get('showError')){
+
+          var valid = sender.isValid();
+          //\u662f\u5426\u6240\u6709\u7684\u5b50\u8282\u70b9\u90fd\u8fdb\u884c\u8fc7\u9a8c\u8bc1
+          if(_self._hasAllChildrenValid()){
+            valid = valid && _self.isChildrenValid();
+            if(valid){
+              _self.validControl(_self.getRecord());
+              valid = _self.isSelfValid();
+            }
           }
+          
           if(!valid){
             _self.showErrors();
           }else{
@@ -20242,6 +20251,22 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
           item.valid();
         }
       });
+    },
+    /**
+     * \u662f\u5426\u6240\u6709\u7684\u5b50\u8282\u70b9\u8fdb\u884c\u8fc7\u6821\u9a8c,\u5982\u679c\u5b50\u8282\u70b9
+     * @private
+     */
+    _hasAllChildrenValid : function(){
+      var _self = this,
+        children = _self.get('children'),
+        rst = true;
+      BUI.each(children,function(item){
+        if(!item.get('disabled') && item.get('hasValid') === false){
+          rst = false;
+          return false;
+        }
+      });  
+      return rst;
     },
     /**
      * \u6240\u6709\u5b50\u63a7\u4ef6\u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
@@ -20292,7 +20317,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         });
       }
       //\u5982\u679c\u6240\u6709\u5b50\u63a7\u4ef6\u901a\u8fc7\u9a8c\u8bc1\uff0c\u624d\u663e\u793a\u81ea\u5df1\u7684\u9519\u8bef
-      if(_self.isChildrenValid()){
+      if(_self._hasAllChildrenValid() && _self.isChildrenValid()){
         validError = _self.get('error');
         if(validError){
           rst.push(validError);
@@ -21109,6 +21134,7 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
         _self.valid();
         if(!_self.isValid() || _self.onBeforeSubmit() === false){
           ev.preventDefault();
+          _self.focusError();
           return;
         }
         if(_self.isValid() && _self.get('submitType') === TYPE_SUBMIT.AJAX){
@@ -21135,6 +21161,25 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
       };
     },
     /**
+     * \u5c06\u7126\u70b9\u5b9a\u4f4d\u5230\u7b2c\u4e00\u4e2a\u9519\u8bef\u5b57\u6bb5
+     */
+    focusError : function(){
+      var _self = this,
+        fields = _self.getFields();
+      
+      BUI.each(fields,function(field){
+        if(field.get('visible') && !field.get('disabled') && !field.isValid()){
+          try{
+            field.focus();
+          }catch(e){
+            BUI.log(e);
+          }
+          
+          return false;
+        }
+      });
+    },
+    /**
      * \u8868\u5355\u63d0\u4ea4\uff0c\u5982\u679c\u672a\u901a\u8fc7\u9a8c\u8bc1\uff0c\u5219\u963b\u6b62\u63d0\u4ea4
      */
     submit : function(options){
@@ -21150,6 +21195,8 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
         }else if(submitType === TYPE_SUBMIT.AJAX){
           _self.ajaxSubmit(options);
         }
+      }else{
+        _self.focusError();
       }
     },
     /**
@@ -21335,6 +21382,13 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
        */
       submitType : {
         value : 'normal'
+      },
+      /**
+       * \u8868\u5355\u63d0\u4ea4\u524d\uff0c\u5982\u679c\u5b58\u5728\u9519\u8bef\uff0c\u662f\u5426\u5c06\u7126\u70b9\u5b9a\u4f4d\u5230\u7b2c\u4e00\u4e2a\u9519\u8bef
+       * @type {Object}
+       */
+      focusError : {
+        value : true
       },
       /**
        * \u8868\u5355\u63d0\u4ea4\u6210\u529f\u540e\u7684\u56de\u8c03\u51fd\u6570\uff0c\u666e\u901a\u63d0\u4ea4\u65b9\u5f0f submitType = 'normal'\uff0c\u4e0d\u4f1a\u8c03\u7528
@@ -22023,8 +22077,8 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
    * \u6570\u5b57\u9a8c\u8bc1\uff0c\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c\uff0c\u65e0\u6570\u636e\u4e0d\u8fdb\u884c\u6821\u9a8c
    * \u5141\u8bb8\u5343\u5206\u7b26\uff0c\u4f8b\u5982\uff1a 12,000,000\u7684\u683c\u5f0f
    * <ol>
-   *  <li>name: number</li>
-   *  <li>msg: \u4e0d\u662f\u6709\u6548\u7684\u6570\u5b57\uff01</li>
+   *  <li>name: mobile</li>
+   *  <li>msg: \u4e0d\u662f\u6709\u6548\u7684\u624b\u673a\u53f7\u7801\uff01</li>
    * </ol>
    * @member BUI.Form.Rules
    * @type {BUI.Form.Rule}

@@ -66,12 +66,18 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
       //当不需要显示子控件错误时，仅需要监听'change'事件即可
       _self.on(validEvent,function(ev){
         var sender = ev.target;
-        if(sender != this && sender.isValid() && _self.get('showError')){
-          var valid = _self.isChildrenValid();
-          if(valid){
-            _self.validControl(_self.getRecord());
-            valid = _self.isSelfValid();
+        if(sender != this && _self.get('showError')){
+
+          var valid = sender.isValid();
+          //是否所有的子节点都进行过验证
+          if(_self._hasAllChildrenValid()){
+            valid = valid && _self.isChildrenValid();
+            if(valid){
+              _self.validControl(_self.getRecord());
+              valid = _self.isSelfValid();
+            }
           }
+          
           if(!valid){
             _self.showErrors();
           }else{
@@ -105,6 +111,22 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
           item.valid();
         }
       });
+    },
+    /**
+     * 是否所有的子节点进行过校验,如果子节点
+     * @private
+     */
+    _hasAllChildrenValid : function(){
+      var _self = this,
+        children = _self.get('children'),
+        rst = true;
+      BUI.each(children,function(item){
+        if(!item.get('disabled') && item.get('hasValid') === false){
+          rst = false;
+          return false;
+        }
+      });  
+      return rst;
     },
     /**
      * 所有子控件是否通过验证
@@ -155,7 +177,7 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
         });
       }
       //如果所有子控件通过验证，才显示自己的错误
-      if(_self.isChildrenValid()){
+      if(_self._hasAllChildrenValid() && _self.isChildrenValid()){
         validError = _self.get('error');
         if(validError){
           rst.push(validError);
