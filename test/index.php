@@ -66,7 +66,7 @@
       },{
         text : 'form',
         children : [
-          'form','form-field','form-group','form-panel','form-remote','form-rules'
+          'form','form-field','form-group','form-panel','form-remote','form-rules','form-submit'
         ]
       },{
         text : 'Tree',

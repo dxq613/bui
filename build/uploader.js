@@ -247,7 +247,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
    * @ignore
    */
   function getFileExtName(filename){
-    var result = /\.[^\.]+/.exec(filename) || [];
+    var result = /\.[^\.]+$/.exec(filename) || [];
     return result.join('').toLowerCase();
   }
 
@@ -804,7 +804,9 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
  * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  * @ignore
  **/
-define('bui/uploader/type/base',function(require) {
+define('bui/uploader/type/base',['bui/common'], function(require) {
+
+  var BUI = require('bui/common');
   /**
    * @class BUI.Uploader.UploadType
    *  上传方式类的基类，定义通用的事件和方法，一般不直接监听此类的事件
@@ -1119,6 +1121,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
 
     var UploadType = require('bui/uploader/type/base');
 
+    var URI_SPLIT_REG = new RegExp('^([^?#]+)?(?:\\?([^#]*))?(?:#(.*))?$');
+
     /**
      * @class BUI.Uploader.FlashType
      * flash上传方案，基于龙藏写的ajbridge内的uploader
@@ -1260,7 +1264,11 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                 var reg = /^http/;
                 //不是绝对路径拼接成绝对路径
                 if(!reg.test(v)){
-                     var href = location.href,uris = href.split('/'),newUris;
+                    //获取前面url部份http://a.b.com/a.html?a=a/b/c#d/e/f => http://a.b.com/a.html
+                    var href = location.href.match(URI_SPLIT_REG) || [],
+                        path = href[1] || '',
+                        uris = path.split('/'),
+                        newUris;
                     newUris  = BUI.Array.filter(uris,function(item,i){
                         return i < uris.length - 1;
                     });

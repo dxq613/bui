@@ -62,6 +62,7 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
         _self.valid();
         if(!_self.isValid() || _self.onBeforeSubmit() === false){
           ev.preventDefault();
+          _self.focusError();
           return;
         }
         if(_self.isValid() && _self.get('submitType') === TYPE_SUBMIT.AJAX){
@@ -88,6 +89,25 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
       };
     },
     /**
+     * 将焦点定位到第一个错误字段
+     */
+    focusError : function(){
+      var _self = this,
+        fields = _self.getFields();
+      
+      BUI.each(fields,function(field){
+        if(field.get('visible') && !field.get('disabled') && !field.isValid()){
+          try{
+            field.focus();
+          }catch(e){
+            BUI.log(e);
+          }
+          
+          return false;
+        }
+      });
+    },
+    /**
      * 表单提交，如果未通过验证，则阻止提交
      */
     submit : function(options){
@@ -103,6 +123,8 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
         }else if(submitType === TYPE_SUBMIT.AJAX){
           _self.ajaxSubmit(options);
         }
+      }else{
+        _self.focusError();
       }
     },
     /**
@@ -288,6 +310,13 @@ define('bui/form/form',['bui/common','bui/form/fieldcontainer'],function (requir
        */
       submitType : {
         value : 'normal'
+      },
+      /**
+       * 表单提交前，如果存在错误，是否将焦点定位到第一个错误
+       * @type {Object}
+       */
+      focusError : {
+        value : true
       },
       /**
        * 表单提交成功后的回调函数，普通提交方式 submitType = 'normal'，不会调用

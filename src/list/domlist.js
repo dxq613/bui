@@ -548,9 +548,11 @@ define('bui/list/domlist',['bui/common'],function (require) {
             _self.clearSelected();
           }
           _self.setItemSelected(item,true,itemEl);
-        }else if(multipleSelect || _self.get('cancelSelected')){
+        }else if(multipleSelect){
           _self.setItemSelected(item,false,itemEl);
-        }           
+        }else if(_self.get('cancelSelected')){
+          _self.setSelected(null); //选中空记录
+        }      
       }
       _self.on('itemrendered itemupdated',function(ev){
         var item = ev.item,

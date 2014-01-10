@@ -109,6 +109,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
    * 表单字段基类
    * @class BUI.Form.Field
    * @mixins BUI.Form.Remote
+   * @mixins BUI.Form.Valid
    * @extends BUI.Component.Controller
    */
   var field = Component.Controller.extend([Remote,Valid],{
