@@ -106,3 +106,54 @@ BUI.use('bui/picker/listpicker',function (Picker) {
   });
 
 });
+
+BUI.use('bui/picker/listpicker',function (Picker) {
+
+  var items = [{text:'选项1',value:'a'},{text:'选项2',value:'b'},{text:'选项3',value:'c'},{text:"数字值",value:3}],
+    picker = new Picker({
+    render : '#l4',
+    trigger : '.a-picker',
+    triggerActiveCls : 'active',
+    align:{
+      points : ['tl','tl']
+    },
+    children:[{
+        elCls:'bui-select-list',
+        items : items
+      }
+    ]
+  });
+  picker.render();
+
+  var f1 = $('#c3'),
+    f2 = $('#c4');
+
+  describe('测试激活选择器',function(){
+    it('触发选择',function(){
+        f1.trigger('click');
+        waits(100);
+        runs(function(){
+          expect(picker.get('visible')).toBe(true);
+          expect(f1.hasClass('active')).toBe(true);
+        });
+    });
+
+    it('切换trigger',function(){
+        f2.trigger('click');
+        waits(100);
+        runs(function(){
+          expect(picker.get('visible')).toBe(true);
+          expect(f1.hasClass('active')).toBe(false);
+          expect(f2.hasClass('active')).toBe(true);
+        });
+    });
+    
+    it('隐藏',function(){
+      picker.hide();
+      expect(f2.hasClass('active')).toBe(false);
+    });
+  });
+
+});
+
+

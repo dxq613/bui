@@ -1102,7 +1102,7 @@ define('bui/util',function(require){
      * \u5b50\u7248\u672c\u53f7
      * @type {String}
      */
-    subVersion : 66,
+    subVersion : 68,
 
     /**
      * \u662f\u5426\u4e3a\u51fd\u6570
@@ -5079,6 +5079,13 @@ define('bui/component/uibase/autoshow',function () {
       value : true
     },
     /**
+     * \u5982\u679c\u8bbe\u7f6e\u4e86\u8fd9\u4e2a\u6837\u5f0f\uff0c\u90a3\u4e48\u89e6\u53d1\u663e\u793a\uff08overlay\uff09\u65f6trigger\u4f1a\u6dfb\u52a0\u6b64\u6837\u5f0f
+     * @type {Object}
+     */
+    triggerActiveCls : {
+
+    },
+    /**
      * \u63a7\u4ef6\u663e\u793a\u65f6\u7531\u6b64trigger\u89e6\u53d1\uff0c\u5f53\u914d\u7f6e\u9879 trigger \u9009\u62e9\u5668\u4ee3\u8868\u591a\u4e2aDOM \u5bf9\u8c61\u65f6\uff0c
      * \u63a7\u4ef6\u53ef\u7531\u591a\u4e2aDOM\u5bf9\u8c61\u89e6\u53d1\u663e\u793a\u3002
      * <pre><code>
@@ -5169,11 +5176,25 @@ define('bui/component/uibase/autoshow',function () {
     __createDom : function () {
       this._setTrigger();
     },
+    __bindUI : function(){
+      var _self = this,
+        triggerActiveCls = _self.get('triggerActiveCls');
+      if(triggerActiveCls){
+        _self.on('hide',function(){
+          var curTrigger = _self.get('curTrigger');
+          if(curTrigger){
+            curTrigger.removeClass(triggerActiveCls);
+          }
+        });
+      }
+     
+    },
     _setTrigger : function () {
       var _self = this,
         triggerEvent = _self.get('triggerEvent'),
         triggerHideEvent = _self.get('triggerHideEvent'),
         triggerCallback = _self.get('triggerCallback'),
+        triggerActiveCls = _self.get('triggerActiveCls') || '',
         trigger = _self.get('trigger'),
         isDelegate = _self.get('delegateTrigger'),
         triggerEl = $(trigger);
@@ -5184,10 +5205,13 @@ define('bui/component/uibase/autoshow',function () {
           curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
           align = _self.get('align');
         if(!prevTrigger || prevTrigger[0] != curTrigger[0]){
-
+          if(prevTrigger){
+            prevTrigger.removeClass(triggerActiveCls);
+          }
           _self.set('curTrigger',curTrigger);
           _self.fire('triggerchange',{prevTrigger : prevTrigger,curTrigger : curTrigger});
         }
+        curTrigger.addClass(triggerActiveCls);
         if(_self.get('autoAlign')){
           align.node = curTrigger;
           

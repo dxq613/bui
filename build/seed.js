@@ -1102,7 +1102,7 @@ define('bui/util',function(require){
      * 子版本号
      * @type {String}
      */
-    subVersion : 66,
+    subVersion : 68,
 
     /**
      * 是否为函数
@@ -5079,6 +5079,13 @@ define('bui/component/uibase/autoshow',function () {
       value : true
     },
     /**
+     * 如果设置了这个样式，那么触发显示（overlay）时trigger会添加此样式
+     * @type {Object}
+     */
+    triggerActiveCls : {
+
+    },
+    /**
      * 控件显示时由此trigger触发，当配置项 trigger 选择器代表多个DOM 对象时，
      * 控件可由多个DOM对象触发显示。
      * <pre><code>
@@ -5169,11 +5176,25 @@ define('bui/component/uibase/autoshow',function () {
     __createDom : function () {
       this._setTrigger();
     },
+    __bindUI : function(){
+      var _self = this,
+        triggerActiveCls = _self.get('triggerActiveCls');
+      if(triggerActiveCls){
+        _self.on('hide',function(){
+          var curTrigger = _self.get('curTrigger');
+          if(curTrigger){
+            curTrigger.removeClass(triggerActiveCls);
+          }
+        });
+      }
+     
+    },
     _setTrigger : function () {
       var _self = this,
         triggerEvent = _self.get('triggerEvent'),
         triggerHideEvent = _self.get('triggerHideEvent'),
         triggerCallback = _self.get('triggerCallback'),
+        triggerActiveCls = _self.get('triggerActiveCls') || '',
         trigger = _self.get('trigger'),
         isDelegate = _self.get('delegateTrigger'),
         triggerEl = $(trigger);
@@ -5184,10 +5205,13 @@ define('bui/component/uibase/autoshow',function () {
           curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
           align = _self.get('align');
         if(!prevTrigger || prevTrigger[0] != curTrigger[0]){
-
+          if(prevTrigger){
+            prevTrigger.removeClass(triggerActiveCls);
+          }
           _self.set('curTrigger',curTrigger);
           _self.fire('triggerchange',{prevTrigger : prevTrigger,curTrigger : curTrigger});
         }
+        curTrigger.addClass(triggerActiveCls);
         if(_self.get('autoAlign')){
           align.node = curTrigger;
           
