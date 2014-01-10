@@ -15,6 +15,12 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
    * 上传文件的显示队列
    * @class BUI.Uploader.Queue
    * @extends BUI.List.SimpleList
+   * <pre><code>
+   *
+   * BUI.use('bui/uploader', function(Uploader){
+   * });
+   * 
+   * </code></pre>
    */
   var Queue = SimpleList.extend({
     bindUI: function () {

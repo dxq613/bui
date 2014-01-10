@@ -3,16 +3,12 @@
  * @fileoverview 文件上传按钮,使用input[type=file]
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
-
-
 define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
     ButtonBase = require('bui/uploader/button/base'),
     UA = BUI.UA;
-
-  
 
   var HtmlButtonView = Component.View.extend([ButtonBase.View], {
 
@@ -61,9 +57,6 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
 
       _self.set('fileInput', fileInput);
 
-      _self.setMultiple(_self.get('multiple'));
-      _self.setDisabled(_self.get('disabled'));
-      _self.setFilter(_self.get('filter'));
     },
     /**
      * 绑定input[type=file]的文件选中事件
@@ -108,7 +101,7 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
      * @param {Boolean} multiple 是否禁用
      * @return {Boolean}
      */
-    setMultiple : function(multiple){
+    _uiSetMultiple : function(multiple){
       var _self = this,
         fileInput = _self.get('fileInput');
 
@@ -127,7 +120,7 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
      * @protected
      * @ignore
      */
-    setDisabled: function(v){
+    _uiSetDisabled: function(v){
       var _self = this,
         fileInput = _self.get('fileInput');
       if (v) {
@@ -143,7 +136,7 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
      * @protected
      * @param {*} filter 可上传文件的类型
      */
-    setFilter: function(v){
+    _uiSetFilter: function(v){
       var _self = this,
         fileInput = _self.get('fileInput'),
         filter = _self.getFilter(v);

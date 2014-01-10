@@ -30,6 +30,21 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
    * 文件上传组组件
    * @class BUI.Uploader.Uploader
    * @extends BUI.Component.Controller
+   * 
+   * <pre><code>
+   *
+   * BUI.use('bui/uploader', function(Uploader){
+   *   var uploader = new Uploader.Uploader({
+   *     url: '../upload.php'
+   *   }).render();
+   *
+   *  uploader.on('success', function(ev){
+   *    //获取上传返回的结果
+   *    var result = ev.result;
+   *  })
+   * });
+   * 
+   * </code></pre>
    */
   var Uploader = Component.Controller.extend({
     renderUI: function(){
@@ -431,6 +446,64 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
        * @type {BUI.Uploader.Validator}
        */
       validator: {
+      },
+      events : {
+        value : {
+          /**
+           * 选中文件时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Array} e.items 选中的文件项
+           */
+          'change': false,
+          /**
+           * 文件开始上传时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           */
+          'start': false,
+          /**
+           * 文件正在上传时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           * @param {Number} e.total 文件的总大小
+           * @param {Object} e.loaded 已经上传的大小
+           */
+          'progress': false,
+          /**
+           * 文件上传成功时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           * @param {Object} e.result 服务端返回的结果
+           */
+          'success': false,
+          /**
+           * 文件上传失败时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           * @param {Object} e.result 服务端返回的结果
+           */
+          'error': false,
+          /**
+           * 文件完成时，不管成功失败都会触发
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           * @param {Object} e.result 服务端返回的结果
+           */
+          'complete': false,
+          /**
+           * 取消上传时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前取消的项
+           */
+          'cancel': false
+        }
       },
       xview: {
         value: UploaderView

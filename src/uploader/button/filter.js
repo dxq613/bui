@@ -2,6 +2,12 @@ define('bui/uploader/button/filter',['bui/common'], function(require){
 
   var BUI = require('bui/common');
 
+  /**
+   * @ignore
+   * @class  BUI.Uploader.Filter
+   * @private
+   */
+
   var filter =  {
     msexcel: {
       type: "application/msexcel",

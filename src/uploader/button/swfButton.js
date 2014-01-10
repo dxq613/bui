@@ -53,8 +53,6 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
           _self.fire('change', {files: files});
         });
 
-        _self.setMultiple(_self.get('multiple'));
-        _self.setFilter(_self.get('filter'));
       });
     },
     _initSwfUploader: function(){
@@ -74,12 +72,12 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
       _self.set('swfEl', swfEl);
       _self.set('swfUploader', swfUploader);
     },
-    setMultiple: function(v){
+    _uiSetMultiple: function(v){
       var _self = this,
         swfUploader = _self.get('swfUploader');
       swfUploader && swfUploader.multifile(v);
     },
-    setDisabled: function(v){
+    _uiSetDisabled: function(v){
       var _self = this,
         swfEl = _self.get('swfEl');
       if(v){
@@ -98,7 +96,7 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
       v.ext = ext.join(';');
       return v;
     },
-    setFilter: function(v){
+    _uiSetFilter: function(v){
       var _self = this,
         swfUploader = _self.get('swfUploader'),
         filter = _self._convertFilter(_self.getFilter(v));

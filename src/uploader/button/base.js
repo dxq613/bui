@@ -84,6 +84,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
   base.ATTRS = {
     /**
      * 按钮的样式
+     * @protected
      * @type {String}
      */
     buttonCls: {
@@ -92,6 +93,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
     },
     /**
      * 文本的样式
+     * @protected
      * @type {String}
      */
     textCls: {
@@ -116,6 +118,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
      * @default false
      */
     disabled : {
+      view: true,
       value : false
     },
     /**
@@ -124,6 +127,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
      * @default true
      */
     multiple : {
+      view: true,
       value : true
     },
     /**
@@ -134,6 +138,17 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
     filter : {
       shared : false,
       value : []
+    },
+    events: {
+      value: {
+        /**
+         * 选中文件时
+         * @event
+         * @param {Object} e 事件对象
+         * @param {Array} e.files 选中的文件
+         */
+        'change': false
+      }
     }
   };
 
@@ -173,31 +188,6 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
       file.attr = fileAttrs;
       return file;
     },
-    //设置多选
-    _uiSetMultiple : function (v) {
-      this.setMultiple(v);
-    },
-    /**
-     * @template
-     * @protected
-     * 设置是否多选，但是从函数含义上来看使用
-     * 更合适
-     * 模板函数，用于子类扩展，参考 模板模式
-     */
-    setMultiple: function(v){
-    },
-    //设置禁用
-    _uiSetDisabled : function (v) {
-      this.setDisabled(v);
-    },
-    /**
-     * @protected
-     * @template
-     * 设置禁用，其实直接替换成_uiSetDisabled更好
-     * 
-     */
-    setDisabled: function(v){
-    },
     getFilter: function(v){
       if(v){
         var desc = [],
@@ -222,16 +212,14 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
         }
       }
     },
+    //设置多选
+    _uiSetMultiple : function (v) {
+    },
+    //设置禁用
+    _uiSetDisabled : function (v) {
+    },
     //设置过滤
     _uiSetFilter : function (v) {
-      this.setFilter(v);
-    },
-    /**
-     * @protected
-     * @template
-     * 设置过滤
-     */
-    setFilter: function(v){
     }
   }
 

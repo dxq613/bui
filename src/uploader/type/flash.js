@@ -1,18 +1,19 @@
 /**
- * @fileoverview flash上传方案，基于龙藏写的ajbridge内的uploader
- * @author 剑平（明河）<minghe36@126.com>
  * @ignore
+ * @fileoverview flash上传方案
+ * @author 
  **/
 define('bui/uploader/type/flash',['./base'], function (require) {
-    var LOG_PREFIX = '[uploader-FlashType]:';
+    var LOG_PREFIX = '[uploader-Flash]:';
 
     var UploadType = require('bui/uploader/type/base');
 
     var URI_SPLIT_REG = new RegExp('^([^?#]+)?(?:\\?([^#]*))?(?:#(.*))?$');
 
     /**
-     * @class BUI.Uploader.FlashType
-     * flash上传方案，基于龙藏写的ajbridge内的uploader
+     * @class BUI.Uploader.UploadType.Flash
+     * flash上传方案
+     * 使用时要确认flash与提交的url是否跨越，如果跨越则需要设置crossdomain.xml
      * @extends BUI.Uploader.UploadType
      */
     function FlashType(config) {
@@ -21,18 +22,6 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         FlashType.superclass.constructor.call(_self, config);
         _self.isHasCrossdomain();
     }
-
-    BUI.mix(FlashType,{
-        /**
-         * 事件列表
-         */
-        event:BUI.merge(UploadType.event, {
-            //swf文件已经准备就绪
-            SWF_READY: 'swfReady',
-            //正在上传
-            PROGRESS:'progress'
-        })
-    });
 
     BUI.extend(FlashType, UploadType, {
         /**
@@ -46,12 +35,12 @@ define('bui/uploader/type/flash',['./base'], function (require) {
             }
             //SWF 内容准备就绪
             swfUploader.on('contentReady', function(ev){
-                _self.fire(FlashType.event.SWF_READY);
+                _self.fire('swfReady');
             });
             //监听开始上传事件
             swfUploader.on('uploadStart', function(ev){
                 var file = _self.get('file');
-                _self.fire(UploadType.event.START, {file: file});
+                _self.fire('start', {file: file});
             });
             //监听文件正在上传事件
             swfUploader.on('uploadProgress', function(ev){
@@ -62,7 +51,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                     total : ev.bytesTotal
                 });
                 BUI.log(LOG_PREFIX + '已经上传字节数为：' + ev.bytesLoaded);
-                _self.fire(FlashType.event.PROGRESS, { 'loaded':ev.loaded, 'total':ev.total });
+                _self.fire('progress', { 'loaded':ev.loaded, 'total':ev.total });
             });
             //监听文件上传完成事件
             swfUploader.on('uploadCompleteData', function(ev){
@@ -74,14 +63,14 @@ define('bui/uploader/type/flash',['./base'], function (require) {
             //监听文件失败事件
             swfUploader.on('uploadError',function(){
                 var file = _self.get('file');
-                _self.fire(FlashType.event.ERROR, {file: file});
+                _self.fire('error', {file: file});
                 _self.set('file', null);
             });
         },
         /**
          * 上传文件
          * @param {String} id 文件id
-         * @return {BUI.Uploader.FlashType}
+         * @return {BUI.Uploader.UploadType.Flash}
          * @chainable
          */
         upload:function (file) {
@@ -100,7 +89,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         },
         /**
          * 停止上传文件
-         * @return {BUI.Uploader.FlashType}
+         * @return {BUI.Uploader.UploadType.Flash}
          * @chainable
          */
         cancel: function () {
@@ -109,7 +98,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                 file = _self.get('file');
             if(file){
                 swfUploader.cancel(file.id);
-                _self.fire(FlashType.event.CANCEL, {file: file});
+                _self.fire('cancel', {file: file});
                 _self.set('file', null);
             }
             return _self;
@@ -126,7 +115,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                  url:'http://' + domain + '/crossdomain.xml',
                  dataType:"xml",
                  error:function(){
-                     BUI.log('缺少crossdomain.xml文件或该文件不合法！');
+                    BUI.log('缺少crossdomain.xml文件或该文件不合法！');
                  }
              });
         }
@@ -174,7 +163,24 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         /**
          * 正在上传的文件id
          */
-        uploadingId : {}
+        uploadingId : {},
+        /**
+         * 事件列表
+         */
+        events:{
+            value: {
+                //swf文件已经准备就绪
+                swfReady: false,
+                /**
+                 * 上传正在上传时
+                 * @event
+                 * @param {Object} e 事件对象
+                 * @param {Number} total 文件的总大小
+                 * @param {Number} loaded 已经上传的大小
+                 */
+                progress: false
+            }
+        }
     }});
     return FlashType;
 });

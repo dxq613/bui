@@ -11,8 +11,9 @@ define('bui/uploader/button/swfButton/ajbridge',['bui/common','bui/swf'], functi
   var instances = {};
 
   /**
+   * @ignore
    * @class  BUI.Uploader.AJBridge
-   * @protected
+   * @private
    * @author kingfo oicuicu@gmail.com
    */
   function AJBridge(config){
