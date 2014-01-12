@@ -145,6 +145,20 @@ BUI.use(['bui/uploader'], function (Uploader) {
     it('render函数是否执行成功', function(){
     });
   });
+
+  describe('测试disalbed属性', function(){
+    it('初始值', function(){
+      expect(uploader.get('button').get('disabled')).toBe(false);
+    });
+    it('禁用', function(){
+      uploader.set('disabled', true);
+      expect(uploader.get('button').get('disabled')).toBe(true);
+    });
+    it('启用', function(){
+      uploader.set('disabled', false);
+      expect(uploader.get('button').get('disabled')).toBe(false);
+    });
+  });
 });
 
 
@@ -153,6 +167,7 @@ BUI.use(['bui/uploader'], function (Uploader) {
     render: '#J_UploaderFlash',
     type: 'flash',
     // disabled: true,
+    // multiple: false,
     // queueTarget: '#J_UploaderQueue',
     url: 'upload/upload.php',
     button: {
@@ -165,6 +180,20 @@ BUI.use(['bui/uploader'], function (Uploader) {
   describe('测试DOM生成', function(){
     it('render函数是否执行成功', function(){
       //expect(el.children().length).not.toBe(0);
+    });
+  });
+
+  describe('测试disalbed属性', function(){
+    it('初始值', function(){
+      expect(uploader.get('button').get('disabled')).toBe(false);
+    });
+    it('禁用', function(){
+      uploader.set('disabled', true);
+      expect(uploader.get('button').get('disabled')).toBe(true);
+    });
+    it('启用', function(){
+      uploader.set('disabled', false);
+      expect(uploader.get('button').get('disabled')).toBe(false);
     });
   });
 });

@@ -8,6 +8,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
 
     var UploadType = require('bui/uploader/type/base');
 
+    //获取链接绝对路径正则
     var URI_SPLIT_REG = new RegExp('^([^?#]+)?(?:\\?([^#]*))?(?:#(.*))?$');
 
     /**
@@ -103,27 +104,25 @@ define('bui/uploader/type/flash',['./base'], function (require) {
             }
             return _self;
         },
-        reset: function(){
-
-        },
         /**
          * 应用是否有flash跨域策略文件
          */
         isHasCrossdomain:function(){
             var domain = location.hostname;
-             $.ajax({
-                 url:'http://' + domain + '/crossdomain.xml',
-                 dataType:"xml",
-                 error:function(){
-                    BUI.log('缺少crossdomain.xml文件或该文件不合法！');
-                 }
-             });
+            $.ajax({
+                url:'http://' + domain + '/crossdomain.xml',
+                dataType:"xml",
+                error:function(){
+                   BUI.log('缺少crossdomain.xml文件或该文件不合法！');
+                }
+            });
         }
     }, {ATTRS:{
         uploader: {
             setter: function(v){
                 var _self = this;
-                if(v){
+                if(v && v.isController){
+                    //因为flash上传需要依赖swfButton，所以是要等flash加载完成后才可以初始化的
                     var swfButton = v.get('button');
                     swfButton.on('swfReady', function(ev){
                         _self.set('swfUploader', ev.swfUploader);
@@ -140,7 +139,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                 var reg = /^http/;
                 //不是绝对路径拼接成绝对路径
                 if(!reg.test(v)){
-                    //获取前面url部份http://a.b.com/a.html?a=a/b/c#d/e/f => http://a.b.com/a.html
+                    //获取前面url部份
+                    //修复下如下链接问题：http://a.b.com/a.html?a=a/b/c#d/e/f => http://a.b.com/a.html
                     var href = location.href.match(URI_SPLIT_REG) || [],
                         path = href[1] || '',
                         uris = path.split('/'),

@@ -55,6 +55,15 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
 
       });
     },
+    syncUI: function(){
+      var _self = this,
+        swfUploader = _self.get('swfUploader');
+      //因为swf加载是个异步的过程，所以加载完后要同步下属性
+      swfUploader.on('contentReady', function(ev){
+        _self._uiSetMultiple(_self.get('multiple'));
+        _self._uiSetFilter(_self.get('filter'));
+      });
+    },
     _initSwfUploader: function(){
       var _self = this,
         buttonCls = _self.get('buttonCls'),
@@ -76,6 +85,7 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
       var _self = this,
         swfUploader = _self.get('swfUploader');
       swfUploader && swfUploader.multifile(v);
+      return v;
     },
     _uiSetDisabled: function(v){
       var _self = this,
@@ -86,6 +96,7 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
       else{
          swfEl.show();
       }
+      return v;
     },
     _convertFilter: function(v){
       var desc = v.desc,
@@ -111,9 +122,17 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
       },
       swfUploader:{
       },
+      /**
+       * 上传uploader.swf的路径，默认为bui/uploader/uploader.swf
+       * @type {String} url
+       */
       flashUrl:{
         value: baseUrl + 'uploader/uploader.swf'
       },
+      /**
+       * flash的配置参数，一般不需要修改
+       * @type {Object}
+       */
       flash:{
         value:{
           params:{
@@ -125,6 +144,7 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
               hand:true,
               //启用按钮模式,激发鼠标事件
               btn:true,
+              //这里flash全局的回调函数
               jsEntry: 'BUI.AJBridge.eventHandler'
             }
           }

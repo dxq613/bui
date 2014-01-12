@@ -259,10 +259,12 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         var curUploadItem = _self.get('curUploadItem'),
           loaded = ev.loaded,
           total = ev.total;
-
         BUI.mix(curUploadItem.attr, {
-          loaded: loaded,
+          //文件总大小, 这里的单位是byte
           total: total,
+          //已经上传的大小
+          loaded: loaded,
+          //已经上传的百分比
           loadedPercent: loaded * 100 / total
         });
 
@@ -288,6 +290,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         _self.set('curUploadItem', null);
       });
 
+      //上传完成的事件
       uploaderType.on('complete', function(ev){
         var curUploadItem = _self.get('curUploadItem'),
           result = ev.result,
@@ -373,6 +376,20 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       var _self = this,
         queue = _self.get('queue');
       return queue.getItemsByStatus('success').length === queue.getItems().length;
+    },
+    /**
+     * 设置是否disabled
+     * @private
+     */
+    _uiSetDisabled: function(v){
+      var _self = this,
+        button = _self.get('button');
+      button && button.isController && button.set('disabled', v);
+    },
+    _uiSetMultiple: function(v){
+      var _self = this,
+        button = _self.get('button');
+      button && button.isController && button.set('multiple', v);
     }
   }, {
     ATTRS: {
@@ -401,21 +418,20 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
        * @type {BUI.Uploader.Button}
        */
       button: {
-        setter: function(v){
-          var disabled = this.get('disabled');
-          if(v && v.isController){
-            v.set('disabled', disabled);
-          }
-          return v;
-        }
       },
+      /**
+       * 上传组件是否可用
+       * @type {Boolean} disabled
+       */
       disabled: {
-        value: false,
-        setter: function(v){
-          var _self = this,
-            button = _self.get('button');
-          button && button.isController && button.set('disabled', true);
-        }
+        value: false
+      },
+      /**
+       * 是否支持多选
+       * @type {Boolean} multiple
+       */
+      multiple: {
+        value: true
       },
       /**
        * 上传组件的上传对列
