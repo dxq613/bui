@@ -16,7 +16,12 @@
       <div class="span8">
         <div id="lp"></div>
       </div>
-       
+      <div class="span8">
+        <div id="l4">
+          <input type="text" id="c3" class="a-picker" />
+          <input type="text" id="c4" class="a-picker"/>
+        </div>
+      </div>
     </div>
   </div>
   
