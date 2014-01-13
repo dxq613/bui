@@ -30,6 +30,21 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
    * 文件上传组组件
    * @class BUI.Uploader.Uploader
    * @extends BUI.Component.Controller
+   * 
+   * <pre><code>
+   *
+   * BUI.use('bui/uploader', function(Uploader){
+   *   var uploader = new Uploader.Uploader({
+   *     url: '../upload.php'
+   *   }).render();
+   *
+   *  uploader.on('success', function(ev){
+   *    //获取上传返回的结果
+   *    var result = ev.result;
+   *  })
+   * });
+   * 
+   * </code></pre>
    */
   var Uploader = Component.Controller.extend({
     renderUI: function(){
@@ -244,10 +259,12 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         var curUploadItem = _self.get('curUploadItem'),
           loaded = ev.loaded,
           total = ev.total;
-
         BUI.mix(curUploadItem.attr, {
-          loaded: loaded,
+          //文件总大小, 这里的单位是byte
           total: total,
+          //已经上传的大小
+          loaded: loaded,
+          //已经上传的百分比
           loadedPercent: loaded * 100 / total
         });
 
@@ -273,6 +290,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         _self.set('curUploadItem', null);
       });
 
+      //上传完成的事件
       uploaderType.on('complete', function(ev){
         var curUploadItem = _self.get('curUploadItem'),
           result = ev.result,
@@ -358,6 +376,20 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       var _self = this,
         queue = _self.get('queue');
       return queue.getItemsByStatus('success').length === queue.getItems().length;
+    },
+    /**
+     * 设置是否disabled
+     * @private
+     */
+    _uiSetDisabled: function(v){
+      var _self = this,
+        button = _self.get('button');
+      button && button.isController && button.set('disabled', v);
+    },
+    _uiSetMultiple: function(v){
+      var _self = this,
+        button = _self.get('button');
+      button && button.isController && button.set('multiple', v);
     }
   }, {
     ATTRS: {
@@ -386,21 +418,20 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
        * @type {BUI.Uploader.Button}
        */
       button: {
-        setter: function(v){
-          var disabled = this.get('disabled');
-          if(v && v.isController){
-            v.set('disabled', disabled);
-          }
-          return v;
-        }
       },
+      /**
+       * 上传组件是否可用
+       * @type {Boolean} disabled
+       */
       disabled: {
-        value: false,
-        setter: function(v){
-          var _self = this,
-            button = _self.get('button');
-          button && button.isController && button.set('disabled', true);
-        }
+        value: false
+      },
+      /**
+       * 是否支持多选
+       * @type {Boolean} multiple
+       */
+      multiple: {
+        value: true
       },
       /**
        * 上传组件的上传对列
@@ -431,6 +462,64 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
        * @type {BUI.Uploader.Validator}
        */
       validator: {
+      },
+      events : {
+        value : {
+          /**
+           * 选中文件时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Array} e.items 选中的文件项
+           */
+          'change': false,
+          /**
+           * 文件开始上传时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           */
+          'start': false,
+          /**
+           * 文件正在上传时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           * @param {Number} e.total 文件的总大小
+           * @param {Object} e.loaded 已经上传的大小
+           */
+          'progress': false,
+          /**
+           * 文件上传成功时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           * @param {Object} e.result 服务端返回的结果
+           */
+          'success': false,
+          /**
+           * 文件上传失败时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           * @param {Object} e.result 服务端返回的结果
+           */
+          'error': false,
+          /**
+           * 文件完成时，不管成功失败都会触发
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前上传的项
+           * @param {Object} e.result 服务端返回的结果
+           */
+          'complete': false,
+          /**
+           * 取消上传时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Object} e.item 当前取消的项
+           */
+          'cancel': false
+        }
       },
       xview: {
         value: UploaderView

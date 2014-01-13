@@ -12,6 +12,17 @@ define('bui/uploader/validator',['bui/common'], function (require) {
    * 异步文件上传的验证器
    * @class BUI.Uploader.Validator
    * @extend BUI.Base
+   *
+   * <pre><code>
+   * //默认已经定义的一些规则
+   * rules: {
+   *   maxSize: [1024, '文件最大不能超过1M!'],
+   *   minSize: [1, '文件最小不能小于1k!'],
+   *   max: [5, '文件最多不能超过{0}个！'],
+   *   min: [1, '文件最少不能少于{0}个!'],
+   *   ext: ['.png','文件类型只能为{0}']
+   * }
+   * </code></pre>
    */
   function Validator(config){
     Validator.superclass.constructor.call(this, config);
@@ -23,10 +34,8 @@ define('bui/uploader/validator',['bui/common'], function (require) {
      * @type {Object}
      */
     rules: {
-
     },
     queue: {
-
     }
   }
 

@@ -13,12 +13,38 @@ define('bui/uploader/theme',['bui/common'], function (require) {
    * 文件上传的主题设置
    * @class BUI.Uploader.Theme
    * @static
+   *
+   * <pre><code>
+   * 默认自带的题有
+   * 
+   * //这个是默认的
+   * theme: 'defaultTheme'
+   *
+   * //这个带图片预览的
+   * theme: 'imageView'
+   * </pre></code>
    */
   var Theme = {
     /**
      * 添加一个主题
      * @param {String} name   主题名称
      * @param {Object} 主题的配置
+     * 
+     * <pre><code>
+     * @example
+     * // 添加一个主题模板
+     * Theme.addTheme('imageView', {
+     *  elCls: 'imageViewTheme',
+     *  queue:{
+     *    resultTpl: {
+     *      'default': '&lt;div class="default"&gt;{name}&lt;/div&gt;',
+     *      'success': '&lt;div class="success"&gt;&lt;img src="{url}" /&gt;&lt;/div&gt;'
+     *      'error': '&lt;div class="error"&gt;&lt;span title="{name}"&gt;{name}&lt;/span&gt;&lt;span class="uploader-error"&gt;{msg}&lt;/span&gt;&lt;/div&gt;',
+     *      'progress': '&lt;div class="progress"&gt;&lt;div class="bar" style="width:{loadedPercent}%"&gt;&lt;/div&gt;&lt;/div&gt;'
+     *    }
+     *  }
+     *});
+     * </code></pre>
      */
     addTheme: function(name, config){
       themes[name] = config;

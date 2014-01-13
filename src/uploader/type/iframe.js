@@ -8,7 +8,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
 
     var UploadType = require('bui/uploader/type/base');
     /**
-     * @class BUI.Uploader.IframeType
+     * @class BUI.Uploader.UploadType.Iframe
      * iframe方案上传，全浏览器支持
      * @extends BUI.Uploader.UploadType
      *
@@ -18,28 +18,6 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
         //调用父类构造函数
         IframeType.superclass.constructor.call(_self, config);
     }
-
-    BUI.mix(IframeType,  {
-        /**
-         * 会用到的html模板
-         * @ignore
-         */
-        tpl : {
-            IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
-            FORM : '<form method="post" enctype="multipart/form-data" action="{action}" target="{target}" style="visibility: hidden;">{hiddenInputs}</form>',
-            HIDDEN_INPUT : '<input type="hidden" name="{name}" value="{value}" />'
-        },
-        /**
-         * 事件列表
-         * @ignore
-         */
-        event : BUI.mix(UploadType.event,{
-            //创建iframe和form后触发
-            CREATE : 'create',
-            //删除form后触发
-            REMOVE : 'remove'
-        })
-    });
 
     //继承于Base，属性getter和setter委托于Base处理
     BUI.extend(IframeType, UploadType,{
@@ -54,7 +32,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
             if (!file){
                 return false
             };
-            _self.fire(IframeType.event.START, {file: file});
+            _self.fire('start', {file: file});
             _self.set('file', file);
             _self.set('fileInput', input);
             //创建iframe和form
@@ -64,16 +42,15 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
             form && form[0].submit();
         },
         /**
-         * 停止上传
-         * @return {BUI.Uploader.IframeType}
-         * @chainable
+         * 取消上传
+         * @return {BUI.Uploader.UploadType.Iframe}
          */
-        stop : function() {
+        cancel : function() {
             var self = this,iframe = self.get('iframe');
             iframe.attr('src', 'javascript:"<html></html>";');
             self.reset();
-            self.fire(IframeType.event.STOP);
-            self.fire(IframeType.event.ERROR, {status : 'abort',msg : '上传失败，原因：abort'});
+            self.fire('cancel');
+            self.fire('error', {status : 'abort',msg : '上传失败，原因：abort'});
             return self;
         },
         /**
@@ -86,7 +63,8 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
             var self = this,
                 hiddenInputHtml = [],
                 //hidden元素模板
-                tpl = self.get('tpl'),hiddenTpl = tpl.HIDDEN_INPUT;
+                tpl = self.get('tpl'),
+                hiddenTpl = tpl.HIDDEN_INPUT;
             if (!BUI.isString(hiddenTpl)) return '';
             for (var k in data) {
                 hiddenInputHtml.push(BUI.substitute(hiddenTpl, {'name' : k,'value' : data[k]}));
@@ -125,11 +103,10 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
          */
         _iframeLoadHandler : function(ev) {
             var self = this,iframe = ev.target,
-                errorEvent = IframeType.event.ERROR,
                 doc = iframe.contentDocument || window.frames[iframe.id].document,
                 result;
             if (!doc || !doc.body) {
-                self.fire(errorEvent, {msg : '服务器端返回数据有问题！'});
+                self.fire('error', {msg : '服务器端返回数据有问题！'});
                 return false;
             }
             var response = doc.body.innerHTML;
@@ -183,7 +160,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
                 iframe = _self._createIframe(),
                 form = _self._createForm();
 
-            _self.fire(IframeType.event.CREATE, {iframe : iframe,form : form});
+            _self.fire('create', {iframe : iframe,form : form});
         },
         /**
          * 移除表单
@@ -195,7 +172,7 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
             form.remove();
             //重置form属性
             self.set('form', null);
-            self.fire(IframeType.event.REMOVE, {form : form});
+            self.fire('remove', {form : form});
         },
         reset: function(){
             var _self = this;
@@ -208,24 +185,46 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
          * @type {String}
          * @default
          * {
-         IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
-         FORM : '<form method="post" enctype="multipart/form-data" action="{action}" target="{target}">{hiddenInputs}</form>',
-         HIDDEN_INPUT : '<input type="hidden" name="{name}" value="{value}" />'
-         }
+         *   IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
+         *   FORM : '<form method="post" enctype="multipart/form-data" action="{action}" target="{target}">{hiddenInputs}</form>',
+         *   HIDDEN_INPUT : '<input type="hidden" name="{name}" value="{value}" />'
+         * }
          */
-        tpl : {value : IframeType.tpl},
+        tpl: {
+            value: {
+                IFRAME : '<iframe src="javascript:false;" name="{id}" id="{id}" border="no" width="1" height="1" style="display: none;" />',
+                FORM : '<form method="post" enctype="multipart/form-data" action="{action}" target="{target}" style="visibility: hidden;">{hiddenInputs}</form>',
+                HIDDEN_INPUT : '<input type="hidden" name="{name}" value="{value}" />'
+            }
+        },
         /**
          * 只读，创建的iframeid,id为组件自动创建
          * @type {String}
          * @default  'ks-uploader-iframe-' +随机id
          */
-        id : {value : ID_PREFIX + BUI.guid()},
+        id: {value : ID_PREFIX + BUI.guid()},
         /**
          * iframe
          */
-        iframe : {value : {}},
-        form : {},
-        fileInput : {}
+        iframe: {value : {}},
+        form: {},
+        fileInput: {},
+        events: {
+            value: {
+                /**
+                 * 创建iframe和form后触发
+                 * @event
+                 * @param {Object} e 事件对象
+                 */
+                create: false,
+                /**
+                 * 删除form后触发
+                 * @event
+                 * @param {Object} e 事件对象
+                 */
+                remove: false
+            }
+        }
     }});
 
     return IframeType;

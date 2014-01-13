@@ -1,10 +1,10 @@
 /**
  * @fileoverview ajax方案上传
- * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
+ * @author
  * @ignore
  **/
 define('bui/uploader/type/ajax', ['./base'], function(require) {
-    var EMPTY = '', LOG_PREFIX = '[uploader-AjaxType]:',
+    var EMPTY = '', LOG_PREFIX = '[uploader-Ajax]:',
         win = window,
         doc = document;
 
@@ -20,7 +20,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
     }
 
     /**
-     * @class BUI.Uploader.AjaxType
+     * @class BUI.Uploader.UploadType.Ajax
      * ajax方案上传
      * @extends BUI.Uploader.UploadType
      */
@@ -30,20 +30,12 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         AjaxType.superclass.constructor.call(self, config);
     }
 
-    BUI.mix(AjaxType, {
-        /**
-         * 事件列表
-         */
-        event : BUI.merge(UploadType.event, {
-            PROGRESS : 'progress'
-        })
-    });
     //继承于Base，属性getter和setter委托于Base处理
     BUI.extend(AjaxType, UploadType,{
         /**
          * 上传文件
          * @param {Object} File
-         * @return {BUI.Uploader.AjaxType}
+         * @return {BUI.Uploader.UploadType.Ajax}
          * @chainable
          */
         upload : function(file) {
@@ -54,7 +46,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
             }
             var self = this;
             self.set('file', file);
-            self.fire(UploadType.event.START, {file: file});
+            self.fire('start', {file: file});
             self._setFormData();
             self._addFileData(file.file);
             self.send();
@@ -62,7 +54,7 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         },
         /**
          * 停止上传
-         * @return {BUI.Uploader.AjaxType}
+         * @return {BUI.Uploader.UploadType.Ajax}
          * @chainable
          */
         cancel : function() {
@@ -72,14 +64,14 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
             //中止ajax请求，会触发error事件
             if(xhr){
                 xhr.abort();
-                self.fire(AjaxType.event.CANCEL, {file: file});
+                self.fire('cancel', {file: file});
             }
             self.set('file', null);
             return self;
         },
         /**
          * 发送ajax请求
-         * @return {BUI.Uploader.AjaxType}
+         * @return {BUI.Uploader.UploadType.Ajax}
          * @chainable
          */
         send : function() {
@@ -91,14 +83,14 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
             var xhr = new XMLHttpRequest();
             //TODO:如果使用onProgress存在第二次上传不触发progress事件的问题
             xhr.upload.addEventListener('progress',function(ev){
-                self.fire(AjaxType.event.PROGRESS, { 'loaded': ev.loaded, 'total': ev.total });
+                self.fire('progress', { 'loaded': ev.loaded, 'total': ev.total });
             });
             xhr.onload = function(ev){
                 var result = self._processResponse(xhr.responseText);
                 self.fire('complete', {result: result, file: file});
             };
             xhr.onerror = function(ev){
-                self.fire(AjaxType.event.ERROR, {file: file});
+                self.fire('error', {file: file});
             }
             xhr.open("POST", url, true);
             xhr.send(data);
@@ -159,6 +151,18 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
         data: {
         },
         xhr: {
+        },
+        events: {
+            value: {
+                /**
+                 * 上传正在上传时
+                 * @event
+                 * @param {Object} e 事件对象
+                 * @param {Number} total 文件的总大小
+                 * @param {Number} loaded 已经上传的大小
+                 */
+                progress: false
+            }
         }//,
         // subDomain: {
         //     value: {
