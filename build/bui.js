@@ -6794,10 +6794,6 @@ define('bui/component/uibase/stdmod',function () {
     }
 
     StdMod.ATTRS =
-    /**
-     * @lends BUI.Component.UIBase.StdMod#
-     * @ignore
-     */
     {
         /**
          * \u63a7\u4ef6\u7684\u5934\u90e8DOM. Readonly
