@@ -171,7 +171,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
     // queueTarget: '#J_UploaderQueue',
     url: 'upload/upload.php',
     button: {
-      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"},
+      flashUrl: 'http://g.tbcdn.cn/fi/bui/uploader/uploader.swf'
     }
   });
   uploader.render();
