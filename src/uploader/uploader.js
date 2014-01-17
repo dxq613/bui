@@ -359,12 +359,12 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     /**
      * 取消正在上传的文件 
      */
-    cancel: function(){
+    cancel: function(item){
       var _self = this,
-        uploaderType = _self.get('uploaderType'),
-        curUploadItem = _self.get('curUploadItem');
+        uploaderType = _self.get('uploaderType');
+      item = item || _self.get('curUploadItem');
 
-      _self.fire('cancel', {item: curUploadItem});
+      _self.fire('cancel', {item: item});
       uploaderType.cancel();
       _self.set('curUploadItem', null);
     },
