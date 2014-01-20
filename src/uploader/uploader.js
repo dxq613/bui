@@ -11,8 +11,24 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     Factory = require('bui/uploader/factory'),
     Validator = require('bui/uploader/validator');
 
+  //上传类型的检测函数定义
+  var supportMap = {
+    ajax: function(){
+      return !!window.FormData;
+    },
+    //flash上传类型默认所有浏览器都支持
+    flash: function(){
+      return true;
+    },
+    iframe: function(){
+      return true;
+    }
+  }
 
-  var win = window;
+  //是否支持该上传类型
+  function isSupport(type){
+    return supportMap[type] && supportMap[type]();
+  }
 
   /**
    * Uploader的视图层
@@ -64,20 +80,6 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       _self._bindQueue();
     },
     /**
-     * 检测浏览器是否支持ajax类型上传方式
-     * @return {Boolean}
-     */
-    isSupportAjax: function(){
-      return !!win['FormData'];
-    },
-    /**
-     * 检测浏览器是否支持flash类型上传方式
-     * @return {Boolean}
-     */
-    isSupportFlash: function(){
-      return true;
-    },
-    /**
      * @private
      * 初始化使用的主题
      */
@@ -106,15 +108,12 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         type = _self.get('type');
       //没有设置时按最优处理，有则按设定的处理
       if(!type){
-        if(_self.isSupportAjax()){
-          type = types.AJAX;
-        }
-        else if(_self.isSupportFlash()){
-          type = types.FLASH;
-        }
-        else{
-          type = types.IFRAME;
-        }
+        BUI.each(types, function(item){
+          if(isSupport(item)){
+            type = item;
+            return false;
+          }
+        })
       }
       _self.set('type', type);
     },
@@ -393,12 +392,13 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     }
   }, {
     ATTRS: {
+      /**
+       * 上传的类型，会依次按这个顺序来检测，并选择第一个可用的
+       * @type {Array} 上传类型
+       * @default ['ajax', 'flash', 'iframe']
+       */
       types: {
-        value: {
-          AJAX: 'ajax',
-          FLASH: 'flash',
-          IFRAME: 'iframe'
-        }
+        value: ['ajax', 'flash', 'iframe']
       },
       /**
        * 上传的类型，有ajax,flash,iframe四种
@@ -446,7 +446,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       uploadStatus: {
       },
       /**
-       * 判断上传是否已经成功，默认判断返回的url中是否有url这个值
+       * 判断上传是否已经成功，默认判断有返回，且返回的json中存在url这个字段
        * @type {Function}
        */
       isSuccess: {
