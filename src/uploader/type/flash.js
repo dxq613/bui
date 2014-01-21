@@ -9,7 +9,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
     var UploadType = require('bui/uploader/type/base');
 
     //获取链接绝对路径正则
-    var URI_SPLIT_REG = new RegExp('^([^?#]+)?(?:\\?([^#]*))?(?:#(.*))?$');
+    var URI_SPLIT_REG = new RegExp('^([^?#]+)?(?:\\?([^#]*))?(?:#(.*))?$'),
+        HOSTNAME_SPLIT_REG = new RegExp('^(?:([\\w\\d+.-]+):)?(?://([\\w\\d\\-\\u0100-\\uffff.+%]*))?.*$');
 
     /**
      * @class BUI.Uploader.UploadType.Flash
@@ -21,7 +22,6 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         var _self = this;
         //调用父类构造函数
         FlashType.superclass.constructor.call(_self, config);
-        _self.isHasCrossdomain();
     }
 
     BUI.extend(FlashType, UploadType, {
@@ -34,10 +34,12 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                 BUI.log(LOG_PREFIX + 'swfUploader对象为空！');
                 return false;
             }
-            //SWF 内容准备就绪
-            swfUploader.on('contentReady', function(ev){
-                _self.fire('swfReady');
-            });
+            //初始化swf时swf已经ready，所以这里直接fire swfReady事件
+            _self.fire('swfReady');
+
+            //测试是否存在crossdomain.xml
+            _self._hasCrossdomain();
+
             //监听开始上传事件
             swfUploader.on('uploadStart', function(ev){
                 var file = _self.get('file');
@@ -106,16 +108,28 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         },
         /**
          * 应用是否有flash跨域策略文件
+         * @private
+         * 2014-01-13 应该判断swf的路径上提交上传接口的路径是否同域
          */
-        isHasCrossdomain:function(){
-            var domain = location.hostname;
-            $.ajax({
-                url:'http://' + domain + '/crossdomain.xml',
-                dataType:"xml",
-                error:function(){
-                   BUI.log('缺少crossdomain.xml文件或该文件不合法！');
-                }
-            });
+        _hasCrossdomain: function(){
+            var _self = this,
+
+                // http://g.tbcdn.cn/fi/bui/upload.php => ['http://g.tbcdn.cn/fi/bui/upload.php', 'http', 'g.tbcdn.cn']
+                url = _self.get('url').match(HOSTNAME_SPLIT_REG) || [],
+                flashUrl = _self.get('swfUploader').get('src').match(HOSTNAME_SPLIT_REG) || [],
+                urlDomain = url[2],
+                flashUrlDomain = flashUrl[2];
+
+            //不同域时才去校验crossdomain
+            if(urlDomain && flashUrlDomain && urlDomain !== flashUrlDomain){
+                $.ajax({
+                    url: url[1] + '://' + urlDomain + '/crossdomain.xml',
+                    dataType:"xml",
+                    error:function(){
+                       BUI.log('缺少crossdomain.xml文件或该文件不合法！');
+                    }
+                });
+            }
         }
     }, {ATTRS:{
         uploader: {

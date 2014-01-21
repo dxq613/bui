@@ -21,6 +21,12 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
 
   }
   Factory.prototype = {
+    /**
+     * 创建上传的类型
+     * @param  {String} type   上传类型
+     * @param  {Object} config 配置项
+     * @return {BUI.Uploader.UploadType} 类型的实例
+     */
     createUploadType: function(type, config){
       if (type === 'ajax') {
         return new Ajax(config);
@@ -32,6 +38,12 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
         return new Iframe(config);
       }
     },
+    /**
+     * 创建button
+     * @param  {String} type   上传类型
+     * @param  {Object} config button的配置项
+     * @return {BUI.Uploader.Button} button的实例
+     */
     createButton: function(type, config){
       if(type === 'ajax' || type === 'iframe'){
         return new HtmlButton(config);
@@ -40,6 +52,11 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
         return new SwfButton(config);
       }
     },
+    /**
+     * 创建上传的对队
+     * @param  {Object} config 配置项
+     * @return {BUI.Uploader.Queue} 队列的实例
+     */
     createQueue: function(config){
       return new Queue(config);
     }
