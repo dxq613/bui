@@ -4,20 +4,19 @@
  * @ignore
  **/
 define('bui/uploader/type/ajax', ['./base'], function(require) {
-    var EMPTY = '', LOG_PREFIX = '[uploader-Ajax]:',
-        win = window,
-        doc = document;
+    var EMPTY = '', LOG_PREFIX = '[uploader-Ajax]:';
 
     var UploadType = require('bui/uploader/type/base');
 
-    function isSubDomain(hostname){
+    
+    /*function isSubDomain(hostname){
         return win.location.host === doc.domain;
     }
 
     function endsWith (str, suffix) {
         var ind = str.length - suffix.length;
         return ind >= 0 && str.indexOf(suffix, ind) == ind;
-    }
+    }*/
 
     /**
      * @class BUI.Uploader.UploadType.Ajax

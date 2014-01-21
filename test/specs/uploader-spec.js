@@ -129,7 +129,7 @@ BUI.use(['bui/uploader/type/flash'], function (Flash) {
   });
 });
 
-
+//使用浏览器支持的默认方式进行上传
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',

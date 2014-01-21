@@ -2135,7 +2135,7 @@ input.x-datepicker-time {
   font-size: 12px;
   text-align: center;
   border: 1px solid #C4DAED;
-  /*渐变*/
+  /** 渐变 **/
 
   background: -webkit-gradient(linear, left top, left bottom, from(#fdfefe), to(#dfe7ef));
   background: -moz-linear-gradient(top, #fdfefe, #dfe7ef);
@@ -2155,6 +2155,14 @@ input.x-datepicker-time {
 .defaultTheme .bui-uploader-button-wrap:active {
   background: #DFE7EF;
   filter: none;
+}
+.defaultTheme .bui-uploader-htmlButton-disabled .bui-uploader-button-wrap {
+  border: 1px solid #bfbfbf;
+  color: #404040;
+  cursor: default;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fafafa), to(#e5e5e5));
+  background: -moz-linear-gradient(top, #fafafa, #e5e5e5);
+  filter: progid:dximagetransform.microsoft.gradient(startColorstr='#FAFAFA', endColorstr='#E5E5E5');
 }
 .defaultTheme .bui-queue-item {
   position: relative;
@@ -2212,6 +2220,25 @@ input.x-datepicker-time {
   background-image: linear-gradient(left, #fdfcfc, #e2f1fc);
   background-repeat: repeat-x;
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfcfc', endColorstr='#e2f1fc', GradientType=1);
+}
+.imageViewTheme .bui-uploader-htmlButton-disabled .bui-uploader-button-wrap {
+  border-color: #eee;
+  color: #404040;
+  cursor: default;
+  background-color: #eee;
+}
+.imageViewTheme .bui-uploader-htmlButton-disabled .bui-uploader-button-wrap:hover {
+  border-color: #eee;
+  background-color: #eee;
+  background-color: #eeeeee;
+  background-image: -moz-linear-gradient(left, #fdfcfc, #eeeeee);
+  background-image: -ms-linear-gradient(left, #fdfcfc, #eeeeee);
+  background-image: -webkit-gradient(linear, 0 0, 100% 0, from(#fdfcfc), to(#eeeeee));
+  background-image: -webkit-linear-gradient(left, #fdfcfc, #eeeeee);
+  background-image: -o-linear-gradient(left, #fdfcfc, #eeeeee);
+  background-image: linear-gradient(left, #fdfcfc, #eeeeee);
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fdfcfc', endColorstr='#eeeeee', GradientType=1);
 }
 .imageViewTheme .bui-queue ul {
   *zoom: 1;
