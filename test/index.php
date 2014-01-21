@@ -77,6 +77,10 @@
         text : 'layout',
         children : ['layout-absolute','layout-border','layout-flow','layout-table','layout-anchor','layout-columns','layout-accordion','viewport']
       },{
+        text : 'chart',
+        children : [{text : '基础图形',href: 'chart/graphic.php'}]
+      },
+      {
         text : 'issue',
         children : [
           'issue'
@@ -93,7 +97,10 @@
           if(BUI.isString(subNode)){
             children[index] = {text : subNode};
           }
-          children[index].href = children[index].text + '.php'
+          if(!children[index].href){
+            children[index].href = children[index].text + '.php'
+          }
+          
         });
       });
       return nodes;

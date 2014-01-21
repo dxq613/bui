@@ -831,7 +831,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
            * @param {Object} e 点击事件
            * @param {Date} e.date
            */
-          'selectedchange' : false
+          'selectedchange' : true
         }
       },
       /**

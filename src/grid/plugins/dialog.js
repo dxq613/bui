@@ -197,9 +197,11 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
     showEditor : function(record){
       var _self = this,
         editor = _self.get('editor');
+        
+      _self.set('record',record);
       editor.show();
       editor.setValue(record,true); //设置值，并且隐藏错误
-      _self.set('record',record);
+      
       _self.fire('recordchange',{record : record,editType : _self.get('editType')});
     },
     /**

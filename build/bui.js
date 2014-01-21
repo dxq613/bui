@@ -17932,7 +17932,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
    * @extends BUI.Component.Controller
    */
   var field = Component.Controller.extend([Remote,Valid],{
-
+    isField : true,
     initializer : function(){
       var _self = this;
       _self.on('afterRenderUI',function(){
@@ -19985,7 +19985,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       _self.on('afterDisabledChange',function(ev){
         var disabled = ev.newVal;
         if(disabled){
-          _self.clearErrors(false);
+          _self.clearErrors(false,false);
         }else{
           _self.valid();
         }
@@ -20080,14 +20080,22 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     },
     /**
      * \u6e05\u9664\u9519\u8bef
+     * @param {Boolean} reset \u6e05\u9664\u9519\u8bef\u65f6\u662f\u5426\u91cd\u7f6e
+     * @param {Boolean} deep \u662f\u5426\u6e05\u7406\u5b50\u63a7\u4ef6\u7684\u9519\u8bef 
      */
-    clearErrors : function(deep){
+    clearErrors : function(reset,deep){
       deep = deep == null ? true : deep;
       var _self = this,
         children = _self.get('children');
       if(deep){
         BUI.each(children,function(item){
-          item.clearErrors && item.clearErrors();
+          if(item.clearErrors){
+            if(item.field){
+              item.clearErrors(reset);
+            }else{
+              item.clearErrors(deep,reset);
+            }
+          }
         });
       }
       
@@ -28256,7 +28264,7 @@ define('bui/calendar/panel',['bui/common'],function (require) {
            * @param {Object} e \u70b9\u51fb\u4e8b\u4ef6
            * @param {Date} e.date
            */
-          'selectedchange' : false
+          'selectedchange' : true
         }
       },
       /**
@@ -35179,9 +35187,11 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
     showEditor : function(record){
       var _self = this,
         editor = _self.get('editor');
+        
+      _self.set('record',record);
       editor.show();
       editor.setValue(record,true); //\u8bbe\u7f6e\u503c\uff0c\u5e76\u4e14\u9690\u85cf\u9519\u8bef
-      _self.set('record',record);
+      
       _self.fire('recordchange',{record : record,editType : _self.get('editType')});
     },
     /**
