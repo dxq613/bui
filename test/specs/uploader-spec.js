@@ -161,7 +161,7 @@ BUI.use(['bui/uploader'], function (Uploader) {
   });
 });
 
-
+//测试flash上传类型
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_UploaderFlash',
@@ -171,7 +171,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
     // queueTarget: '#J_UploaderQueue',
     url: 'upload/upload.php',
     button: {
-      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}//,
+      // flashUrl: 'http://g.tbcdn.cn/fi/bui/uploader/uploader.swf'
     }
   });
   uploader.render();
@@ -198,23 +199,24 @@ BUI.use(['bui/uploader'], function (Uploader) {
   });
 });
 
-// BUI.use(['bui/uploader'], function (Uploader) {
-//   var uploader = new Uploader.Uploader({
-//     render: '#J_UploaderIframe',
-//     type: 'iframe',
-//     // disabled: true,
-//     // queueTarget: '#J_UploaderQueue',
-//     url: 'upload/upload.php',
-//     button: {
-//       filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
-//     }
-//   });
-//   uploader.render();
-//   var el = uploader.get('el');
+//测试iframe上传类型
+BUI.use(['bui/uploader'], function (Uploader) {
+  var uploader = new Uploader.Uploader({
+    render: '#J_UploaderIframe',
+    type: 'iframe',
+    // disabled: true,
+    // queueTarget: '#J_UploaderQueue',
+    url: 'upload/upload.php',
+    button: {
+      filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+    }
+  });
+  uploader.render();
+  var el = uploader.get('el');
 
-//   describe('测试DOM生成', function(){
-//     it('render函数是否执行成功', function(){
-//       //expect(el.children().length).not.toBe(0);
-//     });
-//   });
-// });
+  describe('测试DOM生成', function(){
+    it('render函数是否执行成功', function(){
+      //expect(el.children().length).not.toBe(0);
+    });
+  });
+});

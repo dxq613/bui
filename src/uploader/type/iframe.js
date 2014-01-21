@@ -47,10 +47,10 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
          */
         cancel : function() {
             var self = this,iframe = self.get('iframe');
-            iframe.attr('src', 'javascript:"<html></html>";');
+            //iframe.attr('src', 'javascript:"<html></html>";');
             self.reset();
             self.fire('cancel');
-            self.fire('error', {status : 'abort',msg : '上传失败，原因：abort'});
+            // self.fire('error', {status : 'abort',msg : '上传失败，原因：abort'});
             return self;
         },
         /**
