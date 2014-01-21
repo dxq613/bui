@@ -1132,7 +1132,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
     var UploadType = require('bui/uploader/type/base');
 
     //获取链接绝对路径正则
-    var URI_SPLIT_REG = new RegExp('^([^?#]+)?(?:\\?([^#]*))?(?:#(.*))?$');
+    var URI_SPLIT_REG = new RegExp('^([^?#]+)?(?:\\?([^#]*))?(?:#(.*))?$'),
+        HOSTNAME_SPLIT_REG = new RegExp('^(?:([\\w\\d+.-]+):)?(?://([\\w\\d\\-\\u0100-\\uffff.+%]*))?.*$');
 
     /**
      * @class BUI.Uploader.UploadType.Flash
@@ -1144,7 +1145,6 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         var _self = this;
         //调用父类构造函数
         FlashType.superclass.constructor.call(_self, config);
-        _self.isHasCrossdomain();
     }
 
     BUI.extend(FlashType, UploadType, {
@@ -1157,10 +1157,12 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                 BUI.log(LOG_PREFIX + 'swfUploader对象为空！');
                 return false;
             }
-            //SWF 内容准备就绪
-            swfUploader.on('contentReady', function(ev){
-                _self.fire('swfReady');
-            });
+            //初始化swf时swf已经ready，所以这里直接fire swfReady事件
+            _self.fire('swfReady');
+
+            //测试是否存在crossdomain.xml
+            _self._hasCrossdomain();
+
             //监听开始上传事件
             swfUploader.on('uploadStart', function(ev){
                 var file = _self.get('file');
@@ -1229,16 +1231,28 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         },
         /**
          * 应用是否有flash跨域策略文件
+         * @private
+         * 2014-01-13 应该判断swf的路径上提交上传接口的路径是否同域
          */
-        isHasCrossdomain:function(){
-            var domain = location.hostname;
-            $.ajax({
-                url:'http://' + domain + '/crossdomain.xml',
-                dataType:"xml",
-                error:function(){
-                   BUI.log('缺少crossdomain.xml文件或该文件不合法！');
-                }
-            });
+        _hasCrossdomain: function(){
+            var _self = this,
+
+                // http://g.tbcdn.cn/fi/bui/upload.php => ['http://g.tbcdn.cn/fi/bui/upload.php', 'http', 'g.tbcdn.cn']
+                url = _self.get('url').match(HOSTNAME_SPLIT_REG) || [],
+                flashUrl = _self.get('swfUploader').get('src').match(HOSTNAME_SPLIT_REG) || [],
+                urlDomain = url[2],
+                flashUrlDomain = flashUrl[2];
+
+            //不同域时才去校验crossdomain
+            if(urlDomain && flashUrlDomain && urlDomain !== flashUrlDomain){
+                $.ajax({
+                    url: url[1] + '://' + urlDomain + '/crossdomain.xml',
+                    dataType:"xml",
+                    error:function(){
+                       BUI.log('缺少crossdomain.xml文件或该文件不合法！');
+                    }
+                });
+            }
         }
     }, {ATTRS:{
         uploader: {
@@ -1355,10 +1369,10 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
          */
         cancel : function() {
             var self = this,iframe = self.get('iframe');
-            iframe.attr('src', 'javascript:"<html></html>";');
+            //iframe.attr('src', 'javascript:"<html></html>";');
             self.reset();
             self.fire('cancel');
-            self.fire('error', {status : 'abort',msg : '上传失败，原因：abort'});
+            // self.fire('error', {status : 'abort',msg : '上传失败，原因：abort'});
             return self;
         },
         /**
@@ -1918,6 +1932,12 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
 
   }
   Factory.prototype = {
+    /**
+     * 创建上传的类型
+     * @param  {String} type   上传类型
+     * @param  {Object} config 配置项
+     * @return {BUI.Uploader.UploadType} 类型的实例
+     */
     createUploadType: function(type, config){
       if (type === 'ajax') {
         return new Ajax(config);
@@ -1929,6 +1949,12 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
         return new Iframe(config);
       }
     },
+    /**
+     * 创建button
+     * @param  {String} type   上传类型
+     * @param  {Object} config button的配置项
+     * @return {BUI.Uploader.Button} button的实例
+     */
     createButton: function(type, config){
       if(type === 'ajax' || type === 'iframe'){
         return new HtmlButton(config);
@@ -1937,6 +1963,11 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
         return new SwfButton(config);
       }
     },
+    /**
+     * 创建上传的对队
+     * @param  {Object} config 配置项
+     * @return {BUI.Uploader.Queue} 队列的实例
+     */
     createQueue: function(config){
       return new Queue(config);
     }
@@ -1957,8 +1988,24 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     Factory = require('bui/uploader/factory'),
     Validator = require('bui/uploader/validator');
 
+  //上传类型的检测函数定义
+  var supportMap = {
+    ajax: function(){
+      return !!window.FormData;
+    },
+    //flash上传类型默认所有浏览器都支持
+    flash: function(){
+      return true;
+    },
+    iframe: function(){
+      return true;
+    }
+  }
 
-  var win = window;
+  //是否支持该上传类型
+  function isSupport(type){
+    return supportMap[type] && supportMap[type]();
+  }
 
   /**
    * Uploader的视图层
@@ -2010,20 +2057,6 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       _self._bindQueue();
     },
     /**
-     * 检测浏览器是否支持ajax类型上传方式
-     * @return {Boolean}
-     */
-    isSupportAjax: function(){
-      return !!win['FormData'];
-    },
-    /**
-     * 检测浏览器是否支持flash类型上传方式
-     * @return {Boolean}
-     */
-    isSupportFlash: function(){
-      return true;
-    },
-    /**
      * @private
      * 初始化使用的主题
      */
@@ -2052,15 +2085,12 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         type = _self.get('type');
       //没有设置时按最优处理，有则按设定的处理
       if(!type){
-        if(_self.isSupportAjax()){
-          type = types.AJAX;
-        }
-        else if(_self.isSupportFlash()){
-          type = types.FLASH;
-        }
-        else{
-          type = types.IFRAME;
-        }
+        BUI.each(types, function(item){
+          if(isSupport(item)){
+            type = item;
+            return false;
+          }
+        })
       }
       _self.set('type', type);
     },
@@ -2305,12 +2335,12 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     /**
      * 取消正在上传的文件 
      */
-    cancel: function(){
+    cancel: function(item){
       var _self = this,
-        uploaderType = _self.get('uploaderType'),
-        curUploadItem = _self.get('curUploadItem');
+        uploaderType = _self.get('uploaderType');
+      item = item || _self.get('curUploadItem');
 
-      _self.fire('cancel', {item: curUploadItem});
+      _self.fire('cancel', {item: item});
       uploaderType.cancel();
       _self.set('curUploadItem', null);
     },
@@ -2339,12 +2369,13 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     }
   }, {
     ATTRS: {
+      /**
+       * 上传的类型，会依次按这个顺序来检测，并选择第一个可用的
+       * @type {Array} 上传类型
+       * @default ['ajax', 'flash', 'iframe']
+       */
       types: {
-        value: {
-          AJAX: 'ajax',
-          FLASH: 'flash',
-          IFRAME: 'iframe'
-        }
+        value: ['ajax', 'flash', 'iframe']
       },
       /**
        * 上传的类型，有ajax,flash,iframe四种
@@ -2392,7 +2423,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       uploadStatus: {
       },
       /**
-       * 判断上传是否已经成功，默认判断返回的url中是否有url这个值
+       * 判断上传是否已经成功，默认判断有返回，且返回的json中存在url这个字段
        * @type {Function}
        */
       isSuccess: {

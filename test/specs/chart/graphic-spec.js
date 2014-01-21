@@ -545,7 +545,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 
 				var path = group.addShape('path',{
 					path : 'M 100,20 L30,50 60,70z',
-					fill : 'yellow'
+					fill : '#ffff00'
 				});
 
 				var callback = jasmine.createSpy();
