@@ -4,7 +4,7 @@ define('bui/graphic/raphael/group',function(require){
 
 	window.Raphael && function  (R) {
 	
-		/**
+		/*
 		 * 创建分组
 		 */
 		R.fn.group = function(){
@@ -21,7 +21,7 @@ define('bui/graphic/raphael/group',function(require){
         return  R._rectPath(0,0, bbox.width, bbox.height);
     }
 
-    /**
+    /*
      * 分组构造函数
      */
     var Group = function(node,svg){
@@ -110,6 +110,14 @@ define('bui/graphic/raphael/group',function(require){
           return rest;
       };
 
+      groupproto.translate = function(dx,dy){
+        var el = this.node;
+        $(el).css({
+          top : dy,
+          left : dx
+        });
+      }
+      /*
       //翻转
       groupproto.transform = function(tstr){
           var set = this.__set;
@@ -120,6 +128,7 @@ define('bui/graphic/raphael/group',function(require){
           }
           Group.superclass.transform.call(this,tstr);
       };
+      */
       //创建分组
       R._engine.group = function(vml){
           var el = createNode('group');
@@ -130,7 +139,7 @@ define('bui/graphic/raphael/group',function(require){
 
           return res;
       }
-      /** 分组结束 **/
+      
     }
 
 	}(window.Raphael);

@@ -13,9 +13,27 @@ define('bui/graphic/group',['bui/common','bui/graphic/container','bui/graphic/sh
 		Group.superclass.constructor.call(this,cfg);
 	};
 
+	Group.ATTRS = {
+		/**
+		 * 沿x轴的偏移量
+		 * @type {Number}
+		 */
+		x : {
+
+		},
+		/**
+		 * 沿y轴的偏移量
+		 * @type {Number}
+		 */
+		y : {
+
+		}
+	};
+
 	BUI.extend(Group,Container);
 	//获取画布内元素的一些共性方法
 	BUI.mixin(Group,[Item]);
+
 	BUI.augment(Group,{
 		/**
 		 * 是否Group
@@ -35,7 +53,21 @@ define('bui/graphic/group',['bui/common','bui/graphic/container','bui/graphic/sh
 
   		node = el.node;
   		_self.set('node',node);
+  		_self._initTranslate();
   	},
+  	//初始化平移
+  	_initTranslate: function(){
+  		var _self = this,
+  			x = _self.get('x'),
+  			y = _self.get('y');
+  		if(x || y){
+  			_self.translate((x || 0),(y || 0));
+  		}
+  	},
+  	/**
+  	 * @private
+  	 * @ignore
+  	 */
   	createElement : function(){
   		var _self = this,
 				el = _self.get('parent').get('el');

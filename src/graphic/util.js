@@ -80,6 +80,16 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 		 */
 		transformPath : function(path,transform){
 			return Raphael.transformPath(path,transform);
+		},
+		/**
+		 * 获取逼近的值，用于对齐数据
+		 * @param  {Array} values   数据集合
+		 * @param  {Number} value   数值
+		 * @param  {Number} [tolerance=10] 逼近范围
+		 * @return {Number} 逼近的值
+		 */
+		snapTo : function(values, value, tolerance){
+			return Raphael.snapTo(values, value, tolerance);
 		}
 	});
 	return Util;

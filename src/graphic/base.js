@@ -9,15 +9,21 @@ define('bui/graphic/base',function (require) {
 		this._attrs = {
 			autoRender : true
 		};
-		
-    BUI.mix(this._attrs,cfg);
-    if(this.get('autoRender')){
-    	this.render();
-    }
+		var defaultCfg = this.getDefaultCfg();
+        BUI.mix(this._attrs,defaultCfg,cfg);
+        if(this.get('autoRender')){
+        	this.render();
+        }
 	};
 
 	Base.ATTRS = {
-		
+        /**
+         * 所在父元素中的优先级，仅在父元素排序时有效
+         * @type {Number}
+         */
+		zIndex : {
+
+        },
 		/**
 		 * @protected
 		 * 底层使用了raphael 所以此属性对应raphael的对对象
@@ -32,6 +38,13 @@ define('bui/graphic/base',function (require) {
 
 	BUI.augment(Base,{
 
+    /**
+     * 获取默认的配置信息
+     * @return {Object} 默认的属性
+     */
+    getDefaultCfg : function(){
+      return {};
+    },
 		/**
   	 * 设置属性信息
   	 * @protected
@@ -103,23 +116,23 @@ define('bui/graphic/base',function (require) {
       $(node).trigger(eventType);
     },
     /**
-     * 添加委托事件
+     * 添加委托事件,ie7下无效
      * @param  {String}   selector  选择器
      * @param  {String}   eventType 事件类型
      * @param  {Function} fn  事件处理函数
-     */
+     * @ignore
     delegate : function(selector,eventType,fn){
       var _self = this,
         node = _self.get('node');
       $(node).delegate(selector,eventType,fn);
       return this;
-    },
+    },*/
     //获取属性值
     _getAttr : function(name){
     	var _self = this,
     		el = _self.get('el'),
     		value = el.attr ? el.attr(name) : '',
-    		m = '_get' + BUI.ucfirst(name);
+    		m = '__get' + BUI.ucfirst(name);
     	if(_self[m]){
     		value = _self[m](value);
     	}
@@ -129,7 +142,7 @@ define('bui/graphic/base',function (require) {
     _setAttr : function(name,value){
     	var _self = this,
     		el = _self.get('el'),
-    		m = '_set' + BUI.ucfirst(name);
+    		m = '__set' + BUI.ucfirst(name);
     	if(_self[m]){
     		_self[m](value);
     	}else{
@@ -138,14 +151,40 @@ define('bui/graphic/base',function (require) {
     	return _self;
     },
     /**
+     * @protected
+     * 渲染控件
+     */
+    beforeRenderUI : function(){
+
+    },
+    /**
      * 渲染控件/图形
      */
     render : function(){
-    	var _self = this;
+    	var _self = this,
+        cls = _self.get('elCls'),
+        zIndex = _self.get('zIndex'),
+        node;
 
     	if(!_self.get('rendered')){
+            _self.beforeRenderUI();
     		_self.renderUI();
     		_self.set('rendered',true);
+            node = _self.get('node');
+            if(cls){
+                var oldCls = node.getAttribute('class');
+                    
+                if(oldCls){
+                   node.setAttribute('class',oldCls + ' ' + cls); 
+                }else{
+                   node.setAttribute('class',cls); 
+                }
+                
+            }
+            if(zIndex != null){
+                node.setAttribute('zIndex',zIndex);
+            }
+            _self.bindUI();
     	}
     },
     /**
@@ -153,6 +192,13 @@ define('bui/graphic/base',function (require) {
      * 渲染控件
      */
     renderUI : function(){
+
+    },
+    /**
+     * @protected
+     * 绑定事件
+     */
+    bindUI : function(){
 
     },
     /**

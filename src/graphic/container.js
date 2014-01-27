@@ -1,8 +1,9 @@
-define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/shape'],function (require) {
+define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/shape','bui/graphic/util'],function (require) {
 
 	var BUI = require('bui/common'),
 		Shape = require('bui/graphic/shape'),
-		Base = require('bui/graphic/base');
+		Base = require('bui/graphic/base'),
+		Util = require('bui/graphic/util');
 
 	/**
 	 * @class BUI.Graphic.Container
@@ -11,8 +12,8 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 	 * @abstract
 	 */
 	var Container = function(cfg){
+
 		Container.superclass.constructor.call(this,cfg);
-		this.set('children',[]);;
 	};
 
 	BUI.extend(Container,Base);
@@ -28,7 +29,9 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 	BUI.augment(Container,{
 
 		isContainer : true,
-
+		beforeRenderUI : function(){
+			this.set('children',[]);
+		},
 		/**
 		 * @protected
 		 * @ignore
@@ -75,15 +78,22 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 		},
 		/**
 		 * 添加分组
+		 * @param {Function} C 构造函数,可以为空，默认为BUI.Graphic.Group
 		 * @return {BUI.Graphic.Group} 分组
 		 */
-		addGroup : function(cfg){
+		addGroup : function(C,cfg){
+			if(BUI.isObject(C)){
+				cfg = C;
+				C = null;
+			}
 			var _self = this,
-				C = _self.getGroupClass(),
 				cfg = BUI.mix({
 					parent : _self
 				},cfg),
-				group = new C(cfg);
+				group;
+
+			C = C || _self.getGroupClass();
+			group = new C(cfg);
 			_self.addChild(group);
 			return group;
 		},
@@ -121,6 +131,14 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 			item.parent = item;
 		},
 		/**
+		 * 获取子控件根据索引
+		 * @param  {Number} index 索引值
+		 * @return {BUI.Graphic.Base} 图形或者分组
+		 */
+		getChildAt : function(index){
+			return this.get('children')[index];
+		},
+		/**
 		 * 根据id查找分组或者图形
 		 * @param  {String} id id
 		 * @return {BUI.Graphic.Base} 分组或者图形
@@ -132,8 +150,34 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 			});
 		},
 		/**
+		 * 排序，将子元素按照zIndex进行排序
+		 */
+		sort : function(){
+			var _self = this,
+				node = _self.get('node'),
+				children = $(node).children();
+			if(Util.svg){
+				children.sort(function(obj1,obj2){
+					var zIndex1 = obj1.getAttribute('zIndex') || 0,
+						zIndex2 = obj2.getAttribute('zIndex') || 0;
+					return (+zIndex1) - (+zIndex2);
+				});
+
+				BUI.each(children,function(item){
+					$(item).appendTo(node);
+				});
+			}else{
+				BUI.each(children,function(item){
+					var zIndex = item.getAttribute('zIndex');
+
+					zIndex && $(item).css('zIndex',zIndex);
+				});
+			}
+			
+		},
+		/**
 		 * 根据查找函数查找分组或者图形
-		 * @param  {Function} fn [description]
+		 * @param  {Function} fn 匹配函数
 		 * @return {BUI.Graphic.Base} 分组或者图形
 		 */
 		findBy : function(fn){
@@ -152,6 +196,16 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 				}
 			});
 			return rst;
+		},
+		/**
+		 * 根据dom查找
+		 * @param  {HTMLElement} node 节点
+		 * @return {BUI.Graphic.Base} 返回分组或者图形
+		 */
+		findByNode : function(node){
+			return this.findBy(function(item){
+				return item.get('node') == node;
+			});
 		},
 		/**
 		 * 清除容器内的图形或者分组

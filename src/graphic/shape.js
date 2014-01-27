@@ -1,8 +1,9 @@
-define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasitem','bui/graphic/raphael'],function(require){
+define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasitem','bui/graphic/raphael','bui/graphic/util'],function(require){
 
 	var BUI = require('bui/common'),
 		Base = require('bui/graphic/base'),
 		Item = require('bui/graphic/canvasitem'),
+    Util = require('bui/graphic/util'),
 		Raphael = require('bui/graphic/raphael');
 
 	/**
@@ -73,7 +74,114 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
   	 */
   	getTotalLength : function(){
   		return this.get('el').getTotalLength();
-  	}
+  	},
+    /**
+     * 旋转
+     * @param  {Number} a 旋转的角度
+     * @param  {Number} x 旋转的中心点 x
+     * @param  {Number} y 旋转的中心点 y
+     */
+    rotate : function(a, x, y){
+      var _self = this;
+      if(_self.isGroup){
+        if(x == null && y == null){
+          var tpoint = _self._getTranslatePoint();
+          x = tpoint.x;
+          y = tpoint.y;
+        }
+      }
+      this.get('el').rotate(a,x,y);
+    },
+    /**
+     * 
+     * @param  {Number} sx x轴方向的倍数 
+     * @param  {Number} sy y轴方向的倍数
+     * @param  {Number} cx x轴方向扩展的中心
+     * @param  {Number} cy y轴方向扩展的中心
+     */
+    scale : function(sx, sy, cx,cy){
+      var _self = this,
+        el = _self.get('el');
+      
+      el.scale(sx, sy, cx,cy);
+    },
+    /**
+     * 直接使用transform方法 <br>
+     *  "t100,100r30,100,100s2,2,100,100r45s1.5"
+     *   - 
+     * @param  {String} tstr 几何转换的字符串
+     */
+    transform : function(tstr){
+      var _self = this,
+        el = _self.get('el');
+      el.transform(tstr);
+    },
+    /**
+     * 获取路径
+     * @return {Array} 路径的数组
+     */
+    getPath : function(){
+      var _self = this,
+        el = _self.get('el'),
+        path = el.getPath();
+      if(BUI.isString(path)){
+        path = Util.parsePathString(path);
+      }
+      return path;
+    },
+    /**
+     * 获取路径字符串
+     * @return {String} 路径的字符串
+     */
+    getPathString : function(){
+      var _self = this,
+        path = _self.getPath();
+      return Util.parsePathArray(path);
+    },
+    /**
+     * 获取使用平移后的path
+     * @return {Array} 路径的数组
+     */
+    getTransformPath : function(){
+      var _self = this,
+        path = _self.getPath(),
+        matrix = _self.get('el').matrix;
+      return Util.transformPath(path,matrix.toTransformString());
+    },
+    //获取到移动的位置
+    _getTranslatePoint : function(){
+      var _self = this,
+        tPath = _self.getTransformPath(),
+        rst = {x : 0,y : 0};
+      BUI.each(tPath,function(item){
+        if(item[0] == 'M'){
+          rst.x = item[1];
+          rst.y = item[2];
+        }
+      });
+      return rst;
+    },
+    //获取转换的信息，返回一个数组，处理非数组的场景
+    __getTransform : function(value){
+      if(BUI.isString(value)){
+        value = value.replace(/([t,s,r])/,';$1 ').split(';');
+        var temp = [];
+        BUI.each(value,function(str){
+          if(str){
+            var sub = str.split(' ');
+            sub = $.map(sub,function(subStr){
+              if($.isNumeric(subStr)){
+                return parseFloat(subStr);
+              }
+              return subStr;
+            });
+            temp.push(sub);
+          }
+        });
+        value = temp;
+      }
+      return value;
+    }
   });
 
   /**
@@ -256,31 +364,31 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
   		_self.attr('path',path);
   	},
   	//设置坐标x1
-  	_setX1 : function(value){
+  	__setX1 : function(value){
   		this._setLinePoint(0,1,value);
   	},
-  	_getX1 : function(){
+  	__getX1 : function(){
   		return this._getLinePoint(0,1);
   	},
   	//设置坐标x2
-  	_setX2 : function(value){
+  	__setX2 : function(value){
   		this._setLinePoint(1,1,value);
   	},
-  	_getX2 : function(){
+  	__getX2 : function(){
   		return this._getLinePoint(1,1);
   	},
   	//设置坐标y1
-  	_setY1 : function(value){
+  	__setY1 : function(value){
   		this._setLinePoint(0,2,value);
   	},
-  	_getY1 : function(){
+  	__getY1 : function(){
   		return this._getLinePoint(0,2);
   	},
   	//设置坐标y2
-  	_setY2 : function(value){
+  	__setY2 : function(value){
   		this._setLinePoint(1,2,value);
   	},
-  	_getY2 : function(){
+  	__getY2 : function(){
   		return this._getLinePoint(1,2);
   	}
   });
@@ -320,7 +428,7 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
 
   BUI.augment(PolyLine,{
   	//设置顶点
-  	_setPoints : function(value){
+  	__setPoints : function(value){
   		var _self = this,
   			el = _self.get('el'),
   			path = points2path(value,'');
@@ -365,7 +473,7 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
 
   BUI.augment(Polygon,{
   	//设置顶点
-  	_setPoints : function(value){
+  	__setPoints : function(value){
   		var _self = this,
   			el = _self.get('el'),
   			path = points2path(value,'z');
@@ -425,6 +533,43 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
   BUI.extend(Text,Shape);
 
   Shape.Text = Text;
+
+  /**
+   * @class BUI.Graphic.Shape.Label
+   * 文本标签，继承自文本，但是提供了rotate属性
+   * @extends BUI.Graphic.Shape.Text
+   */
+  var Label = function(cfg){
+    Label.superclass.constructor.call(this,cfg);
+  };
+
+  BUI.extend(Label,Text);
+
+  Label.ATTRS = {
+    /**
+     * 旋转角度
+     * @type {Number}
+     */
+    rotate : {}
+  };
+
+  BUI.augment(Label,{
+    /**
+     * @protected
+     * 格式化初始化配置项
+     */
+    parseElCfg : function(attrs){
+      attrs.type = 'text';
+      if(attrs.rotate){
+        attrs.transform = BUI.substitute('r{rotate} {x} {y}',attrs);
+      }
+      
+      return attrs;
+    }
+  });
+
+  Shape.Label = Label;
+
 
   /**
    * @class BUI.Graphic.Shape.Image

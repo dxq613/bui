@@ -4,7 +4,8 @@
  */
 
 define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui/graphic/group','bui/graphic/util'],function (require) {
-	var Graphic = BUI.namespace('Graphic');
+	var BUI = require('bui/common'),
+		Graphic = BUI.namespace('Graphic');
 
 	BUI.mix(Graphic,{
 		Canvas : require('bui/graphic/canvas'),

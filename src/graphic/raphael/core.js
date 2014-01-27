@@ -5384,7 +5384,4 @@ define('bui/graphic/raphael/core',function(){
     return Raphael;
 });
 
-/***
-* 
-*/
 
