@@ -11,6 +11,8 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 		node = canvas.get('node'),
 		nodeEl = $(node);
 
+	
+
 	/**/describe('测试画板生成',function(){
 
 		it('测试生成dom',function(){
@@ -147,6 +149,27 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			}
 		});
 
+		it('label',function(){
+			var text = canvas.addShape('label',{
+				x : 100,
+				y : 30,
+				rotate : -45,
+				text : '你好么\n我很好'
+			});
+
+			var nEl = $(text.get('node'));
+			expect(text.get('el')).not.toBe(undefined);
+			expect(text.get('node')).not.toBe(undefined);
+
+			
+				var ts = text.attr('transform');
+				expect(ts[0][0]).toBe('r');
+				expect(ts[0][1]).toBe(-45);
+				expect(ts[0][2]).toBe(100);
+			
+
+		});
+
 		it('图片',function(){
 			var image = canvas.addShape('image',{
 				x : 100,
@@ -160,6 +183,8 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			expect(image.get('node')).not.toBe(undefined);
 
 		});
+
+
 
 		it('查找',function(){
       var path = canvas.addShape({
@@ -226,6 +251,142 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 				expect(canvas.get('children').length).toBe(0);
 			})
 			
+		});
+
+
+	});
+
+	describe('测试maker',function(){
+
+		it('测试circle',function(){
+			var circle = canvas.addShape('marker',{
+				x : 400,
+				y : 100,
+				fill: 'blue',
+				radius : 10,
+				symbol : 'circle'
+			});
+
+			circle.set('id','mc');
+			var path = circle.getPath();
+			expect(circle.get('el')).not.toBe(null);
+			expect(path[0][1]).toBe(400);
+			expect(path[0][2]).toBe(90);
+		});
+
+		it('测试三角',function(){
+			var triangle = canvas.addShape('marker',{
+				x : 350,
+				y : 100,
+				fill: 'blue',
+				radius : 10,
+				symbol : 'triangle'
+			});
+
+			var path = triangle.getPath();
+			expect(triangle.get('el')).not.toBe(null);
+			expect(path[0][1]).toBe(350);
+			expect(path[0][2]).toBe(90);
+		});
+
+		it('测试正方形',function(){
+			var rect = canvas.addShape('marker',{
+				x : 400,
+				y : 200,
+				fill: '#ffcc00',
+				radius : 10,
+				symbol : 'square'
+			});
+			var path = rect.getPath();
+			expect(rect.get('el')).not.toBe(null);
+			expect(path[0][1]).toBe(390);
+			expect(path[0][2]).toBe(190);
+		});
+
+		it('测试倒三角',function(){
+			var triangle = canvas.addShape('marker',{
+				x : 350,
+				y : 200,
+				fill: 'yellow',
+				radius : 10,
+				symbol : 'triangle-down'
+			});
+
+			var path = triangle.getPath();
+			expect(triangle.get('el')).not.toBe(null);
+			expect(path[0][1]).toBe(350);
+			expect(path[0][2]).toBe(210);
+		});
+
+		it('测试菱形',function(){
+		  var	diamond = canvas.addShape('marker',{
+				x : 350,
+				y : 150,
+				fill: 'red',
+				radius : 10,
+				symbol : 'diamond'
+			});
+
+		  var path = diamond.getPath();
+			expect(diamond.get('el')).not.toBe(null);
+			expect(path[0][1]).toBe(340);
+			expect(path[0][2]).toBe(150);
+
+		});
+
+		it('测试图片',function(){
+			var image = canvas.addShape('marker',{
+				x : 400,
+				y : 150,
+				radius : 10,
+				symbol : 'url(http://mat1.gtimg.com/www/images/qq2012/weather/20120906/sun.png)'
+			});
+
+			expect(image.get('el').type).toBe('image');
+
+		});
+		it('测试自定义path',function(){
+			var cpath = canvas.addShape('marker',{
+				x : 400,
+				y : 250,
+				path : 'M {x} {y} l 10 0 l0 10 z',
+				fill : 'red'
+			});
+
+			var path = cpath.getPath();
+			expect(cpath.get('el')).not.toBe(null);
+			expect(path[0][1]).toBe(400);
+			expect(path[0][2]).toBe(250);
+		});
+
+		it('更改半径',function(){
+			var mc = canvas.find('mc'),
+				radius = mc.attr('radius');
+			expect(mc).not.toBe(null);
+			expect(radius).not.toBe(undefined);
+			mc.attr('radius',radius * 2);
+			expect(mc.attr('radius')).toBe(radius * 2);
+
+			var path = mc.getPath();
+			
+			expect(path[0][1]).toBe(400);
+			expect(path[0][2]).toBe(80);
+		});
+
+		it('移动',function(){
+			var mc = canvas.find('mc'),
+				x = mc.attr('x'),
+				y = mc.attr('y');
+			mc.attr({
+				 x : x + 10,
+				 y : y + 10
+			});
+
+			var path = mc.getPath();
+			
+			expect(path[0][1]).toBe(410);
+			expect(path[0][2]).toBe(90);
+
 		});
 	});
 
@@ -352,46 +513,19 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 				//path = group.getPath();
 			group.translate(50,50);
 
-			/*var tpath = group.getTransformPath();
-				
-			expect(tpath[0][0]).toBe('M');
-			expect(tpath[0][1]).toBe(50);*/
+			
 
 			
 		});
 
-		/*it('旋转',function(){
-			waits(500);
-			runs(function(){
-				group.rotate(45);
-			});
-		});
-
-		it('放大',function(){
-			waits(500);
-			runs(function(){
-				group.scale(2,-1);
-			});
-		});
-
-		it('翻转',function(){
-
-		});
-	*/
 		it('清除transform',function(){
 			waits(500);
 			runs(function(){
 				group.attr('transform','');
 			});
-			
-			/*var path = group.getPath(),
-			tpath = group.getTransformPath();
-
-			expect(Util.isPointInsidePath(path,60,10)).toBe(true);
-			
-			expect(Util.isPointInsidePath(tpath,60,10)).toBe(true);*/
+		
 		});
-/**/
+
 		it('清除分组内容',function(){
 			waits(500);
 			runs(function(){
@@ -447,8 +581,10 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			});
 		});
 
-/**/
+
 	});
+/**/
+
 
 	describe('测试事件',function(){
 		var group ;
@@ -542,30 +678,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			  	expect(callback).not.toHaveBeenCalled();
 			  });
 			});
-			/*it('测试委托事件',function(){
-
-				var path = group.addShape('path',{
-					path : 'M 100,20 L30,50 60,70z',
-					fill : '#ffff00'
-				});
-
-				var callback = jasmine.createSpy();
-				group.delegate('path','click',function(ev){
-					var target = ev.currentTarget,
-						shape = target.shape;
-					console && console.log('delegate click');
-					callback();
-					expect(shape).toBe(path);
-
-				});
-
-				jasmine.simulate(path.get('node'),'click');
-				waits(100);
-			  runs(function(){
-			  	expect(callback).toHaveBeenCalled();
-			  	group.off();
-			  });
-			});*/
+			
 		});
 		describe('测试画板事件',function(){
 
@@ -583,23 +696,10 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			  	canvas.off();
 			  });
 			});
-			/*it('测试委托事件',function(){
-				var circle = canvas.find('c3'),
-					callback = jasmine.createSpy();
-
-				canvas.delegate('circle','mouseover',function(){
-					callback();
-				});	
-
-				jasmine.simulate(circle.get('node'),'mouseover');
-				waits(100);
-			  runs(function(){
-			  	expect(callback).toHaveBeenCalled();
-			  	canvas.off();
-			  });
-			});*/
+			
 		});
 	});
+	/**/
 
 
 });

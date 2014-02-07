@@ -50,7 +50,13 @@ define('bui/chart/plotitem',['bui/common','bui/graphic'],function (require) {
           	value = attr.value;
           if(value != null){
           	if(attr.shared === false){
-	            rst[p] = {};
+          		if(BUI.isObject(value)){
+          			rst[p] = {};
+          		}
+          		if(BUI.isArray(value)){
+          			rst[p] = [];
+          		}
+	            
 	            BUI.mixAttr(rst[p], value); 
 	          }else{
 	            rst[p] = value;

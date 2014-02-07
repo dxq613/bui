@@ -3,12 +3,13 @@
  * @ignore
  */
 
-define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid','bui/chart/labels'],function(require) {
+define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bui/chart/grid','bui/chart/showlabels'],function(require) {
 
 	var BUI = require('bui/common'),
 		Item = require('bui/chart/plotitem'),
         Grid = require('bui/chart/grid'),
-        Labels = require('bui/chart/labels'),
+        Util = require('bui/graphic').Util,
+        ShowLabels = require('bui/chart/showlabels'),
 		CLS_AXIS = 'x-chart-axis';
 
 	/**
@@ -138,7 +139,10 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
 
 	BUI.extend(Axis,Item);
 
+    BUI.mixin(Axis,[ShowLabels]);
+
 	BUI.augment(Axis,{
+
         //渲染控件前
         beforeRenderUI : function(){
             var _self = this,
@@ -161,6 +165,9 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
                 _self.set('end',end);
             }
 
+            _self.set('indexCache',{});
+            _self.set('pointCache',[]);
+
         },
     	/**
          * @protected
@@ -176,9 +183,10 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
         	}
 
             _self._renderGrid();
-            _self._renderLabels();
+            _self.renderLabels();
         	
         },
+
         /**
          * 是否是纵坐标
          */
@@ -211,6 +219,40 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
 
             return _self.getOffsetByIndex(index);
         },
+        /**
+         * 根据画板上的点获取坐标轴上的值，用于将cavas上的点的坐标转换成坐标轴上的坐标
+         * @param  {Number} offset 
+         * @return {Number} 点在坐标轴上的值
+         */
+        getValue : function(offset){
+            var _self = this,
+                startCoord = _self._getStartCoord(),
+                endCoord = _self._getEndCoord();
+
+            if(offset < startCoord || offset > endCoord){
+                return NaN;
+            }
+
+            return _self.parseOffsetValue(offset);
+        },
+
+        /**
+         * 获取逼近坐标点的值
+         * @param  {Number} offset 画布上的点在坐标轴上的对应值
+         * @return {Number} 坐标轴上的值
+         */
+        getSnapValue : function(offset){
+            var _self = this,
+                pointCache = _self.get('pointCache');
+            return Util.snapTo(pointCache,offset);
+                
+        },
+        getSnapIndex : function(offset){
+            var _self = this,
+                pointCache = _self.get('pointCache'),
+                snap = Util.snapTo(pointCache,offset);;
+            return BUI.Array.indexOf(snap,pointCache);
+        },
         _appendEndOffset : function(offset){
         	var _self = this,
         		tickOffset = _self.get('tickOffset'),
@@ -228,7 +270,11 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
             }
         	return offset;
         },
-
+        /**
+         * 将指定的节点转换成对应的坐标点
+         * @param  {Number} index 顺序 
+         * @return {Number} 节点坐标点（单一坐标）x轴的坐标点或者y轴的坐标点
+         */
         getOffsetByIndex : function(index){
         	var _self = this,
         		length = _self._getLength(),
@@ -242,9 +288,17 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
         getOffsetPoint : function(index,current){
 
         	var _self = this,
-        		ortho = _self._getOrthoCoord();
+        		ortho = _self._getOrthoCoord(),
+                indexCache = _self.get('indexCache'); //根据索引获取值的缓存，防止重复计算
+
         	if(!current){
-        		current = _self.getOffsetByIndex(index);
+                if(indexCache[index] !== undefined){
+                    current = indexCache[index];
+                }else{
+                    current = _self.getOffsetByIndex(index);
+                    indexCache[index] = current;
+                }
+        		
         	}
         	
         	if(_self.isVertical()){
@@ -287,6 +341,16 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
         		return start.y;
         	}
         },
+        //获取坐标轴结束的点
+        _getEndCoord : function(){
+            var _self = this,
+                end = _self.get('end');
+            if(_self.isVertical()){
+                return end.y;
+            }else{
+                return end.x;
+            }
+        },
         //获取中间点的位置
         _getMiddleCoord : function(){
         	var _self = this,
@@ -319,6 +383,7 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
         		start = _self.get('start'),
         		end = _self.get('end'),
         		lineAttrs = _self.get('line'),
+                pointCache = _self.get('pointCache'),
         		ticks = _self.get('ticks');
 
         	if(lineAttrs){
@@ -339,6 +404,7 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
         		var tickOffsetPoint = _self.getTickOffsetPoint(index),
                     offsetPoint = _self.getOffsetPoint(index);
         		//_self._drawTickLine(offsetPoint);
+                pointCache.push(_self.getOffsetByIndex(index));
                 if(_self.get('tickLine')){
                     _self._addTickItem(tickOffsetPoint);
                 }
@@ -346,25 +412,10 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
                     _self._addGridItem(tickOffsetPoint);
                 }
                 if(_self.get('labels')){
-                    _self._addAxisLabel(point,offsetPoint);
+                    _self.addLabel(point,offsetPoint);
                 }
         	});
         	
-        },
-        //添加坐标轴文本的配置信息
-        _addAxisLabel : function(value,offsetPoint){
-            var _self = this,
-                labels = _self.get('labels'),
-                label = {};
-            if(!labels.items){
-                labels.items = [];
-            }
-            label.text = value;
-            label.x = offsetPoint.x;
-            label.y = offsetPoint.y;
-
-            labels.items.push(label);
-
         },
         _addTickItem : function(offsetPoint){
 
@@ -513,22 +564,6 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
             gridGroup = _self.get('parent').addGroup(Grid,grid);
             _self.set('gridGroup',gridGroup);
         },
-        //渲染坐标的提示
-        _renderLabels : function(){
-            var _self = this,
-                labels = _self.get('labels'),
-                labelsGroup;
-            if(!labels){
-                return;
-            }
-
-            labels.x = _self.get('x');
-            labels.y = _self.get('y');
-
-            labelsGroup = _self.get('parent').addGroup(Labels,labels);
-            _self.set('labelsGroup',labelsGroup);
-
-        },
         //移除控件前移除对应的grid和labels
         remove : function(){
             
@@ -536,7 +571,7 @@ define('bui/chart/baseaxis',['bui/common','bui/chart/plotitem','bui/chart/grid',
                 gridGroup = _self.get('gridGroup'),
                 labelsGroup = _self.get('labelsGroup');
             gridGroup && gridGroup.remove();
-            labelsGroup && labelsGroup.remove();
+            _self.removeLabels();
             Axis.superclass.remove.call(this);
         }
     });

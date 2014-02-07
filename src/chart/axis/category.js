@@ -26,7 +26,14 @@ define('bui/chart/categoryaxis',['bui/chart/baseaxis','bui/common'],function (re
 		 */
 		categories : {
 
-		}
+		},
+        /**
+         * 类型
+         * @type {String}
+         */
+        type : {
+            value : 'category'
+        }
 
 	};
 
@@ -59,6 +66,17 @@ define('bui/chart/categoryaxis',['bui/chart/baseaxis','bui/common'],function (re
         		offset -= avg/2;
         	}
         	return _self._appendEndOffset(offset) + _self._getStartCoord();
+        },
+        /**
+         * 根据画板上的点获取坐标轴上的值，对已分类坐标轴来说就是获取其中的一个分类
+         * @param  {Number} offset 
+         * @return {Number} 点在坐标轴上的值,如果不在坐标轴上,值为NaN
+         */
+        getValue : function(offset){
+            var _self = this,
+                index = _self.getSnapIndex(offset),
+                categories = _self.get('categories');
+            return categories[index];
         },
         _getAvgLength : function(){
         	var _self = this,
