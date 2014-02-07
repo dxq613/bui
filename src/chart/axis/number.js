@@ -3,47 +3,16 @@
  * @ignore
  */
 
-define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common'],function (require) {
+define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],function (require) {
 	
 	var BUI = require('bui/common'),
 		Axis = require('bui/chart/baseaxis'),
+		Util = require('bui/graphic').Util,
 		NAN = NaN;
 
   //取小于当前值的
-	function floor(values,value){
-		var length = values.length,
-			pre = values[0];
-		if(value < values[0] || value > values[length - 1]){
-			return NAN;
-		}
-		for (var i = 1; i < values.length; i++) {
-			if(value < values[i]){
-				break;
-			}
-			pre = values[i];
-		}
-
-		return pre;
-	}
-
-	function ceiling(values,value){
-		var length = values.length,
-			pre = values[0],
-			rst;
-		if(value < values[0] || value > values[length - 1]){
-			return NAN;
-		}
-
-		for (var i = 1; i < values.length; i++) {
-			if(value < values[i]){
-				rst = values[i];
-				break;
-			}
-			pre = values[i];
-		}
-
-		return rst;
-	}
+	var floor = Util.snapFloor,
+	  ceiling = Util.snapCeiling;
 
 	/**
 	 * @class BUI.Chart.Axis.Number
@@ -78,6 +47,13 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common'],function (requ
 		 */
 		tickInterval : {
 
+		},
+		/**
+     * 类型
+     * @type {String}
+     */
+		type : {
+			value : 'number'
 		}
 
 	};
@@ -114,6 +90,48 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common'],function (requ
 
     	return _self._appendEndOffset(offset) + _self._getStartCoord();
     },
+    /**
+     * 根据画板上的点获取坐标轴上的值，用于将cavas上的点的坐标转换成坐标轴上的坐标
+     * @param  {Number} offset 
+     * @return {Number} 点在坐标轴上的值,如果不在坐标轴上,值为NaN
+     */
+    getValue : function(offset){
+        var _self = this,
+            startCoord = _self._getStartCoord(),
+            endCoord = _self._getEndCoord(),
+            pointCache,
+            floorVal,
+            floorIndex,
+            ceilingVal,
+            tickInterval,
+            ticks;
+
+        if(offset < startCoord || offset > endCoord){
+            return NaN;
+        }
+        pointCache = _self.get('pointCache');
+        floorVal = floor(pointCache,offset); 
+        floorIndex = BUI.Array.indexOf(floorVal,pointCache);
+        ticks = _self.get('ticks');
+        tickInterval = _self.get('tickInterval');
+        avg = _self._getAvgLength(ticks.length);
+
+        if(floorVal == offset){
+        	return ticks[floorIndex];
+        }
+
+        if(tickInterval){
+        	return ticks[floorIndex] + ((offset - floorVal) / avg) * tickInterval;
+        }
+        ceilingVal = ceiling(pointCache,offset);
+        return ticks[floorIndex] + ((offset - floorVal) / avg) * (ceilingVal - floorVal);
+        
+    },
+    _getAvgLength : function(count){
+    	var _self = this,
+    		length = _self._getLength();
+    	return (length / (count - 1));
+    },
 		 /**
      * @protected
      * 获取相对位置
@@ -122,14 +140,12 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common'],function (requ
      */
     getRelativeOffset : function(value){
       var _self = this,
-          length = _self._getLength(),
           ticks = _self.get('ticks'),
-          count = ticks.length,
           index = BUI.Array.indexOf(value,ticks),
           tickInterval = _self.get('tickInterval'),
           floorVal,
           ceilingVal,
-          avg = (length / (count - 1)),
+          avg = _self._getAvgLength(ticks.length),
           offset;
 
       //如果在指定的坐标点中，直接返回坐标点的位置

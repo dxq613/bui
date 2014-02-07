@@ -1,7 +1,44 @@
 define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 
 	var BUI = require('bui/common'),
-		Raphael = require('bui/graphic/raphael');
+		Raphael = require('bui/graphic/raphael'),
+		NAN = NaN;
+
+	//取小于当前值的
+	function floor(values,value){
+		var length = values.length,
+			pre = values[0];
+		if(value < values[0] || value > values[length - 1]){
+			return NAN;
+		}
+		for (var i = 1; i < values.length; i++) {
+			if(value < values[i]){
+				break;
+			}
+			pre = values[i];
+		}
+
+		return pre;
+	}
+
+	function ceiling(values,value){
+		var length = values.length,
+			pre = values[0],
+			rst;
+		if(value < values[0] || value > values[length - 1]){
+			return NAN;
+		}
+
+		for (var i = 1; i < values.length; i++) {
+			if(value < values[i]){
+				rst = values[i];
+				break;
+			}
+			pre = values[i];
+		}
+
+		return rst;
+	}
 
 	var Util = {};
 
@@ -89,7 +126,33 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 		 * @return {Number} 逼近的值
 		 */
 		snapTo : function(values, value, tolerance){
-			return Raphael.snapTo(values, value, tolerance);
+			if(tolerance){
+				return Raphael.snapTo(values, value, tolerance);
+			}
+			var floorVal = floor(values,value),
+				ceilingVal = ceiling(values,value);
+			if(value - floorVal < ceilingVal - value){
+				return floorVal;
+			}
+			return ceilingVal;
+		},
+		/**
+		 * 获取逼近的最小值，用于对齐数据
+		 * @param  {Array} values   数据集合
+		 * @param  {Number} value   数值
+		 * @return {Number} 逼近的最小值
+		 */
+		snapFloor : function(values,value){
+			return floor(values,value);
+		},
+		/**
+		 * 获取逼近的最大值，用于对齐数据
+		 * @param  {Array} values   数据集合
+		 * @param  {Number} value   数值
+		 * @return {Number} 逼近的最大值
+		 */
+		snapCeiling : function(values,value){
+			return ceiling(values,value);
 		}
 	});
 	return Util;

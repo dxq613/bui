@@ -1117,6 +1117,181 @@ define('bui/graphic/canvasitem',function(require) {
 
   Shape.Label = Label;
 
+  /**
+   * @class BUI.Graphic.Shape.Marker
+   * 用于标示节点的图形
+   * @extends BUI.Graphic.Shape
+   */
+  var Marker = function(cfg){
+    Marker.superclass.constructor.call(this,cfg);
+  };
+
+  Marker.ATTRS = {
+    /**
+     * 类型 "circle", "square", "diamond", "triangle" and "triangle-down"；如果是 "url(xxx)"则是图片；custom则需要指定路径
+     * @type {String}
+     */
+    symbol :{
+      value : 'custom'
+    },
+    /**
+     * 半径
+     * @type {Number}
+     */
+    radius : {
+      value : 5
+    },
+    /**
+     * 如果类型为"custom"时指定路径
+     * @type {Object}
+     */
+    path : {
+
+    },
+    /**
+     * 起始x轴位置
+     * @type {Number}
+     */
+    x : {
+
+    },
+    /**
+     * 起始y轴位置
+     * @type {Number}
+     */
+    y : {
+
+    }
+  };
+
+  Marker.Symbols = {
+    //圆
+    circle : function(x,y,r){
+      return [['M',x,y - r],['a',r,r,0,1,1,0,2*r],['a',r,r,0,1,1,0,-2*r],['z']];
+    },
+    //正方形
+    square : function(x,y,r){
+      return [['M',x-r,y-r],['L',x + r,y-r],['L',x + r,y + r],['L',x - r,y + r],['z']];
+    },
+    //菱形
+    diamond : function(x,y,r){
+      return [['M',x - r,y],['L',x,y - r],['L',x + r, y],['L',x,y + r],['z']];
+    },
+    //三角形
+    triangle : function(x,y,r){
+      var diffX = r * 0.866,
+        diffY = 0.5 * r;
+      return [['M',x,y-r],['L',x + diffX,y + diffY],['L',x - diffX, y + diffY],['z']];
+    },
+    //倒三角形
+    'triangle-down' : function(x,y,r){
+      var diffX = r * 0.866,
+        diffY = 0.5 * r;
+      return [['M',x,y + r],['L',x + diffX, y - diffY],['L',x - diffX,y - diffY],['z']];
+    }
+  };
+
+
+
+  BUI.extend(Marker,Shape);
+
+  BUI.augment(Marker,{
+    //设置半径
+    __setRadius : function(v){
+      var _self = this,
+        attrs = _self.get('attrs');
+
+      _self._setSize(attrs.x,attrs.y,v);
+
+    },
+    __getRadius : function(){
+      return this.get('attrs').radius;
+    },
+    //设置x
+    __setX : function(x){
+      var _self = this,
+        attrs = _self.get('attrs');
+
+      _self._setSize(x,attrs.y,attrs.radius);
+
+    },
+    __getX : function(){
+      return this.get('attrs').x;
+    },
+    //设置y
+    __setY : function(y){
+      var _self = this,
+        attrs = _self.get('attrs');
+
+      _self._setSize(attrs.x,y,attrs.radius);
+
+    },
+    __getY : function(){
+      return this.get('attrs').y;
+    },
+    //设置大小，位置
+    _setSize : function(x,y,radius){
+      var _self = this,
+        attrs = _self.get('attrs'),
+        el = _self.get('el');
+      if(el.type !== 'image'){
+        var cfg = {
+          x : x,
+          y : y,
+          radius : radius
+        };
+        BUI.mix(attrs,cfg);
+        var path = _self._getPath(attrs);
+        el.attr('path',path);
+      }else{
+        BUI.mix(attrs,{
+          width : radius * 2,
+          height : radius * 2,
+          x : x - radius,
+          y : y - radius
+        });
+        el.attr(attrs);
+      }
+    },
+    /**
+     * @protected
+     * 格式化初始化配置项
+     */
+    parseElCfg : function(attrs){
+      var _self = this,
+        symbol = attrs.symbol,
+        radius = attrs.radius || 5;
+      if(symbol && symbol.indexOf('url') != -1){ //图片
+          attrs.type = 'image';
+          attrs.src = symbol.replace(/url\((.*)\)/,'$1');
+          attrs.width = attrs.radius * 2;
+          attrs.height = attrs.radius * 2;
+          attrs.x -= radius,
+          attrs.y -= radius;
+      }else{
+        attrs.type = 'path';
+        attrs.path = _self._getPath(attrs);
+      }
+      return attrs;
+    },
+    //获取path
+    _getPath : function(attrs){
+      if(!attrs.symbol && attrs.path){
+        return  BUI.substitute(attrs.path,attrs);
+      }
+      var method = Marker.Symbols[attrs.symbol];
+      if(method){
+        return method(attrs.x,attrs.y,attrs.radius)
+      }else{
+        throw 'not support this type ' + attrs.symbol;
+      }
+    }
+
+  });
+
+  Shape.Marker = Marker;
+
+
 
   /**
    * @class BUI.Graphic.Shape.Image
@@ -1332,7 +1507,44 @@ define('bui/graphic/canvasitem',function(require) {
 });define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 
 	var BUI = require('bui/common'),
-		Raphael = require('bui/graphic/raphael');
+		Raphael = require('bui/graphic/raphael'),
+		NAN = NaN;
+
+	//取小于当前值的
+	function floor(values,value){
+		var length = values.length,
+			pre = values[0];
+		if(value < values[0] || value > values[length - 1]){
+			return NAN;
+		}
+		for (var i = 1; i < values.length; i++) {
+			if(value < values[i]){
+				break;
+			}
+			pre = values[i];
+		}
+
+		return pre;
+	}
+
+	function ceiling(values,value){
+		var length = values.length,
+			pre = values[0],
+			rst;
+		if(value < values[0] || value > values[length - 1]){
+			return NAN;
+		}
+
+		for (var i = 1; i < values.length; i++) {
+			if(value < values[i]){
+				rst = values[i];
+				break;
+			}
+			pre = values[i];
+		}
+
+		return rst;
+	}
 
 	var Util = {};
 
@@ -1411,6 +1623,42 @@ define('bui/graphic/canvasitem',function(require) {
 		 */
 		transformPath : function(path,transform){
 			return Raphael.transformPath(path,transform);
+		},
+		/**
+		 * 获取逼近的值，用于对齐数据
+		 * @param  {Array} values   数据集合
+		 * @param  {Number} value   数值
+		 * @param  {Number} [tolerance=10] 逼近范围
+		 * @return {Number} 逼近的值
+		 */
+		snapTo : function(values, value, tolerance){
+			if(tolerance){
+				return Raphael.snapTo(values, value, tolerance);
+			}
+			var floorVal = floor(values,value),
+				ceilingVal = ceiling(values,value);
+			if(value - floorVal < ceilingVal - value){
+				return floorVal;
+			}
+			return ceilingVal;
+		},
+		/**
+		 * 获取逼近的最小值，用于对齐数据
+		 * @param  {Array} values   数据集合
+		 * @param  {Number} value   数值
+		 * @return {Number} 逼近的最小值
+		 */
+		snapFloor : function(values,value){
+			return floor(values,value);
+		},
+		/**
+		 * 获取逼近的最大值，用于对齐数据
+		 * @param  {Array} values   数据集合
+		 * @param  {Number} value   数值
+		 * @return {Number} 逼近的最大值
+		 */
+		snapCeiling : function(values,value){
+			return ceiling(values,value);
 		}
 	});
 	return Util;

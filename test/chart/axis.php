@@ -25,6 +25,7 @@
   <script type="text/javascript" src="../../src/chart/axis/base.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/grid.js"></script>
   <script type="text/javascript" src="../../src/chart/labels.js"></script>
+  <script type="text/javascript" src="../../src/chart/mixin/showlabels.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/number.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/category.js"></script>
 
