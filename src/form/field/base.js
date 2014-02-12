@@ -113,7 +113,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
    * @extends BUI.Component.Controller
    */
   var field = Component.Controller.extend([Remote,Valid],{
-
+    isField : true,
     initializer : function(){
       var _self = this;
       _self.on('afterRenderUI',function(){

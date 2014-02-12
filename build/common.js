@@ -109,7 +109,7 @@ define('bui/util',function(require){
      * 子版本号
      * @type {String}
      */
-    subVersion : 68,
+    subVersion : 69,
 
     /**
      * 是否为函数
@@ -5801,10 +5801,6 @@ define('bui/component/uibase/stdmod',function () {
     }
 
     StdMod.ATTRS =
-    /**
-     * @lends BUI.Component.UIBase.StdMod#
-     * @ignore
-     */
     {
         /**
          * 控件的头部DOM. Readonly

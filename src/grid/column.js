@@ -305,7 +305,8 @@ define('bui/grid/column',['bui/common'],function (require) {
                 resizable:{
                     value:true
                 },
-                /* 是否可以按照此列排序，如果设置true,那么点击列头时
+                /**
+                 * 是否可以按照此列排序，如果设置true,那么点击列头时
                  * <pre><code>
                  *     {title : '数字', dataIndex :'b',sortable : false},
                  * </code></pre>

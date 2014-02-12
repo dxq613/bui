@@ -394,7 +394,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
    * @extends BUI.Component.Controller
    */
   var field = Component.Controller.extend([Remote,Valid],{
-
+    isField : true,
     initializer : function(){
       var _self = this;
       _self.on('afterRenderUI',function(){
@@ -2447,7 +2447,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       _self.on('afterDisabledChange',function(ev){
         var disabled = ev.newVal;
         if(disabled){
-          _self.clearErrors(false);
+          _self.clearErrors(false,false);
         }else{
           _self.valid();
         }
@@ -2542,14 +2542,22 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     },
     /**
      * 清除错误
+     * @param {Boolean} reset 清除错误时是否重置
+     * @param {Boolean} deep 是否清理子控件的错误 
      */
-    clearErrors : function(deep){
+    clearErrors : function(reset,deep){
       deep = deep == null ? true : deep;
       var _self = this,
         children = _self.get('children');
       if(deep){
         BUI.each(children,function(item){
-          item.clearErrors && item.clearErrors();
+          if(item.clearErrors){
+            if(item.field){
+              item.clearErrors(reset);
+            }else{
+              item.clearErrors(deep,reset);
+            }
+          }
         });
       }
       
