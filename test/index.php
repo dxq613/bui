@@ -77,6 +77,14 @@
         text : 'layout',
         children : ['layout-absolute','layout-border','layout-flow','layout-table','layout-anchor','layout-columns','layout-accordion','viewport']
       },{
+        text : 'chart',
+        children : [
+          {text : '基础图形',href: 'chart/graphic.php'},
+          {text : '坐标轴',href: 'chart/axis.php'},
+          {text : '文本集合',href: 'chart/labels.php'}
+        ]
+      },
+      {
         text : 'issue',
         children : [
           'issue'
@@ -93,7 +101,10 @@
           if(BUI.isString(subNode)){
             children[index] = {text : subNode};
           }
-          children[index].href = children[index].text + '.php'
+          if(!children[index].href){
+            children[index].href = children[index].text + '.php'
+          }
+          
         });
       });
       return nodes;

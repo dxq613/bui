@@ -115,10 +115,6 @@ define('bui/component/uibase/stdmod',function () {
     }
 
     StdMod.ATTRS =
-    /**
-     * @lends BUI.Component.UIBase.StdMod#
-     * @ignore
-     */
     {
         /**
          * 控件的头部DOM. Readonly

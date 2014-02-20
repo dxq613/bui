@@ -2093,6 +2093,7 @@ input.x-datepicker-time {
   width: 200px;
   top: -50px;
   opacity: 0;
+  filter: alpha(opacity=0);
   position: absolute;
   font-size: 100px;
   left: 0;
@@ -2115,6 +2116,7 @@ input.x-datepicker-time {
   width: 200px;
   top: -50px;
   opacity: 0;
+  filter: alpha(opacity=0);
   position: absolute;
   font-size: 100px;
   left: 0;
@@ -2133,7 +2135,7 @@ input.x-datepicker-time {
   font-size: 12px;
   text-align: center;
   border: 1px solid #C4DAED;
-  /*渐变*/
+  /** 渐变 **/
 
   background: -webkit-gradient(linear, left top, left bottom, from(#fdfefe), to(#dfe7ef));
   background: -moz-linear-gradient(top, #fdfefe, #dfe7ef);
