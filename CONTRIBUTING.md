@@ -68,7 +68,7 @@ username 为你的 github 用户名
 
     cd bui
 
-添加 KISSY 官方 master
+添加 BUI 官方 master
 
     git remote add remote https://github.com/dxq613/bui.git
 
