@@ -85,7 +85,8 @@
           {text : '自动计算坐标轴',href : 'chart/auto-axis.php'},
           {text : '折线序列',href : 'chart/line-series.php'},
           {text : '提示框',href : 'chart/tooltip.php'},
-          {text : '序列组',href : 'chart/series-group.php'}
+          {text : '序列组',href : 'chart/series-group.php'},
+          {text : '集成图表',href : 'chart/chart.php'}
         ]
       },
       {

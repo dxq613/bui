@@ -5,7 +5,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
     width : 1000,
     height : 500,
     plotCfg : {
-      margin : [50,50,100],
+      margin : [50,50,100]
       
     },
     title : {
