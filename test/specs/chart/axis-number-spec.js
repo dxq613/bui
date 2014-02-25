@@ -51,6 +51,31 @@ BUI.use(['bui/graphic','bui/chart/numberaxis'],function (Graphic,Axis) {
 			expect(offset).toBe(66 + (112-66)/2);
 
 		});
+
+		describe('测试数字坐标轴变化',function(){
+			
+			it('更改坐标轴',function(){
+				axis.change({
+					min : 0,
+					max : 1000,
+					tickInterval : 200
+				});
+
+			});
+
+			it('测试新生成的坐标点',function(){
+				var value = 100,
+					offset = axis.getOffset(value);
+					expect(offset).toBe(66);
+
+					offset = axis.getOffset(200);
+					expect(offset).toBe(112);
+			});
+			it('测试新的label',function(){
+				var labelsGroup = axis.get('labelsGroup');
+				expect(labelsGroup.getCount()).toBe(6);
+			});
+		});
 	});
 /**/
 	describe('测试中轴坐标系',function(){

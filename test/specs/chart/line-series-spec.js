@@ -4,6 +4,7 @@ BUI.use(['bui/graphic','bui/chart/lineseries','bui/chart/numberaxis','bui/chart/
 	
 
 	describe('测试序列生成',function(){
+
 		var canvas = new Graphic.Canvas({
 			render : '#s1',
 			width : 900,
@@ -61,8 +62,8 @@ BUI.use(['bui/graphic','bui/chart/lineseries','bui/chart/numberaxis','bui/chart/
 					y : -15
 				}
 			},
+			color : '#2f7ed8',
 			line : {
-				stroke: '#2f7ed8',
 				'stroke-width': 2,
 				'stroke-linejoin': 'round',
 				'stroke-linecap': 'round',
@@ -72,8 +73,7 @@ BUI.use(['bui/graphic','bui/chart/lineseries','bui/chart/numberaxis','bui/chart/
 			},
 			markers : {
 				marker : {
-					fill : '#2f7ed8',
-					stroke: '#2f7ed8',
+					
 					symbol : 'circle',
 					radius : 4
 				},
@@ -106,6 +106,36 @@ BUI.use(['bui/graphic','bui/chart/lineseries','bui/chart/numberaxis','bui/chart/
 			data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
 		});
 
+		var series2 = canvas.addGroup(Series,{
+			xAxis : xAxis,
+			yAxis : yAxis,
+			line : {
+				stroke: '#8bbc21',
+				'stroke-width': 2,
+				'stroke-linejoin': 'round',
+				'stroke-linecap': 'round',
+			},
+			labels : {
+				label : {
+					y : -15
+				}
+			},
+			smooth : true,
+			animate : true,
+			markers : {
+				marker : {
+					fill : '#8bbc21',
+					stroke: '#8bbc21',
+					symbol : 'square',
+					radius : 4
+				},
+				actived : {
+					radius : 6,
+					stroke: '#fff'
+				}
+			},
+			data: [-0.9, 0.6, 3.5, 8.4, 13.5, 17.0, 18.6, 17.9, 14.3, 9.0, 3.9, 1.0]
+		});
 		describe('测试一般折线的生成',function(){
 			var node = series.get('node');
 
@@ -115,14 +145,19 @@ BUI.use(['bui/graphic','bui/chart/lineseries','bui/chart/numberaxis','bui/chart/
 			});
 
 			it('测试线上的点',function(){
-				var line = series.getChildAt(0),
+				var line = series.get('lineShape'),
 					path = line.getPath();
 				expect(path.length).toBe(series.get('data').length);
 
 			});
 
+			it('测试颜色',function(){
+				var line = series.get('lineShape');
+				expect(line.attr('stroke')).toBe('#2f7ed8');
+
+			});
 			it('测试tracker',function(){
-				var tracker = series.getChildAt(1),
+				var tracker = series.get('trackerShape'),
 					path = tracker.getPath();
 				expect(path.length).toBe(series.get('data').length + 1);
 				expect(tracker.attr('stroke-width')).toBe(22);
@@ -165,26 +200,24 @@ BUI.use(['bui/graphic','bui/chart/lineseries','bui/chart/numberaxis','bui/chart/
 
 		});
 
-		describe('测试平滑曲线',function(){
-
-		});
-
 		describe('测试操作',function(){
 
 			it('隐藏',function(){
-
+				series.hide();
+				expect(series.get('node').style.display).toBe('none');
 			});
+
 			it('显示',function(){
-
+				series.show();
+				expect(series.get('node').style.display).not.toBe('none');
 			});
-			it('移除',function(){
 
-			});
+
+
+			//it('移除',function(){
+			//	series.remove();
+			//});
 		})
-
-	});
-
-	describe('测试事件',function(){
 
 	});
 

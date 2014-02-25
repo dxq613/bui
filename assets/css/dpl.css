@@ -47,7 +47,7 @@
 }
 body {
   margin: 0;
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
   line-height: 18px;
   color: #333333;
@@ -55,7 +55,7 @@ body {
 }
 p {
   margin: 9px 0;
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
   line-height: 18px;
 }
@@ -336,7 +336,7 @@ input,
 select,
 textarea {
   margin: 0;
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 100%;
 }
 button,
@@ -2174,7 +2174,7 @@ input,
 select,
 textarea,
 select {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   line-height: 18px;
 }
 input.input-normal,

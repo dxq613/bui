@@ -502,7 +502,7 @@
 }
 .bui-calendar,
 .bui-monthpicker {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
 }
 .bui-calendar em,
@@ -556,7 +556,7 @@
   display: inline-block;
 }
 .bui-overlay {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
 }
 .bui-select-list ul,
@@ -602,7 +602,7 @@ ul.bui-select-list {
   vertical-align: middle;
 }
 .bui-menu {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
   padding: 0;
 }
@@ -611,7 +611,7 @@ ul.bui-select-list {
 }
 ul.bui-tab,
 .bui-nav-tab ul {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
   list-style: none;
   margin: 0;
@@ -631,7 +631,7 @@ ul.bui-tab li,
   color: #333;
 }
 .bui-grid {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
 }
 .bui-editor li.bui-bar-item {
@@ -642,7 +642,7 @@ ul.bui-tab li,
   padding: 0;
 }
 .bui-tree-list {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
 }
 .bui-tree-list ul {

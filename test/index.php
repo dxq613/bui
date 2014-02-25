@@ -81,7 +81,11 @@
         children : [
           {text : '基础图形',href: 'chart/graphic.php'},
           {text : '坐标轴',href: 'chart/axis.php'},
-          {text : '文本集合',href: 'chart/labels.php'}
+          {text : '文本集合',href: 'chart/labels.php'},
+          {text : '自动计算坐标轴',href : 'chart/auto-axis.php'},
+          {text : '折线序列',href : 'chart/line-series.php'},
+          {text : '提示框',href : 'chart/tooltip.php'},
+          {text : '序列组',href : 'chart/series-group.php'}
         ]
       },
       {
