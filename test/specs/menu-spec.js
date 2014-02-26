@@ -296,8 +296,15 @@ BUI.use('bui/menu',function(Menu) {
 	menu.render();
 
 	describe('测试根据DOM生成菜单',function(){
-		expect(menu.get('el').attr('id')).toBe('m20');
-		expect(menu.get('children').length).toBe(4);
+		it('测试菜单生成',function(){
+			expect(menu.get('el').attr('id')).toBe('m20');
+			expect(menu.get('children').length).toBe(4);
+		});
+
+		it('测试子菜单完成',function(){
+			var item = menu.getItemAt(0);
+			expect(item.get('subMenu')).not.toBe(null);
+		})
 	});
 });
 

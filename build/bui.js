@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {String}
              */
-            subVersion : 69,
+            subVersion : 70,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -1594,6 +1594,14 @@ define('bui/util',function(require){
              */
             getWrapBehavior : function(self, action) {
                 return self['__bui_wrap_' + action];
+            },
+            /**
+             * \u83b7\u53d6\u9875\u9762\u4e0a\u4f7f\u7528\u4e86\u6b64id\u7684\u63a7\u4ef6
+             * @param  {String} id \u63a7\u4ef6id
+             * @return {BUI.Component.Controller}    \u67e5\u627e\u7684\u63a7\u4ef6
+             */
+            getControl : function(id){
+                return BUI.Component.Manager.getComponent(id);
             }
 
         });

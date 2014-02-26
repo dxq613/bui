@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {String}
              */
-            subVersion : 69,
+            subVersion : 70,
 
             /**
              * 是否为函数
@@ -1594,6 +1594,14 @@ define('bui/util',function(require){
              */
             getWrapBehavior : function(self, action) {
                 return self['__bui_wrap_' + action];
+            },
+            /**
+             * 获取页面上使用了此id的控件
+             * @param  {String} id 控件id
+             * @return {BUI.Component.Controller}    查找的控件
+             */
+            getControl : function(id){
+                return BUI.Component.Manager.getComponent(id);
             }
 
         });
