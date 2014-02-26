@@ -100,15 +100,15 @@ BUI.use(['bui/graphic','bui/chart/seriesgroup','bui/chart/numberaxis','bui/chart
     });
 
     it('测试声明x轴值的值生成',function(){
-      
-    });
-
-    it('测试x轴的生成',function(){
-        
+      var xAxis = group.getChildAt(0).get('xAxis');
+      expect(xAxis).not.toBe(undefined);
+      expect(xAxis.getOffset(new Date('2010/01/28').getTime())).toBe(14.2);
     });
 
     it('自动计算y轴',function(){
-
+      var yAxis = group.getChildAt(0).get('yAxis');
+      expect(yAxis).not.toBe(undefined);
+      
     });
 
   });

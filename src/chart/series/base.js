@@ -105,7 +105,6 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       Series.superclass.renderUI.call(_self);
       
       _self.processColor();
-      _self.processData();
       _self.renderLabels();
       _self.renderMarkers();
       if(_self.get('autoPaint')){
@@ -123,9 +122,7 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
         _self.onMouseOut();
       }
     },
-    processData : function(){
-
-    },
+   
     /**
      * 获取对应坐标轴上的数据
      * @return {Array} 

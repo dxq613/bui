@@ -185,6 +185,8 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         BUI.each(points,function(point){
           _self._drawPoint(point);
         });
+
+        _self.drawInner(points);
         after();
       }else{
         lineShape = _self._createLine(path);
@@ -203,6 +205,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
             sub = points.slice(0,cur + 1);
             path = _self.points2path(sub);
             lineShape.attr('path',path);
+            _self.drawInner(sub);
             for(var i = pre; i< cur; i++){
               _self._drawPoint(points[i]);
             }
@@ -223,6 +226,13 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         callback && callback();
       }
       
+    },
+    /**
+     * @protected
+     * 绘制内部内容
+     */
+    drawInner : function(points){
+
     },
     //绘制节点相关的label,marker
     _drawPoint : function(point){
@@ -298,6 +308,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         lineActived = _self.get('lineActived');
       if(actived){
         lineActived && lineShape.attr(lineActived);
+        _self.toFront();
       }else{
         line && lineShape.attr(line);
         var markersGroup = _self.get('markersGroup');

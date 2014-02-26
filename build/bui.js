@@ -23979,6 +23979,20 @@ define('bui/menu/menuitem',['bui/common'],function(require){
           'afterOpenChange' : true
         }
       }
+    },
+    PARSER : {
+      subMenu : function(el){
+        var subList = el.find('ul'),
+          sub;
+        if(subList && subList.length){
+          sub = BUI.Component.create({
+            srcNode : subList,
+            xclass : 'pop-menu'
+          });
+          subList.appendTo('body');
+        }
+        return sub;
+      }
     }
   },{
     xclass : 'menu-item',
