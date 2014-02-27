@@ -66,19 +66,46 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
 			
 			//如果未指定坐标轴上的点，则自动计算
 			if(!_self.get('ticks')){
-				var min = _self.get('min'),
-					max = _self.get('max'),
-					tickInterval = _self.get('tickInterval'),
-					ticks = [],
-					count = (max - min)/tickInterval;
+				var	ticks = _self._getTicks(_self.get('max'),_self.get('min'),_self.get('tickInterval'));
 
-				ticks.push(min);
-				for(var i = 1 ; i <= count ;i++){
-					ticks.push(tickInterval * i + min);
-				}
 				_self.set('ticks',ticks);
 			}
 		},
+    _getTicks : function(max,min,tickInterval){
+      var ticks = [],
+        count = (max - min)/tickInterval,
+        cur;
+
+        ticks.push(min);
+        for(var i = 1 ; i <= count ;i++){
+          cur = tickInterval * i + min;
+          ticks.push(cur);
+        }
+        // if(cur != max){
+        //   ticks.push(max);
+        // }
+        return ticks;
+    },
+    /**
+     * @protected
+     * 修改信息
+     */
+    changeInfo : function(info){
+        var _self = this;
+
+        if(info.interval){
+          info.tickInterval = info.interval;
+        }
+
+        if(info.ticks){
+          _self.set('ticks',info.ticks);
+        }else{
+          var ticks = _self._getTicks(info.max,info.min,info.tickInterval);
+          _self.set('ticks',ticks);
+        }
+        
+        info.tickInterval && _self.set('tickInterval',info.tickInterval);
+    },
 		/**
      * 将指定的节点转换成对应的坐标点
      * @param  {*} value 数据值或者分类 

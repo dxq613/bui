@@ -7,6 +7,7 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 	
 	var BUI = require('bui/common'),
 		Item = require('bui/chart/plotitem'),
+		Util = require('bui/graphic').Util,
 		CLS_GRID = 'x-chart-grid';
 
 	function ensure(attrName,self,defVal){
@@ -29,6 +30,7 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
     cfg.path = path;
     return cfg;
 	}
+
 
 	/**
 	 * @class BUI.Chart.Grid
@@ -96,6 +98,16 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
      */
     even : {
 
+    },
+    /**
+     * 发生改变时是否触发动画
+     * @type {Boolean}
+     */
+    animate : {
+    	value : true
+    },
+    duration : {
+    	value : 1000
     }
 
 	};
@@ -111,17 +123,29 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 		_drawLines : function(){
 			var _self = this,
 				lineCfg = _self.get('line'),
-				minorCount = _self.get('minorCount'),
-				renderer = _self.get('renderer'),
 				items = _self.get('items');
 
 			if(items){
 				var preItem;
-				BUI.each(items,function(item,index){
+				_self._precessItems(items);
+				_self._drawGridLines(items,lineCfg,CLS_GRID + '-line');
+				if(_self.get('minorCount')){
+					_self.drawMinorLines();
+				}
+			}
+
+		},
+		//渲染自定义栅格，渲染奇偶线
+		_precessItems : function(items){
+			var _self = this,
+				minorCount = _self.get('minorCount'),
+				renderer = _self.get('renderer'),
+				preItem;
+
+			BUI.each(items,function(item,index){
 					if(renderer){
 						renderer.call(this,item,index);
 					}else if(minorCount){
-						//_self._drawLine(item,lineCfg,CLS_GRID + '-line');
 						if(preItem){
 							_self._addMonorItem(item,preItem);
 						}
@@ -131,13 +155,39 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 					}
 					
 					preItem = item;
-				});
-				_self._drawGridLines(items,lineCfg,CLS_GRID + '-line');
-				if(minorCount){
-					_self.drawMinorLines();
-				}
-			}
+			});
+		},
+		/**
+		 * 栅格改变
+		 * @param  {Array} items 栅格点的坐标
+		 */
+		change : function(items){
+			var _self = this;
+			_self.set('items',items);
+			_self._clearPre();
+			_self._precessItems(items);
+			_self._changeGridLines(items,CLS_GRID + '-line',true);
+			_self._changeMinorLinses();
 
+		},
+		_clearPre : function(){
+			var _self = this,
+				items;
+			if(_self.get('minorCount')){
+				_self.set('minorItems',[]);
+			}
+			//除了栅格线外，全部清除
+			items = _self.findBy(function(item){
+					var elCls = item.get('elCls');
+					if(elCls == CLS_GRID + '-line' || elCls == CLS_GRID + '-minor'){
+						return false;
+					}
+					return true;
+			});
+
+			BUI.each(items,function(item){
+				item.remove();
+			});
 		},
 		//是否垂直
 		_isVertical : function(item){
@@ -146,15 +196,31 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 			}
 			return false;
 		},
+		//画栅格
 		_drawGridLines : function(items,lineCfg,cls){
 			var _self = this,
-        cfg = lines2path(items,lineCfg);
+        cfg = lines2path(items,lineCfg),
+      	gridLine =	_self.addShape({
+	        type : 'path',
+	        elCls : cls,
+	        attrs : cfg
+	    	});
+    	_self.set('gridLine' + cls,gridLine);
+		},
+		//更改栅格
+		_changeGridLines : function(items,cls,animate){
+			var _self = this,
 
-      _self.addShape({
-          type : 'path',
-          elCls : cls,
-          attrs : cfg
-      });
+        gridLine = _self.get('gridLine' + cls);
+      if(gridLine){
+      	var cfg = lines2path(items,{});
+      	if(animate){
+      		Util.animPath(gridLine,cfg.path,2);
+      	}else{
+      		gridLine.attr('path',cfg.path);
+      	}
+      	
+      }
 		},
 		//绘制线
 		_drawLine : function(item,lineCfg,cls){
@@ -235,6 +301,11 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 				lineCfg = _self.get('minorLine'),
 				minorItems = _self.get('minorItems');
 			_self._drawGridLines(minorItems,lineCfg,CLS_GRID + '-minor');
+		},
+		_changeMinorLinses : function(){
+			var _self = this,
+				minorItems = _self.get('minorItems');
+			_self._changeGridLines(minorItems,CLS_GRID + '-minor');
 		}
 	});
 

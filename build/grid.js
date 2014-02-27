@@ -685,7 +685,8 @@ define('bui/grid/column',['bui/common'],function (require) {
                 resizable:{
                     value:true
                 },
-                /* 是否可以按照此列排序，如果设置true,那么点击列头时
+                /**
+                 * 是否可以按照此列排序，如果设置true,那么点击列头时
                  * <pre><code>
                  *     {title : '数字', dataIndex :'b',sortable : false},
                  * </code></pre>
@@ -2831,7 +2832,7 @@ define('bui/grid/format',function (require) {
                 return enumObj[value] || '';
             };
         },
-        /*
+        /**
          * 将多个值转换成一个字符串
          * @param {Object} enumObj 键值对的枚举对象 {"1":"大","2":"小"}
          * @return {Function} 返回指定枚举的格式化函数
@@ -2859,7 +2860,7 @@ define('bui/grid/format',function (require) {
                 return result.join(',');
             };
         },
-        /*
+        /**
          * 将财务数据分转换成元
          * @param {Number|String} enumObj 键值对的枚举对象 {"1":"大","2":"小"}
          * @return {Number} 返回将分转换成元的数字

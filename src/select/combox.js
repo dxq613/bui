@@ -43,8 +43,21 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
         }
       }
       combox.superclass._uiSetItems.call(_self,v);
-    }
+    },
+    bindUI: function(){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list'),
+        textField = picker.get('textField');
 
+      //修复手动清空textField里面的值，再选时不填充的bug
+      $(textField).on('keyup', function(ev){
+        var item = list.getSelected();
+        if(item){
+          list.clearItemStatus(item);
+        }
+      });
+    }
   },{
     ATTRS : 
     /**

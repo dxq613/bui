@@ -29,6 +29,7 @@ define('bui/chart/activedgroup',function  (require) {
 		isItemActived : function(item){
 			return item.isActived();
 		},
+	
 		/**
 		 * @protected
 		 * 获取可以被激活的元素

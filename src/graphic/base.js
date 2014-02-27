@@ -1,5 +1,8 @@
-define('bui/graphic/base',function (require) {
+define('bui/graphic/base',['bui/graphic/util'],function (require) {
 	
+    var BUI = require('bui/common'),
+        Util = require('bui/graphic/util');
+
 	/**
 	 * @class BUI.Graphic.Base
 	 * 图形控件或者分组的基类
@@ -7,13 +10,15 @@ define('bui/graphic/base',function (require) {
 	var Base = function(cfg){
 		this.cfg = cfg;
 		this._attrs = {
-			autoRender : true
+			autoRender : true,
+            visible : true
 		};
 		var defaultCfg = this.getDefaultCfg();
         BUI.mix(this._attrs,defaultCfg,cfg);
         if(this.get('autoRender')){
         	this.render();
         }
+        
 	};
 
 	Base.ATTRS = {
@@ -33,7 +38,21 @@ define('bui/graphic/base',function (require) {
 		 * svg或者vml对象
 		 * @type {HTMLElement}
 		 */
-		node : {}
+		node : {},
+        /**
+         * 画布
+         * @type {BUI.Graphic.Cavas}
+         */
+        canvas : {
+
+        },
+        /**
+         * 是否显示
+         * @type {Boolean}
+         */
+        visible : {
+            value : true
+        }
 	};
 
 	BUI.augment(Base,{
@@ -45,7 +64,7 @@ define('bui/graphic/base',function (require) {
     getDefaultCfg : function(){
       return {};
     },
-		/**
+    /**
   	 * 设置属性信息
   	 * @protected
   	 */
@@ -59,6 +78,29 @@ define('bui/graphic/base',function (require) {
     get : function(name){
       return this._attrs[name];
     },
+    /**
+     * 获取初始配置的信息
+     * @param  {String} name 配置项名称
+     * @return {*}  初始值
+     */
+    getCfgAttr : function(name){
+        return this.cfg[name];
+
+    },
+    /**
+     * 显示
+     */
+    show : function(){
+        this.get('el').show();
+        this.set('visible',true);
+    },
+    /**
+     * 隐藏
+     */
+    hide : function(){
+        this.get('el').hide();
+        this.set('visible',false);
+    },  
     /**
      * 设置或者设置属性，有一下3中情形：
      *
@@ -168,9 +210,13 @@ define('bui/graphic/base',function (require) {
 
     	if(!_self.get('rendered')){
             _self.beforeRenderUI();
+
     		_self.renderUI();
     		_self.set('rendered',true);
             node = _self.get('node');
+            if(this.get('visible') == false){
+                this.hide();
+            }
             if(cls){
                 var oldCls = node.getAttribute('class');
                     
@@ -183,6 +229,9 @@ define('bui/graphic/base',function (require) {
             }
             if(zIndex != null){
                 node.setAttribute('zIndex',zIndex);
+                if(Util.vml){
+                    $(node).css('z-index',zIndex);
+                }
             }
             _self.bindUI();
     	}

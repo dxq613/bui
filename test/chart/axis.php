@@ -28,8 +28,13 @@
   <script type="text/javascript" src="../../src/chart/mixin/showlabels.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/number.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/category.js"></script>
+  <script type="text/javascript" src="../../src/chart/axis/time.js"></script>
 
   <script type="text/javascript" src="../specs/chart/axis-spec.js"></script>
-  <script type="text/javascript" src="../specs/chart/axis-number-spec.js"></script> <!---->
-  <script type="text/javascript" src="../specs/chart/axis-category-spec.js"></script>
+  <script type="text/javascript" src="../specs/chart/axis-number-spec.js"></script>
+   <script type="text/javascript" src="../specs/chart/axis-category-spec.js"></script> <!---->
+
+  <script type="text/javascript" src="../specs/chart/axis-time-spec.js"></script>
+  
+
 <?php include("../templates/footer.php"); ?>

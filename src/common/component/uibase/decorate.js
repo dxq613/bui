@@ -8,7 +8,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
   var ArrayUtil = require('bui/array'),
     JSON = require('bui/json'),
     prefixCls = BUI.prefix,
-    FIELD_PREFIX = 'data-'
+    FIELD_PREFIX = 'data-',
     FIELD_CFG = FIELD_PREFIX + 'cfg',
     PARSER = 'PARSER',
     Manager = require('bui/component/manage'),

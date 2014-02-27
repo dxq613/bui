@@ -12,8 +12,8 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 		nodeEl = $(node);
 
 	
-
-	/**/describe('测试画板生成',function(){
+/*
+	describe('测试画板生成',function(){
 
 		it('测试生成dom',function(){
 			expect(el).not.toBe(undefined);
@@ -39,7 +39,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			canvas.setViewBox(0,0,300,300);
 		});
 	});
-
+*/
 	describe('测试生成图形',function(){
 
 		it('画圆',function(){
@@ -173,7 +173,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 		it('图片',function(){
 			var image = canvas.addShape('image',{
 				x : 100,
-				y : 10,
+				y : 100,
 				width: 200,
 				height: 100,
 				src : 'http://gtms01.alicdn.com/tps/i1/T1oM_QFb8iXXcKT9UI-120-160.jpg_120x160q90.jpg'
@@ -199,6 +199,18 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
       expect(path.get('id')).toBe('p1');
      	expect(canvas.find('p1')).toBe(path);
 
+		});
+
+		it('path动画',function(){
+			var path = canvas.addShape({
+	      type:'path',
+	      attrs :{
+	      	path : 'M 25 208.31428571428572 L 35 208.31428571428572 L 105 209.22 L 175 185.67142857142858 L 245 140.3857142857143 L 315 106.87428571428572 L 385 76.9857142857143 L 455 43.47428571428571 L 525 31.69999999999999 L 595 60.68285714285713 L 665 105.96857142857144 L 735 145.82000000000002 L 805 184.7657142857143 L 815 184.7657142857143',
+	      	stroke : 'blue'
+	      }
+	    });
+
+	    path.animate({path : 'M 25 279.86571428571426 L 35 279.86571428571426 L 105 266.28 L 175 240.01428571428573 L 245 195.6342857142857 L 315 149.44285714285715 L 385 117.74285714285713 L 455 103.25142857142856 L 525 109.5914285714286 L 595 142.19714285714286 L 665 190.2 L 735 236.39142857142858 L 805 262.65714285714284 L 815 262.65714285714284'},2000);
 		});
 
 		it('测试平移',function(){
@@ -236,7 +248,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 		it('翻转',function(){
 
 		});
-
+/*
 		it('删除图形',function(){
 			var path = canvas.find('p1');
 			path.remove();
@@ -252,9 +264,10 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			})
 			
 		});
-
+		*/
 
 	});
+/*
 
 	describe('测试maker',function(){
 
@@ -512,13 +525,34 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			//var 
 				//path = group.getPath();
 			group.translate(50,50);
-
-			
-
 			
 		});
 
-		it('清除transform',function(){
+		it('动画移动',function(){
+			var d = $('<div style="position:absolute;width:100px;height:100px;border:1px solid red"></div>').appendTo('body');
+
+			group.animate({
+				x : 100,
+				y : 100
+			},1000);
+			waits(500);
+			runs(function(){
+				group.animate({
+					x : 200,
+					y : 200
+				},1000);
+			});
+			
+
+			d.animate({
+				top: 100,
+				left : 100
+			},1000);
+
+
+		});
+
+	it('清除transform',function(){
 			waits(500);
 			runs(function(){
 				group.attr('transform','');
@@ -538,7 +572,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 				expect($(group.get('node')).children().length).toBe(0);
 			});
 		});
-
+	
 		it('测试分组嵌套',function(){
 			var g2 = group.addGroup({
 				id : 'g2'
@@ -580,12 +614,12 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 				expect($.contains(node,gNode)).not.toBe(true);
 			});
 		});
-
+		
 
 	});
-/**/
+*/
 
-
+/*
 	describe('测试事件',function(){
 		var group ;
 		describe('测试图形事件',function(){
@@ -699,6 +733,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			
 		});
 	});
+*/
 	/**/
 
 

@@ -286,4 +286,27 @@ BUI.use('bui/menu',function(Menu) {
 	var link = $('#link');
 	
 });
+
+BUI.use('bui/menu',function(Menu) {
+
+	var menu = new Menu.Menu({
+		srcNode : '#m20'
+	});
+
+	menu.render();
+
+	describe('测试根据DOM生成菜单',function(){
+		it('测试菜单生成',function(){
+			expect(menu.get('el').attr('id')).toBe('m20');
+			expect(menu.get('children').length).toBe(4);
+		});
+
+		it('测试子菜单完成',function(){
+			var item = menu.getItemAt(0);
+			expect(item.get('subMenu')).not.toBe(null);
+		})
+	});
+});
+
+
 /**/
