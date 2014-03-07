@@ -188,7 +188,6 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 					visible : false,
 					zIndex : 3,
 					attrs : {
-
 						stroke : '#C0C0C0',
 						x1 : 0,
 						y1 : plotRange.bl.y,
@@ -210,7 +209,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 				title = _self.get('title'),
 				cfg;
 			if(!titleShape){
-				title.text = text;
+				title.text = text || '';
 				titleShape = _self.addShape('text',title);
 				_self.set('titleShape',titleShape);
 			}

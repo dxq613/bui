@@ -25457,7 +25457,9 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         var _self = this,
           children = _self.get('children');
         BUI.each(children,function(item){
-          item.close();
+          if(item.get('closeable')){
+            item.close();
+          }
         });
       },
       closeOther : function(curItem){

@@ -91,9 +91,9 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
     		series = _self.get('series');
 
     	_self.on('mouseover',function(){
-    		series.setActived();
+    		series.setActived && series.setActived();
     	}).on('mouseout',function(){
-    		series.clearActived();
+    		series.clearActived && series.clearActived();
     	});
 
     	_self.on('mousemove',function(ev){
@@ -152,7 +152,7 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
 				labelShape = _self.addShape('label',{
 					x : MARKER_WIDTH,
 					'text-anchor': 'start',
-					y : 5,
+					y : 7,
 					cursor : 'pointer',
 					text : text
 				});
@@ -169,18 +169,31 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
 				case 'line' : 
 					shape =	_self.addShape('line',{
 							x1 : 3,
-							y1 : 5,
+							y1 : 7,
 							x2 : 17,
-							y2 : 5,
+							y2 : 7,
 							stroke : color,
 							"stroke-width" : 2
 						});
+					break;
+				case  'scatter':
+					shape = null;
+					break;
+				case 'bubble' : 
+					shape = _self.addShape('circle',{
+						cx : 10,
+						cy : 7,
+						r : 5,
+						fill : color,
+						stroke : color,
+						'fill-opacity' : .5
+					});
 					break;
 				default : 
 					shape = _self.addShape('rect',{
 						x : 2,
 						y : 2,
-						widht : 18,
+						width : 15,
 						height : 10,
 						fill : color,
 						stroke : color
@@ -198,7 +211,7 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
 				marker = BUI.mix({},markers.marker);
 				marker.radius = 3;
 				marker.x = 10;
-				marker.y = 5;
+				marker.y = 7;
 				marker = _self.addShape('marker',marker);
 			}
 			_self.set('marker',marker);

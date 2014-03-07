@@ -1,4 +1,128 @@
 
+
+BUI.use(['bui/chart/chart'],function (Chart) {
+  var chart = new Chart({
+    width : 1000,
+    height : 500,
+    plotCfg : {
+      margin : [50,50,100]
+      
+    },
+    title : {
+      text : 'Monthly Average Temperature',
+      font : '16px'
+    },
+    subTitle : {
+      text : 'Source: WorldClimate.com'
+    },  
+    tooltip : {
+      shared : true
+    },
+    seriesOptions : {
+        pieCfg : {
+          allowSelect : true,
+          labels : {
+            distance : 40,
+            label : {
+
+            }
+          }
+        }
+    },
+    legend : null,
+    series: [{
+        type: 'pie',
+        name: 'Browser share',
+        data: [
+            ['Firefox',   45.0],
+            ['test',1],
+            ['test',1],
+            ['test',1],
+            ['test',1],
+            ['IE',       26.8],
+            {
+                name: 'Chrome',
+                y: 12.8,
+                sliced: true,
+                selected: true
+            },
+            ['Safari',    8.5],
+            ['test',1],
+            ['test',1],
+            ['test',1],
+            ['test',1],
+            ['Opera',     6.2],
+            ['test',1],
+            ['test',1],
+            ['test',1],
+            ['test',1],
+            ['Others',   0.7]
+        ]
+    }]
+  });
+
+  chart.render();
+  var group = chart.get('seriesGroup');
+  describe('测试饼图',function(){
+    
+  });
+});
+
+
+BUI.use(['bui/chart/chart'],function (Chart) {
+  var chart = new Chart({
+    width : 1000,
+    height : 500,
+    plotCfg : {
+      margin : [50,50,100]
+      
+    },
+    title : {
+      text : 'Monthly Average Temperature',
+      font : '16px'
+    },
+    subTitle : {
+      text : 'Source: WorldClimate.com'
+    },  
+    tooltip : {
+      shared : true
+    },
+    seriesOptions : {
+        pieCfg : {
+          
+        }
+    },
+    legend : null,
+    series: [{
+        type: 'pie',
+        name: 'Browser share',
+        innerSize : '60%',
+        data: [
+            ['Firefox',   45.0],
+            ['IE',       26.8],
+            {
+                name: 'Chrome',
+                y: 12.8,
+                sliced: true,
+                selected: true
+            },
+            ['Safari',    8.5],
+            ['Opera',     6.2],
+            ['Others',   0.7]
+        ]
+    }]
+  });
+
+  chart.render();
+  var group = chart.get('seriesGroup');
+  describe('测试饼图',function(){
+    
+  });
+});
+
+
+
+/*
 BUI.use(['bui/graphic','bui/chart/pie'],function (Graphic,Pie) {
 
   var Util = Graphic.Util,
@@ -144,3 +268,4 @@ BUI.use(['bui/graphic','bui/chart/pie'],function (Graphic,Pie) {
   })
 
 });
+*/

@@ -86,7 +86,12 @@
           {text : '折线序列',href : 'chart/line-series.php'},
           {text : '提示框',href : 'chart/tooltip.php'},
           {text : '序列组',href : 'chart/series-group.php'},
-          {text : '集成图表',href : 'chart/chart.php'}
+          {text : '集成图表',href : 'chart/chart.php'},
+          {text : '区域图',href : 'chart/area-series.php'},
+          {text : '柱状图',href : 'chart/column-series.php'},
+          {text : '饼图',href : 'chart/pie.php'},
+          {text : '散列图',href : 'chart/scatter.php'},
+          {text : '气泡图',href : 'chart/bubble.php'}
         ]
       },
       {

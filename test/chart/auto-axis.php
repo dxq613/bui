@@ -26,7 +26,7 @@
 	
   <script type="text/javascript" src="../../src/chart/axis/auto.js"></script>
 
-  <script type="text/javascript" src="../specs/chart/axis-auto-spec.js"></script> <!---->
-  <script type="text/javascript" src="../specs/chart/axis-auto-time-spec.js"></script>
+ <script type="text/javascript" src="../specs/chart/axis-auto-spec.js"></script> 
+   <script type="text/javascript" src="../specs/chart/axis-auto-time-spec.js"></script><!---->
   
 <?php include("../templates/footer.php"); ?>

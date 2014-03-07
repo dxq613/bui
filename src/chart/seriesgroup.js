@@ -12,7 +12,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     Legend = require('bui/chart/legend'),
     Tooltip = require('bui/chart/tooltip'),
     Axis = require('bui/chart/axis'),
-    Series = require('bui/chart/series');
+    Series = require('bui/chart/series'),
+    maxPixel = 120, //坐标轴上的最大间距
+    minPixel = 80; //坐标轴上最小间距
 
   function min(x,y){
     return x > y ? y : x;
@@ -98,6 +100,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      */
     tooltip : {
 
+    },
+    /**
+     * @private
+     * 缓存的层叠数据
+     * @type {Array}
+     */
+    stackedData : {
+
     }
 
   };
@@ -158,7 +168,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         if(tipGroup.get('visible')){
           _self.clearActived();
           if(tipGroup.get('shared')){
-            BUI.each(_self.get('children'),function(series){
+            BUI.each(_self.getVisibleSeries(),function(series){
               var markers = series.get('markersGroup');
               markers && markers.clearActived();
             });
@@ -166,6 +176,32 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           _self._hideTip();
         }
       }
+    },
+    /**
+     * @protected
+     * 获取可以被激活的元素
+     * @return {BUI.Chart.Actived[]} 可以被激活的元素集合
+     */
+    getActiveItems : function(){
+      var _self = this,
+        series = _self.getSeries(),
+        rst = [];
+
+      BUI.each(series,function(item){
+        if(item.isActived){
+          rst.push(item);
+        }
+      });
+      return rst;
+    },
+    clearActived : function(){
+      var _self = this,
+        series = _self.getSeries();
+      BUI.each(series,function(item){
+        if(item.clearActived){
+          item.clearActived();
+        }
+      });
     },
     /**
      * 获取所有的数据序列
@@ -186,7 +222,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         var activedItem = _self.getActived();
         activedItem && sArray.push(activedItem);
       }else{
-        sArray = _self.get('children');
+        sArray = _self.getSeries();
       }
 
       BUI.each(sArray,function(series){
@@ -208,7 +244,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         items : [],
         point : {}
       };
-
+      var count = 0;
       BUI.each(sArray,function(series,index){
         var info = series.getTrackingInfo(point),
             item = {},
@@ -217,9 +253,10 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           
         if(info){
           if(series.get('visible')){
+            count = count + 1;
             item.name = series.get('name');
             item.value = info.value;
-            item.color = series.get('color');
+            item.color = info.color || series.get('color');
             rst.items.push(item);
             var markersGroup = series.get('markersGroup');
             if(markersGroup && markersGroup.get('single')){
@@ -232,18 +269,24 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
             }
           }
           if(series.get('xAxis')){
-            title = series.get('xAxis').formatPoint(info.originValue);
+            title = series.get('xAxis').formatPoint(info.xValue);
           }else{
-            title = info.originValue;
+            title = info.xValue;
           }
-          if(index == 0){
+          if(count == 1){
             rst.title =  title;
-            rst.point.x = info.x;
-            if(sArray.length == 1){
-              rst.point.y = info.y;
+            if(info.x){
+              rst.point.x = info.x;
+              if(sArray.length == 1){
+                rst.point.y = info.y;
+              }else{
+                rst.point.y = point.y;
+              }
             }else{
+              rst.point.x = point.x;
               rst.point.y = point.y;
             }
+            
           }
         }
       });
@@ -364,6 +407,10 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       var _self = this,
         data = [],
         type = axis.get('type'),
+        length = axis.getLength(),
+        minCount = Math.floor(length / maxPixel),
+        maxCount = Math.ceil(length / minPixel),
+        stackType,
         series,
         min,
         max,
@@ -387,28 +434,84 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         
         interval = axis.getCfgAttr('tickInterval');
       
-      series = _self.get('children');
-      BUI.each(series,function(item){
-          if(item.get('visible') && item.get(name) == axis){
-            data.push(_self.getSeriesData(item,name));
-          }
-      });
+      series = _self.getSeries();
 
-      var rst =  autoUtil.caculate({
-        data : data,
+      var cfg = {
         min : min,
         max : max,
+        
         interval: interval
-      });
+      };
+      if(name == 'yAxis'){
+        cfg.maxCount = maxCount;
+        cfg.minCount = minCount;
+        stackType = series[0].get('stackType');
+      }
+      if(stackType && stackType != 'none'){
+        data = _self.getStackedData(axis,name);
+      }else{
+        data = _self.getSeriesData(axis,name);
+      }
+      cfg.data = data;
+
+      var rst =  autoUtil.caculate(cfg,stackType);
 
       return rst;
 
     },
-    getSeriesData : function(series,name){
+    /**
+     * 获取数据序列的数据
+     * @protected
+     * @param  {BUI.Chart.Axis} axis 坐标轴
+     * @param  {String} name 坐标轴名称
+     * @return {Array} 数据集合
+     */
+    getSeriesData : function(axis,name){
+      var _self = this,
+        data = [],
+        series = _self.getVisibleSeries();
+      axis = axis || _self.get('yAxis');
+      name = name || 'yAxis';
+
+      BUI.each(series,function(item){
+        if(item.get(name) == axis){
+          data.push(item.getData(name));
+        }
+      });
+
+      return data;
+    },
+    /**
+     * @protected
+     * 获取层叠数据
+     * @param  {String} stackType 层叠类型
+     * @param  {BUI.Chart.Axis} axis 坐标轴
+     * @param  {String} name 坐标轴名称
+     * @return {Array} 数据集合
+     */
+    getStackedData : function(axis,name){
       var _self = this,
         data,
-        first;
-      return series.getData(name);
+        first
+        stackedData = _self.get('stackedData'),
+        arr = [];
+      if(stackedData){
+        arr = stackedData;
+      }else{
+        data = _self.getSeriesData(axis,name);
+        first = data[0];
+
+        BUI.each(first,function(value,index){
+          var temp = value;
+          for(var i = 1 ; i< data.length; i++){
+            temp += data[i][index];
+          }
+          arr.push(temp);
+        });
+        _self.set('stackedData',arr);
+      }
+
+      return arr;
     },
     //name 标示是xAxis ,yAxis and so on
     _paintAxis : function(axis,name){
@@ -422,21 +525,40 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }
 
       BUI.each(arr,function(item,index){
-        if(item.get('autoTicks')){
-          var info = _self._caculateAxisInfo(item,name);
-          item.set('tickInterval',info.interval);
-          item.set('ticks',info.ticks);
+        if(_self._hasRelativeSeries(item,name)){
+          if(item.get('autoTicks')){
+            var info = _self._caculateAxisInfo(item,name);
+            item.set('tickInterval',info.interval);
+            item.set('ticks',info.ticks);
+          }
+          
+          item.paint();
         }
         
-        item.paint();
       });
       
+    },
+    _hasRelativeSeries : function(axis,name){
+      var _self = this,
+        series = _self.getVisibleSeries(),
+        rst = false;
+
+      BUI.each(series,function(item){
+        if(item.get(name) == axis){
+          rst = true;
+          return false;
+        }
+      });
+      return rst;
+
     },
     //数据变化或者序列显示隐藏引起的坐标轴变化
     _resetAxis : function(axis){
       var _self = this,
         info = _self._caculateAxisInfo(axis,'yAxis'),
-        series = _self.get('children');
+        series = _self.getSeries();
+
+      _self.set('stackedData',null);
       //如果是非自动计算坐标轴，不进行重新计算
       if(!axis.get('autoTicks')){
         return;
@@ -447,6 +569,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           item.repaint();
         }
       });
+      
     },
     //获取默认的类型
     _getDefaultType : function(){
@@ -459,7 +582,16 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       });
       return rst;
     },
+    /**
+     * 获取显示的数据序列
+     * @return {BUI.Chart.Series[]} 数据序列集合
+     */
     getVisibleSeries : function(){
+      var _self = this,
+        series = _self.getSeries();
+      return BUI.Array.filter(series,function(item){
+        return item.get('visible');
+      });
     },
     /**
      * 添加数据序列
@@ -480,7 +612,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     //绘制数据线
     _paintSeries : function(){
       var _self = this,
-        series = _self.get('children');
+        series = _self.getSeries();
 
       BUI.each(series,function(item){
         item.paint();
@@ -488,9 +620,12 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     },
     _addSeriesAxis : function(){
       var _self = this,
-        series = _self.get('children');
+        series = _self.getSeries();
 
       BUI.each(series,function(item){
+        if(item.get('type') == 'pie'){
+          return true;
+        }
         //x轴
         if(!item.get('xAxis')){
           item.set('xAxis', _self.get('xAxis'));
@@ -555,7 +690,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         item.color = colors[index % (colors.length)];
       }
       //marker的形状
-      if(item.markers && !item.markers.marker.symbol){
+      if(item.markers && item.markers.marker && !item.markers.marker.symbol){
         item.markers.marker.symbol = symbols[index % symbols.length];
       }
       

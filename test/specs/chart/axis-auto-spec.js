@@ -10,7 +10,6 @@ BUI.use('bui/chart/axis/auto',function (Auto) {
 		$(s2).appendTo(el);
 	}
 	describe('计算简单集合',function(){
-		/**/
 		it('计算一个集合',function(){
 			var data = [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2, 26.5, 23.3, 18.3, 13.9, 9.6],
 				rst = Auto.caculate({data : data});
@@ -208,7 +207,7 @@ BUI.use('bui/chart/axis/auto',function (Auto) {
 		});
 	});
 
-	describe('计算部分正数',function(){
+	/**/describe('计算部分正数',function(){
 
 		it('部分负数',function(){
 			var data = [
@@ -226,8 +225,17 @@ BUI.use('bui/chart/axis/auto',function (Auto) {
 		});
 
 	});
+    
+	describe('计算距离0比较远的数字',function(){
+        it('计算1940-2008',function(){
+            var data = [1940,2008],
+                rst = Auto.caculate({data : data});
+            log(data,rst);
+            var info = rst.info;
 
-	describe('计算大数据量',function(){
-
+            var info = rst.info;
+            expect(info.min >= rst.min).toBe(true);
+            expect(info.max <= rst.max).toBe(true);
+        });
 	});
 });

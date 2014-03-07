@@ -9,8 +9,8 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
     Util = require('bui/graphic').Util,
     snapArray = [0,1,1.5,2,2.5,3,4,5,6,8,10],
     intervalArray = [0,1,2.5,5,10],
-    minCount = 5, //最小6个坐标点
-    maxCount = 7; //最多8个坐标点
+    MIN_COUNT = 5, //最小6个坐标点
+    MAX_COUNT = 7; //最多8个坐标点
 
   //是否为null
   function isNull(v){
@@ -84,13 +84,13 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
     return rst;
   }
 
-  function snapMultiple(v,base){
+  function snapMultiple(v,base,ceil){
     //if(v > 0){
+    if(ceil){
+      var div = Math.ceil(v / base,10);
+    }else{
       var div = Math.floor(v / base,10);
-    /*}else{
-      div = Math.ceil(v/base);
-    }*/
-    
+    }
 
     return div * base;
     
@@ -145,15 +145,28 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
   }
 
   //分析数据
-  function analyzeData(data,parser){
+  function analyzeData(data,parser,stacked){
     var arr = [];
     if(BUI.isArray(data[0])){
-      BUI.each(data,function(sub){
-        arr = arr.concat(sub);
-      });
+      if(stacked){
+        BUI.each(data[0],function(value,index){
+          var temp = value;
+          for(var i = 1 ; i< data.length; i++){
+            temp += data[i][index];
+          }
+          arr.push(temp);
+        });
+      }else{
+        BUI.each(data,function(sub){
+          arr = arr.concat(sub);
+        });
+      }
+      
     }else{
       arr = data;
     }
+
+
     
     if(parser){
       arr = $.map(arr,parser);
@@ -175,7 +188,7 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
    * @param  {Object} info 初始信息
    * @return {Object} 计算后的信息
    */
-  Auto.caculate = function(info){
+  Auto.caculate = function(info,stackType){
 
     var 
       min = info.min,
@@ -183,26 +196,39 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
       data = info.data,
       interval = info.interval,
       ticks = [],
-      count;
+      minCount = info.minCount || MIN_COUNT,
+      maxCount = info.maxCount || MAX_COUNT,
+      avgCount = (minCount + maxCount)/2,
+      count,
+      stacked = false;
 
+    if(stackType) {
+      if(stackType != 'none'){
+        stacked = true;
+      }
+      if(stackType == 'percent'){
+        min = 0;
+        max = 100;
+        interval = 25;
+      }
+    }
 
     if(isNull(min) || isNull(max) || isNull(interval)){
-      var rst = analyzeData(data);
+      var rst = analyzeData(data,null,stacked);
 
       //计算max
       if(isNull(max)){ 
         max = rst.max + 0.05 * (rst.max - rst.min);
-        max = snapTo(max,false);
       }
 
       //计算min
       if(isNull(min)){
-        min = snapTo(rst.min,true);
+        min = rst.min;
       }
 
       //计算间距
       if(isNull(interval)){
-        var temp = (max - min) / (minCount -1); //防止方差过大
+        var temp = (max - min) / avgCount ;// ( minCount -1); //防止方差过大
         if(rst.deviation > temp){
           interval = snapTo(temp,true,intervalArray);
         }else{
@@ -213,12 +239,12 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
         if(count > maxCount){
           count = maxCount;
         }
-        if(count < minCount){
+        if(count <  minCount){
           count = minCount;
         }
 
         interval = snapTo((max - min) / count,true,intervalArray) ;
-        max = snapMultiple(max,interval);
+        max = snapMultiple(max,interval,true);
         min = snapMultiple(min,interval);
 
         count = (max - min) / interval;
@@ -322,7 +348,7 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
           date = date.getTime();
         }
         if(BUI.isString(date)){
-          date = date.replace('-','/');
+          date = date.replace(/-/ig,'/');
           date = new Date(date);
         }
         return date;
@@ -353,7 +379,7 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
           yfactor,
           year; //占一年的多少
 
-        interval = parseInt(innerTime / 8);
+        interval = parseInt(innerTime / (info.maxCount || 8));
         yfactor = interval / yms;
         var minYear = getYear(min);
         //大于半年
@@ -365,15 +391,17 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
           for(var i = minYear; i < maxYear + year; i = i + year){
             ticks.push(createYear(i));
           }
+          interval = null;
         }else if(yfactor > 0.0834){//大于一个月
           var year = getYear(min),
-            month = Math.ceil(yfactor/0.0834),
+            month = Math.floor(yfactor/0.0834),
             mmMoth = getMonth(min),
             dMonths = diffMonth(min,max);
 
           for(var i = 0; i <= dMonths + month; i = i + month){
             ticks.push(creatMonth(minYear, i+mmMoth));
           }
+          interval = null;
 
         }else if(interval > dms){ //大于一天
           var date = new Date(min),
@@ -426,7 +454,8 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
       max : max,
       min : min,
       interval : interval,
-      ticks : ticks
+      ticks : ticks,
+      count : ticks.length
     }
   }
 

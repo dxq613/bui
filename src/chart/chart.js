@@ -10,6 +10,25 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
     SeriesGroup = require('bui/chart/seriesgroup'),
     Theme = require('bui/chart/theme');
 
+  function mixIf(obj1,obj2){
+    var rst = {},
+      isMerge = false;
+    BUI.each(obj1,function(v,k){
+      rst[k] = obj2[k];
+      if(BUI.isObject(rst[k])){
+        BUI.mix(true,rst[k],obj1[k]);
+      }else{
+        rst[k] = obj1[k];
+      }
+      
+    });
+    if(!isMerge){
+      rst['lineCfg'] = obj2['lineCfg'];
+    }
+    return rst;
+
+  }
+
   /**
    * @class BUI.Chart.Chart
    * 图，里面包括坐标轴、图例等图形
@@ -76,13 +95,30 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
     _renderTooltip : function(){
 
     },
+    _getDefaultType : function(){
+      var _self = this,
+        seriesOptions = _self.get('seriesOptions'),
+        rst = 'line'; //默认类型是线
+      BUI.each(seriesOptions,function(v,k){
+        rst = k.replace('Cfg','');
+        return false;
+      });
+      return rst;
+    },
     //渲染数据图序列
     _renderSeries : function(){
       var _self = this,
         theme = _self.get('theme'),
         cfg = {},
         attrs = _self.getAttrVals(),
+        defaultType = _self._getDefaultType(),
         seriesGroup;
+
+      BUI.each(attrs.series,function(item){
+        if(!item.type){
+          item.type = defaultType;
+        }
+      });
       BUI.mix(true,cfg,theme,{
         colors :  attrs.colors,
         data : attrs.data,
@@ -94,6 +130,8 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
         xAxis : attrs.xAxis,
         yAxis : attrs.yAxis
       });
+
+      /*cfg.seriesOptions = mixIf(attrs.seriesOptions,theme.seriesOptions);*/
 
       seriesGroup = _self.get('canvas').addGroup(SeriesGroup,cfg);
       _self.set('seriesGroup',seriesGroup);

@@ -1,5 +1,5 @@
 <?php  $base='../' ?>
-<?php  $title='饼图测试' ?>
+<?php  $title='柱状图测试' ?>
 <?php include("../templates/header.php"); ?>
 
   <div class="container">
@@ -35,13 +35,6 @@
   <script type="text/javascript" src="../../src/chart/series/line.js"></script>
   <script type="text/javascript" src="../../src/chart/series/stacked.js"></script>
   <script type="text/javascript" src="../../src/chart/series/area.js"></script>
-  <script type="text/javascript" src="../../src/chart/series/scatter.js"></script>
-  <script type="text/javascript" src="../../src/chart/series/bubble.js"></script>
-
-  <script type="text/javascript" src="../../src/chart/series/pie.js"></script>
-
-
-
 
   <script type="text/javascript" src="../../src/chart/series/itemgroup.js"></script>
   <script type="text/javascript" src="../../src/chart/series/column.js"></script>
@@ -60,6 +53,9 @@
   <script type="text/javascript" src="../../src/chart/theme.js"></script>
   <script type="text/javascript" src="../../src/chart/chart.js"></script>
 
- <script type="text/javascript" src="../specs/chart/pie-spec.js"></script>
 
+
+ <script type="text/javascript" src="../specs/chart/column-series-spec.js"></script>
+ <script type="text/javascript" src="../specs/chart/column-stacked-spec.js"></script>
+ <!---->
 <?php include("../templates/footer.php"); ?>

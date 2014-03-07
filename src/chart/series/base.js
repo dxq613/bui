@@ -50,10 +50,17 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       value : false
     },
     /**
-     * 动画的时间间隔
+     * 生成时动画的时间间隔
      * @type {Number}
      */
     duration : {
+      value : 1000
+    },
+    /**
+     * 发生改变的动画时间
+     * @type {Number}
+     */
+    changeDuration : {
       value : 400
     },
     /**
@@ -93,6 +100,20 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
      */
     stickyTracking : {
       value : true
+    },
+    /**
+     * 用于定位数据的字段，通常是x轴上的数据，但是也可以用于饼图之类不需要x轴的数据序列
+     * @type {String}
+     */
+    xField : {
+      value : 'x'
+    },
+    /**
+     * 标示数据的值,通常用于y轴上的数据，但是也可以用于饼图、雷达图之类
+     * @type {String}
+     */
+    yField : {
+      value : 'y'
     }
 
   };
@@ -122,7 +143,6 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
         _self.onMouseOut();
       }
     },
-   
     /**
      * 获取对应坐标轴上的数据
      * @return {Array} 
@@ -183,21 +203,38 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
     _getPoints : function(){
       var _self = this,
         data = _self.get('data'),
+        xField = _self.get('xField'),
+        yField = _self.get('yField'),
         points = [];
       BUI.each(data,function(item,index){
         var point;
         if(BUI.isObject(item)){
-          point = _self.getPointByObject(item);
+          var xValue = item[xField],
+            yValue = item[yField];
+          if(xValue == null){
+            point = _self.getPointByIndex(yValue,index);
+          }else{
+            point = _self.getPointByValue(xValue,yValue);
+          }
+          point.obj = item;
         }else if(BUI.isArray(item)){
           point = _self.getPointByValue(item[0],item[1]);
+          point.arr = item;
         }else{
           point = _self.getPointByIndex(item,index);
         }
-        
+        _self.processPoint(point,index);
         points.push(point);
       });
 
       return points;
+    },
+    /**
+     * @protected
+     * 处理节点，并且添加附加信息
+     */
+    processPoint : function(point,index){
+
     },
     /**
      * 根据对象获取值
@@ -218,7 +255,7 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
     /**
      * @protected
      * 根据指定的值获取点的信息
-     * @param  {Number} value 在x轴上的值
+     * @param  {Number} value 在基础轴上的值，一般是x轴
      * @return {Object} 点的信息
      */
     getPointByValue : function(xValue,value){
@@ -231,7 +268,7 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
         rst;
 
       BUI.each(points,function(point){
-        if(_self.snapEqual(point.originValue,value)){
+        if(_self.snapEqual(point.xValue,value) && point.value != null){
           rst = point;
           return false;
         }
@@ -313,13 +350,16 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
     addMarker : function(offset){
       var _self = this,
           markersGroup = _self.get('markersGroup'),
-          marker = {};
+          marker = {},
+          rst;
       if(markersGroup){
         marker.x = offset.x;
         marker.y = offset.y;
 
-        markersGroup.addMarker(marker);
+       rst = markersGroup.addMarker(marker);
+       rst.set('point',offset);
       }
+      return rst;
     },
     //渲染标记
     renderMarkers : function(){

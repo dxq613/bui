@@ -311,6 +311,20 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             return _self.getOffsetByIndex(index);
         },
         /**
+         * 起点的坐标位置，也就是cavas上的点的位置
+         * @return {Number} 坐标点的位置
+         */
+        getStartOffset : function(){
+            return this._getStartCoord();
+        },
+        /**
+         * 终点的坐标位置，也就是cavas上的点的位置
+         * @return {Number} 坐标点的位置
+         */
+        getEndOffset : function(){
+            return this._getEndCoord();
+        },
+        /**
          * 根据画板上的点获取坐标轴上的值，用于将cavas上的点的坐标转换成坐标轴上的坐标
          * @param  {Number} offset 
          * @return {Number} 点在坐标轴上的值
@@ -325,6 +339,24 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             }
 
             return _self.parseOffsetValue(offset);
+        },
+        /**
+         * 获取坐标轴上起点代表的值
+         * @return {*} 起点代表的值
+         */
+        getStartValue : function(){
+            var _self = this,
+                ticks = _self.get('ticks');
+            return ticks[0];
+        },
+        /**
+         * 获取坐标轴终点代表的值
+         * @return {*} 终点代表的值
+         */
+        getEndValue : function(){
+            var _self = this,
+                ticks = _self.get('ticks');
+            return ticks[ticks.length - 1];
         },
 
         /**
@@ -450,6 +482,22 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
                 length = _self._getLength();
             return start + _self._appendEndOffset(length/2);
         },
+        /**
+         * 获取坐标轴的长度
+         * @return {Number} 坐标轴长度
+         */
+        getLength : function(){
+            return Math.abs(this._getLength());
+        },
+        /**
+         * 获取坐标点之间的长度
+         * @return {Number} 坐标点之间的宽度
+         */
+        getTickAvgLength : function(){
+            var _self = this,
+                ticks = _self.get('ticks');
+            return _self.getLength()/(ticks.length - 1);
+        },
         //获取坐标轴内部的长度，不计算偏移量
         _getLength : function(){
             var _self = this,
@@ -538,7 +586,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             var _self = this,
                 formatter = _self.get('formatter');
             if(formatter){
-                value = formatter(value);
+                value = formatter.call(this,value);
             }
             return value;
         },
@@ -667,14 +715,17 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
                 middle = _self._getMiddleCoord(),
                 offsetPoint = _self.getOffsetPoint(null,middle),
                 cfg = BUI.mix({},title);
+            if(title.text){
 
-            cfg.x = offsetPoint.x + (title.x || 0);
-            cfg.y = offsetPoint.y + (title.y || 0);
-            _self.addShape({
-                type : 'label',
-                elCls : CLS_AXIS + '-title',
-                attrs : cfg
-            });
+
+                cfg.x = offsetPoint.x + (title.x || 0);
+                cfg.y = offsetPoint.y + (title.y || 0);
+                _self.addShape({
+                    type : 'label',
+                    elCls : CLS_AXIS + '-title',
+                    attrs : cfg
+                });
+            }
 
         },
         //添加grid的项

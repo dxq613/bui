@@ -53,6 +53,10 @@ define('bui/chart/plotrange',function (require) {
     		var br = plotRange.br = {};
     		br.x = max(start.x,end.x);
     		br.y = max(start.y,end.y);
+
+    		var cc = plotRange.cc = {};
+    		cc.x = (br.x - tl.x)/2 + tl.x;
+    		cc.y = (br.y - tl.y)/2 + tl.y;
     	
 		},
 		/**

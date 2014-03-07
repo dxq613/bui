@@ -8,6 +8,7 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
 	var BUI = require('bui/common'),
 		Axis = require('bui/chart/baseaxis'),
 		Util = require('bui/graphic').Util,
+    abbrs = ['k','m','g','t'],
 		NAN = NaN;
 
   //取小于当前值的
@@ -54,7 +55,37 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
      */
 		type : {
 			value : 'number'
-		}
+		},
+    /**
+     * 格式化坐标轴上的节点
+     * @type {Function}
+     */
+    formatter : {
+      value : function(value){
+        if(value == null){
+          return '';
+        }
+        if(value < 1e3){
+          return value;
+        }
+        var interval = this.get('tickInterval');
+        if(interval % 1e3 !== 0){
+          return value;
+        }
+
+        var base = 1e3;
+        
+        for(var i = 1 ; i <= abbrs.length;i++){
+
+          if(value >= base && value < base * 1e3){
+            return (value/base) + abbrs[i - 1];
+          }
+          base = base * 1e3;
+        }
+
+        return value/1e12 + 't';
+      }
+    }
 
 	};
 
@@ -150,8 +181,11 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
         if(tickInterval){
         	return ticks[floorIndex] + ((offset - floorVal) / avg) * tickInterval;
         }
+        
+
         ceilingVal = ceiling(pointCache,offset);
-        return ticks[floorIndex] + ((offset - floorVal) / avg) * (ceilingVal - floorVal);
+        
+        return ticks[floorIndex] + ((offset - floorVal) / avg) * (ticks[floorIndex + 1] - ticks[floorIndex]);;
         
     },
     _getAvgLength : function(count){
@@ -187,7 +221,6 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
       index = BUI.Array.indexOf(floorVal,ticks);
      	offset = avg * index;
       if(tickInterval){
-      	
       	offset = offset + ((value - floorVal)/tickInterval) * avg;
       }else{
       	ceilingVal = ceiling(ticks,value);

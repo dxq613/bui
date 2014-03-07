@@ -16,18 +16,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
     }
   }
 
-  function date2number(value){
-    if(BUI.isNumber(value)){
-      return value;
-    }
-    if(BUI.isString(value)){
-      value = value.replace('-','/');
-      value = new Date(value).getTime();
-    }else if(BUI.isDate(value)){
-      value = value.getTime();
-    }
-    return value;
-  }
+ 
 
   /**
    * @class BUI.Chart.Series.Line
@@ -50,6 +39,13 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
     elCls : {
       value : 'x-chart-line-series'
     },
+    /**
+     * 是否忽略null的值，连接null2边的值
+     * @type {Boolean}
+     */
+    connectNulls : {
+      value : false
+    },  
     /**
      * 线的配置
      * @type {Object}
@@ -136,17 +132,6 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         markersGroup = _self.get('markersGroup'),
         marker = _self.getSnapMarker(point.x);
       markersGroup && markersGroup.setActived(marker);
-    },
-    /**
-     * 获取鼠标移动与该series的焦点
-     */
-    getTrackingInfo : function(point){
-      var _self = this,
-        xAxis = _self.get('xAxis'),
-        yAxis = _self.get('yAxis'),
-        xValue = xAxis.getValue(point.x);
-
-      return _self.findPointByValue(xValue);
     },
     /**
      * @protected
@@ -274,13 +259,29 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
     points2path : function(points){
       var _self = this,
         smooth = _self.get('smooth'),
-        path = '';
+        connectNulls = _self.get('connectNulls'),
+        path = '',
+        preItem,
+        str;
       if(points.length <= 2){ //少于3个点不能使用smooth
         smooth = false;
       }
+
       BUI.each(points,function(item,index){
-        var str = index == 0 ? (smooth ? 'M{x} {y} R' : 'M{x} {y}') : (smooth ? ' {x} {y}' : 'L{x} {y}');
+        if(item.value == null){
+          if(connectNulls){
+            return;
+          }
+          str = '';
+        }else{
+          str = (preItem == null || preItem.value == null) ? (smooth ? 'M{x} {y} R' : 'M{x} {y}') : (smooth ? ' {x} {y}' : 'L{x} {y}');
+          
+        }
+        
         path += BUI.substitute(str,item);
+        
+        preItem = item;
+        
       });
       return path;
     },
@@ -308,50 +309,14 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         lineActived = _self.get('lineActived');
       if(actived){
         lineActived && lineShape.attr(lineActived);
-        _self.toFront();
+        //_self.toFront();
       }else{
         line && lineShape.attr(line);
         var markersGroup = _self.get('markersGroup');
         markersGroup && markersGroup.clearActived();
       }
     },
-    /**
-     * @protected
-     * 判断是否近似相等
-     */
-    snapEqual : function(value1,value2){
-      var _self = this,
-        xAxis = _self.get('xAxis');
-      if(xAxis.get('type') == 'time'){
-
-      }
-      if(BUI.isString(value1)){
-        return value1 == value2;
-      }
-      var pointInterval = _self.get('pointInterval');
-      if(pointInterval){
-        return Math.abs(value1 - value2) < pointInterval / 2;
-      }
-
-      return value1 == value2;
-      
-    },
-    /**
-     * 根据对象获取值
-     * @protected
-     * @return {Object} 点的集合
-     */
-    getPointByObject : function(item){
-      var _self = this,
-        xField = _self.get('xField'),
-        yField = _self.get('yField'),
-        point = _self.getPoint(item[xField],item[yField]);
-
-      point.value = item[yField];
-      
-      return point;
-    },
-
+    
     /**
      * 获取逼近的marker
      * @return {BUI.Graphic.Shape} 逼近的marker
@@ -364,67 +329,6 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         rst = markersGroup.getSnapMarker(offsetX);
       }
       return rst;
-    },
-    /**
-     * @protected
-     * 根据指定的值获取点的信息
-     * @param  {Number} value 在x轴上的值
-     * @return {Object} 点的信息
-     */
-    getPointByValue : function(xValue,value){
-      
-      var _self = this,
-        xAxis = _self.get('xAxis'),
-        yAxis = _self.get('yAxis'),
-        x,y;
-
-      if(xAxis.get('type') == 'time'){
-        xValue = date2number(xValue);
-      }
-      x = xAxis.getOffset(xValue);
-      y = yAxis.getOffset(value);
-
-      return {
-        x : x,
-        y : y,
-        originValue : xValue,
-        value : value
-      };
-    },
-    /**
-     * 根据索引获取值
-     * @protected
-     * @return {Object} 点的集合
-     */
-    getPointByIndex : function(value,index){
-      var _self = this,
-        xAxis = _self.get('xAxis'),
-        yAxis = _self.get('yAxis'),
-        x,
-        y = yAxis.getOffset(value),
-        originValue,
-        xValue;
-
-      if(xAxis.get('type') == 'number' || xAxis.get('type') == 'time'){
-
-        var pointStart = _self.get('pointStart'),
-          pointInterval = _self.get('pointInterval');
-  
-        x = xAxis.getOffset(pointStart + pointInterval * index);
-      }else{
-        x = xAxis.getOffsetByIndex(index);
-      }
-
-      originValue = xAxis.getValue(x);
-      if(pointInterval){
-        originValue = Util.tryFixed(originValue,pointInterval);
-      }
-      return {
-        x : x,
-        y : y,
-        originValue : originValue,
-        value : value
-      };
     }
   });
 

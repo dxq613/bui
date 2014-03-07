@@ -25,6 +25,8 @@
   <script type="text/javascript" src="../../src/chart/axis/number.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/category.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/grid.js"></script>
+  <script type="text/javascript" src="../../src/chart/axis/time.js"></script>
+
    <script type="text/javascript" src="../../src/chart/axis/auto.js"></script>
    <script type="text/javascript" src="../../src/chart/axis.js"></script>
 
@@ -35,7 +37,12 @@
   <script type="text/javascript" src="../../src/chart/series/base.js"></script>
   <script type="text/javascript" src="../../src/chart/series/cartesian.js"></script>
   <script type="text/javascript" src="../../src/chart/series/line.js"></script>
-   <script type="text/javascript" src="../../src/chart/series.js"></script>
+  <script type="text/javascript" src="../../src/chart/series/area.js"></script>
+  
+  <script type="text/javascript" src="../../src/chart/series/itemgroup.js"></script>
+  <script type="text/javascript" src="../../src/chart/series/column.js"></script>
+
+  <script type="text/javascript" src="../../src/chart/series.js"></script>
 
 
 
@@ -50,7 +57,9 @@
 
   <script type="text/javascript" src="../../src/chart/theme.js"></script>
   <script type="text/javascript" src="../../src/chart/chart.js"></script>
+  
+  <script type="text/javascript" src="../specs/chart/chart-spec.js"></script><!---->
 
-  <script type="text/javascript" src="../specs/chart/chart-spec.js"></script>
+  <script type="text/javascript" src="../specs/chart/chart-area-spec.js"></script>
 
 <?php include("../templates/footer.php"); ?>

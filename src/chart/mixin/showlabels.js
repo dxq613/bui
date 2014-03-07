@@ -87,13 +87,15 @@ define('bui/chart/showlabels',['bui/chart/labels'],function (require) {
     addLabel : function(value,offsetPoint){
       var _self = this,
           labelsGroup = _self.get('labelsGroup'),
-          label = {};
+          label = {},
+          rst;
       if(labelsGroup){
       	label.text = value;
 	      label.x = offsetPoint.x;
 	      label.y = offsetPoint.y;
-	      labelsGroup.addLabel(label);
+	      rst = labelsGroup.addLabel(label);
       }
+      return rst;
     },
     /**
      * @protected

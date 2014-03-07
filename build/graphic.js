@@ -598,7 +598,11 @@ define('bui/graphic/canvasitem',function(require) {
   			el = _self.get('el');
   		el.translate(dx,dy);
 		},
-		
+		index : function(){
+			var _self = this,
+				parent = _self.get('parent');
+			return BUI.Array.indexOf(_self,parent.get('children'));
+		},
 		/**
 		 * 执行动画
 		 * @param  {Object}   params   动画的参数
@@ -2082,7 +2086,40 @@ define('bui/graphic/canvasitem',function(require) {
 		 */
 		tryFixed : function(value,base){
 			return tryFixed(value,base);
-		}
+		},
+		/**
+		 * 设置值，仅当对象上没有此属性时
+		 * @param  {Object} obj 对象
+		 * @param  {String} name  字段名
+		 * @param  {*} value 值
+		 */
+		trySet : function(obj,name,value){
+			if(obj && !obj[name]){
+	      obj[name] = value;
+	    }
+		},
+		/**
+		 * 将颜色变亮
+		 * @param  {String} c  颜色
+		 * @param  {Number} percent 变亮的比例 0 - 1
+		 * @return {String} 变亮的颜色
+		 */
+		highlight : function(c,percent){
+	    var color = Raphael.color(c),
+	      l = color.l * (1 + percent);
+	    return Raphael.hsl2rgb(color.h,color.s,l).hex;
+	  },
+	  /**
+		 * 将颜色变暗
+		 * @param  {String} c  颜色
+		 * @param  {Number} percent 变暗的比例 0 - 1
+		 * @return {String} 变暗的颜色
+		 */
+	  dark : function(c,percent){
+	  	var color = Raphael.color(c),
+	      l = color.l * (1 - percent);
+	    return Raphael.hsl2rgb(color.h,color.s,l).hex;
+	  }
 	});
 	return Util;
 });define('bui/graphic/raphael',['bui/graphic/raphael/core','bui/graphic/raphael/svg','bui/graphic/raphael/vml'],function (require) {

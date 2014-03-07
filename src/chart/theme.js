@@ -22,6 +22,29 @@ define('bui/chart/theme',function (requrie) {
     BUI.mix(true,cfg,base);
   };
 
+  var lineCfg = {
+        duration : 1000,
+        pointStart : 20,
+        pointInterval : 100,
+        line : {
+          'stroke-width': 2,
+          'stroke-linejoin': 'round',
+          'stroke-linecap': 'round'
+        },
+        lineActived : {
+          'stroke-width': 3
+        },
+        markers : {
+          marker : {
+            radius : 3
+          },
+          actived : {
+            radius : 6,
+            stroke: '#fff'
+          }
+        },
+        animate : true
+      };
   Theme.Base = Theme({
     colors : ['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
     symbols : ['circle','diamond','square','triangle','triangle-down'],
@@ -60,29 +83,22 @@ define('bui/chart/theme',function (requrie) {
         dy : 30
     },
     seriesOptions : {
-      lineCfg : {
-        duration : 1000,
-        pointStart : 20,
-        pointInterval : 100,
-        line : {
-          'stroke-width': 2,
-          'stroke-linejoin': 'round',
-          'stroke-linecap': 'round'
+      lineCfg : lineCfg,
+      areaCfg : lineCfg,
+      bubbleCfg : {
+        circle : {
+            'stroke-width' : 1,
+            'fill-opacity' : .5
         },
-        lineActived : {
-          'stroke-width': 3
-        },
-        //smooth:true,
-        markers : {
-          marker : {
-            radius : 3
-          },
-          actived : {
-            radius : 6,
-            stroke: '#fff'
-          }
-        },
-        animate : true
+        activeCircle : {
+            'stroke-width' : 2
+        }
+      },
+      pieCfg : {
+        colors : ['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
+        item : {
+          stroke : '#fff'
+        }
       }
       
     },
