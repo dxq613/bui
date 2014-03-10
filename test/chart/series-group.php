@@ -23,6 +23,7 @@
   <script type="text/javascript" src="../../src/chart/plotitem.js"></script>
   <script type="text/javascript" src="../../src/chart/labels.js"></script>
   <script type="text/javascript" src="../../src/chart/markers.js"></script>
+  <script type="text/javascript" src="../../src/chart/axis/abstract.js"></script>
 
   <script type="text/javascript" src="../../src/chart/axis/base.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/number.js"></script>
@@ -31,6 +32,8 @@
    <script type="text/javascript" src="../../src/chart/axis/auto.js"></script>
    <script type="text/javascript" src="../../src/chart/axis/time.js"></script>
    <script type="text/javascript" src="../../src/chart/axis.js"></script>
+    <script type="text/javascript" src="../../src/chart/axis/radius.js"></script>
+  <script type="text/javascript" src="../../src/chart/axis/circle.js"></script>
 
   <script type="text/javascript" src="../../src/chart/mixin/actived.js"></script>
   <script type="text/javascript" src="../../src/chart/mixin/activedgroup.js"></script>

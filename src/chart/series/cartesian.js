@@ -68,12 +68,28 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
       var _self = this,
         xAxis = _self.get('xAxis'),
         yAxis = _self.get('yAxis'),
-        yValue = _self.parseYValue(y);
+        yValue = _self.parseYValue(y),
+        point = {};
 
-      return {
-        x : xAxis.getOffset(x),
-        y : yAxis.getOffset(yValue)
-      };
+      if(xAxis.get('type') == 'time'){
+        x = date2number(x);
+      }
+      //圆形坐标轴，一般用于雷达图
+      if(_self.isInCircle()){
+        
+        point = yAxis.getPointByAngle(x,yValue);
+      }else{
+        point.x = xAxis.getOffset(x);
+        point.y = yAxis.getOffset(yValue);
+      }
+
+      BUI.mix(point,{
+        yValue : yValue,
+        xValue : x,
+        value : y
+      });
+
+      return point;
     },
     /**
      * 根据对象获取值
@@ -100,27 +116,8 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
      * @return {Object} 点的信息
      */
     getPointByValue : function(xValue,value){
-      
-      var _self = this,
-        xAxis = _self.get('xAxis'),
-        yAxis = _self.get('yAxis'),
-        x,y,
-        yValue;
 
-      if(xAxis.get('type') == 'time'){
-        xValue = date2number(xValue);
-      }
-      x = xAxis.getOffset(xValue);
-      yValue = _self.parseYValue(value);
-      y = yAxis.getOffset(yValue);
-
-      return {
-        x : x,
-        y : y,
-        xValue : xValue,
-        yValue : yValue,
-        value : value
-      };
+      return this.getPoint(xValue,value);
     },
     /**
      * @protected
@@ -134,10 +131,8 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
      * 判断是否近似相等
      */
     snapEqual : function(value1,value2){
-      var _self = this,
-        xAxis = _self.get('xAxis');
+      var _self = this;
       
-    
       if(BUI.isString(value1)){
         return value1 == value2;
       }
@@ -148,6 +143,29 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
 
       return value1 == value2;
       
+    },
+    /**
+     * 是否使用圆形坐标轴作为x轴
+     * @return {Boolean} 
+     */
+    isInCircle : function(){
+      return this.get('xAxis').get('type') == 'circle';
+    },
+    /**
+     * @protected
+     * 如果使用圆形坐标轴，则返回中心节点
+     */
+    getCircleCenter : function(){
+      var _self = this,
+        xAxis = _self.get('xAxis'),
+        rst = null;
+      if(xAxis.get('type') == 'circle'){
+        rst = xAxis.getCenter();
+      }
+      return rst;
+    },
+    getCircle : function(){
+      return this.isInCircle() ? this.get('xAxis') : null;
     },
     /**
      * 获取对应坐标轴上的数据，一般用于计算坐标轴
@@ -217,6 +235,10 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
         x = xAxis.getOffsetByIndex(index);
       }
 
+      if(_self.isInCircle()){
+        return _self.getPoint(x,value);
+      }
+
       originValue = xAxis.getValue(x);
       if(pointInterval){
         originValue = Util.tryFixed(originValue,pointInterval);
@@ -235,9 +257,15 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
     getTrackingInfo : function(point){
       var _self = this,
         xAxis = _self.get('xAxis'),
-        yAxis = _self.get('yAxis'),
-        xValue = xAxis.getValue(point.x);
+        xValue;
 
+      if(_self.isInCircle()){
+        var angle = xAxis.getCircleAngle(point.x,point.y);
+
+        xValue = xAxis.getValue(angle);
+      }else{
+        xValue = xAxis.getValue(point.x);
+      }
       return _self.findPointByValue(xValue);
     },
     /**

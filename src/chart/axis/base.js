@@ -3,13 +3,11 @@
  * @ignore
  */
 
-define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bui/chart/grid','bui/chart/showlabels'],function(require) {
+define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'],function(require) {
 
     var BUI = require('bui/common'),
-        Item = require('bui/chart/plotitem'),
-        Grid = require('bui/chart/grid'),
+        Abstract = require('bui/chart/abstractaxis'),
         Util = require('bui/graphic').Util,
-        ShowLabels = require('bui/chart/showlabels'),
         CLS_AXIS = 'x-chart-axis';
 
     //是否在2个数之间
@@ -161,9 +159,8 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
 
     };
 
-    BUI.extend(Axis,Item);
+    BUI.extend(Axis,Abstract);
 
-    BUI.mixin(Axis,[ShowLabels]);
 
     BUI.augment(Axis,{
 
@@ -234,24 +231,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             }
 
         },
-        /**
-         * @protected
-         * 渲染控件
-         */
-        renderUI : function(){
-            var _self = this;
-            Axis.superclass.renderUI.call(_self);
-
-            _self.renderLabels();
-            
-            
-            if(_self.get('title')){
-                _self._renderTitle();
-            }
-            if(_self.get('autoPaint')){
-                _self.paint();
-            }
-        },
+        
         /**
          * 绘制坐标轴
          */
@@ -260,23 +240,6 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             _self._drawLines();
             _self._renderTicks();
             _self._renderGrid(); 
-        },
-        /**
-         * 是否在坐标系内
-         * @return {Boolean} 是否在坐标系内
-         */
-        isInAxis : function(x,y){
-            
-            if(BUI.isObject(x)){
-                y = x.y;
-                x = x.x;
-            }
-            var _self = this,
-                plotRange = _self.get('plotRange'),
-                start = plotRange.start,
-                end = plotRange.end;
-
-            return isBetween(x,start.x,end.x) && isBetween(y,start.y,end.y);
         },
         /**
          * 是否是纵坐标
@@ -359,17 +322,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             return ticks[ticks.length - 1];
         },
 
-        /**
-         * 获取逼近坐标点的值
-         * @param  {Number} offset 画布上的点在坐标轴上的对应值
-         * @return {Number} 坐标轴上的值
-         */
-        getSnapValue : function(offset){
-            var _self = this,
-                pointCache = _self.get('pointCache');
-            return Util.snapTo(pointCache,offset);
-                
-        },
+        
         getSnapIndex : function(offset){
             var _self = this,
                 pointCache = _self.get('pointCache'),
@@ -517,8 +470,23 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             }
             return length;
         },
+        /**
+         * @protected
+         * 获取坐标轴的path
+         * @return {String|Array} path
+         */
+        getLinePath : function(){
+            var _self = this,
+                start = _self.get('start'),
+                end = _self.get('end'),
+                path = [];
+
+            path.push(['M',start.x,start.y]);
+            path.push(['L',end.x,end.y]);
+            return path;
+        },
         //画轴线
-        _drawLines : function(){
+        /*_drawLines : function(){
             var _self = this,
                 start = _self.get('start'),
                 end = _self.get('end'),
@@ -577,54 +545,46 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
                 }
             });
         },
-        /**
-         * 格式化坐标轴上的节点，用于展示
-         * @param  {*} value 格式化文本
-         * @return {String}  格式化后的信息
-         */
-        formatPoint : function(value){
-            var _self = this,
-                formatter = _self.get('formatter');
-            if(formatter){
-                value = formatter.call(this,value);
-            }
-            return value;
-        },
+        
         //添加坐标轴上的坐标点
         _addTickItem : function(offsetPoint){
 
             var _self = this,
-                lineAttrs = _self.get('tickLine'),
-                value = lineAttrs.value,
                 tickItems = _self.get('tickItems'),
-                factor = _self._getAlignFactor(),
                 cfg = {
                     x1 : offsetPoint.x,
                     y1 : offsetPoint.y
-                };
+                },
+                end = _self.getTickEnd(offsetPoint);
 
             if(!tickItems){
                 tickItems = [];
                 _self.set('tickItems',tickItems);
             }
+            BUI.mix(cfg,end);
+            tickItems.push(cfg);
+        },*/
+        getTickEnd : function(start){
+            var _self = this,
+                lineAttrs = _self.get('tickLine'),
+                factor = _self._getAlignFactor(),
+                value = lineAttrs.value,
+                rst = {};
 
             if(_self.isVertical()){
-                cfg.x2 = cfg.x1 + value * factor;
-                cfg.y2 = cfg.y1;
+                rst.x2 = start.x1 + value * factor;
+                rst.y2 = start.y1;
             }else {
-                cfg.x2 = cfg.x1;
-                cfg.y2 = cfg.y1 + value * factor;
+                rst.x2 = start.x1;
+                rst.y2 = start.y1 + value * factor;
             }
-            //BUI.mix(cfg,lineAttrs);
-            //delete cfg.value;
-            tickItems.push(cfg);
+            return rst;
         },
-
+        /*
         _renderTicks : function(){
             var _self = this,
                 tickItems = _self.get('tickItems'),
                 lineAttrs = _self.get('tickLine'),
-                
                 path = '',
                 cfg = BUI.mix({},lineAttrs);
             if(tickItems){
@@ -632,7 +592,6 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
                     var subPath = BUI.substitute('M{x1} {y1}L{x2} {y2}',item);
                     path += subPath;
                 });
-                
                 
                 delete cfg.value;
                 cfg.path = path;
@@ -646,7 +605,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
                 
                 
             }
-        },
+        },*/
         _changeTicks : function(){
             var _self = this,
                 tickShape = _self.get('tickShape'),
@@ -728,8 +687,30 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             }
 
         },
+        /**
+         * 获取栅格项的配置信息，一般是起始点信息
+         * @protected
+         */
+        getGridItemCfg : function(offsetPoint){
+            var _self = this,
+                item = {},
+                plotRange = _self.get('plotRange');
+
+            item.x1 = offsetPoint.x;
+            item.y1 = offsetPoint.y;
+            if(_self.isVertical()){
+                item.y2 = item.y1;
+                item.x2 = plotRange.end.x;
+            }else{
+                item.x2 = item.x1;
+                item.y2 = plotRange.end.y;
+            }
+
+            return item;
+
+        },
         //添加grid的项
-        _addGridItem : function(offsetPoint){
+        /*_addGridItem : function(offsetPoint){
             var _self = this,
                 grid = _self.get('grid'),
                 plotRange = _self.get('plotRange'),
@@ -750,6 +731,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             grid.items.push(item);
 
         },
+
         //渲染栅格
         _renderGrid : function(){
             var _self = this,
@@ -761,7 +743,8 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/plotitem','bu
             }
             gridGroup = _self.get('parent').addGroup(Grid,grid);
             _self.set('gridGroup',gridGroup);
-        },
+        },*/
+
         _changeGrid : function(){
             var _self = this,
                 grid = _self.get('grid'),

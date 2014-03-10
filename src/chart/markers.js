@@ -31,7 +31,7 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 			value : 'x-chart-markers'
 		},
 		zIndex : {
-			value : 3
+			value : 6
 		},
 		/**
 		 * 标记的配置项
@@ -175,16 +175,26 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 			var _self = this,
 				xCache = _self.get('xCache'),
 				single = _self.get('single'),
-				offset = BUI.isObject(point) ? point.x : point;
+				rst;
 
 			if(single){
-				//var marker = _self.getChildAt(0);
 				return _self.getChildAt(0);
 			}
-
-			var	snap = Util.snapTo(xCache,offset,tolerance),
+			if(BUI.isObject(point)){
+				var children = _self.get('children');
+				BUI.each(children,function(marker){
+					if(marker.attr('x') == point.x && marker.attr('y') == point.y){
+						rst = marker;
+						return false;
+					}
+				});
+			}else{
+				var	snap = Util.snapTo(xCache,point,tolerance),
 				index = BUI.Array.indexOf(snap,xCache);
-			return _self.getChildAt(index);
+				rst =  _self.getChildAt(index);
+			}
+
+			return rst;
 		}
 	});
 

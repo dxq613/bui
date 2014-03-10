@@ -24,8 +24,6 @@ define('bui/chart/theme',function (requrie) {
 
   var lineCfg = {
         duration : 1000,
-        pointStart : 20,
-        pointInterval : 100,
         line : {
           'stroke-width': 2,
           'stroke-linejoin': 'round',

@@ -136,6 +136,13 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
 
     deviation = deviation / length;
 
+    if(min == max){
+      if(min > 0){
+        min = 0;
+      }else{
+        max = 0;
+      }
+    }
     return {
       max : max,
       min : min,
@@ -232,7 +239,12 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
         if(rst.deviation > temp){
           interval = snapTo(temp,true,intervalArray);
         }else{
-          interval = snapTo(rst.deviation,true,intervalArray);
+          if(rst.deviation){
+            interval = snapTo(rst.deviation,true,intervalArray);
+          }else{
+            interval = snapTo(temp,true,intervalArray);
+          }
+          
         }
         
         count = parseInt((max - min) / interval,10);

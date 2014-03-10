@@ -117,6 +117,13 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 			value : 100
 		},
 		/**
+		 * 用于格式化数据序列时使用
+		 * @type {Function}
+		 */
+		pointRenderer : {
+
+		},
+		/**
 		 * 跟在value后面的后缀
 		 * @type {String}
 		 */
@@ -356,16 +363,33 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 			});
 
 		  var nameShape =	group.addShape('text',cfg),
-		  	width = nameShape.getBBox().width,
+		  	width = nameShape.getBBox().width + 10,
 		  	valueSuffix = _self.get('valueSuffix'),
+		  	itemValue;
+		  if(BUI.isArray(item.value)){
+		  	BUI.each(item.value,function(sub){
+		  		var subItem
+		  		if(BUI.isObject(sub)){
+		  			subItem = addValue(sub.text,sub);
+		  		}else{
+		  			subItem = addValue(sub);
+		  		}
+		  		width = width + subItem.getBBox().width;
+		  	});
+		  }else{
 		  	itemValue = valueSuffix ? item.value + ' ' + valueSuffix : item.value;
-
-		  cfg = BUI.merge(value,{
-				x : width + 5,
-				y : y,
-				text : itemValue
-			});
-		  group.addShape('text',cfg);
+		  	addValue(itemValue);
+		  }
+		  	
+		  function addValue (text,params){
+		  	var cfg = BUI.merge(value,{
+					x : width,
+					y : y,
+					text : text
+				},params);
+			  return group.addShape('text',cfg);
+		  }
+		  
 
 		},
 		/**

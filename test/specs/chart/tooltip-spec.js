@@ -18,6 +18,7 @@ BUI.use(['bui/graphic','bui/chart/tooltip'],function (Graphic,Tooltip) {
 				x : 8,
 				y : 15
 		},
+		visible : true,
 		valueSuffix : 'millions',
 		items : [
 			{color : 'red',name : 'name1',value : '1222333'},
@@ -84,6 +85,23 @@ BUI.use(['bui/graphic','bui/chart/tooltip'],function (Graphic,Tooltip) {
 
 		it('测试移动',function(){
 			tooltip.setPosition(100,100);
+		});
+
+		it('修改复杂内容',function(){
+			var items = [{
+				color : '#2f7ed8',
+				name : 'Asia',
+				value : '635'
+			},{
+				color : '#0d233a',
+				name : 'Africa',
+				value : ['107',{fill : 'red',text : 100}]
+			}];
+
+			tooltip.setItems(items);
+
+			expect(tooltip.get('textGroup').getCount()).toBe(2);
+
 		});
 
 	});

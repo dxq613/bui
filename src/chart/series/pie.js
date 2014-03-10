@@ -46,8 +46,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
   function alignLables(center,r,arr,endAngle,factor){
     var count = parseInt(r * 2 / LINE_HEIGHT,10),//理论上，最大显示的条数
       maxY = center.y + r,
-      minY = center.y - r,
-      avgAngle = 180 / count;  //理论上平均的角度分布文本
+      minY = center.y - r;
     if(count < arr.length){ //忽略掉不能显示的条数
       arr = arr.slice(0,count - 1);
     }
@@ -73,7 +72,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     }
 
 
-    if(conflictIndex && conflictIndex < length){ //说明存在冲突，因为已经调整过，所以conflictIndex > 0
+    if(conflictIndex && conflictIndex < length - 1){ //说明存在冲突，因为已经调整过，所以conflictIndex > 0
       var start = conflictIndex - 1,
         startLabel = arr[start],
         y = startLabel.y,
@@ -253,14 +252,21 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         }
       });
       if(leftArray.length){
-        alignLables(center,rAppend,leftArray,endAngle,-1);
+        var end;
+        if(startAngle > -90){
+          end = 270;
+        }else{
+          end = -90;
+        }
+        alignLables(center,rAppend,leftArray,end,-1);
         BUI.each(leftArray,function(label){
           labelsGroup.addLabel(label);
           _self.lineToLabel(label,r,distance);
         });
       }
       if(rightArray.length){
-        alignLables(center,rAppend,rightArray,startAngle + (endAngle - startAngle)/2,1);
+
+        alignLables(center,rAppend,rightArray,90,1);
         BUI.each(rightArray,function(label){
           labelsGroup.addLabel(label);
           _self.lineToLabel(label,r,distance);
@@ -327,8 +333,8 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       var _self = this,
         middleAngle = point.startAngle + (point.endAngle - point.startAngle)/2,
         center = _self.getCenter(),
-        x = center.x + rAppend * Math.cos(middleAngle * RAD),
-        y = center.y + rAppend * Math.sin(middleAngle * RAD),
+        x = center.x + (rAppend + MARGIN) * Math.cos(middleAngle * RAD),
+        y = center.y + (rAppend + MARGIN) * Math.sin(middleAngle * RAD),
         rst = {},
         factor = 1;
 
@@ -353,7 +359,8 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       rst.factor = factor;
       rst.angle = middleAngle;
       rst.color = point.color;
-      rst.text = point.xValue + ':' + (point.percent * 100).toFixed(1)+ '%';
+      rst.point = point;
+      rst.text = point.xValue;
       return rst;
     },
     getActiveItems : function(){

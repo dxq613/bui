@@ -22,6 +22,10 @@
   <?php include("../templates/script.php"); ?>
 	
 	<script type="text/javascript" src="../../src/chart/plotitem.js"></script>
+  
+  <script type="text/javascript" src="../../src/chart/axis/abstract.js"></script>
+  <script type="text/javascript" src="../../src/chart/axis/radius.js"></script>
+
   <script type="text/javascript" src="../../src/chart/axis/base.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/grid.js"></script>
   <script type="text/javascript" src="../../src/chart/labels.js"></script>
@@ -29,6 +33,8 @@
   <script type="text/javascript" src="../../src/chart/axis/number.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/category.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/time.js"></script>
+
+
 
   <script type="text/javascript" src="../specs/chart/axis-spec.js"></script>
   <script type="text/javascript" src="../specs/chart/axis-number-spec.js"></script>

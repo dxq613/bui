@@ -93,6 +93,7 @@ define('bui/chart/showlabels',['bui/chart/labels'],function (require) {
       	label.text = value;
 	      label.x = offsetPoint.x;
 	      label.y = offsetPoint.y;
+        label.point = offsetPoint;
 	      rst = labelsGroup.addLabel(label);
       }
       return rst;

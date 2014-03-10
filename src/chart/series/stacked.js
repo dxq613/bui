@@ -38,8 +38,24 @@ define('bui/chart/series/stacked',function (require) {
       if(pre){
         var prePoint = pre.getPoints()[index],
           baseValue = _self.getBaseValue();
-        point.y = point.y + prePoint.y - baseValue;
+        if(!_self.isInCircle()){ //非雷达图中
+          point.y = point.y + prePoint.y - baseValue;
+        }else{ //雷达图中
+          var xAxis = _self.get('xAxis'),
+            r = xAxis.getDistance(point.x,point.y),
+            ir = prePoint.r || xAxis.getDistance(prePoint.x,prePoint.y),
+            curPoint;
+
+          r = ir + r;
+          curPoint = xAxis.getCirclePoint(point.xValue,r)
+          point.x = curPoint.x;
+          point.y = curPoint.y;
+          point.r = r;
+          point.ir = ir;
+        }
+        
         point.lowY = prePoint.y;
+        point.lowX = prePoint.x;
       }
     },
     /**
@@ -91,6 +107,19 @@ define('bui/chart/series/stacked',function (require) {
         }
       });
       return pre;
+    },
+    /**
+     * 获取提示信息
+     * @return {*} 返回显示在上面的文本
+     */
+    getTipItem : function(point){
+      var _self = this,
+        stackType = _self.get('stackType');
+      if(stackType == 'percent'){
+        var y = point.yValue || 0;
+        return [point.value,'（'+y.toFixed(2)+'%）'];
+      }
+      return point.value;
     },
     /**
      * 是否是层叠的数据序列

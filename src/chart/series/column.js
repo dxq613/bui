@@ -17,7 +17,38 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       l = color.l * (1 + percent);
     return Raphael.hsl2rgb(color.h,color.s,l).hex;
   }
+  
+  function getPiePath (startAngle, endAngle,r,ir,circle) {
+      var center = circle.getCenter(),
+        path,
+        cx = center.x,
+        cy = center.y,
+        start = circle.getCirclePoint(startAngle,r),
+        end = circle.getCirclePoint(endAngle,r);
 
+      //不存在内部圆
+      if(!ir){
+        path =  ["M", cx, cy, "L", start.x, start.y, "A", r, r, 0, +(endAngle - startAngle > 180), 1, end.x, end.y, "z"];
+      }else{
+        var iStart = circle.getCirclePoint(startAngle,ir),
+          iEnd = circle.getCirclePoint(endAngle,ir);
+
+        path = [];
+
+        path.push(['M',iStart.x,iStart.y]);
+        path.push(['L',start.x, start.y]);
+        path.push(["A", r, r, 0, +(endAngle - startAngle > 180), 1, end.x, end.y]);
+        path.push(['L',iEnd.x,iEnd.y]);
+        path.push(['A',ir,ir,0,+(endAngle - startAngle > 180),0,iStart.x,iStart.y]);
+        path.push(['z']);
+      }
+      return path;
+    }
+
+  /**
+   * @class BUI.Chart.Axis.Column
+   * 柱状图
+   */
   var Column = function(cfg){
     Column.superclass.constructor.call(this,cfg);
   };
@@ -57,7 +88,8 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       shared : false,
       value : {
         'stroke': 'none',
-        'stroke-width': 1
+        'stroke-width': 1,
+        'fill-opacity':.75
       }
     }
 
@@ -84,6 +116,7 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
         }
       }
     },
+    //渲染
     draw : function(points){
       var _self = this;
       _self.resetWidth();
@@ -100,19 +133,41 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       }
       _self.sort();
     },
+    //重置宽度
     resetWidth : function(){
+      if(this.isInCircle()){
+        this.resetCircleWidth();
+        return ;
+      }
       var _self = this,
-        parent = _self.get('parent'),
-        series = parent.getSeries(),
         curIndex,
         xAxis = _self.get('xAxis'),
         tickLength = xAxis.getTickAvgLength(),
         count,
         margin = 10,
         width,
-        offset;
-      if(!_self.isStacked()){ //非层叠的数据序列
-        var columns = [];
+        offset,
+        info = _self._getIndexInfo();
+
+      count = info.count;
+      curIndex = info.curIndex;
+
+      width = (tickLength/2)/count;
+      margin = 1/2 * width;
+      offset = 1/2 * (tickLength - (count) * width - (count - 1) * margin) + ((curIndex + 1) * width + curIndex * margin) - 1/2 * width - 1/2 * tickLength ;
+      _self.set('columnWidth',width);
+      _self.set('columnOffset',offset)
+
+    },
+    //获取index相关信息
+    _getIndexInfo : function(){
+      var _self = this,
+        parent = _self.get('parent'),
+        series = parent.getSeries(),
+        curIndex,
+        count,
+        columns = [];
+      if(!_self.isStacked()){
         BUI.each(series,function(item){
           if(item.get('visible') && item.get('type') == 'column'){
             columns.push(item);
@@ -121,18 +176,33 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
 
         count = columns.length;
         curIndex = BUI.Array.indexOf(_self,columns);
-
-      }else{ //层叠的进行
+      }else{
         count = 1;
         curIndex = 0;
       }
+      
+      return {
+        curIndex : curIndex,
+        count : count
+      };
+    },
+    //重置圆中的宽度
+    resetCircleWidth : function(){
+      var _self = this,
+        curIndex,
+        xAxis = _self.get('xAxis'),
+        avgAngle = xAxis.getTickAvgAngle(),
+        count,
+        width,
+        offset;
+      info = _self._getIndexInfo();
 
-      width = (tickLength/2)/count;
-      margin = 1/2 * width;
-      offset = 1/2 * (tickLength - (count) * width - (count - 1) * margin) + ((curIndex + 1) * width + curIndex * margin) - 1/2 * width - 1/2 * tickLength ;
+      count = info.count;
+      curIndex = info.curIndex;
+      width = avgAngle / count;
+      offset = curIndex * width;
       _self.set('columnWidth',width);
       _self.set('columnOffset',offset)
-
     },
     changeShapes : function(){
       var _self = this,
@@ -187,8 +257,8 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
         items = _self.getItems();
       if(point){
         BUI.each(items,function(item){
-          if(item.get('point').x == point.x){
-            _self.setActived(item);
+          if(item.get('point').x == point.x && item.get('point').y == point.y){
+            _self.setActivedItem(item);
           }
         });
       }
@@ -203,27 +273,48 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
     pointToFactorPath : function(point,factor){
       var _self = this,
         item = _self.get('item'),
-        width = _self.get('columnWidth'), //宽度
+        width = _self.get('columnWidth'), //宽度,雷达图中表示角度
         offset = _self.get('columnOffset'),
         height,
         value0,
         stackPadding = 0,
         baseValue =  _self.getBaseValue(),
+        isInCircle = _self.isInCircle(),
         path = []; //
-      if(_self.isStacked() && point.lowY){
-          value0 = point.lowY ;
-          stackPadding = _self.get('stackPadding');
-      }else{
-        value0 = baseValue;
-      }
-      value0 = value0 - stackPadding;
 
-      height = point.y - value0;
-      path.push(['M',point.x + offset - width/2,baseValue + (value0 - baseValue) * factor]);
-      path.push(['v',height * factor]);
-      path.push(['h',width]);
-      path.push(['v',-1 * height * factor]);
-      path.push(['z']);
+      if(isInCircle){ //雷达图中显示
+        var xAxis = _self.get('xAxis'),
+          angle = point.xValue,//此时xValue指角度
+          startAngle = offset + angle, //起始坐标
+          endAngle = offset + angle + width,//结束角度
+          r = point.r || xAxis.getDistance(point.x,point.y),
+          ir = point.ir || 0; 
+
+        r = r * factor;
+
+        /*if(_self.isStacked() && point.lowY){ //层叠图
+          ir = xAxis.getDistance(point.lowX,point.lowY);
+        }*/
+        ir = ir * factor;
+        path = getPiePath(startAngle,endAngle,r,ir,xAxis);
+
+      }else{
+        if(_self.isStacked() && point.lowY){
+            value0 = point.lowY ;
+            stackPadding = _self.get('stackPadding');
+        }else{
+          value0 = baseValue;
+        }
+        value0 = value0 - stackPadding;
+
+        height = point.y - value0;
+        path.push(['M',point.x + offset - width/2,baseValue + (value0 - baseValue) * factor]);
+        path.push(['v',height * factor]);
+        path.push(['h',width]);
+        path.push(['v',-1 * height * factor]);
+        path.push(['z']);
+      }
+      
 
       return path;
     },

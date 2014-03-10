@@ -3,12 +3,11 @@
  * @ignore
  */
 
-define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/chart/actived'],function (require) {
+define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],function (require) {
   
   var BUI = require('bui/common'),
     Cartesian = require('bui/chart/cartesianseries'),
-    Util = require('bui/graphic').Util,
-    Actived = require('bui/chart/actived');
+    Util = require('bui/graphic').Util;
 
   function trySet(obj,name,value){
     if(obj && !obj[name]){
@@ -29,7 +28,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
 
   BUI.extend(Line,Cartesian);
 
-  BUI.mixin(Line,[Actived]);
+  
 
   Line.ATTRS = {
 
@@ -109,19 +108,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         }
       }
     },
-    /**
-     * @protected
-     * 鼠标进入事件
-     */
-    onMouseOver : function(){
-      var _self = this,
-        parent = _self.get('parent');
-      _self.on('mouseover',function(){
-        if(parent.setActived){
-          parent.setActived(_self);
-        }
-      });
-    },
+   
     /**
      * @protected
      * 鼠标在画布上移动
@@ -130,8 +117,8 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
       var _self = this,
         point = ev.point,
         markersGroup = _self.get('markersGroup'),
-        marker = _self.getSnapMarker(point.x);
-      markersGroup && markersGroup.setActived(marker);
+        marker = _self.getSnapMarker(point);
+      markersGroup && markersGroup.setActivedItem(marker);
     },
     /**
      * @protected
@@ -175,31 +162,37 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         after();
       }else{
         lineShape = _self._createLine(path);
-        var cur = 0,
-          sub = [],
-          count = points.length;
-        //动画生成线和对应的点
-        Util.animStep(duration,function(factor){
-          var pre = cur;
-          cur = parseInt((factor) * count,10);
-          if(cur > count - 1){
-            cur = count - 1;
-          }
-          
-          if(cur != pre){
-            sub = points.slice(0,cur + 1);
-            path = _self.points2path(sub);
-            lineShape.attr('path',path);
-            _self.drawInner(sub);
-            for(var i = pre; i< cur; i++){
-              _self._drawPoint(points[i]);
+        if(_self.isInCircle()){
+          _self.circleAnimate(points,lineShape);
+        }else{
+          var cur = 0,
+            sub = [],
+            count = points.length;
+
+          //动画生成线和对应的点
+          Util.animStep(duration,function(factor){
+            var pre = cur;
+            cur = parseInt((factor) * count,10);
+            if(cur > count - 1){
+              cur = count - 1;
             }
             
-          }
-          if(factor == 1){
-            _self._drawPoint(points[cur]);
-          }
-        },after);
+            if(cur != pre){
+              sub = points.slice(0,cur + 1);
+              path = _self.points2path(sub);
+              lineShape.attr('path',path);
+              _self.drawInner(sub);
+              for(var i = pre; i< cur; i++){
+                _self._drawPoint(points[i]);
+              }
+              
+            }
+            if(factor == 1){
+              _self._drawPoint(points[cur]);
+            }
+          },after);
+        }
+        
       }
       //_self.set('lineShape',lineShape);
       /**
@@ -211,6 +204,30 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         callback && callback();
       }
       
+    },
+    /**
+     * 在圆中时的动画
+     */
+    circleAnimate : function(points,lineShape){
+      var _self = this,
+        circle = _self.getCircle(),
+        center = circle.getCenter(),
+        initPoints = [],
+        baseValue = _self.getBaseValue(),
+        path;
+      BUI.each(points,function(point){
+        var item = BUI.mix({
+          value : baseValue
+        },center);
+        initPoints.push(item);
+        _self._drawPoint(item);
+      });
+      path = _self.points2path(initPoints);
+      lineShape.attr('path',path);
+      _self.drawInner(initPoints);
+
+      _self.repaint();
+
     },
     /**
      * @protected
@@ -283,6 +300,9 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         preItem = item;
         
       });
+      if(_self.isInCircle()){
+        path += 'z';
+      }
       return path;
     },
     //获取tracker的路径，增加触发事件的范围
@@ -295,6 +315,9 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
         var str = 'L{x} {y}';
         path += BUI.substitute(str,item);
       });
+      if(_self.isInCircle()){
+        path += 'z';
+      }
       return path;
     },
     /**
@@ -313,7 +336,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
       }else{
         line && lineShape.attr(line);
         var markersGroup = _self.get('markersGroup');
-        markersGroup && markersGroup.clearActived();
+        markersGroup && markersGroup.clearActivedItem();
       }
     },
     
@@ -321,12 +344,17 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic','bui/ch
      * 获取逼近的marker
      * @return {BUI.Graphic.Shape} 逼近的marker
      */
-    getSnapMarker : function(offsetX){
+    getSnapMarker : function(point){
       var _self = this,
         markersGroup = _self.get('markersGroup'),
         rst = null;
       if(markersGroup){
-        rst = markersGroup.getSnapMarker(offsetX);
+        if(_self.isInCircle()){
+          var info = _self.getTrackingInfo(point);
+          rst = markersGroup.getSnapMarker(info);
+        }else{
+          rst = markersGroup.getSnapMarker(point.x);
+        }
       }
       return rst;
     }

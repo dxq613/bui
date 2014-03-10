@@ -166,11 +166,11 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }else{
         //标志从显示到隐藏
         if(tipGroup.get('visible')){
-          _self.clearActived();
+          _self.clearActivedItem();
           if(tipGroup.get('shared')){
             BUI.each(_self.getVisibleSeries(),function(series){
               var markers = series.get('markersGroup');
-              markers && markers.clearActived();
+              markers && markers.clearActivedItem();
             });
           }
           _self._hideTip();
@@ -182,7 +182,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      * 获取可以被激活的元素
      * @return {BUI.Chart.Actived[]} 可以被激活的元素集合
      */
-    getActiveItems : function(){
+    /*getActiveItems : function(){
       var _self = this,
         series = _self.getSeries(),
         rst = [];
@@ -202,7 +202,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           item.clearActived();
         }
       });
-    },
+    },*/
     /**
      * 获取所有的数据序列
      * @return {Array} [description]
@@ -244,18 +244,18 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         items : [],
         point : {}
       };
-      var count = 0;
+      var count = 0,
+        renderer = this.get('tipGroup').get('pointRenderer');
       BUI.each(sArray,function(series,index){
         var info = series.getTrackingInfo(point),
             item = {},
             title;
         
-          
         if(info){
           if(series.get('visible')){
             count = count + 1;
             item.name = series.get('name');
-            item.value = info.value;
+            item.value = renderer ? renderer(info) : series.getTipItem(info);
             item.color = info.color || series.get('color');
             rst.items.push(item);
             var markersGroup = series.get('markersGroup');
@@ -265,7 +265,6 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
                 x :info.x,
                 y : info.y
               });
-
             }
           }
           if(series.get('xAxis')){
@@ -375,7 +374,10 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }
 
       if(yAxis && !yAxis.isGroup){
-        
+        if(xAxis && xAxis.get('type') == 'circle'){
+          yAxis.type = 'radius';
+          yAxis.circle = xAxis;
+        }
         yAxis = _self._createAxis(yAxis);
         _self.set('yAxis',yAxis);
       }
@@ -388,7 +390,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         name;
       if(axis.categories){
         type = 'category';
-      }else if(!axis.ticks){
+      }else if(!axis.ticks && type != 'circle'){
         axis.autoTicks = true; //标记是自动计算的坐标轴
       }
       axis.plotRange = _self.get('plotRange');
@@ -416,7 +418,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         max,
         interval,
         autoUtil;
-        if(type == 'number') {
+        if(type == 'number' || type == 'radius') {
           min = axis.getCfgAttr('min');
           max = axis.getCfgAttr('max');
           autoUtil = Axis.Auto;

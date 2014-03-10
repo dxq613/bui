@@ -14,8 +14,11 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 	function floor(values,value){
 		var length = values.length,
 			pre = values[0];
-		if(value < values[0] || value > values[length - 1]){
+		if(value < values[0]){
 			return NAN;
+		}
+		if(value > values[length - 1]){
+			return values[length - 1];
 		}
 		for (var i = 1; i < values.length; i++) {
 			if(value < values[i]){

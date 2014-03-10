@@ -51,6 +51,17 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 			value : CLS_GRID
 		},
 		/**
+		 * 如果栅格线由多个点构成，线的类型
+		 *
+		 *  - line 不封闭的线
+		 *  - polygon 封闭的多边形
+		 *  - circle 圆
+		 * @type {String}
+		 */
+		type : {
+			value : 'line'
+		},
+		/**
 		 * 线的样式配置
 		 * @type {Object}
 		 */
@@ -199,7 +210,7 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 		//画栅格
 		_drawGridLines : function(items,lineCfg,cls){
 			var _self = this,
-        cfg = lines2path(items,lineCfg),
+        cfg = _self._linesToPath(items,lineCfg),
       	gridLine =	_self.addShape({
 	        type : 'path',
 	        elCls : cls,
@@ -213,7 +224,7 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 
         gridLine = _self.get('gridLine' + cls);
       if(gridLine){
-      	var cfg = lines2path(items,{});
+      	var cfg = _self._linesToPath(items,{});
       	if(animate){
       		Util.animPath(gridLine,cfg.path,2);
       	}else{
@@ -222,16 +233,43 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
       	
       }
 		},
-		//绘制线
-		_drawLine : function(item,lineCfg,cls){
+		_linesToPath : function(items,lineCfg){
 			var _self = this,
-				cfg = BUI.mix(lineCfg,item);
-
-			_self.addShape({
-				elCls : cls,
-				type : 'line',
-				attrs : lineCfg
+				path = [],
+				type = _self.get('type'),
+				cfg;
+			if(type == 'line'){
+				return lines2path(items,lineCfg);
+			}
+			cfg = BUI.mix({},lineCfg);
+			BUI.each(items,function(item){
+				path = path.concat(_self._getMultiplePath(item,type));
 			});
+			cfg.path = path;
+			return cfg;
+		},
+		_getMultiplePath : function(item,type){
+			var _self = this,
+				points = item.points,
+				path = [];
+			if(type == 'polygon'){ //多边形
+				BUI.each(points,function(point,index){
+					
+					if(index == 0){
+						path.push(['M',point.x,point.y]);
+					}else{
+						path.push(['L',point.x,point.y]);
+					}
+				});
+				path.push('z');
+			}else{
+				var x = item.center.x,
+					y = item.center.y,
+					rx = item.r,
+					ry = item.r;
+				path = [["M", x, y], ["m", 0, -ry], ["a", rx, ry, 0, 1, 1, 0, 2 * ry], ["a", rx, ry, 0, 1, 1, 0, -2 * ry], ["z"]];
+			}
+			return path;
 		},
 		//绘制奇偶背景
 		_drawOddEven : function(item,preItem,index){

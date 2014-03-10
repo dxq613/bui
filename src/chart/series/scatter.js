@@ -77,7 +77,7 @@ define('bui/chart/scatterseries',['bui/chart/cartesianseries','bui/chart/actived
           var target = ev.target,
             shape = target.shape;
           if(shape){
-            markersGroup.setActived(shape);
+            markersGroup.setActivedItem(shape);
           }
         });
       }
@@ -107,7 +107,7 @@ define('bui/chart/scatterseries',['bui/chart/cartesianseries','bui/chart/actived
           var target = ev.target,
             shape = target.shape;
           if(shape){
-            markersGroup.clearActived(shape);
+            markersGroup.clearActivedItem(shape);
           }
         });
       }

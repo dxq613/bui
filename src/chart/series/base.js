@@ -3,11 +3,12 @@
  * @ignore
  */
 
-define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/chart/markers'],function (require) {
+define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/chart/markers','bui/chart/actived'],function (require) {
   
   var BUI = require('bui/common'),
     Item = require('bui/chart/plotitem'),
     ShowLabels = require('bui/chart/showlabels'),
+    Actived = require('bui/chart/actived'),
     Markers = require('bui/chart/markers');
 
   /**
@@ -20,7 +21,7 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
 
   BUI.extend(Series,Item);
 
-  BUI.mixin(Series,[ShowLabels]);
+  BUI.mixin(Series,[ShowLabels,Actived]);
 
   Series.ATTRS = {
     zIndex : {
@@ -137,7 +138,15 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       var _self = this;
       Series.superclass.bindUI.call(_self);
       if(_self.get('enableMouseTracking')){
+
         _self.onMouseOver();
+        var parent = _self.get('parent');
+        
+        _self.on('mouseover',function(){
+          if(parent.setActivedItem){
+            parent.setActivedItem(_self);
+          }
+        });
       }
       if(!_self.get('stickyTracking')){
         _self.onMouseOut();
@@ -260,6 +269,13 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
      */
     getPointByValue : function(xValue,value){
 
+    },
+    /**
+     * 获取提示信息
+     * @return {*} 返回显示在上面的文本
+     */
+    getTipItem : function(point){
+      return point.value;
     },
     //根据x轴上的值获取y轴上的值
     findPointByValue : function(value){
