@@ -23,7 +23,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
     /**
      * @class BUI.Chart.Axis
      * 坐标轴
-     * @extends BUI.Chart.PlotItem
+     * @extends BUI.Chart.Axis.Abstract
      */
     function Axis(cfg){
         Axis.superclass.constructor.call(this,cfg);
@@ -32,12 +32,6 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
     Axis.ATTRS = {
         zIndex : {
             value : 4
-        },
-        /**
-         * 显示数据的图形范围
-         */
-        plotRange : {
-
         },
         /**
          * 距离初始位置的x轴偏移量,仅对于左侧、右侧的纵向坐标有效
@@ -113,49 +107,8 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
                 'stroke' : '#C0D0E0',
                 value : 5
             }
-        },
-        /**
-         * 标注的节点
-         * @type {Array}
-         */
-        ticks : {
-
-        },
-        /**
-         * 标题
-         * @type {String|Object}
-         */
-        title : {
-
-        },
-        /**
-         * 栅格配置
-         * @type {Object}
-         */
-        grid : {
-
-        },
-        /**
-         * 
-         * @type {Object}
-         */
-        labels : {
-
-        },
-        /**
-         * 是否自动绘制
-         * @type {Object}
-         */
-        autoPaint : {
-            value : true
-        },
-        /**
-         * 格式化坐标轴上的节点
-         * @type {Function}
-         */
-        formatter : {
-
         }
+       
 
     };
 

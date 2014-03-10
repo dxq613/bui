@@ -183,6 +183,10 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
 
   }  
 
+  /**
+   * @class BUI.Chart.Axis.Auto
+   * 计算坐标轴的工具类
+   */
   var Auto = {};
 
   /**
@@ -193,6 +197,7 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
    * - max : 坐标轴的最大值（可选）
    * - interval : 间距(可选)
    * @param  {Object} info 初始信息
+   * @memberOf BUI.Chart.Axis.Auto
    * @return {Object} 计算后的信息
    */
   Auto.caculate = function(info,stackType){
@@ -285,6 +290,11 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
     }
   };
 
+  /**
+   * @memberOf BUI.Chart.Axis.Auto
+   * 时间计算
+   * @type {Object}
+   */
   Auto.Time = {};
 
   var MINUTE_MS = 60 * 1000,

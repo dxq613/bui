@@ -24,7 +24,8 @@ define('bui/chart/timeaxis',['bui/common','bui/chart/numberaxis'],function (requ
   }
 
   /**
-   * @class BUI.Chart.Axis.DateTime
+   * @class BUI.Chart.Axis.Time
+   * 时间坐标轴
    */
   var Time = function(cfg){
     Time.superclass.constructor.call(this,cfg)

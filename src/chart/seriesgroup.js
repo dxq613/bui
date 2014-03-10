@@ -177,32 +177,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         }
       }
     },
-    /**
-     * @protected
-     * 获取可以被激活的元素
-     * @return {BUI.Chart.Actived[]} 可以被激活的元素集合
-     */
-    /*getActiveItems : function(){
-      var _self = this,
-        series = _self.getSeries(),
-        rst = [];
-
-      BUI.each(series,function(item){
-        if(item.isActived){
-          rst.push(item);
-        }
-      });
-      return rst;
-    },
-    clearActived : function(){
-      var _self = this,
-        series = _self.getSeries();
-      BUI.each(series,function(item){
-        if(item.clearActived){
-          item.clearActived();
-        }
-      });
-    },*/
+   
     /**
      * 获取所有的数据序列
      * @return {Array} [description]
@@ -637,7 +612,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
         if(item.get('yAxis') == null){
           if(BUI.isArray(yAxis)){
-            item.set('yAxis') = yAxis[0];
+            item.set('yAxis',yAxis[0]);
           }else{
             item.set('yAxis',yAxis);
           }

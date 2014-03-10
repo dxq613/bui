@@ -1,6 +1,6 @@
 /**
  * @fileOverview 包含数据序列子项的数据序列类,作为一个扩展可以用于柱状图、饼图
- * @ignorei
+ * @ignore
  */
 
 define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) {
@@ -105,7 +105,7 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
     },
     /**
      * 删除子项
-     * @param  {BUI.Chart.Series.Item} item 子项
+     * @param  {Object} item 子项
      */
     removeItem : function(item){
       var _self = this;

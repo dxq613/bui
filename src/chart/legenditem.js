@@ -139,7 +139,7 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
 		},
 		/**
 		 * 获取legend item的宽度
-		 * @return {[type]} [description]
+		 * @return {Number} 宽度
 		 */
 		getWidth : function(){
 			var _self = this,

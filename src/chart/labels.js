@@ -69,7 +69,7 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem','bui/graphic'],func
 		},
 		/**
 		 * 添加文本
-		 * @param {[type]} item [description]
+		 * @param {Object} item 文本配置项
 		 */
 		addLabel : function(item){
 			var _self = this,

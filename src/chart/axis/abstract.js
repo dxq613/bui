@@ -13,7 +13,7 @@ define('bui/chart/abstractaxis',function (require) {
     CLS_AXIS = 'x-chart-axis';
 
   /**
-   * BUI.Chart.Axis.Abastract
+   * @class BUI.Chart.Axis.Abstract
    * 抽象的坐标轴类
    * @extends BUI.Chart.PlotItem
    * @mixin BUI.Chart.ShowLabels
@@ -59,7 +59,7 @@ define('bui/chart/abstractaxis',function (require) {
 
     },
     /**
-     * 
+     * 坐标轴上的文本
      * @type {Object}
      */
     labels : {
