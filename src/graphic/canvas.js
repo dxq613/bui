@@ -5,6 +5,11 @@ define('bui/graphic/canvas',['bui/common','bui/graphic/group','bui/graphic/rapha
 		Raphael = require('bui/graphic/raphael'),
 		Container = require('bui/graphic/container');
 
+	/**
+	 * @class BUI.Graphic.Canvas
+	 * 图形的画板，支持SVG和VML
+	 * @extends BUI.Graphic.Container
+	 */
 	var Canvas = function(cfg){
 		Canvas.superclass.constructor.call(this,cfg);
 	};

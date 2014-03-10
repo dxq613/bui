@@ -93,7 +93,7 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
       this.get('el').rotate(a,x,y);
     },
     /**
-     * 
+     * 放大
      * @param  {Number} sx x轴方向的倍数 
      * @param  {Number} sy y轴方向的倍数
      * @param  {Number} cx x轴方向扩展的中心
@@ -247,7 +247,7 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
      * 矩形的高度
      * @type {Number}
      */
-    width : {}
+    height : {}
   };
 
   BUI.extend(Rect,Shape);

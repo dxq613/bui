@@ -41,7 +41,7 @@ define('bui/graphic/base',['bui/graphic/util'],function (require) {
 		node : {},
         /**
          * 画布
-         * @type {BUI.Graphic.Cavas}
+         * @type {BUI.Graphic.Canvas}
          */
         canvas : {
 

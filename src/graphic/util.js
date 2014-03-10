@@ -105,7 +105,11 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 			delete TIMES[uid];
 		}
 	}
-
+	/**
+	 * @class BUI.Graphic.Util
+	 * @singleton
+	 * 绘图的工具类
+	 */
 	var Util = {};
 
 	BUI.mix(Util,{
