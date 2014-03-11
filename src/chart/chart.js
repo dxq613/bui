@@ -82,18 +82,40 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       var _self = this,
         plotCfg = _self.get('plotCfg'),
         canvas = _self.get('canvas'),
-        plotBack = canvas.addGroup(PlotBack,plotCfg),
-        plotRange = plotBack.get('plotRange');
+        theme = _self.get('theme'),
+        plotBack,
+        plotRange;
+
+      plotCfg = BUI.mix({},theme.plotCfg,plotCfg);
+      plotBack = canvas.addGroup(PlotBack,plotCfg),
+      plotRange = plotBack.get('plotRange');
 
       _self.set('plotRange',plotRange);
 
     },
     //渲染title
     _renderTitle : function(){
-      
-    },
-    _renderTooltip : function(){
-
+      var _self = this,
+        title = _self.get('title'),
+        subTitle = _self.get('subTitle'),
+        theme = _self.get('theme'),
+        canvas = _self.get('canvas');
+      if(title){
+        if(title.x == null){
+          title.x = canvas.get('width')/2;
+          title.y = 15;
+        }
+        title = BUI.mix({},theme.title,title);
+        canvas.addShape('label',title);
+      }
+      if(subTitle){
+        if(subTitle.x == null){
+          subTitle.x = canvas.get('width')/2;
+          subTitle.y = 35;
+        }
+        subTitle = BUI.mix({},theme.subTitle,subTitle);
+        canvas.addShape('label',subTitle);
+      }
     },
     _getDefaultType : function(){
       var _self = this,

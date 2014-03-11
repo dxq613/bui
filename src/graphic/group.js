@@ -154,26 +154,7 @@ define('bui/graphic/group',['bui/common','bui/graphic/util','bui/graphic/contain
 			_self.set('y',params.y);
 			//_self._vmlAnimate(params,ms,callback);
 		},
-		/*_vmlAnimate : function(params,ms,callback){
-			var _self = this,
-				x = _self.get('x') || 0,//当前的x
-				y = _self.get('y') || 0,//当前的y
-				dx = params.x - x, //x 移动的距离
-				dy = params.y - y,
-				stepId = _self.get('stepId'); //y 移动的距离
-
-			stepId && Util.stopStep(stepId); //终止之前的动画
-
-		  stepId = Util.animStep(ms,function(factor){
-				var cx = x + dx * factor,
-					cy = y + dy * factor;
-					
-				_self.move(cx,cy);
-
-			},callback);
-
-			_self.set('stepId',stepId);
-		},*/
+		
 		/**
 		 * 移动的到位置
 		 * @param  {Number} x 移动到x

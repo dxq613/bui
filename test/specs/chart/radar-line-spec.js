@@ -61,12 +61,11 @@ BUI.use(['bui/chart/chart'],function (Chart) {
   describe('测试雷达图',function(){
     it('测试生成',function(){
       var series = group.getSeries();
-      expect(series.length).toBe(2);
-      expect(series[0].get('markersGroup')).not.toBe(undefined);
+      expect(series.length).toBe(3);
     });
   });
 });
-/**/
+
 BUI.use(['bui/chart/chart'],function (Chart) {
   var chart = new Chart({
     width : 1000,
@@ -432,11 +431,11 @@ BUI.use(['bui/chart/chart'],function (Chart) {
           type : 'area',
           name: 'column3',
           data: [1, 8, 2, 7, 3, 6, 4, 5]
-      }/**/
+      }
       ]
   });
 
   chart.render();
   
 });
-
+/**/

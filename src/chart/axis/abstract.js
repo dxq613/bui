@@ -134,6 +134,16 @@ define('bui/chart/abstractaxis',function (require) {
         _self.set('gridGroup',gridGroup);
     },
     /**
+     * 是否在坐标轴内
+     * @return {Boolean} 是否在坐标轴内
+     */
+    isInAxis : function(x,y){
+      var _self = this,
+        plotRange = _self.get('plotRange');
+    
+      return plotRange && plotRange.isInRange(x,y);
+    },
+    /**
      * @protected
      * 获取坐标轴的path
      * @return {String|Array} path

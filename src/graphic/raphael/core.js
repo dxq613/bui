@@ -5034,7 +5034,7 @@ define('bui/graphic/raphael/core',function(){
             var isPointInside = false;
             this.forEach(function (el) {
                 if (el.isPointInside(x, y)) {
-                    console.log('runned');
+                    //console.log('runned');
                     isPointInside = true;
                     return false; // stop loop
                 }

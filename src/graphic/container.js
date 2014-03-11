@@ -241,7 +241,7 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 			BUI.each(children,function(item){
 				item.destroy();
 			});
-			BUI.Array.empty(children);
+			children && BUI.Array.empty(children);
 			if(el.__set && el.__set.clear){
 				el.__set.clear();
 			}
@@ -255,7 +255,9 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
     		children = _self.get('children'),
     		el = _self.get('el'),
     		node = _self.get('node');
-
+    	if(_self.get('destroyed')){
+    		return;
+    	}
     	_self.clear();
 
     	Container.superclass.destroy.call(this);

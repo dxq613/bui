@@ -81,6 +81,7 @@
         children : [
           {text : '基础图形',href: 'chart/graphic.php'},
           {text : '坐标轴',href: 'chart/axis.php'},
+          {text : '雷达图坐标轴',href: 'chart/radar-axis.php'},
           {text : '文本集合',href: 'chart/labels.php'},
           {text : '自动计算坐标轴',href : 'chart/auto-axis.php'},
           {text : '折线序列',href : 'chart/line-series.php'},
@@ -91,7 +92,8 @@
           {text : '柱状图',href : 'chart/column-series.php'},
           {text : '饼图',href : 'chart/pie.php'},
           {text : '散列图',href : 'chart/scatter.php'},
-          {text : '气泡图',href : 'chart/bubble.php'}
+          {text : '气泡图',href : 'chart/bubble.php'},
+          {text : '雷达图',href : 'chart/radar.php'}
         ]
       },
       {

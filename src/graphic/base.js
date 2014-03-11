@@ -261,6 +261,7 @@ define('bui/graphic/base',['bui/graphic/util'],function (require) {
     	var _self = this;
     	if(_self.get('parent')){
     		_self.get('parent').removeChild(_self,destroy);
+            _self.set('parent',null);
     	}else if(destroy){
     		_self.destroy();
     	}
@@ -271,10 +272,15 @@ define('bui/graphic/base',['bui/graphic/util'],function (require) {
     destroy : function(){
     	var _self = this,
     		el = _self.get('el'),
-        node = _self.get('node');
+            destroyed = _self.get('destroyed'),
+            node = _self.get('node');
+        if(destroyed){
+            return;
+        }
     	el.remove && el.remove();
     	_self._attrs = {};
-      $(node).off();
+        $(node).off();
+        _self.set('destroyed',true);
     }
 
 	});

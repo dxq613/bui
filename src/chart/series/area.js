@@ -201,15 +201,22 @@ define('bui/chart/areaseries',['bui/common','bui/chart/lineseries','bui/graphic'
           path = path + linePath.replace('M','L');
           if(REGEX_MOVE.test(path)){
             path = Util.parsePathString(path);
-            var temp = [];
+            var temp = [],
+              preBreak = first;;
             BUI.each(path,function(item,index){
               if(index !== 0 && item[0] == 'M'){ //如果遇到中断的点，附加2个点
                 var n1 = [],
+                  n0 = [], //vml下 中间的'z'存在bug
                   n2 = [],
+
                   preItem = path[index - 1];
                 n1[0] = 'L';
                 n1[1] = preItem[1];
                 n1[2] = value0;
+
+                n0[0] = 'L';
+                n0[1] = preBreak.x;
+                n0[2] = value0;
 
                 n2[0] = 'M';
                 n2[1] = item[1];
@@ -222,14 +229,18 @@ define('bui/chart/areaseries',['bui/common','bui/chart/lineseries','bui/graphic'
                   item[0] = 'L';
                 }
                 temp.push(n1);
+                temp.push(n0);
                 temp.push(n2);
-                
+                preBreak = item;
               }
               temp.push(item);
               
             });
             path = temp;
-            path.push([['L',last.x,value0,'z']]);
+            path.push(['L',last.x,value0]);
+            if(Util.svg){
+              path.push(['Z'])
+            }
 
           }else{
             path = path + 'L '+ last.x + ' '+value0+'z';

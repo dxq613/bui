@@ -1285,7 +1285,7 @@ define('bui/util',function(require){
             /**
              * 是否是布尔类型
              *
-             * @param {Object} 测试的值
+             * @param {Object} value 测试的值
              * @return {Boolean}
              */
             isBoolean: function(value) {
@@ -7192,7 +7192,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     /**
      * 获取子控件的xclass类型
      * @protected
-     * @param {jQuery} 子控件的根节点
+     * @param {jQuery} childNode 子控件的根节点
      */
     findXClassByNode: function (childNode, ignoreError) {
       var _self = this,
@@ -8168,7 +8168,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * <pre><code>
      * var index = list.indexOf(item); //返回索引，不存在则返回-1
      * </code></pre>
-     * @param  {Object|BUI.Component.Controller} 选项
+     * @param  {Object|BUI.Component.Controller} item 选项
      * @return {Number}   项的索引值
      */
     indexOfItem : function(item){

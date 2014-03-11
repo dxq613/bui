@@ -17,6 +17,279 @@ define('bui/chart',['bui/common','bui/chart/chart','bui/chart/axis','bui/chart/s
   return Chart;
 });
 /**
+ * @fileOverview 图表中的激活的元素
+ * @ignore
+ */
+
+define('bui/chart/actived',function (require) {
+	
+	var BUI = require('bui/common');
+
+	/**
+	 * @protected
+	 * @class BUI.Chart.Actived
+	 * 控件可以被激活（active)的扩展
+	 */
+	var Actived = function(){
+
+	};
+
+	Actived.ATTRS = {
+
+		/**
+		 * 是否激活
+		 * @type {Boolean}
+		 */
+		actived : {
+			value : false
+		}
+
+	}; 
+
+	BUI.augment(Actived,{
+		/**
+		 * 是否处于激活状态
+		 * @return {Boolean} 激活状态
+		 */
+		isActived : function(){
+			return this.get('actived');
+		},
+		/**
+		 * 设置激活
+		 */
+		setActived : function(){
+			this.setActiveStatus(true);
+			this.set('actived',true);
+		},
+		/**
+		 * @protected
+		 * 设置图形的激活状态
+		 * @param {Boolean} actived 是否激活
+		 */
+		setActiveStatus : function(actived){
+			
+		},
+		/**
+		 * 清除激活
+		 */
+		clearActived : function(){
+			this.setActiveStatus(false);
+			this.set('actived',false);
+			if(this.clearActivedItem){
+				this.clearActivedItem();
+			}
+		}
+	});
+
+	return Actived;
+});/**
+ * @fileOverview 子元素可以被激活
+ * @ignore
+ */
+
+define('bui/chart/activedgroup',function  (require) {
+	
+	/**
+	 * @class BUI.Chart.ActivedGroup
+	 * @protected
+	 * 元素可以激活的容器扩展
+	 */
+	var Group = function(){
+
+	};
+
+	Group.ATTRS = {
+
+	};
+
+	BUI.augment(Group,{
+
+		/**
+		 * @protected
+		 * 是否激活
+		 * @param {BUI.Chart.Actived} item 可以被激活的元素
+		 * @return {BUI.Chart.Actived[]} 可以被激活的元素集合
+		 */
+		isItemActived : function(item){
+			return item.isActived();
+		},
+		/**
+		 * @protected
+		 * 获取可以被激活的元素
+		 * @return {BUI.Chart.Actived[]} 可以被激活的元素集合
+		 */
+		getActiveItems : function(){
+			return this.get('children');
+		},
+		/**
+		 * @protected
+		 * 设置激活状态
+		 * @param {BUI.Chart.Actived} item 可以被激活的元素
+		 * @param {Boolean} actived 是否激活
+		 */
+		setItemActived : function(item,actived){
+			if(actived){
+				item.setActived();
+			}else{
+				item.clearActived();
+			}
+		},
+		/**
+		 * 设置激活的元素
+		 * @param {BUI.Chart.Actived} item 可以被激活的元素
+		 */
+		setActivedItem : function(item){
+			var _self = this;
+
+			_self.clearActivedItem();
+			if(item && !_self.isItemActived(item)){
+				_self.setItemActived(item,true);
+			}
+			
+		},
+		/**
+		 * 获取激活的元素
+		 * @return {BUI.Chart.Actived} 激活的元素
+		 */
+		getActived : function(){
+			var _self = this,
+				items = _self.getActiveItems(),
+				rst = null;
+
+			BUI.each(items,function(item){
+				if(_self.isItemActived(item)){
+					rst = item;
+					return false;
+				}
+			});
+
+			return rst;
+		},
+		/**
+		 * 清除激活的元素
+		 */
+		clearActivedItem : function(item){
+			var _self = this;
+			item = item || _self.getActived();
+			item && _self.setItemActived(item,false);
+		}
+
+	});
+
+	return Group;
+});/**
+ * 内部显示Labels的控件扩展
+ * @ignore
+ */
+
+define('bui/chart/showlabels',['bui/chart/labels'],function (require) {
+	var BUI = require('bui/common'),
+		Labels = require('bui/chart/labels');
+
+	/**
+	 * @class BUI.Chart.ShowLabels
+	 * 内部显示文本集合
+	 */
+	var ShowLabels = function(){
+
+	};
+
+	ShowLabels.ATTRS = {
+
+		/**
+		 * 多个文本的配置项
+		 * @type {Object}
+		 */
+		labels : {
+
+		}
+	};
+
+	BUI.augment(ShowLabels,{
+ 
+		/**
+		 * @protected
+		 * 渲染文本
+		 */
+		renderLabels : function(){
+			var _self = this,
+          labels = _self.get('labels'),
+          labelsGroup;
+      if(!labels){
+        return;
+      }
+      if(!labels.items){
+      	labels.items = [];
+      }
+
+      /*labels.x = _self.get('x');
+      labels.y = _self.get('y');*/
+
+      labelsGroup = _self.addGroup(Labels,labels);
+      _self.set('labelsGroup',labelsGroup);
+		},
+		/**
+		 * 设置labels
+		 * @param  {Array} items items的配置信息
+		 */
+		resetLabels : function(items){
+			var _self = this,
+				labels = _self.get('labels');
+				
+			if(!labels){
+				return;
+			}
+			
+			var labelsGroup = _self.get('labelsGroup'),
+				children = labelsGroup.get('children'),
+				count = children.length;
+			items = items || labels.items;
+			BUI.each(items,function(item,index){
+				if(index < count){
+					var label = children[index];
+					labelsGroup.changeLabel(label,item);
+				}else{
+					_self.addLabel(item.text,item);
+				}
+			});
+
+			for(var i = count - 1; i >= items.length ; i--){
+				children[i].remove();
+			}
+		},
+		/**
+		 * @protected
+		 * 添加文本项
+		 * @param {String|Number} value  显示的文本
+		 * @param {Object} offsetPoint 显示的位置
+		 */
+    addLabel : function(value,offsetPoint){
+      var _self = this,
+          labelsGroup = _self.get('labelsGroup'),
+          label = {},
+          rst;
+      if(labelsGroup){
+      	label.text = value;
+	      label.x = offsetPoint.x;
+	      label.y = offsetPoint.y;
+        label.point = offsetPoint;
+	      rst = labelsGroup.addLabel(label);
+      }
+      return rst;
+    },
+    /**
+     * @protected
+     * 移除文本
+     */
+    removeLabels : function(){
+    	var _self = this,
+    		labelsGroup = _self.get('labelsGroup');
+    	labelsGroup && labelsGroup.remove();
+    }
+	})
+
+	return ShowLabels;
+});/**
  * @fileOverview 图表中的文本信息
  * @ignore
  */
@@ -87,7 +360,7 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem','bui/graphic'],func
 		},
 		/**
 		 * 添加文本
-		 * @param {[type]} item [description]
+		 * @param {Object} item 文本配置项
 		 */
 		addLabel : function(item){
 			var _self = this,
@@ -552,7 +825,7 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
 		},
 		/**
 		 * 获取legend item的宽度
-		 * @return {[type]} [description]
+		 * @return {Number} 宽度
 		 */
 		getWidth : function(){
 			var _self = this,
@@ -1250,6 +1523,16 @@ define('bui/chart/theme',function (requrie) {
     plotCfg : {
       margin : 50
     },
+    title : {
+      'font-size' : '16px',
+      'font-family' : 'tahoma,arial,"SimSun",Georgia, "Times New Roman", Times, serif',
+      'fill' : '#274b6d'
+    },
+    subTitle : {
+      'font-size' : '14px',
+      'font-family' : 'tahoma,arial,"SimSun",Georgia, "Times New Roman", Times, serif',
+      'fill' : '#4d759e'
+    },
     xAxis : {
       labels : {
         label : {
@@ -1749,184 +2032,6 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 	return Tooltip;
 
 });/**
- * @fileOverview 图表中的激活的元素
- * @ignore
- */
-
-define('bui/chart/actived',function (require) {
-	
-	var BUI = require('bui/common');
-
-	/**
-	 * @protected
-	 * @class BUI.Chart.Actived
-	 * 控件可以被激活（active)的扩展
-	 */
-	var Actived = function(){
-
-	};
-
-	Actived.ATTRS = {
-
-		/**
-		 * 是否激活
-		 * @type {Boolean}
-		 */
-		actived : {
-			value : false
-		}
-
-	}; 
-
-	BUI.augment(Actived,{
-		/**
-		 * 是否处于激活状态
-		 * @return {Boolean} 激活状态
-		 */
-		isActived : function(){
-			return this.get('actived');
-		},
-		/**
-		 * 设置激活
-		 */
-		setActived : function(){
-			this.setActiveStatus(true);
-			this.set('actived',true);
-		},
-		/**
-		 * @protected
-		 * 设置图形的激活状态
-		 * @param {Boolean} actived 是否激活
-		 */
-		setActiveStatus : function(actived){
-			
-		},
-		/**
-		 * 清除激活
-		 */
-		clearActived : function(){
-			this.setActiveStatus(false);
-			this.set('actived',false);
-			if(this.clearActivedItem){
-				this.clearActivedItem();
-			}
-		}
-	});
-
-	return Actived;
-});/**
- * 内部显示Labels的控件扩展
- * @ignore
- */
-
-define('bui/chart/showlabels',['bui/chart/labels'],function (require) {
-	var BUI = require('bui/common'),
-		Labels = require('bui/chart/labels');
-
-	/**
-	 * @class BUI.Chart.ShowLabels
-	 * 内部显示文本集合
-	 */
-	var ShowLabels = function(){
-
-	};
-
-	ShowLabels.ATTRS = {
-
-		/**
-		 * 多个文本的配置项
-		 * @type {Object}
-		 */
-		labels : {
-
-		}
-	};
-
-	BUI.augment(ShowLabels,{
- 
-		/**
-		 * @protected
-		 * 渲染文本
-		 */
-		renderLabels : function(){
-			var _self = this,
-          labels = _self.get('labels'),
-          labelsGroup;
-      if(!labels){
-        return;
-      }
-      if(!labels.items){
-      	labels.items = [];
-      }
-
-      /*labels.x = _self.get('x');
-      labels.y = _self.get('y');*/
-
-      labelsGroup = _self.addGroup(Labels,labels);
-      _self.set('labelsGroup',labelsGroup);
-		},
-		/**
-		 * 设置labels
-		 * @param  {Array} items items的配置信息
-		 */
-		resetLabels : function(items){
-			var _self = this,
-				labels = _self.get('labels');
-				
-			if(!labels){
-				return;
-			}
-			
-			var labelsGroup = _self.get('labelsGroup'),
-				children = labelsGroup.get('children'),
-				count = children.length;
-			items = items || labels.items;
-			BUI.each(items,function(item,index){
-				if(index < count){
-					var label = children[index];
-					labelsGroup.changeLabel(label,item);
-				}else{
-					_self.addLabel(item.text,item);
-				}
-			});
-
-			for(var i = count - 1; i >= items.length ; i--){
-				children[i].remove();
-			}
-		},
-		/**
-		 * @protected
-		 * 添加文本项
-		 * @param {String|Number} value  显示的文本
-		 * @param {Object} offsetPoint 显示的位置
-		 */
-    addLabel : function(value,offsetPoint){
-      var _self = this,
-          labelsGroup = _self.get('labelsGroup'),
-          label = {},
-          rst;
-      if(labelsGroup){
-      	label.text = value;
-	      label.x = offsetPoint.x;
-	      label.y = offsetPoint.y;
-        label.point = offsetPoint;
-	      rst = labelsGroup.addLabel(label);
-      }
-      return rst;
-    },
-    /**
-     * @protected
-     * 移除文本
-     */
-    removeLabels : function(){
-    	var _self = this,
-    		labelsGroup = _self.get('labelsGroup');
-    	labelsGroup && labelsGroup.remove();
-    }
-	})
-
-	return ShowLabels;
-});/**
  * @fileOverview 抽象的坐标轴
  * @ignore
  */
@@ -1941,7 +2046,7 @@ define('bui/chart/abstractaxis',function (require) {
     CLS_AXIS = 'x-chart-axis';
 
   /**
-   * BUI.Chart.Axis.Abastract
+   * @class BUI.Chart.Axis.Abstract
    * 抽象的坐标轴类
    * @extends BUI.Chart.PlotItem
    * @mixin BUI.Chart.ShowLabels
@@ -1987,7 +2092,7 @@ define('bui/chart/abstractaxis',function (require) {
 
     },
     /**
-     * 
+     * 坐标轴上的文本
      * @type {Object}
      */
     labels : {
@@ -2060,6 +2165,16 @@ define('bui/chart/abstractaxis',function (require) {
         }
         gridGroup = _self.get('parent').addGroup(Grid,grid);
         _self.set('gridGroup',gridGroup);
+    },
+    /**
+     * 是否在坐标轴内
+     * @return {Boolean} 是否在坐标轴内
+     */
+    isInAxis : function(x,y){
+      var _self = this,
+        plotRange = _self.get('plotRange');
+    
+      return plotRange && plotRange.isInRange(x,y);
     },
     /**
      * @protected
@@ -2292,7 +2407,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
     /**
      * @class BUI.Chart.Axis
      * 坐标轴
-     * @extends BUI.Chart.PlotItem
+     * @extends BUI.Chart.Axis.Abstract
      */
     function Axis(cfg){
         Axis.superclass.constructor.call(this,cfg);
@@ -2301,12 +2416,6 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
     Axis.ATTRS = {
         zIndex : {
             value : 4
-        },
-        /**
-         * 显示数据的图形范围
-         */
-        plotRange : {
-
         },
         /**
          * 距离初始位置的x轴偏移量,仅对于左侧、右侧的纵向坐标有效
@@ -2382,49 +2491,8 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
                 'stroke' : '#C0D0E0',
                 value : 5
             }
-        },
-        /**
-         * 标注的节点
-         * @type {Array}
-         */
-        ticks : {
-
-        },
-        /**
-         * 标题
-         * @type {String|Object}
-         */
-        title : {
-
-        },
-        /**
-         * 栅格配置
-         * @type {Object}
-         */
-        grid : {
-
-        },
-        /**
-         * 
-         * @type {Object}
-         */
-        labels : {
-
-        },
-        /**
-         * 是否自动绘制
-         * @type {Object}
-         */
-        autoPaint : {
-            value : true
-        },
-        /**
-         * 格式化坐标轴上的节点
-         * @type {Function}
-         */
-        formatter : {
-
         }
+       
 
     };
 
@@ -3223,6 +3291,11 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
 
   }  
 
+  /**
+   * @class BUI.Chart.Axis.Auto
+   * @private
+   * 计算坐标轴的工具类
+   */
   var Auto = {};
 
   /**
@@ -3233,6 +3306,7 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
    * - max : 坐标轴的最大值（可选）
    * - interval : 间距(可选)
    * @param  {Object} info 初始信息
+   * @memberOf BUI.Chart.Axis.Auto
    * @return {Object} 计算后的信息
    */
   Auto.caculate = function(info,stackType){
@@ -3325,6 +3399,11 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
     }
   };
 
+  /**
+   * @memberOf BUI.Chart.Axis.Auto
+   * 时间计算
+   * @type {Object}
+   */
   Auto.Time = {};
 
   var MINUTE_MS = 60 * 1000,
@@ -4009,13 +4088,19 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 						path.push(['L',point.x,point.y]);
 					}
 				});
-				path.push('z');
+				path.push(['L',points[0].x,points[0].y]);
+				path.push(['z']);
 			}else{
 				var x = item.center.x,
 					y = item.center.y,
 					rx = item.r,
 					ry = item.r;
-				path = [["M", x, y], ["m", 0, -ry], ["a", rx, ry, 0, 1, 1, 0, 2 * ry], ["a", rx, ry, 0, 1, 1, 0, -2 * ry], ["z"]];
+				if(rx == 0){
+					path = [];
+				}else{
+					path = [["M", x, y], ["m", 0, -ry], ["a", rx, ry, 0, 1, 1, 0, 2 * ry], ["a", rx, ry, 0, 1, 1, 0, -2 * ry]];
+				}
+				
 			}
 			return path;
 		},
@@ -4508,7 +4593,8 @@ define('bui/chart/timeaxis',['bui/common','bui/chart/numberaxis'],function (requ
   }
 
   /**
-   * @class BUI.Chart.Axis.DateTime
+   * @class BUI.Chart.Axis.Time
+   * 时间坐标轴
    */
   var Time = function(cfg){
     Time.superclass.constructor.call(this,cfg)
@@ -4863,9 +4949,11 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
         _self.onMouseOver();
         var parent = _self.get('parent');
         
-        _self.on('mouseover',function(){
+        /**/_self.on('mouseover',function(){
           if(parent.setActivedItem){
-            parent.setActivedItem(_self);
+            if(!parent.isItemActived(_self)){
+              parent.setActivedItem(_self);
+            }
           }
         });
       }
@@ -5295,7 +5383,7 @@ define('bui/chart/series/stacked',function (require) {
   return Stacked;
 });/**
  * @fileOverview 包含数据序列子项的数据序列类,作为一个扩展可以用于柱状图、饼图
- * @ignorei
+ * @ignore
  */
 
 define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) {
@@ -5400,7 +5488,7 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
     },
     /**
      * 删除子项
-     * @param  {BUI.Chart.Series.Item} item 子项
+     * @param  {Object} item 子项
      */
     removeItem : function(item){
       var _self = this;
@@ -6289,15 +6377,22 @@ define('bui/chart/areaseries',['bui/common','bui/chart/lineseries','bui/graphic'
           path = path + linePath.replace('M','L');
           if(REGEX_MOVE.test(path)){
             path = Util.parsePathString(path);
-            var temp = [];
+            var temp = [],
+              preBreak = first;;
             BUI.each(path,function(item,index){
               if(index !== 0 && item[0] == 'M'){ //如果遇到中断的点，附加2个点
                 var n1 = [],
+                  n0 = [], //vml下 中间的'z'存在bug
                   n2 = [],
+
                   preItem = path[index - 1];
                 n1[0] = 'L';
                 n1[1] = preItem[1];
                 n1[2] = value0;
+
+                n0[0] = 'L';
+                n0[1] = preBreak.x;
+                n0[2] = value0;
 
                 n2[0] = 'M';
                 n2[1] = item[1];
@@ -6310,14 +6405,18 @@ define('bui/chart/areaseries',['bui/common','bui/chart/lineseries','bui/graphic'
                   item[0] = 'L';
                 }
                 temp.push(n1);
+                temp.push(n0);
                 temp.push(n2);
-                
+                preBreak = item;
               }
               temp.push(item);
               
             });
             path = temp;
-            path.push([['L',last.x,value0,'z']]);
+            path.push(['L',last.x,value0]);
+            if(Util.svg){
+              path.push(['Z'])
+            }
 
           }else{
             path = path + 'L '+ last.x + ' '+value0+'z';
@@ -7325,7 +7424,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       _self.on('mouseover',function(ev){
         var target = ev.target,
           shape = target.shape;
-        shape && _self.setActived(shape);
+        shape && _self.setActivedItem(shape);
       });
     },
     _getLabelCfg : function(point,distance,rAppend){
@@ -7851,32 +7950,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         }
       }
     },
-    /**
-     * @protected
-     * 获取可以被激活的元素
-     * @return {BUI.Chart.Actived[]} 可以被激活的元素集合
-     */
-    /*getActiveItems : function(){
-      var _self = this,
-        series = _self.getSeries(),
-        rst = [];
-
-      BUI.each(series,function(item){
-        if(item.isActived){
-          rst.push(item);
-        }
-      });
-      return rst;
-    },
-    clearActived : function(){
-      var _self = this,
-        series = _self.getSeries();
-      BUI.each(series,function(item){
-        if(item.clearActived){
-          item.clearActived();
-        }
-      });
-    },*/
+   
     /**
      * 获取所有的数据序列
      * @return {Array} [description]
@@ -8311,7 +8385,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
         if(item.get('yAxis') == null){
           if(BUI.isArray(yAxis)){
-            item.set('yAxis') = yAxis[0];
+            item.set('yAxis',yAxis[0]);
           }else{
             item.set('yAxis',yAxis);
           }
@@ -8472,18 +8546,40 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       var _self = this,
         plotCfg = _self.get('plotCfg'),
         canvas = _self.get('canvas'),
-        plotBack = canvas.addGroup(PlotBack,plotCfg),
-        plotRange = plotBack.get('plotRange');
+        theme = _self.get('theme'),
+        plotBack,
+        plotRange;
+
+      plotCfg = BUI.mix({},theme.plotCfg,plotCfg);
+      plotBack = canvas.addGroup(PlotBack,plotCfg),
+      plotRange = plotBack.get('plotRange');
 
       _self.set('plotRange',plotRange);
 
     },
     //渲染title
     _renderTitle : function(){
-      
-    },
-    _renderTooltip : function(){
-
+      var _self = this,
+        title = _self.get('title'),
+        subTitle = _self.get('subTitle'),
+        theme = _self.get('theme'),
+        canvas = _self.get('canvas');
+      if(title){
+        if(title.x == null){
+          title.x = canvas.get('width')/2;
+          title.y = 15;
+        }
+        title = BUI.mix({},theme.title,title);
+        canvas.addShape('label',title);
+      }
+      if(subTitle){
+        if(subTitle.x == null){
+          subTitle.x = canvas.get('width')/2;
+          subTitle.y = 35;
+        }
+        subTitle = BUI.mix({},theme.subTitle,subTitle);
+        canvas.addShape('label',subTitle);
+      }
     },
     _getDefaultType : function(){
       var _self = this,

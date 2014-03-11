@@ -78,7 +78,7 @@ define('bui/mask/mask',['bui/common'],function (require) {
         },
         /**
          * @description 解除元素的屏蔽
-         * @param {String|HTMLElement} 屏蔽的元素
+         * @param {String|HTMLElement} element 屏蔽的元素
          * <pre><code>
          * BUI.Mask.unmaskElement('#domId');
          * </code></pre>

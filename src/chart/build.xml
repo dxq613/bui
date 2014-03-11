@@ -22,7 +22,10 @@
     <concat destfile="${des.dir}/chart.js" encoding="${charset}" outputencoding="${charset}">
 
 			<path path="base.js"/>
-      
+      <path path="mixin/actived.js"/>
+      <path path="mixin/activedgroup.js"/>
+      <path path="mixin/showlabels.js"/>
+
 			<path path="labels.js"/>
 			<path path="legend.js"/>
 			<path path="legenditem.js"/>
@@ -34,9 +37,7 @@
       <path path="theme.js"/>
       <path path="tooltip.js"/>
       
-      <path path="mixin/actived.js"/>
-      <path path="mixin/activegroup.js"/>
-      <path path="mixin/showlabels.js"/>
+      
 
       <path path="axis/abstract.js"/>
       <path path="axis/base.js"/>

@@ -1285,7 +1285,7 @@ define('bui/util',function(require){
             /**
              * \u662f\u5426\u662f\u5e03\u5c14\u7c7b\u578b
              *
-             * @param {Object} \u6d4b\u8bd5\u7684\u503c
+             * @param {Object} value \u6d4b\u8bd5\u7684\u503c
              * @return {Boolean}
              */
             isBoolean: function(value) {
@@ -7192,7 +7192,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     /**
      * \u83b7\u53d6\u5b50\u63a7\u4ef6\u7684xclass\u7c7b\u578b
      * @protected
-     * @param {jQuery} \u5b50\u63a7\u4ef6\u7684\u6839\u8282\u70b9
+     * @param {jQuery} childNode \u5b50\u63a7\u4ef6\u7684\u6839\u8282\u70b9
      */
     findXClassByNode: function (childNode, ignoreError) {
       var _self = this,
@@ -8168,7 +8168,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * <pre><code>
      * var index = list.indexOf(item); //\u8fd4\u56de\u7d22\u5f15\uff0c\u4e0d\u5b58\u5728\u5219\u8fd4\u56de-1
      * </code></pre>
-     * @param  {Object|BUI.Component.Controller} \u9009\u9879
+     * @param  {Object|BUI.Component.Controller} item \u9009\u9879
      * @return {Number}   \u9879\u7684\u7d22\u5f15\u503c
      */
     indexOfItem : function(item){
@@ -17003,7 +17003,6 @@ define('bui/list/listitem',['bui/common'],function (require) {
    * @private
    * @class BUI.List.ItemView
    * @extends BUI.Component.View
-   * @extends BUI.Component.View
    * @mixins BUI.Component.UIBase.ListItemView
    * \u5217\u8868\u9879\u7684\u89c6\u56fe\u5c42\u5bf9\u8c61
    */
@@ -20083,7 +20082,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     },
     /**
      * \u663e\u793a\u9519\u8bef
-     * @param {Array} \u663e\u793a\u9519\u8bef
+     * @param {Array} errors \u663e\u793a\u9519\u8bef
      */
     showErrors : function(errors){
       var _self = this,
@@ -22727,9 +22726,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        if(_self.get('forceFit')){
-          picker.set('width',el.outerWidth());
-        }
+        
         picker.render();
         _self.set('list',picker.get('list'));
       },
@@ -22746,6 +22743,11 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         });
         list.on('itemsshow',function(){
           _self._syncValue();
+        });
+        picker.on('show',function(){
+          if(_self.get('forceFit')){
+            picker.set('width',el.outerWidth());
+          }
         });
       },
       /**
@@ -23586,7 +23588,7 @@ define('bui/mask/mask',['bui/common'],function (require) {
         },
         /**
          * @description \u89e3\u9664\u5143\u7d20\u7684\u5c4f\u853d
-         * @param {String|HTMLElement} \u5c4f\u853d\u7684\u5143\u7d20
+         * @param {String|HTMLElement} element \u5c4f\u853d\u7684\u5143\u7d20
          * <pre><code>
          * BUI.Mask.unmaskElement('#domId');
          * </code></pre>

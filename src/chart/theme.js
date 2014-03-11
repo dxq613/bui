@@ -49,6 +49,16 @@ define('bui/chart/theme',function (requrie) {
     plotCfg : {
       margin : 50
     },
+    title : {
+      'font-size' : '16px',
+      'font-family' : 'tahoma,arial,"SimSun",Georgia, "Times New Roman", Times, serif',
+      'fill' : '#274b6d'
+    },
+    subTitle : {
+      'font-size' : '14px',
+      'font-family' : 'tahoma,arial,"SimSun",Georgia, "Times New Roman", Times, serif',
+      'fill' : '#4d759e'
+    },
     xAxis : {
       labels : {
         label : {

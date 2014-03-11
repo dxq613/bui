@@ -46,18 +46,18 @@ BUI.use('bui/chart/axis/auto',function (Auto) {
       var data = [new Date('2010/12/31'),new Date('2012/01/01')];
       var rst = Auto.Time.caculate({data : data});
 
-      expect(rst.ticks.length).toBe(8);
+      expect(rst.ticks.length).toBe(15);
       log(data,rst,'指定数据，,测试月，不指定interval');
     });
-
+    
     it('指定数据,测试月，不指定interval',function(){
       var data = [new Date('2010/01/01'),new Date('2012/02/01')];
       var rst = Auto.Time.caculate({data : data});
 
-      expect(rst.ticks.length).toBe(8);
+      expect(rst.ticks.length).toBe(10);
       log(data,rst,'指定数据，,测试月小于结束月，不指定interval');
     });
-    
+    /**/
    
    it('指定数据,测试天，不指定interval',function(){
       var data = [new Date('2010/12/20'),new Date('2011/05/20')];

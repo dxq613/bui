@@ -58,7 +58,7 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 		node : {},
         /**
          * 画布
-         * @type {BUI.Graphic.Cavas}
+         * @type {BUI.Graphic.Canvas}
          */
         canvas : {
 
@@ -278,6 +278,7 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
     	var _self = this;
     	if(_self.get('parent')){
     		_self.get('parent').removeChild(_self,destroy);
+            _self.set('parent',null);
     	}else if(destroy){
     		_self.destroy();
     	}
@@ -288,10 +289,15 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
     destroy : function(){
     	var _self = this,
     		el = _self.get('el'),
-        node = _self.get('node');
+            destroyed = _self.get('destroyed'),
+            node = _self.get('node');
+        if(destroyed){
+            return;
+        }
     	el.remove && el.remove();
     	_self._attrs = {};
-      $(node).off();
+        $(node).off();
+        _self.set('destroyed',true);
     }
 
 	});
@@ -540,7 +546,7 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 			BUI.each(children,function(item){
 				item.destroy();
 			});
-			BUI.Array.empty(children);
+			children && BUI.Array.empty(children);
 			if(el.__set && el.__set.clear){
 				el.__set.clear();
 			}
@@ -554,7 +560,9 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
     		children = _self.get('children'),
     		el = _self.get('el'),
     		node = _self.get('node');
-
+    	if(_self.get('destroyed')){
+    		return;
+    	}
     	_self.clear();
 
     	Container.superclass.destroy.call(this);
@@ -717,7 +725,7 @@ define('bui/graphic/canvasitem',function(require) {
       this.get('el').rotate(a,x,y);
     },
     /**
-     * 
+     * 放大
      * @param  {Number} sx x轴方向的倍数 
      * @param  {Number} sy y轴方向的倍数
      * @param  {Number} cx x轴方向扩展的中心
@@ -813,7 +821,7 @@ define('bui/graphic/canvasitem',function(require) {
 
   /**
    * 圆
-   * @class BUI.Graphic.She.Circle
+   * @class BUI.Graphic.Shape.Circle
    * @extends BUI.Graphic.Shape
    */
   var Circle = function(cfg){
@@ -871,7 +879,7 @@ define('bui/graphic/canvasitem',function(require) {
      * 矩形的高度
      * @type {Number}
      */
-    width : {}
+    height : {}
   };
 
   BUI.extend(Rect,Shape);
@@ -1595,26 +1603,7 @@ define('bui/graphic/canvasitem',function(require) {
 			_self.set('y',params.y);
 			//_self._vmlAnimate(params,ms,callback);
 		},
-		/*_vmlAnimate : function(params,ms,callback){
-			var _self = this,
-				x = _self.get('x') || 0,//当前的x
-				y = _self.get('y') || 0,//当前的y
-				dx = params.x - x, //x 移动的距离
-				dy = params.y - y,
-				stepId = _self.get('stepId'); //y 移动的距离
-
-			stepId && Util.stopStep(stepId); //终止之前的动画
-
-		  stepId = Util.animStep(ms,function(factor){
-				var cx = x + dx * factor,
-					cy = y + dy * factor;
-					
-				_self.move(cx,cy);
-
-			},callback);
-
-			_self.set('stepId',stepId);
-		},*/
+		
 		/**
 		 * 移动的到位置
 		 * @param  {Number} x 移动到x
@@ -1661,6 +1650,11 @@ define('bui/graphic/canvasitem',function(require) {
 		Raphael = require('bui/graphic/raphael'),
 		Container = require('bui/graphic/container');
 
+	/**
+	 * @class BUI.Graphic.Canvas
+	 * 图形的画板，支持SVG和VML
+	 * @extends BUI.Graphic.Container
+	 */
 	var Canvas = function(cfg){
 		Canvas.superclass.constructor.call(this,cfg);
 	};
@@ -1903,7 +1897,11 @@ define('bui/graphic/canvasitem',function(require) {
 			delete TIMES[uid];
 		}
 	}
-
+	/**
+	 * @class BUI.Graphic.Util
+	 * @singleton
+	 * 绘图的工具类
+	 */
 	var Util = {};
 
 	BUI.mix(Util,{
@@ -7539,7 +7537,7 @@ define('bui/graphic/raphael/core',function(){
             var isPointInside = false;
             this.forEach(function (el) {
                 if (el.isPointInside(x, y)) {
-                    console.log('runned');
+                    //console.log('runned');
                     isPointInside = true;
                     return false; // stop loop
                 }

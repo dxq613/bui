@@ -261,13 +261,19 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 						path.push(['L',point.x,point.y]);
 					}
 				});
-				path.push('z');
+				path.push(['L',points[0].x,points[0].y]);
+				path.push(['z']);
 			}else{
 				var x = item.center.x,
 					y = item.center.y,
 					rx = item.r,
 					ry = item.r;
-				path = [["M", x, y], ["m", 0, -ry], ["a", rx, ry, 0, 1, 1, 0, 2 * ry], ["a", rx, ry, 0, 1, 1, 0, -2 * ry], ["z"]];
+				if(rx == 0){
+					path = [];
+				}else{
+					path = [["M", x, y], ["m", 0, -ry], ["a", rx, ry, 0, 1, 1, 0, 2 * ry], ["a", rx, ry, 0, 1, 1, 0, -2 * ry]];
+				}
+				
 			}
 			return path;
 		},

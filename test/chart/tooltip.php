@@ -27,6 +27,8 @@
   <?php include("../templates/script.php"); ?>
 	
 	<script type="text/javascript" src="../../src/chart/plotitem.js"></script>
+    <script type="text/javascript" src="../../src/chart/axis/abstract.js"></script>
+
   <script type="text/javascript" src="../../src/chart/axis/base.js"></script>
   <script type="text/javascript" src="../../src/chart/axis/grid.js"></script>
   <script type="text/javascript" src="../../src/chart/labels.js"></script>
@@ -37,7 +39,7 @@
   <script type="text/javascript" src="../../src/chart/tooltip.js"></script>
   <script type="text/javascript" src="../../src/chart/plotrange.js"></script>
 
-  <script type="text/javascript" src="../specs/chart/tooltip-spec.js"></script> <!--
-   <script type="text/javascript" src="../specs/chart/tooltip-single-spec.js"></script>-->
+  <script type="text/javascript" src="../specs/chart/tooltip-spec.js"></script> <!---->
+   <script type="text/javascript" src="../specs/chart/tooltip-single-spec.js"></script>
   
 <?php include("../templates/footer.php"); ?>

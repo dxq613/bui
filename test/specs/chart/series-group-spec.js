@@ -141,7 +141,7 @@ BUI.use(['bui/graphic','bui/chart/seriesgroup','bui/chart/numberaxis','bui/chart
 
       it('测试激活序列',function(){
         var series = findByName('Tokyo');
-        group.setActived(series);
+        group.setActivedItem(series);
         waits(100);
         runs(function(){
           expect(series.get('actived')).toBe(true);
@@ -157,9 +157,9 @@ BUI.use(['bui/graphic','bui/chart/seriesgroup','bui/chart/numberaxis','bui/chart
         expect(series1.get('actived')).toBe(true);
         expect(series2.get('actived')).not.toBe(true);
 
-        group.setActived(series2);
+        group.setActivedItem(series2);
 
-        waits(100);
+        waits(300);
         runs(function(){
           expect(series1.get('actived')).toBe(false);
           expect(series2.get('actived')).toBe(true);
@@ -169,7 +169,7 @@ BUI.use(['bui/graphic','bui/chart/seriesgroup','bui/chart/numberaxis','bui/chart
       });
 
       it('清除激活',function(){
-        group.clearActived();
+        group.clearActivedItem();
         expect(group.getActived()).toBe(null);
       });
     });

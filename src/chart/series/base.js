@@ -142,9 +142,11 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
         _self.onMouseOver();
         var parent = _self.get('parent');
         
-        _self.on('mouseover',function(){
+        /**/_self.on('mouseover',function(){
           if(parent.setActivedItem){
-            parent.setActivedItem(_self);
+            if(!parent.isItemActived(_self)){
+              parent.setActivedItem(_self);
+            }
           }
         });
       }
