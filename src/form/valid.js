@@ -261,7 +261,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     },
     /**
      * 显示错误
-     * @param {Array} 显示错误
+     * @param {Array} errors 显示错误
      */
     showErrors : function(errors){
       var _self = this,

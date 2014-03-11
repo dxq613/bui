@@ -189,7 +189,7 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
 
   /**
    * 圆
-   * @class BUI.Graphic.She.Circle
+   * @class BUI.Graphic.Shape.Circle
    * @extends BUI.Graphic.Shape
    */
   var Circle = function(cfg){

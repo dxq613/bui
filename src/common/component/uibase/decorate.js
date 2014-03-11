@@ -262,7 +262,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     /**
      * 获取子控件的xclass类型
      * @protected
-     * @param {jQuery} 子控件的根节点
+     * @param {jQuery} childNode 子控件的根节点
      */
     findXClassByNode: function (childNode, ignoreError) {
       var _self = this,

@@ -213,7 +213,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * <pre><code>
      * var index = list.indexOf(item); //返回索引，不存在则返回-1
      * </code></pre>
-     * @param  {Object|BUI.Component.Controller} 选项
+     * @param  {Object|BUI.Component.Controller} item 选项
      * @return {Number}   项的索引值
      */
     indexOfItem : function(item){

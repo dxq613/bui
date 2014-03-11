@@ -185,6 +185,7 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
 
   /**
    * @class BUI.Chart.Axis.Auto
+   * @private
    * 计算坐标轴的工具类
    */
   var Auto = {};

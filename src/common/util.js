@@ -268,7 +268,7 @@ define('bui/util',function(require){
             /**
              * 是否是布尔类型
              *
-             * @param {Object} 测试的值
+             * @param {Object} value 测试的值
              * @return {Boolean}
              */
             isBoolean: function(value) {
