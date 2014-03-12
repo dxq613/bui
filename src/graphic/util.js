@@ -99,11 +99,48 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 		},STEP_MS);
 	}
 
+	function animTime(duration,fn,callback){
+      var baseTime = new Date().getTime(),
+        baseInterval = 16,
+        uid = BUI.guid(PRE_HAND);
+
+      next(0,fn,duration,callback);
+      function next(num,fn,duration,callback){
+        var nowTime = new Date().getTime();
+        var durTime = nowTime - baseTime;
+        if(durTime >= duration){
+          fn(1,num);
+          callback && callback();
+          return ;
+        }
+
+        var factor = Math.pow(durTime/duration, .48);
+        fn(factor,num);
+
+ 
+        // window.requestAnimationFrame
+        if(window.requestAnimationFrame){
+          HANDLERS[uid] =  window.requestAnimationFrame(function(){
+            next(num+1,fn,duration,callback);
+          });
+        }else{
+          HANDLERS[uid] = setTimeout(function(){
+            next(num+1,fn,duration,callback);
+          },stepInterval)
+        }
+      }
+    } 
+
 	function stopStep(uid){
 		if(HANDLERS[uid]){
-			clearTimeout(HANDLERS[uid]);
+			if(window.requestAnimationFrame){
+				window.cancelAnimationFrame(HANDLERS[uid]);
+			}else{
+				clearTimeout(HANDLERS[uid]);
+			}
+			
 			delete HANDLERS[uid];
-			delete TIMES[uid];
+			//delete TIMES[uid];
 		}
 	}
 	/**
@@ -136,7 +173,7 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 		 * @return {String} 动画的handler用于终止动画
 		 */
 		animStep : function(duration,fn,callback){
-		  return	animStep(duration,fn,callback);
+		  return	animTime(duration,fn,callback);
 		},
 		/**
 		 * 终止分步执行的动画
