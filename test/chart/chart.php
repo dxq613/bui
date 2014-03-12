@@ -66,8 +66,8 @@
   <script type="text/javascript" src="../../src/chart/theme.js"></script>
   <script type="text/javascript" src="../../src/chart/chart.js"></script>
   
-  <script type="text/javascript" src="../specs/chart/chart-spec.js"></script><!---->
-
+  <script type="text/javascript" src="../specs/chart/chart-spec.js"></script>
+<!---->
   <script type="text/javascript" src="../specs/chart/chart-area-spec.js"></script>
 
 <?php include("../templates/footer.php"); ?>

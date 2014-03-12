@@ -90,7 +90,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {String}
              */
-            subVersion : 71,
+            subVersion : 72,
 
             /**
              * 是否为函数

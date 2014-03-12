@@ -346,9 +346,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           temp.push(_self._createAxis(item));
           _self.set('yAxis',temp);
         });
-      }
-
-      if(yAxis && !yAxis.isGroup){
+      }else if(yAxis && !yAxis.isGroup){
         if(xAxis && xAxis.get('type') == 'circle'){
           yAxis.type = 'radius';
           yAxis.circle = xAxis;
@@ -356,6 +354,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         yAxis = _self._createAxis(yAxis);
         _self.set('yAxis',yAxis);
       }
+
+      
     },
     //创建坐标轴
     _createAxis : function(axis){
@@ -530,9 +530,12 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
     },
     //数据变化或者序列显示隐藏引起的坐标轴变化
-    _resetAxis : function(axis){
+    _resetAxis : function(axis,type){
+
+      type = type || 'yAxis';
+
       var _self = this,
-        info = _self._caculateAxisInfo(axis,'yAxis'),
+        info = _self._caculateAxisInfo(axis,type),
         series = _self.getSeries();
 
       _self.set('stackedData',null);
@@ -541,12 +544,34 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         return;
       }
       axis.change(info);
+    },
+    _resetSeries : function(){
+      var _self = this,
+        series = _self.getSeries();
       BUI.each(series,function(item){
-        if(item.get('yAxis') == axis && item.get('visible')){
+        if(item.get('visible')){
           item.repaint();
         }
       });
-      
+    },
+    /**
+     * 重新绘制数据序列
+     */
+    repaint : function(){
+      var _self = this,
+        xAxis = _self.get('xAxis'),
+        yAxis = _self.get('yAxis');
+      xAxis && _self._resetAxis(xAxis,'xAxis');
+      if(yAxis){
+        if(BUI.isArray(yAxis)){
+          BUI.each(yAxis,function(axis){
+            _self._resetAxis(axis,'yAxis');
+          });
+        }else{
+          _self._resetAxis(yAxis,'yAxis');
+        }
+      }
+      _self._resetSeries();
     },
     //获取默认的类型
     _getDefaultType : function(){
@@ -619,7 +644,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         }
         //多个y轴时
         if(BUI.isNumber(item.get('yAxis'))){
-          item.set('yAxis',yAxis[item.yAxis]);
+          item.set('yAxis',yAxis[item.get('yAxis')]);
         }
       });
       
@@ -633,6 +658,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       if(!series.get('visible')){
         series.show();
         _self._resetAxis(series.get('yAxis'));
+        _self._resetSeries();
       }
     },
     /**
@@ -644,6 +670,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       if(series.get('visible')){
         series.hide();
         _self._resetAxis(series.get('yAxis'));
+        _self._resetSeries();
       }
     },
     _addLegendItem : function(series){

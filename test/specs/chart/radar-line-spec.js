@@ -1,4 +1,4 @@
-
+/**/
 BUI.use(['bui/chart/chart'],function (Chart) {
   var chart = new Chart({
     width : 1000,
@@ -68,7 +68,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
 
 BUI.use(['bui/chart/chart'],function (Chart) {
   var chart = new Chart({
-    width : 1000,
+    width : 500,
     height : 500,
     plotCfg : {
       margin : [50,50,100]
@@ -125,7 +125,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
   chart.render();
   
 });
-
+/*
 BUI.use(['bui/chart/chart'],function (Chart) {
   var chart = new Chart({
     width : 1000,
@@ -438,4 +438,4 @@ BUI.use(['bui/chart/chart'],function (Chart) {
   chart.render();
   
 });
-/**/
+*/

@@ -248,7 +248,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 		it('翻转',function(){
 
 		});
-/*
+
 		it('删除图形',function(){
 			var path = canvas.find('p1');
 			path.remove();
@@ -264,10 +264,10 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			})
 			
 		});
-		*/
+		/**/
 
 	});
-/*
+
 
 	describe('测试maker',function(){
 
@@ -617,9 +617,9 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 		
 
 	});
-*/
+/**/
 
-/*
+
 	describe('测试事件',function(){
 		var group ;
 		describe('测试图形事件',function(){
@@ -733,7 +733,7 @@ BUI.use(['bui/graphic/canvas','bui/graphic/util'],function (Canvas,Util) {
 			
 		});
 	});
-*/
+/**/
 	/**/
 
 

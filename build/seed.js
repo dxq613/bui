@@ -1017,7 +1017,7 @@ seajs.config = function(configData) {
 })();
 
 /**
- * @class BUI.Util
+ * @class BUI
  * 控件库的工具方法，这些工具方法直接绑定到BUI对象上
  * <pre><code>
  *     BUI.isString(str);
@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {String}
              */
-            subVersion : 70,
+            subVersion : 72,
 
             /**
              * 是否为函数

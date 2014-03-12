@@ -74,7 +74,9 @@ define('bui/chart/circleaxis',['bui/common','bui/graphic','bui/chart/abstractaxi
 
     },
     grid : {
+      shared : false,
       value :{
+
         line : {
           'stroke-width' : 1,
           'stroke' : '#C0D0E0'

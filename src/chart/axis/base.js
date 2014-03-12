@@ -126,10 +126,19 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
 
             if(plotRange){
                 var start = plotRange.start,
+                    position = _self.get('position'),
                     end = {};
                 if(_self.isVertical()){
-                    end.y = plotRange.end.y;
-                    end.x = start.x; 
+                    if(position == 'left'){
+                        end.y = plotRange.end.y;
+                        end.x = start.x; 
+                    }else{
+                        start = {};
+                        end = plotRange.end;
+                        start.x = plotRange.end.x;
+                        start.y = plotRange.start.y;
+                    }
+                    
                 }else{
                     
                     end.x = plotRange.end.x;

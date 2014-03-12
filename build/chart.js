@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/chart',['bui/common','bui/chart/chart','bui/chart/axis','bui/chart/series'],function (require) {
+define('bui/chart',['bui/common','bui/chart/chart','bui/chart/axis','bui/chart/series','bui/chart/plotrange'],function (require) {
   
   var BUI = require('bui/common'),
     Chart = BUI.namespace('Chart');
@@ -11,7 +11,8 @@ define('bui/chart',['bui/common','bui/chart/chart','bui/chart/axis','bui/chart/s
   BUI.mix(Chart,{
     Chart : require('bui/chart/chart'),
     Axis : require('bui/chart/axis'),
-    Series : require('bui/chart/series')
+    Series : require('bui/chart/series'),
+    PlotRange : require('bui/chart/plotrange')
   });
 
   return Chart;
@@ -402,7 +403,10 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem','bui/graphic'],func
 			if(renderer){
 				item.text = renderer(item.text,item,index);
 			}
-
+			if(item.text == null){
+				item.text = '';
+			}
+			
 			item.text = item.text.toString();
 			item.x = (item.x || 0) + (label.x || 0);
 			item.y = (item.y || 0) + (label.y || 0);
@@ -1519,18 +1523,19 @@ define('bui/chart/theme',function (requrie) {
       };
   Theme.Base = Theme({
     colors : ['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
+    //[ '#ff6600','#b01111','#ac5724','#572d8a','#333333','#7bab12','#c25e5e','#a6c96a','#133960','#2586e7'],
     symbols : ['circle','diamond','square','triangle','triangle-down'],
     plotCfg : {
-      margin : 50
+      margin : [50,50,100]
     },
     title : {
       'font-size' : '16px',
-      'font-family' : 'tahoma,arial,"SimSun",Georgia, "Times New Roman", Times, serif',
+      'font-family' : 'SimSun,Georgia, Times, serif',
       'fill' : '#274b6d'
     },
     subTitle : {
-      'font-size' : '14px',
-      'font-family' : 'tahoma,arial,"SimSun",Georgia, "Times New Roman", Times, serif',
+      'font-size' : 14,
+      'font-family' : 'tahoma,arial,SimSun,Georgia, Times, serif',
       'fill' : '#4d759e'
     },
     xAxis : {
@@ -1550,8 +1555,7 @@ define('bui/chart/theme',function (requrie) {
       },
       title : {
         text : '',
-        font : '16px bold',
-        rotate : 90,
+        rotate : -90,
         x : -30
       },
       position:'left',
@@ -1578,9 +1582,16 @@ define('bui/chart/theme',function (requrie) {
       },
       pieCfg : {
         colors : ['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
+        //[ '#ff6600','#b01111','#ac5724','#572d8a','#333333','#7bab12','#c25e5e','#a6c96a','#133960','#2586e7'],
         item : {
           stroke : '#fff'
-        }
+        },
+        labels : {
+          distance : 30,
+          label : {
+
+          }
+         }
       }
       
     },
@@ -2319,7 +2330,7 @@ define('bui/chart/abstractaxis',function (require) {
                 x1 : offsetPoint.x,
                 y1 : offsetPoint.y
             },
-            end = _self.getTickEnd(offsetPoint,offset);
+            end = _self.getTickEnd(cfg,offset);
         
         if(!tickItems){
             tickItems = [];
@@ -2510,10 +2521,19 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
 
             if(plotRange){
                 var start = plotRange.start,
+                    position = _self.get('position'),
                     end = {};
                 if(_self.isVertical()){
-                    end.y = plotRange.end.y;
-                    end.x = start.x; 
+                    if(position == 'left'){
+                        end.y = plotRange.end.y;
+                        end.x = start.x; 
+                    }else{
+                        start = {};
+                        end = plotRange.end;
+                        start.x = plotRange.end.x;
+                        start.y = plotRange.start.y;
+                    }
+                    
                 }else{
                     
                     end.x = plotRange.end.x;
@@ -4257,7 +4277,9 @@ define('bui/chart/circleaxis',['bui/common','bui/graphic','bui/chart/abstractaxi
 
     },
     grid : {
+      shared : false,
       value :{
+
         line : {
           'stroke-width' : 1,
           'stroke' : '#C0D0E0'
@@ -5151,7 +5173,7 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       _self.changeShapes(points);
       BUI.each(points,function(point){
         if(labels){
-          labels.items.push(point.value,point);
+          labels.items.push(point.value);
         }
         if(markers){
           markers.items.push(point);
@@ -5180,6 +5202,9 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       if(markersGroup){
         marker.x = offset.x;
         marker.y = offset.y;
+        if(offset.obj && offset.obj.marker){
+          BUI.mix(marker,offset.obj.marker);
+        }
 
        rst = markersGroup.addMarker(marker);
        rst.set('point',offset);
@@ -6998,7 +7023,7 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
      */
     setItemActived : function(item,actived){
       var _self = this,
-        color = _self.get('color');
+        color = item.getCfgAttr('attrs').fill;;
 
       if(actived){
         item.attr('fill',highlight(color,0.2));
@@ -7159,7 +7184,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         angle = label.angle,
         y = label.y;
 
-      leftCount = length - i - 1;
+      leftCount = length - i;
       leftAvg = factor > 0 ? (maxY - y) / leftCount : (y - minY) / leftCount;
       conflictIndex = i;
       
@@ -7176,7 +7201,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         y = startLabel.y,
         endY = factor > 0 ? maxY : minY;
 
-      leftCount = length - conflictIndex - 1;
+      leftCount = length - start - 1;
       leftAvg = Math.abs(endY - y) / leftCount;
       if(leftAvg < LINE_HEIGHT){
         leftAvg = LINE_HEIGHT;
@@ -7186,7 +7211,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
           angle = endAngle - (Math.acos((r-h)/r)/Math.PI * 180);
 
         arr[i].orignAngle = arr[i].angle;
-        arr[i].angle = angle;
+        arr[i].angle =  angle;
         arr[i].orignX = arr[i].x;
         arr[i].orignY = arr[i].y;
 
@@ -7276,7 +7301,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
      * 是否允许选中
      * @type {Boolean}
      */
-    allowSelect : {
+    allowPointSelect : {
       value : false
     },
     xField : {
@@ -7408,7 +7433,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     //绑定点击事件
     bindMouseClick : function(){
       var _self = this;
-      if(_self.get('allowSelect')){
+      if(_self.get('allowPointSelect')){
         _self.on('click',function(ev){
           var target = ev.target,
             shape = target.shape;
@@ -7559,7 +7584,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         rst.fill = _self._getColor(index);
         point.color = rst.fill;
       }
-      if(_self.get('allowSelect')){
+      if(_self.get('allowPointSelect')){
         rst.cursor = 'pointer';
       }
       return rst;
@@ -8119,9 +8144,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           temp.push(_self._createAxis(item));
           _self.set('yAxis',temp);
         });
-      }
-
-      if(yAxis && !yAxis.isGroup){
+      }else if(yAxis && !yAxis.isGroup){
         if(xAxis && xAxis.get('type') == 'circle'){
           yAxis.type = 'radius';
           yAxis.circle = xAxis;
@@ -8129,6 +8152,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         yAxis = _self._createAxis(yAxis);
         _self.set('yAxis',yAxis);
       }
+
+      
     },
     //创建坐标轴
     _createAxis : function(axis){
@@ -8303,9 +8328,12 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
     },
     //数据变化或者序列显示隐藏引起的坐标轴变化
-    _resetAxis : function(axis){
+    _resetAxis : function(axis,type){
+
+      type = type || 'yAxis';
+
       var _self = this,
-        info = _self._caculateAxisInfo(axis,'yAxis'),
+        info = _self._caculateAxisInfo(axis,type),
         series = _self.getSeries();
 
       _self.set('stackedData',null);
@@ -8314,12 +8342,34 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         return;
       }
       axis.change(info);
+    },
+    _resetSeries : function(){
+      var _self = this,
+        series = _self.getSeries();
       BUI.each(series,function(item){
-        if(item.get('yAxis') == axis && item.get('visible')){
+        if(item.get('visible')){
           item.repaint();
         }
       });
-      
+    },
+    /**
+     * 重新绘制数据序列
+     */
+    repaint : function(){
+      var _self = this,
+        xAxis = _self.get('xAxis'),
+        yAxis = _self.get('yAxis');
+      xAxis && _self._resetAxis(xAxis,'xAxis');
+      if(yAxis){
+        if(BUI.isArray(yAxis)){
+          BUI.each(yAxis,function(axis){
+            _self._resetAxis(axis,'yAxis');
+          });
+        }else{
+          _self._resetAxis(yAxis,'yAxis');
+        }
+      }
+      _self._resetSeries();
     },
     //获取默认的类型
     _getDefaultType : function(){
@@ -8392,7 +8442,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         }
         //多个y轴时
         if(BUI.isNumber(item.get('yAxis'))){
-          item.set('yAxis',yAxis[item.yAxis]);
+          item.set('yAxis',yAxis[item.get('yAxis')]);
         }
       });
       
@@ -8406,6 +8456,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       if(!series.get('visible')){
         series.show();
         _self._resetAxis(series.get('yAxis'));
+        _self._resetSeries();
       }
     },
     /**
@@ -8417,6 +8468,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       if(series.get('visible')){
         series.hide();
         _self._resetAxis(series.get('yAxis'));
+        _self._resetSeries();
       }
     },
     _addLegendItem : function(series){
@@ -8613,11 +8665,18 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
         seriesOptions : attrs.seriesOptions,
         tooltip : attrs.tooltip,
         legend : attrs.legend,
-        xAxis : attrs.xAxis,
-        yAxis : attrs.yAxis
+        xAxis : attrs.xAxis
       });
 
-      /*cfg.seriesOptions = mixIf(attrs.seriesOptions,theme.seriesOptions);*/
+      if(BUI.isObject(attrs.yAxis)){
+        BUI.mix(true,cfg,{
+          yAxis : attrs.yAxis
+        });
+      }else if(BUI.isArray(attrs.yAxis)){
+        attrs.yAxis[0] = BUI.merge(true,theme.yAxis,attrs.yAxis[0]);
+        cfg.yAxis = attrs.yAxis;
+      }
+
 
       seriesGroup = _self.get('canvas').addGroup(SeriesGroup,cfg);
       _self.set('seriesGroup',seriesGroup);
@@ -8628,9 +8687,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
      */
     repaint : function(){
       var _self = this;
-
-      _self.clear();
-      _self.paint();
+      _self.get('seriesgroup').repaint();
     },
     destructor : function(){
       var _self = this;

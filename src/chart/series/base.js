@@ -344,7 +344,7 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       _self.changeShapes(points);
       BUI.each(points,function(point){
         if(labels){
-          labels.items.push(point.value,point);
+          labels.items.push(point.value);
         }
         if(markers){
           markers.items.push(point);
@@ -373,6 +373,9 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       if(markersGroup){
         marker.x = offset.x;
         marker.y = offset.y;
+        if(offset.obj && offset.obj.marker){
+          BUI.mix(marker,offset.obj.marker);
+        }
 
        rst = markersGroup.addMarker(marker);
        rst.set('point',offset);

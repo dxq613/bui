@@ -111,7 +111,10 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem','bui/graphic'],func
 			if(renderer){
 				item.text = renderer(item.text,item,index);
 			}
-
+			if(item.text == null){
+				item.text = '';
+			}
+			
 			item.text = item.text.toString();
 			item.x = (item.x || 0) + (label.x || 0);
 			item.y = (item.y || 0) + (label.y || 0);

@@ -149,11 +149,18 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
         seriesOptions : attrs.seriesOptions,
         tooltip : attrs.tooltip,
         legend : attrs.legend,
-        xAxis : attrs.xAxis,
-        yAxis : attrs.yAxis
+        xAxis : attrs.xAxis
       });
 
-      /*cfg.seriesOptions = mixIf(attrs.seriesOptions,theme.seriesOptions);*/
+      if(BUI.isObject(attrs.yAxis)){
+        BUI.mix(true,cfg,{
+          yAxis : attrs.yAxis
+        });
+      }else if(BUI.isArray(attrs.yAxis)){
+        attrs.yAxis[0] = BUI.merge(true,theme.yAxis,attrs.yAxis[0]);
+        cfg.yAxis = attrs.yAxis;
+      }
+
 
       seriesGroup = _self.get('canvas').addGroup(SeriesGroup,cfg);
       _self.set('seriesGroup',seriesGroup);
@@ -164,9 +171,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
      */
     repaint : function(){
       var _self = this;
-
-      _self.clear();
-      _self.paint();
+      _self.get('seriesgroup').repaint();
     },
     destructor : function(){
       var _self = this;

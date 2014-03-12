@@ -1,4 +1,5 @@
-/**/
+
+
 
 BUI.use(['bui/chart/chart'],function (Chart) {
   var chart = new Chart({
@@ -9,12 +10,9 @@ BUI.use(['bui/chart/chart'],function (Chart) {
       
     },
     title : {
-      text : 'Monthly Average Temperature',
-      font : '16px'
+      text : '饼图'
     },
-    subTitle : {
-      text : 'Source: WorldClimate.com'
-    },  
+   
     tooltip : {
       shared : true,
       pointRenderer : function(point){
@@ -23,7 +21,67 @@ BUI.use(['bui/chart/chart'],function (Chart) {
     },
     seriesOptions : {
         pieCfg : {
-          allowSelect : true,
+          allowPointSelect : true,
+          labels : {
+            distance : 40,
+            label : {
+
+            },
+            renderer : function(value,item){
+                
+                return value + ' ' + (item.point.percent * 100).toFixed(2)  + '%'; 
+            }
+          }
+        }
+    },
+    legend : null,
+    series: [{
+        type: 'pie',
+        name: 'Browser share',
+        data: [
+          ['Firefox',   45.0],
+          ['IE',       26.8],
+          {
+              name: 'Chrome',
+              y: 12.8,
+              sliced: true,
+              selected: true
+          },
+          ['Safari',    8.5],
+          ['Opera',     6.2],
+          ['Others',   0.7]
+        ]
+    }]
+  });
+
+  chart.render();
+  var group = chart.get('seriesGroup');
+  describe('测试饼图',function(){
+    
+  });
+});
+
+BUI.use(['bui/chart/chart'],function (Chart) {
+  var chart = new Chart({
+    width : 1000,
+    height : 500,
+    plotCfg : {
+      margin : [50,50,100]
+      
+    },
+    title : {
+      text : '饼图'
+    },
+   
+    tooltip : {
+      shared : true,
+      pointRenderer : function(point){
+        return (point.percent * 100).toFixed(2)+ '%';
+      }
+    },
+    seriesOptions : {
+        pieCfg : {
+          allowPointSelect : true,
           labels : {
             distance : 40,
             label : {
@@ -84,13 +142,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
       margin : [50,50,100]
       
     },
-    title : {
-      text : 'Monthly Average Temperature',
-      font : '16px'
-    },
-    subTitle : {
-      text : 'Source: WorldClimate.com'
-    },  
+   
     tooltip : {
       shared : true
     },
@@ -136,13 +188,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
       margin : [50,50,100]
       
     },
-    title : {
-      text : 'Monthly Average Temperature',
-      font : '16px'
-    },
-    subTitle : {
-      text : 'Source: WorldClimate.com'
-    },  
+  
     tooltip : {
       shared : true
     },
@@ -181,3 +227,5 @@ BUI.use(['bui/chart/chart'],function (Chart) {
     
   });
 });
+/**/
+

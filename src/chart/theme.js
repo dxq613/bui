@@ -45,18 +45,19 @@ define('bui/chart/theme',function (requrie) {
       };
   Theme.Base = Theme({
     colors : ['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
+    //[ '#ff6600','#b01111','#ac5724','#572d8a','#333333','#7bab12','#c25e5e','#a6c96a','#133960','#2586e7'],
     symbols : ['circle','diamond','square','triangle','triangle-down'],
     plotCfg : {
-      margin : 50
+      margin : [50,50,100]
     },
     title : {
       'font-size' : '16px',
-      'font-family' : 'tahoma,arial,"SimSun",Georgia, "Times New Roman", Times, serif',
+      'font-family' : 'SimSun,Georgia, Times, serif',
       'fill' : '#274b6d'
     },
     subTitle : {
-      'font-size' : '14px',
-      'font-family' : 'tahoma,arial,"SimSun",Georgia, "Times New Roman", Times, serif',
+      'font-size' : 14,
+      'font-family' : 'tahoma,arial,SimSun,Georgia, Times, serif',
       'fill' : '#4d759e'
     },
     xAxis : {
@@ -76,8 +77,7 @@ define('bui/chart/theme',function (requrie) {
       },
       title : {
         text : '',
-        font : '16px bold',
-        rotate : 90,
+        rotate : -90,
         x : -30
       },
       position:'left',
@@ -104,9 +104,16 @@ define('bui/chart/theme',function (requrie) {
       },
       pieCfg : {
         colors : ['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
+        //[ '#ff6600','#b01111','#ac5724','#572d8a','#333333','#7bab12','#c25e5e','#a6c96a','#133960','#2586e7'],
         item : {
           stroke : '#fff'
-        }
+        },
+        labels : {
+          distance : 30,
+          label : {
+
+          }
+         }
       }
       
     },

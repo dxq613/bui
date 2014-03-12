@@ -247,7 +247,14 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
      * 矩形的高度
      * @type {Number}
      */
-    height : {}
+    height : {},
+    /**
+     * 圆角
+     * @type {Number}
+     */
+    r: {
+      value : 0
+    }
   };
 
   BUI.extend(Rect,Shape);
@@ -706,8 +713,9 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
         BUI.mix(attrs,{
           width : radius * 2,
           height : radius * 2,
-          x : x - radius,
-          y : y - radius
+          x : x - (radius - attrs.radius),
+          y : y - (radius - attrs.radius),
+          radius : radius
         });
         el.attr(attrs);
       }

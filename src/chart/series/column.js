@@ -237,7 +237,7 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
      */
     setItemActived : function(item,actived){
       var _self = this,
-        color = _self.get('color');
+        color = item.getCfgAttr('attrs').fill;;
 
       if(actived){
         item.attr('fill',highlight(color,0.2));

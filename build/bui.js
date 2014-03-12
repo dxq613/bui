@@ -1017,7 +1017,7 @@ seajs.config = function(configData) {
 })();
 
 /**
- * @class BUI.Util
+ * @class BUI
  * \u63a7\u4ef6\u5e93\u7684\u5de5\u5177\u65b9\u6cd5\uff0c\u8fd9\u4e9b\u5de5\u5177\u65b9\u6cd5\u76f4\u63a5\u7ed1\u5b9a\u5230BUI\u5bf9\u8c61\u4e0a
  * <pre><code>
  *     BUI.isString(str);
@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {String}
              */
-            subVersion : 70,
+            subVersion : 72,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570

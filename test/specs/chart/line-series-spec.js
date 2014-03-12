@@ -103,7 +103,7 @@ BUI.use(['bui/graphic','bui/chart/lineseries','bui/chart/numberaxis','bui/chart/
 					radius : 4
 				}
 			},
-			data: [-0.2, 0.8, 5.7, 11.3, 17.0, 22.0, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
+			data: [-0.2, 0.8, 5.7, 11.3, 17.0, {y: 22.0,marker : {symbol : 'circle'}}, 24.8, 24.1, 20.1, 14.1, 8.6, 2.5]
 		});
 
 		var series2 = canvas.addGroup(Series,{

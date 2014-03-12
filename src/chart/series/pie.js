@@ -61,7 +61,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         angle = label.angle,
         y = label.y;
 
-      leftCount = length - i - 1;
+      leftCount = length - i;
       leftAvg = factor > 0 ? (maxY - y) / leftCount : (y - minY) / leftCount;
       conflictIndex = i;
       
@@ -78,7 +78,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         y = startLabel.y,
         endY = factor > 0 ? maxY : minY;
 
-      leftCount = length - conflictIndex - 1;
+      leftCount = length - start - 1;
       leftAvg = Math.abs(endY - y) / leftCount;
       if(leftAvg < LINE_HEIGHT){
         leftAvg = LINE_HEIGHT;
@@ -88,7 +88,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
           angle = endAngle - (Math.acos((r-h)/r)/Math.PI * 180);
 
         arr[i].orignAngle = arr[i].angle;
-        arr[i].angle = angle;
+        arr[i].angle =  angle;
         arr[i].orignX = arr[i].x;
         arr[i].orignY = arr[i].y;
 
@@ -178,7 +178,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
      * 是否允许选中
      * @type {Boolean}
      */
-    allowSelect : {
+    allowPointSelect : {
       value : false
     },
     xField : {
@@ -310,7 +310,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     //绑定点击事件
     bindMouseClick : function(){
       var _self = this;
-      if(_self.get('allowSelect')){
+      if(_self.get('allowPointSelect')){
         _self.on('click',function(ev){
           var target = ev.target,
             shape = target.shape;
@@ -461,7 +461,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         rst.fill = _self._getColor(index);
         point.color = rst.fill;
       }
-      if(_self.get('allowSelect')){
+      if(_self.get('allowPointSelect')){
         rst.cursor = 'pointer';
       }
       return rst;

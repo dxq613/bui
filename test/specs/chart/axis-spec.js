@@ -13,7 +13,7 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 	function isIe7(){
 		return UA.ie && UA.ie < 8;
 	}
-
+/**/
 	describe('测试坐标轴生成',function(){
 
 		var axis = canvas.addGroup(Axis,{
@@ -123,7 +123,7 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 			expect(path[0][1]).toBe(10);
 			expect(path[0][2]).toBe(480);
 			
-		});/**/
+		});
 		it('测试点生成位置',function(){
 			var line = axis.get('lineShape'),
 				path = line.getPath();
@@ -164,7 +164,6 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 		describe('测试数字坐标轴变化',function(){
 
 			it('更改坐标轴',function(){
-				/**/
 				axis.change({
 					ticks : [1,2,3,4,5]
 				});
@@ -335,7 +334,12 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 				text : 'axis right',
 				x : 10,
 				rotate : 90
-			}
+			},
+			labels : {
+        label : {
+          x : 12
+        }
+      }
 		});
 
 
@@ -371,6 +375,6 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 		});
 	});
 	/**/
-/**/
+
 
 });

@@ -286,7 +286,7 @@ define('bui/chart/abstractaxis',function (require) {
                 x1 : offsetPoint.x,
                 y1 : offsetPoint.y
             },
-            end = _self.getTickEnd(offsetPoint,offset);
+            end = _self.getTickEnd(cfg,offset);
         
         if(!tickItems){
             tickItems = [];
