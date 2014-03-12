@@ -44,8 +44,8 @@ define('bui/chart/theme',function (requrie) {
         animate : true
       };
   Theme.Base = Theme({
-    colors : [ '#ff6600','#b01111','#ac5724','#572d8a','#333333','#7bab12','#c25e5e','#a6c96a','#133960','#2586e7'], //['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
-    //
+    colors : ['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
+    //[ '#ff6600','#b01111','#ac5724','#572d8a','#333333','#7bab12','#c25e5e','#a6c96a','#133960','#2586e7'],
     symbols : ['circle','diamond','square','triangle','triangle-down'],
     plotCfg : {
       margin : [50,50,100]

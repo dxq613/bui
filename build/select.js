@@ -137,7 +137,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         });
         picker.on('show',function(){
           if(_self.get('forceFit')){
-            picker.set('width',el.outerWidth());
+            picker.set('width',_self.get('el').outerWidth());
           }
         });
       },

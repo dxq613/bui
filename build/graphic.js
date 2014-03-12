@@ -1870,6 +1870,7 @@ define('bui/graphic/canvasitem',function(require) {
 		next(0,fn,count,callback,uid);
 		return uid;
 	}
+
 	//执行下一步
 	function next(num,fn,total,callback,uid){
 		if(num > total){
