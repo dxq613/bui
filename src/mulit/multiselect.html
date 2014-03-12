@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>SuggestList demo</title>
+
+  <link href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css" rel="stylesheet">
+  <link href="http://g.tbcdn.cn/fi/bui/css/bui-min.css" rel="stylesheet">
+  <script src="http://g.tbcdn.cn/fi/bui/jquery-1.8.1.min.js"></script>
+  <script src="http://g.tbcdn.cn/fi/bui/bui-min.js"></script>
+  <script src="suggestlist.js"></script>
+  <script src="multilist.js"></script>
+  <script src="multiselect.js"></script>
+  <link href="multiselect.css" rel="stylesheet">
+</head>
+<body>
+
+  <div id="J_MultiSelect">
+    <input type="hidden" id="J_SelectVal">
+  </div>
+
+  <div id="J_MultiSelect1">
+    <input type="hidden" id="J_SelectVal1">
+  </div>
+
+  <script type="text/javascript">
+
+    var items1 = [
+        {text:'选项1',value:'a'},
+        {text:'选项2',value:'b'},
+        {text:'选项3',value:'c'},
+        {text:"数字值",value:3}
+      ],
+        items2 = [
+        {text:'选项1',value:'a'},
+        {text:"数字值",value:3}
+      ];
+
+    BUI.use(['suggestlist','multilist', 'multiselect'], function(SuggestList, MultiList, MultiSelect){
+      var store = new BUI.Data.Store({
+        //data: items1
+        url: 'data.php',
+        autoLoad: true
+      });
+      var suggestlist = new SuggestList({
+        store: store,
+        multipleSelect: false,
+        tpl: '方案：<input type="text" class="bui-suggest-input"/><div>dfdf</div><ul></ul>'
+      });
+
+      var multiselect = new MultiSelect({
+        render: '#J_MultiSelect',
+        multilist: {
+          source: {
+            items: items1,
+            elCls:'bui-select-list'
+          },
+          target: {
+            items: items2,
+            elCls:'bui-select-list'
+          }
+        },
+        valueField: '#J_SelectVal',
+        dialog: {
+          title: 'aaa'
+        }
+      }).render();
+
+
+
+      var multiselect = new MultiSelect({
+        render: '#J_MultiSelect',
+        multilist: {
+          source: suggestlist,
+          target: {
+            //items: items2,
+            elCls:'bui-select-list',
+            multipleSelect: false,
+            tpl: '<div>dddd</div><ul></ul>'
+          }
+        },
+        valueField: '#J_SelectVal',
+        dialog: {
+          title: 'aaa',
+          success: function(){
+
+          }
+        }
+      }).render();
+
+      multiselect.get('multilist').on('selected', function(ev){
+        var item = ev.items[0],
+          target = this.get('target');
+
+
+          var flag = true;
+          $.each(target.getItems(), function(index, targetItem){
+            if(item.value === targetItem.value){
+              flag = false
+              return false;
+            }
+          });
+
+      })
+
+      multiselect.on('aftersuccess', function(){
+        var target = this.get('multilist').get('target').getItems();
+        console.log(111111);
+        //return false;
+      });
+
+      //multiselect.get('dialog')
+
+      //unselected
+
+      //multiselect
+    });
+   
+  </script>
+</body>
+</html>

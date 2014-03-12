@@ -1,0 +1,82 @@
+.bui-multiselect{
+  display: inline-block;
+}
+.bui-multiselect .bui-multiselect-text{
+  _border: 1px solid #c3c3d6;
+  border-right: none;
+  vertical-align: middle;
+  outline: none;
+  _height: 22px;
+  _padding: 1px 4px;
+}
+
+.bui-multiselect .x-icon {
+  vertical-align: middle;
+  cursor: pointer;
+  height: 20px;
+  width: 20px;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+.bui-multiselect .icon-caret {
+  vertical-align: middle;
+  margin-top: -4px;
+}
+
+.bui-suggest-list ul{
+  margin-top: 5px;
+  border: 1px solid #c3c3d6;
+  background-color: #fff;
+  overflow: auto;
+}
+
+.bui-multilist .bui-select-list{
+  margin-top: 27px;
+}
+
+.bui-multilist .bui-multilist-action{
+  text-align: center;
+  padding-top: 27px;
+}
+
+.bui-multilist .bui-multilist-action .button{
+  margin-top: 10px;
+}
+
+.bui-suggest-list .bui-list-item {
+  padding: 2px 4px 2px 8px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  border: 1px solid #ffffff;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  margin: 1px;
+  padding-left: 8px;
+  *zoom: 1;
+}
+.bui-suggest-list .bui-list-item-hover {
+  background: #dee5ff;
+  border: 1px solid #ccd7ff;
+}
+.bui-suggest-list .bui-list-item-selected {
+  background: #ccd7ff;
+  border: 1px solid #99afff;
+}
+.bui-suggest-list .bui-list-item-disabled {
+  background: none;
+  color: #cccccc;
+  cursor: default;
+}
+.bui-suggest-list .bui-list-item-disabled a {
+  color: #cccccc;
+  cursor: default;
+}
+.bui-suggest-list .bui-list-item-disabled a:hover {
+  text-decoration: none;
+}
