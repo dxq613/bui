@@ -9,7 +9,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
     },
     title : {
       text : 'Monthly Average Temperature',
-      font : '16px'
+      'font-size' : '16px'
     },
     subTitle : {
       text : 'Source: WorldClimate.com'
@@ -64,7 +64,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
     },
     title : {
       text : 'Monthly Average Temperature',
-      font : '16px'
+      'font-size' : '16px'
     },
     subTitle : {
       text : 'Source: WorldClimate.com'
