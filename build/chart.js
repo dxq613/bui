@@ -7240,7 +7240,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       length = arr.length,
       leftAvg,
       leftCount;
-
+    //查找第一个容放不下后面节点的位置
     for (var i = 0; i < length; i++) {
       var label = arr[i],
         angle = label.angle,
@@ -7269,26 +7269,16 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       if(leftAvg < LINE_HEIGHT){
         leftAvg = LINE_HEIGHT;
       }
+      //调整后面的文本
       for (var i = length - 1; i >= start; i--) {
         var h = (length - 1 - i) * leftAvg;
         resetItem(arr[i],h,endAngle,r,center);
-        /*,
-          angle = endAngle - (Math.acos((r-h)/r)/Math.PI * 180);
-
-        arr[i].orignAngle = arr[i].angle;
-        arr[i].angle =  angle;
-        arr[i].orignX = arr[i].x;
-        arr[i].orignY = arr[i].y;
-
-        //增加5像素，用于连接线
-        arr[i].x = center.x + (r + 5) * Math.cos(arr[i].angle * RAD);
-        arr[i].y = center.y + (r + 5) * Math.sin(arr[i].angle * RAD);
-        */
+       
       };
 
       var startY = factor > 0 ? minY : maxY,
         adjust = false;
-
+      //调整前面的文本
       for(var i = start -1; i > 0 ;i--){
         var item = arr[i];
         if(!adjust && Math.abs(startY - item.y) / (i + 1) < LINE_HEIGHT){
