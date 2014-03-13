@@ -723,7 +723,10 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
     animate : function(params,ms,easing,callback){
       var _self = this;
 
-      if(_self.get('type') == 'image'){
+      if(_self.get('el').type == 'image'){
+        var radius = params.radius || _self.attr('radius');
+        params.x = params.x - radius;
+        params.y = params.y - radius;
         _self.get('el').animate(params,ms,easing,callback);
       }else{
         var attrs = _self.get('attrs'),

@@ -191,7 +191,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       value : true
     },
     duration : {
-      value : 2000
+      value : 1000
     }
   };
 

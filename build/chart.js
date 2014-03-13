@@ -520,7 +520,8 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
      */
     back : {
       value : {
-        stroke : '#909090'
+        stroke : '#909090',
+        fill : '#fff'
       }
     }
 
@@ -535,6 +536,13 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
       Legend.superclass.renderUI.call(_self);
       _self._renderItems();
       _self._renderBorder();    
+    },
+    bindUI : function(){
+      Legend.superclass.bindUI.call(_self);
+      var _self = this;
+      _self.on('mousemove',function(ev){
+        ev.stopPropagation();
+      });
     },
     _renderItems : function(){
       var _self = this,
@@ -591,6 +599,7 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
         },border);
 
         shape = _self.addShape('rect',cfg);
+        shape.toBack();
         _self.set('borderShape',shape);
       }
     },
@@ -648,6 +657,7 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
     _getNextX : function(){
       var _self = this,
         layout = _self.get('layout'),
+        
         nextX = PADDING;
       if(layout == 'horizontal'){
         var children = _self.get('itemsGroup').get('children');
@@ -655,7 +665,6 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
           if(item.isGroup){
             nextX += (item.getWidth() + PADDING);
           }
-          
         });
       }
       return nextX;
@@ -672,7 +681,21 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
     },
     //获取总的宽度
     _getTotalWidth : function(){
-      return this._getNextX();
+      var _self = this;
+      if(_self.get('layout') == 'horizontal'){
+        return this._getNextX();
+      }else{
+        var children = _self.get('itemsGroup').get('children'),
+          max = PADDING;
+        BUI.each(children,function(item){
+          var width = item.getWidth();
+          if(item.isGroup && width > max){
+            max = width;
+          }
+        });
+        return max + PADDING * 2;
+      }
+      
     },
     //获取整体的高度
     _getTotalHeight : function(){
@@ -780,16 +803,11 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
     	var _self = this,
     		series = _self.get('series');
 
-    	_self.on('mouseover',function(){
+    	_self.on('mouseover',function(ev){
     		series.setActived && series.setActived();
-    	}).on('mouseout',function(){
+    	}).on('mouseout',function(ev){
     		series.clearActived && series.clearActived();
     	});
-
-    	_self.on('mousemove',function(ev){
-    		ev.stopPropagation();
-    	});
-
     },
     //点击事件
     bindClick : function(){
@@ -797,7 +815,15 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
     		series = _self.get('series');
 
     	_self.on('click',function(){
-    		_self._setVisible(!series.get('visible'));
+    		var visible = series.get('visible');
+    		if(visible){ //防止最后一个隐藏
+    			var seriesParent = series.get('parent'),
+    				count = seriesParent.getVisibleSeries().length;
+    			if(count == 1){
+    				return;
+    			}
+    		}
+    		_self._setVisible(!visible);
     	});
     },
     //设置是否可见
@@ -890,6 +916,7 @@ define('bui/chart/legenditem',['bui/common','bui/chart/plotitem'],function (requ
 					});
 					break;
 			}
+			shape && shape.attr('cursor','pointer');
 			_self.set('shape',shape);
 		},
 		_createMarker : function(){
@@ -1040,10 +1067,17 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 					}else{
 						marker.attr(item);
 					}
-					
+					xCache.push(item.x);
+				}else{
+					_self._addMarker(item);
 				}
-				xCache.push(item.x);
+				
 			});
+
+			var count = _self.getCount();
+			for(var i = count - 1 ; i > items.length - 1; i--){
+				_self.getChildAt(i).remove();
+			}
 
 			_self.set('xCache',xCache); //清空缓存
 
@@ -2287,7 +2321,7 @@ define('bui/chart/abstractaxis',function (require) {
                 _self.addLabel(_self.formatPoint(tick),offsetPoint,offset);
             }else{
               labels.items.push({
-                  text : tick,
+                  text : _self.formatPoint(tick),
                   x : offsetPoint.x,
                   y : offsetPoint.y
               });
@@ -2553,13 +2587,25 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
          */
         change : function(info){
             var _self = this;
+            if(_self.isChange(info.ticks)){
+                _self._clearTicksInfo();
+                _self.changeInfo(info);
+                _self._processTicks(null,true);
+                _self._changeTicks();
+                _self._changeGrid();
+                _self.resetLabels();
+            }
+        },
+        /**
+         * 坐标轴是否将要发生改变
+         * @param  {Array}  ticks 新的坐标点
+         * @return {Boolean}  是否发生改变
+         */
+        isChange : function(ticks){
+          var _self = this,
+              preTicks = _self.get('ticks');
 
-            _self._clearTicksInfo();
-            _self.changeInfo(info);
-            _self._processTicks(null,true);
-            _self._changeTicks();
-            _self._changeGrid();
-            _self.resetLabels();
+          return  !BUI.Array.equals(ticks,preTicks);
         },
         /**
          * @protected
@@ -2570,7 +2616,6 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
 
             _self.set('ticks',info.ticks);
         },
-        
         _clearTicksInfo : function(){
             var _self = this,
                 grid = _self.get('grid'),
@@ -2843,85 +2888,6 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
             path.push(['L',end.x,end.y]);
             return path;
         },
-        //画轴线
-        /*_drawLines : function(){
-            var _self = this,
-                start = _self.get('start'),
-                end = _self.get('end'),
-                lineAttrs = _self.get('line'),
-                
-                ticks = _self.get('ticks');
-
-            if(lineAttrs){
-                lineAttrs = BUI.mix({
-                    x1 : start.x,
-                    y1 : start.y,
-                    x2 : end.x,
-                    y2 : end.y
-                },lineAttrs);
-                var lineShape = _self.addShape({
-                    type :'line',
-                    elCls : CLS_AXIS + '-line',
-                    attrs :lineAttrs
-                });
-                _self.set('lineShape',lineShape);
-            }
-
-             _self._processTicks(ticks);
-            
-            
-        },
-        //处理坐标,添加对应的栅格和label,初始生成跟重置有所差别
-        _processTicks : function(ticks,reset){
-            var _self = this,
-                pointCache = _self.get('pointCache'),
-                labels = _self.get('labels');
-
-            ticks = ticks || _self.get('ticks');
-            BUI.each(ticks,function(point,index){
-                var tickOffsetPoint = _self.getTickOffsetPoint(index),
-                    offsetPoint = _self.getOffsetPoint(index);
-
-                pointCache.push(_self.getOffsetByIndex(index));
-                if(_self.get('tickLine')){
-                    _self._addTickItem(tickOffsetPoint);
-                }
-                if(_self.get('grid')){
-                    _self._addGridItem(tickOffsetPoint);
-                }
-                if(labels){
-                    if(!reset){
-                        _self.addLabel(_self.formatPoint(point),offsetPoint);
-                    }else{
-                        labels.items.push({
-                            text : point,
-                            x : offsetPoint.x,
-                            y : offsetPoint.y
-                        });
-                    }
-                    
-                }
-            });
-        },
-        
-        //添加坐标轴上的坐标点
-        _addTickItem : function(offsetPoint){
-
-            var _self = this,
-                tickItems = _self.get('tickItems'),
-                cfg = {
-                    x1 : offsetPoint.x,
-                    y1 : offsetPoint.y
-                },
-                end = _self.getTickEnd(offsetPoint);
-
-            if(!tickItems){
-                tickItems = [];
-                _self.set('tickItems',tickItems);
-            }
-            BUI.mix(cfg,end);
-            tickItems.push(cfg);
-        },*/
         getTickEnd : function(start){
             var _self = this,
                 lineAttrs = _self.get('tickLine'),
@@ -2938,32 +2904,6 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
             }
             return rst;
         },
-        /*
-        _renderTicks : function(){
-            var _self = this,
-                tickItems = _self.get('tickItems'),
-                lineAttrs = _self.get('tickLine'),
-                path = '',
-                cfg = BUI.mix({},lineAttrs);
-            if(tickItems){
-                BUI.each(tickItems,function(item){
-                    var subPath = BUI.substitute('M{x1} {y1}L{x2} {y2}',item);
-                    path += subPath;
-                });
-                
-                delete cfg.value;
-                cfg.path = path;
-
-                var tickShape =  _self.addShape({
-                    type : 'path',
-                    elCls : CLS_AXIS + '-ticks',
-                    attrs : cfg
-                });
-                _self.set('tickShape',tickShape);
-                
-                
-            }
-        },*/
         _changeTicks : function(){
             var _self = this,
                 tickShape = _self.get('tickShape'),
@@ -3067,41 +3007,6 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
             return item;
 
         },
-        //添加grid的项
-        /*_addGridItem : function(offsetPoint){
-            var _self = this,
-                grid = _self.get('grid'),
-                plotRange = _self.get('plotRange'),
-                item = {};
-            if(!grid.items){
-                grid.items = [];
-            }
-
-            item.x1 = offsetPoint.x;
-            item.y1 = offsetPoint.y;
-            if(_self.isVertical()){
-                item.y2 = item.y1;
-                item.x2 = plotRange.end.x;
-            }else{
-                item.x2 = item.x1;
-                item.y2 = plotRange.end.y;
-            }
-            grid.items.push(item);
-
-        },
-
-        //渲染栅格
-        _renderGrid : function(){
-            var _self = this,
-                grid = _self.get('grid'),
-                gridGroup,
-                plotRange;
-            if(!grid){
-                return;
-            }
-            gridGroup = _self.get('parent').addGroup(Grid,grid);
-            _self.set('gridGroup',gridGroup);
-        },*/
 
         _changeGrid : function(){
             var _self = this,
@@ -3399,13 +3304,14 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
 
     }
 
-
     //计算ticks
     if(isNull(count)){
       count = (max - min) / interval;
     }
     min = tryFixed(min,interval);
-    ticks.push(min);
+    if(!isNull(min)){
+      ticks.push(min);
+    }
     for(var i = 1 ; i <= count ;i++){
       ticks.push(tryFixed(interval * i + min,interval));
     }
@@ -3581,13 +3487,26 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
             ticks.push(new Date(year,month,day,hour + i).getTime());
           }
 
-        }else{ //最小单位是分钟
+        }else if(interval > MINUTE_MS) { //最小单位是分钟
           var dMinus = diffMinus(min,max),
             minutes = Math.ceil(interval / MINUTE_MS);
           interval = minutes * MINUTE_MS;
 
           for(var i = 0 ; i<= dMinus + minutes ; i = i + minutes){
             ticks.push(min + i * MINUTE_MS);
+          }
+        }else {
+          if(interval < 1000){
+            interval == 1000;
+          }
+          min = Math.floor(min / 1000) * 1000;
+          var 
+            dSeconds = Math.ceil((max - min) / 1000),
+            seconds = Math.ceil(interval / 1000);
+          interval = seconds * 1000;
+
+          for(var i = 0; i< dSeconds + seconds; i = i + seconds){
+            ticks.push(min + i * 1000);
           }
         }
 
@@ -3596,8 +3515,10 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
     }
 
     if(!ticks.length){
+      min = Math.floor(min / 1000) * 1000;
+      max = Math.ceil(max/1000) * 1000;
       var count = (max - min)/interval;
-      for(var i = 1 ; i <= count ;i++){
+      for(var i = 0 ; i <= count ;i++){
         ticks.push(tryFixed(interval * i + min,interval));
       }
     }
@@ -3676,7 +3597,7 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
      */
     formatter : {
       value : function(value){
-        if(value == null){
+        if(value == null || isNaN(value)){
           return '';
         }
         if(value < 1e3){
@@ -3731,6 +3652,7 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
         // }
         return ticks;
     },
+   
     /**
      * @protected
      * 修改信息
@@ -4087,6 +4009,9 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 				type = _self.get('type'),
 				cfg;
 			if(type == 'line'){
+				if(items.length == 0){
+					return '';
+				}
 				return lines2path(items,lineCfg);
 			}
 			cfg = BUI.mix({},lineCfg);
@@ -4985,6 +4910,80 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       }
     },
     /**
+     * 更改数据
+     * @param  {Array} data 数据
+     */
+    changeData : function(data,redraw){
+      var _self = this,
+        preData = _self.get('data'),
+        parent = _self.get('parent');
+      if(data != preData){
+        _self.set('data',data);
+      }
+      if(redraw){
+        if(parent){
+          parent.repaint();
+        }else if(_self.get('visible')){
+          _self.repaint();
+        }
+      }
+    },
+    /**
+     * 添加数据
+     * @param {*} point  数据
+     * @param {Boolean} shift  是否删除最前面的数据
+     * @param {Boolean} redraw 是否重绘图表
+     */
+    addPoint : function(point,shift,redraw){
+      var _self = this,
+        data = _self.get('data');
+      data.push(point);
+      
+      if(shift){
+        data.shift();
+        redraw && data.unshift(data[0]);
+      }
+      _self.changeData(data,redraw);
+
+      if(shift){
+        setTimeout(function(){
+          data.shift();
+          _self.set('points',null);
+          if(redraw){
+            _self.shiftPoint();
+            _self.changeShapes(_self.getPoints(),false);
+          }
+        },800);
+        
+      }
+    },
+    /**
+     * 删除第一个节点的操作
+     * @protected
+     */
+    shiftPoint : function(){
+      var _self = this,
+        markersGroup = _self.get('markersGroup'),
+        labelsGroup = _self.get('labelsGroup'),
+        xAxis = _self.get('xAxis'),
+        first;
+      if(markersGroup){
+        first =markersGroup.getChildAt(0);
+        first && first.remove();
+      }
+      if(labelsGroup){
+        first = labelsGroup.getChildAt(0);
+        first && first.remove();
+      }
+      if(xAxis){
+        var labels = xAxis.get('labelsGroup');
+        if(labels){
+          first = labels.getChildAt(0);
+          first && first.remove();
+        }
+      }
+    },
+    /**
      * 获取对应坐标轴上的数据
      * @return {Array} 
      */
@@ -5586,7 +5585,20 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
   }
 
   Cartesian.ATTRS = {
+     /**
+     * 如果横坐标是数字类型，则通过点的间距来决定点
+     * @type {Number}
+     */
+    pointInterval : {
 
+    },
+    /**
+     * 如果横坐标是数字类型,点的起始值
+     * @type {Number}
+     */
+    pointStart : {
+      value : 0
+    },
     /**
      * x坐标轴
      * @type {BUI.Chart.Axis}
@@ -5645,8 +5657,13 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
 
       return point;
     },
+    //覆写父类方法，改变数据
+    changeData : function(data,redraw){
+      this.set('pointsCache',{});
+      Cartesian.superclass.changeData.call(this,data,redraw);
+    },
     /**
-     * 根据对象获取值
+     * 
      * @protected
      * @return {Object} 点的集合
      */
@@ -5729,23 +5746,24 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
       var _self = this,
         data = _self.get('data'),
         pointsCache = _self.get('pointsCache'),
+        xAxis = _self.get('xAxis'),
         first = data[0],
-        rst = [];
+        rst = [],
+        pointStart = _self.get('pointStart');
 
       type = type || 'yAxis';
       if(pointsCache[type]){
         return pointsCache[type];
       }
       //如果是x轴，并且指定了开始节点
-      if(type == 'xAxis' && _self.get('pointStart') != null){
-        var pointStart = _self.get('pointStart'),
+      if(type == 'xAxis' && (pointStart != null &&!(xAxis.get('type') == 'time' && pointStart == 0)) && _self.get('pointInterval') /*&& !(xAxis.get('type') == 'time') && pointStart == 0*/){
+        var 
           pointInterval = _self.get('pointInterval');
           rst.push(pointStart);
           rst.push(pointStart + (data.length - 1) * pointInterval);
       }else{ 
         var xField = _self.get('xField'),
           yField = _self.get('yField');
-
         //遍历所有节点
         BUI.each(data,function(item){
           //数字和字符串直接填入
@@ -5898,20 +5916,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
     lineActived : {
 
     },
-    /**
-     * 如果横坐标是数字类型，则通过点的间距来决定点
-     * @type {Number}
-     */
-    pointInterval : {
-      value : 1
-    },
-    /**
-     * 如果横坐标是数字类型,点的起始值
-     * @type {Number}
-     */
-    pointStart : {
-      value : 0
-    },
+   
     /**
      * 增大线的触发范围
      * @type {Number}
@@ -5963,19 +5968,32 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
      * @protected
      * 内部图形发生改变
      */
-    changeShapes : function(){
+    changeShapes : function(points,animate){
+
+      points = points || this.getPoints();
+
       var _self = this,
-        points = _self.getPoints(),
+        //points = _self.getPoints(),
         lineShape = _self.get('lineShape'),
         path = _self.points2path(points);
+
+      if(animate == null){
+        animate = _self.get('animate');
+      }
       if(lineShape){
-        if(Util.svg && _self.get('smooth')){ //曲线图，先获取到达的path
-          var prePath = lineShape.getPath();
+        if(animate){
+          if(Util.svg && _self.get('smooth')){ //曲线图，先获取到达的path
+            var prePath = lineShape.getPath();
+            lineShape.attr('path',path);
+            path = lineShape.attr('path');
+            lineShape.attr('path',prePath);
+          }
+
+          Util.animPath(lineShape,path);
+        }else{
           lineShape.attr('path',path);
-          path = lineShape.attr('path');
-          lineShape.attr('path',prePath);
         }
-        Util.animPath(lineShape,path);
+        
       }
     },
     /**
@@ -6909,16 +6927,39 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       _self.resetWidth();
 
       BUI.each(points,function(point,index){
-        var shape = _self.addItem(point,index);
-        if(_self.get('labels')){
-          var label = _self.addLabel(point.value,point);
-          shape.set('label',label);
-        }
+        _self._drawPoint(point,index);
       });
       if(_self.get('animate')){
         _self.animateItems();
       }
       _self.sort();
+    },
+    _drawPoint : function(point,index){
+      var _self = this,
+        shape = _self.addItem(point,index);
+
+      if(_self.get('labels')){
+        var label = _self.addLabel(point.value,point);
+        shape.set('label',label);
+      }
+    },
+    //覆写添加节点的方法
+    addPoint : function(point,shift,redraw){
+      var _self = this,
+        data = _self.get('data');
+      data.push(point);
+      
+      if(shift){
+        data.shift();
+        redraw &&  _self.shiftPoint();
+      }
+      _self.changeData(data,redraw);
+    },
+    shiftPoint : function(){
+      var _self = this,
+        firstItem = _self.getItems()[0];
+      firstItem && firstItem.remove();
+      Column.superclass.shiftPoint.call(this);
     },
     //重置宽度
     resetWidth : function(){
@@ -7005,6 +7046,11 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
           path : path
         },_self.get('changeDuration'));
       });
+      var count = points.length,
+        length = items.length;
+      for (var i = length; i < count; i++) {
+        _self._drawPoint(points[i],i);
+      };
     },
     getActiveItems : function(){
       return this.getItems();
@@ -7315,7 +7361,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       value : true
     },
     duration : {
-      value : 2000
+      value : 1000
     }
   };
 
@@ -7946,6 +7992,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       var _self = this,
         canvas = _self.get('canvas');
       canvas.on('mousemove',BUI.wrapBehavior(_self,'onCanvasMove'));
+      canvas.on('mouseout',BUI.wrapBehavior(_self,'onMouseOut'));
     },
     //处理鼠标在画板上移动
     onCanvasMove : function(ev){
@@ -7963,20 +8010,30 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       if(_self._isInAxis(point)){
         _self._processTracking(point,tipGroup);
       }else{
-        //标志从显示到隐藏
-        if(tipGroup.get('visible')){
-          _self.clearActivedItem();
-          if(tipGroup.get('shared')){
-            BUI.each(_self.getVisibleSeries(),function(series){
-              var markers = series.get('markersGroup');
-              markers && markers.clearActivedItem();
-            });
-          }
-          _self._hideTip();
-        }
+        _self.onMouseOut();
       }
     },
-   
+    
+    onMouseOut : function(ev){
+      var _self = this,
+        tipGroup = _self.get('tipGroup');
+      if(ev && ev.target != _self.get('canvas').get('none')){
+        return;
+      }
+      _self.clearActivedItem();
+
+      //标志从显示到隐藏
+      if(tipGroup.get('visible')){
+        
+        if(tipGroup.get('shared')){
+          BUI.each(_self.getVisibleSeries(),function(series){
+            var markers = series.get('markersGroup');
+            markers && markers.clearActivedItem();
+          });
+        }
+        _self._hideTip();
+      }
+    },
     /**
      * 获取所有的数据序列
      * @return {Array} [description]
@@ -8029,7 +8086,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           if(series.get('visible')){
             count = count + 1;
             item.name = series.get('name');
-            item.value = renderer ? renderer(info) : series.getTipItem(info);
+            item.value = renderer ? renderer(info,series) : series.getTipItem(info);
             item.color = info.color || series.get('color');
             rst.items.push(item);
             var markersGroup = series.get('markersGroup');
@@ -8509,6 +8566,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       var _self = this,
         canvas = _self.get('canvas');
       canvas.off('mousemove',BUI.getWrapBehavior(_self,'onCanvasMove'));
+      canvas.off('mouseout',BUI.getWrapBehavior(_self,'onMouseOut'));
+
       Group.superclass.remove.call(_self);
     }
 
@@ -8688,7 +8747,14 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
      */
     repaint : function(){
       var _self = this;
-      _self.get('seriesgroup').repaint();
+      _self.get('seriesGroup').repaint();
+    },
+    /**
+     * 获取所有的数据序列
+     * @return {Array} 所有的数据序列数组
+     */
+    getSeries : function(){
+      return this.get('seriesGroup').getSeries();
     },
     destructor : function(){
       var _self = this;

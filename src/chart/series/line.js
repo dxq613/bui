@@ -59,20 +59,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
     lineActived : {
 
     },
-    /**
-     * 如果横坐标是数字类型，则通过点的间距来决定点
-     * @type {Number}
-     */
-    pointInterval : {
-      value : 1
-    },
-    /**
-     * 如果横坐标是数字类型,点的起始值
-     * @type {Number}
-     */
-    pointStart : {
-      value : 0
-    },
+   
     /**
      * 增大线的触发范围
      * @type {Number}
@@ -124,19 +111,32 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
      * @protected
      * 内部图形发生改变
      */
-    changeShapes : function(){
+    changeShapes : function(points,animate){
+
+      points = points || this.getPoints();
+
       var _self = this,
-        points = _self.getPoints(),
+        //points = _self.getPoints(),
         lineShape = _self.get('lineShape'),
         path = _self.points2path(points);
+
+      if(animate == null){
+        animate = _self.get('animate');
+      }
       if(lineShape){
-        if(Util.svg && _self.get('smooth')){ //曲线图，先获取到达的path
-          var prePath = lineShape.getPath();
+        if(animate){
+          if(Util.svg && _self.get('smooth')){ //曲线图，先获取到达的path
+            var prePath = lineShape.getPath();
+            lineShape.attr('path',path);
+            path = lineShape.attr('path');
+            lineShape.attr('path',prePath);
+          }
+
+          Util.animPath(lineShape,path);
+        }else{
           lineShape.attr('path',path);
-          path = lineShape.attr('path');
-          lineShape.attr('path',prePath);
         }
-        Util.animPath(lineShape,path);
+        
       }
     },
     /**

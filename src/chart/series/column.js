@@ -122,16 +122,39 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       _self.resetWidth();
 
       BUI.each(points,function(point,index){
-        var shape = _self.addItem(point,index);
-        if(_self.get('labels')){
-          var label = _self.addLabel(point.value,point);
-          shape.set('label',label);
-        }
+        _self._drawPoint(point,index);
       });
       if(_self.get('animate')){
         _self.animateItems();
       }
       _self.sort();
+    },
+    _drawPoint : function(point,index){
+      var _self = this,
+        shape = _self.addItem(point,index);
+
+      if(_self.get('labels')){
+        var label = _self.addLabel(point.value,point);
+        shape.set('label',label);
+      }
+    },
+    //覆写添加节点的方法
+    addPoint : function(point,shift,redraw){
+      var _self = this,
+        data = _self.get('data');
+      data.push(point);
+      
+      if(shift){
+        data.shift();
+        redraw &&  _self.shiftPoint();
+      }
+      _self.changeData(data,redraw);
+    },
+    shiftPoint : function(){
+      var _self = this,
+        firstItem = _self.getItems()[0];
+      firstItem && firstItem.remove();
+      Column.superclass.shiftPoint.call(this);
     },
     //重置宽度
     resetWidth : function(){
@@ -218,6 +241,11 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
           path : path
         },_self.get('changeDuration'));
       });
+      var count = points.length,
+        length = items.length;
+      for (var i = length; i < count; i++) {
+        _self._drawPoint(points[i],i);
+      };
     },
     getActiveItems : function(){
       return this.getItems();

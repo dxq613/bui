@@ -59,46 +59,7 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 		var length = str.substr(index + 1).length;
 		return parseFloat(v.toFixed(length));
 	}
-
-	/**
-	 * 分步执行动画
-	 * @ignore
-	 */
-	function animStep(duration,fn,callback){
-		var count = parseInt(duration / STEP_MS,10) + 1,
-			uid = BUI.guid(PRE_HAND);
-		next(0,fn,count,callback,uid);
-		return uid;
-	}
-
-	//执行下一步
-	function next(num,fn,total,callback,uid){
-		if(num > total){
-			callback && callback();
-			delete HANDLERS[uid];
-			delete TIMES[uid];
-			return;
-		}
-		if(num == 0){
-			TIMES[uid] = new Date().getTime();
-		}
-		//校准时间
-		if(num == 1){
-			var internal = new Date().getTime() - TIMES[uid];
-			//console.log(internal);
-			total = parseInt(total * STEP_MS/internal,10) + 1;
-		}/**/
-
-
-		var factor = Math.pow(num/total, .48);
-		fn(factor,num,total);
-
-	  HANDLERS[uid]	= setTimeout(function(){
-			
-			next(num + 1,fn,total,callback,uid);
-		},STEP_MS);
-	}
-
+	//分步动画
 	function animTime(duration,fn,callback){
       var baseTime = new Date().getTime(),
         baseInterval = 16,
@@ -126,7 +87,7 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
         }else{
           HANDLERS[uid] = setTimeout(function(){
             next(num+1,fn,duration,callback);
-          },stepInterval)
+          },baseInterval)
         }
       }
     } 
@@ -184,6 +145,7 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 		},
 		animPath : function(pathShape,toPath,reserve,duration,easing,callback){
 			//vml阻止动画执行
+			/**/
 			if(Util.vml){
 				after();
 				return;

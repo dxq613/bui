@@ -5,7 +5,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
     width : 1000,
     height : 500,
     plotCfg : {
-      margin : [50,50,100]
+      margin : [50,50,50]
       
     },
     title : {
@@ -27,6 +27,12 @@ BUI.use(['bui/chart/chart'],function (Chart) {
       valueSuffix : '°C',
       shared : true,
       crosshairs : true
+    },
+    legend : {
+      align : 'right',
+      layout : 'vertical',
+      dy : -150,
+      dx : -60
     },
     series : [{
           name: 'Tokyo',
@@ -79,6 +85,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
 
   });
 });
+
 
 BUI.use(['bui/chart/chart'],function (Chart) {
 
@@ -144,5 +151,5 @@ BUI.use(['bui/chart/chart'],function (Chart) {
   chart.render();
 
 });
-
-/**/
+/*
+*/

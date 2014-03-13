@@ -1355,7 +1355,10 @@ define('bui/graphic/canvasitem',function(require) {
     animate : function(params,ms,easing,callback){
       var _self = this;
 
-      if(_self.get('type') == 'image'){
+      if(_self.get('el').type == 'image'){
+        var radius = params.radius || _self.attr('radius');
+        params.x = params.x - radius;
+        params.y = params.y - radius;
         _self.get('el').animate(params,ms,easing,callback);
       }else{
         var attrs = _self.get('attrs'),
@@ -1859,51 +1862,49 @@ define('bui/graphic/canvasitem',function(require) {
 		var length = str.substr(index + 1).length;
 		return parseFloat(v.toFixed(length));
 	}
+	//分步动画
+	function animTime(duration,fn,callback){
+      var baseTime = new Date().getTime(),
+        baseInterval = 16,
+        uid = BUI.guid(PRE_HAND);
 
-	/**
-	 * 分步执行动画
-	 * @ignore
-	 */
-	function animStep(duration,fn,callback){
-		var count = parseInt(duration / STEP_MS,10) + 1,
-			uid = BUI.guid(PRE_HAND);
-		next(0,fn,count,callback,uid);
-		return uid;
-	}
+      next(0,fn,duration,callback);
+      function next(num,fn,duration,callback){
+        var nowTime = new Date().getTime();
+        var durTime = nowTime - baseTime;
+        if(durTime >= duration){
+          fn(1,num);
+          callback && callback();
+          return ;
+        }
 
-	//执行下一步
-	function next(num,fn,total,callback,uid){
-		if(num > total){
-			callback && callback();
-			delete HANDLERS[uid];
-			delete TIMES[uid];
-			return;
-		}
-		if(num == 0){
-			TIMES[uid] = new Date().getTime();
-		}
-		//校准时间
-		if(num == 1){
-			var internal = new Date().getTime() - TIMES[uid];
-			//console.log(internal);
-			total = parseInt(total * STEP_MS/internal,10) + 1;
-		}/**/
+        var factor = Math.pow(durTime/duration, .48);
+        fn(factor,num);
 
-
-		var factor = Math.pow(num/total, .48);
-		fn(factor,num,total);
-
-	  HANDLERS[uid]	= setTimeout(function(){
-			
-			next(num + 1,fn,total,callback,uid);
-		},STEP_MS);
-	}
+ 
+        // window.requestAnimationFrame
+        if(window.requestAnimationFrame){
+          HANDLERS[uid] =  window.requestAnimationFrame(function(){
+            next(num+1,fn,duration,callback);
+          });
+        }else{
+          HANDLERS[uid] = setTimeout(function(){
+            next(num+1,fn,duration,callback);
+          },baseInterval)
+        }
+      }
+    } 
 
 	function stopStep(uid){
 		if(HANDLERS[uid]){
-			clearTimeout(HANDLERS[uid]);
+			if(window.requestAnimationFrame){
+				window.cancelAnimationFrame(HANDLERS[uid]);
+			}else{
+				clearTimeout(HANDLERS[uid]);
+			}
+			
 			delete HANDLERS[uid];
-			delete TIMES[uid];
+			//delete TIMES[uid];
 		}
 	}
 	/**
@@ -1936,7 +1937,7 @@ define('bui/graphic/canvasitem',function(require) {
 		 * @return {String} 动画的handler用于终止动画
 		 */
 		animStep : function(duration,fn,callback){
-		  return	animStep(duration,fn,callback);
+		  return	animTime(duration,fn,callback);
 		},
 		/**
 		 * 终止分步执行的动画
@@ -1947,6 +1948,7 @@ define('bui/graphic/canvasitem',function(require) {
 		},
 		animPath : function(pathShape,toPath,reserve,duration,easing,callback){
 			//vml阻止动画执行
+			/**/
 			if(Util.vml){
 				after();
 				return;
