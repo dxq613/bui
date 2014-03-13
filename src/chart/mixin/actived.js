@@ -57,6 +57,9 @@ define('bui/chart/actived',function (require) {
 		clearActived : function(){
 			this.setActiveStatus(false);
 			this.set('actived',false);
+			if(this.clearActivedItem){
+				this.clearActivedItem();
+			}
 		}
 	});
 

@@ -1017,7 +1017,7 @@ seajs.config = function(configData) {
 })();
 
 /**
- * @class BUI.Util
+ * @class BUI
  * \u63a7\u4ef6\u5e93\u7684\u5de5\u5177\u65b9\u6cd5\uff0c\u8fd9\u4e9b\u5de5\u5177\u65b9\u6cd5\u76f4\u63a5\u7ed1\u5b9a\u5230BUI\u5bf9\u8c61\u4e0a
  * <pre><code>
  *     BUI.isString(str);
@@ -1027,678 +1027,687 @@ seajs.config = function(configData) {
  *     BUI.mix(A,{a:'a'});
  * </code></pre>
  * @singleton
- */  
+ */
 window.BUI = window.BUI || {};
 
 if(!BUI.use && window.seajs){
     BUI.use = seajs.use;
     BUI.config = seajs.config;
 }
-    
+
 define('bui/util',function(require){
-    
+
     //\u517c\u5bb9jquery 1.6\u4ee5\u4e0b
     (function($){
-      if($.fn){
-        $.fn.on = $.fn.on || $.fn.bind;
-        $.fn.off = $.fn.off || $.fn.unbind;
-      }
-     
+        if($.fn){
+            $.fn.on = $.fn.on || $.fn.bind;
+            $.fn.off = $.fn.off || $.fn.unbind;
+        }
+
     })(jQuery);
-  /**
-   * @ignore
-   * \u5904\u4e8e\u6548\u7387\u7684\u76ee\u7684\uff0c\u590d\u5236\u5c5e\u6027
-   */
-  function mixAttrs(to,from){
+    /**
+     * @ignore
+     * \u5904\u4e8e\u6548\u7387\u7684\u76ee\u7684\uff0c\u590d\u5236\u5c5e\u6027
+     */
+    function mixAttrs(to,from){
 
-    for(var c in from){
-        if(from.hasOwnProperty(c)){
-            to[c] = to[c] || {};
-            mixAttr(to[c],from[c]);
+        for(var c in from){
+            if(from.hasOwnProperty(c)){
+                to[c] = to[c] || {};
+                mixAttr(to[c],from[c]);
+            }
         }
+
     }
-    
-  }
-  //\u5408\u5e76\u5c5e\u6027
-  function mixAttr(attr,attrConfig){
-    for (var p in attrConfig) {
-      if(attrConfig.hasOwnProperty(p)){
-        if(p == 'value'){
-          if(BUI.isObject(attrConfig[p])){
-            attr[p] = attr[p] || {};
-            BUI.mix(/*true,*/attr[p], attrConfig[p]); 
-          }else if(BUI.isArray(attrConfig[p])){
-            attr[p] = attr[p] || [];
-            //BUI.mix(/*true,*/attr[p], attrConfig[p]); 
-            attr[p] = attr[p].concat(attrConfig[p]);
-          }else{
-            attr[p] = attrConfig[p];
-          }
-        }else{
-          attr[p] = attrConfig[p];
-        }
-      }
-    };
-  }
-    
-  var win = window,
-    doc = document,
-    objectPrototype = Object.prototype,
-    toString = objectPrototype.toString,
-    ATTRS = 'ATTRS',
-    PARSER = 'PARSER',
-    GUID_DEFAULT = 'guid';
+    //\u5408\u5e76\u5c5e\u6027
+    function mixAttr(attr,attrConfig){
+        for (var p in attrConfig) {
+            if(attrConfig.hasOwnProperty(p)){
+                if(p == 'value'){
+                    if(BUI.isObject(attrConfig[p])){
+                        attr[p] = attr[p] || {};
+                        BUI.mix(/*true,*/attr[p], attrConfig[p]);
+                    }else if(BUI.isArray(attrConfig[p])){
+                        attr[p] = attr[p] || [];
+                        //BUI.mix(/*true,*/attr[p], attrConfig[p]);
+                        attr[p] = attr[p].concat(attrConfig[p]);
+                    }else{
+                        attr[p] = attrConfig[p];
+                    }
+                }else{
+                    attr[p] = attrConfig[p];
+                }
+            }
+        };
+    }
 
-  $.extend(BUI,
-  {
-    /**
-     * \u7248\u672c\u53f7
-     * @memberOf BUI
-     * @type {Number}
-     */
-    version:1.0,
+    var win = window,
+        doc = document,
+        objectPrototype = Object.prototype,
+        toString = objectPrototype.toString,
+        BODY = 'body',
+        DOC_ELEMENT = 'documentElement',
+        SCROLL = 'scroll',
+        SCROLL_WIDTH = SCROLL + 'Width',
+        SCROLL_HEIGHT = SCROLL + 'Height',
+        ATTRS = 'ATTRS',
+        PARSER = 'PARSER',
+        GUID_DEFAULT = 'guid';
 
-    /**
-     * \u5b50\u7248\u672c\u53f7
-     * @type {String}
-     */
-    subVersion : 69,
+    $.extend(BUI,
+        {
+            /**
+             * \u7248\u672c\u53f7
+             * @memberOf BUI
+             * @type {Number}
+             */
+            version:1.0,
 
-    /**
-     * \u662f\u5426\u4e3a\u51fd\u6570
-     * @param  {*} fn \u5bf9\u8c61
-     * @return {Boolean}  \u662f\u5426\u51fd\u6570
-     */
-    isFunction : function(fn){
-      return typeof(fn) === 'function';
-    },
-    /**
-     * \u662f\u5426\u6570\u7ec4
-     * @method 
-     * @param  {*}  obj \u662f\u5426\u6570\u7ec4
-     * @return {Boolean}  \u662f\u5426\u6570\u7ec4
-     */
-    isArray : ('isArray' in Array) ? Array.isArray : function(value) {
-        return toString.call(value) === '[object Array]';
-    },
-    /**
-     * \u662f\u5426\u65e5\u671f
-     * @param  {*}  value \u5bf9\u8c61
-     * @return {Boolean}  \u662f\u5426\u65e5\u671f
-     */
-    isDate: function(value) {
-        return toString.call(value) === '[object Date]';
-    },
-    /**
-     * \u662f\u5426\u662fjavascript\u5bf9\u8c61
-     * @param {Object} value The value to test
-     * @return {Boolean}
-     * @method
-     */
-    isObject: (toString.call(null) === '[object Object]') ?
-    function(value) {
-        // check ownerDocument here as well to exclude DOM nodes
-        return value !== null && value !== undefined && toString.call(value) === '[object Object]' && value.ownerDocument === undefined;
-    } :
-    function(value) {
-        return toString.call(value) === '[object Object]';
-    },
-    /**
-     * \u5c06\u6307\u5b9a\u7684\u65b9\u6cd5\u6216\u5c5e\u6027\u653e\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\uff0c
-     * \u51fd\u6570\u652f\u6301\u591a\u4e8e2\u4e2a\u53d8\u91cf\uff0c\u540e\u9762\u7684\u53d8\u91cf\u540cs1\u4e00\u6837\u5c06\u5176\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\u3002
-     * @param  {Function} r  \u6784\u9020\u51fd\u6570
-     * @param  {Object} s1 \u5c06s1 \u7684\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a
-     *          @example
-     *          BUI.augment(class1,{
+            /**
+             * \u5b50\u7248\u672c\u53f7
+             * @type {String}
+             */
+            subVersion : 72,
+
+            /**
+             * \u662f\u5426\u4e3a\u51fd\u6570
+             * @param  {*} fn \u5bf9\u8c61
+             * @return {Boolean}  \u662f\u5426\u51fd\u6570
+             */
+            isFunction : function(fn){
+                return typeof(fn) === 'function';
+            },
+            /**
+             * \u662f\u5426\u6570\u7ec4
+             * @method
+             * @param  {*}  obj \u662f\u5426\u6570\u7ec4
+             * @return {Boolean}  \u662f\u5426\u6570\u7ec4
+             */
+            isArray : ('isArray' in Array) ? Array.isArray : function(value) {
+                return toString.call(value) === '[object Array]';
+            },
+            /**
+             * \u662f\u5426\u65e5\u671f
+             * @param  {*}  value \u5bf9\u8c61
+             * @return {Boolean}  \u662f\u5426\u65e5\u671f
+             */
+            isDate: function(value) {
+                return toString.call(value) === '[object Date]';
+            },
+            /**
+             * \u662f\u5426\u662fjavascript\u5bf9\u8c61
+             * @param {Object} value The value to test
+             * @return {Boolean}
+             * @method
+             */
+            isObject: (toString.call(null) === '[object Object]') ?
+                function(value) {
+                    // check ownerDocument here as well to exclude DOM nodes
+                    return value !== null && value !== undefined && toString.call(value) === '[object Object]' && value.ownerDocument === undefined;
+                } :
+                function(value) {
+                    return toString.call(value) === '[object Object]';
+                },
+            /**
+             * \u5c06\u6307\u5b9a\u7684\u65b9\u6cd5\u6216\u5c5e\u6027\u653e\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\uff0c
+             * \u51fd\u6570\u652f\u6301\u591a\u4e8e2\u4e2a\u53d8\u91cf\uff0c\u540e\u9762\u7684\u53d8\u91cf\u540cs1\u4e00\u6837\u5c06\u5176\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\u3002
+             * @param  {Function} r  \u6784\u9020\u51fd\u6570
+             * @param  {Object} s1 \u5c06s1 \u7684\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a
+             *          @example
+             *          BUI.augment(class1,{
      *              method1: function(){
      *   
      *              }
      *          });
-     */
-    augment : function(r,s1){
-      if(!BUI.isFunction(r))
-      {
-        return r;
-      }
-      for (var i = 1; i < arguments.length; i++) {
-        BUI.mix(r.prototype,arguments[i].prototype || arguments[i]);
-      };
-      return r;
-    },
-    /**
-     * \u62f7\u8d1d\u5bf9\u8c61
-     * @param  {Object} obj \u8981\u62f7\u8d1d\u7684\u5bf9\u8c61
-     * @return {Object} \u62f7\u8d1d\u751f\u6210\u7684\u5bf9\u8c61
-     */
-    cloneObject : function(obj){
-            var result = BUI.isArray(obj) ? [] : {};
-            
-      return BUI.mix(true,result,obj);
-    },
-    /**
-    * \u629b\u51fa\u9519\u8bef
-    */
-    error : function(msg){
-        if(BUI.debug){
-            throw msg;
-        }
-    },
-    /**
-     * \u5b9e\u73b0\u7c7b\u7684\u7ee7\u627f\uff0c\u901a\u8fc7\u7236\u7c7b\u751f\u6210\u5b50\u7c7b
-     * @param  {Function} subclass
-     * @param  {Function} superclass \u7236\u7c7b\u6784\u9020\u51fd\u6570
-     * @param  {Object} overrides  \u5b50\u7c7b\u7684\u5c5e\u6027\u6216\u8005\u65b9\u6cd5
-     * @return {Function} \u8fd4\u56de\u7684\u5b50\u7c7b\u6784\u9020\u51fd\u6570
-         * \u793a\u4f8b:
-     *      @example
-     *      //\u7236\u7c7b
-     *      function base(){
+             */
+            augment : function(r,s1){
+                if(!BUI.isFunction(r))
+                {
+                    return r;
+                }
+                for (var i = 1; i < arguments.length; i++) {
+                    BUI.mix(r.prototype,arguments[i].prototype || arguments[i]);
+                };
+                return r;
+            },
+            /**
+             * \u62f7\u8d1d\u5bf9\u8c61
+             * @param  {Object} obj \u8981\u62f7\u8d1d\u7684\u5bf9\u8c61
+             * @return {Object} \u62f7\u8d1d\u751f\u6210\u7684\u5bf9\u8c61
+             */
+            cloneObject : function(obj){
+                var result = BUI.isArray(obj) ? [] : {};
+
+                return BUI.mix(true,result,obj);
+            },
+            /**
+             * \u629b\u51fa\u9519\u8bef
+             */
+            error : function(msg){
+                if(BUI.debug){
+                    throw msg;
+                }
+            },
+            /**
+             * \u5b9e\u73b0\u7c7b\u7684\u7ee7\u627f\uff0c\u901a\u8fc7\u7236\u7c7b\u751f\u6210\u5b50\u7c7b
+             * @param  {Function} subclass
+             * @param  {Function} superclass \u7236\u7c7b\u6784\u9020\u51fd\u6570
+             * @param  {Object} overrides  \u5b50\u7c7b\u7684\u5c5e\u6027\u6216\u8005\u65b9\u6cd5
+             * @return {Function} \u8fd4\u56de\u7684\u5b50\u7c7b\u6784\u9020\u51fd\u6570
+             * \u793a\u4f8b:
+             *      @example
+             *      //\u7236\u7c7b
+             *      function base(){
      * 
      *      }
-     *
-     *      function sub(){
+             *
+             *      function sub(){
      * 
      *      }
-     *      //\u5b50\u7c7b
-     *      BUI.extend(sub,base,{
+             *      //\u5b50\u7c7b
+             *      BUI.extend(sub,base,{
      *          method : function(){
      *    
      *          }
      *      });
-     *
-     *      //\u6216\u8005
-     *      var sub = BUI.extend(base,{});
-     */
-    extend : function(subclass,superclass,overrides, staticOverrides){
-      //\u5982\u679c\u53ea\u63d0\u4f9b\u7236\u7c7b\u6784\u9020\u51fd\u6570\uff0c\u5219\u81ea\u52a8\u751f\u6210\u5b50\u7c7b\u6784\u9020\u51fd\u6570
-      if(!BUI.isFunction(superclass))
-      {
-        
-        overrides = superclass;
-        superclass = subclass;
-        subclass =  function(){};
-      }
+             *
+             *      //\u6216\u8005
+             *      var sub = BUI.extend(base,{});
+             */
+            extend : function(subclass,superclass,overrides, staticOverrides){
+                //\u5982\u679c\u53ea\u63d0\u4f9b\u7236\u7c7b\u6784\u9020\u51fd\u6570\uff0c\u5219\u81ea\u52a8\u751f\u6210\u5b50\u7c7b\u6784\u9020\u51fd\u6570
+                if(!BUI.isFunction(superclass))
+                {
 
-      var create = Object.create ?
-            function (proto, c) {
-                return Object.create(proto, {
-                    constructor: {
-                        value: c
-                    }
-                });
-            } :
-            function (proto, c) {
-                function F() {
+                    overrides = superclass;
+                    superclass = subclass;
+                    subclass =  function(){};
                 }
 
-                F.prototype = proto;
-
-                var o = new F();
-                o.constructor = c;
-                return o;
-            };
-      var superObj = create(superclass.prototype,subclass);//new superclass(),//\u5b9e\u4f8b\u5316\u7236\u7c7b\u4f5c\u4e3a\u5b50\u7c7b\u7684prototype
-      subclass.prototype = BUI.mix(superObj,subclass.prototype);     //\u6307\u5b9a\u5b50\u7c7b\u7684prototype
-      subclass.superclass = create(superclass.prototype,superclass);  
-      BUI.mix(superObj,overrides);
-      BUI.mix(subclass,staticOverrides);
-      return subclass;
-    },
-    /**
-     * \u751f\u6210\u552f\u4e00\u7684Id
-     * @method
-     * @param {String} prefix \u524d\u7f00
-     * @default 'bui-guid'
-     * @return {String} \u552f\u4e00\u7684\u7f16\u53f7
-     */
-    guid : (function(){
-        var map = {};
-        return function(prefix){
-            prefix = prefix || BUI.prefix + GUID_DEFAULT;
-            if(!map[prefix]){
-                map[prefix] = 1;
-            }else{
-                map[prefix] += 1;
-            }
-            return prefix + map[prefix];
-        };
-    })(),
-    /**
-     * \u5224\u65ad\u662f\u5426\u662f\u5b57\u7b26\u4e32
-     * @return {Boolean} \u662f\u5426\u662f\u5b57\u7b26\u4e32
-     */
-    isString : function(value){
-      return typeof value === 'string';
-    },
-    /**
-     * \u5224\u65ad\u662f\u5426\u6570\u5b57\uff0c\u7531\u4e8e$.isNumberic\u65b9\u6cd5\u4f1a\u628a '123'\u8ba4\u4e3a\u6570\u5b57
-     * @return {Boolean} \u662f\u5426\u6570\u5b57
-     */
-    isNumber : function(value){
-      return typeof value === 'number';
-    },
-    /**
-     * \u662f\u5426\u662f\u5e03\u5c14\u7c7b\u578b
-     *
-     * @param {Object} \u6d4b\u8bd5\u7684\u503c
-     * @return {Boolean}
-     */
-    isBoolean: function(value) {
-        return typeof value === 'boolean';
-    },
-    /**
-     * \u63a7\u5236\u53f0\u8f93\u51fa\u65e5\u5fd7
-     * @param  {Object} obj \u8f93\u51fa\u7684\u6570\u636e
-     */
-    log : function(obj){
-      if(BUI.debug && win.console && win.console.log){
-        win.console.log(obj);
-      }
-    },
-    /**
-    * \u5c06\u591a\u4e2a\u5bf9\u8c61\u7684\u5c5e\u6027\u590d\u5236\u5230\u4e00\u4e2a\u65b0\u7684\u5bf9\u8c61
-    */
-    merge : function(){
-      var args = $.makeArray(arguments),
-        first = args[0];
-      if(BUI.isBoolean(first)){
-        args.shift();
-        args.unshift({});
-        args.unshift(first);
-      }else{
-        args.unshift({});
-      }
-      
-      return BUI.mix.apply(null,args);
-
-    },
-    /**
-     * \u5c01\u88c5 jQuery.extend \u65b9\u6cd5\uff0c\u5c06\u591a\u4e2a\u5bf9\u8c61\u7684\u5c5e\u6027merge\u5230\u7b2c\u4e00\u4e2a\u5bf9\u8c61\u4e2d
-     * @return {Object} 
-     */
-    mix : function(){
-      return $.extend.apply(null,arguments);
-    },
-    /**
-    * \u521b\u9020\u9876\u5c42\u7684\u547d\u540d\u7a7a\u95f4\uff0c\u9644\u52a0\u5230window\u5bf9\u8c61\u4e0a,
-    * \u5305\u542bnamespace\u65b9\u6cd5
-    */
-    app : function(name){
-      if(!window[name]){
-        window[name] = {
-          namespace :function(nsName){
-            return BUI.namespace(nsName,window[name]);
-          }
-        };
-      }
-      return window[name];
-    },
-
-    mixAttrs : mixAttrs,
-
-    mixAttr : mixAttr,
-
-    /**
-     * \u5c06\u5176\u4ed6\u7c7b\u4f5c\u4e3amixin\u96c6\u6210\u5230\u6307\u5b9a\u7c7b\u4e0a\u9762
-     * @param {Function} c \u6784\u9020\u51fd\u6570
-     * @param {Array} mixins \u6269\u5c55\u7c7b
-     * @param {Array} attrs \u6269\u5c55\u7684\u9759\u6001\u5c5e\u6027\uff0c\u9ed8\u8ba4\u4e3a['ATTRS']
-     * @return {Function} \u4f20\u5165\u7684\u6784\u9020\u51fd\u6570
-     */
-    mixin : function(c,mixins,attrs){
-        attrs = attrs || [ATTRS,PARSER];
-        var extensions = mixins;
-        if (extensions) {
-            c.mixins = extensions;
-
-            var desc = {
-                // ATTRS:
-                // HTML_PARSER:
-            }, constructors = extensions['concat'](c);
-
-            // [ex1,ex2]\uff0c\u6269\u5c55\u7c7b\u540e\u9762\u7684\u4f18\u5148\uff0cex2 \u5b9a\u4e49\u7684\u8986\u76d6 ex1 \u5b9a\u4e49\u7684
-            // \u4e3b\u7c7b\u6700\u4f18\u5148
-            BUI.each(constructors, function (ext) {
-                if (ext) {
-                    // \u5408\u5e76 ATTRS/HTML_PARSER \u5230\u4e3b\u7c7b
-                    BUI.each(attrs, function (K) {
-                        if (ext[K]) {
-                            desc[K] = desc[K] || {};
-                            // \u4e0d\u8986\u76d6\u4e3b\u7c7b\u4e0a\u7684\u5b9a\u4e49\uff0c\u56e0\u4e3a\u7ee7\u627f\u5c42\u6b21\u4e0a\u6269\u5c55\u7c7b\u6bd4\u4e3b\u7c7b\u5c42\u6b21\u9ad8
-                            // \u4f46\u662f\u503c\u662f\u5bf9\u8c61\u7684\u8bdd\u4f1a\u6df1\u5ea6\u5408\u5e76
-                            // \u6ce8\u610f\uff1a\u6700\u597d\u503c\u662f\u7b80\u5355\u5bf9\u8c61\uff0c\u81ea\u5b9a\u4e49 new \u51fa\u6765\u7684\u5bf9\u8c61\u5c31\u4f1a\u6709\u95ee\u9898(\u7528 function return \u51fa\u6765)!
-                            if(K == 'ATTRS'){
-                                //BUI.mix(true,desc[K], ext[K]);
-                                mixAttrs(desc[K],ext[K]);
-                            }else{
-                                BUI.mix(desc[K], ext[K]);
+                var create = Object.create ?
+                    function (proto, c) {
+                        return Object.create(proto, {
+                            constructor: {
+                                value: c
                             }
-                            
+                        });
+                    } :
+                    function (proto, c) {
+                        function F() {
+                        }
+
+                        F.prototype = proto;
+
+                        var o = new F();
+                        o.constructor = c;
+                        return o;
+                    };
+                var superObj = create(superclass.prototype,subclass);//new superclass(),//\u5b9e\u4f8b\u5316\u7236\u7c7b\u4f5c\u4e3a\u5b50\u7c7b\u7684prototype
+                subclass.prototype = BUI.mix(superObj,subclass.prototype);     //\u6307\u5b9a\u5b50\u7c7b\u7684prototype
+                subclass.superclass = create(superclass.prototype,superclass);
+                BUI.mix(superObj,overrides);
+                BUI.mix(subclass,staticOverrides);
+                return subclass;
+            },
+            /**
+             * \u751f\u6210\u552f\u4e00\u7684Id
+             * @method
+             * @param {String} prefix \u524d\u7f00
+             * @default 'bui-guid'
+             * @return {String} \u552f\u4e00\u7684\u7f16\u53f7
+             */
+            guid : (function(){
+                var map = {};
+                return function(prefix){
+                    prefix = prefix || BUI.prefix + GUID_DEFAULT;
+                    if(!map[prefix]){
+                        map[prefix] = 1;
+                    }else{
+                        map[prefix] += 1;
+                    }
+                    return prefix + map[prefix];
+                };
+            })(),
+            /**
+             * \u5224\u65ad\u662f\u5426\u662f\u5b57\u7b26\u4e32
+             * @return {Boolean} \u662f\u5426\u662f\u5b57\u7b26\u4e32
+             */
+            isString : function(value){
+                return typeof value === 'string';
+            },
+            /**
+             * \u5224\u65ad\u662f\u5426\u6570\u5b57\uff0c\u7531\u4e8e$.isNumberic\u65b9\u6cd5\u4f1a\u628a '123'\u8ba4\u4e3a\u6570\u5b57
+             * @return {Boolean} \u662f\u5426\u6570\u5b57
+             */
+            isNumber : function(value){
+                return typeof value === 'number';
+            },
+            /**
+             * \u662f\u5426\u662f\u5e03\u5c14\u7c7b\u578b
+             *
+             * @param {Object} value \u6d4b\u8bd5\u7684\u503c
+             * @return {Boolean}
+             */
+            isBoolean: function(value) {
+                return typeof value === 'boolean';
+            },
+            /**
+             * \u63a7\u5236\u53f0\u8f93\u51fa\u65e5\u5fd7
+             * @param  {Object} obj \u8f93\u51fa\u7684\u6570\u636e
+             */
+            log : function(obj){
+                if(BUI.debug && win.console && win.console.log){
+                    win.console.log(obj);
+                }
+            },
+            /**
+             * \u5c06\u591a\u4e2a\u5bf9\u8c61\u7684\u5c5e\u6027\u590d\u5236\u5230\u4e00\u4e2a\u65b0\u7684\u5bf9\u8c61
+             */
+            merge : function(){
+                var args = $.makeArray(arguments),
+                    first = args[0];
+                if(BUI.isBoolean(first)){
+                    args.shift();
+                    args.unshift({});
+                    args.unshift(first);
+                }else{
+                    args.unshift({});
+                }
+
+                return BUI.mix.apply(null,args);
+
+            },
+            /**
+             * \u5c01\u88c5 jQuery.extend \u65b9\u6cd5\uff0c\u5c06\u591a\u4e2a\u5bf9\u8c61\u7684\u5c5e\u6027merge\u5230\u7b2c\u4e00\u4e2a\u5bf9\u8c61\u4e2d
+             * @return {Object}
+             */
+            mix : function(){
+                return $.extend.apply(null,arguments);
+            },
+            /**
+             * \u521b\u9020\u9876\u5c42\u7684\u547d\u540d\u7a7a\u95f4\uff0c\u9644\u52a0\u5230window\u5bf9\u8c61\u4e0a,
+             * \u5305\u542bnamespace\u65b9\u6cd5
+             */
+            app : function(name){
+                if(!window[name]){
+                    window[name] = {
+                        namespace :function(nsName){
+                            return BUI.namespace(nsName,window[name]);
+                        }
+                    };
+                }
+                return window[name];
+            },
+
+            mixAttrs : mixAttrs,
+
+            mixAttr : mixAttr,
+
+            /**
+             * \u5c06\u5176\u4ed6\u7c7b\u4f5c\u4e3amixin\u96c6\u6210\u5230\u6307\u5b9a\u7c7b\u4e0a\u9762
+             * @param {Function} c \u6784\u9020\u51fd\u6570
+             * @param {Array} mixins \u6269\u5c55\u7c7b
+             * @param {Array} attrs \u6269\u5c55\u7684\u9759\u6001\u5c5e\u6027\uff0c\u9ed8\u8ba4\u4e3a['ATTRS']
+             * @return {Function} \u4f20\u5165\u7684\u6784\u9020\u51fd\u6570
+             */
+            mixin : function(c,mixins,attrs){
+                attrs = attrs || [ATTRS,PARSER];
+                var extensions = mixins;
+                if (extensions) {
+                    c.mixins = extensions;
+
+                    var desc = {
+                        // ATTRS:
+                        // HTML_PARSER:
+                    }, constructors = extensions['concat'](c);
+
+                    // [ex1,ex2]\uff0c\u6269\u5c55\u7c7b\u540e\u9762\u7684\u4f18\u5148\uff0cex2 \u5b9a\u4e49\u7684\u8986\u76d6 ex1 \u5b9a\u4e49\u7684
+                    // \u4e3b\u7c7b\u6700\u4f18\u5148
+                    BUI.each(constructors, function (ext) {
+                        if (ext) {
+                            // \u5408\u5e76 ATTRS/HTML_PARSER \u5230\u4e3b\u7c7b
+                            BUI.each(attrs, function (K) {
+                                if (ext[K]) {
+                                    desc[K] = desc[K] || {};
+                                    // \u4e0d\u8986\u76d6\u4e3b\u7c7b\u4e0a\u7684\u5b9a\u4e49\uff0c\u56e0\u4e3a\u7ee7\u627f\u5c42\u6b21\u4e0a\u6269\u5c55\u7c7b\u6bd4\u4e3b\u7c7b\u5c42\u6b21\u9ad8
+                                    // \u4f46\u662f\u503c\u662f\u5bf9\u8c61\u7684\u8bdd\u4f1a\u6df1\u5ea6\u5408\u5e76
+                                    // \u6ce8\u610f\uff1a\u6700\u597d\u503c\u662f\u7b80\u5355\u5bf9\u8c61\uff0c\u81ea\u5b9a\u4e49 new \u51fa\u6765\u7684\u5bf9\u8c61\u5c31\u4f1a\u6709\u95ee\u9898(\u7528 function return \u51fa\u6765)!
+                                    if(K == 'ATTRS'){
+                                        //BUI.mix(true,desc[K], ext[K]);
+                                        mixAttrs(desc[K],ext[K]);
+                                    }else{
+                                        BUI.mix(desc[K], ext[K]);
+                                    }
+
+                                }
+                            });
                         }
                     });
-                }
-            });
 
-            BUI.each(desc, function (v,k) {
-                c[k] = v;
-            });
+                    BUI.each(desc, function (v,k) {
+                        c[k] = v;
+                    });
 
-            var prototype = {};
+                    var prototype = {};
 
-            // \u4e3b\u7c7b\u6700\u4f18\u5148
-            BUI.each(constructors, function (ext) {
-                if (ext) {
-                    var proto = ext.prototype;
-                    // \u5408\u5e76\u529f\u80fd\u4ee3\u7801\u5230\u4e3b\u7c7b\uff0c\u4e0d\u8986\u76d6
-                    for (var p in proto) {
-                        // \u4e0d\u8986\u76d6\u4e3b\u7c7b\uff0c\u4f46\u662f\u4e3b\u7c7b\u7684\u7236\u7c7b\u8fd8\u662f\u8986\u76d6\u5427
-                        if (proto.hasOwnProperty(p)) {
-                            prototype[p] = proto[p];
+                    // \u4e3b\u7c7b\u6700\u4f18\u5148
+                    BUI.each(constructors, function (ext) {
+                        if (ext) {
+                            var proto = ext.prototype;
+                            // \u5408\u5e76\u529f\u80fd\u4ee3\u7801\u5230\u4e3b\u7c7b\uff0c\u4e0d\u8986\u76d6
+                            for (var p in proto) {
+                                // \u4e0d\u8986\u76d6\u4e3b\u7c7b\uff0c\u4f46\u662f\u4e3b\u7c7b\u7684\u7236\u7c7b\u8fd8\u662f\u8986\u76d6\u5427
+                                if (proto.hasOwnProperty(p)) {
+                                    prototype[p] = proto[p];
+                                }
+                            }
                         }
+                    });
+
+                    BUI.each(prototype, function (v,k) {
+                        c.prototype[k] = v;
+                    });
+                }
+                return c;
+            },
+            /**
+             * \u751f\u6210\u547d\u540d\u7a7a\u95f4
+             * @param  {String} name \u547d\u540d\u7a7a\u95f4\u7684\u540d\u79f0
+             * @param  {Object} baseNS \u5728\u5df2\u6709\u7684\u547d\u540d\u7a7a\u95f4\u4e0a\u521b\u5efa\u547d\u540d\u7a7a\u95f4\uff0c\u9ed8\u8ba4\u201cBUI\u201d
+             * @return {Object} \u8fd4\u56de\u7684\u547d\u540d\u7a7a\u95f4\u5bf9\u8c61
+             *      @example
+             *      BUI.namespace("Grid"); // BUI.Grid
+             */
+            namespace : function(name,baseNS){
+                baseNS = baseNS || BUI;
+                if(!name){
+                    return baseNS;
+                }
+                var list = name.split('.'),
+                //firstNS = win[list[0]],
+                    curNS = baseNS;
+
+                for (var i = 0; i < list.length; i++) {
+                    var nsName = list[i];
+                    if(!curNS[nsName]){
+                        curNS[nsName] = {};
                     }
+                    curNS = curNS[nsName];
+                };
+                return curNS;
+            },
+            /**
+             * BUI \u63a7\u4ef6\u7684\u516c\u7528\u524d\u7f00
+             * @type {String}
+             */
+            prefix : 'bui-',
+            /**
+             * \u66ff\u6362\u5b57\u7b26\u4e32\u4e2d\u7684\u5b57\u6bb5.
+             * @param {String} str \u6a21\u7248\u5b57\u7b26\u4e32
+             * @param {Object} o json data
+             * @param {RegExp} [regexp] \u5339\u914d\u5b57\u7b26\u4e32\u7684\u6b63\u5219\u8868\u8fbe\u5f0f
+             */
+            substitute: function (str, o, regexp) {
+                if (!BUI.isString(str)
+                    || (!BUI.isObject(o)) && !BUI.isArray(o)) {
+                    return str;
+                }
+
+                return str.replace(regexp || /\\?\{([^{}]+)\}/g, function (match, name) {
+                    if (match.charAt(0) === '\\') {
+                        return match.slice(1);
+                    }
+                    return (o[name] === undefined) ? '' : o[name];
+                });
+            },
+            /**
+             * \u4f7f\u7b2c\u4e00\u4e2a\u5b57\u6bcd\u53d8\u6210\u5927\u5199
+             * @param  {String} s \u5b57\u7b26\u4e32
+             * @return {String} \u9996\u5b57\u6bcd\u5927\u5199\u540e\u7684\u5b57\u7b26\u4e32
+             */
+            ucfirst : function(s){
+                s += '';
+                return s.charAt(0).toUpperCase() + s.substring(1);
+            },
+            /**
+             * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
+             * @param {Object} offset \u5750\u6807\uff0cleft,top
+             * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
+             */
+            isInView : function(offset){
+                var left = offset.left,
+                    top = offset.top,
+                    viewWidth = BUI.viewportWidth(),
+                    wiewHeight = BUI.viewportHeight(),
+                    scrollTop = BUI.scrollTop(),
+                    scrollLeft = BUI.scrollLeft();
+                //\u5224\u65ad\u6a2a\u5750\u6807
+                if(left < scrollLeft ||left > scrollLeft + viewWidth){
+                    return false;
+                }
+                //\u5224\u65ad\u7eb5\u5750\u6807
+                if(top < scrollTop || top > scrollTop + wiewHeight){
+                    return false;
+                }
+                return true;
+            },
+            /**
+             * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u7eb5\u5411\u5750\u6807\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
+             * @param {Object} top  \u7eb5\u5750\u6807
+             * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
+             */
+            isInVerticalView : function(top){
+                var wiewHeight = BUI.viewportHeight(),
+                    scrollTop = BUI.scrollTop();
+
+                //\u5224\u65ad\u7eb5\u5750\u6807
+                if(top < scrollTop || top > scrollTop + wiewHeight){
+                    return false;
+                }
+                return true;
+            },
+            /**
+             * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u6a2a\u5411\u5750\u6807\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
+             * @param {Object} left \u6a2a\u5750\u6807
+             * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
+             */
+            isInHorizontalView : function(left){
+                var viewWidth = BUI.viewportWidth(),
+                    scrollLeft = BUI.scrollLeft();
+                //\u5224\u65ad\u6a2a\u5750\u6807
+                if(left < scrollLeft ||left > scrollLeft + viewWidth){
+                    return false;
+                }
+                return true;
+            },
+            /**
+             * \u83b7\u53d6\u7a97\u53e3\u53ef\u89c6\u8303\u56f4\u5bbd\u5ea6
+             * @return {Number} \u53ef\u89c6\u533a\u5bbd\u5ea6
+             */
+            viewportWidth : function(){
+                return $(window).width();
+            },
+            /**
+             * \u83b7\u53d6\u7a97\u53e3\u53ef\u89c6\u8303\u56f4\u9ad8\u5ea6
+             * @return {Number} \u53ef\u89c6\u533a\u9ad8\u5ea6
+             */
+            viewportHeight:function(){
+                return $(window).height();
+            },
+            /**
+             * \u6eda\u52a8\u5230\u7a97\u53e3\u7684left\u4f4d\u7f6e
+             */
+            scrollLeft : function(){
+                return $(window).scrollLeft();
+            },
+            /**
+             * \u6eda\u52a8\u5230\u6a2a\u5411\u4f4d\u7f6e
+             */
+            scrollTop : function(){
+                return $(window).scrollTop();
+            },
+            /**
+             * \u7a97\u53e3\u5bbd\u5ea6
+             * @return {Number} \u7a97\u53e3\u5bbd\u5ea6
+             */
+            docWidth : function(){
+                return Math.max(this.viewportWidth(), doc[DOC_ELEMENT][SCROLL_WIDTH], doc[BODY][SCROLL_WIDTH]);
+            },
+            /**
+             * \u7a97\u53e3\u9ad8\u5ea6
+             * @return {Number} \u7a97\u53e3\u9ad8\u5ea6
+             */
+            docHeight : function(){
+                return Math.max(this.viewportHeight(), doc[DOC_ELEMENT][SCROLL_HEIGHT], doc[BODY][SCROLL_HEIGHT]);
+            },
+            /**
+             * \u904d\u5386\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
+             * @param {Object|Array} element/Object \u6570\u7ec4\u4e2d\u7684\u5143\u7d20\u6216\u8005\u5bf9\u8c61\u7684\u503c
+             * @param {Function} func \u904d\u5386\u7684\u51fd\u6570 function(elememt,index){} \u6216\u8005 function(value,key){}
+             */
+            each : function (elements,func) {
+                if(!elements){
+                    return;
+                }
+                $.each(elements,function(k,v){
+                    return func(v,k);
+                });
+            },
+            /**
+             * \u5c01\u88c5\u4e8b\u4ef6\uff0c\u4fbf\u4e8e\u4f7f\u7528\u4e0a\u4e0b\u6587this,\u548c\u4fbf\u4e8e\u89e3\u9664\u4e8b\u4ef6\u65f6\u4f7f\u7528
+             * @protected
+             * @param  {Object} self   \u5bf9\u8c61
+             * @param  {String} action \u4e8b\u4ef6\u540d\u79f0
+             */
+            wrapBehavior : function(self, action) {
+                return self['__bui_wrap_' + action] = function (e) {
+                    if (!self.get('disabled')) {
+                        self[action](e);
+                    }
+                };
+            },
+            /**
+             * \u83b7\u53d6\u5c01\u88c5\u7684\u4e8b\u4ef6
+             * @protected
+             * @param  {Object} self   \u5bf9\u8c61
+             * @param  {String} action \u4e8b\u4ef6\u540d\u79f0
+             */
+            getWrapBehavior : function(self, action) {
+                return self['__bui_wrap_' + action];
+            },
+            /**
+             * \u83b7\u53d6\u9875\u9762\u4e0a\u4f7f\u7528\u4e86\u6b64id\u7684\u63a7\u4ef6
+             * @param  {String} id \u63a7\u4ef6id
+             * @return {BUI.Component.Controller}    \u67e5\u627e\u7684\u63a7\u4ef6
+             */
+            getControl : function(id){
+                return BUI.Component.Manager.getComponent(id);
+            }
+
+        });
+
+    /**
+     * \u8868\u5355\u5e2e\u52a9\u7c7b\uff0c\u5e8f\u5217\u5316\u3001\u53cd\u5e8f\u5217\u5316\uff0c\u8bbe\u7f6e\u503c
+     * @class BUI.FormHelper
+     * @singleton
+     */
+    var formHelper = BUI.FormHelper = {
+        /**
+         * \u5c06\u8868\u5355\u683c\u5f0f\u5316\u6210\u952e\u503c\u5bf9\u5f62\u5f0f
+         * @param {HTMLElement} form \u8868\u5355
+         * @return {Object} \u952e\u503c\u5bf9\u7684\u5bf9\u8c61
+         */
+        serializeToObject:function(form){
+            var array = $(form).serializeArray(),
+                result = {};
+            BUI.each(array,function(item){
+                var name = item.name;
+                if(!result[name]){ //\u5982\u679c\u662f\u5355\u4e2a\u503c\uff0c\u76f4\u63a5\u8d4b\u503c
+                    result[name] = item.value;
+                }else{ //\u591a\u503c\u4f7f\u7528\u6570\u7ec4
+                    if(!BUI.isArray(result[name])){
+                        result[name] = [result[name]];
+                    }
+                    result[name].push(item.value);
                 }
             });
+            return result;
+        },
+        /**
+         * \u8bbe\u7f6e\u8868\u5355\u7684\u503c
+         * @param {HTMLElement} form \u8868\u5355
+         * @param {Object} obj  \u952e\u503c\u5bf9
+         */
+        setFields : function(form,obj){
+            for(var name in obj){
+                if(obj.hasOwnProperty(name)){
+                    BUI.FormHelper.setField(form,name,obj[name]);
+                }
+            }
+        },
+        /**
+         * \u6e05\u7a7a\u8868\u5355
+         * @param  {HTMLElement} form \u8868\u5355\u5143\u7d20
+         */
+        clear : function(form){
+            var elements = $.makeArray(form.elements);
 
-            BUI.each(prototype, function (v,k) {
-                c.prototype[k] = v;
+            BUI.each(elements,function(element){
+                if(element.type === 'checkbox' || element.type === 'radio' ){
+                    $(element).attr('checked',false);
+                }else{
+                    $(element).val('');
+                }
+                $(element).change();
             });
-        }
-        return c;
-    },
-    /**
-     * \u751f\u6210\u547d\u540d\u7a7a\u95f4
-     * @param  {String} name \u547d\u540d\u7a7a\u95f4\u7684\u540d\u79f0
-     * @param  {Object} baseNS \u5728\u5df2\u6709\u7684\u547d\u540d\u7a7a\u95f4\u4e0a\u521b\u5efa\u547d\u540d\u7a7a\u95f4\uff0c\u9ed8\u8ba4\u201cBUI\u201d
-     * @return {Object} \u8fd4\u56de\u7684\u547d\u540d\u7a7a\u95f4\u5bf9\u8c61
-     *      @example
-     *      BUI.namespace("Grid"); // BUI.Grid
-     */
-    namespace : function(name,baseNS){
-      baseNS = baseNS || BUI;
-      if(!name){
-        return baseNS;
-      }
-      var list = name.split('.'),
-        //firstNS = win[list[0]],
-        curNS = baseNS;
-      
-      for (var i = 0; i < list.length; i++) {
-        var nsName = list[i];
-        if(!curNS[nsName]){
-          curNS[nsName] = {};
-        }
-        curNS = curNS[nsName];
-      };    
-      return curNS;
-    },
-    /**
-     * BUI \u63a7\u4ef6\u7684\u516c\u7528\u524d\u7f00
-     * @type {String}
-     */
-    prefix : 'bui-',
-    /**
-     * \u66ff\u6362\u5b57\u7b26\u4e32\u4e2d\u7684\u5b57\u6bb5.
-     * @param {String} str \u6a21\u7248\u5b57\u7b26\u4e32
-     * @param {Object} o json data
-     * @param {RegExp} [regexp] \u5339\u914d\u5b57\u7b26\u4e32\u7684\u6b63\u5219\u8868\u8fbe\u5f0f
-     */
-    substitute: function (str, o, regexp) {
-        if (!BUI.isString(str)
-            || (!BUI.isObject(o)) && !BUI.isArray(o)) {
-            return str;
-        }
-
-        return str.replace(regexp || /\\?\{([^{}]+)\}/g, function (match, name) {
-            if (match.charAt(0) === '\\') {
-                return match.slice(1);
+        },
+        /**
+         * \u8bbe\u7f6e\u8868\u5355\u5b57\u6bb5
+         * @param {HTMLElement} form \u8868\u5355\u5143\u7d20
+         * @param {string} field \u5b57\u6bb5\u540d
+         * @param {string} value \u5b57\u6bb5\u503c
+         */
+        setField:function(form,fieldName,value){
+            var fields = form.elements[fieldName];
+            if(fields && fields.type){
+                formHelper._setFieldValue(fields,value);
+            }else if(BUI.isArray(fields) || (fields && fields.length)){
+                BUI.each(fields,function(field){
+                    formHelper._setFieldValue(field,value);
+                });
             }
-            return (o[name] === undefined) ? '' : o[name];
-        });
-    },
-    /**
-     * \u4f7f\u7b2c\u4e00\u4e2a\u5b57\u6bcd\u53d8\u6210\u5927\u5199
-     * @param  {String} s \u5b57\u7b26\u4e32
-     * @return {String} \u9996\u5b57\u6bcd\u5927\u5199\u540e\u7684\u5b57\u7b26\u4e32
-     */
-    ucfirst : function(s){
-      s += '';
-            return s.charAt(0).toUpperCase() + s.substring(1);
-    },
-    /**
-     * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
-     * @param {Object} offset \u5750\u6807\uff0cleft,top
-     * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
-     */
-    isInView : function(offset){
-      var left = offset.left,
-        top = offset.top,
-        viewWidth = BUI.viewportWidth(),
-        wiewHeight = BUI.viewportHeight(),
-        scrollTop = BUI.scrollTop(),
-        scrollLeft = BUI.scrollLeft();
-      //\u5224\u65ad\u6a2a\u5750\u6807
-      if(left < scrollLeft ||left > scrollLeft + viewWidth){
-        return false;
-      }
-      //\u5224\u65ad\u7eb5\u5750\u6807
-      if(top < scrollTop || top > scrollTop + wiewHeight){
-        return false;
-      }
-      return true;
-    },
-    /**
-     * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u7eb5\u5411\u5750\u6807\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
-     * @param {Object} top  \u7eb5\u5750\u6807
-     * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
-     */
-    isInVerticalView : function(top){
-      var wiewHeight = BUI.viewportHeight(),
-        scrollTop = BUI.scrollTop();
-      
-      //\u5224\u65ad\u7eb5\u5750\u6807
-      if(top < scrollTop || top > scrollTop + wiewHeight){
-        return false;
-      }
-      return true;
-    },
-    /**
-     * \u9875\u9762\u4e0a\u7684\u4e00\u70b9\u6a2a\u5411\u5750\u6807\u662f\u5426\u5728\u7528\u6237\u7684\u89c6\u56fe\u5185
-     * @param {Object} left \u6a2a\u5750\u6807
-     * @return {Boolean} \u662f\u5426\u5728\u89c6\u56fe\u5185
-     */
-    isInHorizontalView : function(left){
-      var viewWidth = BUI.viewportWidth(),     
-        scrollLeft = BUI.scrollLeft();
-      //\u5224\u65ad\u6a2a\u5750\u6807
-      if(left < scrollLeft ||left > scrollLeft + viewWidth){
-        return false;
-      }
-      return true;
-    },
-    /**
-     * \u83b7\u53d6\u7a97\u53e3\u53ef\u89c6\u8303\u56f4\u5bbd\u5ea6
-     * @return {Number} \u53ef\u89c6\u533a\u5bbd\u5ea6
-     */
-    viewportWidth : function(){
-        return $(window).width();
-    },
-    /**
-     * \u83b7\u53d6\u7a97\u53e3\u53ef\u89c6\u8303\u56f4\u9ad8\u5ea6
-     * @return {Number} \u53ef\u89c6\u533a\u9ad8\u5ea6
-     */
-    viewportHeight:function(){
-         return $(window).height();
-    },
-    /**
-     * \u6eda\u52a8\u5230\u7a97\u53e3\u7684left\u4f4d\u7f6e
-     */
-    scrollLeft : function(){
-        return $(window).scrollLeft();
-    },
-    /**
-     * \u6eda\u52a8\u5230\u6a2a\u5411\u4f4d\u7f6e
-     */
-    scrollTop : function(){
-        return $(window).scrollTop();
-    },
-    /**
-     * \u7a97\u53e3\u5bbd\u5ea6
-     * @return {Number} \u7a97\u53e3\u5bbd\u5ea6
-     */
-    docWidth : function(){
-        var body = document.documentElement || document.body;
-        return $(body).width();
-    },
-    /**
-     * \u7a97\u53e3\u9ad8\u5ea6
-     * @return {Number} \u7a97\u53e3\u9ad8\u5ea6
-     */
-    docHeight : function(){
-        var body = document.documentElement || document.body;
-        return $(body).height();
-    },
-    /**
-     * \u904d\u5386\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
-     * @param {Object|Array} element/Object \u6570\u7ec4\u4e2d\u7684\u5143\u7d20\u6216\u8005\u5bf9\u8c61\u7684\u503c 
-     * @param {Function} func \u904d\u5386\u7684\u51fd\u6570 function(elememt,index){} \u6216\u8005 function(value,key){}
-     */
-    each : function (elements,func) {
-      if(!elements){
-        return;
-      }
-      $.each(elements,function(k,v){
-        return func(v,k);
-      });
-    },
-    /**
-     * \u5c01\u88c5\u4e8b\u4ef6\uff0c\u4fbf\u4e8e\u4f7f\u7528\u4e0a\u4e0b\u6587this,\u548c\u4fbf\u4e8e\u89e3\u9664\u4e8b\u4ef6\u65f6\u4f7f\u7528
-     * @protected
-     * @param  {Object} self   \u5bf9\u8c61
-     * @param  {String} action \u4e8b\u4ef6\u540d\u79f0
-     */
-    wrapBehavior : function(self, action) {
-      return self['__bui_wrap_' + action] = function (e) {
-        if (!self.get('disabled')) {
-            self[action](e);
-        }
-      };
-    },
-    /**
-     * \u83b7\u53d6\u5c01\u88c5\u7684\u4e8b\u4ef6
-     * @protected
-     * @param  {Object} self   \u5bf9\u8c61
-     * @param  {String} action \u4e8b\u4ef6\u540d\u79f0
-     */
-    getWrapBehavior : function(self, action) {
-        return self['__bui_wrap_' + action];
-    }
-
-  });
-
-  /**
-  * \u8868\u5355\u5e2e\u52a9\u7c7b\uff0c\u5e8f\u5217\u5316\u3001\u53cd\u5e8f\u5217\u5316\uff0c\u8bbe\u7f6e\u503c
-  * @class BUI.FormHelper
-  * @singleton
-  */
-  var formHelper = BUI.FormHelper = {
-    /**
-    * \u5c06\u8868\u5355\u683c\u5f0f\u5316\u6210\u952e\u503c\u5bf9\u5f62\u5f0f
-    * @param {HTMLElement} form \u8868\u5355
-    * @return {Object} \u952e\u503c\u5bf9\u7684\u5bf9\u8c61
-    */
-    serializeToObject:function(form){
-      var array = $(form).serializeArray(),
-        result = {};
-      BUI.each(array,function(item){
-        var name = item.name;
-        if(!result[name]){ //\u5982\u679c\u662f\u5355\u4e2a\u503c\uff0c\u76f4\u63a5\u8d4b\u503c
-          result[name] = item.value;  
-        }else{ //\u591a\u503c\u4f7f\u7528\u6570\u7ec4
-          if(!BUI.isArray(result[name])){
-            result[name] = [result[name]];
-          }
-          result[name].push(item.value);
-        }
-      });
-      return result;
-    },
-    /**
-     * \u8bbe\u7f6e\u8868\u5355\u7684\u503c
-     * @param {HTMLElement} form \u8868\u5355
-     * @param {Object} obj  \u952e\u503c\u5bf9
-     */
-    setFields : function(form,obj){
-      for(var name in obj){
-        if(obj.hasOwnProperty(name)){
-          BUI.FormHelper.setField(form,name,obj[name]);
-        }
-      }
-    },
-    /**
-     * \u6e05\u7a7a\u8868\u5355
-     * @param  {HTMLElement} form \u8868\u5355\u5143\u7d20
-     */
-    clear : function(form){
-      var elements = $.makeArray(form.elements);
-
-      BUI.each(elements,function(element){
-        if(element.type === 'checkbox' || element.type === 'radio' ){
-          $(element).attr('checked',false);
-        }else{
-          $(element).val('');
-        }
-        $(element).change();
-      });
-    },
-    /**
-    * \u8bbe\u7f6e\u8868\u5355\u5b57\u6bb5
-    * @param {HTMLElement} form \u8868\u5355\u5143\u7d20
-    * @param {string} field \u5b57\u6bb5\u540d 
-    * @param {string} value \u5b57\u6bb5\u503c
-    */
-    setField:function(form,fieldName,value){
-      var fields = form.elements[fieldName];
-      if(fields && fields.type){
-        formHelper._setFieldValue(fields,value);
-      }else if(BUI.isArray(fields) || (fields && fields.length)){
-        BUI.each(fields,function(field){
-          formHelper._setFieldValue(field,value);
-        });
-      }
-    },
-    //\u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
-    _setFieldValue : function(field,value){
-        if(field.type === 'checkbox'){
-            if(field.value == ''+ value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
-              $(field).attr('checked',true);
+        },
+        //\u8bbe\u7f6e\u5b57\u6bb5\u7684\u503c
+        _setFieldValue : function(field,value){
+            if(field.type === 'checkbox'){
+                if(field.value == ''+ value ||(BUI.isArray(value) && BUI.Array.indexOf(field.value,value) !== -1)) {
+                    $(field).attr('checked',true);
+                }else{
+                    $(field).attr('checked',false);
+                }
+            }else if(field.type === 'radio'){
+                if(field.value == ''+  value){
+                    $(field).attr('checked',true);
+                }else{
+                    $(field).attr('checked',false);
+                }
             }else{
-              $(field).attr('checked',false);  
+                $(field).val(value);
             }
-        }else if(field.type === 'radio'){
-            if(field.value == ''+  value){
-              $(field).attr('checked',true);
-            }else{
-              $(field).attr('checked',false); 
-            }    
-        }else{
-            $(field).val(value);
+        },
+        /**
+         * \u83b7\u53d6\u8868\u5355\u5b57\u6bb5\u503c
+         * @param {HTMLElement} form \u8868\u5355\u5143\u7d20
+         * @param {string} field \u5b57\u6bb5\u540d
+         * @return {String}   \u5b57\u6bb5\u503c
+         */
+        getField : function(form,fieldName){
+            return BUI.FormHelper.serializeToObject(form)[fieldName];
         }
-    },
-    /**
-     * \u83b7\u53d6\u8868\u5355\u5b57\u6bb5\u503c
-     * @param {HTMLElement} form \u8868\u5355\u5143\u7d20
-     * @param {string} field \u5b57\u6bb5\u540d 
-     * @return {String}   \u5b57\u6bb5\u503c
-     */
-    getField : function(form,fieldName){
-      return BUI.FormHelper.serializeToObject(form)[fieldName];
-    }
-  };
+    };
 
-  return BUI;
-});
-
-/**
+    return BUI;
+});/**
  * @fileOverview \u6570\u7ec4\u5e2e\u52a9\u7c7b
  * @ignore
  */
@@ -3236,6 +3245,9 @@ define('bui/date', function () {
          * @return {Date}      \u65e5\u671f\u5bf9\u8c61
          */
         parse: function (date, s) {
+            if(BUI.isString(date)){
+                date = date.replace('\/','-');
+            }
             return dateParse(date, s);
         },
         /**
@@ -6926,7 +6938,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
   var ArrayUtil = require('bui/array'),
     JSON = require('bui/json'),
     prefixCls = BUI.prefix,
-    FIELD_PREFIX = 'data-'
+    FIELD_PREFIX = 'data-',
     FIELD_CFG = FIELD_PREFIX + 'cfg',
     PARSER = 'PARSER',
     Manager = require('bui/component/manage'),
@@ -7180,7 +7192,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     /**
      * \u83b7\u53d6\u5b50\u63a7\u4ef6\u7684xclass\u7c7b\u578b
      * @protected
-     * @param {jQuery} \u5b50\u63a7\u4ef6\u7684\u6839\u8282\u70b9
+     * @param {jQuery} childNode \u5b50\u63a7\u4ef6\u7684\u6839\u8282\u70b9
      */
     findXClassByNode: function (childNode, ignoreError) {
       var _self = this,
@@ -8156,7 +8168,7 @@ define('bui/component/uibase/list',['bui/component/uibase/selection'],function (
      * <pre><code>
      * var index = list.indexOf(item); //\u8fd4\u56de\u7d22\u5f15\uff0c\u4e0d\u5b58\u5728\u5219\u8fd4\u56de-1
      * </code></pre>
-     * @param  {Object|BUI.Component.Controller} \u9009\u9879
+     * @param  {Object|BUI.Component.Controller} item \u9009\u9879
      * @return {Number}   \u9879\u7684\u7d22\u5f15\u503c
      */
     indexOfItem : function(item){
@@ -16991,7 +17003,6 @@ define('bui/list/listitem',['bui/common'],function (require) {
    * @private
    * @class BUI.List.ItemView
    * @extends BUI.Component.View
-   * @extends BUI.Component.View
    * @mixins BUI.Component.UIBase.ListItemView
    * \u5217\u8868\u9879\u7684\u89c6\u56fe\u5c42\u5bf9\u8c61
    */
@@ -20071,7 +20082,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     },
     /**
      * \u663e\u793a\u9519\u8bef
-     * @param {Array} \u663e\u793a\u9519\u8bef
+     * @param {Array} errors \u663e\u793a\u9519\u8bef
      */
     showErrors : function(errors){
       var _self = this,
@@ -22715,9 +22726,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        if(_self.get('forceFit')){
-          picker.set('width',el.outerWidth());
-        }
+        
         picker.render();
         _self.set('list',picker.get('list'));
       },
@@ -22734,6 +22743,11 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         });
         list.on('itemsshow',function(){
           _self._syncValue();
+        });
+        picker.on('show',function(){
+          if(_self.get('forceFit')){
+            picker.set('width',_self.get('el').outerWidth());
+          }
         });
       },
       /**
@@ -23097,8 +23111,21 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
         }
       }
       combox.superclass._uiSetItems.call(_self,v);
-    }
+    },
+    bindUI: function(){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list'),
+        textField = picker.get('textField');
 
+      //\u4fee\u590d\u624b\u52a8\u6e05\u7a7atextField\u91cc\u9762\u7684\u503c\uff0c\u518d\u9009\u65f6\u4e0d\u586b\u5145\u7684bug
+      $(textField).on('keyup', function(ev){
+        var item = list.getSelected();
+        if(item){
+          list.clearItemStatus(item);
+        }
+      });
+    }
   },{
     ATTRS : 
     /**
@@ -23561,7 +23588,7 @@ define('bui/mask/mask',['bui/common'],function (require) {
         },
         /**
          * @description \u89e3\u9664\u5143\u7d20\u7684\u5c4f\u853d
-         * @param {String|HTMLElement} \u5c4f\u853d\u7684\u5143\u7d20
+         * @param {String|HTMLElement} element \u5c4f\u853d\u7684\u5143\u7d20
          * <pre><code>
          * BUI.Mask.unmaskElement('#domId');
          * </code></pre>
@@ -23961,6 +23988,20 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : {
           'afterOpenChange' : true
         }
+      }
+    },
+    PARSER : {
+      subMenu : function(el){
+        var subList = el.find('ul'),
+          sub;
+        if(subList && subList.length){
+          sub = BUI.Component.create({
+            srcNode : subList,
+            xclass : 'pop-menu'
+          });
+          subList.appendTo('body');
+        }
+        return sub;
       }
     }
   },{
@@ -25418,7 +25459,9 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         var _self = this,
           children = _self.get('children');
         BUI.each(children,function(item){
-          item.close();
+          if(item.get('closeable')){
+            item.close();
+          }
         });
       },
       closeOther : function(curItem){
@@ -30621,7 +30664,8 @@ define('bui/grid/column',['bui/common'],function (require) {
                 resizable:{
                     value:true
                 },
-                /* \u662f\u5426\u53ef\u4ee5\u6309\u7167\u6b64\u5217\u6392\u5e8f\uff0c\u5982\u679c\u8bbe\u7f6etrue,\u90a3\u4e48\u70b9\u51fb\u5217\u5934\u65f6
+                /**
+                 * \u662f\u5426\u53ef\u4ee5\u6309\u7167\u6b64\u5217\u6392\u5e8f\uff0c\u5982\u679c\u8bbe\u7f6etrue,\u90a3\u4e48\u70b9\u51fb\u5217\u5934\u65f6
                  * <pre><code>
                  *     {title : '\u6570\u5b57', dataIndex :'b',sortable : false},
                  * </code></pre>
@@ -32767,7 +32811,7 @@ define('bui/grid/format',function (require) {
                 return enumObj[value] || '';
             };
         },
-        /*
+        /**
          * \u5c06\u591a\u4e2a\u503c\u8f6c\u6362\u6210\u4e00\u4e2a\u5b57\u7b26\u4e32
          * @param {Object} enumObj \u952e\u503c\u5bf9\u7684\u679a\u4e3e\u5bf9\u8c61 {"1":"\u5927","2":"\u5c0f"}
          * @return {Function} \u8fd4\u56de\u6307\u5b9a\u679a\u4e3e\u7684\u683c\u5f0f\u5316\u51fd\u6570
@@ -32795,7 +32839,7 @@ define('bui/grid/format',function (require) {
                 return result.join(',');
             };
         },
-        /*
+        /**
          * \u5c06\u8d22\u52a1\u6570\u636e\u5206\u8f6c\u6362\u6210\u5143
          * @param {Number|String} enumObj \u952e\u503c\u5bf9\u7684\u679a\u4e3e\u5bf9\u8c61 {"1":"\u5927","2":"\u5c0f"}
          * @return {Number} \u8fd4\u56de\u5c06\u5206\u8f6c\u6362\u6210\u5143\u7684\u6570\u5b57

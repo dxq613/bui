@@ -117,9 +117,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        if(_self.get('forceFit')){
-          picker.set('width',el.outerWidth());
-        }
+        
         picker.render();
         _self.set('list',picker.get('list'));
       },
@@ -136,6 +134,11 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         });
         list.on('itemsshow',function(){
           _self._syncValue();
+        });
+        picker.on('show',function(){
+          if(_self.get('forceFit')){
+            picker.set('width',_self.get('el').outerWidth());
+          }
         });
       },
       /**
@@ -499,8 +502,21 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
         }
       }
       combox.superclass._uiSetItems.call(_self,v);
-    }
+    },
+    bindUI: function(){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list'),
+        textField = picker.get('textField');
 
+      //修复手动清空textField里面的值，再选时不填充的bug
+      $(textField).on('keyup', function(ev){
+        var item = list.getSelected();
+        if(item){
+          list.clearItemStatus(item);
+        }
+      });
+    }
   },{
     ATTRS : 
     /**

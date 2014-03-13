@@ -3,10 +3,11 @@
  * @ignore
  */
 
-define('bui/chart/labels',['bui/common','bui/chart/plotitem'],function (require) {
+define('bui/chart/labels',['bui/common','bui/chart/plotitem','bui/graphic'],function (require) {
 	
 	var BUI = require('bui/common'),
 		Item = require('bui/chart/plotitem'),
+		Util = require('bui/graphic').Util,
 		CLS_LABELS = 'x-chart-labels';
 
 	/**
@@ -24,7 +25,7 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem'],function (require)
 			value : CLS_LABELS
 		},
 		zIndex : {
-			value : 5
+			value : 6
 		},
 		/**
 		 * 文本集合
@@ -46,6 +47,12 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem'],function (require)
 		 */
 		renderer : {
 
+		},
+		animate : {
+			value : true
+		},
+		duration : {
+			value : 400
 		}
 
 	};
@@ -60,37 +67,83 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem'],function (require)
 			Labels.superclass.renderUI.call(_self);
 			_self._drawLabels();
 		},
+		/**
+		 * 添加文本
+		 * @param {Object} item 文本配置项
+		 */
+		addLabel : function(item){
+			var _self = this,
+				items = _self.get('items'),
+				count = items.length;
+			items.push(item);
+
+			return _self._addLabel(item,count);
+
+		},
 		//绘制文本
 		_drawLabels : function(){
 			var _self = this,
 				items = _self.get('items'),
-				label = _self.get('label'),
-				renderer = _self.get('renderer'),
 				cfg;
 
 			BUI.each(items,function(item,index){
-				if(!BUI.isObject(item)){
-					var tmp = item;
-					item = {};
-					item.text = tmp;
-				}
-				
-				if(renderer){
-					item.text = renderer(item.text,item,index);
-				}
-				item.text = item.text.toString();
-				item.x = (item.x || 0) + (label.x || 0);
-				item.y = (item.y || 0) + (label.y || 0);
-				cfg = BUI.merge(label,item);
-				_self._createText(cfg);
+				_self._addLabel(item,index);
 			});
+		},
+
+		_addLabel : function(item,index){
+			var _self = this,
+				cfg = _self._getLabelCfg(item,index);
+
+			return _self._createText(cfg);
+		},
+		_getLabelCfg : function(item,index){
+			var _self = this,
+				label = _self.get('label'),
+				renderer = _self.get('renderer');
+
+			if(!BUI.isObject(item)){
+				var tmp = item;
+				item = {};
+				item.text = tmp;
+			}
+
+			if(renderer){
+				item.text = renderer(item.text,item,index);
+			}
+			if(item.text == null){
+				item.text = '';
+			}
+			
+			item.text = item.text.toString();
+			item.x = (item.x || 0) + (label.x || 0);
+			item.y = (item.y || 0) + (label.y || 0);
+			cfg = BUI.merge(label,item);
+
+			return cfg;
+		},
+		changeLabel : function(label,item){
+			var _self = this,
+				index = BUI.Array.indexOf(label,_self.get('children')),
+				cfg = _self._getLabelCfg(item,index);
+			if(label){
+				if(Util.svg && _self.get('animate')){
+					label.attr('text',cfg.text);
+					label.animate({
+						x : cfg.x,
+						y : cfg.y
+					},_self.get('duration'));
+				}else{
+					label.attr(cfg);
+				}
+			}
 		},
 		/**
 		 * 创建按文本
 		 * @private
 		 */
 		_createText : function(cfg){
-			this.addShape('label',cfg);
+			return this.addShape('label',cfg);
 		}
 
 	});

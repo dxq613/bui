@@ -1,6 +1,6 @@
 
 /**
- * @class BUI.Util
+ * @class BUI
  * 控件库的工具方法，这些工具方法直接绑定到BUI对象上
  * <pre><code>
  *     BUI.isString(str);
@@ -90,7 +90,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {String}
              */
-            subVersion : 69,
+            subVersion : 72,
 
             /**
              * 是否为函数
@@ -268,7 +268,7 @@ define('bui/util',function(require){
             /**
              * 是否是布尔类型
              *
-             * @param {Object} 测试的值
+             * @param {Object} value 测试的值
              * @return {Boolean}
              */
             isBoolean: function(value) {
@@ -577,6 +577,14 @@ define('bui/util',function(require){
              */
             getWrapBehavior : function(self, action) {
                 return self['__bui_wrap_' + action];
+            },
+            /**
+             * 获取页面上使用了此id的控件
+             * @param  {String} id 控件id
+             * @return {BUI.Component.Controller}    查找的控件
+             */
+            getControl : function(id){
+                return BUI.Component.Manager.getComponent(id);
             }
 
         });

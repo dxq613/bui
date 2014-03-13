@@ -54,10 +54,10 @@ define('bui/chart/activedgroup',function  (require) {
 		 * 设置激活的元素
 		 * @param {BUI.Chart.Actived} item 可以被激活的元素
 		 */
-		setActived : function(item){
+		setActivedItem : function(item){
 			var _self = this;
 
-			_self.clearActived();
+			_self.clearActivedItem();
 			if(item && !_self.isItemActived(item)){
 				_self.setItemActived(item,true);
 			}
@@ -84,9 +84,9 @@ define('bui/chart/activedgroup',function  (require) {
 		/**
 		 * 清除激活的元素
 		 */
-		clearActived : function(){
-			var _self = this,
-				item = _self.getActived();
+		clearActivedItem : function(item){
+			var _self = this;
+			item = item || _self.getActived();
 			item && _self.setItemActived(item,false);
 		}
 

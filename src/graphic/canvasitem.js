@@ -32,7 +32,11 @@ define('bui/graphic/canvasitem',function(require) {
   			el = _self.get('el');
   		el.translate(dx,dy);
 		},
-		
+		index : function(){
+			var _self = this,
+				parent = _self.get('parent');
+			return BUI.Array.indexOf(_self,parent.get('children'));
+		},
 		/**
 		 * 执行动画
 		 * @param  {Object}   params   动画的参数

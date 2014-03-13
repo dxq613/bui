@@ -106,7 +106,7 @@
 }
 .bui-calendar,
 .bui-monthpicker {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
 }
 .bui-calendar em,

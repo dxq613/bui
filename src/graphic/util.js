@@ -2,14 +2,23 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 
 	var BUI = require('bui/common'),
 		Raphael = require('bui/graphic/raphael'),
-		NAN = NaN;
+		STEP_MS = 16,//16毫秒一个step
+		HANDLERS = {
+
+		},
+		TIMES = {},//动画的事件校验
+		NAN = NaN,
+		PRE_HAND = 'h';
 
 	//取小于当前值的
 	function floor(values,value){
 		var length = values.length,
 			pre = values[0];
-		if(value < values[0] || value > values[length - 1]){
+		if(value < values[0]){
 			return NAN;
+		}
+		if(value > values[length - 1]){
+			return values[length - 1];
 		}
 		for (var i = 1; i < values.length; i++) {
 			if(value < values[i]){
@@ -20,7 +29,7 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 
 		return pre;
 	}
-
+	//大于当前值的第一个
 	function ceiling(values,value){
 		var length = values.length,
 			pre = values[0],
@@ -40,6 +49,68 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 		return rst;
 	}
 
+	//将数值逼近到指定的数
+	function tryFixed(v,base){
+		var str = base.toString(),
+			index = str.indexOf('.');
+		if(index == -1){
+			return parseInt(v);
+		}
+		var length = str.substr(index + 1).length;
+		return parseFloat(v.toFixed(length));
+	}
+
+	/**
+	 * 分步执行动画
+	 * @ignore
+	 */
+	function animStep(duration,fn,callback){
+		var count = parseInt(duration / STEP_MS,10) + 1,
+			uid = BUI.guid(PRE_HAND);
+		next(0,fn,count,callback,uid);
+		return uid;
+	}
+
+	//执行下一步
+	function next(num,fn,total,callback,uid){
+		if(num > total){
+			callback && callback();
+			delete HANDLERS[uid];
+			delete TIMES[uid];
+			return;
+		}
+		if(num == 0){
+			TIMES[uid] = new Date().getTime();
+		}
+		//校准时间
+		if(num == 1){
+			var internal = new Date().getTime() - TIMES[uid];
+			//console.log(internal);
+			total = parseInt(total * STEP_MS/internal,10) + 1;
+		}/**/
+
+
+		var factor = Math.pow(num/total, .48);
+		fn(factor,num,total);
+
+	  HANDLERS[uid]	= setTimeout(function(){
+			
+			next(num + 1,fn,total,callback,uid);
+		},STEP_MS);
+	}
+
+	function stopStep(uid){
+		if(HANDLERS[uid]){
+			clearTimeout(HANDLERS[uid]);
+			delete HANDLERS[uid];
+			delete TIMES[uid];
+		}
+	}
+	/**
+	 * @class BUI.Graphic.Util
+	 * @singleton
+	 * 绘图的工具类
+	 */
 	var Util = {};
 
 	BUI.mix(Util,{
@@ -56,6 +127,57 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 
 		angle : function(x1, y1, x2, y2){
 			return Raphael.angle(x1, y1, x2, y2);
+		},
+		/**
+		 * 分步执行动画
+		 * @param  {Number}   duration 执行时间
+		 * @param  {Function} fn  每一步执行的回调函数，function(step,total){}
+		 * @param  {Function} callback 回调函数
+		 * @return {String} 动画的handler用于终止动画
+		 */
+		animStep : function(duration,fn,callback){
+		  return	animStep(duration,fn,callback);
+		},
+		/**
+		 * 终止分步执行的动画
+		 * @param  {String} handler 句柄
+		 */
+		stopStep : function(handler){
+			stopStep(handler);
+		},
+		animPath : function(pathShape,toPath,reserve,duration,easing,callback){
+			//vml阻止动画执行
+			if(Util.vml){
+				after();
+				return;
+			}
+			reserve = reserve || 0;
+			duration = duration || 400;
+
+			var curPath = pathShape.getPath(),
+				endPath = Util.parsePathString(toPath),
+				tempPath,
+				last = curPath.slice(reserve * -1);
+
+			if(curPath.length > endPath.length){
+				tempPath = curPath.slice(0,endPath.length);
+				
+			}else{
+				tempPath = curPath.concat([]);
+				if(reserve){
+					for(var i = tempPath.length; i < endPath.length;i ++){
+						tempPath = tempPath.concat(last);
+					}
+				}
+			}
+			pathShape.attr('path',tempPath);
+
+			pathShape.animate({path : endPath},duration,easing,after);
+
+			function after(){
+				pathShape.attr('path',toPath);
+				callback && callback();
+			}
 		},
 		/**
 		 * 获取path上的点
@@ -109,6 +231,7 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 			}
 			return array;
 		},
+
 		/**
 		 * 平移path
 		 * @param  {String} path 路径
@@ -131,6 +254,17 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 			}
 			var floorVal = floor(values,value),
 				ceilingVal = ceiling(values,value);
+			if(isNaN(floorVal) || isNaN(ceilingVal)){
+				if(values[0] >= value){
+					return values[0];
+				}
+				var last = values[values.length -1];
+				if(last <= value){
+					return last;
+				}
+			}
+			
+
 			if(value - floorVal < ceilingVal - value){
 				return floorVal;
 			}
@@ -153,7 +287,49 @@ define('bui/graphic/util',['bui/graphic/raphael'],function (require) {
 		 */
 		snapCeiling : function(values,value){
 			return ceiling(values,value);
-		}
+		},
+		/**
+		 * 将数字保留对应数字的小数位
+		 * @param  {Number} value 值
+		 * @param  {Number} base  基准值
+		 * @return {Number}  fixed后的数字
+		 */
+		tryFixed : function(value,base){
+			return tryFixed(value,base);
+		},
+		/**
+		 * 设置值，仅当对象上没有此属性时
+		 * @param  {Object} obj 对象
+		 * @param  {String} name  字段名
+		 * @param  {*} value 值
+		 */
+		trySet : function(obj,name,value){
+			if(obj && !obj[name]){
+	      obj[name] = value;
+	    }
+		},
+		/**
+		 * 将颜色变亮
+		 * @param  {String} c  颜色
+		 * @param  {Number} percent 变亮的比例 0 - 1
+		 * @return {String} 变亮的颜色
+		 */
+		highlight : function(c,percent){
+	    var color = Raphael.color(c),
+	      l = color.l * (1 + percent);
+	    return Raphael.hsl2rgb(color.h,color.s,l).hex;
+	  },
+	  /**
+		 * 将颜色变暗
+		 * @param  {String} c  颜色
+		 * @param  {Number} percent 变暗的比例 0 - 1
+		 * @return {String} 变暗的颜色
+		 */
+	  dark : function(c,percent){
+	  	var color = Raphael.color(c),
+	      l = color.l * (1 - percent);
+	    return Raphael.hsl2rgb(color.h,color.s,l).hex;
+	  }
 	});
 	return Util;
 });
