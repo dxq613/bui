@@ -43,12 +43,26 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     return self.get('parent').get('plotRange');
   }
 
+  function resetItem(item,h,endAngle,r,center){
+      var angle = endAngle - (Math.acos((r-h)/r)/Math.PI * 180);
+
+        item.orignAngle = item.angle;
+        item.angle =  angle;
+        item.orignX = item.x;
+        item.orignY = item.y;
+
+        //增加5像素，用于连接线
+        item.x = center.x + (r + 5) * Math.cos(item.angle * RAD);
+        item.y = center.y + (r + 5) * Math.sin(item.angle * RAD);
+  }
+
   function alignLables(center,r,arr,endAngle,factor){
     var count = parseInt(r * 2 / LINE_HEIGHT,10),//理论上，最大显示的条数
       maxY = center.y + r,
       minY = center.y - r;
     if(count < arr.length){ //忽略掉不能显示的条数
-      arr = arr.slice(0,count - 1);
+      //arr = arr.slice(0,count - 1);
+      arr.splice(count,arr.length - count);
     }
 
     var conflictIndex = 0, //从该点开始存在冲突，需要调整位置
@@ -71,11 +85,12 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       }
     }
 
+    
 
     if(conflictIndex && conflictIndex < length - 1){ //说明存在冲突，因为已经调整过，所以conflictIndex > 0
       var start = conflictIndex - 1,
         startLabel = arr[start],
-        y = startLabel.y,
+        y =  startLabel.y, //start == 0 ? (factor > 0 ? minY : maxY) :
         endY = factor > 0 ? maxY : minY;
 
       leftCount = length - start - 1;
@@ -84,7 +99,9 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         leftAvg = LINE_HEIGHT;
       }
       for (var i = length - 1; i >= start; i--) {
-        var h = (length - 1 - i) * leftAvg,
+        var h = (length - 1 - i) * leftAvg;
+        resetItem(arr[i],h,endAngle,r,center);
+        /*,
           angle = endAngle - (Math.acos((r-h)/r)/Math.PI * 180);
 
         arr[i].orignAngle = arr[i].angle;
@@ -95,8 +112,22 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         //增加5像素，用于连接线
         arr[i].x = center.x + (r + 5) * Math.cos(arr[i].angle * RAD);
         arr[i].y = center.y + (r + 5) * Math.sin(arr[i].angle * RAD);
-
+        */
       };
+
+      var startY = factor > 0 ? minY : maxY,
+        adjust = false;
+
+      for(var i = start -1; i > 0 ;i--){
+        var item = arr[i];
+        if(!adjust && Math.abs(startY - item.y) / (i + 1) < LINE_HEIGHT){
+          adjust = true;
+        }
+        if(adjust){
+          var h = Math.abs(arr[i + 1].y - endY) + LINE_HEIGHT;
+          resetItem(arr[i],h,endAngle,r,center);
+        }
+      }
       
     }
 
@@ -219,6 +250,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       }
       if(_self.get('labelsGroup')){
         _self.processLabels(points);
+        _self.get('labelsGroup').toFront();
       }
 
       function after(){
@@ -253,7 +285,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       });
       if(leftArray.length){
         var end;
-        if(startAngle > -90){
+        if(startAngle >= -90){
           end = 270;
         }else{
           end = -90;
@@ -344,9 +376,12 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       if(distance < 0){ //圆内显示文本
         if(middleAngle > -90 && middleAngle <= 90){
           rst['text-anchor'] = 'end';
+          rst.rotate = middleAngle;
         }else{
           rst['text-anchor'] = 'start';
+          rst.rotate = middleAngle - 180;
         }
+
       }else{
         if(middleAngle > -90 && middleAngle <= 90){
           rst['text-anchor'] = 'start';
@@ -459,8 +494,8 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       }
       if(!rst.fill){
         rst.fill = _self._getColor(index);
-        point.color = rst.fill;
       }
+      point.color = rst.fill;
       if(_self.get('allowPointSelect')){
         rst.cursor = 'pointer';
       }

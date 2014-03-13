@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/chart',['bui/common','bui/chart/chart','bui/chart/axis','bui/chart/series','bui/chart/plotrange'],function (require) {
+define('bui/chart',['bui/common','bui/chart/chart','bui/chart/axis','bui/chart/series','bui/chart/plotrange','bui/chart/theme'],function (require) {
   
   var BUI = require('bui/common'),
     Chart = BUI.namespace('Chart');
@@ -12,7 +12,8 @@ define('bui/chart',['bui/common','bui/chart/chart','bui/chart/axis','bui/chart/s
     Chart : require('bui/chart/chart'),
     Axis : require('bui/chart/axis'),
     Series : require('bui/chart/series'),
-    PlotRange : require('bui/chart/plotrange')
+    PlotRange : require('bui/chart/plotrange'),
+    Theme : require('bui/chart/theme')
   });
 
   return Chart;
