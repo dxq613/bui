@@ -240,7 +240,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
 
       function after(){
         if(selectedPoint){
-          _self._setItemSelected(selectedPoint,true);
+          _self.setSelected(selectedPoint);
         }
       }
     },

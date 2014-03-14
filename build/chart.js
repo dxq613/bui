@@ -5503,7 +5503,6 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
           }
         });
       }
-      
     },
     /**
      * 设置选中
@@ -7537,7 +7536,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
 
       function after(){
         if(selectedPoint){
-          _self._setItemSelected(selectedPoint,true);
+          _self.setSelected(selectedPoint);
         }
       }
     },

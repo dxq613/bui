@@ -1,4 +1,4 @@
-/*
+
 BUI.use(['bui/chart/chart'],function (Chart) {
   var chart = new Chart({
     width : 1000,
@@ -53,7 +53,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
   
 });
 
-*/
+/**/
 
 
 BUI.use(['bui/chart/chart','bui/graphic'],function (Chart,Graphic) {
