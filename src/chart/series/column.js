@@ -46,8 +46,10 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
     }
 
   /**
-   * @class BUI.Chart.Axis.Column
+   * @class BUI.Chart.Series.Column
    * 柱状图
+   * @extends BUI.Chart.Series.Cartesian
+   * @mixins BUI.Chart.Series.ItemGroup
    */
   var Column = function(cfg){
     Column.superclass.constructor.call(this,cfg);
@@ -75,6 +77,17 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
     columnOffset : {
       value : 0
     },
+    /**
+     * 是否允许取消选中，选中状态下，继续点击则会取消选中
+     * @type {Boolean}
+     */
+    cancelSelect : {
+      value : false
+    },
+    /**
+     * 发生层叠时，层叠之间的间距
+     * @type {Object}
+     */
     stackPadding : {
       value : 1
     },
@@ -116,22 +129,49 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
         }
       }
     },
+    bindUI : function(){
+      Column.superclass.bindUI.call(this);
+      this.bindItemClick();
+    },
     //渲染
     draw : function(points){
       var _self = this;
       _self.resetWidth();
 
       BUI.each(points,function(point,index){
-        var shape = _self.addItem(point,index);
-        if(_self.get('labels')){
-          var label = _self.addLabel(point.value,point);
-          shape.set('label',label);
-        }
+        _self._drawPoint(point,index);
       });
       if(_self.get('animate')){
         _self.animateItems();
       }
       _self.sort();
+    },
+    _drawPoint : function(point,index){
+      var _self = this,
+        shape = _self.addItem(point,index);
+
+      if(_self.get('labels')){
+        var label = _self.addLabel(point.value,point);
+        shape.set('label',label);
+      }
+    },
+    //覆写添加节点的方法
+    addPoint : function(point,shift,redraw){
+      var _self = this,
+        data = _self.get('data');
+      data.push(point);
+      
+      if(shift){
+        data.shift();
+        redraw &&  _self.shiftPoint();
+      }
+      _self.changeData(data,redraw);
+    },
+    shiftPoint : function(){
+      var _self = this,
+        firstItem = _self.getItems()[0];
+      firstItem && firstItem.remove();
+      Column.superclass.shiftPoint.call(this);
     },
     //重置宽度
     resetWidth : function(){
@@ -218,6 +258,11 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
           path : path
         },_self.get('changeDuration'));
       });
+      var count = points.length,
+        length = items.length;
+      for (var i = length; i < count; i++) {
+        _self._drawPoint(points[i],i);
+      };
     },
     getActiveItems : function(){
       return this.getItems();
@@ -237,7 +282,7 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
      */
     setItemActived : function(item,actived){
       var _self = this,
-        color = item.getCfgAttr('attrs').fill;;
+        color = item.getCfgAttr('attrs').fill;
 
       if(actived){
         item.attr('fill',highlight(color,0.2));
@@ -245,6 +290,26 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       }else{
         item.attr('fill',color);
         item.set('actived',false);
+      }
+    },
+    /**
+     * @protected
+     * 设置选中
+     * @param {Object} item  
+     * @param {Boolean} selected 选中状态
+     */
+    setItemSelected : function(item,selected){
+      var _self = this,
+        attrs = item.getCfgAttr('attrs'),
+        color = attrs.fill,
+        stroke = attrs.stroke,
+        strokeWidth = attrs['stroke-width'];
+      if(selected){
+        item.attr({'stroke': Util.dark(color,.30),'stroke-width' : 2});
+        item.set('selected',true);
+      }else{
+        item.attr({'stroke': stroke,'stroke-width' : strokeWidth});
+        item.set('selected',false);
       }
     },
     /**

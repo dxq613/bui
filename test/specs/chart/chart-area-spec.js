@@ -180,7 +180,6 @@ BUI.use(['bui/chart/chart'],function (Chart) {
 });
 
 
-
 BUI.use(['bui/chart/chart'],function (Chart) {
   
   var chart = new Chart({
@@ -227,7 +226,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
                     23586,22380, 21004, 17287, 14747, 13076, 12555, 12144, 11009, 10950,
                 10871, 10824, 10577, 10527, 10475, 10421, 10358, 10295, 10104 
             ]
-        }/*, {
+        }, {
             name: 'USSR/Russia',
             type : 'area',
             data: [null, null, null, null, null, null, null , null , null ,null,5, 25, 50,
@@ -237,7 +236,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
                 41000, 39000, 37000,35000, 33000, 31000, 29000, 27000, 25000, 24000, 23000,
                 22000,21000, 20000, 19000, 18000, 18000, 17000, 16000
             ]
-        }*/
+        }
     ]
   });
 
@@ -269,3 +268,6 @@ BUI.use(['bui/chart/chart'],function (Chart) {
 
   });
 });
+
+/*
+*/

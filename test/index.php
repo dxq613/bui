@@ -93,7 +93,8 @@
           {text : '饼图',href : 'chart/pie.php'},
           {text : '散列图',href : 'chart/scatter.php'},
           {text : '气泡图',href : 'chart/bubble.php'},
-          {text : '雷达图',href : 'chart/radar.php'}
+          {text : '雷达图',href : 'chart/radar.php'},
+          {text : '动态图',href : 'chart/dynamic.php'}
         ]
       },
       {

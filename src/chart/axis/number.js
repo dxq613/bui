@@ -62,7 +62,7 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
      */
     formatter : {
       value : function(value){
-        if(value == null){
+        if(value == null || isNaN(value)){
           return '';
         }
         if(value < 1e3){
@@ -117,6 +117,7 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
         // }
         return ticks;
     },
+   
     /**
      * @protected
      * 修改信息

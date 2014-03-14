@@ -185,7 +185,7 @@ BUI.use(['bui/graphic','bui/chart/numberaxis'],function (Graphic,Axis) {
 				y2 : end.y
 			});
 			path1 = line.getPath();
-			console.log(Raphael._path2curve(path1));
+			console && console.log(Raphael._path2curve(path1));
 			expect(line.get('el')).not.toBe(undefined);
 		});
 
@@ -209,7 +209,7 @@ BUI.use(['bui/graphic','bui/chart/numberaxis'],function (Graphic,Axis) {
 			});
 			path2 = line.getPath();
 
-			console.log(Raphael.pathIntersection(path1,path2));
+			console && console.log(Raphael.pathIntersection(path1,path2));
 		});
 
 	});

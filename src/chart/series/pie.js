@@ -43,19 +43,33 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     return self.get('parent').get('plotRange');
   }
 
+  function resetItem(item,h,endAngle,r,center){
+      var angle = endAngle - (Math.acos((r-h)/r)/Math.PI * 180);
+
+        item.orignAngle = item.angle;
+        item.angle =  angle;
+        item.orignX = item.x;
+        item.orignY = item.y;
+
+        //增加5像素，用于连接线
+        item.x = center.x + (r + 5) * Math.cos(item.angle * RAD);
+        item.y = center.y + (r + 5) * Math.sin(item.angle * RAD);
+  }
+
   function alignLables(center,r,arr,endAngle,factor){
     var count = parseInt(r * 2 / LINE_HEIGHT,10),//理论上，最大显示的条数
       maxY = center.y + r,
       minY = center.y - r;
     if(count < arr.length){ //忽略掉不能显示的条数
-      arr = arr.slice(0,count - 1);
+      //arr = arr.slice(0,count - 1);
+      arr.splice(count,arr.length - count);
     }
 
     var conflictIndex = 0, //从该点开始存在冲突，需要调整位置
       length = arr.length,
       leftAvg,
       leftCount;
-
+    //查找第一个容放不下后面节点的位置
     for (var i = 0; i < length; i++) {
       var label = arr[i],
         angle = label.angle,
@@ -71,11 +85,12 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       }
     }
 
+    
 
     if(conflictIndex && conflictIndex < length - 1){ //说明存在冲突，因为已经调整过，所以conflictIndex > 0
       var start = conflictIndex - 1,
         startLabel = arr[start],
-        y = startLabel.y,
+        y =  startLabel.y, //start == 0 ? (factor > 0 ? minY : maxY) :
         endY = factor > 0 ? maxY : minY;
 
       leftCount = length - start - 1;
@@ -83,20 +98,26 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       if(leftAvg < LINE_HEIGHT){
         leftAvg = LINE_HEIGHT;
       }
+      //调整后面的文本
       for (var i = length - 1; i >= start; i--) {
-        var h = (length - 1 - i) * leftAvg,
-          angle = endAngle - (Math.acos((r-h)/r)/Math.PI * 180);
-
-        arr[i].orignAngle = arr[i].angle;
-        arr[i].angle =  angle;
-        arr[i].orignX = arr[i].x;
-        arr[i].orignY = arr[i].y;
-
-        //增加5像素，用于连接线
-        arr[i].x = center.x + (r + 5) * Math.cos(arr[i].angle * RAD);
-        arr[i].y = center.y + (r + 5) * Math.sin(arr[i].angle * RAD);
-
+        var h = (length - 1 - i) * leftAvg;
+        resetItem(arr[i],h,endAngle,r,center);
+       
       };
+
+      var startY = factor > 0 ? minY : maxY,
+        adjust = false;
+      //调整前面的文本
+      for(var i = start -1; i > 0 ;i--){
+        var item = arr[i];
+        if(!adjust && Math.abs(startY - item.y) / (i + 1) < LINE_HEIGHT){
+          adjust = true;
+        }
+        if(adjust){
+          var h = Math.abs(arr[i + 1].y - endY) + LINE_HEIGHT;
+          resetItem(arr[i],h,endAngle,r,center);
+        }
+      }
       
     }
 
@@ -111,6 +132,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
    * @class BUI.Chart.Series.Pie
    * 饼图数据序列
    * @extends BUI.Chart.Series
+   * @mixins BUI.Chart.Series.ItemGroup
    */
   var Pie = function(cfg){
     Pie.superclass.constructor.call(this,cfg);
@@ -174,13 +196,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     endAngle : {
       value : 270
     },
-    /**
-     * 是否允许选中
-     * @type {Boolean}
-     */
-    allowPointSelect : {
-      value : false
-    },
+    
     xField : {
       value : 'name'
     },
@@ -191,7 +207,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       value : true
     },
     duration : {
-      value : 2000
+      value : 1000
     }
   };
 
@@ -219,11 +235,12 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       }
       if(_self.get('labelsGroup')){
         _self.processLabels(points);
+        _self.get('labelsGroup').toFront();
       }
 
       function after(){
         if(selectedPoint){
-          _self._setItemSelected(selectedPoint,true);
+          _self.setSelected(selectedPoint);
         }
       }
     },
@@ -253,7 +270,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       });
       if(leftArray.length){
         var end;
-        if(startAngle > -90){
+        if(startAngle >= -90){
           end = 270;
         }else{
           end = -90;
@@ -305,20 +322,9 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     },
     bindUI : function(){
       Pie.superclass.bindUI.call(this);
-      this.bindMouseClick();
+      this.bindItemClick();
     },
-    //绑定点击事件
-    bindMouseClick : function(){
-      var _self = this;
-      if(_self.get('allowPointSelect')){
-        _self.on('click',function(ev){
-          var target = ev.target,
-            shape = target.shape;
-          shape && _self._setItemSelected(shape,!shape.get('selected'));
-        });
-      }
-      
-    },
+   
     //鼠标移动
     onMouseOver : function(){
       var _self = this;
@@ -344,9 +350,12 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       if(distance < 0){ //圆内显示文本
         if(middleAngle > -90 && middleAngle <= 90){
           rst['text-anchor'] = 'end';
+          rst.rotate = middleAngle;
         }else{
           rst['text-anchor'] = 'start';
+          rst.rotate = middleAngle - 180;
         }
+
       }else{
         if(middleAngle > -90 && middleAngle <= 90){
           rst['text-anchor'] = 'start';
@@ -459,8 +468,8 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       }
       if(!rst.fill){
         rst.fill = _self._getColor(index);
-        point.color = rst.fill;
       }
+      point.color = rst.fill;
       if(_self.get('allowPointSelect')){
         rst.cursor = 'pointer';
       }
@@ -609,38 +618,23 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       rst.y = distance * Math.sin(middleAngle * RAD);
       return rst;
     },
-    getSelected : function(){
-      var _self = this,
-        items = _self.getItems(),
-        rst;
-      BUI.each(items,function(item){
-        if(_self.isSelected(item)){
-          rst = item;
-          return false;
-        }
-      });
-      return rst;
-    },
     /**
-     * 是否选中
-     * @param  {Object}  item 是否选中
-     * @return {Boolean}  是否选中
+     * @protected
+     * 覆写方法
+     * @ignore
      */
-    isSelected : function(item){
-      return item.get('selected');
-    },
-    _setItemSelected : function(item,selected){
+    setItemSelected : function(item,selected){
 
       var _self = this,
         point = item.get('point'),
         duration = _self.get('changeDuration'),
-        selectedItem,
+        //selectedItem,
         offset;
       if(selected){
-        selectedItem = _self.getSelected();
+        /*selectedItem = _self.getSelected();
         if(selectedItem && selectedItem != item){
-          _self._setItemSelected(selectedItem,false);
-        }
+          _self.setItemSelected(selectedItem,false);
+        }*/
         offset = _self._getOffset(point.startAngle,point.endAngle,10);
         item.animate({
           transform : 't'+ offset.x +' '+offset.y

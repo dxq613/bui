@@ -1105,9 +1105,9 @@ define('bui/util',function(require){
 
             /**
              * \u5b50\u7248\u672c\u53f7
-             * @type {String}
+             * @type {Number}
              */
-            subVersion : 72,
+            subVersion : 75,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570

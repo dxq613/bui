@@ -242,7 +242,7 @@ define('bui/chart/abstractaxis',function (require) {
                 _self.addLabel(_self.formatPoint(tick),offsetPoint,offset);
             }else{
               labels.items.push({
-                  text : tick,
+                  text : _self.formatPoint(tick),
                   x : offsetPoint.x,
                   y : offsetPoint.y
               });

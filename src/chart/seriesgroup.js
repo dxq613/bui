@@ -147,6 +147,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       var _self = this,
         canvas = _self.get('canvas');
       canvas.on('mousemove',BUI.wrapBehavior(_self,'onCanvasMove'));
+      canvas.on('mouseout',BUI.wrapBehavior(_self,'onMouseOut'));
     },
     //处理鼠标在画板上移动
     onCanvasMove : function(ev){
@@ -164,20 +165,30 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       if(_self._isInAxis(point)){
         _self._processTracking(point,tipGroup);
       }else{
-        //标志从显示到隐藏
-        if(tipGroup.get('visible')){
-          _self.clearActivedItem();
-          if(tipGroup.get('shared')){
-            BUI.each(_self.getVisibleSeries(),function(series){
-              var markers = series.get('markersGroup');
-              markers && markers.clearActivedItem();
-            });
-          }
-          _self._hideTip();
-        }
+        _self.onMouseOut();
       }
     },
-   
+    
+    onMouseOut : function(ev){
+      var _self = this,
+        tipGroup = _self.get('tipGroup');
+      if(ev && ev.target != _self.get('canvas').get('none')){
+        return;
+      }
+      _self.clearActivedItem();
+
+      //标志从显示到隐藏
+      if(tipGroup.get('visible')){
+        
+        if(tipGroup.get('shared')){
+          BUI.each(_self.getVisibleSeries(),function(series){
+            var markers = series.get('markersGroup');
+            markers && markers.clearActivedItem();
+          });
+        }
+        _self._hideTip();
+      }
+    },
     /**
      * 获取所有的数据序列
      * @return {Array} [description]
@@ -230,7 +241,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           if(series.get('visible')){
             count = count + 1;
             item.name = series.get('name');
-            item.value = renderer ? renderer(info) : series.getTipItem(info);
+            item.value = renderer ? renderer(info,series) : series.getTipItem(info);
             item.color = info.color || series.get('color');
             rst.items.push(item);
             var markersGroup = series.get('markersGroup');
@@ -710,6 +721,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       var _self = this,
         canvas = _self.get('canvas');
       canvas.off('mousemove',BUI.getWrapBehavior(_self,'onCanvasMove'));
+      canvas.off('mouseout',BUI.getWrapBehavior(_self,'onMouseOut'));
+
       Group.superclass.remove.call(_self);
     }
 

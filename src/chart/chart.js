@@ -171,7 +171,14 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
      */
     repaint : function(){
       var _self = this;
-      _self.get('seriesgroup').repaint();
+      _self.get('seriesGroup').repaint();
+    },
+    /**
+     * 获取所有的数据序列
+     * @return {Array} 所有的数据序列数组
+     */
+    getSeries : function(){
+      return this.get('seriesGroup').getSeries();
     },
     destructor : function(){
       var _self = this;

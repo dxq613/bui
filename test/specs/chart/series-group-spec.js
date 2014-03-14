@@ -101,7 +101,7 @@ BUI.use(['bui/graphic','bui/chart/seriesgroup','bui/chart/numberaxis','bui/chart
         expect(group.get('node')).not.toBe(undefined);
       });
       it('测试序列生成',function(){
-        waits(500);
+        waits(1000);
         runs(function(){
           expect(group.get('children').length).toBe(group.get('series').length);
         });

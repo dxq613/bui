@@ -32,7 +32,20 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
   }
 
   Cartesian.ATTRS = {
+     /**
+     * 如果横坐标是数字类型，则通过点的间距来决定点
+     * @type {Number}
+     */
+    pointInterval : {
 
+    },
+    /**
+     * 如果横坐标是数字类型,点的起始值
+     * @type {Number}
+     */
+    pointStart : {
+      value : 0
+    },
     /**
      * x坐标轴
      * @type {BUI.Chart.Axis}
@@ -91,8 +104,13 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
 
       return point;
     },
+    //覆写父类方法，改变数据
+    changeData : function(data,redraw){
+      this.set('pointsCache',{});
+      Cartesian.superclass.changeData.call(this,data,redraw);
+    },
     /**
-     * 根据对象获取值
+     * 
      * @protected
      * @return {Object} 点的集合
      */
@@ -175,23 +193,24 @@ define('bui/chart/cartesianseries',['bui/chart/baseseries','bui/graphic'],functi
       var _self = this,
         data = _self.get('data'),
         pointsCache = _self.get('pointsCache'),
+        xAxis = _self.get('xAxis'),
         first = data[0],
-        rst = [];
+        rst = [],
+        pointStart = _self.get('pointStart');
 
       type = type || 'yAxis';
       if(pointsCache[type]){
         return pointsCache[type];
       }
       //如果是x轴，并且指定了开始节点
-      if(type == 'xAxis' && _self.get('pointStart') != null){
-        var pointStart = _self.get('pointStart'),
+      if(type == 'xAxis' && (pointStart != null &&!(xAxis.get('type') == 'time' && pointStart == 0)) && _self.get('pointInterval') /*&& !(xAxis.get('type') == 'time') && pointStart == 0*/){
+        var 
           pointInterval = _self.get('pointInterval');
           rst.push(pointStart);
           rst.push(pointStart + (data.length - 1) * pointInterval);
       }else{ 
         var xField = _self.get('xField'),
           yField = _self.get('yField');
-
         //遍历所有节点
         BUI.each(data,function(item){
           //数字和字符串直接填入

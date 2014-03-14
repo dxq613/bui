@@ -63,6 +63,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
             data: [34.4, 21.8, {y : 20.1,attrs : {fill : '#ff0000'}}, 20, 19.6, 19.5, 19.1, 18.4, 18,
                 17.3, 16.8, 15, 14.7, 14.5, 13.3, 12.8, 12.4, 11.8,
                 11.7, 11.2],
+            allowPointSelect : true,
             labels : {
               label : {
                 rotate : -90,

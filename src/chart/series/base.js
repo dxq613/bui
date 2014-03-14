@@ -155,6 +155,80 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       }
     },
     /**
+     * 更改数据
+     * @param  {Array} data 数据
+     */
+    changeData : function(data,redraw){
+      var _self = this,
+        preData = _self.get('data'),
+        parent = _self.get('parent');
+      if(data != preData){
+        _self.set('data',data);
+      }
+      if(redraw){
+        if(parent){
+          parent.repaint();
+        }else if(_self.get('visible')){
+          _self.repaint();
+        }
+      }
+    },
+    /**
+     * 添加数据
+     * @param {*} point  数据
+     * @param {Boolean} shift  是否删除最前面的数据
+     * @param {Boolean} redraw 是否重绘图表
+     */
+    addPoint : function(point,shift,redraw){
+      var _self = this,
+        data = _self.get('data');
+      data.push(point);
+      
+      if(shift){
+        data.shift();
+        redraw && data.unshift(data[0]);
+      }
+      _self.changeData(data,redraw);
+
+      if(shift){
+        setTimeout(function(){
+          data.shift();
+          _self.set('points',null);
+          if(redraw){
+            _self.shiftPoint();
+            _self.changeShapes(_self.getPoints(),false);
+          }
+        },800);
+        
+      }
+    },
+    /**
+     * 删除第一个节点的操作
+     * @protected
+     */
+    shiftPoint : function(){
+      var _self = this,
+        markersGroup = _self.get('markersGroup'),
+        labelsGroup = _self.get('labelsGroup'),
+        xAxis = _self.get('xAxis'),
+        first;
+      if(markersGroup){
+        first =markersGroup.getChildAt(0);
+        first && first.remove();
+      }
+      if(labelsGroup){
+        first = labelsGroup.getChildAt(0);
+        first && first.remove();
+      }
+      if(xAxis){
+        var labels = xAxis.get('labelsGroup');
+        if(labels){
+          first = labels.getChildAt(0);
+          first && first.remove();
+        }
+      }
+    },
+    /**
      * 获取对应坐标轴上的数据
      * @return {Array} 
      */

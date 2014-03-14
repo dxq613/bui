@@ -76,7 +76,8 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
      */
     back : {
       value : {
-        stroke : '#909090'
+        stroke : '#909090',
+        fill : '#fff'
       }
     }
 
@@ -91,6 +92,13 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
       Legend.superclass.renderUI.call(_self);
       _self._renderItems();
       _self._renderBorder();    
+    },
+    bindUI : function(){
+      Legend.superclass.bindUI.call(_self);
+      var _self = this;
+      _self.on('mousemove',function(ev){
+        ev.stopPropagation();
+      });
     },
     _renderItems : function(){
       var _self = this,
@@ -147,6 +155,7 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
         },border);
 
         shape = _self.addShape('rect',cfg);
+        shape.toBack();
         _self.set('borderShape',shape);
       }
     },
@@ -204,6 +213,7 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
     _getNextX : function(){
       var _self = this,
         layout = _self.get('layout'),
+        
         nextX = PADDING;
       if(layout == 'horizontal'){
         var children = _self.get('itemsGroup').get('children');
@@ -211,7 +221,6 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
           if(item.isGroup){
             nextX += (item.getWidth() + PADDING);
           }
-          
         });
       }
       return nextX;
@@ -228,7 +237,21 @@ define('bui/chart/legend',['bui/common','bui/chart/plotitem','bui/chart/legendit
     },
     //获取总的宽度
     _getTotalWidth : function(){
-      return this._getNextX();
+      var _self = this;
+      if(_self.get('layout') == 'horizontal'){
+        return this._getNextX();
+      }else{
+        var children = _self.get('itemsGroup').get('children'),
+          max = PADDING;
+        BUI.each(children,function(item){
+          var width = item.getWidth();
+          if(item.isGroup && width > max){
+            max = width;
+          }
+        });
+        return max + PADDING * 2;
+      }
+      
     },
     //获取整体的高度
     _getTotalHeight : function(){

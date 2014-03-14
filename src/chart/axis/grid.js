@@ -239,6 +239,9 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
 				type = _self.get('type'),
 				cfg;
 			if(type == 'line'){
+				if(items.length == 0){
+					return '';
+				}
 				return lines2path(items,lineCfg);
 			}
 			cfg = BUI.mix({},lineCfg);
