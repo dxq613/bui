@@ -132,6 +132,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
    * @class BUI.Chart.Series.Pie
    * 饼图数据序列
    * @extends BUI.Chart.Series
+   * @mixins BUI.Chart.Series.ItemGroup
    */
   var Pie = function(cfg){
     Pie.superclass.constructor.call(this,cfg);
@@ -195,13 +196,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     endAngle : {
       value : 270
     },
-    /**
-     * 是否允许选中
-     * @type {Boolean}
-     */
-    allowPointSelect : {
-      value : false
-    },
+    
     xField : {
       value : 'name'
     },
@@ -327,20 +322,9 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     },
     bindUI : function(){
       Pie.superclass.bindUI.call(this);
-      this.bindMouseClick();
+      this.bindItemClick();
     },
-    //绑定点击事件
-    bindMouseClick : function(){
-      var _self = this;
-      if(_self.get('allowPointSelect')){
-        _self.on('click',function(ev){
-          var target = ev.target,
-            shape = target.shape;
-          shape && _self._setItemSelected(shape,!shape.get('selected'));
-        });
-      }
-      
-    },
+   
     //鼠标移动
     onMouseOver : function(){
       var _self = this;
@@ -634,38 +618,23 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       rst.y = distance * Math.sin(middleAngle * RAD);
       return rst;
     },
-    getSelected : function(){
-      var _self = this,
-        items = _self.getItems(),
-        rst;
-      BUI.each(items,function(item){
-        if(_self.isSelected(item)){
-          rst = item;
-          return false;
-        }
-      });
-      return rst;
-    },
     /**
-     * 是否选中
-     * @param  {Object}  item 是否选中
-     * @return {Boolean}  是否选中
+     * @protected
+     * 覆写方法
+     * @ignore
      */
-    isSelected : function(item){
-      return item.get('selected');
-    },
-    _setItemSelected : function(item,selected){
+    setItemSelected : function(item,selected){
 
       var _self = this,
         point = item.get('point'),
         duration = _self.get('changeDuration'),
-        selectedItem,
+        //selectedItem,
         offset;
       if(selected){
-        selectedItem = _self.getSelected();
+        /*selectedItem = _self.getSelected();
         if(selectedItem && selectedItem != item){
-          _self._setItemSelected(selectedItem,false);
-        }
+          _self.setItemSelected(selectedItem,false);
+        }*/
         offset = _self._getOffset(point.startAngle,point.endAngle,10);
         item.animate({
           transform : 't'+ offset.x +' '+offset.y

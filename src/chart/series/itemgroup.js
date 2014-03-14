@@ -31,13 +31,26 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
      */
     group : {
 
+    },
+    /**
+     * 是否允许选中
+     * @type {Boolean}
+     */
+    allowPointSelect : {
+      value : false
+    },
+    /**
+     * 是否允许取消选中，选中状态下，继续点击则会取消选中
+     * @type {Boolean}
+     */
+    cancelSelect : {
+      value : true
     }
   }
 
   BUI.extend(Group,Base);
 
   BUI.augment(Group,{
-
     addItem : function(point,index){
       var _self = this,
         group = _self.get('group'),
@@ -58,9 +71,84 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       }
 
       var shape = group.addShape('path',cfg);
-      
+      shape.isSeriesItem = true;
       shape.set('point',point);
       return shape;
+    },
+     //绑定点击事件
+    bindItemClick : function(){
+      var _self = this,
+        cancelSelect = _self.get('cancelSelect');
+      if(_self.get('allowPointSelect')){
+        _self.on('click',function(ev){
+          var target = ev.target,
+            shape = target.shape,
+            selected;
+          if(shape && shape.isSeriesItem){
+            selected = shape.get('selected');
+            if(cancelSelect && selected){
+              _self.clearSelected(shape)
+            }else{
+              _self.setSelected(shape);
+            }
+          }
+        });
+      }
+    },
+    /**
+     * 设置选中
+     * @param {Object} item 选项
+     */
+    setSelected : function(item){
+      var _self = this;
+      if(!_self.isSelected(item)){
+        _self.clearSelected();
+        _self.setItemSelected(item,true);
+      }
+    },
+    /**
+     * 清除选中
+     * @param  {Object} item 选项
+     */
+    clearSelected : function(item){
+      var _self = this;
+      item = item || _self.getSelected();
+      if(item){
+        _self.setItemSelected(item,false);
+      }
+    },
+    /**
+     * @protected
+     * 设置选中
+     * @param {Object} item  
+     * @param {Boolean} selected 选中状态
+     */
+    setItemSelected : function(item,selected){
+
+    },
+    /**
+     * 是否选中
+     * @param  {Object}  item 是否选中
+     * @return {Boolean}  是否选中
+     */
+    isSelected : function(item){
+      return item && item.get('selected');
+    },
+    /**
+     * 获取选中的项
+     * @return {Object} 选中的项
+     */
+    getSelected : function(){
+      var _self = this,
+        items = _self.getItems(),
+        rst;
+      BUI.each(items,function(item){
+        if(_self.isSelected(item)){
+          rst = item;
+          return false;
+        }
+      });
+      return rst;
     },
     /**
      * @protected

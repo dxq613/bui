@@ -5440,13 +5440,26 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
      */
     group : {
 
+    },
+    /**
+     * 是否允许选中
+     * @type {Boolean}
+     */
+    allowPointSelect : {
+      value : false
+    },
+    /**
+     * 是否允许取消选中，选中状态下，继续点击则会取消选中
+     * @type {Boolean}
+     */
+    cancelSelect : {
+      value : true
     }
   }
 
   BUI.extend(Group,Base);
 
   BUI.augment(Group,{
-
     addItem : function(point,index){
       var _self = this,
         group = _self.get('group'),
@@ -5467,9 +5480,85 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       }
 
       var shape = group.addShape('path',cfg);
-      
+      shape.isSeriesItem = true;
       shape.set('point',point);
       return shape;
+    },
+     //绑定点击事件
+    bindItemClick : function(){
+      var _self = this,
+        cancelSelect = _self.get('cancelSelect');
+      if(_self.get('allowPointSelect')){
+        _self.on('click',function(ev){
+          var target = ev.target,
+            shape = target.shape,
+            selected;
+          if(shape && shape.isSeriesItem){
+            selected = shape.get('selected');
+            if(cancelSelect && selected){
+              _self.clearSelected(shape)
+            }else{
+              _self.setSelected(shape);
+            }
+          }
+        });
+      }
+      
+    },
+    /**
+     * 设置选中
+     * @param {Object} item 选项
+     */
+    setSelected : function(item){
+      var _self = this;
+      if(!_self.isSelected(item)){
+        _self.clearSelected();
+        _self.setItemSelected(item,true);
+      }
+    },
+    /**
+     * 清除选中
+     * @param  {Object} item 选项
+     */
+    clearSelected : function(item){
+      var _self = this;
+      item = item || _self.getSelected();
+      if(item){
+        _self.setItemSelected(item,false);
+      }
+    },
+    /**
+     * @protected
+     * 设置选中
+     * @param {Object} item  
+     * @param {Boolean} selected 选中状态
+     */
+    setItemSelected : function(item,selected){
+
+    },
+    /**
+     * 是否选中
+     * @param  {Object}  item 是否选中
+     * @return {Boolean}  是否选中
+     */
+    isSelected : function(item){
+      return item && item.get('selected');
+    },
+    /**
+     * 获取选中的项
+     * @return {Object} 选中的项
+     */
+    getSelected : function(){
+      var _self = this,
+        items = _self.getItems(),
+        rst;
+      BUI.each(items,function(item){
+        if(_self.isSelected(item)){
+          rst = item;
+          return false;
+        }
+      });
+      return rst;
     },
     /**
      * @protected
@@ -6852,8 +6941,10 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
     }
 
   /**
-   * @class BUI.Chart.Axis.Column
+   * @class BUI.Chart.Series.Column
    * 柱状图
+   * @extends BUI.Chart.Series.Cartesian
+   * @mixins BUI.Chart.Series.ItemGroup
    */
   var Column = function(cfg){
     Column.superclass.constructor.call(this,cfg);
@@ -6881,6 +6972,17 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
     columnOffset : {
       value : 0
     },
+    /**
+     * 是否允许取消选中，选中状态下，继续点击则会取消选中
+     * @type {Boolean}
+     */
+    cancelSelect : {
+      value : false
+    },
+    /**
+     * 发生层叠时，层叠之间的间距
+     * @type {Object}
+     */
     stackPadding : {
       value : 1
     },
@@ -6921,6 +7023,10 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
           item.fill = color;
         }
       }
+    },
+    bindUI : function(){
+      Column.superclass.bindUI.call(this);
+      this.bindItemClick();
     },
     //渲染
     draw : function(points){
@@ -7071,7 +7177,7 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
      */
     setItemActived : function(item,actived){
       var _self = this,
-        color = item.getCfgAttr('attrs').fill;;
+        color = item.getCfgAttr('attrs').fill;
 
       if(actived){
         item.attr('fill',highlight(color,0.2));
@@ -7079,6 +7185,26 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       }else{
         item.attr('fill',color);
         item.set('actived',false);
+      }
+    },
+    /**
+     * @protected
+     * 设置选中
+     * @param {Object} item  
+     * @param {Boolean} selected 选中状态
+     */
+    setItemSelected : function(item,selected){
+      var _self = this,
+        attrs = item.getCfgAttr('attrs'),
+        color = attrs.fill,
+        stroke = attrs.stroke,
+        strokeWidth = attrs['stroke-width'];
+      if(selected){
+        item.attr({'stroke': Util.dark(color,.30),'stroke-width' : 2});
+        item.set('selected',true);
+      }else{
+        item.attr({'stroke': stroke,'stroke-width' : strokeWidth});
+        item.set('selected',false);
       }
     },
     /**
@@ -7303,6 +7429,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
    * @class BUI.Chart.Series.Pie
    * 饼图数据序列
    * @extends BUI.Chart.Series
+   * @mixins BUI.Chart.Series.ItemGroup
    */
   var Pie = function(cfg){
     Pie.superclass.constructor.call(this,cfg);
@@ -7366,13 +7493,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     endAngle : {
       value : 270
     },
-    /**
-     * 是否允许选中
-     * @type {Boolean}
-     */
-    allowPointSelect : {
-      value : false
-    },
+    
     xField : {
       value : 'name'
     },
@@ -7498,20 +7619,9 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     },
     bindUI : function(){
       Pie.superclass.bindUI.call(this);
-      this.bindMouseClick();
+      this.bindItemClick();
     },
-    //绑定点击事件
-    bindMouseClick : function(){
-      var _self = this;
-      if(_self.get('allowPointSelect')){
-        _self.on('click',function(ev){
-          var target = ev.target,
-            shape = target.shape;
-          shape && _self._setItemSelected(shape,!shape.get('selected'));
-        });
-      }
-      
-    },
+   
     //鼠标移动
     onMouseOver : function(){
       var _self = this;
@@ -7805,38 +7915,23 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       rst.y = distance * Math.sin(middleAngle * RAD);
       return rst;
     },
-    getSelected : function(){
-      var _self = this,
-        items = _self.getItems(),
-        rst;
-      BUI.each(items,function(item){
-        if(_self.isSelected(item)){
-          rst = item;
-          return false;
-        }
-      });
-      return rst;
-    },
     /**
-     * 是否选中
-     * @param  {Object}  item 是否选中
-     * @return {Boolean}  是否选中
+     * @protected
+     * 覆写方法
+     * @ignore
      */
-    isSelected : function(item){
-      return item.get('selected');
-    },
-    _setItemSelected : function(item,selected){
+    setItemSelected : function(item,selected){
 
       var _self = this,
         point = item.get('point'),
         duration = _self.get('changeDuration'),
-        selectedItem,
+        //selectedItem,
         offset;
       if(selected){
-        selectedItem = _self.getSelected();
+        /*selectedItem = _self.getSelected();
         if(selectedItem && selectedItem != item){
-          _self._setItemSelected(selectedItem,false);
-        }
+          _self.setItemSelected(selectedItem,false);
+        }*/
         offset = _self._getOffset(point.startAngle,point.endAngle,10);
         item.animate({
           transform : 't'+ offset.x +' '+offset.y
