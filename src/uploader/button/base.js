@@ -73,6 +73,11 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
   });
 
 
+  /**
+   * 文件上传按钮的基类
+   * @class BUI.Uploader.Button
+   * @extends BUI.Component.Controller
+   */
   var Button = Component.Controller.extend({
     /**
      * 获取文件的扩展信息

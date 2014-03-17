@@ -23,8 +23,7 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
   /**
    * 文件上传按钮，flash上传方式使用,使用的是flash
    * @class BUI.Uploader.Button.SwfButton
-   * @extends BUI.Component.Controller
-   * @mixins BUI.Uploader.Button
+   * @extends BUI.Uploader.Button
    */
   var SwfButton = ButtonBase.extend({
     renderUI: function(){

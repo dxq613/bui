@@ -13,8 +13,7 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
   /**
    * 文件上传按钮，ajax和iframe上传方式使用,使用的是input[type=file]
    * @class BUI.Uploader.Button.HtmlButton
-   * @extends BUI.Component.Controller
-   * @mixins BUI.Uploader.Button
+   * @extends BUI.Uploader.Button
    */
   var HtmlButton = ButtonBase.extend({
     renderUI: function(){

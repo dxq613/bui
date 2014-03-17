@@ -272,7 +272,8 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
 
         _self.fire('progress', {item: curUploadItem, total: total, loaded: loaded});
       });
-      //上传过程中的error事件，这时一般是当校验出错是才会出现
+      //上传过程中的error事件
+      //一般是当校验出错时和上传接口异常时触发的
       uploaderType.on('error', function(ev){
         var curUploadItem = _self.get('curUploadItem'),
           errorFn = _self.get('error'),
