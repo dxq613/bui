@@ -379,7 +379,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     _uiSetUrl: function(v){
       var _self = this,
         uploaderType = _self.get('uploaderType');
-      uploaderType && uploaderType.isController && uploaderType.set('url', v);
+      uploaderType && uploaderType.set && uploaderType.set('url', v);
     },
     /**
      * 设置是否disabled
