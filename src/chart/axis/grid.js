@@ -231,6 +231,14 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
       		gridLine.attr('path',cfg.path);
       	}
       	
+      }else if(items && items.length){
+      	var lineCfg;
+      	if(cls == CLS_GRID + '-line'){
+      		lineCfg = _self.get('line');
+      	}else{
+      		lineCfg = _self.get('minorLine');
+      	}
+      	_self._drawGridLines(items,lineCfg,cls);
       }
 		},
 		_linesToPath : function(items,lineCfg){

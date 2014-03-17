@@ -149,10 +149,6 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
     }
   },{
     ATTRS : 
-	/**
-	* @lends BUI.Overlay.Overlay#
-  * @ignore 
-	**/	
 	{
       /**
        * {Object} - 可选, 显示或隐藏时的特效支持, 对象包含以下配置

@@ -30,10 +30,6 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
      * @class BUI.Toolbar.PagingBar
      */
     var PagingBar = Bar.extend([Bindable],
-        /** 
-        * @lends BUI.Toolbar.PagingBar.prototype
-        * @ignore
-        */
         {
             /**
              * From Bar, Initialize this paging bar items.
@@ -336,10 +332,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
             }
         }, {
             ATTRS:
-            /** 
-            * @lends BUI.Toolbar.PagingBar.prototype
-            * @ignore
-            */
+     
             {
                
                 /**

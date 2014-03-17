@@ -42,10 +42,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   BUI.extend(checkSelection,BUI.Base);
 
   checkSelection.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     /**
     * column's width which contains the checkbox
@@ -69,10 +65,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   };
 
   BUI.augment(checkSelection, 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     createDom : function(grid){
       var _self = this;
@@ -132,10 +124,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   BUI.extend(radioSelection,BUI.Base);
 
   radioSelection.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.RadioSelection#
-   * @ignore
-   */ 
   {
     /**
     * column's width which contains the checkbox

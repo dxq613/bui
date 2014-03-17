@@ -39,6 +39,7 @@
   <script type="text/javascript" src="../../src/chart/series/area.js"></script>
   <script type="text/javascript" src="../../src/chart/series/scatter.js"></script>
   <script type="text/javascript" src="../../src/chart/series/bubble.js"></script>
+  <script type="text/javascript" src="../../src/chart/series/pie.js"></script>
 
 
 

@@ -1,4 +1,3 @@
-/**/
 BUI.use(['bui/chart/chart'],function (Chart) {
   
   var chart = new Chart({
@@ -178,7 +177,8 @@ BUI.use(['bui/chart/chart'],function (Chart) {
     });
   });
 });
-
+/*
+*/
 
 BUI.use(['bui/chart/chart'],function (Chart) {
   

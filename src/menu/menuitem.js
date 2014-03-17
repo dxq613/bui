@@ -151,10 +151,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 默认的Html 标签

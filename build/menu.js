@@ -170,10 +170,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 默认的Html 标签
@@ -376,10 +372,6 @@ define('bui/menu/menu',['bui/common'],function(require){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Menu.Menu#
-     * @ignore
-     */
     {
 
       elTagName:{
@@ -539,10 +531,6 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   },{
 
     ATTRS:
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 显示的文本
@@ -619,10 +607,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
    * @extends BUI.Menu.Menu
    */
   var sideMenu = Menu.extend(
-  /**
-   * @lends BUI.Menu.SideMenu.prototype
-   * @ignore
-   */
   {
     //初始化配置项
     initializer : function(){
@@ -715,10 +699,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
   },{
 
     ATTRS : 
-    /**
-     * @lends BUI.Menu.SideMenu.prototype
-     * @ignore
-     */
     {
       
       /**

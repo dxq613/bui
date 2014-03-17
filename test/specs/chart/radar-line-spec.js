@@ -58,13 +58,15 @@ BUI.use(['bui/chart/chart'],function (Chart) {
 
   chart.render();
   var group = chart.get('seriesGroup');
-  describe('测试雷达图',function(){
+ describe('测试雷达图',function(){
     it('测试生成',function(){
       var series = group.getSeries();
       expect(series.length).toBe(3);
     });
   });
+
 });
+
 
 BUI.use(['bui/chart/chart'],function (Chart) {
   var chart = new Chart({
@@ -437,5 +439,3 @@ BUI.use(['bui/chart/chart'],function (Chart) {
   chart.render();
   
 });
-/*
-*/

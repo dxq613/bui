@@ -83,10 +83,6 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    * @mixins BUI.Component.UIBase.Bindable
    */
   var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav,Sortable],
-  /**
-   * @lends BUI.List.SimpleList.prototype
-   * @ignore
-   */
   {
     /**
      * @protected
@@ -176,10 +172,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.SimpleList#
-     * @ignore
-     */
+
     {
 
       /**

@@ -108,6 +108,21 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      */
     stackedData : {
 
+    },
+    /**
+     * 可以设置数据序列共同的数据源
+     * @type {Array}
+     */
+    data : {
+
+    },
+    /**
+     * 活动子项的名称，用于组成 itemactived,itemunactived的事件
+     * @protected
+     * @type {String}
+     */
+    itemName : {
+      value : 'series'
     }
 
   };
@@ -379,6 +394,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }else if(!axis.ticks && type != 'circle'){
         axis.autoTicks = true; //标记是自动计算的坐标轴
       }
+      if(type == 'category' && !axis.categories){
+        axis.autoTicks = true; //标记是自动计算的坐标轴
+      }
       axis.plotRange = _self.get('plotRange');
       axis.autoPaint = false;  //暂时不绘制坐标轴，需要自动生成坐标轴
 
@@ -392,6 +410,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     },
     //获取y轴的坐标点
     _caculateAxisInfo : function(axis,name){
+      if(axis.get('type') == 'category'){
+        return this._caculateCategories(axis,name);
+      }
       var _self = this,
         data = [],
         type = axis.get('type'),
@@ -403,7 +424,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         min,
         max,
         interval,
-        autoUtil;
+        autoUtil,
+        rst;
         if(type == 'number' || type == 'radius') {
           min = axis.getCfgAttr('min');
           max = axis.getCfgAttr('max');
@@ -440,12 +462,37 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }else{
         data = _self.getSeriesData(axis,name);
       }
-      cfg.data = data;
+      if(data.length){
+        cfg.data = data;
 
-      var rst =  autoUtil.caculate(cfg,stackType);
+        rst =  autoUtil.caculate(cfg,stackType);
+      }else{
+        rst = {
+          ticks : []
+        };
+      }
+      
 
       return rst;
 
+    },
+    _caculateCategories : function(axis,name){
+      var _self = this,
+        data = _self.getSeriesData(axis,name),
+        categories = [].concat(data[0]);
+      if(data.length > 1 && !_self.get('data')){ //不共享data时
+        for (var i = 1; i < data.length; i++) {
+          var arr = data[i];
+          BUI.each(arr,function(value){
+            if(!BUI.indexOf(value)){
+              categories.push(value);
+            }
+          });
+        };
+      }
+      return {
+        categories : categories
+      };
     },
     /**
      * 获取数据序列的数据
@@ -463,7 +510,11 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
       BUI.each(series,function(item){
         if(item.get(name) == axis){
-          data.push(item.getData(name));
+          var arr = item.getData(name);
+          if(arr.length){
+            data.push(arr);
+          }
+          
         }
       });
 
@@ -516,8 +567,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         if(_self._hasRelativeSeries(item,name)){
           if(item.get('autoTicks')){
             var info = _self._caculateAxisInfo(item,name);
-            item.set('tickInterval',info.interval);
-            item.set('ticks',info.ticks);
+            item.changeInfo(info);
+            
           }
           
           item.paint();
@@ -526,6 +577,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       });
       
     },
+    //是否存在关联的数据序列
     _hasRelativeSeries : function(axis,name){
       var _self = this,
         series = _self.getVisibleSeries(),
@@ -583,6 +635,20 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         }
       }
       _self._resetSeries();
+    },
+    /**
+     * 改变数据
+     * @param  {Array} data 数据
+     */
+    changeData : function(data){
+      var _self = this,
+        series = _self.getSeries();
+
+      _self.set('data',data);
+      BUI.each(series,function(item){
+        item.changeData(data);
+      });
+      _self.repaint();
     },
     //获取默认的类型
     _getDefaultType : function(){
@@ -696,6 +762,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       var _self = this,
         seriesCfg = _self.get('seriesOptions'),
         colors = _self.get('colors'),
+        data = _self.get('data'),
         symbols = _self.get('symbols');
 
       item = BUI.mix(true,{},seriesCfg[type + 'Cfg'],item);
@@ -707,6 +774,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       //marker的形状
       if(item.markers && item.markers.marker && !item.markers.marker.symbol){
         item.markers.marker.symbol = symbols[index % symbols.length];
+      }
+      if(data && !item.data){
+        item.data = data;
       }
       
       return item;

@@ -19,10 +19,6 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
      * @class BUI.Toolbar.NumberPagingBar
      */
     var NumberPagingBar = PBar.extend(
-        /** 
-        * @lends BUI.Toolbar.NumberPagingBar.prototype
-        * @ignore
-        */
         {
         /**
         * get the initial items of paging bar

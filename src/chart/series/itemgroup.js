@@ -79,12 +79,13 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
     bindItemClick : function(){
       var _self = this,
         cancelSelect = _self.get('cancelSelect');
-      if(_self.get('allowPointSelect')){
-        _self.on('click',function(ev){
-          var target = ev.target,
-            shape = target.shape,
-            selected;
-          if(shape && shape.isSeriesItem){
+      
+      _self.on('click',function(ev){
+        var target = ev.target,
+          shape = target.shape,
+          selected;
+        if(shape && shape.isSeriesItem){
+          if(_self.get('allowPointSelect')){
             selected = shape.get('selected');
             if(cancelSelect && selected){
               _self.clearSelected(shape)
@@ -92,8 +93,9 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
               _self.setSelected(shape);
             }
           }
-        });
-      }
+          _self.fireUpGroup('click',shape);
+        }
+      });
     },
     /**
      * 设置选中
@@ -104,7 +106,22 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       if(!_self.isSelected(item)){
         _self.clearSelected();
         _self.setItemSelected(item,true);
+        _self.onSelected(item);
       }
+    },
+    /**
+     * @protected
+     * 触发选中事件
+     */
+    onSelected : function(item){
+      this.fireUpGroup('selected',item);
+    },
+    /**
+     * @protected
+     * 触发移除选中
+     */
+    onUnSelected : function(item){
+      this.fireUpGroup('unselected',item);
     },
     /**
      * 清除选中
@@ -115,6 +132,7 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       item = item || _self.getSelected();
       if(item){
         _self.setItemSelected(item,false);
+        _self.onUnSelected(item);
       }
     },
     /**

@@ -1410,10 +1410,6 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    * @mixins BUI.Component.UIBase.Bindable
    */
   var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav,Sortable],
-  /**
-   * @lends BUI.List.SimpleList.prototype
-   * @ignore
-   */
   {
     /**
      * @protected
@@ -1503,10 +1499,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.SimpleList#
-     * @ignore
-     */
+
     {
 
       /**
@@ -1684,10 +1677,6 @@ define('bui/list/listitem',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.Item#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,
@@ -1732,10 +1721,6 @@ define('bui/list/list',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.List#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,

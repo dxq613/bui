@@ -1,4 +1,4 @@
-define('bui/graphic/raphael/group',function(require){
+define('bui/graphic/raphael/group',['bui/common'],function(require){
 
 	var BUI = require('bui/common');
 

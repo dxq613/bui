@@ -357,8 +357,8 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 		},
 		/**
 		 * 添加图形
-		 * @param {String | Object} 类型或者配置项
-		 * @param {String} 属性
+		 * @param {String | Object} type 类型或者配置项
+		 * @param {String} attrs 属性
 		 * @return {BUI.Graphic.Shape} 图形
 		 */
 		addShape : function(type,attrs){
@@ -430,7 +430,7 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 		/**
 		 * @protected
 		 * 添加图形或者分组
-		 * @param {BUI.Graphic.Base} 图形或者分组
+		 * @param {BUI.Graphic.Base} item 图形或者分组
 		 */
 		addChild : function(item){
 			var _self = this,
@@ -576,7 +576,9 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
  * @fileOverview 画布内部的元素扩展
  * @ignore
  */
-define('bui/graphic/canvasitem',function(require) {
+define('bui/graphic/canvasitem',['bui/common'],function(require) {
+	
+	var BUI = require('bui/common');
 	
 	/**
 	 * @class BUI.Graphic.CanvasItem
@@ -805,7 +807,7 @@ define('bui/graphic/canvasitem',function(require) {
           if(str){
             var sub = str.split(' ');
             sub = $.map(sub,function(subStr){
-              if($.isNumeric(subStr)){
+              if(BUI.isNumeric(subStr)){
                 return parseFloat(subStr);
               }
               return subStr;
@@ -1654,7 +1656,7 @@ define('bui/graphic/canvasitem',function(require) {
 	});
 
 	return Group;
-});define('bui/graphic/canvas',['bui/common','bui/graphic/group','bui/graphic/raphael'],function(require) {
+});define('bui/graphic/canvas',['bui/common','bui/graphic/group','bui/graphic/container','bui/graphic/raphael'],function(require) {
 
 	var BUI = require('bui/common'),
 		Group = require('bui/graphic/group'),
@@ -10255,7 +10257,7 @@ define('bui/graphic/raphael/vml',function(){
     }(window.Raphael);
 });
 
-define('bui/graphic/raphael/group',function(require){
+define('bui/graphic/raphael/group',['bui/common'],function(require){
 
 	var BUI = require('bui/common');
 

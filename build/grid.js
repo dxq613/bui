@@ -195,10 +195,6 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
    * @extends BUI.List.SimpleList
    */
   var simpleGrid = BUI.List.SimpleList.extend(
-  /**
-   * @lends BUI.Grid.SimpleGrid.prototype
-   * @ignore
-   */
   {
     renderUI : function(){
       this.get('view').setColumns();
@@ -252,10 +248,6 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Grid.SimpleGrid#
-     * @ignore
-     */
     {
       /**
        * 表格可点击项的样式
@@ -534,10 +526,6 @@ define('bui/grid/column',['bui/common'],function (require) {
      * @extends BUI.Component.Controller
      */
     var column = BUI.Component.Controller.extend(
-        /**
-         * @lends BUI.Grid.Column.prototype
-         * @ignore
-         */
         {    //toggle sort state of this column ,if no sort state set 'ASC',else toggle 'ASC' and 'DESC'
             _toggleSortState:function () {
                 var _self = this,
@@ -569,10 +557,6 @@ define('bui/grid/column',['bui/common'],function (require) {
             }
         }, {
             ATTRS:
-            /*** 
-            * @lends BUI.Grid.Column.prototype 
-            * @ignore
-            */
             {
                 /**
                  * The tag name of the rendered column
@@ -960,10 +944,6 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
    * @extends BUI.Component.Controller
    */
   var header = Controller.extend(
-    /**
-     * @lends BUI.Grid.Header.prototype
-     * @ignore
-     */
     {
       /**
        * add a columns to header
@@ -1028,7 +1008,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
        * get the columns of this header,the result equals the 'children' property .
        * @return {Array} columns
        * @example var columns = header.getColumns();
-       *    <br>or</br>
+       *    <br>or<br>
        * var columns = header.get('children');
        */
       getColumns:function () {
@@ -1303,10 +1283,6 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
     }, {
       ATTRS:
-      /** 
-      * @lends BUI.Grid.Header.prototype
-      * @ignore
-      * */
       {
         /**
          * 列集合
@@ -2749,10 +2725,6 @@ define('bui/grid/format',function (require) {
      * @singleton
      */
     var Format =
-    /** 
-    * @lends BUI.Grid.Format 
-    * @ignore
-    */
     {
         /**
          * 日期格式化函数
@@ -3257,10 +3229,6 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   BUI.extend(cascade,BUI.Base);
 
   cascade.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.Cascade#
-   * @ignore
-   */
   {
     /**
      * 显示展开按钮列的宽度
@@ -3333,10 +3301,6 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   };
 
   BUI.augment(cascade,
-  /**
-   * @lends BUI.Grid.Plugins.Cascade.prototype
-   * @ignore
-   */
   {
     /**
      * 初始化
@@ -3644,10 +3608,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   BUI.extend(checkSelection,BUI.Base);
 
   checkSelection.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     /**
     * column's width which contains the checkbox
@@ -3671,10 +3631,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   };
 
   BUI.augment(checkSelection, 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     createDom : function(grid){
       var _self = this;
@@ -3734,10 +3690,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   BUI.extend(radioSelection,BUI.Base);
 
   radioSelection.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.RadioSelection#
-   * @ignore
-   */ 
   {
     /**
     * column's width which contains the checkbox

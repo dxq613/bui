@@ -114,7 +114,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {Number}
              */
-            subVersion : 75,
+            subVersion : 76,
 
             /**
              * 是否为函数
@@ -156,6 +156,14 @@ define('bui/util',function(require){
                     return toString.call(value) === '[object Object]';
                 },
             /**
+             * 是否是数字或者数字字符串
+             * @param  {String}  value 数字字符串
+             * @return {Boolean}  是否是数字或者数字字符串
+             */
+            isNumeric: function(value) {
+                return !isNaN(parseFloat(value)) && isFinite(value);
+            },
+            /**
              * 将指定的方法或属性放到构造函数的原型链上，
              * 函数支持多于2个变量，后面的变量同s1一样将其成员复制到构造函数的原型链上。
              * @param  {Function} r  构造函数
@@ -195,6 +203,7 @@ define('bui/util',function(require){
                     throw msg;
                 }
             },
+            
             /**
              * 实现类的继承，通过父类生成子类
              * @param  {Function} subclass
@@ -205,18 +214,18 @@ define('bui/util',function(require){
              *      @example
              *      //父类
              *      function base(){
-     * 
-     *      }
+             *  
+             *      }
              *
              *      function sub(){
-     * 
-     *      }
+             * 
+             *      }
              *      //子类
              *      BUI.extend(sub,base,{
-     *          method : function(){
-     *    
-     *          }
-     *      });
+             *          method : function(){
+             *    
+             *          }
+             *      });
              *
              *      //或者
              *      var sub = BUI.extend(base,{});
@@ -982,9 +991,24 @@ define('bui/observable',['bui/util'],function (r) {
         functions.splice(index,1);
       }
     },
+    /**
+     * 清空事件
+     */
     empty : function(){
       var length = this._functions.length; //ie6,7下，必须指定需要删除的数量
       this._functions.splice(0,length);
+    },
+    /**
+     * 暂停事件
+     */
+    pause : function(){
+      this._paused = true;
+    },
+    /**
+     * 唤醒事件
+     */
+    resume : function(){
+      this._paused = false;
     },
     /**
      * 触发回调
@@ -995,7 +1019,9 @@ define('bui/observable',['bui/util'],function (r) {
     fireWith : function(scope,args){
       var _self = this,
         rst;
-
+      if(this._paused){
+        return;
+      }
       BUI.each(_self._functions,function(fn){
         rst = fn.apply(scope,args);
         if(rst === false){
@@ -1189,6 +1215,24 @@ define('bui/observable',['bui/util'],function (r) {
           }
       }
       return result;
+    },
+    /**
+     * 暂停事件的执行
+     * @param  {String} eventType 事件类型
+     */
+    pauseEvent : function(eventType){
+      var _self = this,
+        callbacks = _self._getCallbacks(eventType);
+      callbacks && callbacks.pause();
+    },
+    /**
+     * 唤醒事件
+     * @param  {String} eventType 事件类型
+     */
+    resumeEvent : function(eventType){
+      var _self = this,
+        callbacks = _self._getCallbacks(eventType);
+      callbacks && callbacks.resume();
     },
     /**
      * 添加绑定事件
@@ -5418,10 +5462,6 @@ define('bui/component/uibase/position',function () {
     }
 
     Position.ATTRS =
-    /**
-     * @lends BUI.Component.UIBase.Position#
-     * @ignore
-     */
     {
         /**
          * 水平坐标
@@ -5541,10 +5581,6 @@ define('bui/component/uibase/position',function () {
 
 
     Position.prototype =
-    /**
-     * @lends BUI.Component.UIBase.Position.prototype
-     * @ignore
-     */
     {
         /**
          * Move to absolute position.
@@ -6568,10 +6604,7 @@ define('bui/component/uibase/selection',function () {
     };
 
     selection.ATTRS = 
-    /**
-     * @lends BUI.Component.UIBase.Selection#
-     * @ignore
-     */
+   
     {
         /**
          * 选中的事件
@@ -6675,10 +6708,7 @@ define('bui/component/uibase/selection',function () {
     };
 
     selection.prototype = 
-    /**
-     * @lends BUI.Component.UIBase.Selection.prototype
-     * @ignore
-     */
+    
     {
         /**
          * 清理选中的项
@@ -7976,10 +8006,6 @@ define('bui/component/uibase/bindable',function(){
 
 
 	BUI.augment(bindable,
-	/**
-	* @lends BUI.Data.Bindable.prototype
-	* @ignore
-	*/	
 	{
 
 		__bindUI : function(){

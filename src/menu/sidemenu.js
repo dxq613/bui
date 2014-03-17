@@ -18,10 +18,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
    * @extends BUI.Menu.Menu
    */
   var sideMenu = Menu.extend(
-  /**
-   * @lends BUI.Menu.SideMenu.prototype
-   * @ignore
-   */
   {
     //初始化配置项
     initializer : function(){
@@ -114,10 +110,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
   },{
 
     ATTRS : 
-    /**
-     * @lends BUI.Menu.SideMenu.prototype
-     * @ignore
-     */
     {
       
       /**

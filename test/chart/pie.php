@@ -61,8 +61,8 @@
   <script type="text/javascript" src="../../src/chart/chart.js"></script>
 
  <script type="text/javascript" src="../specs/chart/pie-spec.js"></script>
-<!---->
-  <script type="text/javascript" src="../specs/chart/pie-ring-spec.js"></script>
 
+  <script type="text/javascript" src="../specs/chart/pie-ring-spec.js"></script>
+<!---->
 
 <?php include("../templates/footer.php"); ?>

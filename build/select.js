@@ -251,10 +251,6 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       }
     },{
       ATTRS : 
-      /**
-       * @lends BUI.Select.Select#
-       * @ignore
-       */
       {
 
         /**
@@ -519,10 +515,6 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Select.Combox#
-     * @ignore
-     */
     {
       /**
        * 控件的模版
@@ -589,7 +581,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
    *  suggest.render();
    *
    * });
-   * <code></pre>
+   * </code></pre>
    * @class BUI.Select.Suggest
    * @extends BUI.Select.Combox
    */
@@ -771,10 +763,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Select.Suggest#
-     * @ignore
-     */
     {
       /**
        * 用于显示提示的数据源
@@ -790,7 +778,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * 用于显示提示的数据源
        * @type {Array}
-       * @ignore
        */
       data:{
         value : null
@@ -806,12 +793,10 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * 是否允许缓存
        * @cfg {Boolean} cacheable
-       * @default false
        */
       /**
        * 是否允许缓存
        * @type {Boolean}
-       * @default false
        */
       cacheable:{
         value:false
@@ -888,7 +873,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * suggest不提供自动设置选中文本功能
        * @type {Boolean}
-       * @default true
        */
       autoSetValue:{
         value:false

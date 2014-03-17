@@ -41,10 +41,6 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   },{
 
     ATTRS:
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 显示的文本

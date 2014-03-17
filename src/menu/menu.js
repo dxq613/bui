@@ -96,10 +96,6 @@ define('bui/menu/menu',['bui/common'],function(require){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Menu.Menu#
-     * @ignore
-     */
     {
 
       elTagName:{

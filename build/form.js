@@ -45,10 +45,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
    * @extends BUI.Overlay.Overlay
    */
   var tipItem = Overlay.extend(
-  /**
-   * @lends BUI.Form.TipItem.prototype
-   * @ignore
-   */
+
   {
     initializer : function(){
       var _self = this,
@@ -99,10 +96,6 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Form.TipItem#
-     * @ignore
-     */
     {
       /**
        * 提示的输入框 
@@ -167,10 +160,6 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
   };
 
   Tips.ATTRS = 
-  /**
-   * @lends BUI.Form.Tips
-   * @ignore
-   */
   {
 
     /**
@@ -1436,7 +1425,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       var _self = this,
         datePicker = _self.get('datePicker');
 
-      if(datePicker.get('showTime')){
+      if(datePicker.showTime || (datePicker.get && datePicker.get('showTime'))){
         return 'yyyy-mm-dd HH:MM:ss';
       }
       return 'yyyy-mm-dd';
@@ -2018,7 +2007,7 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
  * @ignore
  */
 
-define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (require) {
+define('bui/form/uploaderfield',['bui/common','bui/form/basefield','bui/form/rules'],function (require) {
 
   var BUI = require('bui/common'),
     JSON = BUI.JSON,
@@ -2244,7 +2233,7 @@ define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (r
 ;(function(){
 var BASE = 'bui/form/';
 define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
-  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',
+  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',BASE + 'uploaderfield',
   BASE + 'checklistfield',BASE + 'radiolistfield', BASE + 'textareafield'],function (require) {
   var BUI = require('bui/common'),
     Field = require(BASE + 'basefield');

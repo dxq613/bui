@@ -162,7 +162,7 @@ define('bui/module',['bui/common'], function (require) {
     },
     /**
      * 删除模块
-     * @param  {BUI.Module.Module} 模块
+     * @param  {BUI.Module.Module} module 模块
      */
     removeModule : function(module){
       delete this.get('modules')[module.get('id')];

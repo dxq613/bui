@@ -61,7 +61,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       var _self = this,
         datePicker = _self.get('datePicker');
 
-      if(datePicker.get('showTime')){
+      if(datePicker.showTime || (datePicker.get && datePicker.get('showTime'))){
         return 'yyyy-mm-dd HH:MM:ss';
       }
       return 'yyyy-mm-dd';

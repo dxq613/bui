@@ -53,11 +53,7 @@ define('bui/toolbar/bar',function(){
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList
    */
-	var Bar = Component.Controller.extend([UIBase.ChildList],
-	 /**
-	 * @lends BUI.Toolbar.Bar.prototype
-   * @ignore 
-	 */	
+	var Bar = Component.Controller.extend([UIBase.ChildList],	
 	{
 		/**
 		* 通过id 获取项
@@ -69,10 +65,6 @@ define('bui/toolbar/bar',function(){
 		}
 	},{
 		ATTRS:
-    /** 
-    * @lends BUI.Toolbar.Bar.prototype
-    * @ignore
-    */
 		{
       elTagName :{
           view : true,

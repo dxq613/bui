@@ -2,7 +2,9 @@
  * @fileOverview 画布内部的元素扩展
  * @ignore
  */
-define('bui/graphic/canvasitem',function(require) {
+define('bui/graphic/canvasitem',['bui/common'],function(require) {
+	
+	var BUI = require('bui/common');
 	
 	/**
 	 * @class BUI.Graphic.CanvasItem

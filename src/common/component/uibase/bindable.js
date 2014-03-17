@@ -89,10 +89,6 @@ define('bui/component/uibase/bindable',function(){
 
 
 	BUI.augment(bindable,
-	/**
-	* @lends BUI.Data.Bindable.prototype
-	* @ignore
-	*/	
 	{
 
 		__bindUI : function(){
