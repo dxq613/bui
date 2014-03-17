@@ -376,6 +376,11 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         queue = _self.get('queue');
       return queue.getItemsByStatus('success').length === queue.getItems().length;
     },
+    _uiSetUrl: function(v){
+      var _self = this,
+        uploaderType = _self.get('uploaderType');
+      uploaderType && uploaderType.isController && uploaderType.set('url', v);
+    },
     /**
      * 设置是否disabled
      * @private
