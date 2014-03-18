@@ -90,6 +90,29 @@ define('bui/grid/plugins/editing',function (require) {
     triggerSelected : {
       value : true
     }
+    /**
+     * @event accept 
+     * 确认编辑
+     * @param {Object} ev 事件对象
+     * @param {Object} ev.record 编辑的数据
+     * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+     */
+    
+    /**
+     * @event cancel 
+     * 取消编辑
+     * @param {Object} ev 事件对象
+     * @param {Object} ev.record 编辑的数据
+     * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+     */
+    
+    /**
+     * @event editorshow 
+     * editor 显示
+     * @param {Object} ev 事件对象
+     * @param {Object} ev.record 编辑的数据
+     * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+     */
   };
 
   BUI.augment(Editing,{
@@ -294,10 +317,13 @@ define('bui/grid/plugins/editing',function (require) {
       editor.on('accept',function(){
         var record = _self.get('record');
         _self.updateRecord(store,record,editor);
+        _self.fire('accept',{editor : editor,record : record});
         _self.set('curEditor',null);
+
       });
 
       editor.on('cancel',function(){
+        _self.fire('cancel',{editor : editor,record : _self.get('record')});
         _self.set('curEditor',null);
       });
     },
@@ -351,6 +377,7 @@ define('bui/grid/plugins/editing',function (require) {
       editor.show();
       _self.focusEditor(editor,options.field);
       _self.set('curEditor',editor);
+      _self.fire('editorshow',{editor : editor});
     },
     /**
      * @protected

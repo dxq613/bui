@@ -104,7 +104,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       if(title){
         if(title.x == null){
           title.x = canvas.get('width')/2;
-          title.y = 15;
+          title.y = title.y || 15;
         }
         title = BUI.mix({},theme.title,title);
         canvas.addShape('label',title);
@@ -112,7 +112,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       if(subTitle){
         if(subTitle.x == null){
           subTitle.x = canvas.get('width')/2;
-          subTitle.y = 35;
+          subTitle.y = subTitle.y || 35;
         }
         subTitle = BUI.mix({},theme.subTitle,subTitle);
         canvas.addShape('label',subTitle);
@@ -145,6 +145,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       BUI.mix(true,cfg,theme,{
         colors :  attrs.colors,
         data : attrs.data,
+        fields : attrs.fields,
         plotRange : attrs.plotRange,
         series : attrs.series,
         seriesOptions : attrs.seriesOptions,
@@ -324,6 +325,30 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
        */
       yAxis : {
 
+      },
+      /**
+       * 数据中使用的字段，用于转换数据使用例如： 
+       *  - fields : ['intelli','force','political','commander']
+       *  - 数据：
+       * <pre><code>
+       * [
+       *  {"name" : "张三","intelli":52,"force":90,"political":35,"commander" : 85},
+       *   {"name" : "李四","intelli":95,"force":79,"political":88,"commander": 72},
+       *  {"name" : "王五","intelli":80,"force":42,"political":92,"commander": 50}
+       * ]
+       * </code></pre>
+       *  - 转换成
+       *  <pre><code>
+       * [
+       *   [52,90,35,85],
+       *   [95,79,88,72],
+       *   [80,42,92,50]
+       * ]
+       * </code></pre>
+       * @type {Array}
+       */
+      fields : {
+        
       },
       /**
        * 应用的样式

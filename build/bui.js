@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 77,
+            subVersion : 78,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -34018,6 +34018,29 @@ define('bui/grid/plugins/editing',function (require) {
     triggerSelected : {
       value : true
     }
+    /**
+     * @event accept 
+     * \u786e\u8ba4\u7f16\u8f91
+     * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     */
+    
+    /**
+     * @event cancel 
+     * \u53d6\u6d88\u7f16\u8f91
+     * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     */
+    
+    /**
+     * @event editorshow 
+     * editor \u663e\u793a
+     * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     */
   };
 
   BUI.augment(Editing,{
@@ -34222,10 +34245,13 @@ define('bui/grid/plugins/editing',function (require) {
       editor.on('accept',function(){
         var record = _self.get('record');
         _self.updateRecord(store,record,editor);
+        _self.fire('accept',{editor : editor,record : record});
         _self.set('curEditor',null);
+
       });
 
       editor.on('cancel',function(){
+        _self.fire('cancel',{editor : editor,record : _self.get('record')});
         _self.set('curEditor',null);
       });
     },
@@ -34279,6 +34305,7 @@ define('bui/grid/plugins/editing',function (require) {
       editor.show();
       _self.focusEditor(editor,options.field);
       _self.set('curEditor',editor);
+      _self.fire('editorshow',{editor : editor});
     },
     /**
      * @protected
@@ -34922,6 +34949,32 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} e.editType \u7f16\u8f91\u7684\u7c7b\u578b add \u6216\u8005 edit
          */
         recordchange : false
+
+         /**
+         * @event accept 
+         * \u786e\u8ba4\u7f16\u8f91
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+         * @param {BUI.Form.Form} form \u8868\u5355
+         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         */
+        
+        /**
+         * @event cancel 
+         * \u53d6\u6d88\u7f16\u8f91
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+         * @param {BUI.Form.Form} form \u8868\u5355
+         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         */
+        
+        /**
+         * @event editorshow 
+         * editor \u663e\u793a
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         */
       }
     },
     editType : {
@@ -34986,6 +35039,11 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
         var form = editor.get('form'),
           record = form.serializeToObject();
         _self.saveRecord(record);
+        _self.fire('accept',{editor : editor,record : _self.get('record'),form : form});
+      });
+
+      editor.on('cancel',function(){
+        _self.fire('cancel',{editor : editor,record : _self.get('record'),form : editor.get('form')});
       });
     },
     /**
@@ -35048,6 +35106,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       editor.setValue(record,true); //\u8bbe\u7f6e\u503c\uff0c\u5e76\u4e14\u9690\u85cf\u9519\u8bef
       
       _self.fire('recordchange',{record : record,editType : _self.get('editType')});
+      _self.fire('editorshow',{eidtor : editor,editType : _self.get('editType')});
     },
     /**
      * \u53d6\u6d88\u7f16\u8f91

@@ -143,9 +143,9 @@ define('bui/chart/plotback',['bui/common','bui/chart/plotitem'],function (requir
 			}
 			if(BUI.isArray(margin)){
 				top = margin[0];
-				right = margin[1];
-				bottom = margin[2] || margin[0];
-				left = margin[3] || margin[1];
+				right = margin[1] != null ? margin[1] : margin[0];
+				bottom = margin[2] != null ? margin[2] : margin[0];
+				left = margin[3] != null ? margin[3] : right;
 			}
 
 			start = canvas.getRelativePoint(left,height - bottom);

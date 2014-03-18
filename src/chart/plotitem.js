@@ -96,7 +96,7 @@ define('bui/chart/plotitem',['bui/common','bui/graphic'],function (require) {
         canvas = _self.get('canvas'),
         chart = canvas.chart;
       if(chart){
-        ev.target = ev.target || _self;
+        ev.target = ev.target || chart;
         chart.fire(name,ev);
       }
     },

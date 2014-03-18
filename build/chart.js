@@ -441,15 +441,22 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem','bui/graphic'],func
 			var _self = this,
 				index = BUI.Array.indexOf(label,_self.get('children')),
 				cfg = _self._getLabelCfg(item,index);
-			if(label){
-				if(Util.svg && _self.get('animate')){
+			if(label && (label.attr('x') != cfg.x || label.attr('y') != cfg.y)){
+				if(Util.svg && _self.get('animate') && !cfg.rotate){
 					label.attr('text',cfg.text);
+					if(cfg.rotate){
+						label.attr('transform','');
+					}
+					
 					label.animate({
 						x : cfg.x,
 						y : cfg.y
 					},_self.get('duration'));
 				}else{
 					label.attr(cfg);
+					if(cfg.rotate){
+						label.attr('transform',BUI.substitute('r{rotate} {x} {y}',cfg));
+					}
 				}
 			}
 		},
@@ -1312,9 +1319,9 @@ define('bui/chart/plotback',['bui/common','bui/chart/plotitem'],function (requir
 			}
 			if(BUI.isArray(margin)){
 				top = margin[0];
-				right = margin[1];
-				bottom = margin[2] || margin[0];
-				left = margin[3] || margin[1];
+				right = margin[1] != null ? margin[1] : margin[0];
+				bottom = margin[2] != null ? margin[2] : margin[0];
+				left = margin[3] != null ? margin[3] : right;
 			}
 
 			start = canvas.getRelativePoint(left,height - bottom);
@@ -1426,7 +1433,7 @@ define('bui/chart/plotitem',['bui/common','bui/graphic'],function (require) {
         canvas = _self.get('canvas'),
         chart = canvas.chart;
       if(chart){
-        ev.target = ev.target || _self;
+        ev.target = ev.target || chart;
         chart.fire(name,ev);
       }
     },
@@ -1942,9 +1949,15 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		getInnerBox : function(){
 			var _self = this,
 				textGroup = _self.get('textGroup'),
+				titleShape = _self.get('titleShape'),
 				bbx = textGroup.getBBox(),
-				rst = {};
-			rst.width = bbx.x + bbx.width + 8;
+				rst = {},
+				width = bbx.width;
+			if(titleShape){
+				var tbox = titleShape.getBBox();
+				width = Math.max(width,tbox.width);
+			}
+			rst.width = bbx.x + width + 8;
 			rst.height = bbx.height + bbx.y + 10;
 
 			return rst;
@@ -2052,6 +2065,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 			var _self = this,
 				bbox = _self.getInnerBox(),
 				borderShape = _self.get('borderShape');
+
 
 			borderShape.attr({
 				width : bbox.width,
@@ -3756,6 +3770,7 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
      * @return {Number} 节点坐标点（单一坐标）x轴的坐标点或者y轴的坐标点
      */
     getOffset : function(value){
+      value = parseFloat(value);
     	var _self = this,
     		offset = _self.getRelativeOffset(value);
 
@@ -4296,6 +4311,21 @@ define('bui/chart/circleaxis',['bui/common','bui/graphic','bui/chart/abstractaxi
           'stroke' : '#C0D0E0'
         }
       } 
+    },
+    formatter : {
+      value : function(value){
+        var _self = this,
+          ticks = _self.get('ticks');
+        if(BUI.isNumber(value)){
+          var index = BUI.Array.indexOf(value,ticks);
+          if(index == -1){
+            var avg = _self.getTickAvgAngle();
+            index =parseInt(value / avg,10) ;
+            value = ticks[index];
+          }
+        }
+        return value;
+      }
     }
   };
 
@@ -5287,7 +5317,11 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       _self.changeShapes(points);
       BUI.each(points,function(point){
         if(labels){
-          labels.items.push(point.value);
+          var item = {};
+          item.text = point.value;
+          item.x = point.x;
+          item.y = point.y;
+          labels.items.push(item);
         }
         if(markers){
           markers.items.push(point);
@@ -8700,7 +8734,10 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     _caculateCategories : function(axis,name){
       var _self = this,
         data = _self.getSeriesData(axis,name),
-        categories = [].concat(data[0]);
+        categories = [];
+        if(data.length){
+          categories = categories.concat(data[0]);
+        }
       if(data.length > 1 && !_self.get('data')){ //不共享data时
         for (var i = 1; i < data.length; i++) {
           var arr = data[i];
@@ -8740,6 +8777,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       });
 
       return data;
+    },
+    //转换数据,将json转换成数组
+    _parseData : function(obj,fields){
+      var rst = [];
+      BUI.each(fields,function(key){
+        rst.push(obj[key]);
+      });
+      return rst;
     },
     /**
      * @protected
@@ -8816,6 +8861,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     //数据变化或者序列显示隐藏引起的坐标轴变化
     _resetAxis : function(axis,type){
 
+      if(!axis.get('autoTicks')){
+        return;
+      }
       type = type || 'yAxis';
 
       var _self = this,
@@ -8824,9 +8872,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
       _self.set('stackedData',null);
       //如果是非自动计算坐标轴，不进行重新计算
-      if(!axis.get('autoTicks')){
-        return;
-      }
+      
       axis.change(info);
     },
     _resetSeries : function(){
@@ -8863,13 +8909,36 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      */
     changeData : function(data){
       var _self = this,
-        series = _self.getSeries();
+        series = _self.getSeries(),
+        fields = _self.get('fields');
 
       _self.set('data',data);
-      BUI.each(series,function(item){
-        item.changeData(data);
+
+      BUI.each(series,function(item,index){
+        if(fields){
+          var arr = _self._getSeriesData(item.get('name'),index);
+          item.changeData(arr);
+        }else{
+          item.changeData(data);
+        }
       });
       _self.repaint();
+    },
+    //根据series获取data
+    _getSeriesData : function(name,index){
+      var _self = this,
+        data = _self.get('data'),
+        fields = _self.get('fields'),
+        obj = data[index];
+      if(name){
+        BUI.each(data,function(item){
+          if(item.name == name){
+            obj = item;
+            return false;
+          }
+        });
+      }
+      return _self._parseData(obj,fields);
     },
     //获取默认的类型
     _getDefaultType : function(){
@@ -8984,6 +9053,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         seriesCfg = _self.get('seriesOptions'),
         colors = _self.get('colors'),
         data = _self.get('data'),
+        fields = _self.get('fields'),
         symbols = _self.get('symbols');
 
       item = BUI.mix(true,{},seriesCfg[type + 'Cfg'],item);
@@ -8997,7 +9067,12 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         item.markers.marker.symbol = symbols[index % symbols.length];
       }
       if(data && !item.data){
-        item.data = data;
+        if(fields){
+          item.data = _self._getSeriesData(item.name,index);
+        }else{
+          item.data = data;
+        }
+        
       }
       
       return item;
@@ -9126,7 +9201,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       if(title){
         if(title.x == null){
           title.x = canvas.get('width')/2;
-          title.y = 15;
+          title.y = title.y || 15;
         }
         title = BUI.mix({},theme.title,title);
         canvas.addShape('label',title);
@@ -9134,7 +9209,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       if(subTitle){
         if(subTitle.x == null){
           subTitle.x = canvas.get('width')/2;
-          subTitle.y = 35;
+          subTitle.y = subTitle.y || 35;
         }
         subTitle = BUI.mix({},theme.subTitle,subTitle);
         canvas.addShape('label',subTitle);
@@ -9167,6 +9242,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       BUI.mix(true,cfg,theme,{
         colors :  attrs.colors,
         data : attrs.data,
+        fields : attrs.fields,
         plotRange : attrs.plotRange,
         series : attrs.series,
         seriesOptions : attrs.seriesOptions,
@@ -9346,6 +9422,30 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
        */
       yAxis : {
 
+      },
+      /**
+       * 数据中使用的字段，用于转换数据使用例如： 
+       *  - fields : ['intelli','force','political','commander']
+       *  - 数据：
+       * <pre><code>
+       * [
+       *  {"name" : "张三","intelli":52,"force":90,"political":35,"commander" : 85},
+       *   {"name" : "李四","intelli":95,"force":79,"political":88,"commander": 72},
+       *  {"name" : "王五","intelli":80,"force":42,"political":92,"commander": 50}
+       * ]
+       * </code></pre>
+       *  - 转换成
+       *  <pre><code>
+       * [
+       *   [52,90,35,85],
+       *   [95,79,88,72],
+       *   [80,42,92,50]
+       * ]
+       * </code></pre>
+       * @type {Array}
+       */
+      fields : {
+        
       },
       /**
        * 应用的样式

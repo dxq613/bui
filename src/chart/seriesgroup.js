@@ -479,7 +479,10 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     _caculateCategories : function(axis,name){
       var _self = this,
         data = _self.getSeriesData(axis,name),
-        categories = [].concat(data[0]);
+        categories = [];
+        if(data.length){
+          categories = categories.concat(data[0]);
+        }
       if(data.length > 1 && !_self.get('data')){ //不共享data时
         for (var i = 1; i < data.length; i++) {
           var arr = data[i];
@@ -519,6 +522,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       });
 
       return data;
+    },
+    //转换数据,将json转换成数组
+    _parseData : function(obj,fields){
+      var rst = [];
+      BUI.each(fields,function(key){
+        rst.push(obj[key]);
+      });
+      return rst;
     },
     /**
      * @protected
@@ -595,6 +606,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     //数据变化或者序列显示隐藏引起的坐标轴变化
     _resetAxis : function(axis,type){
 
+      if(!axis.get('autoTicks')){
+        return;
+      }
       type = type || 'yAxis';
 
       var _self = this,
@@ -603,9 +617,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
       _self.set('stackedData',null);
       //如果是非自动计算坐标轴，不进行重新计算
-      if(!axis.get('autoTicks')){
-        return;
-      }
+      
       axis.change(info);
     },
     _resetSeries : function(){
@@ -642,13 +654,36 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      */
     changeData : function(data){
       var _self = this,
-        series = _self.getSeries();
+        series = _self.getSeries(),
+        fields = _self.get('fields');
 
       _self.set('data',data);
-      BUI.each(series,function(item){
-        item.changeData(data);
+
+      BUI.each(series,function(item,index){
+        if(fields){
+          var arr = _self._getSeriesData(item.get('name'),index);
+          item.changeData(arr);
+        }else{
+          item.changeData(data);
+        }
       });
       _self.repaint();
+    },
+    //根据series获取data
+    _getSeriesData : function(name,index){
+      var _self = this,
+        data = _self.get('data'),
+        fields = _self.get('fields'),
+        obj = data[index];
+      if(name){
+        BUI.each(data,function(item){
+          if(item.name == name){
+            obj = item;
+            return false;
+          }
+        });
+      }
+      return _self._parseData(obj,fields);
     },
     //获取默认的类型
     _getDefaultType : function(){
@@ -763,6 +798,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         seriesCfg = _self.get('seriesOptions'),
         colors = _self.get('colors'),
         data = _self.get('data'),
+        fields = _self.get('fields'),
         symbols = _self.get('symbols');
 
       item = BUI.mix(true,{},seriesCfg[type + 'Cfg'],item);
@@ -776,7 +812,12 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         item.markers.marker.symbol = symbols[index % symbols.length];
       }
       if(data && !item.data){
-        item.data = data;
+        if(fields){
+          item.data = _self._getSeriesData(item.name,index);
+        }else{
+          item.data = data;
+        }
+        
       }
       
       return item;

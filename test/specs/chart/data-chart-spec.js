@@ -1,4 +1,4 @@
-/*
+
 BUI.use(['bui/chart/chart'],function (Chart) {
   
   var chart = new Chart({
@@ -268,7 +268,7 @@ BUI.use(['bui/chart/chart','bui/data'],function (Chart,Data) {
   });
 
 });
-*/
+/**/
 BUI.use(['bui/chart/chart','bui/data'],function (Chart,Data) {
   
   var store = new Data.Store({
@@ -499,7 +499,6 @@ BUI.use(['bui/chart/chart','bui/data'],function (Chart,Data) {
     runs(function(){
         expect(series[0].getItems().length).toBe(chart.get('data').length);
     });
-
    });
 
     it('数据源替换',function(){
