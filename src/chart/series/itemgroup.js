@@ -111,6 +111,55 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
     },
     /**
      * @protected
+     * points 发生改变时
+     */
+    changePoints : function(points){
+      var _self = this,
+        items = _self.getItems(),
+        animate = _self.get('animate');
+
+      points = points || _self.getPoints();
+
+      //修改现有的path
+      BUI.each(items,function(item,index){
+        var point = points[index],
+          prePoint,
+          path;
+        if(point){
+          prePoint = item.get('point');
+          item.set('point',point);
+          item.set('prePoint',prePoint);
+
+          if(!animate){
+            path = _self.pointToPath(point);
+            item.attr('path',path);
+          }else{
+            _self.animateItem(item,prePoint);
+          }
+          
+        }
+      });
+
+      var count = points.length,
+        length = items.length;
+
+      //大于现有的点
+      for (var i = length; i < count; i++) {
+        var shape = _self.addItem(points[i],i);
+
+        animate && _self.animateItem(shape,items[length - 1].get('prePoint'));
+      }
+
+      //小于现有的点
+      for(var i = length - 1; i >= count; i--){
+        var item = items[i];
+        item.remove();
+      }
+
+    },
+    
+    /**
+     * @protected
      * 触发选中事件
      */
     onSelected : function(item){
@@ -190,7 +239,9 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
      * @return {Array} 子项集合
      */
     getItems : function(){
-      return this.get('group').get('children');
+      var group = this.get('group');
+
+      return group ? group.get('children') : [];
     },
     /**
      * 生成动画
@@ -208,6 +259,19 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
           item.attr('path',path);
         });
       },callback);
+    },
+    /**
+     * 执行单个点的动画
+     * @protected
+     */
+    animateItem : function(item,prePoint){
+      var _self = this,
+        point = item.get('point'),
+        path = _self.pointToPath(point);
+
+      item.animate({
+        path : path
+      },_self.get('changeDuration'));
     },
     /**
      * 删除子项

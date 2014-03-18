@@ -244,25 +244,11 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       _self.set('columnWidth',width);
       _self.set('columnOffset',offset)
     },
-    changeShapes : function(){
-      var _self = this,
-        items = _self.getItems(),
-        points = _self.get('points');
-      _self.resetWidth();
-      BUI.each(items,function(item,index){
-        var point = points[index],
-          path = _self.pointToPath(point);
+    changeShapes : function(points){
+      var _self = this;
 
-        item.set('point',point);
-        item.animate({
-          path : path
-        },_self.get('changeDuration'));
-      });
-      var count = points.length,
-        length = items.length;
-      for (var i = length; i < count; i++) {
-        _self._drawPoint(points[i],i);
-      };
+      _self.resetWidth();
+      _self.changePoints(points);
     },
     getActiveItems : function(){
       return this.getItems();
@@ -356,10 +342,6 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
           ir = point.ir || 0; 
 
         r = r * factor;
-
-        /*if(_self.isStacked() && point.lowY){ //层叠图
-          ir = xAxis.getDistance(point.lowX,point.lowY);
-        }*/
         ir = ir * factor;
         path = getPiePath(startAngle,endAngle,r,ir,xAxis);
 

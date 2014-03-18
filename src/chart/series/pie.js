@@ -222,7 +222,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       var _self = this,
         selectedPoint;
       BUI.each(points,function(point,index){
-        _self.formatPoint(point);
+        _self.formatPoint(point,index);
         var item = _self.addItem(point,index);
         if(point.obj && point.obj.selected){
           selectedPoint = item;
@@ -244,6 +244,21 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         }
       }
     },
+    /**
+     * @protected
+     * 内部图形发生改变
+     */
+    changeShapes : function(points,animate){
+      var _self = this;
+
+      BUI.each(points,function(point,index){
+        _self.formatPoint(point,index);
+      });
+
+      _self.changePoints(points);
+
+    },
+    //处理labels
     processLabels : function(points){
       var _self = this,
         labelsGroup = _self.get('labelsGroup'),
@@ -290,6 +305,20 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         });
       }
       
+    },
+    /**
+     * 设置labels
+     * @param  {Array} items items的配置信息
+     */
+    resetLabels : function(){
+      var _self = this,
+        labelsGroup = _self.get('labelsGroup'),
+        lineGroup = _self.get('lineGroup');
+      if(labelsGroup){
+        labelsGroup.clear();
+        lineGroup && lineGroup.clear();
+        _self.processLabels(_self.getPoints());
+      }
     },
     lineToLabel : function(label,r,distance){
       var _self = this,
@@ -466,10 +495,9 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       if(cfg && cfg.attrs){
         BUI.mix(rst,cfg.attrs);
       }
-      if(!rst.fill){
-        rst.fill = _self._getColor(index);
-      }
-      point.color = rst.fill;
+      //if(!rst.fill){
+        rst.fill = point.color;
+      //}
       if(_self.get('allowPointSelect')){
         rst.cursor = 'pointer';
       }
@@ -489,7 +517,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       return color;
     },
     //格式化节点
-    formatPoint : function(point){
+    formatPoint : function(point,index){
       var _self = this,
         points = _self.getVisiblePoints(),
         percent = _self._getPiePercent(point,points),
@@ -498,6 +526,10 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         totalAngle = endAngle - startAngle,
         rst = {};
       point.percent = percent.percent;
+      if(point.obj && point.obj.attrs){
+        point.color = point.obj.attrs.fill;
+      }
+      point.color =  point.color || _self._getColor(index);
       point.prePercent = percent.prePercent;
       point.startAngle = startAngle + totalAngle * percent.prePercent;
       point.endAngle = startAngle + totalAngle * (point.prePercent + point.percent);
@@ -530,9 +562,11 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     getVisiblePoints : function(){
       var _self = this,
         visiblePoints;
+
+      return _self.getPoints();
       //未渲染，则调用初始化时的点信息
-      if(!_self.get('isPaint')){
-        return _self.getPoints();
+      /*if(!_self.get('isPaint')){
+        
       }
 
       visiblePoints = _self.get('visiblePoints');
@@ -543,11 +577,50 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         items = _self.getItems();
       BUI.each(items,function(item){
         if(item.get('visible')){
-          points.push(item);
+          points.push(item.get('point'));
         }
       });
       _self.set('visiblePoints',points);
       return points;
+      */
+    },
+    /**
+     * 执行单个点的动画
+     * @protected
+     */
+    animateItem : function(item,prePoint){
+      var _self = this,
+        curPoint = item.get('point'),
+        startAngle = curPoint.startAngle,
+        endAngle = curPoint.endAngle,
+        isPre = prePoint == item.get('prePoint'),
+        preStart = isPre ? prePoint.startAngle : prePoint.endAngle,
+        preEnd = isPre ? prePoint.endAngle : prePoint.endAngle;
+      var animHadler = item.get('animHadler');
+      if(animHadler){
+        Util.stopStep(animHadler);
+      }
+      animHadler = Util.animStep(_self.get('changeDuration'),function(factor){
+        var path,
+          curStart,
+          curEnd;
+        if(isPre){
+          curStart = preStart + (startAngle - preStart) * factor;
+          curEnd = preEnd + (endAngle - preEnd) * factor
+          
+        }else{
+          curStart = preStart - (preStart - startAngle) * factor;
+          curEnd = preEnd - (preEnd - endAngle) * factor;
+        }
+        path = _self._getPiePath(curStart,curEnd);
+       
+        item.attr('path',path);
+        if(_self.isSelected(item)){
+          var offset = _self._getOffset(curStart,curEnd,10);
+          item.attr('transform' ,'t'+ offset.x +' '+offset.y);
+        }
+      });
+      item.set('animHadler',animHadler);
     },
     /**
      * @protected

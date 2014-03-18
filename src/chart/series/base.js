@@ -237,13 +237,13 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
         first = labelsGroup.getChildAt(0);
         first && first.remove();
       }
-      /*if(xAxis){
+      if(xAxis){
         var labels = xAxis.get('labelsGroup');
         if(labels){
           first = labels.getChildAt(0);
           first && first.remove();
         }
-      }*/
+      }/**/
     },
     /**
      * 获取对应坐标轴上的数据
