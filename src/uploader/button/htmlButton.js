@@ -10,20 +10,12 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
     ButtonBase = require('bui/uploader/button/base'),
     UA = BUI.UA;
 
-  var HtmlButtonView = Component.View.extend([ButtonBase.View], {
-
-  },{
-    ATTRS: {
-    }
-  });
-
   /**
    * 文件上传按钮，ajax和iframe上传方式使用,使用的是input[type=file]
    * @class BUI.Uploader.Button.HtmlButton
-   * @extends BUI.Component.Controller
-   * @mixins BUI.Uploader.Button
+   * @extends BUI.Uploader.Button
    */
-  var HtmlButton = Component.Controller.extend([ButtonBase], {
+  var HtmlButton = ButtonBase.extend({
     renderUI: function(){
       var _self = this;
       _self._createInput();
@@ -179,9 +171,6 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
             v && this.get('fileInput') && $(this.get('fileInput')).attr('name', v);
           return v;
         }
-      },
-      xview: {
-        value: HtmlButtonView
       }
     }
   }, {

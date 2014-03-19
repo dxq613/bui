@@ -91,6 +91,16 @@
 
   }
 
+  //禁用的样式
+  .bui-uploader-htmlButton-disabled .bui-uploader-button-wrap{
+    border: 1px solid #bfbfbf;
+    color: #404040;
+    cursor: default;
+    background: -webkit-gradient(linear,left top,left bottom,from(#fafafa),to(#e5e5e5));
+    background: -moz-linear-gradient(top,#fafafa,#e5e5e5);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FAFAFA',endColorstr = '#E5E5E5');
+  }
+
   //对列
   .bui-queue-item{
     position: relative;
@@ -135,6 +145,20 @@
       border-color: #369bd7;
       background-color: #fdfcfc;
       #gradient > .horizontal(#fdfcfc, #e2f1fc);
+    }
+  }
+
+  //禁用的样式
+  .bui-uploader-htmlButton-disabled .bui-uploader-button-wrap{
+    border-color: #eee;
+    color: #404040;
+    cursor: default;
+    background-color: #eee;
+
+    &:hover{
+      border-color: #eee;
+      background-color: #eee;
+      #gradient > .horizontal(#fdfcfc, #eee);
     }
   }
 

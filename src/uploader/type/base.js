@@ -1,6 +1,5 @@
 /**
  * @fileoverview 上传方式类的基类
- * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  * @ignore
  **/
 define('bui/uploader/type/base',['bui/common'], function(require) {

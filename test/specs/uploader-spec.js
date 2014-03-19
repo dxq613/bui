@@ -119,24 +119,22 @@ BUI.use(['bui/uploader/button/swfButton'], function(SwfButton){
 
 BUI.use(['bui/uploader/type/flash'], function (Flash) {
   var flash = new Flash({
-    url: '../upload.php?p=a/b/c#a/b/c'
+    url: 'upload.php?p=a/b/c#a/b/c'
   });
 
   describe('测试flash上传类型', function(){
     it('url的路径是否正确', function(){
-      // expect(flash.get('url')).toBe('11');
+      var absolutePath = location.href.substring(0, location.href.lastIndexOf('/') + 1);
+      expect(flash.get('url')).toBe(absolutePath + 'upload.php?p=a/b/c#a/b/c');
     })
   });
 });
 
-
+//使用浏览器支持的默认方式进行上传
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
-    url: 'upload/upload.php',
-    button: {
-      //filter: {desc:'image', ext:".jpg,.jpeg,.png,.gif,.bmp"}
-    }
+    url: 'upload/upload.php'
   });
   uploader.render();
   var el = uploader.get('el');
@@ -159,6 +157,20 @@ BUI.use(['bui/uploader'], function (Uploader) {
       expect(uploader.get('button').get('disabled')).toBe(false);
     });
   });
+
+  describe('测试修改url', function(){
+    var old = uploader.get('url'),
+      newUrl = 'http://localhost/upload/uploadNew.php';
+    uploader.set('url', newUrl);
+    expect(uploader.get('uploaderType').get('url')).toBe(newUrl);
+    uploader.set('url', old);
+  })
+
+
+  describe('测试修改text', function(){
+    uploader.set('text', '选择文件');
+    expect(uploader.get('button').get('text')).toBe('选择文件');
+  })
 });
 
 //测试flash上传类型
