@@ -147,8 +147,6 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
          */
         formData: {
         },
-        data: {
-        },
         xhr: {
         },
         events: {

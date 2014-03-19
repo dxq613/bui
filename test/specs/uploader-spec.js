@@ -134,10 +134,7 @@ BUI.use(['bui/uploader/type/flash'], function (Flash) {
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
-    url: 'upload/upload.php',
-    button: {
-      //filter: {desc:'image', ext:".jpg,.jpeg,.png,.gif,.bmp"}
-    }
+    url: 'upload/upload.php'
   });
   uploader.render();
   var el = uploader.get('el');
@@ -167,6 +164,12 @@ BUI.use(['bui/uploader'], function (Uploader) {
     uploader.set('url', newUrl);
     expect(uploader.get('uploaderType').get('url')).toBe(newUrl);
     uploader.set('url', old);
+  })
+
+
+  describe('测试修改text', function(){
+    uploader.set('text', '选择文件');
+    expect(uploader.get('button').get('text')).toBe('选择文件');
   })
 });
 

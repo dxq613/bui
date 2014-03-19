@@ -120,6 +120,7 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
        */
       itemStatusFields: {
         value: {
+          add: 'add',
           wait: 'wait',
           start: 'start',
           progress: 'progress',
