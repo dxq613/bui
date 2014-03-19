@@ -441,23 +441,26 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem','bui/graphic'],func
 			var _self = this,
 				index = BUI.Array.indexOf(label,_self.get('children')),
 				cfg = _self._getLabelCfg(item,index);
-			if(label && (label.attr('x') != cfg.x || label.attr('y') != cfg.y)){
-				if(Util.svg && _self.get('animate') && !cfg.rotate){
-					label.attr('text',cfg.text);
-					if(cfg.rotate){
-						label.attr('transform','');
-					}
-					
-					label.animate({
-						x : cfg.x,
-						y : cfg.y
-					},_self.get('duration'));
-				}else{
-					label.attr(cfg);
-					if(cfg.rotate){
-						label.attr('transform',BUI.substitute('r{rotate} {x} {y}',cfg));
+			if(label){
+				label.attr('text',cfg.text);
+				if(label.attr('x') != cfg.x || label.attr('y') != cfg.y){
+					if(Util.svg && _self.get('animate') && !cfg.rotate){
+						if(cfg.rotate){
+							label.attr('transform','');
+						}
+						
+						label.animate({
+							x : cfg.x,
+							y : cfg.y
+						},_self.get('duration'));
+					}else{
+						label.attr(cfg);
+						if(cfg.rotate){
+							label.attr('transform',BUI.substitute('r{rotate} {x} {y}',cfg));
+						}
 					}
 				}
+				
 			}
 		},
 		/**
