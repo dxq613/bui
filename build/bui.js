@@ -4468,6 +4468,9 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      */
     destroy: function () {
         var _self = this;
+        if(_self.destroyed){ //\u9632\u6b62\u8fd4\u56de\u9500\u6bc1
+            return _self;
+        }
         /**
          * @event beforeDestroy
          * fired before UIBase 's destroy.

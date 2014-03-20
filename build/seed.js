@@ -4468,6 +4468,9 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      */
     destroy: function () {
         var _self = this;
+        if(_self.destroyed){ //防止返回销毁
+            return _self;
+        }
         /**
          * @event beforeDestroy
          * fired before UIBase 's destroy.
