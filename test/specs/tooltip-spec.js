@@ -203,15 +203,31 @@ BUI.use('bui/tooltip',function (Tooltip) {
 
   describe('测试srcNode',function () {
     var tip = new Tip({
-      trigger: '#t2',
+      trigger: '#t3',
       srcNode : '#tip',
       offset: 8,
-      alignType : 'left'
+      /*triggerEvent : 'click', //点击出现
+      autoHideType : 'click',*/
+      autoHideDelay : 1000,
+     /* */effect : {
+        effect : 'fade',
+        duration : 300
+      },
+      alignType : 'right'
     });
     tip.render();
     //tip.hide();
     it('控件生成',function () {
-      // body...
+      $('#t3').trigger('mouseover');
+      waits(500);
+      runs(function(){
+        expect(tip.get('visible')).toBe(true);
+      })
+      
+      waits(1500);
+      runs(function(){
+        expect(tip.get('visible')).toBe(false);
+      });
     });
   });
 /**/

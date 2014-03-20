@@ -71,7 +71,18 @@ BUI.use('bui/form/basefield',function  (Field) {
         });
       });
 
+      it('禁止校验',function(){
+        textField.set('pauseValid',true);
+        textField.set('value','123456789101');
+        waits(600);
+        runs(function () {
+          expect(!!textField.get('error')).toBe(false);
+          expect(textField.get('isLoading')).toBe(false);
+        });
+      });
+
       it('设置数据长度等于12，9，测试验证取消，测试验证成功',function () {
+        textField.set('pauseValid',false);
         textField.set('value','123456789101');
         waits(600);
         runs(function () {
@@ -92,6 +103,8 @@ BUI.use('bui/form/basefield',function  (Field) {
         expect(textField.get('isLoading')).toBe(false);
 
       });
+
+
     });
   }); 
 });

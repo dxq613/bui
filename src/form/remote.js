@@ -180,7 +180,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       var _self = this;
 
       _self.on('valid',function (ev) {
-        if(_self.get('remote') && _self.isValid()){
+        if(_self.get('remote') && _self.isValid() && !_self.get('pauseValid')){
           var value = _self.getControlValue(),
             data = _self.getRemoteParams();
           _self._startRemote(data,value);

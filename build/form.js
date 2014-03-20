@@ -2427,6 +2427,17 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      */
     error : {
 
+    },
+    /**
+     * 暂停验证
+     * <pre><code>
+     *   field.set('pauseValid',true); //可以调用field.clearErrors()
+     *   field.set('pauseValid',false); //可以同时调用field.valid()
+     * </code></pre>
+     * @type {Boolean}
+     */
+    pauseValid : {
+      value : false
     }
   };
 
@@ -2436,12 +2447,13 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       var _self = this;
       //监听是否禁用
       _self.on('afterDisabledChange',function(ev){
-        var disabled = ev.newVal;
-        if(disabled){
-          _self.clearErrors(false,false);
-        }else{
-          _self.valid();
-        }
+        
+          var disabled = ev.newVal;
+          if(disabled){
+            _self.clearErrors(false,false);
+          }else{
+            _self.valid();
+          }
       });
     },
     /**
@@ -2469,6 +2481,9 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     //验证规则
     validRules : function(rules,value){
       if(!rules){
+        return;
+      }
+      if(this.get('pauseValid')){
         return;
       }
       var _self = this,
@@ -4939,7 +4954,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       var _self = this;
 
       _self.on('valid',function (ev) {
-        if(_self.get('remote') && _self.isValid()){
+        if(_self.get('remote') && _self.isValid() && !_self.get('pauseValid')){
           var value = _self.getControlValue(),
             data = _self.getRemoteParams();
           _self._startRemote(data,value);

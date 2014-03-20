@@ -14633,6 +14633,17 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
         if(effectCfg.callback){
           effectCfg.callback.call(_self);
         }
+        //\u81ea\u52a8\u9690\u85cf
+        var delay = _self.get('autoHideDelay'),
+          delayHandler = _self.get('delayHandler');
+        if(delay){
+          delayHandler && clearTimeout(delayHandler);
+          delayHandler = setTimeout(function(){
+            _self.hide();
+            _self.set('delayHandler',null);
+          },delay);
+          _self.set('delayHandler',delayHandler);
+        }
       }
 
     },
@@ -14685,6 +14696,13 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
           duration : 0,
           callback : null
         }
+      },
+      /**
+       * \u663e\u793a\u540e\u95f4\u9694\u591a\u5c11\u79d2\u81ea\u52a8\u9690\u85cf
+       * @type {Number}
+       */
+      autoHideDelay : {
+
       },
       /**
        * whether this component can be closed.
@@ -20011,6 +20029,17 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      */
     error : {
 
+    },
+    /**
+     * \u6682\u505c\u9a8c\u8bc1
+     * <pre><code>
+     *   field.set('pauseValid',true); //\u53ef\u4ee5\u8c03\u7528field.clearErrors()
+     *   field.set('pauseValid',false); //\u53ef\u4ee5\u540c\u65f6\u8c03\u7528field.valid()
+     * </code></pre>
+     * @type {Boolean}
+     */
+    pauseValid : {
+      value : false
     }
   };
 
@@ -20020,12 +20049,13 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       var _self = this;
       //\u76d1\u542c\u662f\u5426\u7981\u7528
       _self.on('afterDisabledChange',function(ev){
-        var disabled = ev.newVal;
-        if(disabled){
-          _self.clearErrors(false,false);
-        }else{
-          _self.valid();
-        }
+        
+          var disabled = ev.newVal;
+          if(disabled){
+            _self.clearErrors(false,false);
+          }else{
+            _self.valid();
+          }
       });
     },
     /**
@@ -20053,6 +20083,9 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     //\u9a8c\u8bc1\u89c4\u5219
     validRules : function(rules,value){
       if(!rules){
+        return;
+      }
+      if(this.get('pauseValid')){
         return;
       }
       var _self = this,
@@ -22523,7 +22556,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       var _self = this;
 
       _self.on('valid',function (ev) {
-        if(_self.get('remote') && _self.isValid()){
+        if(_self.get('remote') && _self.isValid() && !_self.get('pauseValid')){
           var value = _self.getControlValue(),
             data = _self.getRemoteParams();
           _self._startRemote(data,value);
@@ -23914,8 +23947,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         if(!subMenu.get('parentMenu')){
           subMenu.set('parentMenu',parent);
           if(parent.get('autoHide')){
-            subMenu.set('autoHide',false);
-          } 
+            if(parent.get('autoHideType') == 'click'){
+              subMenu.set('autoHide',false);
+            }else{
+              subMenu.set('autoHideType','leave');
+            }
+            
+          } /**/
         }
         $(_self.get('arrowTpl')).appendTo(el);
       }
@@ -23999,12 +24037,15 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     },
     PARSER : {
       subMenu : function(el){
-        var subList = el.find('ul'),
+        var 
+          subList = el.find('ul'),
           sub;
         if(subList && subList.length){
           sub = BUI.Component.create({
             srcNode : subList,
-            xclass : 'pop-menu'
+            xclass : 'pop-menu',
+            autoHide : true,
+            autoHideType : 'leave'
           });
           subList.appendTo('body');
         }
