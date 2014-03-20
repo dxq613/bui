@@ -166,6 +166,14 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
         view: true,
         value: '上传文件'
       },
+      /**
+       * 上传时，提交文件的name值
+       * @type String
+       * @default "Filedata"
+       */
+      name: {
+        value: 'fileData'
+      },
       tpl: {
         view: true,
         value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '"><span class="' + CLS_UPLOADER_BUTTON_TEXT + '">{text}</span></a>'

@@ -167,9 +167,6 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                 return v;
             }
         },
-        fileDataName: {
-            value: 'Filedata'
-        },
         /**
          * ajbridge的uploader组件的实例，必须参数
          */

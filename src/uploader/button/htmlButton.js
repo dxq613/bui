@@ -142,6 +142,9 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
       //accept是html5的属性，所以ie8以下是不支持的
       filter.type && fileInput.attr('accept', filter.type);
       return filter;
+    },
+    _uiSetName: function(v){
+      $(this.get('fileInput')).attr('name', v)
     }
   },{
     ATTRS: {
@@ -158,19 +161,6 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
        * @type {jQuery}
        */
       fileInput: {
-      },
-      /**
-       * 隐藏的表单上传域的name值
-       * @type String
-       * @default "Filedata"
-       */
-      name : {
-        view: true,
-        value : 'Filedata',
-        setter : function(v) {
-            v && this.get('fileInput') && $(this.get('fileInput')).attr('name', v);
-          return v;
-        }
       }
     }
   }, {
