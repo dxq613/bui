@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 78,
+            subVersion : 79,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
