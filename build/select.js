@@ -516,6 +516,9 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
   },{
     ATTRS : 
     {
+      /*focusable : {
+        value : false
+      },*/
       /**
        * 控件的模版
        * @type {String}
@@ -839,6 +842,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       url : {
 
       },
+     
       /**
        * 请求完数据的回调函数
        * <pre><code>

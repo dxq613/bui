@@ -49,7 +49,7 @@
                 <label class="radio">
                   <input type="radio" name="uptime" value="inputc">放入仓库
                 </label>
-                <div class="bui-form-group" style="display:none"  data-depends="{'#upn:checked':['show','enable'],'#upn:unchecked':['hide','disable']}">
+                <div class="bui-form-group" style="display:none" data-cfg="{datePicker:{minDate : '2012-0-01'}}"  data-depends="{'#upn:checked':['show','enable'],'#upn:unchecked':['hide','disable']}">
                   <input type="text" class="calendar ks-select-calendar calendar-time">
                   <span class="auxiliary-text">您可以设定宝贝正式销售时间</span>   
                   <label class="valid-text" style="height: 18px;"><span class="estate error"><em class="label">此项为必填项。</em></span></label>

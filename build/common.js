@@ -5031,19 +5031,19 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       
       switch(code){
         case KeyCode.UP :
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 
@@ -6186,7 +6186,12 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
           }
           else if(isConfigField(name,decorateCfgFields)){
             name = name.replace(FIELD_PREFIX,'');
-            config[name] = parseFieldValue(attr.nodeValue);
+            var value = parseFieldValue(attr.nodeValue);
+            if(config[name] && BUI.isObject(value)){
+              BUI.mix(config[name],value);
+            }else{
+              config[name] = value;
+            }
           }
         }catch(e){
           BUI.log('parse field error,the attribute is:' + name);
@@ -9848,6 +9853,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         handleMouseDown: function (ev) {
             var self = this,
                 n,
+                target = $(ev.target),
                 isMouseActionButton = ev['which'] === 1,
                 el;
             if (isMouseActionButton) {
@@ -9856,8 +9862,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     self.set('active', true);
                 }
                 if (self.get('focusable')) {
-                    el[0].focus();
-                    self.set('focused', true);
+                    //如果不是input,select,area等可以获取焦点的控件，那么设置此控件的focus
+                    /*if(target[0] == el[0] || (!target.is('input,select,area') && !target.attr('tabindex'))){
+                      el[0].focus(); 
+                      
+                    }*/
+                    self.setInternal('focused', true); 
                 }
 
                 if (!self.get('allowTextSelection')) {

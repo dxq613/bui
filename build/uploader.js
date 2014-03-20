@@ -279,13 +279,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
   }
 
 
-  function baseView() {
-  }
-
-  baseView.ATTRS = {
-  }
-
-  baseView.prototype = {
+  var ButtonView = Component.View.extend({
     _uiSetText: function (v) {
       var _self = this,
         text = _self.get('text'),
@@ -293,88 +287,20 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
         textEl = _self.get('el').find('.' + textCls);
       textEl.text(text);
     }
-  }
+  },{
+    ATTRS: {
+    }
+  },{
+    xclass: 'uploader-button-view'
+  });
+
 
   /**
-   * 上传组件按钮的基类
+   * 文件上传按钮的基类
    * @class BUI.Uploader.Button
+   * @extends BUI.Component.Controller
    */
-  function base(){
-
-  }
-
-  base.ATTRS = {
-    /**
-     * 按钮的样式
-     * @protected
-     * @type {String}
-     */
-    buttonCls: {
-      value: CLS_UPLOADER_BUTTON + '-wrap',
-      view: true
-    },
-    /**
-     * 文本的样式
-     * @protected
-     * @type {String}
-     */
-    textCls: {
-      value: CLS_UPLOADER_BUTTON_TEXT,
-      view: true
-    },
-    /**
-     * 显示的文本
-     * @type {String}
-     */
-    text: {
-      view: true,
-      value: '上传文件'
-    },
-    tpl: {
-      view: true,
-      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '"><span class="' + CLS_UPLOADER_BUTTON_TEXT + '">{text}</span></a>'
-    },
-    /**
-     * 是否可用,false为可用
-     * @type Boolean
-     * @default false
-     */
-    disabled : {
-      view: true,
-      value : false
-    },
-    /**
-     * 是否开启多选支持
-     * @type Boolean
-     * @default true
-     */
-    multiple : {
-      view: true,
-      value : true
-    },
-    /**
-     * 文件过滤
-     * @type Array
-     * @default []
-     */
-    filter : {
-      shared : false,
-      value : []
-    },
-    events: {
-      value: {
-        /**
-         * 选中文件时
-         * @event
-         * @param {Object} e 事件对象
-         * @param {Array} e.files 选中的文件
-         */
-        'change': false
-      }
-    }
-  };
-
-  base.prototype = {
+  var Button = Component.Controller.extend({
     /**
      * 获取文件的扩展信息
      * @param  {Object} file 文件对象
@@ -433,22 +359,86 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
           type: type.join(',')
         }
       }
-    },
-    //设置多选
-    _uiSetMultiple : function (v) {
-    },
-    //设置禁用
-    _uiSetDisabled : function (v) {
-    },
-    //设置过滤
-    _uiSetFilter : function (v) {
     }
-  }
+  },{
+    ATTRS: {
+      /**
+       * 按钮的样式
+       * @protected
+       * @type {String}
+       */
+      buttonCls: {
+        value: CLS_UPLOADER_BUTTON + '-wrap',
+        view: true
+      },
+      /**
+       * 文本的样式
+       * @protected
+       * @type {String}
+       */
+      textCls: {
+        value: CLS_UPLOADER_BUTTON_TEXT,
+        view: true
+      },
+      /**
+       * 显示的文本
+       * @type {String}
+       */
+      text: {
+        view: true,
+        value: '上传文件'
+      },
+      tpl: {
+        view: true,
+        value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '"><span class="' + CLS_UPLOADER_BUTTON_TEXT + '">{text}</span></a>'
+      },
+      /**
+       * 是否可用,false为可用
+       * @type Boolean
+       * @default false
+       */
+      disabled : {
+        value : false
+      },
+      /**
+       * 是否开启多选支持
+       * @type Boolean
+       * @default true
+       */
+      multiple : {
+        value : true
+      },
+      /**
+       * 文件过滤
+       * @type Array
+       * @default []
+       */
+      filter : {
+        shared : false,
+        value : []
+      },
+      events: {
+        value: {
+          /**
+           * 选中文件时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Array} e.files 选中的文件
+           */
+          'change': false
+        }
+      },
+      xview: {
+        value: ButtonView
+      }
+    }
+  },{
+    xclass: 'uploader-button'
+  });
 
-  base.View = baseView
+  Button.View = ButtonView;
 
-  return base;
-
+  return Button;
 });
 /**
  * @ignore
@@ -462,20 +452,12 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
     ButtonBase = require('bui/uploader/button/base'),
     UA = BUI.UA;
 
-  var HtmlButtonView = Component.View.extend([ButtonBase.View], {
-
-  },{
-    ATTRS: {
-    }
-  });
-
   /**
    * 文件上传按钮，ajax和iframe上传方式使用,使用的是input[type=file]
    * @class BUI.Uploader.Button.HtmlButton
-   * @extends BUI.Component.Controller
-   * @mixins BUI.Uploader.Button
+   * @extends BUI.Uploader.Button
    */
-  var HtmlButton = Component.Controller.extend([ButtonBase], {
+  var HtmlButton = ButtonBase.extend({
     renderUI: function(){
       var _self = this;
       _self._createInput();
@@ -631,9 +613,6 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
             v && this.get('fileInput') && $(this.get('fileInput')).attr('name', v);
           return v;
         }
-      },
-      xview: {
-        value: HtmlButtonView
       }
     }
   }, {
@@ -665,20 +644,12 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
     }
   }
 
-
-  var SwfButtonView = Component.View.extend([ButtonBase.View], {
-  },{
-    ATTRS: {
-    }
-  });
-
   /**
    * 文件上传按钮，flash上传方式使用,使用的是flash
    * @class BUI.Uploader.Button.SwfButton
-   * @extends BUI.Component.Controller
-   * @mixins BUI.Uploader.Button
+   * @extends BUI.Uploader.Button
    */
-  var SwfButton = Component.Controller.extend([ButtonBase], {
+  var SwfButton = ButtonBase.extend({
     renderUI: function(){
       var _self = this;
       _self._initSwfUploader();
@@ -799,9 +770,6 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
       swfTpl:{
         view: true,
         value: '<div class="uploader-button-swf"></div>'
-      },
-      xview: {
-        value: SwfButtonView
       }
     }
   }, {
@@ -811,7 +779,6 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
   return SwfButton;
 });/**
  * @fileoverview 上传方式类的基类
- * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  * @ignore
  **/
 define('bui/uploader/type/base',['bui/common'], function(require) {
@@ -953,20 +920,19 @@ define('bui/uploader/type/base',['bui/common'], function(require) {
  * @ignore
  **/
 define('bui/uploader/type/ajax', ['./base'], function(require) {
-    var EMPTY = '', LOG_PREFIX = '[uploader-Ajax]:',
-        win = window,
-        doc = document;
+    var EMPTY = '', LOG_PREFIX = '[uploader-Ajax]:';
 
     var UploadType = require('bui/uploader/type/base');
 
-    function isSubDomain(hostname){
+    
+    /*function isSubDomain(hostname){
         return win.location.host === doc.domain;
     }
 
     function endsWith (str, suffix) {
         var ind = str.length - suffix.length;
         return ind >= 0 && str.indexOf(suffix, ind) == ind;
-    }
+    }*/
 
     /**
      * @class BUI.Uploader.UploadType.Ajax
@@ -1096,8 +1062,6 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
          * 表单数据对象
          */
         formData: {
-        },
-        data: {
         },
         xhr: {
         },
@@ -1272,7 +1236,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
          * 服务器端路径，留意flash必须是绝对路径
          */
         url:{
-            getter:function(v){
+            setter: function(v){
                 var reg = /^http/;
                 //不是绝对路径拼接成绝对路径
                 if(!reg.test(v)){
@@ -1322,7 +1286,6 @@ define('bui/uploader/type/flash',['./base'], function (require) {
     return FlashType;
 });/**
  * @fileoverview iframe方案上传
- * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  * @ignore
  **/
 define('bui/uploader/type/iframe',['./base'], function(require) {
@@ -1672,6 +1635,7 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
        */
       itemStatusFields: {
         value: {
+          add: 'add',
           wait: 'wait',
           start: 'start',
           progress: 'progress',
@@ -2007,17 +1971,15 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     return supportMap[type] && supportMap[type]();
   }
 
-  /**
-   * Uploader的视图层
-   * @class BUI.Uploader.UploaderView
-   * @private
-   */
-  var UploaderView = Component.View.extend({
-    }, {
-    ATTRS: {
-         
+  //设置Controller的属性
+  function setControllerAttr(control, key, value) {
+    if (BUI.isFunction(control.set)) {
+      control.set(key, value);
     }
-  });
+    else {
+      control[key] = value;
+    }
+  }
 
   /**
    * 文件上传组组件
@@ -2040,11 +2002,13 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
    * </code></pre>
    */
   var Uploader = Component.Controller.extend({
-    renderUI: function(){
+    initializer: function(){
       var _self = this;
       _self._initTheme();
       _self._initType();
-      
+    },
+    renderUI: function(){
+      var _self = this;
       _self._renderButton();
       _self._renderUploaderType();
       _self._renderQueue();
@@ -2065,6 +2029,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         theme = Theme.getTheme(_self.get('theme')),
         attrVals = _self.getAttrVals();
       BUI.each(theme, function(value, name){
+        //uploader里面没有定义该配置，但是主题里面有定义
         if(attrVals[name] === undefined){
           _self.set(name, value);
         }
@@ -2110,28 +2075,14 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       }
     },
     /**
-     * 获取用户的配置信息
-     * @private
-     */
-    _getUserConfig: function(keys){
-      var attrVals = this.getAttrVals(),
-        config = {};
-      BUI.each(keys, function(key){
-        var value = attrVals[key];
-        if(value !== undefined){
-          config[key] = value;
-        }
-      });
-      return config;
-    },
-    /**
      * 初始线上传类型的实例
      * @private
      */
     _renderUploaderType: function(){
       var _self = this,
         type = _self.get('type'),
-        config = _self._getUserConfig(['url', 'data']);
+        config = _self.get('uploaderType');
+
       var uploaderType = Factory.createUploadType(type, config);
       uploaderType.set('uploader', _self);
       _self.set('uploaderType', uploaderType);
@@ -2144,7 +2095,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       var _self = this,
         type = _self.get('type'),
         el = _self.get('el'),
-        button = _self.get('button') || {};
+        button = _self.get('button');
       if(!button.isController){
         button.render = el;
         button.autoRender = true;
@@ -2160,7 +2111,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     _renderQueue: function(){
       var _self = this,
         el = _self.get('el'),
-        queue = _self.get('queue') || {};
+        queue = _self.get('queue');
       if (!queue.isController) {
         queue.render = el;
         queue.autoRender = true;
@@ -2177,8 +2128,8 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     _bindButton: function () {
       var _self = this,
         button = _self.get('button'),
-        queue = _self.get('queue'),
-        uploaderType = _self.get('uploaderType');
+        queue = _self.get('queue');
+
       button.on('change', function(ev) {
         var files = ev.files;
         //对添加的文件添加状态
@@ -2195,23 +2146,22 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         queue = _self.get('queue'),
         validator = _self.get('validator');
 
-      //渲染完了之后去设置文件状态
+      //渲染完了之后去设置文件状态，这个是会在添加完后触发的
       queue.on('itemrendered', function(ev){
         var item = ev.item,
-          status = 'wait';
+          status = 'add';
         if(!validator.valid(item)){
           status = 'error';
         }
         queue.updateFileStatus(item, status);
+
+        if(_self.get('autoUpload')){
+          _self.upload();
+        }
       });
 
       queue.on('itemupdated', function(ev) {
-        var items = queue.getItemsByStatus('wait');
-        //如果有等待的文件则上传第1个
-        if (items && items.length) {
-          _self.uploadFile(items[0]);
-          //如果文件被置为等等状态，则要进行重新上传
-        }
+        _self.uploadFiles();
       });
     },
     /**
@@ -2249,7 +2199,8 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
 
         _self.fire('progress', {item: curUploadItem, total: total, loaded: loaded});
       });
-      //上传过程中的error事件，这时一般是当校验出错是才会出现
+      //上传过程中的error事件
+      //一般是当校验出错时和上传接口异常时触发的
       uploaderType.on('error', function(ev){
         var curUploadItem = _self.get('curUploadItem'),
           errorFn = _self.get('error'),
@@ -2275,6 +2226,8 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
           errorFn = _self.get('error'),
           completeFn = _self.get('complete');
 
+        _self.set('curUploadItem', null);
+
         // BUI.mix(curUploadItem.result, result);
         curUploadItem.result = result;
 
@@ -2293,10 +2246,10 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
 
         completeFn && BUI.isFunction(completeFn) && completeFn.call(_self, result);
         _self.fire('complete', {item: curUploadItem, result: result});
-        _self.set('curUploadItem', null);
+        
 
         //重新上传其他等待的文件
-        _self.uploadFiles();
+        //_self.uploadFiles();
       });
     },
     /**
@@ -2333,6 +2286,19 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       }
     },
     /**
+     * 上传所有新添加的文件
+     * @return {[type]} [description]
+     */
+    upload: function(){
+      var _self = this,
+        queue = _self.get('queue'),
+        //所有文件只有在wait状态才可以上传
+        items = queue.getItemsByStatus('add');
+      BUI.each(items, function(item){
+        queue.updateFileStatus(item, 'wait');
+      });
+    },
+    /**
      * 取消正在上传的文件 
      */
     cancel: function(item){
@@ -2352,20 +2318,6 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       var _self = this,
         queue = _self.get('queue');
       return queue.getItemsByStatus('success').length === queue.getItems().length;
-    },
-    /**
-     * 设置是否disabled
-     * @private
-     */
-    _uiSetDisabled: function(v){
-      var _self = this,
-        button = _self.get('button');
-      button && button.isController && button.set('disabled', v);
-    },
-    _uiSetMultiple: function(v){
-      var _self = this,
-        button = _self.get('button');
-      button && button.isController && button.set('multiple', v);
     }
   }, {
     ATTRS: {
@@ -2395,26 +2347,98 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
        * @type {BUI.Uploader.Button}
        */
       button: {
+        value: {},
+        shared: false
+      },
+      /**
+       * 按钮的文本
+       * @type {String} text
+       * @default 上传文件
+       */
+      text: {
+        setter: function(v) {
+          setControllerAttr(this.get('button'), 'text', v);
+          return v;
+        }
       },
       /**
        * 上传组件是否可用
        * @type {Boolean} disabled
        */
       disabled: {
-        value: false
+        value: false,
+        setter: function(v) {
+          setControllerAttr(this.get('button'), 'disabled', v);
+          return v;
+        }
       },
       /**
        * 是否支持多选
        * @type {Boolean} multiple
        */
       multiple: {
-        value: true
+        value: true,
+        setter: function(v) {
+          setControllerAttr(this.get('button'), 'multiple', v);
+          return v;
+        }
+      },
+      /**
+       * 可选择的文件类型
+       */
+      filter: {
+        setter: function(v) {
+          setControllerAttr(this.get('button'), 'filter', v);
+          return v;
+        }
+      },
+      /**
+       * 用来处理上传的类
+       * @type {Object}
+       */
+      uploaderType: {
+        value: {},
+        shared: false
+      },
+      url: {
+        setter: function(v) {
+          setControllerAttr(this.get('uploaderType'), 'url', v);
+          return v;
+        }
+      },
+      fileDataName: {
+        setter: function(v) {
+          setControllerAttr(this.get('uploaderType'), 'fileDataName', v);
+          return v;
+        }
+      },
+      data: {
+        setter: function(v) {
+          setControllerAttr(this.get('uploaderType'), 'data', v);
+          return v;
+        }
       },
       /**
        * 上传组件的上传对列
        * @type {BUI.Uploader.Queue}
        */
       queue: {
+        value: {},
+        shared: false
+      },
+      resultTpl: {
+        setter: function(v) {
+          setControllerAttr(this.get('queue'), 'resultTpl', v);
+          return v;
+        }
+      },
+      /**
+       * 选中文件后是否自动上传
+       * @type {Boolean}
+       * @default true
+       */
+      autoUpload: {
+        value: true
       },
       /**
        * 当前上传的状态
@@ -2497,9 +2521,6 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
            */
           'cancel': false
         }
-      },
-      xview: {
-        value: UploaderView
       }
     }
   }, {

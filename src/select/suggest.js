@@ -296,6 +296,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       url : {
 
       },
+     
       /**
        * 请求完数据的回调函数
        * <pre><code>

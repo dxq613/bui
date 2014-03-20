@@ -6024,19 +6024,19 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       
       switch(code){
         case KeyCode.UP :
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 
@@ -7179,7 +7179,12 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
           }
           else if(isConfigField(name,decorateCfgFields)){
             name = name.replace(FIELD_PREFIX,'');
-            config[name] = parseFieldValue(attr.nodeValue);
+            var value = parseFieldValue(attr.nodeValue);
+            if(config[name] && BUI.isObject(value)){
+              BUI.mix(config[name],value);
+            }else{
+              config[name] = value;
+            }
           }
         }catch(e){
           BUI.log('parse field error,the attribute is:' + name);
@@ -10841,6 +10846,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         handleMouseDown: function (ev) {
             var self = this,
                 n,
+                target = $(ev.target),
                 isMouseActionButton = ev['which'] === 1,
                 el;
             if (isMouseActionButton) {
@@ -10849,8 +10855,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     self.set('active', true);
                 }
                 if (self.get('focusable')) {
-                    el[0].focus();
-                    self.set('focused', true);
+                    //\u5982\u679c\u4e0d\u662finput,select,area\u7b49\u53ef\u4ee5\u83b7\u53d6\u7126\u70b9\u7684\u63a7\u4ef6\uff0c\u90a3\u4e48\u8bbe\u7f6e\u6b64\u63a7\u4ef6\u7684focus
+                    /*if(target[0] == el[0] || (!target.is('input,select,area') && !target.attr('tabindex'))){
+                      el[0].focus(); 
+                      
+                    }*/
+                    self.setInternal('focused', true); 
                 }
 
                 if (!self.get('allowTextSelection')) {
@@ -16388,6 +16398,7 @@ define('bui/list/keynav',['bui/common'],function (require) {
           this.setItemStatus(lightedItem,highlightedStatus,false,lightedElement);
         }
         this.setItemStatus(item,highlightedStatus,true,element);
+        _self._scrollToItem(item,element);
       }
     },
     _getHighLightedElement : function(){
@@ -16493,8 +16504,44 @@ define('bui/list/keynav',['bui/common'],function (require) {
       if(rows <= 1){ //\u5355\u884c\u6216\u8005\u4e3a0\u65f6
         return null;
       }
+
       return  this._getNextItem(true,columns,columns * rows);
 
+    },
+    getScrollContainer : function(){
+      return this.get('el');
+    },
+    /**
+     * @protected
+     * \u53ea\u5904\u7406\u4e0a\u4e0b\u6eda\u52a8\uff0c\u4e0d\u5904\u7406\u5de6\u53f3\u6eda\u52a8
+     * @return {Boolean} \u662f\u5426\u53ef\u4ee5\u4e0a\u4e0b\u6eda\u52a8
+     */
+    isScrollVertical : function(){
+      var _self = this,
+        el = _self.get('el'),
+        container = _self.get('view').getItemContainer();
+
+      return el.height() < container.height();
+    },
+
+    _scrollToItem : function(item,element){
+      var _self = this;
+
+      if(_self.isScrollVertical()){
+        element = element || _self.findElement(item);
+        var container = _self.getScrollContainer(),
+          top = $(element).position().top,
+          ctop = container.position().top,
+          cHeight = container.height(),
+          distance = top - ctop,
+          height = $(element).height(),
+          scrollTop = container.scrollTop();
+
+        if(distance < 0 || distance > cHeight - height){
+          container.scrollTop(scrollTop + distance);
+        }
+
+      }
     },
     //\u83b7\u53d6\u4e0a\u9762\u4e00\u9879
     _getUpperItem : function(){
@@ -16671,6 +16718,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    */
   var BUI = require('bui/common'),
     UIBase = BUI.Component.UIBase,
+    UA = BUI.UA,
     DomList = require('bui/list/domlist'),
     KeyNav = require('bui/list/keynav'),
     Sortable = require('bui/list/sortable'),
@@ -16762,12 +16810,12 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           return;
         }
         
-        /*if(_self.get('highlightedStatus') === 'hover'){
+        if(!(UA.ie && UA.ie < 8) && _self.get('focusable') && _self.get('highlightedStatus') === 'hover'){
           _self.setHighlighted(item,element)
         }else{
           _self.setItemStatus(item,'hover',true,element);
-        }*/
-        _self.get('view').setElementHover(element,true);
+        }
+        /*_self.get('view').setElementHover(element,true);*/
 
       }).delegate('.'+itemCls,'mouseout',function(ev){
         if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
@@ -16841,6 +16889,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
        * cfg {Boolean} frontSortable
        */
       frontSortable : {
+        value : false
+      },
+      focusable : {
         value : false
       },
       /**
@@ -19065,12 +19116,14 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     },
     PARSER : {
       datePicker : function(el){
+        var _self = this,
+          cfg = _self.get('datePicker') || {};
         if(el.hasClass('calendar-time')){
-          return {
+          BUI.mix(cfg,{
             showTime : true
-          }
+          }) ;
         }
-        return {};
+        return cfg;
       }
     }
   },{
@@ -23095,6 +23148,9 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
   },{
     ATTRS : 
     {
+      /*focusable : {
+        value : false
+      },*/
       /**
        * \u63a7\u4ef6\u7684\u6a21\u7248
        * @type {String}
@@ -23418,6 +23474,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       url : {
 
       },
+     
       /**
        * \u8bf7\u6c42\u5b8c\u6570\u636e\u7684\u56de\u8c03\u51fd\u6570
        * <pre><code>
