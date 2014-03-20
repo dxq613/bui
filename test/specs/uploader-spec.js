@@ -237,14 +237,14 @@ BUI.use(['bui/uploader'], function (Uploader) {
     // });
   })
 
-  // describe('测试不进行自动上传', function(){
+  describe('测试不进行自动上传', function(){
 
-  //   uploader.set('autoUpload', false);
-  //   uploader.get('queue').addItems(BUI.cloneObject(files));
+    uploader.set('autoUpload', false);
+    uploader.get('queue').addItems(BUI.cloneObject(files));
 
-  //   it('添加的数量是否正确', function(){
-  //     expect(uploader.get('queue').getItemsByStatus('add').length).toBe(1);
-  //   })
+    it('添加的数量是否正确', function(){
+      expect(uploader.get('queue').getItemsByStatus('add').length).toBe(1);
+    })
 
   //   waits(100);
   //   it('测试success的回调', function(){
@@ -264,7 +264,7 @@ BUI.use(['bui/uploader'], function (Uploader) {
         
   //     })
   //   });
-  // })
+  })
 });
 
 
