@@ -25,6 +25,8 @@
     <script type="text/javascript" src="specs/issue/issue-109-spec.js"></script>
     <script type="text/javascript" src="specs/issue/issue-117-spec.js"></script><!---->
     <script type="text/javascript" src="specs/issue/issue-102-spec.js"></script>
+        <script type="text/javascript" src="specs/issue/issue-100-spec.js"></script>
+
     
     
 <?php include("./templates/footer.php"); ?>

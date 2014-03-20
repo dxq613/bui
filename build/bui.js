@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 79,
+            subVersion : 80,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -6806,7 +6806,7 @@ define('bui/component/uibase/stdmod',function () {
 
     StdModView.prototype = {
 
-        __createDom:function () {
+        __renderUI:function () { //createDom
             createUI(this, 'header');
             createUI(this, 'body');
             createUI(this, 'footer');
