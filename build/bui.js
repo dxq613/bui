@@ -20118,7 +20118,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * \u6e05\u9664\u9519\u8bef
      * @param {Boolean} reset \u6e05\u9664\u9519\u8bef\u65f6\u662f\u5426\u91cd\u7f6e
-     * @param {Boolean} deep \u662f\u5426\u6e05\u7406\u5b50\u63a7\u4ef6\u7684\u9519\u8bef 
+     * @param {Boolean} [deep = true] \u662f\u5426\u6e05\u7406\u5b50\u63a7\u4ef6\u7684\u9519\u8bef 
      */
     clearErrors : function(reset,deep){
       deep = deep == null ? true : deep;
@@ -20626,6 +20626,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           if(value == null){
             value = '';
           }
+          field.clearErrors(true);//\u6e05\u7406\u9519\u8bef
           field.set('value',value);
         }
       },
@@ -20664,7 +20665,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
        * \u6e05\u9664\u6240\u6709\u8868\u5355\u57df\u7684\u503c
        */
       clearFields : function(){
-        this.clearErrors();
+        this.clearErrors(true);
         this.setRecord({})
       },
       /**
@@ -32783,7 +32784,8 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
  */
 
 define('bui/grid/plugins/autofit',['bui/common'],function (require) {
-  var BUI = require('bui/common');
+  var BUI = require('bui/common'),
+    UA = BUI.UA;
 
   /**
    * \u8868\u683c\u81ea\u9002\u5e94\u5bbd\u5ea6
@@ -32812,19 +32814,25 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
           handler = setTimeout(function(){
             _self._autoFit(grid);
           },100);
+          _self.set('handler',handler);
         }
         autoFit();
       });
     },
     //\u81ea\u9002\u5e94\u5bbd\u5ea6
     _autoFit : function(grid){
-      var render = grid.get('render'),
-          width;
-        grid.set('visible',false);
-        width = $(render).width();
+      var _self = this,
+        render = $(grid.get('render')),
+        docWidth = $(window).width(),//\u7a97\u53e3\u5bbd\u5ea6
+        width,
+        appendWidth = 0,
+        parent = grid.get('el').parent();
+      while(parent[0] && parent[0] != $('body')[0]){
+        appendWidth += parent.outerWidth() - parent.width();
+        parent = parent.parent();
+      }
 
-        grid.set('visible',true);
-        grid.set('width',width);
+      grid.set('width',docWidth - appendWidth);
     }
 
   });

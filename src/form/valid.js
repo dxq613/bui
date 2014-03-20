@@ -271,7 +271,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * 清除错误
      * @param {Boolean} reset 清除错误时是否重置
-     * @param {Boolean} deep 是否清理子控件的错误 
+     * @param {Boolean} [deep = true] 是否清理子控件的错误 
      */
     clearErrors : function(reset,deep){
       deep = deep == null ? true : deep;

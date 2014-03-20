@@ -19,12 +19,12 @@
     <?php $url = 'bui/common,bui/form,bui/picker,bui/select'?>
     <?php include("./templates/script.php"); ?>
 
-<!--
-    <script type="text/javascript" src="specs/issue/issue-62-spec.js"></script>
-    <script type="text/javascript" src="specs/issue/issue-67-spec.js"></script>-->
-    <script type="text/javascript" src="specs/issue/issue-109-spec.js"></script><!--
-    <script type="text/javascript" src="specs/issue/issue-117-spec.js"></script>-->
 
+    <script type="text/javascript" src="specs/issue/issue-62-spec.js"></script>
+    <script type="text/javascript" src="specs/issue/issue-67-spec.js"></script><!---->
+    <script type="text/javascript" src="specs/issue/issue-109-spec.js"></script>
+    <script type="text/javascript" src="specs/issue/issue-117-spec.js"></script><!---->
+    <script type="text/javascript" src="specs/issue/issue-102-spec.js"></script>
     
     
 <?php include("./templates/footer.php"); ?>

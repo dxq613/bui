@@ -2534,7 +2534,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * 清除错误
      * @param {Boolean} reset 清除错误时是否重置
-     * @param {Boolean} deep 是否清理子控件的错误 
+     * @param {Boolean} [deep = true] 是否清理子控件的错误 
      */
     clearErrors : function(reset,deep){
       deep = deep == null ? true : deep;
@@ -3042,6 +3042,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           if(value == null){
             value = '';
           }
+          field.clearErrors(true);//清理错误
           field.set('value',value);
         }
       },
@@ -3080,7 +3081,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
        * 清除所有表单域的值
        */
       clearFields : function(){
-        this.clearErrors();
+        this.clearErrors(true);
         this.setRecord({})
       },
       /**
