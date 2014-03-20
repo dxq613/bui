@@ -208,7 +208,9 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       //渲染完了之后去设置文件状态，这个是会在添加完后触发的
       queue.on('itemrendered', function(ev){
         var item = ev.item,
-          status = 'add';
+          //如果文件已经存在某一状态，则不再去设置add状态
+          status = queue.status(item) || 'add';
+
         if(!validator.valid(item)){
           status = 'error';
         }
@@ -421,6 +423,18 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         }
       },
       /**
+       * 提交文件时的name值
+       * @type {String} name
+       * @default fileData
+       */
+      name: {
+        setter: function(v) {
+          setControllerAttr(this.get('button'), 'name', v);
+          setControllerAttr(this.get('uploaderType'), 'fileDataName', v);
+          return v;
+        }
+      },
+      /**
        * 上传组件是否可用
        * @type {Boolean} disabled
        */
@@ -443,7 +457,18 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         }
       },
       /**
-       * 可选择的文件类型
+       * 文件过滤
+       * @type Array
+       * @default []
+       * @description
+       * 在使用ajax方式上传时，不同浏览器、不同操作系统这个filter表现得都不太一致
+       * 所以在使用ajax方式上传不建议使用
+       * 如果已经声明使用flash方式上传，则可以使用这个
+       *
+       * <pre><code>
+       * filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
+       * </pre></code>
+       *
        */
       filter: {
         setter: function(v) {
@@ -454,23 +479,26 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
       /**
        * 用来处理上传的类
        * @type {Object}
+       * @readOnly
        */
       uploaderType: {
         value: {},
         shared: false
       },
+      /**
+       * 文件上传的url
+       * @type {String} url
+       */
       url: {
         setter: function(v) {
           setControllerAttr(this.get('uploaderType'), 'url', v);
           return v;
         }
       },
-      fileDataName: {
-        setter: function(v) {
-          setControllerAttr(this.get('uploaderType'), 'fileDataName', v);
-          return v;
-        }
-      },
+      /**
+       * 文件上传时，附加的数据
+       * @type {Object} data
+       */
       data: {
         setter: function(v) {
           setControllerAttr(this.get('uploaderType'), 'data', v);
@@ -485,6 +513,20 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         value: {},
         shared: false
       },
+      /**
+       * 上传结果的模板，可根据上传状态的不同进行设置，没有时取默认的
+       * @type {Object}
+       * 
+       * ** 默认定义的模板结构 **
+       * <pre><code>
+       * 
+       * 'default': '<div class="default">{name}</div>',
+       * 'success': '<div data-url="{url}" class="success">{name}</div>',
+       * 'error': '<div class="error"><span title="{name}">{name}</span><span class="uploader-error">{msg}</span></div>',
+       * 'progress': '<div class="progress"><div class="bar" style="width:{loadedPercent}%"></div></div>'
+       * 
+       * </code></pre>
+       */
       resultTpl: {
         setter: function(v) {
           setControllerAttr(this.get('queue'), 'resultTpl', v);
