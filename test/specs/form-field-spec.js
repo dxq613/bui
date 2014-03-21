@@ -51,11 +51,11 @@ BUI.use('bui/form/textfield',function  (TextField) {
     it('禁用验证',function(){
       textField.set('pauseValid',true);
       textField.valid();
-      expect(textField.get('error')).toBe('');
+      expect(textField.get('error')).toBe(null);
 
-      textField.set('pauseValid',true);
+      textField.set('pauseValid',false);
       textField.valid();
-      expect(textField.get('error')).not.toBe('');
+      expect(textField.get('error')).not.toBe(null);
     })
 
     it('验证不通过时,禁用字段',function(){

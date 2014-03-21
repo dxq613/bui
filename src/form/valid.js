@@ -218,10 +218,10 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     //验证规则
     validRules : function(rules,value){
       if(!rules){
-        return;
+        return null;
       }
       if(this.get('pauseValid')){
-        return;
+        return null;
       }
       var _self = this,
         messages = _self._getValidMessages(),
@@ -258,7 +258,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
       error = _self.validRules(_self.get('defaultRules'),value) || _self.validRules(_self.get('rules'),value);
 
-      if(!error){
+      if(!error && !this.get('pauseValid')){
         if(_self.parseValue){
           value = _self.parseValue(value);
         }

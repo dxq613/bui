@@ -73,7 +73,7 @@ BUI.use('bui/form/basefield',function  (Field) {
 
       it('禁止校验',function(){
         textField.set('pauseValid',true);
-        textField.set('value','123456789101');
+        textField.set('value','123456789102');
         waits(600);
         runs(function () {
           expect(!!textField.get('error')).toBe(false);
@@ -104,7 +104,7 @@ BUI.use('bui/form/basefield',function  (Field) {
 
       });
 
-
+      /**/
     });
   }); 
 });
