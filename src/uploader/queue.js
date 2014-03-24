@@ -37,6 +37,10 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
         }
       });
     },
+    /**
+     * 从队列中删除一项
+     * @param  {Object} item
+     */
     removeItem: function(item){
       var _self = this,
         uploader = _self.get('uploader');
