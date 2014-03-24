@@ -173,7 +173,7 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
           if(str){
             var sub = str.split(' ');
             sub = $.map(sub,function(subStr){
-              if($.isNumeric(subStr)){
+              if(BUI.isNumeric(subStr)){
                 return parseFloat(subStr);
               }
               return subStr;

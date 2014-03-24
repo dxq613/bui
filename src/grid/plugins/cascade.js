@@ -49,10 +49,6 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   BUI.extend(cascade,BUI.Base);
 
   cascade.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.Cascade#
-   * @ignore
-   */
   {
     /**
      * 显示展开按钮列的宽度
@@ -125,10 +121,6 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   };
 
   BUI.augment(cascade,
-  /**
-   * @lends BUI.Grid.Plugins.Cascade.prototype
-   * @ignore
-   */
   {
     /**
      * 初始化

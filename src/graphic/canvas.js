@@ -1,4 +1,4 @@
-define('bui/graphic/canvas',['bui/common','bui/graphic/group','bui/graphic/raphael'],function(require) {
+define('bui/graphic/canvas',['bui/common','bui/graphic/group','bui/graphic/container','bui/graphic/raphael'],function(require) {
 
 	var BUI = require('bui/common'),
 		Group = require('bui/graphic/group'),

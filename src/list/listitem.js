@@ -31,10 +31,6 @@ define('bui/list/listitem',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.Item#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,

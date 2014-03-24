@@ -90,7 +90,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {Number}
              */
-            subVersion : 75,
+            subVersion : 80,
 
             /**
              * 是否为函数
@@ -132,6 +132,14 @@ define('bui/util',function(require){
                     return toString.call(value) === '[object Object]';
                 },
             /**
+             * 是否是数字或者数字字符串
+             * @param  {String}  value 数字字符串
+             * @return {Boolean}  是否是数字或者数字字符串
+             */
+            isNumeric: function(value) {
+                return !isNaN(parseFloat(value)) && isFinite(value);
+            },
+            /**
              * 将指定的方法或属性放到构造函数的原型链上，
              * 函数支持多于2个变量，后面的变量同s1一样将其成员复制到构造函数的原型链上。
              * @param  {Function} r  构造函数
@@ -171,6 +179,7 @@ define('bui/util',function(require){
                     throw msg;
                 }
             },
+            
             /**
              * 实现类的继承，通过父类生成子类
              * @param  {Function} subclass
@@ -181,18 +190,18 @@ define('bui/util',function(require){
              *      @example
              *      //父类
              *      function base(){
-     * 
-     *      }
+             *  
+             *      }
              *
              *      function sub(){
-     * 
-     *      }
+             * 
+             *      }
              *      //子类
              *      BUI.extend(sub,base,{
-     *          method : function(){
-     *    
-     *          }
-     *      });
+             *          method : function(){
+             *    
+             *          }
+             *      });
              *
              *      //或者
              *      var sub = BUI.extend(base,{});

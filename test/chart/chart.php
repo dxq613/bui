@@ -40,7 +40,6 @@
   <script type="text/javascript" src="../../src/chart/series/base.js"></script>
   <script type="text/javascript" src="../../src/chart/series/cartesian.js"></script>
   <script type="text/javascript" src="../../src/chart/series/line.js"></script>
-  <script type="text/javascript" src="../../src/chart/series/area.js"></script>
   
   <script type="text/javascript" src="../../src/chart/series/itemgroup.js"></script>
    <script type="text/javascript" src="../../src/chart/series/stacked.js"></script>
@@ -67,7 +66,7 @@
   <script type="text/javascript" src="../../src/chart/chart.js"></script>
  
   <script type="text/javascript" src="../specs/chart/chart-spec.js"></script>
-<!-- -->
+ <!---->
   <script type="text/javascript" src="../specs/chart/chart-area-spec.js"></script>
 
 <?php include("../templates/footer.php"); ?>

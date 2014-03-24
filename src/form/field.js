@@ -5,7 +5,7 @@
 ;(function(){
 var BASE = 'bui/form/';
 define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
-  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',
+  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',BASE + 'uploaderfield',
   BASE + 'checklistfield',BASE + 'radiolistfield', BASE + 'textareafield'],function (require) {
   var BUI = require('bui/common'),
     Field = require(BASE + 'basefield');

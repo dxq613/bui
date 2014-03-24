@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 75,
+            subVersion : 80,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -1149,6 +1149,14 @@ define('bui/util',function(require){
                     return toString.call(value) === '[object Object]';
                 },
             /**
+             * \u662f\u5426\u662f\u6570\u5b57\u6216\u8005\u6570\u5b57\u5b57\u7b26\u4e32
+             * @param  {String}  value \u6570\u5b57\u5b57\u7b26\u4e32
+             * @return {Boolean}  \u662f\u5426\u662f\u6570\u5b57\u6216\u8005\u6570\u5b57\u5b57\u7b26\u4e32
+             */
+            isNumeric: function(value) {
+                return !isNaN(parseFloat(value)) && isFinite(value);
+            },
+            /**
              * \u5c06\u6307\u5b9a\u7684\u65b9\u6cd5\u6216\u5c5e\u6027\u653e\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\uff0c
              * \u51fd\u6570\u652f\u6301\u591a\u4e8e2\u4e2a\u53d8\u91cf\uff0c\u540e\u9762\u7684\u53d8\u91cf\u540cs1\u4e00\u6837\u5c06\u5176\u6210\u5458\u590d\u5236\u5230\u6784\u9020\u51fd\u6570\u7684\u539f\u578b\u94fe\u4e0a\u3002
              * @param  {Function} r  \u6784\u9020\u51fd\u6570
@@ -1188,6 +1196,7 @@ define('bui/util',function(require){
                     throw msg;
                 }
             },
+            
             /**
              * \u5b9e\u73b0\u7c7b\u7684\u7ee7\u627f\uff0c\u901a\u8fc7\u7236\u7c7b\u751f\u6210\u5b50\u7c7b
              * @param  {Function} subclass
@@ -1198,18 +1207,18 @@ define('bui/util',function(require){
              *      @example
              *      //\u7236\u7c7b
              *      function base(){
-     * 
-     *      }
+             *  
+             *      }
              *
              *      function sub(){
-     * 
-     *      }
+             * 
+             *      }
              *      //\u5b50\u7c7b
              *      BUI.extend(sub,base,{
-     *          method : function(){
-     *    
-     *          }
-     *      });
+             *          method : function(){
+             *    
+             *          }
+             *      });
              *
              *      //\u6216\u8005
              *      var sub = BUI.extend(base,{});
@@ -1975,9 +1984,24 @@ define('bui/observable',['bui/util'],function (r) {
         functions.splice(index,1);
       }
     },
+    /**
+     * \u6e05\u7a7a\u4e8b\u4ef6
+     */
     empty : function(){
       var length = this._functions.length; //ie6,7\u4e0b\uff0c\u5fc5\u987b\u6307\u5b9a\u9700\u8981\u5220\u9664\u7684\u6570\u91cf
       this._functions.splice(0,length);
+    },
+    /**
+     * \u6682\u505c\u4e8b\u4ef6
+     */
+    pause : function(){
+      this._paused = true;
+    },
+    /**
+     * \u5524\u9192\u4e8b\u4ef6
+     */
+    resume : function(){
+      this._paused = false;
     },
     /**
      * \u89e6\u53d1\u56de\u8c03
@@ -1988,7 +2012,9 @@ define('bui/observable',['bui/util'],function (r) {
     fireWith : function(scope,args){
       var _self = this,
         rst;
-
+      if(this._paused){
+        return;
+      }
       BUI.each(_self._functions,function(fn){
         rst = fn.apply(scope,args);
         if(rst === false){
@@ -2182,6 +2208,24 @@ define('bui/observable',['bui/util'],function (r) {
           }
       }
       return result;
+    },
+    /**
+     * \u6682\u505c\u4e8b\u4ef6\u7684\u6267\u884c
+     * @param  {String} eventType \u4e8b\u4ef6\u7c7b\u578b
+     */
+    pauseEvent : function(eventType){
+      var _self = this,
+        callbacks = _self._getCallbacks(eventType);
+      callbacks && callbacks.pause();
+    },
+    /**
+     * \u5524\u9192\u4e8b\u4ef6
+     * @param  {String} eventType \u4e8b\u4ef6\u7c7b\u578b
+     */
+    resumeEvent : function(eventType){
+      var _self = this,
+        callbacks = _self._getCallbacks(eventType);
+      callbacks && callbacks.resume();
     },
     /**
      * \u6dfb\u52a0\u7ed1\u5b9a\u4e8b\u4ef6
@@ -4424,6 +4468,9 @@ define('bui/component/uibase/base',['bui/component/manage'],function(require){
      */
     destroy: function () {
         var _self = this;
+        if(_self.destroyed){ //\u9632\u6b62\u8fd4\u56de\u9500\u6bc1
+            return _self;
+        }
         /**
          * @event beforeDestroy
          * fired before UIBase 's destroy.
@@ -5980,19 +6027,19 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       
       switch(code){
         case KeyCode.UP :
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 
@@ -6411,10 +6458,6 @@ define('bui/component/uibase/position',function () {
     }
 
     Position.ATTRS =
-    /**
-     * @lends BUI.Component.UIBase.Position#
-     * @ignore
-     */
     {
         /**
          * \u6c34\u5e73\u5750\u6807
@@ -6534,10 +6577,6 @@ define('bui/component/uibase/position',function () {
 
 
     Position.prototype =
-    /**
-     * @lends BUI.Component.UIBase.Position.prototype
-     * @ignore
-     */
     {
         /**
          * Move to absolute position.
@@ -6767,7 +6806,7 @@ define('bui/component/uibase/stdmod',function () {
 
     StdModView.prototype = {
 
-        __createDom:function () {
+        __renderUI:function () { //createDom
             createUI(this, 'header');
             createUI(this, 'body');
             createUI(this, 'footer');
@@ -7143,7 +7182,12 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
           }
           else if(isConfigField(name,decorateCfgFields)){
             name = name.replace(FIELD_PREFIX,'');
-            config[name] = parseFieldValue(attr.nodeValue);
+            var value = parseFieldValue(attr.nodeValue);
+            if(config[name] && BUI.isObject(value)){
+              BUI.mix(config[name],value);
+            }else{
+              config[name] = value;
+            }
           }
         }catch(e){
           BUI.log('parse field error,the attribute is:' + name);
@@ -7561,10 +7605,7 @@ define('bui/component/uibase/selection',function () {
     };
 
     selection.ATTRS = 
-    /**
-     * @lends BUI.Component.UIBase.Selection#
-     * @ignore
-     */
+   
     {
         /**
          * \u9009\u4e2d\u7684\u4e8b\u4ef6
@@ -7668,10 +7709,7 @@ define('bui/component/uibase/selection',function () {
     };
 
     selection.prototype = 
-    /**
-     * @lends BUI.Component.UIBase.Selection.prototype
-     * @ignore
-     */
+    
     {
         /**
          * \u6e05\u7406\u9009\u4e2d\u7684\u9879
@@ -8969,10 +9007,6 @@ define('bui/component/uibase/bindable',function(){
 
 
 	BUI.augment(bindable,
-	/**
-	* @lends BUI.Data.Bindable.prototype
-	* @ignore
-	*/	
 	{
 
 		__bindUI : function(){
@@ -10815,6 +10849,7 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
         handleMouseDown: function (ev) {
             var self = this,
                 n,
+                target = $(ev.target),
                 isMouseActionButton = ev['which'] === 1,
                 el;
             if (isMouseActionButton) {
@@ -10823,8 +10858,12 @@ define('bui/component/controller',['bui/component/uibase','bui/component/manage'
                     self.set('active', true);
                 }
                 if (self.get('focusable')) {
-                    el[0].focus();
-                    self.set('focused', true);
+                    //\u5982\u679c\u4e0d\u662finput,select,area\u7b49\u53ef\u4ee5\u83b7\u53d6\u7126\u70b9\u7684\u63a7\u4ef6\uff0c\u90a3\u4e48\u8bbe\u7f6e\u6b64\u63a7\u4ef6\u7684focus
+                    /*if(target[0] == el[0] || (!target.is('input,select,area') && !target.attr('tabindex'))){
+                      el[0].focus(); 
+                      
+                    }*/
+                    self.setInternal('focused', true); 
                 }
 
                 if (!self.get('allowTextSelection')) {
@@ -11777,10 +11816,7 @@ define('bui/data/sortable',function() {
   };
 
   sortable.ATTRS = 
-  /**
-   * @lends BUI.Data.Sortable#
-   * @ignore
-   */
+
   {
     /**
      * \u6bd4\u8f83\u51fd\u6570
@@ -11867,10 +11903,6 @@ define('bui/data/sortable',function() {
   };
 
   BUI.augment(sortable,
-  /**
-   * @lends BUI.Data.Sortable.prototype
-   * @ignore
-   */
   {
     compare : function(obj1,obj2,field,direction){
 
@@ -11951,10 +11983,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.extend(proxy,BUI.Base);
 
   BUI.augment(proxy,
-  /**
-   * @lends BUI.Data.Proxy.prototype
-   * @ignore
-   */
+
   {
     /**
      * @protected
@@ -12018,10 +12047,6 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   };
 
   ajaxProxy.ATTRS = BUI.mix(true,proxy.ATTRS,
-  /**
-   * @lends BUI.Data.Proxy.Ajax#
-   * @ignore
-   */
   {
     /**
      * \u9650\u5236\u6761\u6570
@@ -13054,7 +13079,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       
     },
     /**
-     * \u8fd4\u56de\u6570\u636e\u6807\u793a\u6570\u636e\u7684\u5b57\u6bb5</br>
+     * \u8fd4\u56de\u6570\u636e\u6807\u793a\u6570\u636e\u7684\u5b57\u6bb5<br/>
      * \u5f02\u6b65\u52a0\u8f7d\u6570\u636e\u65f6\uff0c\u8fd4\u56de\u6570\u636e\u53ef\u4ee5\u4f7f\u6570\u7ec4\u6216\u8005\u5bf9\u8c61
      * - \u5982\u679c\u8fd4\u56de\u7684\u662f\u5bf9\u8c61,\u53ef\u4ee5\u9644\u52a0\u5176\u4ed6\u4fe1\u606f,\u90a3\u4e48\u53d6\u5bf9\u8c61\u5bf9\u5e94\u7684\u5b57\u6bb5 {nodes : [],hasError:false}
      * - \u5982\u4f55\u83b7\u53d6\u9644\u52a0\u4fe1\u606f\u53c2\u770b @see {BUI.Data.AbstractStore-event-beforeprocessload}
@@ -13102,7 +13127,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         'remove',
         /**  
         * \u8282\u70b9\u52a0\u8f7d\u5b8c\u6bd5\u89e6\u53d1\u8be5\u4e8b\u4ef6
-        * <pre></code>
+        * <pre><code>
         *   //\u5f02\u6b65\u52a0\u8f7d\u8282\u70b9,\u6b64\u65f6\u8282\u70b9\u5df2\u7ecf\u9644\u52a0\u5230\u52a0\u8f7d\u8282\u70b9\u7684\u540e\u9762
         *   store.on('load',function(ev){
         *     var params = ev.params,
@@ -13624,10 +13649,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   };
 
   store.ATTRS = 
-  /**
-   * @lends BUI.Data.Store#
-   * @ignore
-   */
   {
     /**
      * \u4fdd\u5b58\u6570\u636e\u65f6\uff0c\u662f\u5426\u81ea\u52a8\u66f4\u65b0\u6570\u636e\u6e90\u7684\u6570\u636e\uff0c\u5e38\u7528\u4e8e\u6dfb\u52a0\u3001\u5220\u9664\u3001\u66f4\u6539\u6570\u636e\u540e\u91cd\u65b0\u52a0\u8f7d\u6570\u636e\u3002
@@ -13853,10 +13874,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   BUI.mixin(store,[Sortable]);
 
   BUI.augment(store,
-  /**
-   * @lends BUI.Data.Store.prototype
-   * @ignore
-   */
   {
     /**
     * \u6dfb\u52a0\u8bb0\u5f55,\u9ed8\u8ba4\u6dfb\u52a0\u5728\u540e\u9762
@@ -14616,6 +14633,17 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
         if(effectCfg.callback){
           effectCfg.callback.call(_self);
         }
+        //\u81ea\u52a8\u9690\u85cf
+        var delay = _self.get('autoHideDelay'),
+          delayHandler = _self.get('delayHandler');
+        if(delay){
+          delayHandler && clearTimeout(delayHandler);
+          delayHandler = setTimeout(function(){
+            _self.hide();
+            _self.set('delayHandler',null);
+          },delay);
+          _self.set('delayHandler',delayHandler);
+        }
       }
 
     },
@@ -14653,10 +14681,6 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
     }
   },{
     ATTRS : 
-	/**
-	* @lends BUI.Overlay.Overlay#
-  * @ignore 
-	**/	
 	{
       /**
        * {Object} - \u53ef\u9009, \u663e\u793a\u6216\u9690\u85cf\u65f6\u7684\u7279\u6548\u652f\u6301, \u5bf9\u8c61\u5305\u542b\u4ee5\u4e0b\u914d\u7f6e
@@ -14672,6 +14696,13 @@ define('bui/overlay/overlay',['bui/common'],function (require) {
           duration : 0,
           callback : null
         }
+      },
+      /**
+       * \u663e\u793a\u540e\u95f4\u9694\u591a\u5c11\u79d2\u81ea\u52a8\u9690\u85cf
+       * @type {Number}
+       */
+      autoHideDelay : {
+
       },
       /**
        * whether this component can be closed.
@@ -14895,10 +14926,6 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
   },{
 
     ATTRS : 
-  	/**
-  	* @lends BUI.Overlay.Dialog#
-    * @ignore 
-  	*/
     {
       closeTpl:{
         view:true,
@@ -16392,6 +16419,7 @@ define('bui/list/keynav',['bui/common'],function (require) {
           this.setItemStatus(lightedItem,highlightedStatus,false,lightedElement);
         }
         this.setItemStatus(item,highlightedStatus,true,element);
+        _self._scrollToItem(item,element);
       }
     },
     _getHighLightedElement : function(){
@@ -16497,8 +16525,44 @@ define('bui/list/keynav',['bui/common'],function (require) {
       if(rows <= 1){ //\u5355\u884c\u6216\u8005\u4e3a0\u65f6
         return null;
       }
+
       return  this._getNextItem(true,columns,columns * rows);
 
+    },
+    getScrollContainer : function(){
+      return this.get('el');
+    },
+    /**
+     * @protected
+     * \u53ea\u5904\u7406\u4e0a\u4e0b\u6eda\u52a8\uff0c\u4e0d\u5904\u7406\u5de6\u53f3\u6eda\u52a8
+     * @return {Boolean} \u662f\u5426\u53ef\u4ee5\u4e0a\u4e0b\u6eda\u52a8
+     */
+    isScrollVertical : function(){
+      var _self = this,
+        el = _self.get('el'),
+        container = _self.get('view').getItemContainer();
+
+      return el.height() < container.height();
+    },
+
+    _scrollToItem : function(item,element){
+      var _self = this;
+
+      if(_self.isScrollVertical()){
+        element = element || _self.findElement(item);
+        var container = _self.getScrollContainer(),
+          top = $(element).position().top,
+          ctop = container.position().top,
+          cHeight = container.height(),
+          distance = top - ctop,
+          height = $(element).height(),
+          scrollTop = container.scrollTop();
+
+        if(distance < 0 || distance > cHeight - height){
+          container.scrollTop(scrollTop + distance);
+        }
+
+      }
     },
     //\u83b7\u53d6\u4e0a\u9762\u4e00\u9879
     _getUpperItem : function(){
@@ -16675,6 +16739,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    */
   var BUI = require('bui/common'),
     UIBase = BUI.Component.UIBase,
+    UA = BUI.UA,
     DomList = require('bui/list/domlist'),
     KeyNav = require('bui/list/keynav'),
     Sortable = require('bui/list/sortable'),
@@ -16746,10 +16811,6 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    * @mixins BUI.Component.UIBase.Bindable
    */
   var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav,Sortable],
-  /**
-   * @lends BUI.List.SimpleList.prototype
-   * @ignore
-   */
   {
     /**
      * @protected
@@ -16770,12 +16831,12 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           return;
         }
         
-        /*if(_self.get('highlightedStatus') === 'hover'){
+        if(!(UA.ie && UA.ie < 8) && _self.get('focusable') && _self.get('highlightedStatus') === 'hover'){
           _self.setHighlighted(item,element)
         }else{
           _self.setItemStatus(item,'hover',true,element);
-        }*/
-        _self.get('view').setElementHover(element,true);
+        }
+        /*_self.get('view').setElementHover(element,true);*/
 
       }).delegate('.'+itemCls,'mouseout',function(ev){
         if(_self.get('disabled')){ //\u63a7\u4ef6\u7981\u7528\u540e\uff0c\u963b\u6b62\u4e8b\u4ef6
@@ -16839,10 +16900,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.SimpleList#
-     * @ignore
-     */
+
     {
 
       /**
@@ -16852,6 +16910,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
        * cfg {Boolean} frontSortable
        */
       frontSortable : {
+        value : false
+      },
+      focusable : {
         value : false
       },
       /**
@@ -17020,10 +17081,6 @@ define('bui/list/listitem',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.Item#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,
@@ -17068,10 +17125,6 @@ define('bui/list/list',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.List#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,
@@ -17594,10 +17647,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
    * @extends BUI.Overlay.Overlay
    */
   var tipItem = Overlay.extend(
-  /**
-   * @lends BUI.Form.TipItem.prototype
-   * @ignore
-   */
+
   {
     initializer : function(){
       var _self = this,
@@ -17648,10 +17698,6 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Form.TipItem#
-     * @ignore
-     */
     {
       /**
        * \u63d0\u793a\u7684\u8f93\u5165\u6846 
@@ -17716,10 +17762,6 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
   };
 
   Tips.ATTRS = 
-  /**
-   * @lends BUI.Form.Tips
-   * @ignore
-   */
   {
 
     /**
@@ -18985,7 +19027,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       var _self = this,
         datePicker = _self.get('datePicker');
 
-      if(datePicker.get('showTime')){
+      if(datePicker.showTime || (datePicker.get && datePicker.get('showTime'))){
         return 'yyyy-mm-dd HH:MM:ss';
       }
       return 'yyyy-mm-dd';
@@ -19095,12 +19137,14 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     },
     PARSER : {
       datePicker : function(el){
+        var _self = this,
+          cfg = _self.get('datePicker') || {};
         if(el.hasClass('calendar-time')){
-          return {
+          BUI.mix(cfg,{
             showTime : true
-          }
+          }) ;
         }
-        return {};
+        return cfg;
       }
     }
   },{
@@ -19567,7 +19611,7 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
  * @ignore
  */
 
-define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (require) {
+define('bui/form/uploaderfield',['bui/common','bui/form/basefield','bui/form/rules'],function (require) {
 
   var BUI = require('bui/common'),
     JSON = BUI.JSON,
@@ -19793,7 +19837,7 @@ define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (r
 ;(function(){
 var BASE = 'bui/form/';
 define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
-  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',
+  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',BASE + 'uploaderfield',
   BASE + 'checklistfield',BASE + 'radiolistfield', BASE + 'textareafield'],function (require) {
   var BUI = require('bui/common'),
     Field = require(BASE + 'basefield');
@@ -19985,6 +20029,17 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      */
     error : {
 
+    },
+    /**
+     * \u6682\u505c\u9a8c\u8bc1
+     * <pre><code>
+     *   field.set('pauseValid',true); //\u53ef\u4ee5\u8c03\u7528field.clearErrors()
+     *   field.set('pauseValid',false); //\u53ef\u4ee5\u540c\u65f6\u8c03\u7528field.valid()
+     * </code></pre>
+     * @type {Boolean}
+     */
+    pauseValid : {
+      value : false
     }
   };
 
@@ -19994,12 +20049,13 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       var _self = this;
       //\u76d1\u542c\u662f\u5426\u7981\u7528
       _self.on('afterDisabledChange',function(ev){
-        var disabled = ev.newVal;
-        if(disabled){
-          _self.clearErrors(false,false);
-        }else{
-          _self.valid();
-        }
+        
+          var disabled = ev.newVal;
+          if(disabled){
+            _self.clearErrors(false,false);
+          }else{
+            _self.valid();
+          }
       });
     },
     /**
@@ -20027,7 +20083,10 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     //\u9a8c\u8bc1\u89c4\u5219
     validRules : function(rules,value){
       if(!rules){
-        return;
+        return null;
+      }
+      if(this.get('pauseValid')){
+        return null;
       }
       var _self = this,
         messages = _self._getValidMessages(),
@@ -20064,7 +20123,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
       error = _self.validRules(_self.get('defaultRules'),value) || _self.validRules(_self.get('rules'),value);
 
-      if(!error){
+      if(!error && !this.get('pauseValid')){
         if(_self.parseValue){
           value = _self.parseValue(value);
         }
@@ -20092,7 +20151,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * \u6e05\u9664\u9519\u8bef
      * @param {Boolean} reset \u6e05\u9664\u9519\u8bef\u65f6\u662f\u5426\u91cd\u7f6e
-     * @param {Boolean} deep \u662f\u5426\u6e05\u7406\u5b50\u63a7\u4ef6\u7684\u9519\u8bef 
+     * @param {Boolean} [deep = true] \u662f\u5426\u6e05\u7406\u5b50\u63a7\u4ef6\u7684\u9519\u8bef 
      */
     clearErrors : function(reset,deep){
       deep = deep == null ? true : deep;
@@ -20600,6 +20659,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           if(value == null){
             value = '';
           }
+          field.clearErrors(true);//\u6e05\u7406\u9519\u8bef
           field.set('value',value);
         }
       },
@@ -20638,7 +20698,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
        * \u6e05\u9664\u6240\u6709\u8868\u5355\u57df\u7684\u503c
        */
       clearFields : function(){
-        this.clearErrors();
+        this.clearErrors(true);
         this.setRecord({})
       },
       /**
@@ -22496,7 +22556,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       var _self = this;
 
       _self.on('valid',function (ev) {
-        if(_self.get('remote') && _self.isValid()){
+        if(_self.get('remote') && _self.isValid() && !_self.get('pauseValid')){
           var value = _self.getControlValue(),
             data = _self.getRemoteParams();
           _self._startRemote(data,value);
@@ -22860,10 +22920,6 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       }
     },{
       ATTRS : 
-      /**
-       * @lends BUI.Select.Select#
-       * @ignore
-       */
       {
 
         /**
@@ -23128,11 +23184,10 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Select.Combox#
-     * @ignore
-     */
     {
+      /*focusable : {
+        value : false
+      },*/
       /**
        * \u63a7\u4ef6\u7684\u6a21\u7248
        * @type {String}
@@ -23198,7 +23253,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
    *  suggest.render();
    *
    * });
-   * <code></pre>
+   * </code></pre>
    * @class BUI.Select.Suggest
    * @extends BUI.Select.Combox
    */
@@ -23380,10 +23435,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Select.Suggest#
-     * @ignore
-     */
     {
       /**
        * \u7528\u4e8e\u663e\u793a\u63d0\u793a\u7684\u6570\u636e\u6e90
@@ -23399,7 +23450,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * \u7528\u4e8e\u663e\u793a\u63d0\u793a\u7684\u6570\u636e\u6e90
        * @type {Array}
-       * @ignore
        */
       data:{
         value : null
@@ -23415,12 +23465,10 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * \u662f\u5426\u5141\u8bb8\u7f13\u5b58
        * @cfg {Boolean} cacheable
-       * @default false
        */
       /**
        * \u662f\u5426\u5141\u8bb8\u7f13\u5b58
        * @type {Boolean}
-       * @default false
        */
       cacheable:{
         value:false
@@ -23463,6 +23511,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       url : {
 
       },
+     
       /**
        * \u8bf7\u6c42\u5b8c\u6570\u636e\u7684\u56de\u8c03\u51fd\u6570
        * <pre><code>
@@ -23497,7 +23546,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * suggest\u4e0d\u63d0\u4f9b\u81ea\u52a8\u8bbe\u7f6e\u9009\u4e2d\u6587\u672c\u529f\u80fd
        * @type {Boolean}
-       * @default true
        */
       autoSetValue:{
         value:false
@@ -23620,7 +23668,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
 
    /**
      * \u5c4f\u853d\u6307\u5b9a\u5143\u7d20\uff0c\u5e76\u663e\u793a\u52a0\u8f7d\u4fe1\u606f
-     * <pre></code>
+     * <pre><code>
      * BUI.use('bui/mask',function(Mask){
      *    var loadMask = new Mask.LoadMask({
      *        el : '#domId',
@@ -23649,7 +23697,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
     LoadMask.ATTRS = {
         /**
          * \u5c4f\u853d\u7684\u5143\u7d20
-         * <pre></code>
+         * <pre><code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId'
          *    });
@@ -23661,7 +23709,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
         },
         /**
          * \u52a0\u8f7d\u65f6\u663e\u793a\u7684\u52a0\u8f7d\u4fe1\u606f
-         * <pre></code>
+         * <pre><code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId',
          *        msg : '\u6b63\u5728\u52a0\u8f7d\uff0c\u8bf7\u7a0d\u540e\u3002\u3002\u3002'
@@ -23674,7 +23722,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
         },
         /**
          * \u52a0\u8f7d\u65f6\u663e\u793a\u7684\u52a0\u8f7d\u4fe1\u606f\u7684\u6837\u5f0f
-         * <pre></code>
+         * <pre><code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId',
          *        msgCls : 'custom-cls'
@@ -23699,10 +23747,6 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
 
     //\u5bf9\u8c61\u539f\u578b
     BUI.augment(LoadMask,
-    /** 
-    * @lends BUI.Mask.LoadMask.prototype 
-    * @ignore
-    */
     {
         
         /**
@@ -23903,8 +23947,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         if(!subMenu.get('parentMenu')){
           subMenu.set('parentMenu',parent);
           if(parent.get('autoHide')){
-            subMenu.set('autoHide',false);
-          } 
+            if(parent.get('autoHideType') == 'click'){
+              subMenu.set('autoHide',false);
+            }else{
+              subMenu.set('autoHideType','leave');
+            }
+            
+          } /**/
         }
         $(_self.get('arrowTpl')).appendTo(el);
       }
@@ -23923,10 +23972,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * \u9ed8\u8ba4\u7684Html \u6807\u7b7e
@@ -23992,12 +24037,15 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     },
     PARSER : {
       subMenu : function(el){
-        var subList = el.find('ul'),
+        var 
+          subList = el.find('ul'),
           sub;
         if(subList && subList.length){
           sub = BUI.Component.create({
             srcNode : subList,
-            xclass : 'pop-menu'
+            xclass : 'pop-menu',
+            autoHide : true,
+            autoHideType : 'leave'
           });
           subList.appendTo('body');
         }
@@ -24129,10 +24177,6 @@ define('bui/menu/menu',['bui/common'],function(require){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Menu.Menu#
-     * @ignore
-     */
     {
 
       elTagName:{
@@ -24292,10 +24336,6 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   },{
 
     ATTRS:
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * \u663e\u793a\u7684\u6587\u672c
@@ -24372,10 +24412,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
    * @extends BUI.Menu.Menu
    */
   var sideMenu = Menu.extend(
-  /**
-   * @lends BUI.Menu.SideMenu.prototype
-   * @ignore
-   */
   {
     //\u521d\u59cb\u5316\u914d\u7f6e\u9879
     initializer : function(){
@@ -24468,10 +24504,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
   },{
 
     ATTRS : 
-    /**
-     * @lends BUI.Menu.SideMenu.prototype
-     * @ignore
-     */
     {
       
       /**
@@ -24894,10 +24926,6 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
    * @extends BUI.Component.Controller
    */
   var navTabItem = Component.Controller.extend(
-  /**
-   * @lends BUI.Tab.NavTabItem.prototype
-   * @ignore
-   */
   {
     /**
      * \u521b\u5efaDOM
@@ -25008,10 +25036,6 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Tab.NavTabItem#
-     * @ignore
-     */
     {
       elTagName : {
         value: 'li'
@@ -25204,10 +25228,6 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
    * @extends BUI.Component.Controller
    */
   var navTab = Component.Controller.extend(
-    /**
-     * @lends BUI.Tab.NavTab.prototype
-     * @ignore
-     */
     {
       /**
        * \u6dfb\u52a0\u6807\u7b7e\u9879
@@ -25672,11 +25692,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     },
     
     {
-      ATTRS : 
-    /**
-      * @lends BUI.Tab.NavTab.prototype
-      * @ignore
-      */    
+      ATTRS :    
     {
         defaultChildClass:{
           value : 'nav-tab-item'
@@ -26118,10 +26134,6 @@ define('bui/toolbar/baritem',function(){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.prototype
-     * @ignore
-     */
     {
       elTagName :{
           view : true,
@@ -26188,10 +26200,6 @@ define('bui/toolbar/baritem',function(){
     
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.Button.prototype
-     * @ignore
-     */
     {
       /**
        * \u662f\u5426\u9009\u4e2d
@@ -26269,10 +26277,6 @@ define('bui/toolbar/baritem',function(){
     
   },{
     ATTRS:
-    /** 
-    * @lends BUI.Toolbar.BarItem.Spacer.prototype
-    * @ignore
-    */
     {
       /**
       * \u7a7a\u767d\u5bbd\u5ea6
@@ -26303,10 +26307,6 @@ define('bui/toolbar/baritem',function(){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.Text.prototype
-     * @ignore
-     */
     {
       
       /**
@@ -26391,11 +26391,7 @@ define('bui/toolbar/bar',function(){
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList
    */
-	var Bar = Component.Controller.extend([UIBase.ChildList],
-	 /**
-	 * @lends BUI.Toolbar.Bar.prototype
-   * @ignore 
-	 */	
+	var Bar = Component.Controller.extend([UIBase.ChildList],	
 	{
 		/**
 		* \u901a\u8fc7id \u83b7\u53d6\u9879
@@ -26407,10 +26403,6 @@ define('bui/toolbar/bar',function(){
 		}
 	},{
 		ATTRS:
-    /** 
-    * @lends BUI.Toolbar.Bar.prototype
-    * @ignore
-    */
 		{
       elTagName :{
           view : true,
@@ -26478,10 +26470,6 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
      * @class BUI.Toolbar.PagingBar
      */
     var PagingBar = Bar.extend([Bindable],
-        /** 
-        * @lends BUI.Toolbar.PagingBar.prototype
-        * @ignore
-        */
         {
             /**
              * From Bar, Initialize this paging bar items.
@@ -26784,10 +26772,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
             }
         }, {
             ATTRS:
-            /** 
-            * @lends BUI.Toolbar.PagingBar.prototype
-            * @ignore
-            */
+     
             {
                
                 /**
@@ -26968,10 +26953,6 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
      * @class BUI.Toolbar.NumberPagingBar
      */
     var NumberPagingBar = PBar.extend(
-        /** 
-        * @lends BUI.Toolbar.NumberPagingBar.prototype
-        * @ignore
-        */
         {
         /**
         * get the initial items of paging bar
@@ -27757,10 +27738,6 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Calendar.MonthPicker#
-     * @ignore
-     */
     {
       /**
        * \u4e0b\u90e8\u5de5\u5177\u680f
@@ -28156,10 +28133,6 @@ define('bui/calendar/panel',['bui/common'],function (require) {
    * @extends BUI.Component.Controller
    */
   var panel = Component.Controller.extend(
-  /**
-  * @lends  BUI.Calendar.Panel.prototype 
-  * @ignore
-  */
   {
 
     /**
@@ -28251,10 +28224,6 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Calendar.Panel#
-     * @ignore
-     */
     {
       /**
        * \u5c55\u793a\u7684\u6708\u6240\u5c5e\u5e74
@@ -28696,10 +28665,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
   },{
     ATTRS :
-    /**
-     * @lends BUI.Calendar.Calendar#
-     * @ignore
-     */
     {
       /**
        * \u65e5\u5386\u63a7\u4ef6\u5934\u90e8\uff0c\u9009\u62e9\u5e74\u6708
@@ -29002,10 +28967,6 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Calendar.DatePicker#
-     * @ignore
-     */
     {
       /**
        * \u662f\u5426\u663e\u793a\u65e5\u671f
@@ -30174,10 +30135,6 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
    * @extends BUI.List.SimpleList
    */
   var simpleGrid = BUI.List.SimpleList.extend(
-  /**
-   * @lends BUI.Grid.SimpleGrid.prototype
-   * @ignore
-   */
   {
     renderUI : function(){
       this.get('view').setColumns();
@@ -30231,10 +30188,6 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Grid.SimpleGrid#
-     * @ignore
-     */
     {
       /**
        * \u8868\u683c\u53ef\u70b9\u51fb\u9879\u7684\u6837\u5f0f
@@ -30513,10 +30466,6 @@ define('bui/grid/column',['bui/common'],function (require) {
      * @extends BUI.Component.Controller
      */
     var column = BUI.Component.Controller.extend(
-        /**
-         * @lends BUI.Grid.Column.prototype
-         * @ignore
-         */
         {    //toggle sort state of this column ,if no sort state set 'ASC',else toggle 'ASC' and 'DESC'
             _toggleSortState:function () {
                 var _self = this,
@@ -30548,10 +30497,6 @@ define('bui/grid/column',['bui/common'],function (require) {
             }
         }, {
             ATTRS:
-            /*** 
-            * @lends BUI.Grid.Column.prototype 
-            * @ignore
-            */
             {
                 /**
                  * The tag name of the rendered column
@@ -30939,10 +30884,6 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
    * @extends BUI.Component.Controller
    */
   var header = Controller.extend(
-    /**
-     * @lends BUI.Grid.Header.prototype
-     * @ignore
-     */
     {
       /**
        * add a columns to header
@@ -31007,7 +30948,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
        * get the columns of this header,the result equals the 'children' property .
        * @return {Array} columns
        * @example var columns = header.getColumns();
-       *    <br>or</br>
+       *    <br>or<br>
        * var columns = header.get('children');
        */
       getColumns:function () {
@@ -31282,10 +31223,6 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
     }, {
       ATTRS:
-      /** 
-      * @lends BUI.Grid.Header.prototype
-      * @ignore
-      * */
       {
         /**
          * \u5217\u96c6\u5408
@@ -32728,10 +32665,6 @@ define('bui/grid/format',function (require) {
      * @singleton
      */
     var Format =
-    /** 
-    * @lends BUI.Grid.Format 
-    * @ignore
-    */
     {
         /**
          * \u65e5\u671f\u683c\u5f0f\u5316\u51fd\u6570
@@ -32892,7 +32825,8 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
  */
 
 define('bui/grid/plugins/autofit',['bui/common'],function (require) {
-  var BUI = require('bui/common');
+  var BUI = require('bui/common'),
+    UA = BUI.UA;
 
   /**
    * \u8868\u683c\u81ea\u9002\u5e94\u5bbd\u5ea6
@@ -32921,19 +32855,25 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
           handler = setTimeout(function(){
             _self._autoFit(grid);
           },100);
+          _self.set('handler',handler);
         }
         autoFit();
       });
     },
     //\u81ea\u9002\u5e94\u5bbd\u5ea6
     _autoFit : function(grid){
-      var render = grid.get('render'),
-          width;
-        grid.set('visible',false);
-        width = $(render).width();
+      var _self = this,
+        render = $(grid.get('render')),
+        docWidth = $(window).width(),//\u7a97\u53e3\u5bbd\u5ea6
+        width,
+        appendWidth = 0,
+        parent = grid.get('el').parent();
+      while(parent[0] && parent[0] != $('body')[0]){
+        appendWidth += parent.outerWidth() - parent.width();
+        parent = parent.parent();
+      }
 
-        grid.set('visible',true);
-        grid.set('width',width);
+      grid.set('width',docWidth - appendWidth);
     }
 
   });
@@ -33236,10 +33176,6 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   BUI.extend(cascade,BUI.Base);
 
   cascade.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.Cascade#
-   * @ignore
-   */
   {
     /**
      * \u663e\u793a\u5c55\u5f00\u6309\u94ae\u5217\u7684\u5bbd\u5ea6
@@ -33312,10 +33248,6 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   };
 
   BUI.augment(cascade,
-  /**
-   * @lends BUI.Grid.Plugins.Cascade.prototype
-   * @ignore
-   */
   {
     /**
      * \u521d\u59cb\u5316
@@ -33623,10 +33555,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   BUI.extend(checkSelection,BUI.Base);
 
   checkSelection.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     /**
     * column's width which contains the checkbox
@@ -33650,10 +33578,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   };
 
   BUI.augment(checkSelection, 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     createDom : function(grid){
       var _self = this;
@@ -33713,10 +33637,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   BUI.extend(radioSelection,BUI.Base);
 
   radioSelection.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.RadioSelection#
-   * @ignore
-   */ 
   {
     /**
     * column's width which contains the checkbox
@@ -34207,6 +34127,29 @@ define('bui/grid/plugins/editing',function (require) {
     triggerSelected : {
       value : true
     }
+    /**
+     * @event accept 
+     * \u786e\u8ba4\u7f16\u8f91
+     * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     */
+    
+    /**
+     * @event cancel 
+     * \u53d6\u6d88\u7f16\u8f91
+     * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     */
+    
+    /**
+     * @event editorshow 
+     * editor \u663e\u793a
+     * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     */
   };
 
   BUI.augment(Editing,{
@@ -34411,10 +34354,13 @@ define('bui/grid/plugins/editing',function (require) {
       editor.on('accept',function(){
         var record = _self.get('record');
         _self.updateRecord(store,record,editor);
+        _self.fire('accept',{editor : editor,record : record});
         _self.set('curEditor',null);
+
       });
 
       editor.on('cancel',function(){
+        _self.fire('cancel',{editor : editor,record : _self.get('record')});
         _self.set('curEditor',null);
       });
     },
@@ -34468,6 +34414,7 @@ define('bui/grid/plugins/editing',function (require) {
       editor.show();
       _self.focusEditor(editor,options.field);
       _self.set('curEditor',editor);
+      _self.fire('editorshow',{editor : editor});
     },
     /**
      * @protected
@@ -35111,6 +35058,32 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} e.editType \u7f16\u8f91\u7684\u7c7b\u578b add \u6216\u8005 edit
          */
         recordchange : false
+
+         /**
+         * @event accept 
+         * \u786e\u8ba4\u7f16\u8f91
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+         * @param {BUI.Form.Form} form \u8868\u5355
+         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         */
+        
+        /**
+         * @event cancel 
+         * \u53d6\u6d88\u7f16\u8f91
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+         * @param {BUI.Form.Form} form \u8868\u5355
+         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         */
+        
+        /**
+         * @event editorshow 
+         * editor \u663e\u793a
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         */
       }
     },
     editType : {
@@ -35175,6 +35148,11 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
         var form = editor.get('form'),
           record = form.serializeToObject();
         _self.saveRecord(record);
+        _self.fire('accept',{editor : editor,record : _self.get('record'),form : form});
+      });
+
+      editor.on('cancel',function(){
+        _self.fire('cancel',{editor : editor,record : _self.get('record'),form : editor.get('form')});
       });
     },
     /**
@@ -35237,6 +35215,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       editor.setValue(record,true); //\u8bbe\u7f6e\u503c\uff0c\u5e76\u4e14\u9690\u85cf\u9519\u8bef
       
       _self.fire('recordchange',{record : record,editType : _self.get('editType')});
+      _self.fire('editorshow',{eidtor : editor,editType : _self.get('editType')});
     },
     /**
      * \u53d6\u6d88\u7f16\u8f91
@@ -36899,6 +36878,7 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin','bui/tr
    *    });
    *    tree.render();
    *  });
+   *  </code></pre>
    * @mixin BUI.Tree.Mixin
    * @extends BUI.List.SimpleList
    */
@@ -36981,6 +36961,7 @@ define('bui/tree/treemenu',['bui/common','bui/list','bui/tree/treemixin','bui/tr
    *    });
    *    tree.render();
    *  });
+   * </code></pre>
    * @mixin BUI.Tree.Mixin
    * @extends BUI.List.SimpleList
    */

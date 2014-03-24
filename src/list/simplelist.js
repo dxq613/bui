@@ -12,6 +12,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    */
   var BUI = require('bui/common'),
     UIBase = BUI.Component.UIBase,
+    UA = BUI.UA,
     DomList = require('bui/list/domlist'),
     KeyNav = require('bui/list/keynav'),
     Sortable = require('bui/list/sortable'),
@@ -83,10 +84,6 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    * @mixins BUI.Component.UIBase.Bindable
    */
   var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav,Sortable],
-  /**
-   * @lends BUI.List.SimpleList.prototype
-   * @ignore
-   */
   {
     /**
      * @protected
@@ -107,12 +104,12 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           return;
         }
         
-        /*if(_self.get('highlightedStatus') === 'hover'){
+        if(!(UA.ie && UA.ie < 8) && _self.get('focusable') && _self.get('highlightedStatus') === 'hover'){
           _self.setHighlighted(item,element)
         }else{
           _self.setItemStatus(item,'hover',true,element);
-        }*/
-        _self.get('view').setElementHover(element,true);
+        }
+        /*_self.get('view').setElementHover(element,true);*/
 
       }).delegate('.'+itemCls,'mouseout',function(ev){
         if(_self.get('disabled')){ //控件禁用后，阻止事件
@@ -176,10 +173,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.SimpleList#
-     * @ignore
-     */
+
     {
 
       /**
@@ -189,6 +183,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
        * cfg {Boolean} frontSortable
        */
       frontSortable : {
+        value : false
+      },
+      focusable : {
         value : false
       },
       /**

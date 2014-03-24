@@ -57,7 +57,11 @@ define('bui/chart/categoryaxis',['bui/chart/baseaxis','bui/common'],function (re
             var _self = this,
                 ticks = [];
             ticks = ticks.concat(info.categories);
-            ticks.push(' ');
+            if(ticks.length){
+               ticks.push(' '); 
+            }
+            
+            _self.set('categories',info.categories);
             _self.set('ticks',ticks);
         },
 		/**

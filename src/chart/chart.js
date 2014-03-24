@@ -2,7 +2,7 @@
  * @fileOverview 图表控件
  * @ignore
  */
-define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/chart/theme'],function (require) {
+define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/chart/theme','bui/chart/seriesgroup'],function (require) {
   
   var BUI = require('bui/common'),
     PlotBack = require('bui/chart/plotback'),
@@ -33,8 +33,9 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
    * @class BUI.Chart.Chart
    * 图，里面包括坐标轴、图例等图形
    * @extends BUI.Component.Controller
+   * @mixins BUI.Component.UIBase.Bindable
    */
-  var Chart = BUI.Component.Controller.extend({
+  var Chart = BUI.Component.Controller.extend([BUI.Component.UIBase.Bindable],{
 
     renderUI : function(){
       var _self = this;
@@ -74,7 +75,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
           height :height,
           render : el
         });
-
+      canvas.chart = _self;
       _self.set('canvas',canvas);
     },
     //渲染背景、边框等
@@ -103,7 +104,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       if(title){
         if(title.x == null){
           title.x = canvas.get('width')/2;
-          title.y = 15;
+          title.y = title.y || 15;
         }
         title = BUI.mix({},theme.title,title);
         canvas.addShape('label',title);
@@ -111,7 +112,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       if(subTitle){
         if(subTitle.x == null){
           subTitle.x = canvas.get('width')/2;
-          subTitle.y = 35;
+          subTitle.y = subTitle.y || 35;
         }
         subTitle = BUI.mix({},theme.subTitle,subTitle);
         canvas.addShape('label',subTitle);
@@ -144,6 +145,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       BUI.mix(true,cfg,theme,{
         colors :  attrs.colors,
         data : attrs.data,
+        fields : attrs.fields,
         plotRange : attrs.plotRange,
         series : attrs.series,
         seriesOptions : attrs.seriesOptions,
@@ -179,6 +181,39 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
      */
     getSeries : function(){
       return this.get('seriesGroup').getSeries();
+    },
+     /**
+     * 改变数据
+     * @param  {Array} data 数据
+     */
+    changeData : function(data){
+      var _self = this,
+        group = _self.get('seriesGroup');
+      if(data !== _self.get('data')){
+        _self.set('data',data);
+      }
+      group.changeData(data);
+    },
+    //加载完成数据
+    onLoad : function(){
+      var _self = this,
+        store = _self.get('store'),
+        data = store.getResult();
+      _self.changeData(data);
+    },
+    //添加数据
+    onAdd : function(e){
+      this.onLoad();
+    },
+    //移除数据
+    onRemove : function(e){
+      this.onLoad();
+    },
+    onUpdate : function(e){
+      this.onLoad();
+    },
+    onLocalSort : function(e){
+      this.onLoad();
     },
     destructor : function(){
       var _self = this;
@@ -292,12 +327,90 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
 
       },
       /**
+       * 数据中使用的字段，用于转换数据使用例如： 
+       *  - fields : ['intelli','force','political','commander']
+       *  - 数据：
+       * <pre><code>
+       * [
+       *  {"name" : "张三","intelli":52,"force":90,"political":35,"commander" : 85},
+       *   {"name" : "李四","intelli":95,"force":79,"political":88,"commander": 72},
+       *  {"name" : "王五","intelli":80,"force":42,"political":92,"commander": 50}
+       * ]
+       * </code></pre>
+       *  - 转换成
+       *  <pre><code>
+       * [
+       *   [52,90,35,85],
+       *   [95,79,88,72],
+       *   [80,42,92,50]
+       * ]
+       * </code></pre>
+       * @type {Array}
+       */
+      fields : {
+        
+      },
+      /**
        * 应用的样式
        * @type {Object}
        */
       theme : {
         value : Theme.Base
       }
+      /**
+       * @event seriesactived
+       * 数据序列激活
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesunactived
+       * 数据序列取消激活
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemactived
+       * 数据序列的子项激活，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemunactived
+       * 数据序列的子项取消激活，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemclick
+       * 数据序列的子项的点击，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemselected
+       * 数据序列的子项选中，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemunselected
+       * 数据序列的子项取消选中，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
     }
   },{
     xclass : 'chart'

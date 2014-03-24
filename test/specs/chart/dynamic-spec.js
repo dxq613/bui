@@ -1,4 +1,4 @@
-/**/
+/*
 BUI.use(['bui/chart/chart'],function (Chart) {
   
   var chart = new Chart({
@@ -187,8 +187,9 @@ BUI.use(['bui/chart/chart'],function (Chart) {
     },
     series : [ {
         name: 'New York',
-        smooth : true,
+       // smooth : true,
         pointInterval : 2000,
+
         //type : 'column',
         data: (function() {                                                 
             // generate an array of random data                             
@@ -225,7 +226,7 @@ BUI.use(['bui/chart/chart'],function (Chart) {
       series.addPoint([x, y],true,true); 
     }
 });
-
+*/
 
 BUI.use(['bui/chart/chart'],function (Chart) {
   
@@ -339,3 +340,4 @@ BUI.use(['bui/chart/chart'],function (Chart) {
       series1.addPoint([x, y],false,true);  //第二个重绘
     }
 });
+/**/

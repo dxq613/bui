@@ -19,10 +19,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
    * @extends BUI.Overlay.Overlay
    */
   var tipItem = Overlay.extend(
-  /**
-   * @lends BUI.Form.TipItem.prototype
-   * @ignore
-   */
+
   {
     initializer : function(){
       var _self = this,
@@ -73,10 +70,6 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Form.TipItem#
-     * @ignore
-     */
     {
       /**
        * 提示的输入框 
@@ -141,10 +134,6 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
   };
 
   Tips.ATTRS = 
-  /**
-   * @lends BUI.Form.Tips
-   * @ignore
-   */
   {
 
     /**

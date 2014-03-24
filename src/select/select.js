@@ -236,10 +236,6 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       }
     },{
       ATTRS : 
-      /**
-       * @lends BUI.Select.Select#
-       * @ignore
-       */
       {
 
         /**

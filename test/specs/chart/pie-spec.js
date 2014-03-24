@@ -55,9 +55,120 @@ BUI.use(['bui/chart/chart'],function (Chart) {
   });
 
   chart.render();
-  var group = chart.get('seriesGroup');
+  var group = chart.get('seriesGroup'),
+    pie = group.getSeries()[0];
   describe('测试饼图',function(){
+    it('生成饼图',function(){
+      waits(1000);
+      runs(function(){
+        expect(pie).not.toBe(undefined);
+        expect(pie.get('node')).not.toBe(undefined);
+      });
+      
+    });
+    it('生成label',function(){
+      var labels = pie.get('labelsGroup');
+      expect(labels.getCount()).toBe(pie.get('data').length);
+    });
+
+    it('点击选中饼图',function(){
+      var first = pie.getItems()[0];
+      first.fire('click',{target : first.get('node')});
+      waits(500);
+      runs(function(){
+        expect(first.get('selected')).toBe(true);
+      })
+
+    });
+
+    it('点击其他',function(){
+      var first = pie.getItems()[0],
+        second = pie.getItems()[1];
+      second.fire('click',{
+        target : second.get('node')
+      });
+       waits(500);
+      runs(function(){
+        expect(first.get('selected')).toBe(false);
+        expect(second.get('selected')).toBe(true);
+      });
+    });
+
+    it('点击取消',function(){
+      var second = pie.getItems()[1];
+      second.fire('click',{
+        target : second.get('node')
+      });
+      waits(500);
+      runs(function(){
+        expect(second.get('selected')).toBe(false);
+      });
+    });
+  });
+
+  describe('测试触发的事件',function(){
+    var items = pie.getItems(),
     
+    unActiveFn = jasmine.createSpy();
+
+    it('触发actived',function(){
+      var first = items[0],
+        callback = jasmine.createSpy();
+      chart.on('seriesitemactived',callback);
+      first.fire('mouseover',{target : first.get('node')});
+      waits(500);
+      runs(function(){
+        expect(first.get('actived')).toBe(true);
+        expect(callback).toHaveBeenCalled();
+
+        chart.off('seriesitemactived',callback);
+      });
+      
+    });
+    it('触发unactived',function(){
+      var first = items[0],
+        second = items[1],
+        callback = jasmine.createSpy();
+      chart.on('seriesitemunactived',callback);
+      second.fire('mouseover',{target : second.get('node')});
+
+      waits(500);
+      runs(function(){
+        expect(first.get('actived')).toBe(false);
+        expect(second.get('actived')).toBe(true);
+
+        chart.off('seriesitemunactived',callback);
+      });
+    });
+
+    it('触发click,触发选中',function(){
+      var first = items[0],
+        callback = jasmine.createSpy(),
+        selCallback = jasmine.createSpy();
+      chart.on('seriesitemclick',callback);
+      chart.on('seriesitemselected',selCallback);
+      first.fire('click',{target : first.get('node')});
+      waits(500);
+      runs(function(){
+        expect(callback).toHaveBeenCalled();
+         expect(selCallback).toHaveBeenCalled();
+        chart.off('seriesitemclick',callback);
+        chart.off('seriesitemselected',selCallback);
+      });
+    });
+
+    it('触发取消选中',function(){
+      var first = items[0],
+        callback = jasmine.createSpy();
+      chart.on('seriesitemunselected',callback);
+
+      first.fire('click',{target : first.get('node')});
+      waits(500);
+      runs(function(){
+        expect(callback).toHaveBeenCalled();
+        chart.off('seriesitemunselected',callback);
+      });
+    });
   });
 });
 

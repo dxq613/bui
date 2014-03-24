@@ -154,10 +154,6 @@ define('bui/grid/column',['bui/common'],function (require) {
      * @extends BUI.Component.Controller
      */
     var column = BUI.Component.Controller.extend(
-        /**
-         * @lends BUI.Grid.Column.prototype
-         * @ignore
-         */
         {    //toggle sort state of this column ,if no sort state set 'ASC',else toggle 'ASC' and 'DESC'
             _toggleSortState:function () {
                 var _self = this,
@@ -189,10 +185,6 @@ define('bui/grid/column',['bui/common'],function (require) {
             }
         }, {
             ATTRS:
-            /*** 
-            * @lends BUI.Grid.Column.prototype 
-            * @ignore
-            */
             {
                 /**
                  * The tag name of the rendered column

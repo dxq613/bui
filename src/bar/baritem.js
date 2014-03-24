@@ -42,10 +42,6 @@ define('bui/toolbar/baritem',function(){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.prototype
-     * @ignore
-     */
     {
       elTagName :{
           view : true,
@@ -112,10 +108,6 @@ define('bui/toolbar/baritem',function(){
     
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.Button.prototype
-     * @ignore
-     */
     {
       /**
        * 是否选中
@@ -193,10 +185,6 @@ define('bui/toolbar/baritem',function(){
     
   },{
     ATTRS:
-    /** 
-    * @lends BUI.Toolbar.BarItem.Spacer.prototype
-    * @ignore
-    */
     {
       /**
       * 空白宽度
@@ -227,10 +215,6 @@ define('bui/toolbar/baritem',function(){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.Text.prototype
-     * @ignore
-     */
     {
       
       /**

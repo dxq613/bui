@@ -52,8 +52,8 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 		},
 		/**
 		 * 添加图形
-		 * @param {String | Object} 类型或者配置项
-		 * @param {String} 属性
+		 * @param {String | Object} type 类型或者配置项
+		 * @param {String} attrs 属性
 		 * @return {BUI.Graphic.Shape} 图形
 		 */
 		addShape : function(type,attrs){
@@ -125,7 +125,7 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 		/**
 		 * @protected
 		 * 添加图形或者分组
-		 * @param {BUI.Graphic.Base} 图形或者分组
+		 * @param {BUI.Graphic.Base} item 图形或者分组
 		 */
 		addChild : function(item){
 			var _self = this,

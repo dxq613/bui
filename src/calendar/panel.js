@@ -174,10 +174,6 @@ define('bui/calendar/panel',['bui/common'],function (require) {
    * @extends BUI.Component.Controller
    */
   var panel = Component.Controller.extend(
-  /**
-  * @lends  BUI.Calendar.Panel.prototype 
-  * @ignore
-  */
   {
 
     /**
@@ -269,10 +265,6 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Calendar.Panel#
-     * @ignore
-     */
     {
       /**
        * 展示的月所属年

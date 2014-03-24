@@ -41,10 +41,7 @@ define('bui/data/sortable',function() {
   };
 
   sortable.ATTRS = 
-  /**
-   * @lends BUI.Data.Sortable#
-   * @ignore
-   */
+
   {
     /**
      * 比较函数
@@ -131,10 +128,6 @@ define('bui/data/sortable',function() {
   };
 
   BUI.augment(sortable,
-  /**
-   * @lends BUI.Data.Sortable.prototype
-   * @ignore
-   */
   {
     compare : function(obj1,obj2,field,direction){
 
@@ -215,10 +208,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.extend(proxy,BUI.Base);
 
   BUI.augment(proxy,
-  /**
-   * @lends BUI.Data.Proxy.prototype
-   * @ignore
-   */
+
   {
     /**
      * @protected
@@ -282,10 +272,6 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   };
 
   ajaxProxy.ATTRS = BUI.mix(true,proxy.ATTRS,
-  /**
-   * @lends BUI.Data.Proxy.Ajax#
-   * @ignore
-   */
   {
     /**
      * 限制条数
@@ -1318,7 +1304,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       
     },
     /**
-     * 返回数据标示数据的字段</br>
+     * 返回数据标示数据的字段<br/>
      * 异步加载数据时，返回数据可以使数组或者对象
      * - 如果返回的是对象,可以附加其他信息,那么取对象对应的字段 {nodes : [],hasError:false}
      * - 如何获取附加信息参看 @see {BUI.Data.AbstractStore-event-beforeprocessload}
@@ -1366,7 +1352,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         'remove',
         /**  
         * 节点加载完毕触发该事件
-        * <pre></code>
+        * <pre><code>
         *   //异步加载节点,此时节点已经附加到加载节点的后面
         *   store.on('load',function(ev){
         *     var params = ev.params,
@@ -1888,10 +1874,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   };
 
   store.ATTRS = 
-  /**
-   * @lends BUI.Data.Store#
-   * @ignore
-   */
   {
     /**
      * 保存数据时，是否自动更新数据源的数据，常用于添加、删除、更改数据后重新加载数据。
@@ -2117,10 +2099,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   BUI.mixin(store,[Sortable]);
 
   BUI.augment(store,
-  /**
-   * @lends BUI.Data.Store.prototype
-   * @ignore
-   */
   {
     /**
     * 添加记录,默认添加在后面

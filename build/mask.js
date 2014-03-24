@@ -110,7 +110,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
 
    /**
      * 屏蔽指定元素，并显示加载信息
-     * <pre></code>
+     * <pre><code>
      * BUI.use('bui/mask',function(Mask){
      *    var loadMask = new Mask.LoadMask({
      *        el : '#domId',
@@ -139,7 +139,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
     LoadMask.ATTRS = {
         /**
          * 屏蔽的元素
-         * <pre></code>
+         * <pre><code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId'
          *    });
@@ -151,7 +151,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
         },
         /**
          * 加载时显示的加载信息
-         * <pre></code>
+         * <pre><code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId',
          *        msg : '正在加载，请稍后。。。'
@@ -164,7 +164,7 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
         },
         /**
          * 加载时显示的加载信息的样式
-         * <pre></code>
+         * <pre><code>
          *    var loadMask = new Mask.LoadMask({
          *        el : '#domId',
          *        msgCls : 'custom-cls'
@@ -189,10 +189,6 @@ define('bui/mask/loadmask',['bui/mask/mask'],function (require) {
 
     //对象原型
     BUI.augment(LoadMask,
-    /** 
-    * @lends BUI.Mask.LoadMask.prototype 
-    * @ignore
-    */
     {
         
         /**

@@ -1056,6 +1056,7 @@ define('bui/list/keynav',['bui/common'],function (require) {
           this.setItemStatus(lightedItem,highlightedStatus,false,lightedElement);
         }
         this.setItemStatus(item,highlightedStatus,true,element);
+        _self._scrollToItem(item,element);
       }
     },
     _getHighLightedElement : function(){
@@ -1161,8 +1162,44 @@ define('bui/list/keynav',['bui/common'],function (require) {
       if(rows <= 1){ //单行或者为0时
         return null;
       }
+
       return  this._getNextItem(true,columns,columns * rows);
 
+    },
+    getScrollContainer : function(){
+      return this.get('el');
+    },
+    /**
+     * @protected
+     * 只处理上下滚动，不处理左右滚动
+     * @return {Boolean} 是否可以上下滚动
+     */
+    isScrollVertical : function(){
+      var _self = this,
+        el = _self.get('el'),
+        container = _self.get('view').getItemContainer();
+
+      return el.height() < container.height();
+    },
+
+    _scrollToItem : function(item,element){
+      var _self = this;
+
+      if(_self.isScrollVertical()){
+        element = element || _self.findElement(item);
+        var container = _self.getScrollContainer(),
+          top = $(element).position().top,
+          ctop = container.position().top,
+          cHeight = container.height(),
+          distance = top - ctop,
+          height = $(element).height(),
+          scrollTop = container.scrollTop();
+
+        if(distance < 0 || distance > cHeight - height){
+          container.scrollTop(scrollTop + distance);
+        }
+
+      }
     },
     //获取上面一项
     _getUpperItem : function(){
@@ -1339,6 +1376,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    */
   var BUI = require('bui/common'),
     UIBase = BUI.Component.UIBase,
+    UA = BUI.UA,
     DomList = require('bui/list/domlist'),
     KeyNav = require('bui/list/keynav'),
     Sortable = require('bui/list/sortable'),
@@ -1410,10 +1448,6 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
    * @mixins BUI.Component.UIBase.Bindable
    */
   var  simpleList = BUI.Component.Controller.extend([DomList,UIBase.Bindable,KeyNav,Sortable],
-  /**
-   * @lends BUI.List.SimpleList.prototype
-   * @ignore
-   */
   {
     /**
      * @protected
@@ -1434,12 +1468,12 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
           return;
         }
         
-        /*if(_self.get('highlightedStatus') === 'hover'){
+        if(!(UA.ie && UA.ie < 8) && _self.get('focusable') && _self.get('highlightedStatus') === 'hover'){
           _self.setHighlighted(item,element)
         }else{
           _self.setItemStatus(item,'hover',true,element);
-        }*/
-        _self.get('view').setElementHover(element,true);
+        }
+        /*_self.get('view').setElementHover(element,true);*/
 
       }).delegate('.'+itemCls,'mouseout',function(ev){
         if(_self.get('disabled')){ //控件禁用后，阻止事件
@@ -1503,10 +1537,7 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.SimpleList#
-     * @ignore
-     */
+
     {
 
       /**
@@ -1516,6 +1547,9 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
        * cfg {Boolean} frontSortable
        */
       frontSortable : {
+        value : false
+      },
+      focusable : {
         value : false
       },
       /**
@@ -1684,10 +1718,6 @@ define('bui/list/listitem',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.Item#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,
@@ -1732,10 +1762,6 @@ define('bui/list/list',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.List#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,

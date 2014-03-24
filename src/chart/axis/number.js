@@ -144,6 +144,7 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
      * @return {Number} 节点坐标点（单一坐标）x轴的坐标点或者y轴的坐标点
      */
     getOffset : function(value){
+      value = parseFloat(value);
     	var _self = this,
     		offset = _self.getRelativeOffset(value);
 

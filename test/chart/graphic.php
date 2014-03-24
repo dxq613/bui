@@ -10,9 +10,10 @@
    	</div>
   </div>
  
-  <?php $url = 'bui/toolbar'?>
+  <?php $url = 'bui/graphic/canvas,bui/graphic/util'?>
   <?php include("../templates/script.php"); ?>
-	<script type="text/javascript" src="../../src/graphic/raphael/eve.js"></script>
+	<!---->
+  <script type="text/javascript" src="../../src/graphic/raphael/eve.js"></script>
   <script type="text/javascript" src="../../src/graphic/raphael/core.js"></script>
   <script type="text/javascript" src="../../src/graphic/raphael/svg.js"></script>
   <script type="text/javascript" src="../../src/graphic/raphael/vml.js"></script>
@@ -28,5 +29,5 @@
   <script type="text/javascript" src="../../src/graphic/canvas.js"></script>
 
   <script type="text/javascript" src="../specs/chart/graphic-spec.js"></script>
-
+<!---->
 <?php include("../templates/footer.php"); ?>

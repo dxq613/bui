@@ -45,10 +45,7 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
    * @extends BUI.Overlay.Overlay
    */
   var tipItem = Overlay.extend(
-  /**
-   * @lends BUI.Form.TipItem.prototype
-   * @ignore
-   */
+
   {
     initializer : function(){
       var _self = this,
@@ -99,10 +96,6 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Form.TipItem#
-     * @ignore
-     */
     {
       /**
        * 提示的输入框 
@@ -167,10 +160,6 @@ define('bui/form/tips',['bui/common','bui/overlay'],function (require) {
   };
 
   Tips.ATTRS = 
-  /**
-   * @lends BUI.Form.Tips
-   * @ignore
-   */
   {
 
     /**
@@ -1436,7 +1425,7 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
       var _self = this,
         datePicker = _self.get('datePicker');
 
-      if(datePicker.get('showTime')){
+      if(datePicker.showTime || (datePicker.get && datePicker.get('showTime'))){
         return 'yyyy-mm-dd HH:MM:ss';
       }
       return 'yyyy-mm-dd';
@@ -1546,12 +1535,14 @@ define('bui/form/datefield',['bui/common','bui/form/basefield','bui/calendar'],f
     },
     PARSER : {
       datePicker : function(el){
+        var _self = this,
+          cfg = _self.get('datePicker') || {};
         if(el.hasClass('calendar-time')){
-          return {
+          BUI.mix(cfg,{
             showTime : true
-          }
+          }) ;
         }
-        return {};
+        return cfg;
       }
     }
   },{
@@ -2018,7 +2009,7 @@ define('bui/form/listfield',['bui/common','bui/form/basefield','bui/list'],funct
  * @ignore
  */
 
-define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (require) {
+define('bui/form/uploaderfield',['bui/common','bui/form/basefield','bui/form/rules'],function (require) {
 
   var BUI = require('bui/common'),
     JSON = BUI.JSON,
@@ -2244,7 +2235,7 @@ define('bui/form/radiolistfield',['bui/common','bui/form/listfield'],function (r
 ;(function(){
 var BASE = 'bui/form/';
 define(BASE + 'field',['bui/common',BASE + 'textfield',BASE + 'datefield',BASE + 'selectfield',BASE + 'hiddenfield',
-  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',
+  BASE + 'numberfield',BASE + 'checkfield',BASE + 'radiofield',BASE + 'checkboxfield',BASE + 'plainfield',BASE + 'listfield',BASE + 'uploaderfield',
   BASE + 'checklistfield',BASE + 'radiolistfield', BASE + 'textareafield'],function (require) {
   var BUI = require('bui/common'),
     Field = require(BASE + 'basefield');
@@ -2436,6 +2427,17 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
      */
     error : {
 
+    },
+    /**
+     * 暂停验证
+     * <pre><code>
+     *   field.set('pauseValid',true); //可以调用field.clearErrors()
+     *   field.set('pauseValid',false); //可以同时调用field.valid()
+     * </code></pre>
+     * @type {Boolean}
+     */
+    pauseValid : {
+      value : false
     }
   };
 
@@ -2445,12 +2447,13 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
       var _self = this;
       //监听是否禁用
       _self.on('afterDisabledChange',function(ev){
-        var disabled = ev.newVal;
-        if(disabled){
-          _self.clearErrors(false,false);
-        }else{
-          _self.valid();
-        }
+        
+          var disabled = ev.newVal;
+          if(disabled){
+            _self.clearErrors(false,false);
+          }else{
+            _self.valid();
+          }
       });
     },
     /**
@@ -2478,7 +2481,10 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     //验证规则
     validRules : function(rules,value){
       if(!rules){
-        return;
+        return null;
+      }
+      if(this.get('pauseValid')){
+        return null;
       }
       var _self = this,
         messages = _self._getValidMessages(),
@@ -2515,7 +2521,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
 
       error = _self.validRules(_self.get('defaultRules'),value) || _self.validRules(_self.get('rules'),value);
 
-      if(!error){
+      if(!error && !this.get('pauseValid')){
         if(_self.parseValue){
           value = _self.parseValue(value);
         }
@@ -2543,7 +2549,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
     /**
      * 清除错误
      * @param {Boolean} reset 清除错误时是否重置
-     * @param {Boolean} deep 是否清理子控件的错误 
+     * @param {Boolean} [deep = true] 是否清理子控件的错误 
      */
     clearErrors : function(reset,deep){
       deep = deep == null ? true : deep;
@@ -3051,6 +3057,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           if(value == null){
             value = '';
           }
+          field.clearErrors(true);//清理错误
           field.set('value',value);
         }
       },
@@ -3089,7 +3096,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
        * 清除所有表单域的值
        */
       clearFields : function(){
-        this.clearErrors();
+        this.clearErrors(true);
         this.setRecord({})
       },
       /**
@@ -4947,7 +4954,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       var _self = this;
 
       _self.on('valid',function (ev) {
-        if(_self.get('remote') && _self.isValid()){
+        if(_self.get('remote') && _self.isValid() && !_self.get('pauseValid')){
           var value = _self.getControlValue(),
             data = _self.getRemoteParams();
           _self._startRemote(data,value);

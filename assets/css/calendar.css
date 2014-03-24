@@ -580,3 +580,6 @@ input.x-datepicker-time {
   height: 15px;
   width: 20px;
 }
+.bui-datepicker {
+  position: absolute;
+}

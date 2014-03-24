@@ -71,10 +71,6 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
    * @extends BUI.Component.Controller
    */
   var navTab = Component.Controller.extend(
-    /**
-     * @lends BUI.Tab.NavTab.prototype
-     * @ignore
-     */
     {
       /**
        * 添加标签项
@@ -539,11 +535,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     },
     
     {
-      ATTRS : 
-    /**
-      * @lends BUI.Tab.NavTab.prototype
-      * @ignore
-      */    
+      ATTRS :    
     {
         defaultChildClass:{
           value : 'nav-tab-item'

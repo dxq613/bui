@@ -65,10 +65,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   };
 
   store.ATTRS = 
-  /**
-   * @lends BUI.Data.Store#
-   * @ignore
-   */
   {
     /**
      * 保存数据时，是否自动更新数据源的数据，常用于添加、删除、更改数据后重新加载数据。
@@ -294,10 +290,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
   BUI.mixin(store,[Sortable]);
 
   BUI.augment(store,
-  /**
-   * @lends BUI.Data.Store.prototype
-   * @ignore
-   */
   {
     /**
     * 添加记录,默认添加在后面

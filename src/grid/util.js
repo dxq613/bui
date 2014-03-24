@@ -18,10 +18,6 @@ define('bui/grid/format',function (require) {
      * @singleton
      */
     var Format =
-    /** 
-    * @lends BUI.Grid.Format 
-    * @ignore
-    */
     {
         /**
          * 日期格式化函数

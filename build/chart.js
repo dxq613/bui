@@ -101,7 +101,7 @@ define('bui/chart/activedgroup',function  (require) {
 	};
 
 	Group.ATTRS = {
-
+		
 	};
 
 	BUI.augment(Group,{
@@ -136,6 +136,23 @@ define('bui/chart/activedgroup',function  (require) {
 				item.clearActived();
 			}
 		},
+		
+		/**
+		 * @protected
+		 * 触发激活事件
+		 * @param  {Object} item 可激活的子项
+		 */
+		onActived : function(item){
+			this.fireUpGroup('actived',item);
+		},
+		/**
+		 * @protected
+		 * 触发取消激活事件
+		 * @param  {Object} item 可激活的子项
+		 */
+		onUnActived : function(item){
+			this.fireUpGroup('unactived',item);
+		},
 		/**
 		 * 设置激活的元素
 		 * @param {BUI.Chart.Actived} item 可以被激活的元素
@@ -146,6 +163,7 @@ define('bui/chart/activedgroup',function  (require) {
 			_self.clearActivedItem();
 			if(item && !_self.isItemActived(item)){
 				_self.setItemActived(item,true);
+				_self.onActived();
 			}
 			
 		},
@@ -173,7 +191,11 @@ define('bui/chart/activedgroup',function  (require) {
 		clearActivedItem : function(item){
 			var _self = this;
 			item = item || _self.getActived();
-			item && _self.setItemActived(item,false);
+			if(item){
+				_self.setItemActived(item,false);
+				_self.onUnActived(item);
+			}
+				 
 		}
 
 	});
@@ -420,15 +442,25 @@ define('bui/chart/labels',['bui/common','bui/chart/plotitem','bui/graphic'],func
 				index = BUI.Array.indexOf(label,_self.get('children')),
 				cfg = _self._getLabelCfg(item,index);
 			if(label){
-				if(Util.svg && _self.get('animate')){
-					label.attr('text',cfg.text);
-					label.animate({
-						x : cfg.x,
-						y : cfg.y
-					},_self.get('duration'));
-				}else{
-					label.attr(cfg);
+				label.attr('text',cfg.text);
+				if(label.attr('x') != cfg.x || label.attr('y') != cfg.y){
+					if(Util.svg && _self.get('animate') && !cfg.rotate){
+						if(cfg.rotate){
+							label.attr('transform','');
+						}
+						
+						label.animate({
+							x : cfg.x,
+							y : cfg.y
+						},_self.get('duration'));
+					}else{
+						label.attr(cfg);
+						if(cfg.rotate){
+							label.attr('transform',BUI.substitute('r{rotate} {x} {y}',cfg));
+						}
+					}
 				}
+				
 			}
 		},
 		/**
@@ -1290,9 +1322,9 @@ define('bui/chart/plotback',['bui/common','bui/chart/plotitem'],function (requir
 			}
 			if(BUI.isArray(margin)){
 				top = margin[0];
-				right = margin[1];
-				bottom = margin[2] || margin[0];
-				left = margin[3] || margin[1];
+				right = margin[1] != null ? margin[1] : margin[0];
+				bottom = margin[2] != null ? margin[2] : margin[0];
+				left = margin[3] != null ? margin[3] : right;
 			}
 
 			start = canvas.getRelativePoint(left,height - bottom);
@@ -1317,7 +1349,7 @@ define('bui/chart/plotitem',['bui/common','bui/graphic'],function (require) {
 		Graphic = require('bui/graphic');
 
 	function initClassAttrs(c){
-    if(c._attrs || c == Item){
+    if(c._attrs || c == Graphic.Group){
       return;
     }
 
@@ -1341,6 +1373,25 @@ define('bui/chart/plotitem',['bui/common','bui/graphic'],function (require) {
 		initClassAttrs(this.constructor);
 		Item.superclass.constructor.call(this,cfg);
 	};
+
+  Item.ATTRS = {
+    /**
+     * 活动子项的名称，用于组成 itemactived,itemunactived的事件
+     * @protected
+     * @type {String}
+     */
+    itemName : {
+      value : 'item'
+    },
+    /**
+     * 所属分组的名称,用于事件中标示父元素
+     * @protected
+     * @type {String}
+     */
+    groupName : {
+      value : ''
+    }
+  };
 
 	BUI.extend(Item,Graphic.Group);
 
@@ -1374,7 +1425,39 @@ define('bui/chart/plotitem',['bui/common','bui/graphic'],function (require) {
         }
       }
 			return rst;
-		}
+		},
+    /**
+     * 在顶层图表控件上触发事件
+     * @param {String} name 事件名称
+     * @param  {Object} ev 事件对象
+     */
+    fireUp : function(name,ev){
+      var _self = this,
+        canvas = _self.get('canvas'),
+        chart = canvas.chart;
+      if(chart){
+        ev.target = ev.target || chart;
+        chart.fire(name,ev);
+      }
+    },
+    /**
+     * @protected
+     * 在分组上触发事件
+     * @param  {String} name 事件名称
+     * @param  {Object} item 触发事件的子项
+     * @param  {Object} obj  事件对象
+     */
+    fireUpGroup : function(name,item,obj){
+      var _self = this,
+        itemName = _self.get('itemName'),
+        groupName = _self.get('groupName');
+      obj = obj || {};
+      obj[itemName] =  item;
+      if(groupName){
+        obj[groupName] = _self.get('parent')
+      }
+      _self.fireUp(itemName.toLowerCase() + name,obj);
+    }
 	});
 
 	return Item;
@@ -1869,9 +1952,15 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		getInnerBox : function(){
 			var _self = this,
 				textGroup = _self.get('textGroup'),
+				titleShape = _self.get('titleShape'),
 				bbx = textGroup.getBBox(),
-				rst = {};
-			rst.width = bbx.x + bbx.width + 8;
+				rst = {},
+				width = bbx.width;
+			if(titleShape){
+				var tbox = titleShape.getBBox();
+				width = Math.max(width,tbox.width);
+			}
+			rst.width = bbx.x + width + 8;
 			rst.height = bbx.height + bbx.y + 10;
 
 			return rst;
@@ -1979,6 +2068,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 			var _self = this,
 				bbox = _self.getInnerBox(),
 				borderShape = _self.get('borderShape');
+
 
 			borderShape.attr({
 				width : bbox.width,
@@ -3018,7 +3108,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
             }
             gridGroup = _self.get('gridGroup');
 
-            gridGroup.change(grid.items);
+            gridGroup && gridGroup.change(grid.items);
         },
         //移除控件前移除对应的grid和labels
         remove : function(){
@@ -3143,6 +3233,7 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
 
   //分析数组
   function analyze(arr){
+  
     var max = arr[0],
       min = arr[0],
       avg,
@@ -3261,7 +3352,9 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
       }
     }
 
+
     if(isNull(min) || isNull(max) || isNull(interval)){
+
       var rst = analyzeData(data,null,stacked);
 
       //计算max
@@ -3680,6 +3773,7 @@ define('bui/chart/numberaxis',['bui/chart/baseaxis','bui/common','bui/graphic'],
      * @return {Number} 节点坐标点（单一坐标）x轴的坐标点或者y轴的坐标点
      */
     getOffset : function(value){
+      value = parseFloat(value);
     	var _self = this,
     		offset = _self.getRelativeOffset(value);
 
@@ -4002,6 +4096,14 @@ define('bui/chart/grid',['bui/common','bui/chart/plotitem'],function (require) {
       		gridLine.attr('path',cfg.path);
       	}
       	
+      }else if(items && items.length){
+      	var lineCfg;
+      	if(cls == CLS_GRID + '-line'){
+      		lineCfg = _self.get('line');
+      	}else{
+      		lineCfg = _self.get('minorLine');
+      	}
+      	_self._drawGridLines(items,lineCfg,cls);
       }
 		},
 		_linesToPath : function(items,lineCfg){
@@ -4212,6 +4314,21 @@ define('bui/chart/circleaxis',['bui/common','bui/graphic','bui/chart/abstractaxi
           'stroke' : '#C0D0E0'
         }
       } 
+    },
+    formatter : {
+      value : function(value){
+        var _self = this,
+          ticks = _self.get('ticks');
+        if(BUI.isNumber(value)){
+          var index = BUI.Array.indexOf(value,ticks);
+          if(index == -1){
+            var avg = _self.getTickAvgAngle();
+            index =parseInt(value / avg,10) ;
+            value = ticks[index];
+          }
+        }
+        return value;
+      }
     }
   };
 
@@ -4652,7 +4769,11 @@ define('bui/chart/categoryaxis',['bui/chart/baseaxis','bui/common'],function (re
             var _self = this,
                 ticks = [];
             ticks = ticks.concat(info.categories);
-            ticks.push(' ');
+            if(ticks.length){
+               ticks.push(' '); 
+            }
+            
+            _self.set('categories',info.categories);
             _self.set('ticks',ticks);
         },
 		/**
@@ -4832,7 +4953,8 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
      * @type {Array}
      */
     data : {
-
+      value : [],
+      shared : false
     },
     /**
      * 渲染时就绘制图形
@@ -4871,6 +4993,22 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
      */
     yField : {
       value : 'y'
+    },
+    /**
+     * 活动子项的名称，用于组成 itemactived,itemunactived的事件
+     * @protected
+     * @type {String}
+     */
+    itemName : {
+      value : 'seriesItem'
+    },
+    /**
+     * 所属分组的名称,用于事件中标示父元素
+     * @protected
+     * @type {String}
+     */
+    groupName : {
+      value : 'series'
     }
 
   };
@@ -4982,7 +5120,7 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
           first = labels.getChildAt(0);
           first && first.remove();
         }
-      }
+      }/**/
     },
     /**
      * 获取对应坐标轴上的数据
@@ -5145,13 +5283,15 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       var _self = this,
         points = _self.getPoints();
 
-      if(_self.get('isPaint')){
+      if(_self.get('isPaint') || !_self.get('data').length){ //没有数据时不做渲染
         return;
       }
+      _self.set('painting',true);//正在绘制，防止再绘制过程中触发重绘
       _self.draw(points,function(){
         _self.sort();
       });
       _self.set('isPaint',true);
+      _self.set('painting',false);
     },
     /**
      * 重绘
@@ -5163,6 +5303,12 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
         points;
 
       _self.set('points',null);
+      if(!_self.get('isPaint') && !_self.get('painting')){
+        _self.paint();
+        return;
+      }
+
+      
       points = _self.getPoints();
 
       if(labels){
@@ -5174,7 +5320,11 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       _self.changeShapes(points);
       BUI.each(points,function(point){
         if(labels){
-          labels.items.push(point.value);
+          var item = {};
+          item.text = point.value;
+          item.x = point.x;
+          item.y = point.y;
+          labels.items.push(item);
         }
         if(markers){
           markers.items.push(point);
@@ -5488,12 +5638,13 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
     bindItemClick : function(){
       var _self = this,
         cancelSelect = _self.get('cancelSelect');
-      if(_self.get('allowPointSelect')){
-        _self.on('click',function(ev){
-          var target = ev.target,
-            shape = target.shape,
-            selected;
-          if(shape && shape.isSeriesItem){
+      
+      _self.on('click',function(ev){
+        var target = ev.target,
+          shape = target.shape,
+          selected;
+        if(shape && shape.isSeriesItem){
+          if(_self.get('allowPointSelect')){
             selected = shape.get('selected');
             if(cancelSelect && selected){
               _self.clearSelected(shape)
@@ -5501,8 +5652,9 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
               _self.setSelected(shape);
             }
           }
-        });
-      }
+          _self.fireUpGroup('click',shape);
+        }
+      });
     },
     /**
      * 设置选中
@@ -5513,7 +5665,71 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       if(!_self.isSelected(item)){
         _self.clearSelected();
         _self.setItemSelected(item,true);
+        _self.onSelected(item);
       }
+    },
+    /**
+     * @protected
+     * points 发生改变时
+     */
+    changePoints : function(points){
+      var _self = this,
+        items = _self.getItems(),
+        animate = _self.get('animate');
+
+      points = points || _self.getPoints();
+
+      //修改现有的path
+      BUI.each(items,function(item,index){
+        var point = points[index],
+          prePoint,
+          path;
+        if(point){
+          prePoint = item.get('point');
+          item.set('point',point);
+          item.set('prePoint',prePoint);
+
+          if(!animate){
+            path = _self.pointToPath(point);
+            item.attr('path',path);
+          }else{
+            _self.animateItem(item,prePoint);
+          }
+          
+        }
+      });
+
+      var count = points.length,
+        length = items.length;
+
+      //大于现有的点
+      for (var i = length; i < count; i++) {
+        var shape = _self.addItem(points[i],i);
+
+        animate && _self.animateItem(shape,items[length - 1].get('prePoint'));
+      }
+
+      //小于现有的点
+      for(var i = length - 1; i >= count; i--){
+        var item = items[i];
+        item.remove();
+      }
+
+    },
+    
+    /**
+     * @protected
+     * 触发选中事件
+     */
+    onSelected : function(item){
+      this.fireUpGroup('selected',item);
+    },
+    /**
+     * @protected
+     * 触发移除选中
+     */
+    onUnSelected : function(item){
+      this.fireUpGroup('unselected',item);
     },
     /**
      * 清除选中
@@ -5524,6 +5740,7 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       item = item || _self.getSelected();
       if(item){
         _self.setItemSelected(item,false);
+        _self.onUnSelected(item);
       }
     },
     /**
@@ -5581,7 +5798,9 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
      * @return {Array} 子项集合
      */
     getItems : function(){
-      return this.get('group').get('children');
+      var group = this.get('group');
+
+      return group ? group.get('children') : [];
     },
     /**
      * 生成动画
@@ -5599,6 +5818,19 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
           item.attr('path',path);
         });
       },callback);
+    },
+    /**
+     * 执行单个点的动画
+     * @protected
+     */
+    animateItem : function(item,prePoint){
+      var _self = this,
+        point = item.get('point'),
+        path = _self.pointToPath(point);
+
+      item.animate({
+        path : path
+      },_self.get('changeDuration'));
     },
     /**
      * 删除子项
@@ -6220,6 +6452,9 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
     },
     //将点转换成Path
     points2path : function(points){
+      if(!points.length){
+        return '';
+      }
       var _self = this,
         smooth = _self.get('smooth'),
         connectNulls = _self.get('connectNulls'),
@@ -6253,6 +6488,9 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
     },
     //获取tracker的路径，增加触发事件的范围
     points2tracker : function(points){
+      if(!points.length){
+        return '';
+      }
       var _self = this,
         tolerance = _self.get('tolerance'),
         first = points[0],
@@ -6686,7 +6924,7 @@ define('bui/chart/scatterseries',['bui/chart/cartesianseries','bui/chart/actived
  * @ignore
  */
 
-define('bui/chart/bubbleseries',['bui/chart/cartesianseries'],function (require) {
+define('bui/chart/bubbleseries',['bui/common','bui/chart/cartesianseries','bui/graphic','bui/chart/activedgroup'],function (require) {
   
   var BUI = require('bui/common'),
     Cartesian = require('bui/chart/cartesianseries'),
@@ -7138,25 +7376,11 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
       _self.set('columnWidth',width);
       _self.set('columnOffset',offset)
     },
-    changeShapes : function(){
-      var _self = this,
-        items = _self.getItems(),
-        points = _self.get('points');
-      _self.resetWidth();
-      BUI.each(items,function(item,index){
-        var point = points[index],
-          path = _self.pointToPath(point);
+    changeShapes : function(points){
+      var _self = this;
 
-        item.set('point',point);
-        item.animate({
-          path : path
-        },_self.get('changeDuration'));
-      });
-      var count = points.length,
-        length = items.length;
-      for (var i = length; i < count; i++) {
-        _self._drawPoint(points[i],i);
-      };
+      _self.resetWidth();
+      _self.changePoints(points);
     },
     getActiveItems : function(){
       return this.getItems();
@@ -7250,10 +7474,6 @@ define('bui/chart/columnseries',['bui/common','bui/graphic','bui/chart/activedgr
           ir = point.ir || 0; 
 
         r = r * factor;
-
-        /*if(_self.isStacked() && point.lowY){ //层叠图
-          ir = xAxis.getDistance(point.lowX,point.lowY);
-        }*/
         ir = ir * factor;
         path = getPiePath(startAngle,endAngle,r,ir,xAxis);
 
@@ -7518,7 +7738,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       var _self = this,
         selectedPoint;
       BUI.each(points,function(point,index){
-        _self.formatPoint(point);
+        _self.formatPoint(point,index);
         var item = _self.addItem(point,index);
         if(point.obj && point.obj.selected){
           selectedPoint = item;
@@ -7540,6 +7760,21 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         }
       }
     },
+    /**
+     * @protected
+     * 内部图形发生改变
+     */
+    changeShapes : function(points,animate){
+      var _self = this;
+
+      BUI.each(points,function(point,index){
+        _self.formatPoint(point,index);
+      });
+
+      _self.changePoints(points);
+
+    },
+    //处理labels
     processLabels : function(points){
       var _self = this,
         labelsGroup = _self.get('labelsGroup'),
@@ -7586,6 +7821,20 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         });
       }
       
+    },
+    /**
+     * 设置labels
+     * @param  {Array} items items的配置信息
+     */
+    resetLabels : function(){
+      var _self = this,
+        labelsGroup = _self.get('labelsGroup'),
+        lineGroup = _self.get('lineGroup');
+      if(labelsGroup){
+        labelsGroup.clear();
+        lineGroup && lineGroup.clear();
+        _self.processLabels(_self.getPoints());
+      }
     },
     lineToLabel : function(label,r,distance){
       var _self = this,
@@ -7762,10 +8011,9 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       if(cfg && cfg.attrs){
         BUI.mix(rst,cfg.attrs);
       }
-      if(!rst.fill){
-        rst.fill = _self._getColor(index);
-      }
-      point.color = rst.fill;
+      //if(!rst.fill){
+        rst.fill = point.color;
+      //}
       if(_self.get('allowPointSelect')){
         rst.cursor = 'pointer';
       }
@@ -7785,7 +8033,7 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
       return color;
     },
     //格式化节点
-    formatPoint : function(point){
+    formatPoint : function(point,index){
       var _self = this,
         points = _self.getVisiblePoints(),
         percent = _self._getPiePercent(point,points),
@@ -7794,6 +8042,10 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         totalAngle = endAngle - startAngle,
         rst = {};
       point.percent = percent.percent;
+      if(point.obj && point.obj.attrs){
+        point.color = point.obj.attrs.fill;
+      }
+      point.color =  point.color || _self._getColor(index);
       point.prePercent = percent.prePercent;
       point.startAngle = startAngle + totalAngle * percent.prePercent;
       point.endAngle = startAngle + totalAngle * (point.prePercent + point.percent);
@@ -7826,9 +8078,11 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
     getVisiblePoints : function(){
       var _self = this,
         visiblePoints;
+
+      return _self.getPoints();
       //未渲染，则调用初始化时的点信息
-      if(!_self.get('isPaint')){
-        return _self.getPoints();
+      /*if(!_self.get('isPaint')){
+        
       }
 
       visiblePoints = _self.get('visiblePoints');
@@ -7839,11 +8093,50 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         items = _self.getItems();
       BUI.each(items,function(item){
         if(item.get('visible')){
-          points.push(item);
+          points.push(item.get('point'));
         }
       });
       _self.set('visiblePoints',points);
       return points;
+      */
+    },
+    /**
+     * 执行单个点的动画
+     * @protected
+     */
+    animateItem : function(item,prePoint){
+      var _self = this,
+        curPoint = item.get('point'),
+        startAngle = curPoint.startAngle,
+        endAngle = curPoint.endAngle,
+        isPre = prePoint == item.get('prePoint'),
+        preStart = isPre ? prePoint.startAngle : prePoint.endAngle,
+        preEnd = isPre ? prePoint.endAngle : prePoint.endAngle;
+      var animHadler = item.get('animHadler');
+      if(animHadler){
+        Util.stopStep(animHadler);
+      }
+      animHadler = Util.animStep(_self.get('changeDuration'),function(factor){
+        var path,
+          curStart,
+          curEnd;
+        if(isPre){
+          curStart = preStart + (startAngle - preStart) * factor;
+          curEnd = preEnd + (endAngle - preEnd) * factor
+          
+        }else{
+          curStart = preStart - (preStart - startAngle) * factor;
+          curEnd = preEnd - (preEnd - endAngle) * factor;
+        }
+        path = _self._getPiePath(curStart,curEnd);
+       
+        item.attr('path',path);
+        if(_self.isSelected(item)){
+          var offset = _self._getOffset(curStart,curEnd,10);
+          item.attr('transform' ,'t'+ offset.x +' '+offset.y);
+        }
+      });
+      item.set('animHadler',animHadler);
     },
     /**
      * @protected
@@ -8073,6 +8366,21 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      */
     stackedData : {
 
+    },
+    /**
+     * 可以设置数据序列共同的数据源
+     * @type {Array}
+     */
+    data : {
+
+    },
+    /**
+     * 活动子项的名称，用于组成 itemactived,itemunactived的事件
+     * @protected
+     * @type {String}
+     */
+    itemName : {
+      value : 'series'
     }
 
   };
@@ -8344,6 +8652,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }else if(!axis.ticks && type != 'circle'){
         axis.autoTicks = true; //标记是自动计算的坐标轴
       }
+      if(type == 'category' && !axis.categories){
+        axis.autoTicks = true; //标记是自动计算的坐标轴
+      }
       axis.plotRange = _self.get('plotRange');
       axis.autoPaint = false;  //暂时不绘制坐标轴，需要自动生成坐标轴
 
@@ -8357,6 +8668,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     },
     //获取y轴的坐标点
     _caculateAxisInfo : function(axis,name){
+      if(axis.get('type') == 'category'){
+        return this._caculateCategories(axis,name);
+      }
       var _self = this,
         data = [],
         type = axis.get('type'),
@@ -8368,7 +8682,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         min,
         max,
         interval,
-        autoUtil;
+        autoUtil,
+        rst;
         if(type == 'number' || type == 'radius') {
           min = axis.getCfgAttr('min');
           max = axis.getCfgAttr('max');
@@ -8405,12 +8720,40 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }else{
         data = _self.getSeriesData(axis,name);
       }
-      cfg.data = data;
+      if(data.length){
+        cfg.data = data;
 
-      var rst =  autoUtil.caculate(cfg,stackType);
+        rst =  autoUtil.caculate(cfg,stackType);
+      }else{
+        rst = {
+          ticks : []
+        };
+      }
+      
 
       return rst;
 
+    },
+    _caculateCategories : function(axis,name){
+      var _self = this,
+        data = _self.getSeriesData(axis,name),
+        categories = [];
+        if(data.length){
+          categories = categories.concat(data[0]);
+        }
+      if(data.length > 1 && !_self.get('data')){ //不共享data时
+        for (var i = 1; i < data.length; i++) {
+          var arr = data[i];
+          BUI.each(arr,function(value){
+            if(!BUI.indexOf(value)){
+              categories.push(value);
+            }
+          });
+        };
+      }
+      return {
+        categories : categories
+      };
     },
     /**
      * 获取数据序列的数据
@@ -8428,11 +8771,23 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
       BUI.each(series,function(item){
         if(item.get(name) == axis){
-          data.push(item.getData(name));
+          var arr = item.getData(name);
+          if(arr.length){
+            data.push(arr);
+          }
+          
         }
       });
 
       return data;
+    },
+    //转换数据,将json转换成数组
+    _parseData : function(obj,fields){
+      var rst = [];
+      BUI.each(fields,function(key){
+        rst.push(obj[key]);
+      });
+      return rst;
     },
     /**
      * @protected
@@ -8481,8 +8836,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         if(_self._hasRelativeSeries(item,name)){
           if(item.get('autoTicks')){
             var info = _self._caculateAxisInfo(item,name);
-            item.set('tickInterval',info.interval);
-            item.set('ticks',info.ticks);
+            item.changeInfo(info);
+            
           }
           
           item.paint();
@@ -8491,6 +8846,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       });
       
     },
+    //是否存在关联的数据序列
     _hasRelativeSeries : function(axis,name){
       var _self = this,
         series = _self.getVisibleSeries(),
@@ -8508,6 +8864,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     //数据变化或者序列显示隐藏引起的坐标轴变化
     _resetAxis : function(axis,type){
 
+      if(!axis.get('autoTicks')){
+        return;
+      }
       type = type || 'yAxis';
 
       var _self = this,
@@ -8516,9 +8875,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
       _self.set('stackedData',null);
       //如果是非自动计算坐标轴，不进行重新计算
-      if(!axis.get('autoTicks')){
-        return;
-      }
+      
       axis.change(info);
     },
     _resetSeries : function(){
@@ -8548,6 +8905,43 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         }
       }
       _self._resetSeries();
+    },
+    /**
+     * 改变数据
+     * @param  {Array} data 数据
+     */
+    changeData : function(data){
+      var _self = this,
+        series = _self.getSeries(),
+        fields = _self.get('fields');
+
+      _self.set('data',data);
+
+      BUI.each(series,function(item,index){
+        if(fields){
+          var arr = _self._getSeriesData(item.get('name'),index);
+          item.changeData(arr);
+        }else{
+          item.changeData(data);
+        }
+      });
+      _self.repaint();
+    },
+    //根据series获取data
+    _getSeriesData : function(name,index){
+      var _self = this,
+        data = _self.get('data'),
+        fields = _self.get('fields'),
+        obj = data[index];
+      if(name){
+        BUI.each(data,function(item){
+          if(item.name == name){
+            obj = item;
+            return false;
+          }
+        });
+      }
+      return _self._parseData(obj,fields);
     },
     //获取默认的类型
     _getDefaultType : function(){
@@ -8661,6 +9055,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       var _self = this,
         seriesCfg = _self.get('seriesOptions'),
         colors = _self.get('colors'),
+        data = _self.get('data'),
+        fields = _self.get('fields'),
         symbols = _self.get('symbols');
 
       item = BUI.mix(true,{},seriesCfg[type + 'Cfg'],item);
@@ -8672,6 +9068,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       //marker的形状
       if(item.markers && item.markers.marker && !item.markers.marker.symbol){
         item.markers.marker.symbol = symbols[index % symbols.length];
+      }
+      if(data && !item.data){
+        if(fields){
+          item.data = _self._getSeriesData(item.name,index);
+        }else{
+          item.data = data;
+        }
+        
       }
       
       return item;
@@ -8698,7 +9102,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
  * @fileOverview 图表控件
  * @ignore
  */
-define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/chart/theme'],function (require) {
+define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/chart/theme','bui/chart/seriesgroup'],function (require) {
   
   var BUI = require('bui/common'),
     PlotBack = require('bui/chart/plotback'),
@@ -8729,8 +9133,9 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
    * @class BUI.Chart.Chart
    * 图，里面包括坐标轴、图例等图形
    * @extends BUI.Component.Controller
+   * @mixins BUI.Component.UIBase.Bindable
    */
-  var Chart = BUI.Component.Controller.extend({
+  var Chart = BUI.Component.Controller.extend([BUI.Component.UIBase.Bindable],{
 
     renderUI : function(){
       var _self = this;
@@ -8770,7 +9175,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
           height :height,
           render : el
         });
-
+      canvas.chart = _self;
       _self.set('canvas',canvas);
     },
     //渲染背景、边框等
@@ -8799,7 +9204,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       if(title){
         if(title.x == null){
           title.x = canvas.get('width')/2;
-          title.y = 15;
+          title.y = title.y || 15;
         }
         title = BUI.mix({},theme.title,title);
         canvas.addShape('label',title);
@@ -8807,7 +9212,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       if(subTitle){
         if(subTitle.x == null){
           subTitle.x = canvas.get('width')/2;
-          subTitle.y = 35;
+          subTitle.y = subTitle.y || 35;
         }
         subTitle = BUI.mix({},theme.subTitle,subTitle);
         canvas.addShape('label',subTitle);
@@ -8840,6 +9245,7 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
       BUI.mix(true,cfg,theme,{
         colors :  attrs.colors,
         data : attrs.data,
+        fields : attrs.fields,
         plotRange : attrs.plotRange,
         series : attrs.series,
         seriesOptions : attrs.seriesOptions,
@@ -8875,6 +9281,39 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
      */
     getSeries : function(){
       return this.get('seriesGroup').getSeries();
+    },
+     /**
+     * 改变数据
+     * @param  {Array} data 数据
+     */
+    changeData : function(data){
+      var _self = this,
+        group = _self.get('seriesGroup');
+      if(data !== _self.get('data')){
+        _self.set('data',data);
+      }
+      group.changeData(data);
+    },
+    //加载完成数据
+    onLoad : function(){
+      var _self = this,
+        store = _self.get('store'),
+        data = store.getResult();
+      _self.changeData(data);
+    },
+    //添加数据
+    onAdd : function(e){
+      this.onLoad();
+    },
+    //移除数据
+    onRemove : function(e){
+      this.onLoad();
+    },
+    onUpdate : function(e){
+      this.onLoad();
+    },
+    onLocalSort : function(e){
+      this.onLoad();
     },
     destructor : function(){
       var _self = this;
@@ -8988,12 +9427,90 @@ define('bui/chart/chart',['bui/common','bui/graphic','bui/chart/plotback','bui/c
 
       },
       /**
+       * 数据中使用的字段，用于转换数据使用例如： 
+       *  - fields : ['intelli','force','political','commander']
+       *  - 数据：
+       * <pre><code>
+       * [
+       *  {"name" : "张三","intelli":52,"force":90,"political":35,"commander" : 85},
+       *   {"name" : "李四","intelli":95,"force":79,"political":88,"commander": 72},
+       *  {"name" : "王五","intelli":80,"force":42,"political":92,"commander": 50}
+       * ]
+       * </code></pre>
+       *  - 转换成
+       *  <pre><code>
+       * [
+       *   [52,90,35,85],
+       *   [95,79,88,72],
+       *   [80,42,92,50]
+       * ]
+       * </code></pre>
+       * @type {Array}
+       */
+      fields : {
+        
+      },
+      /**
        * 应用的样式
        * @type {Object}
        */
       theme : {
         value : Theme.Base
       }
+      /**
+       * @event seriesactived
+       * 数据序列激活
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesunactived
+       * 数据序列取消激活
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemactived
+       * 数据序列的子项激活，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemunactived
+       * 数据序列的子项取消激活，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemclick
+       * 数据序列的子项的点击，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemselected
+       * 数据序列的子项选中，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
+      /**
+       * @event seriesitemunselected
+       * 数据序列的子项取消选中，一般用于饼图和柱状图
+       * @param {Object} ev 事件对象
+       * @param {BUI.Chart.Series} ev.seriesItem 数据序列子项
+       * @param {BUI.Chart.Series} ev.series 数据序列对象
+       */
+      
     }
   },{
     xclass : 'chart'

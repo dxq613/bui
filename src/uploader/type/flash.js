@@ -149,7 +149,7 @@ define('bui/uploader/type/flash',['./base'], function (require) {
          * 服务器端路径，留意flash必须是绝对路径
          */
         url:{
-            getter:function(v){
+            setter: function(v){
                 var reg = /^http/;
                 //不是绝对路径拼接成绝对路径
                 if(!reg.test(v)){
@@ -166,9 +166,6 @@ define('bui/uploader/type/flash',['./base'], function (require) {
                 }
                 return v;
             }
-        },
-        fileDataName: {
-            value: 'Filedata'
         },
         /**
          * ajbridge的uploader组件的实例，必须参数

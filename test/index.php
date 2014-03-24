@@ -71,7 +71,7 @@
       },{
         text : 'Tree',
         children : [
-          'treestore','tree','treemenu','treegrid'
+          'treestore','tree','treemenu','treegrid','treepicker'
         ]
       },{
         text : 'layout',
@@ -94,7 +94,8 @@
           {text : '散列图',href : 'chart/scatter.php'},
           {text : '气泡图',href : 'chart/bubble.php'},
           {text : '雷达图',href : 'chart/radar.php'},
-          {text : '动态图',href : 'chart/dynamic.php'}
+          {text : '动态图',href : 'chart/dynamic.php'},
+          {text : '使用store',href : 'chart/data-chart.php'}
         ]
       },
       {

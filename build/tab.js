@@ -392,10 +392,6 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
    * @extends BUI.Component.Controller
    */
   var navTabItem = Component.Controller.extend(
-  /**
-   * @lends BUI.Tab.NavTabItem.prototype
-   * @ignore
-   */
   {
     /**
      * 创建DOM
@@ -506,10 +502,6 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Tab.NavTabItem#
-     * @ignore
-     */
     {
       elTagName : {
         value: 'li'
@@ -702,10 +694,6 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
    * @extends BUI.Component.Controller
    */
   var navTab = Component.Controller.extend(
-    /**
-     * @lends BUI.Tab.NavTab.prototype
-     * @ignore
-     */
     {
       /**
        * 添加标签项
@@ -1170,11 +1158,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     },
     
     {
-      ATTRS : 
-    /**
-      * @lends BUI.Tab.NavTab.prototype
-      * @ignore
-      */    
+      ATTRS :    
     {
         defaultChildClass:{
           value : 'nav-tab-item'

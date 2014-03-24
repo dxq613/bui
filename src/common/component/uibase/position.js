@@ -100,10 +100,6 @@ define('bui/component/uibase/position',function () {
     }
 
     Position.ATTRS =
-    /**
-     * @lends BUI.Component.UIBase.Position#
-     * @ignore
-     */
     {
         /**
          * 水平坐标
@@ -223,10 +219,6 @@ define('bui/component/uibase/position',function () {
 
 
     Position.prototype =
-    /**
-     * @lends BUI.Component.UIBase.Position.prototype
-     * @ignore
-     */
     {
         /**
          * Move to absolute position.

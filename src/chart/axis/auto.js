@@ -108,6 +108,7 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
 
   //分析数组
   function analyze(arr){
+  
     var max = arr[0],
       min = arr[0],
       avg,
@@ -226,7 +227,9 @@ define('bui/chart/axis/auto',['bui/graphic'],function  (require) {
       }
     }
 
+
     if(isNull(min) || isNull(max) || isNull(interval)){
+
       var rst = analyzeData(data,null,stacked);
 
       //计算max

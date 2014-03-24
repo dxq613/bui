@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/chart/bubbleseries',['bui/chart/cartesianseries'],function (require) {
+define('bui/chart/bubbleseries',['bui/common','bui/chart/cartesianseries','bui/graphic','bui/chart/activedgroup'],function (require) {
   
   var BUI = require('bui/common'),
     Cartesian = require('bui/chart/cartesianseries'),

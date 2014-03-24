@@ -82,6 +82,21 @@ define('bui/chart/circleaxis',['bui/common','bui/graphic','bui/chart/abstractaxi
           'stroke' : '#C0D0E0'
         }
       } 
+    },
+    formatter : {
+      value : function(value){
+        var _self = this,
+          ticks = _self.get('ticks');
+        if(BUI.isNumber(value)){
+          var index = BUI.Array.indexOf(value,ticks);
+          if(index == -1){
+            var avg = _self.getTickAvgAngle();
+            index =parseInt(value / avg,10) ;
+            value = ticks[index];
+          }
+        }
+        return value;
+      }
     }
   };
 

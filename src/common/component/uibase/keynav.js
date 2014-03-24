@@ -71,19 +71,19 @@ define('bui/component/uibase/keynav',['bui/keycode'],function (require) {
       
       switch(code){
         case KeyCode.UP :
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavUp(ev);
           break;
         case KeyCode.DOWN : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavDown(ev);
           break;
         case KeyCode.RIGHT : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavRight(ev);
           break;
         case KeyCode.LEFT : 
-          //ev.preventDefault();
+          ev.preventDefault();
           _self.handleNavLeft(ev);
           break;
         case KeyCode.ENTER : 

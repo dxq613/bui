@@ -140,6 +140,7 @@
   border: 1px solid #c3c3d6;
   background-color: #ffffff;
   padding: 2px 0;
+  position: absolute;
 }
 .bui-pop-menu .bui-menu-item {
   padding: 3px 15px;

@@ -60,11 +60,10 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Select.Combox#
-     * @ignore
-     */
     {
+      /*focusable : {
+        value : false
+      },*/
       /**
        * 控件的模版
        * @type {String}

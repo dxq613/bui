@@ -76,7 +76,8 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
      * @type {Array}
      */
     data : {
-
+      value : [],
+      shared : false
     },
     /**
      * 渲染时就绘制图形
@@ -115,6 +116,22 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
      */
     yField : {
       value : 'y'
+    },
+    /**
+     * 活动子项的名称，用于组成 itemactived,itemunactived的事件
+     * @protected
+     * @type {String}
+     */
+    itemName : {
+      value : 'seriesItem'
+    },
+    /**
+     * 所属分组的名称,用于事件中标示父元素
+     * @protected
+     * @type {String}
+     */
+    groupName : {
+      value : 'series'
     }
 
   };
@@ -226,7 +243,7 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
           first = labels.getChildAt(0);
           first && first.remove();
         }
-      }
+      }/**/
     },
     /**
      * 获取对应坐标轴上的数据
@@ -389,13 +406,15 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       var _self = this,
         points = _self.getPoints();
 
-      if(_self.get('isPaint')){
+      if(_self.get('isPaint') || !_self.get('data').length){ //没有数据时不做渲染
         return;
       }
+      _self.set('painting',true);//正在绘制，防止再绘制过程中触发重绘
       _self.draw(points,function(){
         _self.sort();
       });
       _self.set('isPaint',true);
+      _self.set('painting',false);
     },
     /**
      * 重绘
@@ -407,6 +426,12 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
         points;
 
       _self.set('points',null);
+      if(!_self.get('isPaint') && !_self.get('painting')){
+        _self.paint();
+        return;
+      }
+
+      
       points = _self.getPoints();
 
       if(labels){
@@ -418,7 +443,11 @@ define('bui/chart/baseseries',['bui/chart/plotitem','bui/chart/showlabels','bui/
       _self.changeShapes(points);
       BUI.each(points,function(point){
         if(labels){
-          labels.items.push(point.value);
+          var item = {};
+          item.text = point.value;
+          item.x = point.x;
+          item.y = point.y;
+          labels.items.push(item);
         }
         if(markers){
           markers.items.push(point);

@@ -587,7 +587,7 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
             }
             gridGroup = _self.get('gridGroup');
 
-            gridGroup.change(grid.items);
+            gridGroup && gridGroup.change(grid.items);
         },
         //移除控件前移除对应的grid和labels
         remove : function(){

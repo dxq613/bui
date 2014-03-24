@@ -150,8 +150,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         if(!subMenu.get('parentMenu')){
           subMenu.set('parentMenu',parent);
           if(parent.get('autoHide')){
-            subMenu.set('autoHide',false);
-          } 
+            if(parent.get('autoHideType') == 'click'){
+              subMenu.set('autoHide',false);
+            }else{
+              subMenu.set('autoHideType','leave');
+            }
+            
+          } /**/
         }
         $(_self.get('arrowTpl')).appendTo(el);
       }
@@ -170,10 +175,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 默认的Html 标签
@@ -239,12 +240,15 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     },
     PARSER : {
       subMenu : function(el){
-        var subList = el.find('ul'),
+        var 
+          subList = el.find('ul'),
           sub;
         if(subList && subList.length){
           sub = BUI.Component.create({
             srcNode : subList,
-            xclass : 'pop-menu'
+            xclass : 'pop-menu',
+            autoHide : true,
+            autoHideType : 'leave'
           });
           subList.appendTo('body');
         }
@@ -376,10 +380,6 @@ define('bui/menu/menu',['bui/common'],function(require){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Menu.Menu#
-     * @ignore
-     */
     {
 
       elTagName:{
@@ -539,10 +539,6 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   },{
 
     ATTRS:
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 显示的文本
@@ -619,10 +615,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
    * @extends BUI.Menu.Menu
    */
   var sideMenu = Menu.extend(
-  /**
-   * @lends BUI.Menu.SideMenu.prototype
-   * @ignore
-   */
   {
     //初始化配置项
     initializer : function(){
@@ -715,10 +707,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
   },{
 
     ATTRS : 
-    /**
-     * @lends BUI.Menu.SideMenu.prototype
-     * @ignore
-     */
     {
       
       /**
