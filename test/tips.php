@@ -30,6 +30,7 @@
       </div>
       <div class="span16">
         <a href="#" id="t2">显示表格</a>
+        <a href="#" id="t3">显示表格</a>
       </div>
     </div>
   </div>

@@ -13,7 +13,7 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 	function isIe7(){
 		return UA.ie && UA.ie < 8;
 	}
-
+/**/
 	describe('测试坐标轴生成',function(){
 
 		var axis = canvas.addGroup(Axis,{
@@ -57,7 +57,6 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 			var labelsGroup = axis.get('labelsGroup');
 			expect(labelsGroup).not.toBe(undefined);
 			expect(labelsGroup.get('children').length).toBe(axis.get('ticks').length);
-			/**/
 		});
 		it('测试tite',function(){
 			if(!(UA.ie && UA.ie < 8)){ 
@@ -67,7 +66,7 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 
 		it('测试偏移量',function(){
 			if(Graphic.Util.svg){
-				expect(axis.get('children')[0].getTotalLength()).toBe(480);
+				expect(axis.get('lineShape').getTotalLength()).toBe(480);
 			}
 			
 			expect(axis._getLength()).toBe(460);
@@ -78,10 +77,10 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 			expect($.contains(canvas.get('node'),node)).toBe(false);
 			expect(axis.get('children')).toBe(undefined);
 		});
-		/**/	
+		
 
 	});
-	
+
 	describe('测试底部坐标轴',function(){
 
 		var axis = canvas.addGroup(Axis,{
@@ -118,7 +117,7 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 
 		it('测试线生成',function(){
 			var 
-				line = children[0],
+				line = axis.get('lineShape'),
 				path = line.getPath();
 
 			expect(path[0][1]).toBe(10);
@@ -126,13 +125,14 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 			
 		});
 		it('测试点生成位置',function(){
-			var line = children[1],
+			var line = axis.get('lineShape'),
 				path = line.getPath();
 			expect(path[0][2]).toBe(480);
 			expect(path[0][1] > 480);
 		});
 		it('测试label生成位置',function(){
-
+			var labelsGroup = axis.get('labelsGroup');
+			expect(labelsGroup.getCount()).toBe(10);
 		});
 		it('测试tite位置',function(){
 			if(!isIe7()){
@@ -161,6 +161,39 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 			//axis.remove();
 		});
 
+		describe('测试数字坐标轴变化',function(){
+
+			it('更改坐标轴',function(){
+				axis.change({
+					ticks : [1,2,3,4,5]
+				});
+
+				waits(1000);
+				runs(function(){
+					expect(axis.get('ticks').length).toBe(5);
+				});
+
+			});
+
+			it('测试新的label',function(){
+				var labelsGroup = axis.get('labelsGroup');
+				expect(labelsGroup.getCount()).toBe(5);
+			});
+			it('测试栅格变化',function(){
+				var gridGroup = axis.get('gridGroup'),
+					line = gridGroup.getChildAt(0);
+
+				expect(line.getPath().length).toBe(10);
+
+			});
+
+			it('更改回来',function(){
+				axis.change({
+					ticks : [1,2,3,4,5,6,7,8,9,10]
+				});
+			});
+		});
+
 	});
 	
 	describe('测试顶部坐标轴',function(){
@@ -184,7 +217,7 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 			children = axis.get('children');
 		it('测试线生成',function(){
 			var 
-				line = children[0],
+				line = axis.get('lineShape'),
 				path = line.getPath();
 
 			expect(path[0][1]).toBe(10);
@@ -192,10 +225,10 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 		});
 
 		it('测试点生成位置',function(){
-			var line = children[1],
+			var line = axis.get('lineShape'),
 				path = line.getPath();
 			expect(path[0][2]).toBe(10);
-			expect(path[1][2]).toBe(5);
+			expect(path[1][2]).toBe(10);
 		});
 		it('测试label生成位置',function(){
 
@@ -251,17 +284,17 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 
 		it('测试线生成',function(){
 			var 
-				line = children[0],
+				line = axis.get('lineShape'),
 				path = line.getPath();
 
 			expect(path[1][1]).toBe(10);
 			expect(path[1][2]).toBe(10);
 		});
 		it('测试点生成位置',function(){
-			var line = children[1],
+			var line = axis.get('lineShape'),
 				path = line.getPath();
 			expect(path[0][1]).toBe(10);
-			expect(path[1][1]).toBe(5);
+			expect(path[1][1]).toBe(10);
 		});
 		it('测试label生成位置',function(){
 
@@ -301,7 +334,12 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 				text : 'axis right',
 				x : 10,
 				rotate : 90
-			}
+			},
+			labels : {
+        label : {
+          x : 12
+        }
+      }
 		});
 
 
@@ -311,7 +349,7 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 
 		it('测试线生成',function(){
 			var 
-				line = children[0],
+				line = axis.get('lineShape'),
 				path = line.getPath();
 
 			expect(path[1][1]).toBe(480);
@@ -319,10 +357,10 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 		});
 
 		it('测试点生成位置',function(){
-			var line = children[1],
+			var line = axis.get('lineShape'),
 				path = line.getPath();
 			expect(path[0][1]).toBe(480);
-			expect(path[1][1]).toBe(485);
+			expect(path[1][1]).toBe(480);
 		});
 		it('测试label生成位置',function(){
 
@@ -337,6 +375,6 @@ BUI.use(['bui/graphic','bui/chart/baseaxis'],function (Graphic,Axis) {
 		});
 	});
 	/**/
-/**/
+
 
 });

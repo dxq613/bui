@@ -50,14 +50,14 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 		},
 		/**
 		 * 是否可以折叠
-		 * @type {String}
+		 * @type {Boolean}
 		 */
 		collapsable : {
 			value : false
 		},
 		/**
 		 * 是否折叠
-		 * @type {String}
+		 * @type {Boolean}
 		 */
 		collapsed : {
 			value : false

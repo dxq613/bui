@@ -44,6 +44,7 @@ define('bui/list/keynav',['bui/common'],function (require) {
           this.setItemStatus(lightedItem,highlightedStatus,false,lightedElement);
         }
         this.setItemStatus(item,highlightedStatus,true,element);
+        _self._scrollToItem(item,element);
       }
     },
     _getHighLightedElement : function(){
@@ -149,8 +150,44 @@ define('bui/list/keynav',['bui/common'],function (require) {
       if(rows <= 1){ //单行或者为0时
         return null;
       }
+
       return  this._getNextItem(true,columns,columns * rows);
 
+    },
+    getScrollContainer : function(){
+      return this.get('el');
+    },
+    /**
+     * @protected
+     * 只处理上下滚动，不处理左右滚动
+     * @return {Boolean} 是否可以上下滚动
+     */
+    isScrollVertical : function(){
+      var _self = this,
+        el = _self.get('el'),
+        container = _self.get('view').getItemContainer();
+
+      return el.height() < container.height();
+    },
+
+    _scrollToItem : function(item,element){
+      var _self = this;
+
+      if(_self.isScrollVertical()){
+        element = element || _self.findElement(item);
+        var container = _self.getScrollContainer(),
+          top = $(element).position().top,
+          ctop = container.position().top,
+          cHeight = container.height(),
+          distance = top - ctop,
+          height = $(element).height(),
+          scrollTop = container.scrollTop();
+
+        if(distance < 0 || distance > cHeight - height){
+          container.scrollTop(scrollTop + distance);
+        }
+
+      }
     },
     //获取上面一项
     _getUpperItem : function(){

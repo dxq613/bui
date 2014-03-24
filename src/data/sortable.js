@@ -18,10 +18,7 @@ define('bui/data/sortable',function() {
   };
 
   sortable.ATTRS = 
-  /**
-   * @lends BUI.Data.Sortable#
-   * @ignore
-   */
+
   {
     /**
      * 比较函数
@@ -108,10 +105,6 @@ define('bui/data/sortable',function() {
   };
 
   BUI.augment(sortable,
-  /**
-   * @lends BUI.Data.Sortable.prototype
-   * @ignore
-   */
   {
     compare : function(obj1,obj2,field,direction){
 

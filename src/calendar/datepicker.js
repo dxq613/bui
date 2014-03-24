@@ -139,10 +139,6 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Calendar.DatePicker#
-     * @ignore
-     */
     {
       /**
        * 是否显示日期

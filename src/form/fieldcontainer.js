@@ -217,6 +217,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
           if(value == null){
             value = '';
           }
+          field.clearErrors(true);//清理错误
           field.set('value',value);
         }
       },
@@ -255,7 +256,7 @@ define('bui/form/fieldcontainer',['bui/common','bui/form/field','bui/form/groupv
        * 清除所有表单域的值
        */
       clearFields : function(){
-        this.clearErrors();
+        this.clearErrors(true);
         this.setRecord({})
       },
       /**

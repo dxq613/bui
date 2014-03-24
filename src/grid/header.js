@@ -67,10 +67,6 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
    * @extends BUI.Component.Controller
    */
   var header = Controller.extend(
-    /**
-     * @lends BUI.Grid.Header.prototype
-     * @ignore
-     */
     {
       /**
        * add a columns to header
@@ -135,7 +131,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
        * get the columns of this header,the result equals the 'children' property .
        * @return {Array} columns
        * @example var columns = header.getColumns();
-       *    <br>or</br>
+       *    <br>or<br>
        * var columns = header.get('children');
        */
       getColumns:function () {
@@ -410,10 +406,6 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
     }, {
       ATTRS:
-      /** 
-      * @lends BUI.Grid.Header.prototype
-      * @ignore
-      * */
       {
         /**
          * 列集合

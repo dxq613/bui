@@ -3,7 +3,7 @@
  * @ignore
  */
 
-define('bui/form/uploaderfield',['bui/common','bui/form/basefield'],function (require) {
+define('bui/form/uploaderfield',['bui/common','bui/form/basefield','bui/form/rules'],function (require) {
 
   var BUI = require('bui/common'),
     JSON = BUI.JSON,

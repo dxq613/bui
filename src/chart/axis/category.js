@@ -52,6 +52,18 @@ define('bui/chart/categoryaxis',['bui/chart/baseaxis','bui/common'],function (re
               _self.set('ticks',ticks);
 			}
 		},
+        //ticks 获取
+        changeInfo : function(info){
+            var _self = this,
+                ticks = [];
+            ticks = ticks.concat(info.categories);
+            if(ticks.length){
+               ticks.push(' '); 
+            }
+            
+            _self.set('categories',info.categories);
+            _self.set('ticks',ticks);
+        },
 		/**
 		 * @override
 		 * @ignore
@@ -77,6 +89,17 @@ define('bui/chart/categoryaxis',['bui/chart/baseaxis','bui/common'],function (re
                 index = _self.getSnapIndex(offset),
                 categories = _self.get('categories');
             return categories[index];
+        },
+        /**
+         * 改变坐标轴，对于分类坐标轴，只能更改 categories
+         * <code>
+         *     axis.changeAxis({
+         *         categories : categories
+         *     });
+         * </code>
+         */
+        changeAxis : function(info){
+
         },
         _getAvgLength : function(){
         	var _self = this,

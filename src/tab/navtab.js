@@ -71,10 +71,6 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
    * @extends BUI.Component.Controller
    */
   var navTab = Component.Controller.extend(
-    /**
-     * @lends BUI.Tab.NavTab.prototype
-     * @ignore
-     */
     {
       /**
        * 添加标签项
@@ -326,7 +322,9 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         var _self = this,
           children = _self.get('children');
         BUI.each(children,function(item){
-          item.close();
+          if(item.get('closeable')){
+            item.close();
+          }
         });
       },
       closeOther : function(curItem){
@@ -537,11 +535,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
     },
     
     {
-      ATTRS : 
-    /**
-      * @lends BUI.Tab.NavTab.prototype
-      * @ignore
-      */    
+      ATTRS :    
     {
         defaultChildClass:{
           value : 'nav-tab-item'

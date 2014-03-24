@@ -78,6 +78,7 @@ define('bui/tree/treelist',['bui/common','bui/list','bui/tree/treemixin','bui/tr
    *    });
    *    tree.render();
    *  });
+   *  </code></pre>
    * @mixin BUI.Tree.Mixin
    * @extends BUI.List.SimpleList
    */

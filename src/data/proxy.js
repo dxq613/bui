@@ -21,10 +21,7 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   BUI.extend(proxy,BUI.Base);
 
   BUI.augment(proxy,
-  /**
-   * @lends BUI.Data.Proxy.prototype
-   * @ignore
-   */
+
   {
     /**
      * @protected
@@ -88,10 +85,6 @@ define('bui/data/proxy',['bui/data/sortable'],function(require) {
   };
 
   ajaxProxy.ATTRS = BUI.mix(true,proxy.ATTRS,
-  /**
-   * @lends BUI.Data.Proxy.Ajax#
-   * @ignore
-   */
   {
     /**
      * 限制条数

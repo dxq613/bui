@@ -174,10 +174,6 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
    * @extends BUI.List.SimpleList
    */
   var simpleGrid = BUI.List.SimpleList.extend(
-  /**
-   * @lends BUI.Grid.SimpleGrid.prototype
-   * @ignore
-   */
   {
     renderUI : function(){
       this.get('view').setColumns();
@@ -231,10 +227,6 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Grid.SimpleGrid#
-     * @ignore
-     */
     {
       /**
        * 表格可点击项的样式

@@ -22,13 +22,13 @@ define('bui/uploader/theme',['bui/common'], function (require) {
    *
    * //这个带图片预览的
    * theme: 'imageView'
-   * </pre></code>
+   * </code></pre>
    */
   var Theme = {
     /**
      * 添加一个主题
      * @param {String} name   主题名称
-     * @param {Object} 主题的配置
+     * @param {Object} config 主题的配置
      * 
      * <pre><code>
      * @example

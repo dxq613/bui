@@ -22,10 +22,6 @@ define('bui/list/list',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.List#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,

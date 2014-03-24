@@ -25,6 +25,9 @@ define('bui/extensions/treepicker',['bui/common','bui/picker','bui/tree'],functi
       value = value || '';
       var _self = this,
         tree = _self.get('tree');
+      if(!_self.get('isInit')){
+            _self._initControl();
+      }
       if(_self.get('selectStatus') === 'selected'){ //如果不使用勾选
         if(value){
           tree.expandNode(value);

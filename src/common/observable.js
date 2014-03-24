@@ -43,9 +43,24 @@ define('bui/observable',['bui/util'],function (r) {
         functions.splice(index,1);
       }
     },
+    /**
+     * 清空事件
+     */
     empty : function(){
       var length = this._functions.length; //ie6,7下，必须指定需要删除的数量
       this._functions.splice(0,length);
+    },
+    /**
+     * 暂停事件
+     */
+    pause : function(){
+      this._paused = true;
+    },
+    /**
+     * 唤醒事件
+     */
+    resume : function(){
+      this._paused = false;
     },
     /**
      * 触发回调
@@ -56,7 +71,9 @@ define('bui/observable',['bui/util'],function (r) {
     fireWith : function(scope,args){
       var _self = this,
         rst;
-
+      if(this._paused){
+        return;
+      }
       BUI.each(_self._functions,function(fn){
         rst = fn.apply(scope,args);
         if(rst === false){
@@ -250,6 +267,24 @@ define('bui/observable',['bui/util'],function (r) {
           }
       }
       return result;
+    },
+    /**
+     * 暂停事件的执行
+     * @param  {String} eventType 事件类型
+     */
+    pauseEvent : function(eventType){
+      var _self = this,
+        callbacks = _self._getCallbacks(eventType);
+      callbacks && callbacks.pause();
+    },
+    /**
+     * 唤醒事件
+     * @param  {String} eventType 事件类型
+     */
+    resumeEvent : function(eventType){
+      var _self = this,
+        callbacks = _self._getCallbacks(eventType);
+      callbacks && callbacks.resume();
     },
     /**
      * 添加绑定事件

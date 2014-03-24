@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project name="lpmodule.build" default="build" basedir=".">
+	
+    <property name="tools.dir" location="../../../tools/"/>
+    <property name="build.dir" location="./"/>
+    <property name="des.dir" location="../../build/"/>
+    <property name="component.files" value="*"/>
+    <property name="charset" value="utf-8"/>
+	
+	<target name="build" depends="prepare,combine.js">
+    </target>
+	
+	<!-- 删除 build 目录下的 -min 样式和脚本 --> 
+    <target name="prepare">
+        <delete>
+            <fileset dir="${des.dir}" includes="chart.js"/>
+        </delete>
+    </target>
+
+	<!-- 合并js --> 
+	<target name="combine.js" depends="prepare">
+    <concat destfile="${des.dir}/chart.js" encoding="${charset}" outputencoding="${charset}">
+
+			<path path="base.js"/>
+      <path path="mixin/actived.js"/>
+      <path path="mixin/activedgroup.js"/>
+      <path path="mixin/showlabels.js"/>
+
+			<path path="labels.js"/>
+			<path path="legend.js"/>
+			<path path="legenditem.js"/>
+			<path path="markers.js"/>
+			<path path="plotback.js"/>
+			
+			<path path="plotitem.js"/>
+			<path path="plotrange.js"/>
+      <path path="theme.js"/>
+      <path path="tooltip.js"/>
+      
+      
+
+      <path path="axis/abstract.js"/>
+      <path path="axis/base.js"/>
+      <path path="axis/auto.js"/>
+      <path path="axis/number.js"/>
+      <path path="axis/grid.js"/>
+      <path path="axis/circle.js"/>
+      <path path="axis/radius.js"/>
+      <path path="axis/time.js"/>
+      <path path="axis/category.js"/>
+      <path path="axis.js"/>
+      
+      <path path="series/base.js"/>
+      <path path="series/stacked.js"/>
+      <path path="series/itemgroup.js"/>
+      <path path="series/cartesian.js"/>
+      <path path="series/line.js"/>
+      <path path="series/area.js"/>
+      <path path="series/scatter.js"/>
+      <path path="series/bubble.js"/>
+      <path path="series/column.js"/>
+      <path path="series/pie.js"/>
+      <path path="series.js"/>
+
+      <path path="seriesgroup.js"/>
+      <path path="chart.js"/>
+			  
+		</concat>
+  </target>
+
+	
+</project>

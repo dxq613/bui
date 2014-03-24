@@ -210,6 +210,21 @@ BUI.use('bui/common',function(){
 				a.fire('up',obj);
 				expect(callback).toHaveBeenCalledWith(obj);
 				expect(callback1).toHaveBeenCalledWith(obj);
+				
+			});
+
+			it('阻止事件',function(){
+				a.pauseEvent('up');
+				var newCal = jasmine.createSpy();
+				a.on('up',newCal);
+				var obj ={a:123};
+				a.fire('up',obj);
+				expect(newCal).not.toHaveBeenCalled();
+
+				a.resumeEvent('up');
+				var obj ={a:123};
+				a.fire('up',obj);
+				expect(newCal).toHaveBeenCalled();
 
 			});
 

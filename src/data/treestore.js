@@ -103,7 +103,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       
     },
     /**
-     * 返回数据标示数据的字段</br>
+     * 返回数据标示数据的字段<br/>
      * 异步加载数据时，返回数据可以使数组或者对象
      * - 如果返回的是对象,可以附加其他信息,那么取对象对应的字段 {nodes : [],hasError:false}
      * - 如何获取附加信息参看 @see {BUI.Data.AbstractStore-event-beforeprocessload}
@@ -151,7 +151,7 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         'remove',
         /**  
         * 节点加载完毕触发该事件
-        * <pre></code>
+        * <pre><code>
         *   //异步加载节点,此时节点已经附加到加载节点的后面
         *   store.on('load',function(ev){
         *     var params = ev.params,

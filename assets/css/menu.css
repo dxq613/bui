@@ -140,6 +140,7 @@
   border: 1px solid #c3c3d6;
   background-color: #ffffff;
   padding: 2px 0;
+  position: absolute;
 }
 .bui-pop-menu .bui-menu-item {
   padding: 3px 15px;
@@ -226,7 +227,7 @@
   filter: alpha(opacity=50);
 }
 .bui-menu {
-  font-family: "SimSun", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: tahoma, arial, "SimSun", "Helvetica Neue", Helvetica, sans-serif;
   font-size: 12px;
   padding: 0;
 }

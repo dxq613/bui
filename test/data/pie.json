@@ -1,0 +1,8 @@
+[
+  {"name":"Firefox", "y":45.0},
+  {"name": "IE",      "y" : 26.8,"selected" : true},
+  { "name": "Chrome","y": 12.8}, 
+  { "name": "Safari","y": 8.5},   
+  { "name": "Opera","y": 6.2},   
+  { "name": "Opera","y": 0.7}
+]

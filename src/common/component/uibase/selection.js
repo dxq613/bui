@@ -23,10 +23,7 @@ define('bui/component/uibase/selection',function () {
     };
 
     selection.ATTRS = 
-    /**
-     * @lends BUI.Component.UIBase.Selection#
-     * @ignore
-     */
+   
     {
         /**
          * 选中的事件
@@ -130,10 +127,7 @@ define('bui/component/uibase/selection',function () {
     };
 
     selection.prototype = 
-    /**
-     * @lends BUI.Component.UIBase.Selection.prototype
-     * @ignore
-     */
+    
     {
         /**
          * 清理选中的项
