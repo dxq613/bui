@@ -134,7 +134,11 @@ BUI.use(['bui/uploader/type/flash'], function (Flash) {
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
-    url: 'data/uploader.json'
+    url: 'data/uploader.json',
+    rules: {
+      //文的类型
+      ext: ['.doc,.docx,.png,.jpg','文件类型只能为{0}']
+    }
   });
   uploader.render();
   var el = uploader.get('el');
@@ -204,8 +208,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
 
   var file = {'name': 'a.jpg', 'size': 1000},
     files = [
-      {id: '1','name': 'a.jpg', 'size': 1000, file: file, attr: file, success:true},
-      {id: '2','name': 'b.jpg', 'size': 1000, file: file, attr: file}
+      {id: '1','name': 'a.jpg', 'size': 1000, ext:'.jpg', file: file, attr: file, success:true},
+      {id: '2','name': 'b.jpg', 'size': 1000, ext:'.jpg', file: file, attr: file}
     ];
 
   var successCallback = jasmine.createSpy(),
