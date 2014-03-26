@@ -8,14 +8,16 @@
   <link href="http://g.tbcdn.cn/fi/bui/css/bui-min.css" rel="stylesheet">
   <script src="http://g.tbcdn.cn/fi/bui/jquery-1.8.1.min.js"></script>
   <script src="http://g.tbcdn.cn/fi/bui/bui-min.js"></script>
-  <script src="suggestlist.js"></script>
-  <link href="multiselect.css" rel="stylesheet">
+  <script src="search.js"></script>
+  <script src="multilist.js"></script>
 </head>
 <body>
 
   <div class="row">
     <div class="span5">
-      <div id="J_SuggestList">
+      <div id="J_SearchList">
+      </div>
+      <div id="J_MultiList">
       </div>
     </div>
   </div>
@@ -33,18 +35,26 @@
         {text:"数字值",value:3}
       ];
 
-    BUI.use(['suggestlist'], function(SuggestList){
+    BUI.use(['bui/list', 'search', 'bui/data', 'multilist'], function(List, Search, Data, Multilist){
       var store = new BUI.Data.Store({
-        //data: items1
         url: 'data.php',
         autoLoad: true
       });
-      var suggestlist = new SuggestList({
-        render: '#J_SuggestList',
+      var list = new List.SimpleList({
+        elCls:'bui-select-list',
+        render : '#J_SearchList',
         store: store,
-        multipleSelect: true
+        plugins: [Search]
       }).render();
-    });
+
+      var multi = new Multilist({
+        render: '#J_MultiList',
+        source: {
+          multipleSelect: true,
+          store: store
+        }
+      }).render();
+    })
    
   </script>
 </body>

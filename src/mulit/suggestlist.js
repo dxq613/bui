@@ -5,19 +5,19 @@
  */
 define('suggestlist', function(require) {
   var BUI = require('bui/common'),
-    SimpleList = require('bui/list').SimpleList;
+    Component = BUI.Component,
+    SimpleList = require('bui/list'),
+    Form = require('bui/form');
 
   var PREFIX = BUI.prefix,
     CLS_INPUT = PREFIX + 'suggest-input',
     TPL_ITEM = '<li><span class="x-checkbox"></span>{text}</li>';
 
-    var SuggestList = SimpleList.extend({
+    var SuggestList = Component.Controller.extend({
       initializer: function(){
         var _self = this,
-          multipleSelect = _self.get('multipleSelect');
-        if(multipleSelect){
-          _self.set('itemTpl', TPL_ITEM);
-        }
+          multipleSelect = _self.get('multipleSelect'),
+          xclass = multipleSelect ? 'listbox' : 'simple-list';
       },
       renderUI: function(){
         var _self = this,
@@ -38,20 +38,18 @@ define('suggestlist', function(require) {
           store.load(param);
           //_self.clearSelection();
         });
-      },
-      _uiSetName: function(v){
-        this.get('inputEl').attr('name', v);
       }
     }, {
       ATTRS: {
-        name: {
-          value: 'key'
-        },
         tpl: {
-          value: '<input type="text" class="' + CLS_INPUT + '"/><ul></ul>'
+          value: '<div><button class="button button-mini">确定</button></div>'
         },
-        triggerEvent: {
-          value: 'change keyup'
+        url: {
+        },
+        store: {
+        },
+        multipleSelect: {
+          value: false
         }
       }
     }, {

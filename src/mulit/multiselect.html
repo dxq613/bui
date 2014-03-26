@@ -31,89 +31,21 @@
         {text:'选项3',value:'c'},
         {text:"数字值",value:3}
       ],
-        items2 = [
-        {text:'选项1',value:'a'},
-        {text:"数字值",value:3}
-      ];
+      items2 = [];
 
     BUI.use(['suggestlist','multilist', 'multiselect'], function(SuggestList, MultiList, MultiSelect){
       var store = new BUI.Data.Store({
-        //data: items1
         url: 'data.php',
         autoLoad: true
       });
-      var suggestlist = new SuggestList({
-        store: store,
-        multipleSelect: false,
-        tpl: '方案：<input type="text" class="bui-suggest-input"/><div>dfdf</div><ul></ul>'
-      });
 
       var multiselect = new MultiSelect({
         render: '#J_MultiSelect',
-        multilist: {
-          source: {
-            items: items1,
-            elCls:'bui-select-list'
-          },
-          target: {
-            items: items2,
-            elCls:'bui-select-list'
-          }
-        },
         valueField: '#J_SelectVal',
-        dialog: {
-          title: 'aaa'
-        }
+        url: '',
+        source: items1,
+        searchTpl: ''
       }).render();
-
-
-
-      var multiselect = new MultiSelect({
-        render: '#J_MultiSelect',
-        multilist: {
-          source: suggestlist,
-          target: {
-            //items: items2,
-            elCls:'bui-select-list',
-            multipleSelect: false,
-            tpl: '<div>dddd</div><ul></ul>'
-          }
-        },
-        valueField: '#J_SelectVal',
-        dialog: {
-          title: 'aaa',
-          success: function(){
-
-          }
-        }
-      }).render();
-
-      multiselect.get('multilist').on('selected', function(ev){
-        var item = ev.items[0],
-          target = this.get('target');
-
-
-          var flag = true;
-          $.each(target.getItems(), function(index, targetItem){
-            if(item.value === targetItem.value){
-              flag = false
-              return false;
-            }
-          });
-
-      })
-
-      multiselect.on('aftersuccess', function(){
-        var target = this.get('multilist').get('target').getItems();
-        console.log(111111);
-        //return false;
-      });
-
-      //multiselect.get('dialog')
-
-      //unselected
-
-      //multiselect
     });
    
   </script>

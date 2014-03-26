@@ -93,30 +93,7 @@ define('multilist', function(require){
           source.addItem(item);
         }
       });
-    }/*,
-    syncUI: function(){
-      this.syncSourceItems();
-    },
-    syncSourceItems: function(){
-      var _self = this,
-        target = _self.get('target'),
-        source = _self.get('source'),
-        idField = source.get('idField'),
-        targetItems = target.getItems(),
-        sourceItems = source.getItems();
-
-      BUI.each(sourceItems, function(sourceItem){
-        var flag = true;
-        BUI.each(targetItems, function(item){
-          if(item[idField] === sourceItem[idField]){
-            flag = false;
-            source.removeItem(sourceItem);
-            return false;
-          }
-        })
-        return flag;
-      });
-    }*/
+    }
   }, {
     ATTRS: {
       source:{
