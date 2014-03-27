@@ -45,11 +45,8 @@
 
       var multiselect = new MultiList({
         render: '#J_MultiSelect',
-        source: suggestlist,
-        target: {
-          elCls: 'bui-select-list',
-          items: items2
-        }
+        store: store,
+        elCls: 'bui-select-list'
       }).render();
     });
    

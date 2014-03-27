@@ -16,12 +16,12 @@ define('search', function(require) {
 
   Search.ATTRS = {
     tpl: {
-      value: '<input type="text" name="a" value="1"/><button class="button button-mini">确定</button>'
+      value: '<input type="text" name="key"/><button class="button button-mini">确定</button>'
     }
   }
 
   BUI.augment(Search, {
-    createDom: function(list){
+    createDom: function(control){
       var _self = this,
         el = $('<div></div>').append(_self.get('tpl')),
         group = new Form.Group( {
@@ -31,14 +31,14 @@ define('search', function(require) {
       _self.set('el', el);
       _self.set('group', group);
     },
-    renderUI: function(list){
-      var el = list.get('el');
+    renderUI: function(control){
+      var el = control.get('el');
       el.before(this.get('el'));
     },
-    bindUI: function(list){
+    bindUI: function(control){
       var _self = this,
         el = _self.get('el'),
-        store = list.get('store'),
+        store = control.get('store'),
         group = _self.get('group');
 
       el.find('.button').on('click', function(ev){
