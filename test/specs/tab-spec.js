@@ -6,7 +6,7 @@ BUI.use('bui/tab',function (Tab){
     CLS_ITEM_CLOSE = 'tab-item-close',
     CLS_CONTENT = 'tab-content';
   var config = {
-    title : '测试标签',
+    title : '<i class="icon icon-music"></i>测试标签',
     render : '#t1',
     actived : true,
     href : 'http://www.taobao.com',

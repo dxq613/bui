@@ -2211,6 +2211,9 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 暂停事件的执行
+     * <pre><code>
+     *  list.pauseEvent('itemclick');
+     * </code></pre>
      * @param  {String} eventType 事件类型
      */
     pauseEvent : function(eventType){
@@ -2220,6 +2223,9 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 唤醒事件
+     * <pre><code>
+     *  list.resumeEvent('itemclick');
+     * </code></pre>
      * @param  {String} eventType 事件类型
      */
     resumeEvent : function(eventType){

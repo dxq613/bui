@@ -83,6 +83,7 @@ define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borde
 			control.render();
 	 * 	</code>
 	 * </pre>
+	 * @mixins BUI.Layout.Collapsable
 	 */
 	var Border = function(config){
 		Border.superclass.constructor.call(this,config);
@@ -208,6 +209,11 @@ define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borde
 		},
 		/**
 		 * 获取选项，根据位置类型
+		 * <pre>
+		 * <code>
+		 * var item = layout.getItemsByRegion('west')[0];
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 * @param  {String} region 类型
 		 * @return {Array}  选项集合
 		 */
@@ -258,6 +264,7 @@ define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borde
 		},
 		/**
 		 * 展开选项前
+		 * @protected
 		 */
 		beforeExpanded : function(item,range){
 			this.beforeCollapsedChange(item,range,false);
@@ -310,6 +317,7 @@ define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borde
 		},
 		/**
 		 * 折叠选项后
+		 * @protected
 		 */
 		beforeCollapsed : function(item,range){
 			this.beforeCollapsedChange(item,range,true);

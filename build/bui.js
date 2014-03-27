@@ -2211,6 +2211,9 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u6682\u505c\u4e8b\u4ef6\u7684\u6267\u884c
+     * <pre><code>
+     *  list.pauseEvent('itemclick');
+     * </code></pre>
      * @param  {String} eventType \u4e8b\u4ef6\u7c7b\u578b
      */
     pauseEvent : function(eventType){
@@ -2220,6 +2223,9 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u5524\u9192\u4e8b\u4ef6
+     * <pre><code>
+     *  list.resumeEvent('itemclick');
+     * </code></pre>
      * @param  {String} eventType \u4e8b\u4ef6\u7c7b\u578b
      */
     resumeEvent : function(eventType){
@@ -24473,16 +24479,18 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
         items = item.items,
         subItems = [],
         cfg = {
-          xclass : 'menu-item',
-          elCls : 'menu-second',
-          collapsed : item.collapsed,
           selectable: false,
           children : [{
             xclass : 'menu',
             children : subItems
-          }],
-          content: '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">'+item.text+'</span></div>'
+          }]
         };
+
+      BUI.mix(cfg,{
+        xclass : 'menu-item',
+        elCls : 'menu-second'
+      },item);
+
       BUI.each(items,function(subItem){
         var subItemCfg = _self._initSubMenuCfg(subItem);
         subItems.push(subItemCfg);
@@ -24497,7 +24505,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
         cfg = {
           xclass : 'menu-item',
           elCls : 'menu-leaf',
-          tpl : '<a href="{href}"><em>{text}</em></a>'
+          tpl : _self.get('subMenuItemTpl')
         };
       return BUI.mix(cfg,subItem);
     }
@@ -24513,6 +24521,20 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
        */
       autoInitItems : {
           value : false
+      },
+      /**
+       * \u83dc\u5355\u9879\u7684\u6a21\u677f
+       * @type {String}
+       */
+      itemTpl : {
+        value : '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">{text}</span></div>'
+      },
+      /**
+       * \u5b50\u83dc\u5355\u7684\u9009\u9879\u6a21\u677f
+       * @cfg {String} subMenuTpl
+       */
+      subMenuItemTpl : {
+        value : '<a href="{href}"><em>{text}</em></a>'
       },
       events : {
         value : {
@@ -24863,8 +24885,8 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     _uiSetTitle : function(v){
       var _self = this,
         el = _self.get('el');
-      el.attr('title',v);
-      $('.' + CLS_ITEM_TITLE,el).text(v);
+      //el.attr('title',v);
+      $('.' + CLS_ITEM_TITLE,el).html(v);
     },
     _uiSetActived : function(v){
       var _self = this,
@@ -31796,26 +31818,20 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    * @extends BUI.List.SimpleList
    */
   var grid = List.SimpleList.extend({
-    
-    /**
-     * \u521d\u59cb\u5316\uff0c\u5982\u679c\u672a\u8bbe\u7f6e\u5bbd\u5ea6\uff0c\u5219\u4f7f\u7528\u8868\u683c\u5bb9\u5668\u7684\u5bbd\u5ea6
-     * @protected
-     * @ignore
-     */
-    initializer : function(){
-        var _self = this,
-            render = _self.get('render'),
-            width = _self.get('width');
-        if(!width){
-            _self.set('width',$(render).width());
-        }
-    },
     /**
      * @protected
      * @ignore
      */
     createDom:function () {
-      var _self = this;
+      var _self = this,
+            render = _self.get('render'),
+            outerWidth = $(render).width(),
+            width = _self.get('width');
+            
+      if(!width && outerWidth){
+        var appendWidth = _self.getAppendWidth();
+        _self.set('width',outerWidth - appendWidth);
+      }
 
       // \u63d0\u524d,\u4e2d\u9014\u8bbe\u7f6e\u5bbd\u5ea6\u65f6\u4f1a\u5931\u8d25\uff01\uff01
       if (_self.get('width')) {
@@ -34132,7 +34148,7 @@ define('bui/grid/plugins/editing',function (require) {
      * \u786e\u8ba4\u7f16\u8f91
      * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
      * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
-     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
      */
     
     /**
@@ -34140,7 +34156,7 @@ define('bui/grid/plugins/editing',function (require) {
      * \u53d6\u6d88\u7f16\u8f91
      * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
      * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
-     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
      */
     
     /**
@@ -34148,7 +34164,7 @@ define('bui/grid/plugins/editing',function (require) {
      * editor \u663e\u793a
      * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
      * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
-     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
      */
   };
 
@@ -35065,7 +35081,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
          * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
          * @param {BUI.Form.Form} form \u8868\u5355
-         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
          */
         
         /**
@@ -35074,7 +35090,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
          * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
          * @param {BUI.Form.Form} form \u8868\u5355
-         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
          */
         
         /**
@@ -35082,7 +35098,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * editor \u663e\u793a
          * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
          * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
-         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
          */
       }
     },
