@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 80,
+            subVersion : 81,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -20296,7 +20296,20 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   GroupValid.ATTRS = ATTRS =BUI.merge(true,Valid.ATTRS,{
     events: {
       value : {
+        /**
+         * @event
+         * \u9a8c\u8bc1\u7ed3\u679c\u53d1\u751f\u6539\u53d8\uff0c\u4ecetrue\u53d8\u6210false\u6216\u8005\u76f8\u53cd
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5b50\u63a7\u4ef6
+         * @param {Boolean} ev.valid \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
+         */
         validchange : true,
+        /**
+         * @event
+         * \u503c\u6539\u53d8\uff0c\u4ec5\u5f53\u901a\u8fc7\u9a8c\u8bc1\u65f6\u89e6\u53d1
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5b50\u63a7\u4ef6
+         */
         change : true
       }
     }
@@ -21945,6 +21958,9 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     name : 'min',
     msg : '\u8f93\u5165\u503c\u4e0d\u80fd\u5c0f\u4e8e{0}\uff01',
     validator : function(value,min,formatedMsg){
+      if(BUI.isString(value)){
+        value = value.replace(/\,/g,'');
+      }
       if(value !== '' && toNumber(value) < toNumber(min)){
         return formatedMsg;
       }
@@ -21972,6 +21988,9 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     name : 'max',
     msg : '\u8f93\u5165\u503c\u4e0d\u80fd\u5927\u4e8e{0}\uff01',
     validator : function(value,max,formatedMsg){
+      if(BUI.isString(value)){
+        value = value.replace(/\,/g,'');
+      }
       if(value !== '' && toNumber(value) > toNumber(max)){
         return formatedMsg;
       }
@@ -22179,8 +22198,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * \u6570\u5b57\u9a8c\u8bc1\uff0c\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c\uff0c\u65e0\u6570\u636e\u4e0d\u8fdb\u884c\u6821\u9a8c
-   * \u5141\u8bb8\u5343\u5206\u7b26\uff0c\u4f8b\u5982\uff1a 12,000,000\u7684\u683c\u5f0f
+   * \u624b\u673a\u9a8c\u8bc1\uff0c11\u4f4d\u624b\u673a\u6570\u5b57
    * <ol>
    *  <li>name: mobile</li>
    *  <li>msg: \u4e0d\u662f\u6709\u6548\u7684\u624b\u673a\u53f7\u7801\uff01</li>
@@ -29145,7 +29163,7 @@ define('bui/editor/mixin',function (require) {
      * @type {Boolean}
      */
     ignoreInputFields: {
-      value :true
+      value :false
     },
     /**
      * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5

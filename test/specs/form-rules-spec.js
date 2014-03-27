@@ -83,6 +83,23 @@ BUI.use('bui/form/rules',function (Rules) {
         expect(Rules.isValid('min',val,min)).toBe(true);
     });
 
+
+    it('测试最小值，带有逗号',function(){
+        var val = 0,
+            min = 5000;
+        expect(Rules.isValid('min',val,min)).toBe(false);
+        val = 5000;
+        expect(Rules.isValid('min',val,min)).toBe(true);
+        val = '5000';
+        expect(Rules.isValid('min',val,min)).toBe(true);
+
+        val = '5,000';
+        expect(Rules.isValid('min',val,min)).toBe(true);
+
+        val = '4,000';
+        expect(Rules.isValid('min',val,min)).toBe(false);
+    });
+
     it('测试最大值',function(){
         var val = 0,
             max = 5;
@@ -97,6 +114,25 @@ BUI.use('bui/form/rules',function (Rules) {
         expect(Rules.isValid('max',val,max)).toBe(false);
 
         val = '10';
+        expect(Rules.isValid('max',val,max)).toBe(false);
+    });
+
+    it('测试最大值,带有逗号',function(){
+        var val = 0,
+            max = 5000;
+        expect(Rules.isValid('max',val,max)).toBe(true);
+        val = 5000;
+        expect(Rules.isValid('max',val,max)).toBe(true);
+
+        val = '5000';
+        expect(Rules.isValid('max',val,max)).toBe(true);
+
+        val = '5,000';
+        expect(Rules.isValid('max',val,max)).toBe(true);
+
+       
+
+        val = '10,000';
         expect(Rules.isValid('max',val,max)).toBe(false);
     });
 

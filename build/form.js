@@ -2688,7 +2688,20 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   GroupValid.ATTRS = ATTRS =BUI.merge(true,Valid.ATTRS,{
     events: {
       value : {
+        /**
+         * @event
+         * 验证结果发生改变，从true变成false或者相反
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.target 触发事件的子控件
+         * @param {Boolean} ev.valid 是否通过验证
+         */
         validchange : true,
+        /**
+         * @event
+         * 值改变，仅当通过验证时触发
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.target 触发事件的子控件
+         */
         change : true
       }
     }
@@ -4337,6 +4350,9 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     name : 'min',
     msg : '输入值不能小于{0}！',
     validator : function(value,min,formatedMsg){
+      if(BUI.isString(value)){
+        value = value.replace(/\,/g,'');
+      }
       if(value !== '' && toNumber(value) < toNumber(min)){
         return formatedMsg;
       }
@@ -4364,6 +4380,9 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     name : 'max',
     msg : '输入值不能大于{0}！',
     validator : function(value,max,formatedMsg){
+      if(BUI.isString(value)){
+        value = value.replace(/\,/g,'');
+      }
       if(value !== '' && toNumber(value) > toNumber(max)){
         return formatedMsg;
       }
@@ -4571,8 +4590,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 数字验证，会对值去除空格，无数据不进行校验
-   * 允许千分符，例如： 12,000,000的格式
+   * 手机验证，11位手机数字
    * <ol>
    *  <li>name: mobile</li>
    *  <li>msg: 不是有效的手机号码！</li>

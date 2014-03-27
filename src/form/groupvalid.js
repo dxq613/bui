@@ -52,7 +52,20 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   GroupValid.ATTRS = ATTRS =BUI.merge(true,Valid.ATTRS,{
     events: {
       value : {
+        /**
+         * @event
+         * 验证结果发生改变，从true变成false或者相反
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.target 触发事件的子控件
+         * @param {Boolean} ev.valid 是否通过验证
+         */
         validchange : true,
+        /**
+         * @event
+         * 值改变，仅当通过验证时触发
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.target 触发事件的子控件
+         */
         change : true
       }
     }
