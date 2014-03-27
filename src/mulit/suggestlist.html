@@ -10,6 +10,8 @@
   <script src="http://g.tbcdn.cn/fi/bui/bui-min.js"></script>
   <script src="search.js"></script>
   <script src="multilist.js"></script>
+  <script src="multiselect.js"></script>
+  <link href="multiselect.css" rel="stylesheet">
 </head>
 <body>
 
@@ -18,6 +20,10 @@
       <div id="J_SearchList">
       </div>
       <div id="J_MultiList">
+      </div>
+
+      <div id="J_MultiSelect">
+          <input type="hidden" id="J_Val" value="b">
       </div>
     </div>
   </div>
@@ -35,7 +41,7 @@
         {text:"数字值",value:3}
       ];
 
-    BUI.use(['bui/list', 'search', 'bui/data', 'multilist'], function(List, Search, Data, Multilist){
+    BUI.use(['bui/list', 'search', 'bui/data', 'multilist', 'multiselect'], function(List, Search, Data, Multilist, MultiSelect){
       var store = new BUI.Data.Store({
         url: 'data.php',
         autoLoad: true
@@ -49,8 +55,19 @@
 
       var multi = new Multilist({
         render: '#J_MultiList',
-        elCls:'bui-select-list',
-        store: store
+        source: {
+          elCls:'bui-select-list',
+          store: store
+        }
+      }).render();
+
+      var select = new MultiSelect({
+        render: '#J_MultiSelect',
+        title: '标题',
+        //items: items1,
+        url: 'data.php',
+        valueField: '#J_Val',
+        multipleSelect: true
       }).render();
     })
    

@@ -9,6 +9,16 @@
     MultiList = require('multilist'),
     Overlay = require('bui/overlay');
 
+  //设置Controller的属性
+  function setControllerAttr(control, key, value) {
+    if (BUI.isFunction(control.set)) {
+      control.set(key, value);
+    }
+    else {
+      control[key] = value;
+    }
+  }
+
   var CLS_INPUT = BUI.prefix + 'multiselect-text'
 
   var MultiSelect = Component.Controller.extend({
@@ -30,18 +40,21 @@
       }
       _self._initMultiList();
     },
+    //初始化左右选择列表
     _initMultiList: function(){
       var _self = this, 
         source = _self.get('source'),
         target = _self.get('target'),
         multilist = _self.get('multilist');
-      if(!multilist.isController){
-        multilist = new MultiList(multilist);
+      if(!multilist || !multilist.isController){
+        multilist = new MultiList({
+          source: source,
+          target: target,
+          multipleSelect: _self.get('multipleSelect')
+        });
         _self.set('multilist', multilist);
+        
       }
-    },
-    renderUI: function(){
-      var _self = this;
     },
     bindUI: function(){
       var _self = this,
@@ -54,6 +67,8 @@
         if(!multilist.get('rendered')){
           multilist.set('render', dialog.get('body'));
           multilist.render();
+          // _self.set('source', source);
+          // _self.set('target', target);
         }
       });
 
@@ -81,15 +96,105 @@
           return $.map(items,function(item){
               return list.getValueByField(item, field);
           });
+    },
+    _uiSetStore: function(store){
+      var _self = this;
+      store.on('load', function(ev){
+        var result = store.filter(function(item){
+          
+        })
+      });
+    },
+    syncUI: function(){
+      var _self = this,
+        store = _self.get('store'),
+        valueField = _self.get('valueField'),
+        value = $(valueField).val();
 
+      function sysText(){
+        _self._syncText(store, value);
+        store.off(sysText);
+      }
+      
+      if(value){
+        if(store.get('url')){
+          store.on('load', sysText);
+        }
+        else{
+          _self._syncText(store, value);
+        }
+        
+      }
+    },
+    _syncText: function(store, val){
+      var _self = this,
+        store = _self.get('store'),
+        idField = _self.get('idField'),
+        arr = val.split(','),
+        source = [],
+        result = [];
+      store.filter(function(item){
+        if($.inArray(item[idField], arr) !== -1){
+          result.push(item);
+        }
+        else{
+          source.push(item);
+        }
+      });
+      store.setResult(source);
+      setControllerAttr(_self.get('target'), 'items', result);
     }
   }, {
     ATTRS: {
       source: {
-
+        value: {
+          elCls:'bui-select-list'
+        }
       },
       target: {
-
+        value: {
+          elCls:'bui-select-list'
+        }
+      },
+      multilist: {
+      },
+      multipleSelect: {
+        value: false
+      },
+      store: {
+        setter: function(v){
+          setControllerAttr(this.get('source'), 'store', v);
+          return v;
+        }
+      },
+      url: {
+        setter: function(v){
+          var store = new BUI.Data.Store({
+            url: v,
+            autoLoad: true
+          });
+          this.set('store', store);
+          return v;
+        }
+      },
+      items: {
+        setter: function(v){
+          var store = new BUI.Data.Store({
+            data: v
+          });
+          this.set('store', store);
+          return v;
+        }
+      },
+      dialog: {
+        value: {},
+        shared: false
+      },
+      title: {
+        setter: function(v){
+          setControllerAttr(this.get('dialog'), 'title', v);
+          return v;
+        }
       },
       /**
        * textField的class
@@ -98,6 +203,9 @@
        */
       inputCls: {
         value: CLS_INPUT
+      },
+      idField: {
+        value: 'value'
       },
       textField: {
         getter: function(){
@@ -108,9 +216,6 @@
         getter: function(v){
           return $(v);
         }
-      },
-      dialog: {
-        value: {}
       },
       triggerEvent: {
         value: 'click'
