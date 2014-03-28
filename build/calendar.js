@@ -281,10 +281,6 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Calendar.MonthPicker#
-     * @ignore
-     */
     {
       /**
        * 下部工具栏
@@ -680,10 +676,6 @@ define('bui/calendar/panel',['bui/common'],function (require) {
    * @extends BUI.Component.Controller
    */
   var panel = Component.Controller.extend(
-  /**
-  * @lends  BUI.Calendar.Panel.prototype 
-  * @ignore
-  */
   {
 
     /**
@@ -775,10 +767,6 @@ define('bui/calendar/panel',['bui/common'],function (require) {
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Calendar.Panel#
-     * @ignore
-     */
     {
       /**
        * 展示的月所属年
@@ -1220,10 +1208,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
   },{
     ATTRS :
-    /**
-     * @lends BUI.Calendar.Calendar#
-     * @ignore
-     */
     {
       /**
        * 日历控件头部，选择年月
@@ -1526,10 +1510,6 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Calendar.DatePicker#
-     * @ignore
-     */
     {
       /**
        * 是否显示日期

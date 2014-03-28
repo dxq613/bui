@@ -440,6 +440,9 @@ define('bui/date', function () {
          * @return {Date}      日期对象
          */
         parse: function (date, s) {
+            if(BUI.isString(date)){
+                date = date.replace('\/','-');
+            }
             return dateParse(date, s);
         },
         /**

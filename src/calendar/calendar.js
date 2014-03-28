@@ -319,10 +319,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
   },{
     ATTRS :
-    /**
-     * @lends BUI.Calendar.Calendar#
-     * @ignore
-     */
     {
       /**
        * 日历控件头部，选择年月

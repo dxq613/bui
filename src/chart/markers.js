@@ -30,6 +30,9 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 		elCls : {
 			value : 'x-chart-markers'
 		},
+		zIndex : {
+			value : 6
+		},
 		/**
 		 * 标记的配置项
 		 * @type {Object}
@@ -43,6 +46,13 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 		 */
 		actived : {
 
+		},
+		/**
+		 * 是否只有一个marker
+		 * @type {Boolean}
+		 */
+		single : {
+			value : false
 		},
 		/**
 		 * @private
@@ -80,26 +90,89 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 		setItemActived : function(item,actived){
 			var _self = this,
 				marker = _self.get('marker'),
-				activedCfg = _self.get('actived');
+				activedCfg = _self.get('actived'),
+				single = _self.get('single');
 			if(actived){
 				item.attr(activedCfg);
 				item.set('actived',true);
+				if(single && !item.get('visible')){
+					item.show();
+				}
 			}else{
 				item.attr(marker);
 				item.set('actived',false);
+				if(single){
+					item.hide();
+				}
 			}
+		},
+		/**
+		 * 标记改变
+		 * @param {Array} items 标记集合
+		 */
+		change : function(items){
+			var _self = this,
+				children = _self.get('children'),
+				xCache = [];
+			
+
+			_self.set('items',items);
+
+			BUI.each(items,function(item,index){
+				var marker = children[index];
+				if(marker){
+					if(Util.svg){
+						marker.animate({
+							x : item.x,
+							y : item.y
+						},400);
+					}else{
+						marker.attr(item);
+					}
+					xCache.push(item.x);
+				}else{
+					_self._addMarker(item);
+				}
+				
+			});
+
+			var count = _self.getCount();
+			for(var i = count - 1 ; i > items.length - 1; i--){
+				_self.getChildAt(i).remove();
+			}
+
+			_self.set('xCache',xCache); //清空缓存
+
 		},
 		_drawMarkers : function(){
 			var _self = this,
-				items = _self.get('items'),
+				single = _self.get('single'),
+				items = _self.get('items');
+
+			if(single){
+				items = [{x : 0 ,y : 0,visible:false}];
+			}
+			BUI.each(items,function(item){
+				_self._addMarker(item)
+			});
+		},
+		/**
+		 * 添加marker
+		 * @param {Object} item marker的配置信息
+		 */
+		addMarker : function(item){
+			return this._addMarker(item);
+		},
+		//添加marker
+		_addMarker : function(item){
+			var _self = this,
 				xCache = _self.get('xCache'),
 				marker = _self.get('marker'),
-				cfg;
-			BUI.each(items,function(item,index){
 				cfg = BUI.merge(marker,item);
-				_self.addShape('marker',cfg);
-				xCache.push(parseInt(item.x));
-			});
+
+			xCache.push(parseInt(item.x));
+			return _self.addShape('marker',cfg);
+				
 		},
 		/**
 		 * 获取逼近的marker
@@ -108,11 +181,27 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 		getSnapMarker : function(point,tolerance){
 			var _self = this,
 				xCache = _self.get('xCache'),
-				offset = BUI.isObject(point) ? point.x : point;
+				single = _self.get('single'),
+				rst;
 
-			var	snap = Util.snapTo(xCache,offset,tolerance),
+			if(single){
+				return _self.getChildAt(0);
+			}
+			if(BUI.isObject(point)){
+				var children = _self.get('children');
+				BUI.each(children,function(marker){
+					if(marker.attr('x') == point.x && marker.attr('y') == point.y){
+						rst = marker;
+						return false;
+					}
+				});
+			}else{
+				var	snap = Util.snapTo(xCache,point,tolerance),
 				index = BUI.Array.indexOf(snap,xCache);
-			return _self.getChildAt(index);
+				rst =  _self.getChildAt(index);
+			}
+
+			return rst;
 		}
 	});
 

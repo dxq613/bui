@@ -7,16 +7,21 @@
   <link href="http://g.tbcdn.cn/fi/bui/css/dpl-min.css" rel="stylesheet">
   <link href="http://g.tbcdn.cn/fi/bui/css/bui-min.css" rel="stylesheet">
   <script src="http://g.tbcdn.cn/fi/bui/jquery-1.8.1.min.js"></script>
-  <script src="http://g.tbcdn.cn/fi/bui/bui.js"></script>
+  <script src="http://g.tbcdn.cn/fi/bui/seed.js"></script>
   <script src="../../picker/mixin.js "></script>
+  <script src="../../overlay/overlay.js "></script>
   <script src="../../overlay/dialog.js "></script>
+  <script src="../../overlay/message.js "></script>
+  <script src="../../overlay/base.js "></script>
   <script src="multilist.js"></script>
   <script src="multilistpicker.js"></script>
+  <script src="../search.js"></script>
 </head>
 <body>
 
   <div id="J_MultiSelect">
-    <input type="text" id="multilist">
+    <input type="text" id="multilist" value="">
+    <input type="text" id="multilistVal" value="b">
   </div>
 
   <script type="text/javascript">
@@ -32,14 +37,16 @@
         {text:"数字值",value:3}
       ];
 
-    BUI.use(['bui/extensions/mulit/multilist', 'bui/extensions/mulit/multilistpicker'], function(Multilist, MultilistPicker){
+    BUI.use(['bui/extensions/mulit/multilist', 'bui/extensions/mulit/multilistpicker', 'bui/extensions/search'], function(Multilist, MultilistPicker, Search){
       var multilist = new Multilist({
-        source: {
-          items: items1
-        }
-      });
+          // items: items1,
+          url: 'data.php',
+          plugins: [Search]
+        });
       var picker = new MultilistPicker({
         trigger: '#multilist',
+        textField: '#multilist',
+        valueField: '#multilistVal',
         children: [multilist]
       }).render();
     });

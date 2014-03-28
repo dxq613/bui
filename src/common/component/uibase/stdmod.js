@@ -76,7 +76,7 @@ define('bui/component/uibase/stdmod',function () {
 
     StdModView.prototype = {
 
-        __createDom:function () {
+        __renderUI:function () { //createDom
             createUI(this, 'header');
             createUI(this, 'body');
             createUI(this, 'footer');

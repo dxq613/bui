@@ -150,8 +150,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         if(!subMenu.get('parentMenu')){
           subMenu.set('parentMenu',parent);
           if(parent.get('autoHide')){
-            subMenu.set('autoHide',false);
-          } 
+            if(parent.get('autoHideType') == 'click'){
+              subMenu.set('autoHide',false);
+            }else{
+              subMenu.set('autoHideType','leave');
+            }
+            
+          } /**/
         }
         $(_self.get('arrowTpl')).appendTo(el);
       }
@@ -170,10 +175,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 默认的Html 标签
@@ -235,6 +236,23 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : {
           'afterOpenChange' : true
         }
+      }
+    },
+    PARSER : {
+      subMenu : function(el){
+        var 
+          subList = el.find('ul'),
+          sub;
+        if(subList && subList.length){
+          sub = BUI.Component.create({
+            srcNode : subList,
+            xclass : 'pop-menu',
+            autoHide : true,
+            autoHideType : 'leave'
+          });
+          subList.appendTo('body');
+        }
+        return sub;
       }
     }
   },{
@@ -362,10 +380,6 @@ define('bui/menu/menu',['bui/common'],function(require){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Menu.Menu#
-     * @ignore
-     */
     {
 
       elTagName:{
@@ -525,10 +539,6 @@ define('bui/memu/contextmenu',['bui/common','bui/menu/menuitem','bui/menu/popmen
   },{
 
     ATTRS:
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 显示的文本
@@ -605,10 +615,6 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
    * @extends BUI.Menu.Menu
    */
   var sideMenu = Menu.extend(
-  /**
-   * @lends BUI.Menu.SideMenu.prototype
-   * @ignore
-   */
   {
     //初始化配置项
     initializer : function(){
@@ -670,16 +676,18 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
         items = item.items,
         subItems = [],
         cfg = {
-          xclass : 'menu-item',
-          elCls : 'menu-second',
-          collapsed : item.collapsed,
           selectable: false,
           children : [{
             xclass : 'menu',
             children : subItems
-          }],
-          content: '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">'+item.text+'</span></div>'
+          }]
         };
+
+      BUI.mix(cfg,{
+        xclass : 'menu-item',
+        elCls : 'menu-second'
+      },item);
+
       BUI.each(items,function(subItem){
         var subItemCfg = _self._initSubMenuCfg(subItem);
         subItems.push(subItemCfg);
@@ -694,17 +702,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
         cfg = {
           xclass : 'menu-item',
           elCls : 'menu-leaf',
-          tpl : '<a href="{href}"><em>{text}</em></a>'
+          tpl : _self.get('subMenuItemTpl')
         };
       return BUI.mix(cfg,subItem);
     }
   },{
 
     ATTRS : 
-    /**
-     * @lends BUI.Menu.SideMenu.prototype
-     * @ignore
-     */
     {
       
       /**
@@ -714,6 +718,20 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
        */
       autoInitItems : {
           value : false
+      },
+      /**
+       * 菜单项的模板
+       * @type {String}
+       */
+      itemTpl : {
+        value : '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">{text}</span></div>'
+      },
+      /**
+       * 子菜单的选项模板
+       * @cfg {String} subMenuTpl
+       */
+      subMenuItemTpl : {
+        value : '<a href="{href}"><em>{text}</em></a>'
       },
       events : {
         value : {

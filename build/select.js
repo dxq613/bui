@@ -117,9 +117,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        if(_self.get('forceFit')){
-          picker.set('width',el.outerWidth());
-        }
+        
         picker.render();
         _self.set('list',picker.get('list'));
       },
@@ -136,6 +134,11 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         });
         list.on('itemsshow',function(){
           _self._syncValue();
+        });
+        picker.on('show',function(){
+          if(_self.get('forceFit')){
+            picker.set('width',_self.get('el').outerWidth());
+          }
         });
       },
       /**
@@ -248,10 +251,6 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       }
     },{
       ATTRS : 
-      /**
-       * @lends BUI.Select.Select#
-       * @ignore
-       */
       {
 
         /**
@@ -499,15 +498,27 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
         }
       }
       combox.superclass._uiSetItems.call(_self,v);
-    }
+    },
+    bindUI: function(){
+      var _self = this,
+        picker = _self.get('picker'),
+        list = picker.get('list'),
+        textField = picker.get('textField');
 
+      //修复手动清空textField里面的值，再选时不填充的bug
+      $(textField).on('keyup', function(ev){
+        var item = list.getSelected();
+        if(item){
+          list.clearItemStatus(item);
+        }
+      });
+    }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Select.Combox#
-     * @ignore
-     */
     {
+      /*focusable : {
+        value : false
+      },*/
       /**
        * 控件的模版
        * @type {String}
@@ -573,7 +584,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
    *  suggest.render();
    *
    * });
-   * <code></pre>
+   * </code></pre>
    * @class BUI.Select.Suggest
    * @extends BUI.Select.Combox
    */
@@ -755,10 +766,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Select.Suggest#
-     * @ignore
-     */
     {
       /**
        * 用于显示提示的数据源
@@ -774,7 +781,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * 用于显示提示的数据源
        * @type {Array}
-       * @ignore
        */
       data:{
         value : null
@@ -790,12 +796,10 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * 是否允许缓存
        * @cfg {Boolean} cacheable
-       * @default false
        */
       /**
        * 是否允许缓存
        * @type {Boolean}
-       * @default false
        */
       cacheable:{
         value:false
@@ -838,6 +842,7 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       url : {
 
       },
+     
       /**
        * 请求完数据的回调函数
        * <pre><code>
@@ -872,7 +877,6 @@ define('bui/select/suggest',['bui/common','bui/select/combox'],function (require
       /**
        * suggest不提供自动设置选中文本功能
        * @type {Boolean}
-       * @default true
        */
       autoSetValue:{
         value:false

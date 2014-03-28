@@ -25,7 +25,7 @@ window.define = window.define || function(name,depends,fun){
   }
 
   function callback(S){
-    return fun.call(S,require);
+    return fun.call(window,require);
   }
   KISSY.add(name,callback,{requires : depends});
 };
@@ -132,6 +132,9 @@ var adapterCallback = function(){
       /*children : function(selector){
         return new wrapNode(DOM.children(this[0],selector));
       },*/
+      sort : function(fn){
+        return Array.prototype.sort.call(this,fn);
+      },
       filter : function(selector){
         if(!selector){
           return new wrapNode();

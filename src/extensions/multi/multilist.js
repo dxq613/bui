@@ -5,7 +5,18 @@
  */
 define('bui/extensions/mulit/multilist', function(require){
   var BUI = require('bui/common'),
+    List = require('bui/list'),
     Component = BUI.Component;
+
+  //设置Controller的属性
+  function setControllerAttr(control, key, value) {
+    if (BUI.isFunction(control.set)) {
+      control.set(key, value);
+    }
+    else {
+      control[key] = value;
+    }
+  }
 
   var PREFIX = BUI.prefix,
     CLS_SOURCE = PREFIX + 'multilist-source',
@@ -32,11 +43,6 @@ define('bui/extensions/mulit/multilist', function(require){
     _initControl: function(control, renderCls){
       var _self = this,
         el = _self.get('el');
-      if(!control){
-        control = {
-          elCls:'bui-select-list'
-        }
-      }
 
       //如果已经是一个控件了，则直接返回
       if(control.isController){
@@ -98,14 +104,65 @@ define('bui/extensions/mulit/multilist', function(require){
           source.addItem(item);
         }
       });
+    },
+    _uiSetStore: function(store){
+      var _self = this,
+        target = _self.get('target'),
+        idField = target.get('idField');
+      store.on('load', function(){
+        var items = target.getItems(),
+          result = store.getResult(),
+          removeArr = [];
+        BUI.each(result, function(item){
+          BUI.each(items, function(i){
+            if(i[idField] === item[idField]){
+              removeArr.push(item);
+            }
+          })
+        });
+        BUI.each(removeArr, function(item){
+          store.remove(item);
+        })
+      })
     }
   }, {
     ATTRS: {
       source:{
+        value: {
+          elCls:'bui-select-list'
+        },
+        shared: false
       },
       target: {
+        value: {
+          elCls:'bui-select-list'
+        },
+        shared: false
       },
       store: {
+        setter: function(v){
+          setControllerAttr(this.get('source'), 'store', v);
+          return v;
+        }
+      },
+      items: {
+        setter: function(v){
+          var store = new BUI.Data.Store({
+            data: v
+          });
+          this.set('store', store);
+          return v;
+        }
+      },
+      url: {
+        setter: function(v){
+          var store = new BUI.Data.Store({
+            url: v,
+            autoLoad: true
+          });
+          this.set('store', store);
+          return v;
+        }
       },
       tpl: {
         value: '<div class="row">' +

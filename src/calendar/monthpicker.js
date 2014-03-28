@@ -266,10 +266,6 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Calendar.MonthPicker#
-     * @ignore
-     */
     {
       /**
        * 下部工具栏

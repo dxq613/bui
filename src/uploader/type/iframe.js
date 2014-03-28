@@ -1,6 +1,5 @@
 /**
  * @fileoverview iframe方案上传
- * @author 剑平（明河）<minghe36@126.com>,紫英<daxingplay@gmail.com>
  * @ignore
  **/
 define('bui/uploader/type/iframe',['./base'], function(require) {

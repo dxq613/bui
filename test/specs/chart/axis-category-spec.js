@@ -70,6 +70,31 @@ BUI.use(['bui/graphic','bui/chart/categoryaxis','bui/chart/numberaxis'],function
 			expect(isNaN(offset)).not.toBe(true);
 			expect(parseInt(offset)).toBe(115);
 		});
+
+		describe('测试数字坐标轴变化',function(){
+			var labelsGroup = axis.get('labelsGroup');
+			it('更改坐标轴',function(){
+				var categories =  ['one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+				axis.change({
+					categories : categories.slice(0,6)
+				});
+
+				
+				waits(500);
+				runs(function(){
+					var value = 'two',
+					offset = axis.getOffset(value);
+					expect(isNaN(offset)).not.toBe(true);
+					expect(parseInt(offset)).toBe(135);
+				});
+
+
+			});
+			
+			it('测试新的label',function(){
+				expect(labelsGroup.get('children').length).toBe(7);
+			});
+		});
 	});
 
 

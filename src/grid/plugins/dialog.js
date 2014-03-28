@@ -77,6 +77,32 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} e.editType 编辑的类型 add 或者 edit
          */
         recordchange : false
+
+         /**
+         * @event accept 
+         * 确认编辑
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.record 编辑的数据
+         * @param {BUI.Form.Form} form 表单
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
+         */
+        
+        /**
+         * @event cancel 
+         * 取消编辑
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.record 编辑的数据
+         * @param {BUI.Form.Form} form 表单
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
+         */
+        
+        /**
+         * @event editorshow 
+         * editor 显示
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.record 编辑的数据
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
+         */
       }
     },
     editType : {
@@ -141,6 +167,11 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
         var form = editor.get('form'),
           record = form.serializeToObject();
         _self.saveRecord(record);
+        _self.fire('accept',{editor : editor,record : _self.get('record'),form : form});
+      });
+
+      editor.on('cancel',function(){
+        _self.fire('cancel',{editor : editor,record : _self.get('record'),form : editor.get('form')});
       });
     },
     /**
@@ -203,6 +234,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       editor.setValue(record,true); //设置值，并且隐藏错误
       
       _self.fire('recordchange',{record : record,editType : _self.get('editType')});
+      _self.fire('editorshow',{eidtor : editor,editType : _self.get('editType')});
     },
     /**
      * 取消编辑

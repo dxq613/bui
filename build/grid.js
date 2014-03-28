@@ -195,10 +195,6 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
    * @extends BUI.List.SimpleList
    */
   var simpleGrid = BUI.List.SimpleList.extend(
-  /**
-   * @lends BUI.Grid.SimpleGrid.prototype
-   * @ignore
-   */
   {
     renderUI : function(){
       this.get('view').setColumns();
@@ -252,10 +248,6 @@ define('bui/grid/simplegrid',['bui/common','bui/list'],function(require) {
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Grid.SimpleGrid#
-     * @ignore
-     */
     {
       /**
        * 表格可点击项的样式
@@ -534,10 +526,6 @@ define('bui/grid/column',['bui/common'],function (require) {
      * @extends BUI.Component.Controller
      */
     var column = BUI.Component.Controller.extend(
-        /**
-         * @lends BUI.Grid.Column.prototype
-         * @ignore
-         */
         {    //toggle sort state of this column ,if no sort state set 'ASC',else toggle 'ASC' and 'DESC'
             _toggleSortState:function () {
                 var _self = this,
@@ -569,10 +557,6 @@ define('bui/grid/column',['bui/common'],function (require) {
             }
         }, {
             ATTRS:
-            /*** 
-            * @lends BUI.Grid.Column.prototype 
-            * @ignore
-            */
             {
                 /**
                  * The tag name of the rendered column
@@ -685,7 +669,8 @@ define('bui/grid/column',['bui/common'],function (require) {
                 resizable:{
                     value:true
                 },
-                /* 是否可以按照此列排序，如果设置true,那么点击列头时
+                /**
+                 * 是否可以按照此列排序，如果设置true,那么点击列头时
                  * <pre><code>
                  *     {title : '数字', dataIndex :'b',sortable : false},
                  * </code></pre>
@@ -959,10 +944,6 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
    * @extends BUI.Component.Controller
    */
   var header = Controller.extend(
-    /**
-     * @lends BUI.Grid.Header.prototype
-     * @ignore
-     */
     {
       /**
        * add a columns to header
@@ -1027,7 +1008,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
        * get the columns of this header,the result equals the 'children' property .
        * @return {Array} columns
        * @example var columns = header.getColumns();
-       *    <br>or</br>
+       *    <br>or<br>
        * var columns = header.get('children');
        */
       getColumns:function () {
@@ -1302,10 +1283,6 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
 
     }, {
       ATTRS:
-      /** 
-      * @lends BUI.Grid.Header.prototype
-      * @ignore
-      * */
       {
         /**
          * 列集合
@@ -1879,26 +1856,20 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    * @extends BUI.List.SimpleList
    */
   var grid = List.SimpleList.extend({
-    
-    /**
-     * 初始化，如果未设置宽度，则使用表格容器的宽度
-     * @protected
-     * @ignore
-     */
-    initializer : function(){
-        var _self = this,
-            render = _self.get('render'),
-            width = _self.get('width');
-        if(!width){
-            _self.set('width',$(render).width());
-        }
-    },
     /**
      * @protected
      * @ignore
      */
     createDom:function () {
-      var _self = this;
+      var _self = this,
+            render = _self.get('render'),
+            outerWidth = $(render).width(),
+            width = _self.get('width');
+            
+      if(!width && outerWidth){
+        var appendWidth = _self.getAppendWidth();
+        _self.set('width',outerWidth - appendWidth);
+      }
 
       // 提前,中途设置宽度时会失败！！
       if (_self.get('width')) {
@@ -2748,10 +2719,6 @@ define('bui/grid/format',function (require) {
      * @singleton
      */
     var Format =
-    /** 
-    * @lends BUI.Grid.Format 
-    * @ignore
-    */
     {
         /**
          * 日期格式化函数
@@ -2831,7 +2798,7 @@ define('bui/grid/format',function (require) {
                 return enumObj[value] || '';
             };
         },
-        /*
+        /**
          * 将多个值转换成一个字符串
          * @param {Object} enumObj 键值对的枚举对象 {"1":"大","2":"小"}
          * @return {Function} 返回指定枚举的格式化函数
@@ -2859,7 +2826,7 @@ define('bui/grid/format',function (require) {
                 return result.join(',');
             };
         },
-        /*
+        /**
          * 将财务数据分转换成元
          * @param {Number|String} enumObj 键值对的枚举对象 {"1":"大","2":"小"}
          * @return {Number} 返回将分转换成元的数字
@@ -2912,7 +2879,8 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
  */
 
 define('bui/grid/plugins/autofit',['bui/common'],function (require) {
-  var BUI = require('bui/common');
+  var BUI = require('bui/common'),
+    UA = BUI.UA;
 
   /**
    * 表格自适应宽度
@@ -2941,19 +2909,25 @@ define('bui/grid/plugins/autofit',['bui/common'],function (require) {
           handler = setTimeout(function(){
             _self._autoFit(grid);
           },100);
+          _self.set('handler',handler);
         }
         autoFit();
       });
     },
     //自适应宽度
     _autoFit : function(grid){
-      var render = grid.get('render'),
-          width;
-        grid.set('visible',false);
-        width = $(render).width();
+      var _self = this,
+        render = $(grid.get('render')),
+        docWidth = $(window).width(),//窗口宽度
+        width,
+        appendWidth = 0,
+        parent = grid.get('el').parent();
+      while(parent[0] && parent[0] != $('body')[0]){
+        appendWidth += parent.outerWidth() - parent.width();
+        parent = parent.parent();
+      }
 
-        grid.set('visible',true);
-        grid.set('width',width);
+      grid.set('width',docWidth - appendWidth);
     }
 
   });
@@ -3256,10 +3230,6 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   BUI.extend(cascade,BUI.Base);
 
   cascade.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.Cascade#
-   * @ignore
-   */
   {
     /**
      * 显示展开按钮列的宽度
@@ -3332,10 +3302,6 @@ define('bui/grid/plugins/cascade',['bui/common'],function(require){
   };
 
   BUI.augment(cascade,
-  /**
-   * @lends BUI.Grid.Plugins.Cascade.prototype
-   * @ignore
-   */
   {
     /**
      * 初始化
@@ -3643,10 +3609,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   BUI.extend(checkSelection,BUI.Base);
 
   checkSelection.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     /**
     * column's width which contains the checkbox
@@ -3670,10 +3632,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   };
 
   BUI.augment(checkSelection, 
-  /**
-   * @lends BUI.Grid.Plugins.CheckSelection.prototype
-   * @ignore
-   */ 
   {
     createDom : function(grid){
       var _self = this;
@@ -3733,10 +3691,6 @@ define('bui/grid/plugins/selection',['bui/common'],function(require){
   BUI.extend(radioSelection,BUI.Base);
 
   radioSelection.ATTRS = 
-  /**
-   * @lends BUI.Grid.Plugins.RadioSelection#
-   * @ignore
-   */ 
   {
     /**
     * column's width which contains the checkbox
@@ -4227,6 +4181,29 @@ define('bui/grid/plugins/editing',function (require) {
     triggerSelected : {
       value : true
     }
+    /**
+     * @event accept 
+     * 确认编辑
+     * @param {Object} ev 事件对象
+     * @param {Object} ev.record 编辑的数据
+     * @param {BUI.Editor.Editor} ev.editor 编辑器
+     */
+    
+    /**
+     * @event cancel 
+     * 取消编辑
+     * @param {Object} ev 事件对象
+     * @param {Object} ev.record 编辑的数据
+     * @param {BUI.Editor.Editor} ev.editor 编辑器
+     */
+    
+    /**
+     * @event editorshow 
+     * editor 显示
+     * @param {Object} ev 事件对象
+     * @param {Object} ev.record 编辑的数据
+     * @param {BUI.Editor.Editor} ev.editor 编辑器
+     */
   };
 
   BUI.augment(Editing,{
@@ -4431,10 +4408,13 @@ define('bui/grid/plugins/editing',function (require) {
       editor.on('accept',function(){
         var record = _self.get('record');
         _self.updateRecord(store,record,editor);
+        _self.fire('accept',{editor : editor,record : record});
         _self.set('curEditor',null);
+
       });
 
       editor.on('cancel',function(){
+        _self.fire('cancel',{editor : editor,record : _self.get('record')});
         _self.set('curEditor',null);
       });
     },
@@ -4488,6 +4468,7 @@ define('bui/grid/plugins/editing',function (require) {
       editor.show();
       _self.focusEditor(editor,options.field);
       _self.set('curEditor',editor);
+      _self.fire('editorshow',{editor : editor});
     },
     /**
      * @protected
@@ -5131,6 +5112,32 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} e.editType 编辑的类型 add 或者 edit
          */
         recordchange : false
+
+         /**
+         * @event accept 
+         * 确认编辑
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.record 编辑的数据
+         * @param {BUI.Form.Form} form 表单
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
+         */
+        
+        /**
+         * @event cancel 
+         * 取消编辑
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.record 编辑的数据
+         * @param {BUI.Form.Form} form 表单
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
+         */
+        
+        /**
+         * @event editorshow 
+         * editor 显示
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.record 编辑的数据
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
+         */
       }
     },
     editType : {
@@ -5195,6 +5202,11 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
         var form = editor.get('form'),
           record = form.serializeToObject();
         _self.saveRecord(record);
+        _self.fire('accept',{editor : editor,record : _self.get('record'),form : form});
+      });
+
+      editor.on('cancel',function(){
+        _self.fire('cancel',{editor : editor,record : _self.get('record'),form : editor.get('form')});
       });
     },
     /**
@@ -5257,6 +5269,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       editor.setValue(record,true); //设置值，并且隐藏错误
       
       _self.fire('recordchange',{record : record,editType : _self.get('editType')});
+      _self.fire('editorshow',{eidtor : editor,editType : _self.get('editType')});
     },
     /**
      * 取消编辑

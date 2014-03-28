@@ -58,10 +58,6 @@ define('bui/toolbar/baritem',function(){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.prototype
-     * @ignore
-     */
     {
       elTagName :{
           view : true,
@@ -128,10 +124,6 @@ define('bui/toolbar/baritem',function(){
     
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.Button.prototype
-     * @ignore
-     */
     {
       /**
        * 是否选中
@@ -209,10 +201,6 @@ define('bui/toolbar/baritem',function(){
     
   },{
     ATTRS:
-    /** 
-    * @lends BUI.Toolbar.BarItem.Spacer.prototype
-    * @ignore
-    */
     {
       /**
       * 空白宽度
@@ -243,10 +231,6 @@ define('bui/toolbar/baritem',function(){
     }
   },{
     ATTRS:
-    /**
-     * @lends BUI.Toolbar.BarItem.Text.prototype
-     * @ignore
-     */
     {
       
       /**
@@ -331,11 +315,7 @@ define('bui/toolbar/bar',function(){
    * @extends BUI.Component.Controller
    * @mixins BUI.Component.UIBase.ChildList
    */
-	var Bar = Component.Controller.extend([UIBase.ChildList],
-	 /**
-	 * @lends BUI.Toolbar.Bar.prototype
-   * @ignore 
-	 */	
+	var Bar = Component.Controller.extend([UIBase.ChildList],	
 	{
 		/**
 		* 通过id 获取项
@@ -347,10 +327,6 @@ define('bui/toolbar/bar',function(){
 		}
 	},{
 		ATTRS:
-    /** 
-    * @lends BUI.Toolbar.Bar.prototype
-    * @ignore
-    */
 		{
       elTagName :{
           view : true,
@@ -418,10 +394,6 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
      * @class BUI.Toolbar.PagingBar
      */
     var PagingBar = Bar.extend([Bindable],
-        /** 
-        * @lends BUI.Toolbar.PagingBar.prototype
-        * @ignore
-        */
         {
             /**
              * From Bar, Initialize this paging bar items.
@@ -724,10 +696,7 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
             }
         }, {
             ATTRS:
-            /** 
-            * @lends BUI.Toolbar.PagingBar.prototype
-            * @ignore
-            */
+     
             {
                
                 /**
@@ -908,10 +877,6 @@ define('bui/toolbar/numberpagingbar',['bui/toolbar/pagingbar'],function(require)
      * @class BUI.Toolbar.NumberPagingBar
      */
     var NumberPagingBar = PBar.extend(
-        /** 
-        * @lends BUI.Toolbar.NumberPagingBar.prototype
-        * @ignore
-        */
         {
         /**
         * get the initial items of paging bar

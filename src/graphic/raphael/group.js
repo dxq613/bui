@@ -1,4 +1,4 @@
-define('bui/graphic/raphael/group',function(require){
+define('bui/graphic/raphael/group',['bui/common'],function(require){
 
 	var BUI = require('bui/common');
 
@@ -72,7 +72,7 @@ define('bui/graphic/raphael/group',function(require){
     //use vml
     if(window.Raphael.vml){
     	var createNode = function (tagName) {
-        return R._g.doc.createElement('<rvml:' + tagName + ' class="rvml">');
+        return R._g.doc.createElement('div');
       };
       //获取path
       R._getPath.group = function(el){
@@ -111,13 +111,34 @@ define('bui/graphic/raphael/group',function(require){
       };
 
       groupproto.translate = function(dx,dy){
-        var el = this.node;
-        $(el).css({
-          top : dy,
-          left : dx
+        var el = $(this.node),
+          top = parseFloat(el.css('top'),10) || 0,
+          left = parseFloat(el.css('left'),10) || 0;
+        el.css({
+          top : top + dy,
+          left : left + dx
         });
-      }
-      /*
+      };
+
+      groupproto.move = function(x,y){
+        var el = $(this.node);
+        el.css({
+          top : y,
+          left : x
+        });
+      };
+
+      groupproto.animate = function(params,ms,easing,callback){
+
+        var el = $(this.node);
+        el.animate({
+          top : params.y,
+          left : params.x
+        },ms,easing,callback);
+        
+      };
+      /**/
+      
       //翻转
       groupproto.transform = function(tstr){
           var set = this.__set;
@@ -128,10 +149,10 @@ define('bui/graphic/raphael/group',function(require){
           }
           Group.superclass.transform.call(this,tstr);
       };
-      */
+      /**/
       //创建分组
       R._engine.group = function(vml){
-          var el = createNode('group');
+          var el = createNode();
           vml.canvas.appendChild(el);
           var res = new Group(el,vml);
           res.type = "group";

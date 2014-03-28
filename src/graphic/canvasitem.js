@@ -2,7 +2,9 @@
  * @fileOverview 画布内部的元素扩展
  * @ignore
  */
-define('bui/graphic/canvasitem',function(require) {
+define('bui/graphic/canvasitem',['bui/common'],function(require) {
+	
+	var BUI = require('bui/common');
 	
 	/**
 	 * @class BUI.Graphic.CanvasItem
@@ -32,7 +34,11 @@ define('bui/graphic/canvasitem',function(require) {
   			el = _self.get('el');
   		el.translate(dx,dy);
 		},
-		
+		index : function(){
+			var _self = this,
+				parent = _self.get('parent');
+			return BUI.Array.indexOf(_self,parent.get('children'));
+		},
 		/**
 		 * 执行动画
 		 * @param  {Object}   params   动画的参数

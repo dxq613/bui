@@ -131,8 +131,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         if(!subMenu.get('parentMenu')){
           subMenu.set('parentMenu',parent);
           if(parent.get('autoHide')){
-            subMenu.set('autoHide',false);
-          } 
+            if(parent.get('autoHideType') == 'click'){
+              subMenu.set('autoHide',false);
+            }else{
+              subMenu.set('autoHideType','leave');
+            }
+            
+          } /**/
         }
         $(_self.get('arrowTpl')).appendTo(el);
       }
@@ -151,10 +156,6 @@ define('bui/menu/menuitem',['bui/common'],function(require){
 
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Menu.MenuItem#
-     * @ignore
-     */
     {
       /**
        * 默认的Html 标签
@@ -216,6 +217,23 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : {
           'afterOpenChange' : true
         }
+      }
+    },
+    PARSER : {
+      subMenu : function(el){
+        var 
+          subList = el.find('ul'),
+          sub;
+        if(subList && subList.length){
+          sub = BUI.Component.create({
+            srcNode : subList,
+            xclass : 'pop-menu',
+            autoHide : true,
+            autoHideType : 'leave'
+          });
+          subList.appendTo('body');
+        }
+        return sub;
       }
     }
   },{

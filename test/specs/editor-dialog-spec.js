@@ -21,6 +21,8 @@ BUI.use(['bui/editor','bui/overlay'],function (Editor,Overlay) {
 
   editor.render();
 
+  
+
   /*var d = new Overlay.Dialog({
     contentId:'c1',
     width : 500,

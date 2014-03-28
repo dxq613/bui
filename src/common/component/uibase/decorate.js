@@ -8,7 +8,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
   var ArrayUtil = require('bui/array'),
     JSON = require('bui/json'),
     prefixCls = BUI.prefix,
-    FIELD_PREFIX = 'data-'
+    FIELD_PREFIX = 'data-',
     FIELD_CFG = FIELD_PREFIX + 'cfg',
     PARSER = 'PARSER',
     Manager = require('bui/component/manage'),
@@ -213,7 +213,12 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
           }
           else if(isConfigField(name,decorateCfgFields)){
             name = name.replace(FIELD_PREFIX,'');
-            config[name] = parseFieldValue(attr.nodeValue);
+            var value = parseFieldValue(attr.nodeValue);
+            if(config[name] && BUI.isObject(value)){
+              BUI.mix(config[name],value);
+            }else{
+              config[name] = value;
+            }
           }
         }catch(e){
           BUI.log('parse field error,the attribute is:' + name);
@@ -262,7 +267,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     /**
      * 获取子控件的xclass类型
      * @protected
-     * @param {jQuery} 子控件的根节点
+     * @param {jQuery} childNode 子控件的根节点
      */
     findXClassByNode: function (childNode, ignoreError) {
       var _self = this,

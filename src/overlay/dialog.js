@@ -177,10 +177,6 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
   },{
 
     ATTRS : 
-  	/**
-  	* @lends BUI.Overlay.Dialog#
-    * @ignore 
-  	*/
     {
       closeTpl:{
         view:true,

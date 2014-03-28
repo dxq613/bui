@@ -48,8 +48,8 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     _uiSetTitle : function(v){
       var _self = this,
         el = _self.get('el');
-      el.attr('title',v);
-      $('.' + CLS_ITEM_TITLE,el).text(v);
+      //el.attr('title',v);
+      $('.' + CLS_ITEM_TITLE,el).html(v);
     },
     _uiSetActived : function(v){
       var _self = this,
@@ -111,10 +111,6 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
    * @extends BUI.Component.Controller
    */
   var navTabItem = Component.Controller.extend(
-  /**
-   * @lends BUI.Tab.NavTabItem.prototype
-   * @ignore
-   */
   {
     /**
      * 创建DOM
@@ -225,10 +221,6 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     }
   },{
     ATTRS : 
-    /**
-     * @lends BUI.Tab.NavTabItem#
-     * @ignore
-     */
     {
       elTagName : {
         value: 'li'

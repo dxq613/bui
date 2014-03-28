@@ -29,42 +29,98 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 
 		/**
 		 * 位置
-		 * @type {String}
+		 *<ol>
+     * <li>fit: 'none', 内部控件不跟随布局项的宽高自适应</li>
+     * <li>fit: 'width',内部控件跟随布局项的宽度进行自适应</li>
+     * <li>fit: 'height',内部控件跟随布局项的高度进行自适应</li>
+     * <li>fit: 'both',内部控件跟随布局项的宽度、高度都进行自适应</li>
+     *</ol>
+		 * @cfg {String} region
 		 */
 		region : {
 
 		},
 		/**
 		 * 标题的模板
-		 * @type {Object}
+		 * <pre><code>
+		 * 	children : [{
+					layout : {
+						title : 'north',
+						region : 'north',
+						height : 50,
+						titleTpl : '&lt;div class="x-border-title x-border-title-{region}">{title}&lt;/div>'
+					},
+					width : 100,
+					height :15,
+					elCls : 'red',
+					xclass : 'grid',
+					content : "无自适应"
+				}]
+		 * </code></pre>
+		 * @cfg {Object} titleTpl
 		 */
 		titleTpl : {
 			value : '<div class="x-border-title x-border-title-{region}">{title}</div>'
 		},
 		/**
-		 * 附加元素
-		 * @type {Object}
+		 * 收缩展开的dom的模板
+		 * <pre><code>
+		 * 	children : [{
+					layout : {
+						title : 'north',
+						region : 'north',
+						height : 50,
+						collapsable : true,//只有callapsable:true，collapseTpl才会生效
+						collapseTpl : '&lt;s class="x-collapsed-btn x-collapsed-{region}">&lt;/s>'
+					},
+					width : 100,
+					height :15,
+					elCls : 'red',
+					xclass : 'grid',
+					content : "无自适应"
+				}]
+		 * </code></pre>
+		 * @cfg {Object} collapseTpl
 		 */
 		collapseTpl : {
 			value : '<s class="x-collapsed-btn x-collapsed-{region}"></s>'
 		},
 		/**
 		 * 是否可以折叠
-		 * @type {String}
+		 *  <pre><code>
+		 * 	children : [{
+					layout : {
+						title : 'north',
+						region : 'north',
+						height : 50,
+						collapsable : true
+					},
+					width : 100,
+					height :15,
+					elCls : 'red',
+					xclass : 'grid',
+					content : "无自适应"
+				}]
+		 * </code></pre>
+		 * @cfg {Boolean} collapsable
 		 */
 		collapsable : {
 			value : false
 		},
 		/**
+		 * 是否默认折叠
+		 * @cfg {Boolean} collapsed
+		 */
+		/**
 		 * 是否折叠
-		 * @type {String}
+		 * @type {Boolean}
 		 */
 		collapsed : {
 			value : false
 		},
 		/**
 		 * 收缩后剩余的宽度或者高度，如果存在title，则以title的高度为准
-		 * @type {Object}
+		 * @cfg {Number} leftRange
 		 */
 		leftRange : {
 			value : 28
@@ -104,6 +160,12 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 		},
 		/**
 		 * 展开
+		 * <pre>
+		 * <code>
+		 * var item = layout.getItemsByRegion('west')[0];
+		 * item && item.expand()
+		 * </code>
+		 * </pre>
 		 */
 		expand : function(range,duration,callback){
 			var _self = this,
@@ -132,8 +194,7 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 		_getLeftRange : function(){
 			var _self = this,
 				el = _self.get('el'),
-				left = _self.get('leftRange'),
-				titleEl = _self.get('_titleEl');
+				left = _self.get('leftRange');
 			return left;
 		},
 		/**
@@ -143,11 +204,29 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 		getCollapsedRange : function(){
 			var _self = this,
 				property = _self.getCollapseProperty(),
-				el = _self.get('el');
-			return _self.get(property) - _self._getLeftRange(property);
+				el = _self.get('el'),
+				val = _self.get(property);
+			if(BUI.isString(val)){
+				var dynacAttrs = _self._getDynacAttrs();
+				if(val.indexOf('{') != -1){
+					val = BUI.substitute(val,dynacAttrs);
+					val = BUI.JSON.looseParse(val);
+				}
+				else if(val.indexOf('%') != -1){
+					val = parseInt(val,10) * 0.01 * dynacAttrs[property];
+				}else{
+					val = parseInt(val,10);
+				}
+			}
+			return val - _self._getLeftRange(property);
 		},
 		/**
 		 * 折叠
+		 * <pre>
+		 * <code>
+		 * var item = layout.getItemsByRegion('west')[0];
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 */
 		collapse : function(duration,callback){
 			var _self = this,

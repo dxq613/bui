@@ -89,10 +89,6 @@ define('bui/component/uibase/bindable',function(){
 
 
 	BUI.augment(bindable,
-	/**
-	* @lends BUI.Data.Bindable.prototype
-	* @ignore
-	*/	
 	{
 
 		__bindUI : function(){
@@ -211,6 +207,16 @@ define('bui/component/uibase/bindable',function(){
 		* @see {@link BUI.Data.Store#event-localsort}
 		*/
 		onLocalSort : function(e){
+			
+		},
+		/**
+		* @protected
+    * @template
+		* after filter sorted data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-filter}
+		*/
+		onFiltered : function(e){
 			
 		}
 	});

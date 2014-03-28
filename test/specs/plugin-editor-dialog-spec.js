@@ -54,7 +54,22 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins/dialogediting','bui/grid/f
   });;
 
   grid.render();
+  function log(obj){
+    window.console && window.console.log(obj);
+  }
 
+  editing.on('accept',function(ev){
+    log(ev);
+  });
+
+  editing.on('editorshow',function(ev){
+    log(ev);
+
+  });
+
+  editing.on('cancel',function(ev){
+    log(ev);
+  });
 
   function getField(field){
     return form.getField(field);

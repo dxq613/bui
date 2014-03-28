@@ -67,6 +67,24 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
         itemTpl = resultTpl[status] || resultTpl['default'],
         tplData = BUI.mix({}, item.attr, item.result);
       item.resultTpl = BUI.substitute(itemTpl, tplData);
+    },
+    /**
+     * 获取文件的当前状态
+     * @param {Object} item
+     * @return {String} status 状态名称
+     */
+    status: function(item){
+      var _self = this,
+        itemStatusFields = _self.get('itemStatusFields'),
+        status;
+
+      BUI.each(itemStatusFields, function(v, k){
+        if (item[v]) {
+          status = v;
+          return false;
+        }
+      });
+      return status;
     }
   }, {
     ATTRS: {
@@ -120,6 +138,7 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
        */
       itemStatusFields: {
         value: {
+          add: 'add',
           wait: 'wait',
           start: 'start',
           progress: 'progress',

@@ -10,7 +10,7 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 
 	/**
 	 * @class BUI.Layout.Abstract
-	 * 控件布局插件的抽象类
+	 * 控件布局插件的抽象类，此插件不要直接使用
 	 * @extends BUI.Base
 	 */
 	var Abstract = function(config){
@@ -23,70 +23,144 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 
 		/**
 		 * 子项对应的构造函数
+		 * @protected
 		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item
 		},
 		/**
-		 * 使用此插件的控件
+		 * 使用此插件的控件,只读属性
+		 * <pre>
+		 * <code>
+		 *  var control =	layout.get('control');
+		 * </code>
+		 * </pre>
+		 * @readOnly
 		 * @type {BUI.Component.Controller}
 		 */
 		control : {
 
 		},
 		/**
-		 * 控件的的那些事件会引起重新布局
+		 * 控件的的哪些事件会引起重新布局，一般场景下控件的宽高改变都会引起重新布局
 		 * @type {Array}
 		 */
 		layoutEvents : {
 			value : ['afterWidthChange','afterHeightChange']
 		},
 		/**
-		 * 内部选项
+		 * 内部选项，获取布局插件的布局项
+		 * <pre>
+		 * <code>
+		 *  var items =	layout.get('items');
+		 * </code>
+		 * </pre>
 		 * @type {String}
 		 */
 		items : {
 
 		},
 		/**
-		 * 布局容器上添加的样式
-		 * @type {String}
+		 * 布局容器上添加的样式,布局插件在放置子项的节点上设置的样式
+		 * @cfg {String} elCls
 		 */
 		elCls : {
 
 		},
 		/**
 		 * 布局子项的默认得配置项
-		 * @type {Object}
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	}
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {Object} defaultCfg
 		 */
 		defaultCfg : {
 			value : {}
 		},
 		/**
-		 * 放置控件的容器css
-		 * @type {string}
+		 * 放置控件的容器css,当设置itemTpl时指定布局项放置的位置
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	},
+		 *  	itempl : '&lt;div class="a">&lt;div class="b">&lt;/div>&lt;/div>',
+		 *  	wraperCls : 'b'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {string} wraperCls
 		 */
 		wraperCls : {
 
 		},
 		/**
 		 * 放置布局的容器
+		 * @readOnly
 		 * @type {jQuery}
 		 */
 		container : {
 
 		},
 		/**
-		 * 布局相关的模板,将所有的子控件放置其中
+		 * 布局的模板,将所有的子控件放置其中,默认为空
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	},
+		 *  	tpl : '&lt;div class="custom-a">&lt;/div>'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
 		 * @type {String}
 		 */
 		tpl : {
 
 		},
 		/**
-		 * 每一个布局子项的模板
-		 * @type {String}
+		 * 每一个布局子项的模板，会将使用此插件的子控件放入其中
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	},
+		 *  	itemTpl : '&lt;div class="a">&lt;div class="b">&lt;/div>&lt;/div>',
+		 *  	wraperCls : 'b'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {String} itemTpl
 		 */
 		itemTpl : {
 			value : '<div></div>'
@@ -162,6 +236,12 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 通过DOM查找子项
+		 * <pre>
+		 * <code>
+		 *  var node = $('#id');//一般可以通过点击事件等获取
+		 *  var item = layout.getItemByElement(node);
+		 * </code>
+		 * </pre>
 		 * @param  {jQuery} element DOM元素
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
@@ -204,6 +284,12 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 获取下一项选项,如果当前项是最后一条记录，则返回第一条记录
+		 * <pre>
+		 * <code>
+		 *  var preItem = ...;//通过各种方式获得
+		 *  var next = layout.getNextItem(preItem); //下一个
+		 * </code>
+		 * </pre>
 		 * @param  {BUI.Layout.Item} item 选项
 		 * @return {BUI.Layout.Item}  下一个选项
 		 */
@@ -272,6 +358,13 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 通过匹配函数获取布局选项
+		 * <pre>
+		 * <code>
+		 *  var item = layout.getItemBy(function(item){
+		 *    return item.get('control').get('id') == 'tree';//查找内部控件的id='grid'的布局项
+		 *  });
+		 * </code>
+		 * </pre>
 		 * @param  {Function} fn 匹配函数
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
@@ -290,6 +383,13 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 通过匹配函数获取布局选项集合
+		 * <pre>
+		 * <code>
+		 *  var items = layout.getItemsBy(function(item){
+		 *    return item.get('region') == 'north';//查找
+		 *  });
+		 * </code>
+		 * </pre>
 		 * @param  {Function} fn 匹配函数
 		 * @return {Array} 布局选项集合
 		 */
@@ -307,6 +407,12 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 获取布局选项
+		 * <pre>
+		 * <code>
+		 *  var grid = BUI.getControl('grid');//根据id获取grid
+		 *  var next = layout.getItem(grid); //下一个
+		 * </code>
+		 * </pre>
 		 * @param {Object} controlChild 子控件
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
@@ -317,13 +423,23 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 返回子项的数目
+		 * <pre>
+		 * <code>
+		 *  var count = layout.getCount();
+		 * </code>
+		 * </pre>
 		 * @return {Number} 数目
 		 */
 		getCount : function(){
 			return this.getItems().length;
 		},
 		/**
-		 * 根据索引返回选项
+		 * 根据索引返回选项,索引从0开始
+		 * <pre>
+		 * <code>
+		 *  var item = layout.getItemAt(2);
+		 * </code>
+		 * </pre>
 		 * @return {BUI.Layout.Item}} 返回选项
 		 */
 		getItemAt : function(index){
@@ -331,6 +447,11 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 获取索引
+		 * <pre>
+		 * <code>
+		 *  var index = layout.getItemIndex(item);
+		 * </code>
+		 * </pre>
 		 * @param  {BUI.Layout.Item} item 选项
 		 * @return {Number} 索引
 		 */
@@ -370,6 +491,11 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 重新布局
+		 * <pre>
+		 * <code>
+		 *  layout.reset();
+		 * </code>
+		 * </pre>
 		 */
 		reset: function(){
 			this.resetLayout();

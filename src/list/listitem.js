@@ -14,7 +14,6 @@ define('bui/list/listitem',['bui/common'],function (require) {
    * @private
    * @class BUI.List.ItemView
    * @extends BUI.Component.View
-   * @extends BUI.Component.View
    * @mixins BUI.Component.UIBase.ListItemView
    * 列表项的视图层对象
    */
@@ -32,10 +31,6 @@ define('bui/list/listitem',['bui/common'],function (require) {
     
   },{
     ATTRS : 
-    /**
-     * @lends BUI.List.Item#
-     * @ignore
-     */
     {
       elTagName:{
         view:true,

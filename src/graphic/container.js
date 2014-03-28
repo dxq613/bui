@@ -52,8 +52,8 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 		},
 		/**
 		 * 添加图形
-		 * @param {String | Object} 类型或者配置项
-		 * @param {String} 属性
+		 * @param {String | Object} type 类型或者配置项
+		 * @param {String} attrs 属性
 		 * @return {BUI.Graphic.Shape} 图形
 		 */
 		addShape : function(type,attrs){
@@ -67,12 +67,14 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 			}else{
 				cfg = {
 					type : type,
-					attrs : attrs
+					attrs : attrs,
+					canvas : _self.get('canvas')
 				};
 			}
 			cfg.parent = _self;
 			C = _self.getShapeClass(type);
 			shape = new C(cfg);
+			shape.set('canvas',_self.get('canvas'));
 			_self.addChild(shape);
 			return shape;
 		},
@@ -88,7 +90,8 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 			}
 			var _self = this,
 				cfg = BUI.mix({
-					parent : _self
+					parent : _self,
+					canvas : _self.get('canvas')
 				},cfg),
 				group;
 
@@ -122,7 +125,7 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 		/**
 		 * @protected
 		 * 添加图形或者分组
-		 * @param {BUI.Graphic.Base} 图形或者分组
+		 * @param {BUI.Graphic.Base} item 图形或者分组
 		 */
 		addChild : function(item){
 			var _self = this,
@@ -137,6 +140,27 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 		 */
 		getChildAt : function(index){
 			return this.get('children')[index];
+		},
+		/**
+		 * 获取子控件数目
+		 * @return {Number} 数目
+		 */
+		getCount : function(){
+			return this.get('children').length;
+		},
+		/**
+		 * 获取最后一个控件
+		 * @return {BUI.Graphic.Base} 图形或者分组
+		 */
+		getLast : function(){
+			return this.getChildAt(this.getCount() - 1);
+		},
+		/**
+		 * 获取第一个控件
+		 * @return {BUI.Graphic.Base} 图形或者分组
+		 */
+		getFirst : function(){
+			return this.getChildAt(0);
 		},
 		/**
 		 * 根据id查找分组或者图形
@@ -217,7 +241,7 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
 			BUI.each(children,function(item){
 				item.destroy();
 			});
-			BUI.Array.empty(children);
+			children && BUI.Array.empty(children);
 			if(el.__set && el.__set.clear){
 				el.__set.clear();
 			}
@@ -231,7 +255,9 @@ define('bui/graphic/container',['bui/common','bui/graphic/base','bui/graphic/sha
     		children = _self.get('children'),
     		el = _self.get('el'),
     		node = _self.get('node');
-
+    	if(_self.get('destroyed')){
+    		return;
+    	}
     	_self.clear();
 
     	Container.superclass.destroy.call(this);

@@ -483,26 +483,20 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    * @extends BUI.List.SimpleList
    */
   var grid = List.SimpleList.extend({
-    
-    /**
-     * 初始化，如果未设置宽度，则使用表格容器的宽度
-     * @protected
-     * @ignore
-     */
-    initializer : function(){
-        var _self = this,
-            render = _self.get('render'),
-            width = _self.get('width');
-        if(!width){
-            _self.set('width',$(render).width());
-        }
-    },
     /**
      * @protected
      * @ignore
      */
     createDom:function () {
-      var _self = this;
+      var _self = this,
+            render = _self.get('render'),
+            outerWidth = $(render).width(),
+            width = _self.get('width');
+            
+      if(!width && outerWidth){
+        var appendWidth = _self.getAppendWidth();
+        _self.set('width',outerWidth - appendWidth);
+      }
 
       // 提前,中途设置宽度时会失败！！
       if (_self.get('width')) {

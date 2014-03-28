@@ -15,8 +15,11 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 	});
 
 	return Graphic;
-});define('bui/graphic/base',function (require) {
+});define('bui/graphic/base',['bui/graphic/util'],function (require) {
 	
+    var BUI = require('bui/common'),
+        Util = require('bui/graphic/util');
+
 	/**
 	 * @class BUI.Graphic.Base
 	 * 图形控件或者分组的基类
@@ -24,13 +27,15 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 	var Base = function(cfg){
 		this.cfg = cfg;
 		this._attrs = {
-			autoRender : true
+			autoRender : true,
+            visible : true
 		};
 		var defaultCfg = this.getDefaultCfg();
         BUI.mix(this._attrs,defaultCfg,cfg);
         if(this.get('autoRender')){
         	this.render();
         }
+        
 	};
 
 	Base.ATTRS = {
@@ -50,7 +55,21 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 		 * svg或者vml对象
 		 * @type {HTMLElement}
 		 */
-		node : {}
+		node : {},
+        /**
+         * 画布
+         * @type {BUI.Graphic.Canvas}
+         */
+        canvas : {
+
+        },
+        /**
+         * 是否显示
+         * @type {Boolean}
+         */
+        visible : {
+            value : true
+        }
 	};
 
 	BUI.augment(Base,{
@@ -62,7 +81,7 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
     getDefaultCfg : function(){
       return {};
     },
-		/**
+    /**
   	 * 设置属性信息
   	 * @protected
   	 */
@@ -76,6 +95,29 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
     get : function(name){
       return this._attrs[name];
     },
+    /**
+     * 获取初始配置的信息
+     * @param  {String} name 配置项名称
+     * @return {*}  初始值
+     */
+    getCfgAttr : function(name){
+        return this.cfg[name];
+
+    },
+    /**
+     * 显示
+     */
+    show : function(){
+        this.get('el').show();
+        this.set('visible',true);
+    },
+    /**
+     * 隐藏
+     */
+    hide : function(){
+        this.get('el').hide();
+        this.set('visible',false);
+    },  
     /**
      * 设置或者设置属性，有一下3中情形：
      *
@@ -185,9 +227,13 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 
     	if(!_self.get('rendered')){
             _self.beforeRenderUI();
+
     		_self.renderUI();
     		_self.set('rendered',true);
             node = _self.get('node');
+            if(this.get('visible') == false){
+                this.hide();
+            }
             if(cls){
                 var oldCls = node.getAttribute('class');
                     
@@ -200,6 +246,9 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
             }
             if(zIndex != null){
                 node.setAttribute('zIndex',zIndex);
+                if(Util.vml){
+                    $(node).css('z-index',zIndex);
+                }
             }
             _self.bindUI();
     	}
@@ -229,6 +278,7 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
     	var _self = this;
     	if(_self.get('parent')){
     		_self.get('parent').removeChild(_self,destroy);
+            _self.set('parent',null);
     	}else if(destroy){
     		_self.destroy();
     	}
@@ -239,10 +289,15 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
     destroy : function(){
     	var _self = this,
     		el = _self.get('el'),
-        node = _self.get('node');
+            destroyed = _self.get('destroyed'),
+            node = _self.get('node');
+        if(destroyed){
+            return;
+        }
     	el.remove && el.remove();
     	_self._attrs = {};
-      $(node).off();
+        $(node).off();
+        _self.set('destroyed',true);
     }
 
 	});
@@ -302,8 +357,8 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 		},
 		/**
 		 * 添加图形
-		 * @param {String | Object} 类型或者配置项
-		 * @param {String} 属性
+		 * @param {String | Object} type 类型或者配置项
+		 * @param {String} attrs 属性
 		 * @return {BUI.Graphic.Shape} 图形
 		 */
 		addShape : function(type,attrs){
@@ -317,12 +372,14 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 			}else{
 				cfg = {
 					type : type,
-					attrs : attrs
+					attrs : attrs,
+					canvas : _self.get('canvas')
 				};
 			}
 			cfg.parent = _self;
 			C = _self.getShapeClass(type);
 			shape = new C(cfg);
+			shape.set('canvas',_self.get('canvas'));
 			_self.addChild(shape);
 			return shape;
 		},
@@ -338,7 +395,8 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 			}
 			var _self = this,
 				cfg = BUI.mix({
-					parent : _self
+					parent : _self,
+					canvas : _self.get('canvas')
 				},cfg),
 				group;
 
@@ -372,7 +430,7 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 		/**
 		 * @protected
 		 * 添加图形或者分组
-		 * @param {BUI.Graphic.Base} 图形或者分组
+		 * @param {BUI.Graphic.Base} item 图形或者分组
 		 */
 		addChild : function(item){
 			var _self = this,
@@ -387,6 +445,27 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 		 */
 		getChildAt : function(index){
 			return this.get('children')[index];
+		},
+		/**
+		 * 获取子控件数目
+		 * @return {Number} 数目
+		 */
+		getCount : function(){
+			return this.get('children').length;
+		},
+		/**
+		 * 获取最后一个控件
+		 * @return {BUI.Graphic.Base} 图形或者分组
+		 */
+		getLast : function(){
+			return this.getChildAt(this.getCount() - 1);
+		},
+		/**
+		 * 获取第一个控件
+		 * @return {BUI.Graphic.Base} 图形或者分组
+		 */
+		getFirst : function(){
+			return this.getChildAt(0);
 		},
 		/**
 		 * 根据id查找分组或者图形
@@ -467,7 +546,7 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
 			BUI.each(children,function(item){
 				item.destroy();
 			});
-			BUI.Array.empty(children);
+			children && BUI.Array.empty(children);
 			if(el.__set && el.__set.clear){
 				el.__set.clear();
 			}
@@ -481,7 +560,9 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
     		children = _self.get('children'),
     		el = _self.get('el'),
     		node = _self.get('node');
-
+    	if(_self.get('destroyed')){
+    		return;
+    	}
     	_self.clear();
 
     	Container.superclass.destroy.call(this);
@@ -495,7 +576,9 @@ define('bui/graphic',['bui/common','bui/graphic/canvas','bui/graphic/shape','bui
  * @fileOverview 画布内部的元素扩展
  * @ignore
  */
-define('bui/graphic/canvasitem',function(require) {
+define('bui/graphic/canvasitem',['bui/common'],function(require) {
+	
+	var BUI = require('bui/common');
 	
 	/**
 	 * @class BUI.Graphic.CanvasItem
@@ -525,7 +608,11 @@ define('bui/graphic/canvasitem',function(require) {
   			el = _self.get('el');
   		el.translate(dx,dy);
 		},
-		
+		index : function(){
+			var _self = this,
+				parent = _self.get('parent');
+			return BUI.Array.indexOf(_self,parent.get('children'));
+		},
 		/**
 		 * 执行动画
 		 * @param  {Object}   params   动画的参数
@@ -547,13 +634,13 @@ define('bui/graphic/canvasitem',function(require) {
 	return Item;
 });define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasitem','bui/graphic/raphael','bui/graphic/util'],function(require){
 
-	var BUI = require('bui/common'),
-		Base = require('bui/graphic/base'),
-		Item = require('bui/graphic/canvasitem'),
+  var BUI = require('bui/common'),
+    Base = require('bui/graphic/base'),
+    Item = require('bui/graphic/canvasitem'),
     Util = require('bui/graphic/util'),
-		Raphael = require('bui/graphic/raphael');
+    Raphael = require('bui/graphic/raphael');
 
-	/**
+  /**
    * @class BUI.Graphic.Shape
    * 图形的基类
    * @extends BUI.Graphic.Base
@@ -563,65 +650,65 @@ define('bui/graphic/canvasitem',function(require) {
   };
 
   Shape.ATTRS = {
-  	attrs : {}
+    attrs : {}
   }
 
   BUI.extend(Shape,Base);
 
   //获取画布内元素的一些共性方法
-	BUI.mixin(Shape,[Item]);
+  BUI.mixin(Shape,[Item]);
 
   BUI.augment(Shape,{
-  	/**
-  	 * 是否图形
-  	 * @type {Boolean}
-  	 */
-  	isShape : true,
-  	
-  	//渲染shape
-  	renderUI : function(){
+    /**
+     * 是否图形
+     * @type {Boolean}
+     */
+    isShape : true,
+    
+    //渲染shape
+    renderUI : function(){
 
-  		var _self = this,
-  			el = _self.get('el'),
-  			node,
-  			cfg,
-  			attrs;
-  		if(!el){
-  			cfg = _self.cfg;
-  			attrs = _self.parseElCfg(cfg.attrs);
-  			el = _self.createElement(attrs);
-  			_self.set('el',el);
-  		}
-  		node = el.node;
+      var _self = this,
+        el = _self.get('el'),
+        node,
+        cfg,
+        attrs;
+      if(!el){
+        cfg = _self.cfg;
+        attrs = _self.parseElCfg(cfg.attrs);
+        el = _self.createElement(attrs);
+        _self.set('el',el);
+      }
+      node = el.node;
       node.shape = this;
-  		_self.set('node',node);
-  	},
-  	/**
-  	 * @private
-  	 */
-  	createElement : function(attrs){
-  		var _self = this,
-  			parent = _self.get('parent'),
+      _self.set('node',node);
+    },
+    /**
+     * @private
+     */
+    createElement : function(attrs){
+      var _self = this,
+        parent = _self.get('parent'),
         set = parent.get('el').add([attrs]),
-  			element;
+        element;
       element = set[0];
-  		return element;
-  	},
-  	/**
-  	 * @protected
-  	 * 格式化初始化配置项
-  	 */
-  	parseElCfg : function(attrs){
-  		attrs.type = this.get('type');
-  		return attrs;
-  	},
-  	/**
-  	 * 获取图形的整体长度
-  	 * @return {Number} 长度
-  	 */
-  	getTotalLength : function(){
-  		return this.get('el').getTotalLength();
-  	},
+      return element;
+    },
+    /**
+     * @protected
+     * 格式化初始化配置项
+     */
+    parseElCfg : function(attrs){
+      attrs.type = this.get('type');
+      return attrs;
+    },
+    /**
+     * 获取图形的整体长度
+     * @return {Number} 长度
+     */
+    getTotalLength : function(){
+      return this.get('el').getTotalLength();
+    },
     /**
      * 旋转
      * @param  {Number} a 旋转的角度
@@ -640,7 +727,7 @@ define('bui/graphic/canvasitem',function(require) {
       this.get('el').rotate(a,x,y);
     },
     /**
-     * 
+     * 放大
      * @param  {Number} sx x轴方向的倍数 
      * @param  {Number} sy y轴方向的倍数
      * @param  {Number} cx x轴方向扩展的中心
@@ -662,6 +749,9 @@ define('bui/graphic/canvasitem',function(require) {
       var _self = this,
         el = _self.get('el');
       el.transform(tstr);
+    },
+    getBBox : function(){
+      return this.get('el').getBBox();
     },
     /**
      * 获取路径
@@ -717,7 +807,7 @@ define('bui/graphic/canvasitem',function(require) {
           if(str){
             var sub = str.split(' ');
             sub = $.map(sub,function(subStr){
-              if($.isNumeric(subStr)){
+              if(BUI.isNumeric(subStr)){
                 return parseFloat(subStr);
               }
               return subStr;
@@ -733,29 +823,29 @@ define('bui/graphic/canvasitem',function(require) {
 
   /**
    * 圆
-   * @class BUI.Graphic.She.Circle
+   * @class BUI.Graphic.Shape.Circle
    * @extends BUI.Graphic.Shape
    */
   var Circle = function(cfg){
-  	Circle.superclass.constructor.call(this,cfg);
+    Circle.superclass.constructor.call(this,cfg);
   };
 
   Circle.ATTRS = {
-  	/**
-  	 * 圆心的x坐标
-  	 * @type {Number}
-  	 */
-  	cx : {},
-  	/**
-  	 * 圆心的y坐标
-  	 * @type {Number}
-  	 */
-  	cy : {},
-  	/**
-  	 * 圆的半径
-  	 * @type {Number}
-  	 */
-  	r : {}
+    /**
+     * 圆心的x坐标
+     * @type {Number}
+     */
+    cx : {},
+    /**
+     * 圆心的y坐标
+     * @type {Number}
+     */
+    cy : {},
+    /**
+     * 圆的半径
+     * @type {Number}
+     */
+    r : {}
   };
 
   BUI.extend(Circle,Shape);
@@ -768,30 +858,37 @@ define('bui/graphic/canvasitem',function(require) {
    * @extends BUI.Graphic.Shape
    */
   var Rect = function(cfg){
-  	Rect.superclass.constructor.call(this,cfg);
+    Rect.superclass.constructor.call(this,cfg);
   };
 
   Rect.ATTRS = {
-  	/**
-  	 * 矩形的左定点x坐标
-  	 * @type {Number}
-  	 */
-  	x : {},
-  	/**
-  	 * 矩形的左定点y坐标
-  	 * @type {Number}
-  	 */
-  	y : {},
-  	/**
-  	 * 矩形的宽度
-  	 * @type {Number}
-  	 */
-  	width : {},
-  	/**
-  	 * 矩形的高度
-  	 * @type {Number}
-  	 */
-  	width : {}
+    /**
+     * 矩形的左定点x坐标
+     * @type {Number}
+     */
+    x : {},
+    /**
+     * 矩形的左定点y坐标
+     * @type {Number}
+     */
+    y : {},
+    /**
+     * 矩形的宽度
+     * @type {Number}
+     */
+    width : {},
+    /**
+     * 矩形的高度
+     * @type {Number}
+     */
+    height : {},
+    /**
+     * 圆角
+     * @type {Number}
+     */
+    r: {
+      value : 0
+    }
   };
 
   BUI.extend(Rect,Shape);
@@ -803,30 +900,30 @@ define('bui/graphic/canvasitem',function(require) {
    * @extends BUI.Graphic.Shape
    */
   var Ellipse = function(cfg){
-  	Ellipse.superclass.constructor.call(this,cfg);
+    Ellipse.superclass.constructor.call(this,cfg);
   };
 
   Ellipse.ATTRS = {
-  	/**
-  	 * 矩形的左定点x坐标
-  	 * @type {Number}
-  	 */
-  	cx : {},
-  	/**
-  	 * 矩形的左定点y坐标
-  	 * @type {Number}
-  	 */
-  	cy : {},
-  	/**
-  	 * 矩形的宽度
-  	 * @type {Number}
-  	 */
-  	rx : {},
-  	/**
-  	 * 矩形的高度
-  	 * @type {Number}
-  	 */
-  	ry : {}
+    /**
+     * 矩形的左定点x坐标
+     * @type {Number}
+     */
+    cx : {},
+    /**
+     * 矩形的左定点y坐标
+     * @type {Number}
+     */
+    cy : {},
+    /**
+     * 矩形的宽度
+     * @type {Number}
+     */
+    rx : {},
+    /**
+     * 矩形的高度
+     * @type {Number}
+     */
+    ry : {}
   };
 
   BUI.extend(Ellipse,Shape);
@@ -838,15 +935,15 @@ define('bui/graphic/canvasitem',function(require) {
    * @extends BUI.Graphic.Shape
    */
   var Path = function(cfg){
-  	Path.superclass.constructor.call(this,cfg);
+    Path.superclass.constructor.call(this,cfg);
   };
 
   Path.ATTRS = {
-  	/**
-  	 * 路径
-  	 * @type {String}
-  	 */
-  	path : {}
+    /**
+     * 路径
+     * @type {String}
+     */
+    path : {}
   };
 
 
@@ -860,94 +957,94 @@ define('bui/graphic/canvasitem',function(require) {
    * @extends BUI.Graphic.Shape.Path
    */
   var Line = function(cfg){
-  	Line.superclass.constructor.call(this,cfg);
+    Line.superclass.constructor.call(this,cfg);
   };
 
   Line.ATTRS = {
-  	/**
-  	 * 起始x坐标
-  	 * @type {Number}
-  	 */
-  	x1 : {},
-  	/**
-  	 * 起始y坐标
-  	 * @type {Number}
-  	 */
-  	y1 : {},
-  	/**
-  	 * 终止x坐标
-  	 * @type {Number}
-  	 */
-  	x2 : {},
-  	/**
-  	 * 终止y坐标
-  	 * @type {Number}
-  	 */
-  	y2 : {}
+    /**
+     * 起始x坐标
+     * @type {Number}
+     */
+    x1 : {},
+    /**
+     * 起始y坐标
+     * @type {Number}
+     */
+    y1 : {},
+    /**
+     * 终止x坐标
+     * @type {Number}
+     */
+    x2 : {},
+    /**
+     * 终止y坐标
+     * @type {Number}
+     */
+    y2 : {}
   };
 
   BUI.extend(Line,Path);
 
   BUI.augment(Line,{
-  	/**
-  	 * @protected
-  	 * 格式化初始化配置项
-  	 */
-  	parseElCfg : function(attrs){
-  		attrs.type = 'path'; //将线转换成path
-			attrs.path = BUI.substitute('M {x1},{y1}L{x2},{y2}',attrs);
-  		return attrs;
-  	},
-  	//获取线的坐标点
-  	_getLinePoint : function(pointIndex,coordIndex){
-  		var path = this.getPath();
-  		return path[pointIndex][coordIndex];
-  	},
-  	//设置线的坐标点
-  	_setLinePoint : function(pointIndex,coordIndex,value){
-  		var _self = this,
-  			path = this.getPath();
-  		path[pointIndex][coordIndex] = value;
-  		_self.attr('path',path);
-  	},
-  	//设置坐标x1
-  	__setX1 : function(value){
-  		this._setLinePoint(0,1,value);
-  	},
-  	__getX1 : function(){
-  		return this._getLinePoint(0,1);
-  	},
-  	//设置坐标x2
-  	__setX2 : function(value){
-  		this._setLinePoint(1,1,value);
-  	},
-  	__getX2 : function(){
-  		return this._getLinePoint(1,1);
-  	},
-  	//设置坐标y1
-  	__setY1 : function(value){
-  		this._setLinePoint(0,2,value);
-  	},
-  	__getY1 : function(){
-  		return this._getLinePoint(0,2);
-  	},
-  	//设置坐标y2
-  	__setY2 : function(value){
-  		this._setLinePoint(1,2,value);
-  	},
-  	__getY2 : function(){
-  		return this._getLinePoint(1,2);
-  	}
+    /**
+     * @protected
+     * 格式化初始化配置项
+     */
+    parseElCfg : function(attrs){
+      attrs.type = 'path'; //将线转换成path
+      attrs.path = BUI.substitute('M {x1},{y1}L{x2},{y2}',attrs);
+      return attrs;
+    },
+    //获取线的坐标点
+    _getLinePoint : function(pointIndex,coordIndex){
+      var path = this.getPath();
+      return path[pointIndex][coordIndex];
+    },
+    //设置线的坐标点
+    _setLinePoint : function(pointIndex,coordIndex,value){
+      var _self = this,
+        path = this.getPath();
+      path[pointIndex][coordIndex] = value;
+      _self.attr('path',path);
+    },
+    //设置坐标x1
+    __setX1 : function(value){
+      this._setLinePoint(0,1,value);
+    },
+    __getX1 : function(){
+      return this._getLinePoint(0,1);
+    },
+    //设置坐标x2
+    __setX2 : function(value){
+      this._setLinePoint(1,1,value);
+    },
+    __getX2 : function(){
+      return this._getLinePoint(1,1);
+    },
+    //设置坐标y1
+    __setY1 : function(value){
+      this._setLinePoint(0,2,value);
+    },
+    __getY1 : function(){
+      return this._getLinePoint(0,2);
+    },
+    //设置坐标y2
+    __setY2 : function(value){
+      this._setLinePoint(1,2,value);
+    },
+    __getY2 : function(){
+      return this._getLinePoint(1,2);
+    }
   });
 
   Shape.Line = Line;
 
 
   function points2path(points,z){
-  	if(BUI.isArray(points)){
-  		points = points.join(' ');
-  	}
-  	return 'M' + points + z;
+    if(BUI.isArray(points)){
+      points = points.join(' ');
+    }
+    return 'M' + points + z;
   }
 
   /**
@@ -956,40 +1053,40 @@ define('bui/graphic/canvasitem',function(require) {
    * @extends BUI.Graphic.Shape.Path
    */
   var PolyLine = function(cfg){
-  	PolyLine.superclass.constructor.call(this,cfg);
+    PolyLine.superclass.constructor.call(this,cfg);
   };
 
   PolyLine.ATTRS = {
-  	/**
-  	 * 定点集合，可以是字符串、或者数组
-  	 *
-  	 *  - 字符串： '0,0 25,25 31,50'
-  	 *  - 数组 ： ['0,0','25,25','31,50']
-  	 *  
-  	 * @type {Array|String}
-  	 */
-  	points : {}
+    /**
+     * 定点集合，可以是字符串、或者数组
+     *
+     *  - 字符串： '0,0 25,25 31,50'
+     *  - 数组 ： ['0,0','25,25','31,50']
+     *  
+     * @type {Array|String}
+     */
+    points : {}
   };
 
   BUI.extend(PolyLine,Path);
 
   BUI.augment(PolyLine,{
-  	//设置顶点
-  	__setPoints : function(value){
-  		var _self = this,
-  			el = _self.get('el'),
-  			path = points2path(value,'');
-  		_self.attr('path',path);
-  	},
-  	/**
-  	 * @protected
-  	 * 格式化初始化配置项
-  	 */
-  	parseElCfg : function(attrs){
-  		attrs.type = 'path'; //将线转换成path
-			attrs.path = points2path(attrs.points,'');
-  		return attrs;
-  	}
+    //设置顶点
+    __setPoints : function(value){
+      var _self = this,
+        el = _self.get('el'),
+        path = points2path(value,'');
+      _self.attr('path',path);
+    },
+    /**
+     * @protected
+     * 格式化初始化配置项
+     */
+    parseElCfg : function(attrs){
+      attrs.type = 'path'; //将线转换成path
+      attrs.path = points2path(attrs.points,'');
+      return attrs;
+    }
 
   });
 
@@ -1001,40 +1098,40 @@ define('bui/graphic/canvasitem',function(require) {
    * @extends BUI.Graphic.Shape.Path
    */
   var Polygon = function(cfg){
-  	PolyLine.superclass.constructor.call(this,cfg);
+    PolyLine.superclass.constructor.call(this,cfg);
   };
 
   Polygon.ATTRS = {
-  	/**
-  	 * 定点集合，可以是字符串、或者数组
-  	 *
-  	 *  - 字符串： '0,0 25,25 31,50'
-  	 *  - 数组 ： ['0,0','25,25','31,50']
-  	 *  
-  	 * @type {Array|String}
-  	 */
-  	points : {}
+    /**
+     * 定点集合，可以是字符串、或者数组
+     *
+     *  - 字符串： '0,0 25,25 31,50'
+     *  - 数组 ： ['0,0','25,25','31,50']
+     *  
+     * @type {Array|String}
+     */
+    points : {}
   };
 
   BUI.extend(Polygon,Path);
 
   BUI.augment(Polygon,{
-  	//设置顶点
-  	__setPoints : function(value){
-  		var _self = this,
-  			el = _self.get('el'),
-  			path = points2path(value,'z');
-  		_self.attr('path',path);
-  	},
-  	/**
-  	 * @protected
-  	 * 格式化初始化配置项
-  	 */
-  	parseElCfg : function(attrs){
-  		attrs.type = 'path'; //将线转换成path
-			attrs.path = points2path(attrs.points,'z');
-  		return attrs;
-  	}
+    //设置顶点
+    __setPoints : function(value){
+      var _self = this,
+        el = _self.get('el'),
+        path = points2path(value,'z');
+      _self.attr('path',path);
+    },
+    /**
+     * @protected
+     * 格式化初始化配置项
+     */
+    parseElCfg : function(attrs){
+      attrs.type = 'path'; //将线转换成path
+      attrs.path = points2path(attrs.points,'z');
+      return attrs;
+    }
 
   });
 
@@ -1046,35 +1143,35 @@ define('bui/graphic/canvasitem',function(require) {
    * @extends BUI.Graphic.Shape
    */
   var Text = function(cfg){
-  	Text.superclass.constructor.call(this,cfg);
+    Text.superclass.constructor.call(this,cfg);
   };
 
   Text.ATTRS = {
-  	/**
-  	 * x轴坐标
-  	 * @type {Number}
-  	 */
-  	x : {},
-  	/**
-  	 * y轴坐标
-  	 * @type {Number}
-  	 */
-  	y : {},
-  	/**
-  	 * 显示的文本
-  	 * @type {String}
-  	 */
-  	text : {},
-  	/**
-  	 * 字体相关的属性，也可以单独设置其中的属性: font-family,font-weight....
-  	 * @type {String}
-  	 */
-  	'font' : {},
-  	/**
-  	 * 文本的对齐方式：默认对齐方式: 'middle'
-  	 * @type {String}
-  	 */
-  	'text-anchor' : {}
+    /**
+     * x轴坐标
+     * @type {Number}
+     */
+    x : {},
+    /**
+     * y轴坐标
+     * @type {Number}
+     */
+    y : {},
+    /**
+     * 显示的文本
+     * @type {String}
+     */
+    text : {},
+    /**
+     * 字体相关的属性，也可以单独设置其中的属性: font-family,font-weight....
+     * @type {String}
+     */
+    'font' : {},
+    /**
+     * 文本的对齐方式：默认对齐方式: 'middle'
+     * @type {String}
+     */
+    'text-anchor' : {}
   };
 
   BUI.extend(Text,Shape);
@@ -1179,14 +1276,14 @@ define('bui/graphic/canvasitem',function(require) {
     },
     //三角形
     triangle : function(x,y,r){
-      var diffX = r * 0.866,
-        diffY = 0.5 * r;
+      var diffX = r / 0.866,
+        diffY =  r;
       return [['M',x,y-r],['L',x + diffX,y + diffY],['L',x - diffX, y + diffY],['z']];
     },
     //倒三角形
     'triangle-down' : function(x,y,r){
-      var diffX = r * 0.866,
-        diffY = 0.5 * r;
+      var diffX = r / 0.866,
+        diffY =  r;
       return [['M',x,y + r],['L',x + diffX, y - diffY],['L',x - diffX,y - diffY],['z']];
     }
   };
@@ -1229,6 +1326,9 @@ define('bui/graphic/canvasitem',function(require) {
     __getY : function(){
       return this.get('attrs').y;
     },
+    __getSymbol : function(){
+      return this.get('attrs').symbol;
+    },
     //设置大小，位置
     _setSize : function(x,y,radius){
       var _self = this,
@@ -1247,12 +1347,36 @@ define('bui/graphic/canvasitem',function(require) {
         BUI.mix(attrs,{
           width : radius * 2,
           height : radius * 2,
-          x : x - radius,
-          y : y - radius
+          x : x - (radius - attrs.radius),
+          y : y - (radius - attrs.radius),
+          radius : radius
         });
         el.attr(attrs);
       }
     },
+    animate : function(params,ms,easing,callback){
+      var _self = this;
+
+      if(_self.get('el').type == 'image'){
+        var radius = params.radius || _self.attr('radius');
+        params.x = params.x - radius;
+        params.y = params.y - radius;
+        _self.get('el').animate(params,ms,easing,callback);
+      }else{
+        var attrs = _self.get('attrs'),
+          path;
+          BUI.mix(attrs,{
+            x : params.x,
+            y : params.y
+          });
+          
+          path = _self._getPath(attrs);
+
+        _self.get('el').animate({path : path},ms,easing,callback);
+      }
+
+    },
+
     /**
      * @protected
      * 格式化初始化配置项
@@ -1299,35 +1423,35 @@ define('bui/graphic/canvasitem',function(require) {
    * @extends BUI.Graphic.Shape
    */
   var Image = function(cfg){
-  	Image.superclass.constructor.call(this,cfg);
+    Image.superclass.constructor.call(this,cfg);
   };
 
   Image.ATTRS = {
-  	/**
-  	 * 路径
-  	 * @type {String}
-  	 */
-  	src : {}, 
-  	/**
-  	 * x轴位置
-  	 * @type {Number}
-  	 */
-  	x : {}, 
-  	/**
-  	 * y轴位置
-  	 * @type {Number}
-  	 */
-  	y : {}, 
-  	/**
-  	 * 宽度
-  	 * @type {Number}
-  	 */
-  	width : {}, 
-  	/**
-  	 * 高度
-  	 * @type {Number}
-  	 */
-  	height : {}
+    /**
+     * 路径
+     * @type {String}
+     */
+    src : {}, 
+    /**
+     * x轴位置
+     * @type {Number}
+     */
+    x : {}, 
+    /**
+     * y轴位置
+     * @type {Number}
+     */
+    y : {}, 
+    /**
+     * 宽度
+     * @type {Number}
+     */
+    width : {}, 
+    /**
+     * 高度
+     * @type {Number}
+     */
+    height : {}
   }
 
   BUI.extend(Image,Shape);
@@ -1336,10 +1460,11 @@ define('bui/graphic/canvasitem',function(require) {
 
   
   return Shape;
-});define('bui/graphic/group',['bui/common','bui/graphic/container','bui/graphic/shape','bui/graphic/canvasitem','bui/graphic/raphael/group'],function(require) {
+});define('bui/graphic/group',['bui/common','bui/graphic/util','bui/graphic/container','bui/graphic/shape','bui/graphic/canvasitem','bui/graphic/raphael/group'],function(require) {
 
 	var Container = require('bui/graphic/container'),
 		Item = require('bui/graphic/canvasitem'),
+		Util = require('bui/graphic/util'),
 		Shape = require('bui/graphic/shape');
 	require('bui/graphic/raphael/group');
 
@@ -1390,6 +1515,7 @@ define('bui/graphic/canvasitem',function(require) {
   		}
 
   		node = el.node;
+  		node.group = _self;
   		_self.set('node',node);
   		_self._initTranslate();
   	},
@@ -1399,9 +1525,116 @@ define('bui/graphic/canvasitem',function(require) {
   			x = _self.get('x'),
   			y = _self.get('y');
   		if(x || y){
-  			_self.translate((x || 0),(y || 0));
+  			_self._translate((x || 0),(y || 0));
+  		}else{
+  			_self.set('x',x || 0);
+  			_self.set('y',y || 0);
   		}
   	},
+  	/**
+		 * 移动
+		 * @param  {Number} dx 沿x轴平移的距离
+		 * @param  {Number} dy 沿y轴平移的距离
+		 */
+		translate : function(dx,dy){
+			var _self = this,
+				x = _self.get('x') || 0,
+				y = _self.get('y') || 0;
+			_self.set('x',x + dx);
+			_self.set('y',y + dy);
+			_self._translate(dx,dy);
+		},
+
+		getBBox : function(){
+			var _self = this,
+				children = _self.get('children'),
+				w = 0,
+				h = 0,
+				rst = {};
+
+			BUI.each(children,function(item){
+				var bbox = item.getBBox(),
+					w1 = bbox.width + bbox.x,
+					h1 = bbox.height + bbox.y;
+				if(w < w1){
+					w = w1;
+				}
+				if(h < h1){
+					h = h1;
+				}
+			});
+
+			rst.x = _self.get('x');
+			rst.y = _self.get('y');
+			rst.width = w;
+			rst.height = h;
+
+			return rst;
+
+		},
+		_translate : function(dx,dy){
+			var _self = this,
+  			el = _self.get('el');
+  		el.translate(dx,dy);
+		},
+  	/**
+  	 * 是否包含指定的DOM
+  	 * @param  {HTMLElement} element dom元素
+  	 * @return {Boolean}   是否包含
+  	 */
+  	containsElement : function(element){
+  		var _self = this,
+  			node = _self.get('node');
+  		return node == element || $.contains(node,element);
+  	},
+  	/**
+		 * 执行动画,对于分组来说，animate仅支持平移动画
+		 *
+		 * <code>
+		 * 	group.animate({
+		 * 		x : 100,
+		 * 		y : 100
+		 * 	},400);
+		 * </code>
+		 * 
+		 * @param  {Object}   params   动画的参数
+		 * @param  {Number}   ms       毫秒数
+		 * @param  {String}   easing   路径函数
+		 * @param  {Function} callback 回调函数
+		 */
+		animate : function(params,ms,easing,callback){
+			var _self = this,
+				el = _self.get('el');
+			if(Util.svg){
+				el.animate({
+					transform : 't '+ params.x + ' ' + params.y
+				},ms,easing,callback);
+			}else{
+				el.animate(params,ms,easing,callback);
+			}
+			_self.set('x',params.x);
+			_self.set('y',params.y);
+			//_self._vmlAnimate(params,ms,callback);
+		},
+		
+		/**
+		 * 移动的到位置
+		 * @param  {Number} x 移动到x
+		 * @param  {Number} y 移动到y
+		 */
+		move : function(x,y){
+			var _self = this,
+				cx = _self.get('x') || 0, //当前的x
+				cy = _self.get('y') || 0; //当前的y
+			if(Util.svg){
+				_self._translate(x - cx,y -cy);
+			}else{
+				_self.get('el').move(x,y);
+			}
+			
+			_self.set('x',x);
+			_self.set('y',y);
+		},
   	/**
   	 * @private
   	 * @ignore
@@ -1423,13 +1656,18 @@ define('bui/graphic/canvasitem',function(require) {
 	});
 
 	return Group;
-});define('bui/graphic/canvas',['bui/common','bui/graphic/group','bui/graphic/raphael'],function(require) {
+});define('bui/graphic/canvas',['bui/common','bui/graphic/group','bui/graphic/container','bui/graphic/raphael'],function(require) {
 
 	var BUI = require('bui/common'),
 		Group = require('bui/graphic/group'),
 		Raphael = require('bui/graphic/raphael'),
 		Container = require('bui/graphic/container');
 
+	/**
+	 * @class BUI.Graphic.Canvas
+	 * 图形的画板，支持SVG和VML
+	 * @extends BUI.Graphic.Container
+	 */
 	var Canvas = function(cfg){
 		Canvas.superclass.constructor.call(this,cfg);
 	};
@@ -1449,7 +1687,14 @@ define('bui/graphic/canvasitem',function(require) {
 		 * 渲染到的节点
 		 * @cfg {String} render
 		 */
-		render : {} 
+		render : {} ,
+		/**
+		 * @private
+		 * @type {Object}
+		 */
+		viewbox : {
+
+		}
 	};
 
 	BUI.extend(Canvas,Container);
@@ -1476,6 +1721,7 @@ define('bui/graphic/canvasitem',function(require) {
 			}
 			el = Raphael(id,width,height);
 
+		  _self.set('canvas',_self);
 			_self.set('el',el);
 			_self.set('node',el.canvas);
 		},
@@ -1499,6 +1745,59 @@ define('bui/graphic/canvasitem',function(require) {
 		 */
 		setViewBox : function(x, y, w, h, fit){
 			this.get('el').setViewBox(x, y, w, h, fit);
+			this.set('viewbox',{
+				x : x,
+				y : y,
+				width : w,
+				height : h
+			});
+		},
+		/**
+		 * 将页面上的坐标转换成画布上的坐标
+		 * @param  {Number} pageX 页面上的x坐标
+		 * @param  {Number} pageY 页面上的y坐标
+		 * @return {Object} 坐标对象包含x,y
+		 */
+		getPoint : function(pageX,pageY){
+			var _self = this,
+				node = _self.get('node'),
+				viewbox = _self.get('viewbox'),
+				offset = $(node).offset(),
+				point = {};
+
+			if(!viewbox){ //如果不存在viewbox
+				point.x = pageX - offset.left;
+				point.y = pageY - offset.top;
+			}else{
+				var xfactor = viewbox.width / _self.get('width'), //计算 宽度比例
+					yfactor = viewbox.height / _self.get('height'); //高度比例
+				point.x = (pageX - offset.left)	* xfactor + viewbox.x;
+				point.y = (pageY - offset.top) * yfactor + viewbox.y;
+			}
+
+			return point;
+		},
+		/**
+		 * 将相对地址转换成为画布上的坐标
+		 * @param  {Number} dx 相对于起始点的x偏移
+		 * @param  {Number} dy 相对于起始点的y偏移
+		 * @return {Object} 坐标对象
+		 */
+		getRelativePoint : function(dx,dy){
+			var _self = this,
+				viewbox = _self.get('viewbox'),
+				point = {};
+			if(!viewbox){
+				point.x = dx;
+				point.y = dy;
+			}else{
+				var xfactor = viewbox.width / _self.get('width'), //计算 宽度比例
+					yfactor = viewbox.height / _self.get('height'); //高度比例
+				point.x = dx * xfactor + viewbox.x;
+				point.y = dy * xfactor + viewbox.y;
+			}
+
+			return point;
 		}
 
 	});
@@ -1508,14 +1807,23 @@ define('bui/graphic/canvasitem',function(require) {
 
 	var BUI = require('bui/common'),
 		Raphael = require('bui/graphic/raphael'),
-		NAN = NaN;
+		STEP_MS = 16,//16毫秒一个step
+		HANDLERS = {
+
+		},
+		TIMES = {},//动画的事件校验
+		NAN = NaN,
+		PRE_HAND = 'h';
 
 	//取小于当前值的
 	function floor(values,value){
 		var length = values.length,
 			pre = values[0];
-		if(value < values[0] || value > values[length - 1]){
+		if(value < values[0]){
 			return NAN;
+		}
+		if(value > values[length - 1]){
+			return values[length - 1];
 		}
 		for (var i = 1; i < values.length; i++) {
 			if(value < values[i]){
@@ -1526,7 +1834,7 @@ define('bui/graphic/canvasitem',function(require) {
 
 		return pre;
 	}
-
+	//大于当前值的第一个
 	function ceiling(values,value){
 		var length = values.length,
 			pre = values[0],
@@ -1546,6 +1854,66 @@ define('bui/graphic/canvasitem',function(require) {
 		return rst;
 	}
 
+	//将数值逼近到指定的数
+	function tryFixed(v,base){
+		var str = base.toString(),
+			index = str.indexOf('.');
+		if(index == -1){
+			return parseInt(v);
+		}
+		var length = str.substr(index + 1).length;
+		return parseFloat(v.toFixed(length));
+	}
+	//分步动画
+	function animTime(duration,fn,callback){
+      var baseTime = new Date().getTime(),
+        baseInterval = 16,
+        uid = BUI.guid(PRE_HAND);
+
+      next(0,fn,duration,callback);
+      function next(num,fn,duration,callback){
+        var nowTime = new Date().getTime();
+        var durTime = nowTime - baseTime;
+        if(durTime >= duration){
+          fn(1,num);
+          callback && callback();
+          return ;
+        }
+
+        var factor = Math.pow(durTime/duration, .48);
+        fn(factor,num);
+
+ 
+        // window.requestAnimationFrame
+        if(window.requestAnimationFrame){
+          HANDLERS[uid] =  window.requestAnimationFrame(function(){
+            next(num+1,fn,duration,callback);
+          });
+        }else{
+          HANDLERS[uid] = setTimeout(function(){
+            next(num+1,fn,duration,callback);
+          },baseInterval)
+        }
+      }
+    } 
+
+	function stopStep(uid){
+		if(HANDLERS[uid]){
+			if(window.requestAnimationFrame){
+				window.cancelAnimationFrame(HANDLERS[uid]);
+			}else{
+				clearTimeout(HANDLERS[uid]);
+			}
+			
+			delete HANDLERS[uid];
+			//delete TIMES[uid];
+		}
+	}
+	/**
+	 * @class BUI.Graphic.Util
+	 * @singleton
+	 * 绘图的工具类
+	 */
 	var Util = {};
 
 	BUI.mix(Util,{
@@ -1562,6 +1930,58 @@ define('bui/graphic/canvasitem',function(require) {
 
 		angle : function(x1, y1, x2, y2){
 			return Raphael.angle(x1, y1, x2, y2);
+		},
+		/**
+		 * 分步执行动画
+		 * @param  {Number}   duration 执行时间
+		 * @param  {Function} fn  每一步执行的回调函数，function(step,total){}
+		 * @param  {Function} callback 回调函数
+		 * @return {String} 动画的handler用于终止动画
+		 */
+		animStep : function(duration,fn,callback){
+		  return	animTime(duration,fn,callback);
+		},
+		/**
+		 * 终止分步执行的动画
+		 * @param  {String} handler 句柄
+		 */
+		stopStep : function(handler){
+			stopStep(handler);
+		},
+		animPath : function(pathShape,toPath,reserve,duration,easing,callback){
+			//vml阻止动画执行
+			/**/
+			if(Util.vml){
+				after();
+				return;
+			}
+			reserve = reserve || 0;
+			duration = duration || 400;
+
+			var curPath = pathShape.getPath(),
+				endPath = Util.parsePathString(toPath),
+				tempPath,
+				last = curPath.slice(reserve * -1);
+
+			if(curPath.length > endPath.length){
+				tempPath = curPath.slice(0,endPath.length);
+				
+			}else{
+				tempPath = curPath.concat([]);
+				if(reserve){
+					for(var i = tempPath.length; i < endPath.length;i ++){
+						tempPath = tempPath.concat(last);
+					}
+				}
+			}
+			pathShape.attr('path',tempPath);
+
+			pathShape.animate({path : endPath},duration,easing,after);
+
+			function after(){
+				pathShape.attr('path',toPath);
+				callback && callback();
+			}
 		},
 		/**
 		 * 获取path上的点
@@ -1615,6 +2035,7 @@ define('bui/graphic/canvasitem',function(require) {
 			}
 			return array;
 		},
+
 		/**
 		 * 平移path
 		 * @param  {String} path 路径
@@ -1637,6 +2058,17 @@ define('bui/graphic/canvasitem',function(require) {
 			}
 			var floorVal = floor(values,value),
 				ceilingVal = ceiling(values,value);
+			if(isNaN(floorVal) || isNaN(ceilingVal)){
+				if(values[0] >= value){
+					return values[0];
+				}
+				var last = values[values.length -1];
+				if(last <= value){
+					return last;
+				}
+			}
+			
+
 			if(value - floorVal < ceilingVal - value){
 				return floorVal;
 			}
@@ -1659,7 +2091,49 @@ define('bui/graphic/canvasitem',function(require) {
 		 */
 		snapCeiling : function(values,value){
 			return ceiling(values,value);
-		}
+		},
+		/**
+		 * 将数字保留对应数字的小数位
+		 * @param  {Number} value 值
+		 * @param  {Number} base  基准值
+		 * @return {Number}  fixed后的数字
+		 */
+		tryFixed : function(value,base){
+			return tryFixed(value,base);
+		},
+		/**
+		 * 设置值，仅当对象上没有此属性时
+		 * @param  {Object} obj 对象
+		 * @param  {String} name  字段名
+		 * @param  {*} value 值
+		 */
+		trySet : function(obj,name,value){
+			if(obj && !obj[name]){
+	      obj[name] = value;
+	    }
+		},
+		/**
+		 * 将颜色变亮
+		 * @param  {String} c  颜色
+		 * @param  {Number} percent 变亮的比例 0 - 1
+		 * @return {String} 变亮的颜色
+		 */
+		highlight : function(c,percent){
+	    var color = Raphael.color(c),
+	      l = color.l * (1 + percent);
+	    return Raphael.hsl2rgb(color.h,color.s,l).hex;
+	  },
+	  /**
+		 * 将颜色变暗
+		 * @param  {String} c  颜色
+		 * @param  {Number} percent 变暗的比例 0 - 1
+		 * @return {String} 变暗的颜色
+		 */
+	  dark : function(c,percent){
+	  	var color = Raphael.color(c),
+	      l = color.l * (1 - percent);
+	    return Raphael.hsl2rgb(color.h,color.s,l).hex;
+	  }
 	});
 	return Util;
 });define('bui/graphic/raphael',['bui/graphic/raphael/core','bui/graphic/raphael/svg','bui/graphic/raphael/vml'],function (require) {
@@ -7076,7 +7550,7 @@ define('bui/graphic/raphael/core',function(){
             var isPointInside = false;
             this.forEach(function (el) {
                 if (el.isPointInside(x, y)) {
-                    console.log('runned');
+                    //console.log('runned');
                     isPointInside = true;
                     return false; // stop loop
                 }
@@ -9783,7 +10257,7 @@ define('bui/graphic/raphael/vml',function(){
     }(window.Raphael);
 });
 
-define('bui/graphic/raphael/group',function(require){
+define('bui/graphic/raphael/group',['bui/common'],function(require){
 
 	var BUI = require('bui/common');
 
@@ -9857,7 +10331,7 @@ define('bui/graphic/raphael/group',function(require){
     //use vml
     if(window.Raphael.vml){
     	var createNode = function (tagName) {
-        return R._g.doc.createElement('<rvml:' + tagName + ' class="rvml">');
+        return R._g.doc.createElement('div');
       };
       //获取path
       R._getPath.group = function(el){
@@ -9896,13 +10370,34 @@ define('bui/graphic/raphael/group',function(require){
       };
 
       groupproto.translate = function(dx,dy){
-        var el = this.node;
-        $(el).css({
-          top : dy,
-          left : dx
+        var el = $(this.node),
+          top = parseFloat(el.css('top'),10) || 0,
+          left = parseFloat(el.css('left'),10) || 0;
+        el.css({
+          top : top + dy,
+          left : left + dx
         });
-      }
-      /*
+      };
+
+      groupproto.move = function(x,y){
+        var el = $(this.node);
+        el.css({
+          top : y,
+          left : x
+        });
+      };
+
+      groupproto.animate = function(params,ms,easing,callback){
+
+        var el = $(this.node);
+        el.animate({
+          top : params.y,
+          left : params.x
+        },ms,easing,callback);
+        
+      };
+      /**/
+      
       //翻转
       groupproto.transform = function(tstr){
           var set = this.__set;
@@ -9913,10 +10408,10 @@ define('bui/graphic/raphael/group',function(require){
           }
           Group.superclass.transform.call(this,tstr);
       };
-      */
+      /**/
       //创建分组
       R._engine.group = function(vml){
-          var el = createNode('group');
+          var el = createNode();
           vml.canvas.appendChild(el);
           var res = new Group(el,vml);
           res.type = "group";

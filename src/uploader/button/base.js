@@ -57,13 +57,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
   }
 
 
-  function baseView() {
-  }
-
-  baseView.ATTRS = {
-  }
-
-  baseView.prototype = {
+  var ButtonView = Component.View.extend({
     _uiSetText: function (v) {
       var _self = this,
         text = _self.get('text'),
@@ -71,88 +65,20 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
         textEl = _self.get('el').find('.' + textCls);
       textEl.text(text);
     }
-  }
+  },{
+    ATTRS: {
+    }
+  },{
+    xclass: 'uploader-button-view'
+  });
+
 
   /**
-   * 上传组件按钮的基类
+   * 文件上传按钮的基类
    * @class BUI.Uploader.Button
+   * @extends BUI.Component.Controller
    */
-  function base(){
-
-  }
-
-  base.ATTRS = {
-    /**
-     * 按钮的样式
-     * @protected
-     * @type {String}
-     */
-    buttonCls: {
-      value: CLS_UPLOADER_BUTTON + '-wrap',
-      view: true
-    },
-    /**
-     * 文本的样式
-     * @protected
-     * @type {String}
-     */
-    textCls: {
-      value: CLS_UPLOADER_BUTTON_TEXT,
-      view: true
-    },
-    /**
-     * 显示的文本
-     * @type {String}
-     */
-    text: {
-      view: true,
-      value: '上传文件'
-    },
-    tpl: {
-      view: true,
-      value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '"><span class="' + CLS_UPLOADER_BUTTON_TEXT + '">{text}</span></a>'
-    },
-    /**
-     * 是否可用,false为可用
-     * @type Boolean
-     * @default false
-     */
-    disabled : {
-      view: true,
-      value : false
-    },
-    /**
-     * 是否开启多选支持
-     * @type Boolean
-     * @default true
-     */
-    multiple : {
-      view: true,
-      value : true
-    },
-    /**
-     * 文件过滤
-     * @type Array
-     * @default []
-     */
-    filter : {
-      shared : false,
-      value : []
-    },
-    events: {
-      value: {
-        /**
-         * 选中文件时
-         * @event
-         * @param {Object} e 事件对象
-         * @param {Array} e.files 选中的文件
-         */
-        'change': false
-      }
-    }
-  };
-
-  base.prototype = {
+  var Button = Component.Controller.extend({
     /**
      * 获取文件的扩展信息
      * @param  {Object} file 文件对象
@@ -211,20 +137,92 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
           type: type.join(',')
         }
       }
-    },
-    //设置多选
-    _uiSetMultiple : function (v) {
-    },
-    //设置禁用
-    _uiSetDisabled : function (v) {
-    },
-    //设置过滤
-    _uiSetFilter : function (v) {
     }
-  }
+  },{
+    ATTRS: {
+      /**
+       * 按钮的样式
+       * @protected
+       * @type {String}
+       */
+      buttonCls: {
+        value: CLS_UPLOADER_BUTTON + '-wrap',
+        view: true
+      },
+      /**
+       * 文本的样式
+       * @protected
+       * @type {String}
+       */
+      textCls: {
+        value: CLS_UPLOADER_BUTTON_TEXT,
+        view: true
+      },
+      /**
+       * 显示的文本
+       * @type {String}
+       */
+      text: {
+        view: true,
+        value: '上传文件'
+      },
+      /**
+       * 上传时，提交文件的name值
+       * @type String
+       * @default "Filedata"
+       */
+      name: {
+        value: 'fileData'
+      },
+      tpl: {
+        view: true,
+        value: '<a href="javascript:void(0);" class="' + CLS_UPLOADER_BUTTON + '-wrap' + '"><span class="' + CLS_UPLOADER_BUTTON_TEXT + '">{text}</span></a>'
+      },
+      /**
+       * 是否可用,false为可用
+       * @type Boolean
+       * @default false
+       */
+      disabled : {
+        value : false
+      },
+      /**
+       * 是否开启多选支持
+       * @type Boolean
+       * @default true
+       */
+      multiple : {
+        value : true
+      },
+      /**
+       * 文件过滤
+       * @type Array
+       * @default []
+       */
+      filter : {
+        shared : false,
+        value : []
+      },
+      events: {
+        value: {
+          /**
+           * 选中文件时
+           * @event
+           * @param {Object} e 事件对象
+           * @param {Array} e.files 选中的文件
+           */
+          'change': false
+        }
+      },
+      xview: {
+        value: ButtonView
+      }
+    }
+  },{
+    xclass: 'uploader-button'
+  });
 
-  base.View = baseView
+  Button.View = ButtonView;
 
-  return base;
-
+  return Button;
 });
