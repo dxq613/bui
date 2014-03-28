@@ -1,4 +1,4 @@
-
+/*
 BUI.use('bui/menu',function(Menu) {
 	
 	var menu = new Menu.Menu({
@@ -308,5 +308,13 @@ BUI.use('bui/menu',function(Menu) {
 	});
 });
 
+*/
+BUI.use('bui/menu',function(Menu){
+	var sideMenu = new Menu.SideMenu({
+			width:200,
+			srcNode:'#m5'
+		});
 
-/**/
+	sideMenu.render();
+});
+

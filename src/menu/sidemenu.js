@@ -48,7 +48,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       //处理点击事件，展开、折叠、选中
       _self.on('itemclick',function(ev){
         var item = ev.item,
-          titleEl = $(ev.domTarget).closest('.' + CLS_MENU_TITLE);
+          titleEl = $(ev.domTarget).closest('.' + _self.get('collapsedCls'));
         if(titleEl.length){
           var collapsed = item.get('collapsed');
             item.set('collapsed',!collapsed);
@@ -113,6 +113,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
     ATTRS : 
     {
+      defaultChildCfg : {
+        value : {
+          subMenuType : 'menu',
+          arrowTpl : '',
+          openable : false
+        }
+      },
       
       /**
        * 配置的items 项是在初始化时作为children
@@ -135,6 +142,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
        */
       subMenuItemTpl : {
         value : '<a href="{href}"><em>{text}</em></a>'
+      },
+      /**
+       * 展开收缩的样式，用来触发展开折叠事件,默认是 'bui-menu-title'
+       * @type {String} 
+       */
+      collapsedCls : {
+        value : CLS_MENU_TITLE
       },
       events : {
         value : {
