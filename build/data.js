@@ -993,6 +993,11 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       }
     },
     /**
+     * 获取当前缓存的纪录
+     */
+    getResult : function(){
+    },
+    /**
      * 过滤数据，此函数的执行同属性 remoteFilter关联密切
      *
      *  - remoteFilter == true时：此函数只接受字符串类型的过滤参数，将{filter : filterStr}参数传输到服务器端
@@ -1006,12 +1011,17 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
             remoteFilter = _self.get('remoteFilter'),
             result;
 
+        filter = filter || _self.get('filter');
+
         if(remoteFilter){
             _self.load({filter : filter});
-        }else{
+        }else if(filter){
             _self.set('filter',filter);
-            result = _self._filterLocal(filter);
-            _self.onFiltered(result,filter);
+            //如果result有值时才会进行filter
+            if(_self.getResult().length > 0){
+                result = _self._filterLocal(filter);
+                _self.onFiltered(result,filter);
+            }
         }
     },
     /**
@@ -1023,10 +1033,21 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     _filterLocal : function(fn){
         
     },
+    /**
+     * 获取过滤后的数据
+     * @return {[type]} [description]
+     */
+    getFilterResult: function(){
+        var filter = this.get('filter');
+        if(filter) {
+            return this._filterLocal(filter);
+        }
+        else {
+            return this.getResult();
+        }
+    },
     _clearLocalFilter : function(){
-        this._filterLocal(function(){
-            return true;
-        });
+        this.set('filter', null);
     },
     /**
      * 清理过滤
@@ -1040,6 +1061,8 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
             _self.load({filter : ''});
         }else{
             _self._clearLocalFilter();
+            result = _self.getFilterResult();
+            _self.onFiltered(result, null);
         }
     },
     /**
@@ -2335,6 +2358,10 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
         _self.load({start:0});
       }else{
         _self._setResult(data);
+        //如果有filter则进行过滤
+        if(_self.get('filter')){
+          _self.filter();
+        }
       }
     },
 
@@ -2705,6 +2732,11 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }
 
       _self.fire('load',{ params : params });
+
+      //如果有本地过滤，则本地过滤
+      if(!_self.get('remoteFilter') && _self.get('filter')){
+        _self.filter(_self.get('filter'));
+      }
     },
     //设置结果集
     _setResult : function(rows,totalCount){

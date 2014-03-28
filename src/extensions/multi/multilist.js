@@ -109,20 +109,16 @@ define('bui/extensions/mulit/multilist', function(require){
       var _self = this,
         target = _self.get('target'),
         idField = target.get('idField');
-      store.on('load', function(){
+      store.filter(function(item){
         var items = target.getItems(),
-          result = store.getResult(),
-          removeArr = [];
-        BUI.each(result, function(item){
-          BUI.each(items, function(i){
-            if(i[idField] === item[idField]){
-              removeArr.push(item);
-            }
-          })
+          flag = true;
+        BUI.each(items, function(i){
+          if(i[idField] === item[idField]){
+            flag = false;
+            return false;
+          }
         });
-        BUI.each(removeArr, function(item){
-          store.remove(item);
-        })
+        return flag;
       })
     }
   }, {

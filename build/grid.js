@@ -4204,6 +4204,13 @@ define('bui/grid/plugins/editing',function (require) {
      * @param {Object} ev.record 编辑的数据
      * @param {BUI.Editor.Editor} ev.editor 编辑器
      */
+    
+    /**
+     * @event editorready
+     * editor 创建完成，因为editor延迟创建，所以创建完成grid，等待editor创建成功
+     */
+    
+
   };
 
   BUI.augment(Editing,{
@@ -4225,6 +4232,7 @@ define('bui/grid/plugins/editing',function (require) {
         _self.initEditors(Editor);
         _self._initGridEvent(grid);
         _self.set('isInitEditors',true);
+        _self.fire('editorready');
       });
     },
     /**
@@ -5138,6 +5146,11 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} ev.record 编辑的数据
          * @param {BUI.Editor.Editor} ev.editor 编辑器
          */
+        
+        /**
+         * @event editorready
+         * editor 创建完成，因为editor延迟创建，所以创建完成grid，等待editor创建成功
+         */
       }
     },
     editType : {
@@ -5158,6 +5171,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       //延迟加载 editor模块
       BUI.use('bui/editor',function(Editor){
         _self._initEditor(Editor);
+        _self.fire('editorready');
       });
     },
     bindUI : function(grid){

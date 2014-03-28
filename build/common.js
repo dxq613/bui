@@ -114,7 +114,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {Number}
              */
-            subVersion : 80,
+            subVersion : 81,
 
             /**
              * 是否为函数
@@ -4155,7 +4155,7 @@ define('bui/component/uibase/autoshow',function () {
      * @type {Object}
      */
     triggerActiveCls : {
-
+      
     },
     /**
      * 控件显示时由此trigger触发，当配置项 trigger 选择器代表多个DOM 对象时，
@@ -8059,6 +8059,9 @@ define('bui/component/uibase/bindable',function(){
 			store.on('localsort',function(e){
 				_self.onLocalSort(e);
 			});
+			store.on('filtered',function(e){
+				_self.onFiltered(e);
+			});
 		},
 		__syncUI : function(){
 			var _self = this,
@@ -8139,6 +8142,15 @@ define('bui/component/uibase/bindable',function(){
 		*/
 		onLocalSort : function(e){
 			
+		},
+		/**
+		* @protected
+    * @template
+		* after filter data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-filter}
+		*/
+		onFiltered : function(e){
 		}
 	});
 
