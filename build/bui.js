@@ -5148,7 +5148,7 @@ define('bui/component/uibase/autoshow',function () {
      * @type {Object}
      */
     triggerActiveCls : {
-
+      
     },
     /**
      * \u63a7\u4ef6\u663e\u793a\u65f6\u7531\u6b64trigger\u89e6\u53d1\uff0c\u5f53\u914d\u7f6e\u9879 trigger \u9009\u62e9\u5668\u4ee3\u8868\u591a\u4e2aDOM \u5bf9\u8c61\u65f6\uff0c
@@ -22435,7 +22435,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       var _self = this,
         loadingEl = _self.get('loadingEl'),
         loadingTpl = _self.get('loadingTpl');
-      if(!loadingEl){
+      if(loadingTpl && !loadingEl){
         loadingEl = $(loadingTpl).appendTo(_self.getLoadingContainer());
         _self.setInternal('loadingEl',loadingEl);
       }
@@ -34184,6 +34184,13 @@ define('bui/grid/plugins/editing',function (require) {
      * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
      * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
      */
+    
+    /**
+     * @event editorready
+     * editor \u521b\u5efa\u5b8c\u6210\uff0c\u56e0\u4e3aeditor\u5ef6\u8fdf\u521b\u5efa\uff0c\u6240\u4ee5\u521b\u5efa\u5b8c\u6210grid\uff0c\u7b49\u5f85editor\u521b\u5efa\u6210\u529f
+     */
+    
+
   };
 
   BUI.augment(Editing,{
@@ -34205,6 +34212,7 @@ define('bui/grid/plugins/editing',function (require) {
         _self.initEditors(Editor);
         _self._initGridEvent(grid);
         _self.set('isInitEditors',true);
+        _self.fire('editorready');
       });
     },
     /**
@@ -35118,6 +35126,11 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
          * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
          */
+        
+        /**
+         * @event editorready
+         * editor \u521b\u5efa\u5b8c\u6210\uff0c\u56e0\u4e3aeditor\u5ef6\u8fdf\u521b\u5efa\uff0c\u6240\u4ee5\u521b\u5efa\u5b8c\u6210grid\uff0c\u7b49\u5f85editor\u521b\u5efa\u6210\u529f
+         */
       }
     },
     editType : {
@@ -35138,6 +35151,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       //\u5ef6\u8fdf\u52a0\u8f7d editor\u6a21\u5757
       BUI.use('bui/editor',function(Editor){
         _self._initEditor(Editor);
+        _self.fire('editorready');
       });
     },
     bindUI : function(grid){

@@ -5148,7 +5148,7 @@ define('bui/component/uibase/autoshow',function () {
      * @type {Object}
      */
     triggerActiveCls : {
-
+      
     },
     /**
      * 控件显示时由此trigger触发，当配置项 trigger 选择器代表多个DOM 对象时，
