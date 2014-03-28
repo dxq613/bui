@@ -175,8 +175,10 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      * 过滤数据
      * @protected
      */
-    onFiltered: function(){
-      
+    onFiltered: function(e){
+      var _self = this,
+        data = e.data;
+      _self.set('items', data);
     }
   },{
     ATTRS : 
