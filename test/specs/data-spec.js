@@ -364,6 +364,63 @@ BUI.use('bui/data',function (Data) {
     });
   });
 
+  describe('测试filter', function(){
+    it('测试load之后的数据', function(){
+      var data = [{},{},{},{}],
+      store = new Store({
+        url:'data/store.json',
+        autoLoad : true
+      });
+
+      var filtered = jasmine.createSpy();
+      store.on('filtered', filtered);
+
+      store.filter(function(item){
+        return item['value'] === '1'
+      })
+
+      waits(100);
+      runs(function(){
+        expect(filtered).toHaveBeenCalled();
+        var result = filtered.argsForCall[0][0].data;
+        expect(result.length).toBe(1);
+      });
+
+      waits(100);
+      store.load();
+      runs(function(){
+        expect(filtered.callCount).toBe(2);
+      })
+    })
+
+    it('测试使用本地数据', function(){
+      var data = [{value:'1'},{value: '2'},{value: '3'},{value: '4'}],
+      store = new Store({
+        data: data
+      });
+
+      var filtered = jasmine.createSpy();
+      store.on('filtered', filtered);
+
+      store.filter(function(item){
+        return item['value'] === '1'
+      })
+
+      waits(100);
+      runs(function(){
+        expect(filtered).toHaveBeenCalled();
+        var result = filtered.argsForCall[0][0].data;
+        expect(result.length).toBe(1);
+      });
+
+      waits(100);
+      store.setResult(data);
+      runs(function(){
+        expect(filtered.callCount).toBe(2);
+      })
+    })
+  })
+
 });
 /**/
 BUI.use('bui/data',function(Data){
