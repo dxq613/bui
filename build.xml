@@ -8,7 +8,7 @@
 	<property name="component.files" value="*"/>
 	<property name="charset" value="UTF-8"/>
 	
-	<target name="build" depends="prepare,build-all,combine.js,seed.js,compress.js,native2ascii,copy">
+	<target name="build" depends="prepare,build-all,copy-extensions,combine.js,seed.js,compress.js,native2ascii,copy">
     </target>
 	<target name="prepare">
         <delete>
@@ -19,10 +19,7 @@
 			<fileset dir="${base.dir}/src/common/"  includes="adapter.js">
         </fileset>
 	  </copy>
-    <copy todir="${des.dir}/extensions">
-          <fileset dir="${base.dir}/src/extensions"  includes="*.js">
-          </fileset>
-    </copy>
+    
     </target>
 
 	 <target name="build-all">
@@ -36,6 +33,13 @@
             <fileset dir="${build.dir}/assets/css" includes="**/build.xml"/>
         </subant>
     </target>
+
+	<target name="copy-extensions">
+		<copy todir="${des.dir}/extensions">
+			  <fileset dir="${base.dir}/src/extensions"  includes="**/*.js">
+			  </fileset>
+		</copy>
+	</target>
 	
 	<!-- 合并js --> 
 	<target name="combine.js" depends="prepare">

@@ -220,7 +220,6 @@ define('bui/component/uibase/bindable',function(){
 		* @see {@link BUI.Data.Store#event-filter}
 		*/
 		onFiltered : function(e){
-
 		}
 	});
 
