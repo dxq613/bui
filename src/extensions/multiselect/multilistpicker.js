@@ -3,11 +3,10 @@
  * @ignore
  */
 
-define('bui/extensions/mulit/multilistpicker', ['bui/overlay', 'bui/picker/mixin', 'bui/extensions/mulit/multilist'], function (require) {
+define('bui/extensions/multiselect/multilistpicker', ['bui/overlay', 'bui/picker/mixin'], function (require) {
   
   var Dialog = require('bui/overlay').Dialog,
-    Mixin = require('bui/picker/mixin'),
-    Mulitlist = require('bui/extensions/mulit/multilist');
+    Mixin = require('bui/picker/mixin');
 
   var MultilistPicker = Dialog.extend([Mixin], {
     /**
@@ -26,7 +25,7 @@ define('bui/extensions/mulit/multilistpicker', ['bui/overlay', 'bui/picker/mixin
 
         function syncValue(){
           _self._syncValue(val);
-          store.off(syncValue);
+          store.off('load', syncValue);
         }
 
         if(store.get('url')){
@@ -43,10 +42,11 @@ define('bui/extensions/mulit/multilistpicker', ['bui/overlay', 'bui/picker/mixin
         textField = _self._getTextField(),
         idField = innerControl.get('source').get('idField'),
         store = innerControl.get('store'),
+        result = store.getResult(),
         target = [],
         text = [];
 
-      store.filter(function(item){
+      BUI.each(result, function(item){
         if($.inArray(item[idField], val) !== -1){
           target.push(item);
           text.push(item['text']);

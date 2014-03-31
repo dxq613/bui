@@ -15,7 +15,7 @@ define('bui/extensions/search', ['bui/common', 'bui/form'], function(require) {
 
   Search.ATTRS = {
     tpl: {
-      value: '<input type="text" name="key"/><button class="button button-mini">确定</button>'
+      value: '<p><input type="text" name="key"/> <button class="button button-small">确定</button></p>'
     }
   }
 
