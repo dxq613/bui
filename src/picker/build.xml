@@ -21,6 +21,7 @@
 	<target name="combine.js" depends="prepare">
     <concat destfile="${des.dir}/picker.js" encoding="${charset}" outputencoding="${charset}">
       <path path="base.js"/>
+      <path path="mixin.js"/>
 	  <path path="picker.js"/>
 	  <path path="listpicker.js"/>
 	</concat>

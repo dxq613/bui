@@ -177,8 +177,8 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      */
     onFiltered: function(e){
       var _self = this,
-        data = e.data;
-      _self.set('items', data);
+        items = e.data;
+      _self.set('items', items);
     }
   },{
     ATTRS : 

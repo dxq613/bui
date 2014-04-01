@@ -27,6 +27,7 @@
   
   <?php $url = 'bui/picker'?>
   <?php include("./templates/script.php"); ?>
+  <script type="text/javascript" src="../src/picker/mixin.js"></script>
   <script type="text/javascript" src="../src/picker/picker.js"></script>
   <script type="text/javascript" src="../src/picker/listpicker.js"></script>
   <script type="text/javascript" src="../src/picker/base.js"></script>
