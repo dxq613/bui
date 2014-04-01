@@ -199,7 +199,16 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         * @param {Object} e.field 排序的字段
         * @param {Object} e.direction 排序的方向 'ASC'，'DESC'
         */
-        'localsort'
+        'localsort',
+
+        /**  
+        * 前端发生过滤时触发
+        * @event  
+        * @param {jQuery.Event} e  事件对象
+        * @param {Array} e.data 过滤完成的数据
+        * @param {Function} e.filter 过滤器
+        */
+        'filtered'
       ]
     },
     /**
@@ -397,8 +406,8 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         
     },
     /**
-     * 获取过滤后的数据
-     * @return {[type]} [description]
+     * 获取过滤后的数据，仅当本地过滤(remoteFilter = false)时有效
+     * @return {Array} 过滤过的数据
      */
     getFilterResult: function(){
         var filter = this.get('filter');

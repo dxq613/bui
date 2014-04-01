@@ -86,7 +86,8 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      */
     handleMouseEnter : function (ev) {
       var _self = this;
-      if(this.get('subMenu')){
+
+      if(this.get('subMenu') && this.get('openable')){
         this.set('open',true);
       }
       menuItem.superclass.handleMouseEnter.call(this,ev);
@@ -96,13 +97,15 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      * @protected
      */
     handleMouseLeave :function (ev) {
-      var _self = this,
-        subMenu = _self.get('subMenu'),
-        toElement = ev.toElement || ev.relatedTarget;;
-      if(toElement && subMenu && subMenu.containsElement(toElement)){
-        _self.set('open',true);
-      }else{
-        _self.set('open',false);
+      if(this.get('openable')){
+        var _self = this,
+          subMenu = _self.get('subMenu'),
+          toElement = ev.toElement || ev.relatedTarget;;
+        if(toElement && subMenu && subMenu.containsElement(toElement)){
+          _self.set('open',true);
+        }else{
+          _self.set('open',false);
+        }
       }
       menuItem.superclass.handleMouseLeave.call(this,ev);
     },
@@ -122,21 +125,23 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     }, 
     //设置打开子菜单 
     _uiSetOpen : function (v) {
-      var _self = this,
-        subMenu = _self.get('subMenu'),
-        subMenuAlign = _self.get('subMenuAlign');
-      if(subMenu){
-        if(v){
-          subMenuAlign.node = _self.get('el');
-          subMenu.set('align',subMenuAlign);
-          subMenu.show();
-        }else{
-          var menuAlign = subMenu.get('align');
-          //防止子菜单被公用时
-          if(!menuAlign || menuAlign.node == _self.get('el')){
-            subMenu.hide();
+      if(this.get('openable')){
+        var _self = this,
+          subMenu = _self.get('subMenu'),
+          subMenuAlign = _self.get('subMenuAlign');
+        if(subMenu){
+          if(v){
+            subMenuAlign.node = _self.get('el');
+            subMenu.set('align',subMenuAlign);
+            subMenu.show();
+          }else{
+            var menuAlign = subMenu.get('align');
+            //防止子菜单被公用时
+            if(!menuAlign || menuAlign.node == _self.get('el')){
+              subMenu.hide();
+            }
+            
           }
-          
         }
       }
     },
@@ -200,6 +205,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : false
       },
       /**
+       * 是否可以展开
+       * @type {Boolean}
+       */
+      openable : {
+        value : true
+      },
+      /**
        * 下级菜单
        * @cfg {BUI.Menu.Menu} subMenu
        */
@@ -236,21 +248,31 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : {
           'afterOpenChange' : true
         }
+      },
+      subMenuType : {
+        value : 'pop-menu'
       }
     },
     PARSER : {
       subMenu : function(el){
         var 
           subList = el.find('ul'),
+          type = this.get('subMenuType'),
           sub;
         if(subList && subList.length){
           sub = BUI.Component.create({
             srcNode : subList,
-            xclass : 'pop-menu',
-            autoHide : true,
-            autoHideType : 'leave'
+            xclass : type
           });
-          subList.appendTo('body');
+          if(type == 'pop-menu'){
+            subList.appendTo('body');
+            sub.setInternal({
+              autoHide : true,
+              autoHideType : 'leave'
+            });
+          }else{
+            this.get('children').push(sub);
+          }
         }
         return sub;
       }
@@ -389,6 +411,7 @@ define('bui/menu/menu',['bui/common'],function(require){
 		  idField:{
         value:'id'
       },
+      
       /**
        * @protected
        * 是否根据DOM生成子控件
@@ -645,7 +668,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       //处理点击事件，展开、折叠、选中
       _self.on('itemclick',function(ev){
         var item = ev.item,
-          titleEl = $(ev.domTarget).closest('.' + CLS_MENU_TITLE);
+          titleEl = $(ev.domTarget).closest('.' + _self.get('collapsedCls'));
         if(titleEl.length){
           var collapsed = item.get('collapsed');
             item.set('collapsed',!collapsed);
@@ -710,6 +733,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
     ATTRS : 
     {
+      defaultChildCfg : {
+        value : {
+          subMenuType : 'menu',
+          openable : false,
+          arrowTpl : ''
+        }
+      },
       
       /**
        * 配置的items 项是在初始化时作为children
@@ -732,6 +762,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
        */
       subMenuItemTpl : {
         value : '<a href="{href}"><em>{text}</em></a>'
+      },
+      /**
+       * 展开收缩的样式，用来触发展开折叠事件,默认是 'bui-menu-title'
+       * @type {String} 
+       */
+      collapsedCls : {
+        value : CLS_MENU_TITLE
       },
       events : {
         value : {

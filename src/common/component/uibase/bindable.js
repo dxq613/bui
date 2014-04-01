@@ -217,7 +217,7 @@ define('bui/component/uibase/bindable',function(){
     * @template
 		* after filter data to store
 		* @param {Object} e The event object
-		* @see {@link BUI.Data.Store#event-filter}
+		* @see {@link BUI.Data.Store#event-filtered}
 		*/
 		onFiltered : function(e){
 

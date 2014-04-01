@@ -116,8 +116,8 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       defaultChildCfg : {
         value : {
           subMenuType : 'menu',
-          arrowTpl : '',
-          openable : false
+          openable : false,
+          arrowTpl : ''
         }
       },
       

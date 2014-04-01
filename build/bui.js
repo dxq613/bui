@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 81,
+            subVersion : 82,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -9052,6 +9052,9 @@ define('bui/component/uibase/bindable',function(){
 			store.on('localsort',function(e){
 				_self.onLocalSort(e);
 			});
+			store.on('filtered',function(e){
+				_self.onFiltered(e);
+			});
 		},
 		__syncUI : function(){
 			var _self = this,
@@ -9132,6 +9135,16 @@ define('bui/component/uibase/bindable',function(){
 		*/
 		onLocalSort : function(e){
 			
+		},
+		/**
+		* @protected
+    * @template
+		* after filter data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-filtered}
+		*/
+		onFiltered : function(e){
+
 		}
 	});
 
@@ -12617,7 +12630,16 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         * @param {Object} e.field \u6392\u5e8f\u7684\u5b57\u6bb5
         * @param {Object} e.direction \u6392\u5e8f\u7684\u65b9\u5411 'ASC'\uff0c'DESC'
         */
-        'localsort'
+        'localsort',
+
+        /**  
+        * \u524d\u7aef\u53d1\u751f\u8fc7\u6ee4\u65f6\u89e6\u53d1
+        * @event  
+        * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+        * @param {Array} e.data \u8fc7\u6ee4\u5b8c\u6210\u7684\u6570\u636e
+        * @param {Function} e.filter \u8fc7\u6ee4\u5668
+        */
+        'filtered'
       ]
     },
     /**
@@ -12774,6 +12796,11 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       }
     },
     /**
+     * \u83b7\u53d6\u5f53\u524d\u7f13\u5b58\u7684\u7eaa\u5f55
+     */
+    getResult : function(){
+    },
+    /**
      * \u8fc7\u6ee4\u6570\u636e\uff0c\u6b64\u51fd\u6570\u7684\u6267\u884c\u540c\u5c5e\u6027 remoteFilter\u5173\u8054\u5bc6\u5207
      *
      *  - remoteFilter == true\u65f6\uff1a\u6b64\u51fd\u6570\u53ea\u63a5\u53d7\u5b57\u7b26\u4e32\u7c7b\u578b\u7684\u8fc7\u6ee4\u53c2\u6570\uff0c\u5c06{filter : filterStr}\u53c2\u6570\u4f20\u8f93\u5230\u670d\u52a1\u5668\u7aef
@@ -12787,12 +12814,17 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
             remoteFilter = _self.get('remoteFilter'),
             result;
 
+        filter = filter || _self.get('filter');
+
         if(remoteFilter){
             _self.load({filter : filter});
-        }else{
+        }else if(filter){
             _self.set('filter',filter);
-            result = _self._filterLocal(filter);
-            _self.onFiltered(result,filter);
+            //\u5982\u679cresult\u6709\u503c\u65f6\u624d\u4f1a\u8fdb\u884cfilter
+            if(_self.getResult().length > 0){
+                result = _self._filterLocal(filter);
+                _self.onFiltered(result,filter);
+            }
         }
     },
     /**
@@ -12804,10 +12836,21 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     _filterLocal : function(fn){
         
     },
+    /**
+     * \u83b7\u53d6\u8fc7\u6ee4\u540e\u7684\u6570\u636e\uff0c\u4ec5\u5f53\u672c\u5730\u8fc7\u6ee4(remoteFilter = false)\u65f6\u6709\u6548
+     * @return {Array} \u8fc7\u6ee4\u8fc7\u7684\u6570\u636e
+     */
+    getFilterResult: function(){
+        var filter = this.get('filter');
+        if(filter) {
+            return this._filterLocal(filter);
+        }
+        else {
+            return this.getResult();
+        }
+    },
     _clearLocalFilter : function(){
-        this._filterLocal(function(){
-            return true;
-        });
+        this.set('filter', null);
     },
     /**
      * \u6e05\u7406\u8fc7\u6ee4
@@ -12821,6 +12864,8 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
             _self.load({filter : ''});
         }else{
             _self._clearLocalFilter();
+            result = _self.getFilterResult();
+            _self.onFiltered(result, null);
         }
     },
     /**
@@ -14116,6 +14161,10 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
         _self.load({start:0});
       }else{
         _self._setResult(data);
+        //\u5982\u679c\u6709filter\u5219\u8fdb\u884c\u8fc7\u6ee4
+        if(_self.get('filter')){
+          _self.filter();
+        }
       }
     },
 
@@ -14486,6 +14535,11 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }
 
       _self.fire('load',{ params : params });
+
+      //\u5982\u679c\u6709\u672c\u5730\u8fc7\u6ee4\uff0c\u5219\u672c\u5730\u8fc7\u6ee4
+      if(!_self.get('remoteFilter') && _self.get('filter')){
+        _self.filter(_self.get('filter'));
+      }
     },
     //\u8bbe\u7f6e\u7ed3\u679c\u96c6
     _setResult : function(rows,totalCount){
@@ -16903,6 +16957,15 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
         store = _self.get('store'),
         items = store.getResult();
       _self.set('items',items);
+    },
+    /**
+     * \u8fc7\u6ee4\u6570\u636e
+     * @protected
+     */
+    onFiltered: function(e){
+      var _self = this,
+        data = e.data;
+      _self.set('items', data);
     }
   },{
     ATTRS : 
@@ -23907,7 +23970,8 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      */
     handleMouseEnter : function (ev) {
       var _self = this;
-      if(this.get('subMenu')){
+
+      if(this.get('subMenu') && this.get('openable')){
         this.set('open',true);
       }
       menuItem.superclass.handleMouseEnter.call(this,ev);
@@ -23917,13 +23981,15 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      * @protected
      */
     handleMouseLeave :function (ev) {
-      var _self = this,
-        subMenu = _self.get('subMenu'),
-        toElement = ev.toElement || ev.relatedTarget;;
-      if(toElement && subMenu && subMenu.containsElement(toElement)){
-        _self.set('open',true);
-      }else{
-        _self.set('open',false);
+      if(this.get('openable')){
+        var _self = this,
+          subMenu = _self.get('subMenu'),
+          toElement = ev.toElement || ev.relatedTarget;;
+        if(toElement && subMenu && subMenu.containsElement(toElement)){
+          _self.set('open',true);
+        }else{
+          _self.set('open',false);
+        }
       }
       menuItem.superclass.handleMouseLeave.call(this,ev);
     },
@@ -23943,21 +24009,23 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     }, 
     //\u8bbe\u7f6e\u6253\u5f00\u5b50\u83dc\u5355 
     _uiSetOpen : function (v) {
-      var _self = this,
-        subMenu = _self.get('subMenu'),
-        subMenuAlign = _self.get('subMenuAlign');
-      if(subMenu){
-        if(v){
-          subMenuAlign.node = _self.get('el');
-          subMenu.set('align',subMenuAlign);
-          subMenu.show();
-        }else{
-          var menuAlign = subMenu.get('align');
-          //\u9632\u6b62\u5b50\u83dc\u5355\u88ab\u516c\u7528\u65f6
-          if(!menuAlign || menuAlign.node == _self.get('el')){
-            subMenu.hide();
+      if(this.get('openable')){
+        var _self = this,
+          subMenu = _self.get('subMenu'),
+          subMenuAlign = _self.get('subMenuAlign');
+        if(subMenu){
+          if(v){
+            subMenuAlign.node = _self.get('el');
+            subMenu.set('align',subMenuAlign);
+            subMenu.show();
+          }else{
+            var menuAlign = subMenu.get('align');
+            //\u9632\u6b62\u5b50\u83dc\u5355\u88ab\u516c\u7528\u65f6
+            if(!menuAlign || menuAlign.node == _self.get('el')){
+              subMenu.hide();
+            }
+            
           }
-          
         }
       }
     },
@@ -24021,6 +24089,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : false
       },
       /**
+       * \u662f\u5426\u53ef\u4ee5\u5c55\u5f00
+       * @type {Boolean}
+       */
+      openable : {
+        value : true
+      },
+      /**
        * \u4e0b\u7ea7\u83dc\u5355
        * @cfg {BUI.Menu.Menu} subMenu
        */
@@ -24057,21 +24132,31 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : {
           'afterOpenChange' : true
         }
+      },
+      subMenuType : {
+        value : 'pop-menu'
       }
     },
     PARSER : {
       subMenu : function(el){
         var 
           subList = el.find('ul'),
+          type = this.get('subMenuType'),
           sub;
         if(subList && subList.length){
           sub = BUI.Component.create({
             srcNode : subList,
-            xclass : 'pop-menu',
-            autoHide : true,
-            autoHideType : 'leave'
+            xclass : type
           });
-          subList.appendTo('body');
+          if(type == 'pop-menu'){
+            subList.appendTo('body');
+            sub.setInternal({
+              autoHide : true,
+              autoHideType : 'leave'
+            });
+          }else{
+            this.get('children').push(sub);
+          }
         }
         return sub;
       }
@@ -24210,6 +24295,7 @@ define('bui/menu/menu',['bui/common'],function(require){
 		  idField:{
         value:'id'
       },
+      
       /**
        * @protected
        * \u662f\u5426\u6839\u636eDOM\u751f\u6210\u5b50\u63a7\u4ef6
@@ -24466,7 +24552,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       //\u5904\u7406\u70b9\u51fb\u4e8b\u4ef6\uff0c\u5c55\u5f00\u3001\u6298\u53e0\u3001\u9009\u4e2d
       _self.on('itemclick',function(ev){
         var item = ev.item,
-          titleEl = $(ev.domTarget).closest('.' + CLS_MENU_TITLE);
+          titleEl = $(ev.domTarget).closest('.' + _self.get('collapsedCls'));
         if(titleEl.length){
           var collapsed = item.get('collapsed');
             item.set('collapsed',!collapsed);
@@ -24531,6 +24617,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
     ATTRS : 
     {
+      defaultChildCfg : {
+        value : {
+          subMenuType : 'menu',
+          openable : false,
+          arrowTpl : ''
+        }
+      },
       
       /**
        * \u914d\u7f6e\u7684items \u9879\u662f\u5728\u521d\u59cb\u5316\u65f6\u4f5c\u4e3achildren
@@ -24553,6 +24646,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
        */
       subMenuItemTpl : {
         value : '<a href="{href}"><em>{text}</em></a>'
+      },
+      /**
+       * \u5c55\u5f00\u6536\u7f29\u7684\u6837\u5f0f\uff0c\u7528\u6765\u89e6\u53d1\u5c55\u5f00\u6298\u53e0\u4e8b\u4ef6,\u9ed8\u8ba4\u662f 'bui-menu-title'
+       * @type {String} 
+       */
+      collapsedCls : {
+        value : CLS_MENU_TITLE
       },
       events : {
         value : {

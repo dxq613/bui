@@ -2302,7 +2302,6 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     },
     /**
      * 上传所有新添加的文件
-     * @return {[type]} [description]
      */
     upload: function(){
       var _self = this,
@@ -2421,7 +2420,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
        *
        * <pre><code>
        * filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
-       * </pre></code>
+       * </code></pre>
        *
        */
       filter: {

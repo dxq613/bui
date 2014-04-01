@@ -1534,6 +1534,15 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
         store = _self.get('store'),
         items = store.getResult();
       _self.set('items',items);
+    },
+    /**
+     * 过滤数据
+     * @protected
+     */
+    onFiltered: function(e){
+      var _self = this,
+        data = e.data;
+      _self.set('items', data);
     }
   },{
     ATTRS : 
