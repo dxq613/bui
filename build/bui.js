@@ -9144,7 +9144,6 @@ define('bui/component/uibase/bindable',function(){
 		* @see {@link BUI.Data.Store#event-filtered}
 		*/
 		onFiltered : function(e){
-
 		}
 	});
 
@@ -14839,6 +14838,15 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    */
   var dialogView = Overlay.View.extend([UIBase.StdModView,UIBase.MaskView],{
 
+    /**
+     * \u5b50\u7ec4\u4ef6\u5c06\u8981\u6e32\u67d3\u5230\u7684\u8282\u70b9\uff0c\u5728 render \u7c7b\u4e0a\u8986\u76d6\u5bf9\u5e94\u65b9\u6cd5
+     * @protected
+     * @ignore
+     */
+    getContentElement: function () {
+      return this.get('body');
+    },
+
     _uiSetTitle:function(v){
       var _self = this,
         el = _self.get('el');
@@ -16964,8 +16972,8 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
      */
     onFiltered: function(e){
       var _self = this,
-        data = e.data;
-      _self.set('items', data);
+        items = e.data;
+      _self.set('items', items);
     }
   },{
     ATTRS : 
@@ -17223,24 +17231,301 @@ define('bui/list/list',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/picker',['bui/common','bui/picker/picker','bui/picker/listpicker'],function (require) {
+define('bui/picker',['bui/common','bui/picker/mixin','bui/picker/picker','bui/picker/listpicker'],function (require) {
   var BUI = require('bui/common'),
     Picker = BUI.namespace('Picker');
 
   BUI.mix(Picker,{
+    Mixin : require('bui/picker/mixin'),
     Picker : require('bui/picker/picker'),
     ListPicker : require('bui/picker/listpicker')
   });
 
   return Picker;
 });/**
+ * @fileOverview picker\u7684\u6269\u5c55
+ * @ignore
+ */
+
+define('bui/picker/mixin', function (require) {
+  
+
+  /**
+   * @class BUI.Picker.Mixin
+   */
+  var Mixin = function () {
+  };
+
+  Mixin.ATTRS = {
+    /**
+     * \u7528\u4e8e\u9009\u62e9\u7684\u63a7\u4ef6\uff0c\u9ed8\u8ba4\u4e3a\u7b2c\u4e00\u4e2a\u5b50\u5143\u7d20,\u6b64\u63a7\u4ef6\u5b9e\u73b0 @see {BUI.Component.UIBase.Selection} \u63a5\u53e3
+     * @protected
+     * @type {Object|BUI.Component.Controller}
+     */
+    innerControl : {
+      getter:function(){
+        return this.get('children')[0];
+      }
+    },
+    /**
+     * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+     * @cfg {String} [triggerEvent='click']
+     */
+    /**
+     * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+     * @type {String}
+     * @default 'click'
+     */
+    triggerEvent:{
+      value:'click'
+    },
+    /**
+     * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
+     * @cfg {Boolean} [autoSetValue=true]
+     */
+    /**
+     * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
+     * @type {Boolean}
+     */
+    autoSetValue : {
+      value : true
+    },
+    /**
+     * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
+     * @cfg {String} [changeEvent='selectedchange']
+     */
+    /**
+     * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
+     * @type {String}
+     */
+    changeEvent : {
+      value:'selectedchange'
+    },
+    /**
+     * \u81ea\u52a8\u9690\u85cf
+     * @type {Boolean}
+     * @override
+     */
+    autoHide:{
+      value : true
+    },
+    /**
+     * \u9690\u85cf\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+     * @protected
+     * @type {String}
+     */
+    hideEvent:{
+      value:'itemclick'
+    },
+    /**
+     * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
+     * @cfg {String|HTMLElement|jQuery} textField
+     */
+    /**
+     * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
+     * @type {String|HTMLElement|jQuery}
+     */
+    textField : {
+
+    },
+    align : {
+      value : {
+         points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+         offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
+      }
+    },
+    /**
+     * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
+     * @cfg {String|HTMLElement|jQuery} valueField
+     */
+    /**
+     * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
+     * @type {String|HTMLElement|jQuery}
+     */
+    valueField:{
+
+    }
+    /**
+     * @event selectedchange
+     * \u9009\u4e2d\u503c\u6539\u53d8\u4e8b\u4ef6
+     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {String} text \u9009\u4e2d\u7684\u6587\u672c
+     * @param {string} value \u9009\u4e2d\u7684\u503c
+     * @param {jQuery} curTrigger \u5f53\u524d\u89e6\u53d1picker\u7684\u5143\u7d20
+     */
+  }
+
+  Mixin.prototype = {
+
+    __bindUI : function(){
+      var _self = this,
+        //innerControl = _self.get('innerControl'),
+        hideEvent = _self.get('hideEvent'),
+        trigger = $(_self.get('trigger'));
+
+      _self.on('show',function(ev){
+      //trigger.on(_self.get('triggerEvent'),function(e){
+        if(!_self.get('isInit')){
+          _self._initControl();
+        }
+        if(_self.get('autoSetValue')){
+          var valueField = _self.get('valueField') || _self.get('textField') || _self.get('curTrigger'),
+            val = $(valueField).val();
+          _self.setSelectedValue(val);
+        }
+      });
+
+      //_self.initControlEvent();
+    },
+    _initControl : function(){
+      var _self = this;
+      if(_self.get('isInit')){ //\u5df2\u7ecf\u521d\u59cb\u5316\u8fc7
+        return ;
+      }
+      if(!_self.get('innerControl')){
+        var control = _self.createControl();
+        _self.get('children').push(control);
+      }
+      _self.initControlEvent();
+      _self.set('isInit',true);
+    },
+    /**
+     * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\uff0c\u7ed1\u5b9a\u4e8b\u4ef6
+     */
+    initControl : function(){
+      this._initControl();
+    },  
+    /**
+     * @protected
+     * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6
+     */
+    createControl : function(){
+      
+    },
+    //\u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\u7684\u4e8b\u4ef6
+    initControlEvent : function(){
+      var _self = this,
+        innerControl = _self.get('innerControl'),
+        trigger = $(_self.get('trigger')),
+        hideEvent = _self.get('hideEvent');
+
+      innerControl.on(_self.get('changeEvent'),function(e){
+        var curTrigger = _self.get('curTrigger'),
+          textField = _self.get('textField') || curTrigger || trigger,
+          valueField = _self.get('valueField'),
+          selValue = _self.getSelectedValue(),
+          isChange = false;
+
+        if(textField){
+          var selText = _self.getSelectedText(),
+            preText = $(textField).val();
+          if(selText != preText){
+            $(textField).val(selText);
+            isChange = true;
+            $(textField).trigger('change');
+          }
+        }
+        
+        if(valueField){
+          var preValue = $(valueField).val();  
+          if(valueField != preValue){
+            $(valueField).val(selValue);
+            isChange = true;
+            $(valueField).trigger('change');
+          }
+        }
+        if(isChange){
+          _self.onChange(selText,selValue,e);
+        }
+      });
+      
+      if(hideEvent){
+        innerControl.on(_self.get('hideEvent'),function(){
+          var curTrigger = _self.get('curTrigger');
+          try{ //\u9690\u85cf\u65f6\uff0c\u5728ie6,7\u4e0b\u4f1a\u62a5\u9519
+            if(curTrigger){
+              curTrigger.focus();
+            }
+          }catch(e){
+            BUI.log(e);
+          }
+          _self.hide();
+        });
+      }
+    },
+    /**
+     * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
+     * @template
+     * @protected
+     * @param {String} val \u8bbe\u7f6e\u503c
+     */
+    setSelectedValue : function(val){
+      
+    },
+    /**
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
+     * @template
+     * @protected
+     * @return {String} \u9009\u4e2d\u7684\u503c
+     */
+    getSelectedValue : function(){
+      
+    },
+    /**
+     * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
+     * @template
+     * @protected
+     * @return {String} \u9009\u4e2d\u7684\u6587\u672c
+     */
+    getSelectedText : function(){
+
+    },
+    /**
+     * \u9009\u62e9\u5668\u83b7\u53d6\u7126\u70b9\u65f6\uff0c\u9ed8\u8ba4\u9009\u4e2d\u5185\u90e8\u63a7\u4ef6
+     */
+    focus : function(){
+      this.get('innerControl').focus();
+    },
+    /**
+     * @protected
+     * \u53d1\u751f\u6539\u53d8
+     */
+    onChange : function(selText,selValue,ev){
+      var _self = this,
+        curTrigger = _self.get('curTrigger');
+      //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
+      _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
+    },
+    /**
+     * \u5904\u7406 esc \u952e
+     * @protected
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
+     */
+    handleNavEsc : function (ev) {
+      this.hide();
+    },
+    _uiSetValueField : function(v){
+      var _self = this;
+      if(v != null && v !== ''){ //if(v)\u95ee\u9898\u592a\u591a
+        _self.setSelectedValue($(v).val());
+      }
+    },
+    _getTextField : function(){
+      var _self = this;
+      return _self.get('textField') || _self.get('curTrigger');
+    }
+  }
+
+  return Mixin;
+});/**
  * @fileOverview \u9009\u62e9\u5668
  * @ignore
  */
 
-define('bui/picker/picker',['bui/overlay'],function (require) {
+define('bui/picker/picker',['bui/overlay', 'bui/picker/mixin'],function (require) {
   
-  var Overlay = require('bui/overlay').Overlay;
+  var Overlay = require('bui/overlay').Overlay,
+    Mixin = require('bui/picker/mixin');
 
   /**
    * \u9009\u62e9\u5668\u63a7\u4ef6\u7684\u57fa\u7c7b\uff0c\u5f39\u51fa\u4e00\u4e2a\u5c42\u6765\u9009\u62e9\u6570\u636e\uff0c\u4e0d\u8981\u4f7f\u7528\u6b64\u7c7b\u521b\u5efa\u63a7\u4ef6\uff0c\u4ec5\u7528\u4e8e\u7ee7\u627f\u5b9e\u73b0\u63a7\u4ef6
@@ -17268,267 +17553,14 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
    * </code></pre>
    * @abstract
    * @class BUI.Picker.Picker
+   * @mixins BUI.Picker.Mixin
    * @extends BUI.Overlay.Overlay
    */
-  var picker = Overlay.extend({
+  var picker = Overlay.extend([Mixin], {
     
-      bindUI : function(){
-        var _self = this,
-          //innerControl = _self.get('innerControl'),
-          hideEvent = _self.get('hideEvent'),
-          trigger = $(_self.get('trigger'));
-
-        _self.on('show',function(ev){
-        //trigger.on(_self.get('triggerEvent'),function(e){
-          if(!_self.get('isInit')){
-            _self._initControl();
-          }
-          if(_self.get('autoSetValue')){
-            var valueField = _self.get('valueField') || _self.get('textField') || _self.get('curTrigger'),
-              val = $(valueField).val();
-            _self.setSelectedValue(val);
-          }
-        });
-
-
-        //_self.initControlEvent();
-      },
-      _initControl : function(){
-        var _self = this;
-        if(_self.get('isInit')){ //\u5df2\u7ecf\u521d\u59cb\u5316\u8fc7
-          return ;
-        }
-        if(!_self.get('innerControl')){
-          var control = _self.createControl();
-          _self.get('children').push(control);
-        }
-        _self.initControlEvent();
-        _self.set('isInit',true);
-      },
-      /**
-       * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\uff0c\u7ed1\u5b9a\u4e8b\u4ef6
-       */
-      initControl : function(){
-        this._initControl();
-      },  
-      /**
-       * @protected
-       * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6
-       */
-      createControl : function(){
-        
-      },
-      //\u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\u7684\u4e8b\u4ef6
-      initControlEvent : function(){
-        var _self = this,
-          innerControl = _self.get('innerControl'),
-          trigger = $(_self.get('trigger')),
-          hideEvent = _self.get('hideEvent');
-
-        innerControl.on(_self.get('changeEvent'),function(e){
-          var curTrigger = _self.get('curTrigger'),
-            textField = _self.get('textField') || curTrigger || trigger,
-            valueField = _self.get('valueField'),
-            selValue = _self.getSelectedValue(),
-            isChange = false;
-
-          if(textField){
-            var selText = _self.getSelectedText(),
-              preText = $(textField).val();
-            if(selText != preText){
-              $(textField).val(selText);
-              isChange = true;
-              $(textField).trigger('change');
-            }
-          }
-          
-          if(valueField){
-            var preValue = $(valueField).val();  
-            if(valueField != preValue){
-              $(valueField).val(selValue);
-              isChange = true;
-              $(valueField).trigger('change');
-            }
-          }
-          if(isChange){
-            _self.onChange(selText,selValue,e);
-          }
-        });
-        
-        if(hideEvent){
-          innerControl.on(_self.get('hideEvent'),function(){
-            var curTrigger = _self.get('curTrigger');
-            try{ //\u9690\u85cf\u65f6\uff0c\u5728ie6,7\u4e0b\u4f1a\u62a5\u9519
-              if(curTrigger){
-                curTrigger.focus();
-              }
-            }catch(e){
-              BUI.log(e);
-            }
-            _self.hide();
-          });
-        }
-      },
-      /**
-       * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
-       * @template
-       * @protected
-       * @param {String} val \u8bbe\u7f6e\u503c
-       */
-      setSelectedValue : function(val){
-        
-      },
-      /**
-       * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
-       * @template
-       * @protected
-       * @return {String} \u9009\u4e2d\u7684\u503c
-       */
-      getSelectedValue : function(){
-        
-      },
-      /**
-       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
-       * @template
-       * @protected
-       * @return {String} \u9009\u4e2d\u7684\u6587\u672c
-       */
-      getSelectedText : function(){
-
-      },
-      /**
-       * \u9009\u62e9\u5668\u83b7\u53d6\u7126\u70b9\u65f6\uff0c\u9ed8\u8ba4\u9009\u4e2d\u5185\u90e8\u63a7\u4ef6
-       */
-      focus : function(){
-        this.get('innerControl').focus();
-      },
-      /**
-       * @protected
-       * \u53d1\u751f\u6539\u53d8
-       */
-      onChange : function(selText,selValue,ev){
-        var _self = this,
-          curTrigger = _self.get('curTrigger');
-        //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
-        _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
-      },
-      /**
-       * \u5904\u7406 esc \u952e
-       * @protected
-       * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
-       */
-      handleNavEsc : function (ev) {
-        this.hide();
-      },
-      _uiSetValueField : function(v){
-        var _self = this;
-        if(v != null && v !== ''){ //if(v)\u95ee\u9898\u592a\u591a
-          _self.setSelectedValue($(v).val());
-        }
-      },
-      _getTextField : function(){
-        var _self = this;
-        return _self.get('textField') || _self.get('curTrigger');
-      }
   },{
     ATTRS : {
-      
-      /**
-       * \u7528\u4e8e\u9009\u62e9\u7684\u63a7\u4ef6\uff0c\u9ed8\u8ba4\u4e3a\u7b2c\u4e00\u4e2a\u5b50\u5143\u7d20,\u6b64\u63a7\u4ef6\u5b9e\u73b0 @see {BUI.Component.UIBase.Selection} \u63a5\u53e3
-       * @protected
-       * @type {Object|BUI.Component.Controller}
-       */
-      innerControl : {
-        getter:function(){
-          return this.get('children')[0];
-        }
-      },
-      /**
-       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @cfg {String} [triggerEvent='click']
-       */
-      /**
-       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @type {String}
-       * @default 'click'
-       */
-      triggerEvent:{
-        value:'click'
-      },
-      /**
-       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
-       * @cfg {Boolean} [autoSetValue=true]
-       */
-      /**
-       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
-       * @type {Boolean}
-       */
-      autoSetValue : {
-        value : true
-      },
-      /**
-       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
-       * @cfg {String} [changeEvent='selectedchange']
-       */
-      /**
-       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
-       * @type {String}
-       */
-      changeEvent : {
-        value:'selectedchange'
-      },
-      /**
-       * \u81ea\u52a8\u9690\u85cf
-       * @type {Boolean}
-       * @override
-       */
-      autoHide:{
-        value : true
-      },
-      /**
-       * \u9690\u85cf\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @protected
-       * @type {String}
-       */
-      hideEvent:{
-        value:'itemclick'
-      },
-      /**
-       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
-       * @cfg {String|HTMLElement|jQuery} textField
-       */
-      /**
-       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
-       * @type {String|HTMLElement|jQuery}
-       */
-      textField : {
 
-      },
-      align : {
-        value : {
-           points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
-           offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
-        }
-      },
-      /**
-       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
-       * @cfg {String|HTMLElement|jQuery} valueField
-       */
-      /**
-       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
-       * @type {String|HTMLElement|jQuery}
-       */
-      valueField:{
-
-      }
-      /**
-       * @event selectedchange
-       * \u9009\u4e2d\u503c\u6539\u53d8\u4e8b\u4ef6
-       * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
-       * @param {String} text \u9009\u4e2d\u7684\u6587\u672c
-       * @param {string} value \u9009\u4e2d\u7684\u503c
-       * @param {jQuery} curTrigger \u5f53\u524d\u89e6\u53d1picker\u7684\u5143\u7d20
-       */
     }
   },{
     xclass:'picker'

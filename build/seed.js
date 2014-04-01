@@ -9144,7 +9144,6 @@ define('bui/component/uibase/bindable',function(){
 		* @see {@link BUI.Data.Store#event-filtered}
 		*/
 		onFiltered : function(e){
-
 		}
 	});
 
