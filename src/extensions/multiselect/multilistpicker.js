@@ -3,10 +3,10 @@
  * @ignore
  */
 
-define('bui/extensions/multiselect/multilistpicker', ['bui/overlay', 'bui/picker/mixin'], function (require) {
+define('bui/extensions/multiselect/multilistpicker', ['bui/overlay', 'bui/picker'], function (require) {
   
   var Dialog = require('bui/overlay').Dialog,
-    Mixin = require('bui/picker/mixin');
+    Mixin = require('bui/picker').Mixin;
 
   var MultilistPicker = Dialog.extend([Mixin], {
     /**

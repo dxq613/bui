@@ -48,6 +48,10 @@ define('bui/extensions/multiselect/multiselect',['bui/common', 'bui/extensions/m
         valueField: _self.get('valueField'),
         children: [multilist]
       }).render();
+    },
+    bindUI: function(){
+      var _self = this,
+        multilist = _self.get('multilist');
     }
   }, {
     ATTRS: {
