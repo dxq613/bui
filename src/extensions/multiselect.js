@@ -185,10 +185,10 @@ define('bui/extensions/multiselect/multilist', ['bui/common', 'bui/list'], funct
  * @ignore
  */
 
-define('bui/extensions/multiselect/multilistpicker', ['bui/overlay', 'bui/picker/mixin'], function (require) {
+define('bui/extensions/multiselect/multilistpicker', ['bui/overlay', 'bui/picker'], function (require) {
   
   var Dialog = require('bui/overlay').Dialog,
-    Mixin = require('bui/picker/mixin');
+    Mixin = require('bui/picker').Mixin;
 
   var MultilistPicker = Dialog.extend([Mixin], {
     /**
@@ -347,10 +347,26 @@ define('bui/extensions/multiselect/multiselect',['bui/common', 'bui/extensions/m
 
       var picker = new MultiListPicker({
         trigger: inputEl,
+        autoRender: true,
         textField: inputEl,
         valueField: _self.get('valueField'),
         children: [multilist]
-      }).render();
+      });
+      _self.set('picker', picker);
+      _self.set('textField', inputEl);
+    },
+    bindUI: function(){
+      var _self = this,
+        multilist = _self.get('multilist');
+
+      multilist.on('selected', function(ev){
+        var items = ev.items;
+        return _self.fire('selected', {items: items});
+      });
+      multilist.on('unselected', function(ev){
+        var items = ev.items;
+        return _self.fire('unselected', {items: items});
+      })
     }
   }, {
     ATTRS: {
@@ -369,8 +385,20 @@ define('bui/extensions/multiselect/multiselect',['bui/common', 'bui/extensions/m
       items: {
 
       },
+      source: {
+        getter: function(){
+          return this.get('multilist').get('source');
+        }
+      },
+      target: {
+        getter: function(){
+          return this.get('multilist').get('target');
+        }
+      },
       valueField: {
-
+        setter: function(v){
+          return $(v);
+        }
       },
       textField: {
 
