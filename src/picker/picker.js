@@ -3,10 +3,10 @@
  * @ignore
  */
 
-define('bui/picker/picker',['bui/overlay', 'bui/picker/mixin'],function (require) {
+define('bui/picker/picker',['bui/overlay', 'bui/picker'],function (require) {
   
   var Overlay = require('bui/overlay').Overlay,
-    Mixin = require('bui/picker/mixin');
+    Mixin = require('bui/picker').Mixin;
 
   /**
    * 选择器控件的基类，弹出一个层来选择数据，不要使用此类创建控件，仅用于继承实现控件

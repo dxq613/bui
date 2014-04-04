@@ -44,14 +44,26 @@ define('bui/extensions/multiselect/multiselect',['bui/common', 'bui/extensions/m
 
       var picker = new MultiListPicker({
         trigger: inputEl,
+        autoRender: true,
         textField: inputEl,
         valueField: _self.get('valueField'),
         children: [multilist]
-      }).render();
+      });
+      _self.set('picker', picker);
+      _self.set('textField', inputEl);
     },
     bindUI: function(){
       var _self = this,
         multilist = _self.get('multilist');
+
+      multilist.on('selected', function(ev){
+        var items = ev.items;
+        return _self.fire('selected', {items: items});
+      });
+      multilist.on('unselected', function(ev){
+        var items = ev.items;
+        return _self.fire('unselected', {items: items});
+      })
     }
   }, {
     ATTRS: {
@@ -70,8 +82,20 @@ define('bui/extensions/multiselect/multiselect',['bui/common', 'bui/extensions/m
       items: {
 
       },
+      source: {
+        getter: function(){
+          return this.get('multilist').get('source');
+        }
+      },
+      target: {
+        getter: function(){
+          return this.get('multilist').get('target');
+        }
+      },
       valueField: {
-
+        setter: function(v){
+          return $(v);
+        }
       },
       textField: {
 
