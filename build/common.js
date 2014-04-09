@@ -4273,6 +4273,9 @@ define('bui/component/uibase/autoshow',function () {
 
       //触发显示
       function tiggerShow (ev) {
+        if(_self.get('disabled')){ //如果禁用则中断
+          return;
+        }
         var prevTrigger = _self.get('curTrigger'),
           curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
           align = _self.get('align');

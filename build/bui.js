@@ -5266,6 +5266,9 @@ define('bui/component/uibase/autoshow',function () {
 
       //\u89e6\u53d1\u663e\u793a
       function tiggerShow (ev) {
+        if(_self.get('disabled')){ //\u5982\u679c\u7981\u7528\u5219\u4e2d\u65ad
+          return;
+        }
         var prevTrigger = _self.get('curTrigger'),
           curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
           align = _self.get('align');
@@ -22905,7 +22908,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        
+
         picker.render();
         _self.set('list',picker.get('list'));
       },
@@ -22981,6 +22984,14 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           }
           
         }
+      },
+      //\u7981\u7528
+      _uiSetDisabled : function(v){
+        var _self = this,
+          picker = _self.get('picker'),
+          textEl = _self._getTextEl();
+        picker.set('disabled',v);
+        textEl && textEl.attr('disabled',v);
       },
       _getTextEl : function(){
          var _self = this,
