@@ -366,7 +366,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		//同步控件的宽度
 		_syncControlWidth : function(control){
 			var _self = this,
-				width = _self.get('el').width(),
+				width = _self.get('width') || _self.get('el').width(),
 				appendWidth = control.getAppendWidth();
 			control.set('width',width - appendWidth);
 
@@ -388,7 +388,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl'),
 				siblings,
-				outerHeight = el.height(),
+				outerHeight = _self.get('height') || el.height(),
 				height = outerHeight;
 			if(bodyEl[0] == el[0]){ //如果控件的容器等于外层容器
 				return outerHeight;

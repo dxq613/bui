@@ -34970,6 +34970,13 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
      */
     triggerCls : {
       value : CLS_ROW
+    },
+    /**
+     * \u7f16\u8f91\u5668\u7684\u9ed8\u8ba4\u914d\u7f6e\u4fe1\u606f
+     * @type {Object}
+     */
+    editor : {
+
     }
   };
 
@@ -34983,17 +34990,21 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
      * @param  {Array} fields \u5b57\u6bb5\u914d\u7f6e
      */ 
     getEditorCfgs : function(fields){
-      var rst = [];
-      rst.push({
-        changeSourceEvent : null,
-        autoUpdate : false,
-        form : {
-          children : fields,
-          buttonBar : {
-            elCls : 'centered toolbar'
+      var _self = this,
+        editor = _self.get('editor'),
+        rst = [],
+        cfg = BUI.mix(true,{
+          changeSourceEvent : null,
+          autoUpdate : false,
+          form : {
+            children : fields,
+            buttonBar : {
+              elCls : 'centered toolbar'
+            }
           }
-        }
-      });
+        },editor);
+        
+      rst.push(cfg);
       return rst;
     },
     /**

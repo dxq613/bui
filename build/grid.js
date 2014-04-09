@@ -4858,6 +4858,13 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
      */
     triggerCls : {
       value : CLS_ROW
+    },
+    /**
+     * 编辑器的默认配置信息
+     * @type {Object}
+     */
+    editor : {
+
     }
   };
 
@@ -4871,17 +4878,21 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
      * @param  {Array} fields 字段配置
      */ 
     getEditorCfgs : function(fields){
-      var rst = [];
-      rst.push({
-        changeSourceEvent : null,
-        autoUpdate : false,
-        form : {
-          children : fields,
-          buttonBar : {
-            elCls : 'centered toolbar'
+      var _self = this,
+        editor = _self.get('editor'),
+        rst = [],
+        cfg = BUI.mix(true,{
+          changeSourceEvent : null,
+          autoUpdate : false,
+          form : {
+            children : fields,
+            buttonBar : {
+              elCls : 'centered toolbar'
+            }
           }
-        }
-      });
+        },editor);
+        
+      rst.push(cfg);
       return rst;
     },
     /**
