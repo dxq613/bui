@@ -8,9 +8,10 @@
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
+  margin: 0;
   font-family: @headingsFontFamily;
   font-weight: @headingsFontWeight;
-  line-height: 1.4;
+  line-height: 1.5;
   color: @headingsColor;
 
   small,
@@ -24,8 +25,8 @@ h1, h2, h3, h4, h5, h6,
 h1, .h1,
 h2, .h2,
 h3, .h3 {
-  margin-top: @computedLineHeight;
-  margin-bottom: (@computedLineHeight / 2);
+  // margin-top: @computedLineHeight;
+  // margin-bottom: (@computedLineHeight / 2);
 
   small,
   .small {
@@ -35,8 +36,8 @@ h3, .h3 {
 h4, .h4,
 h5, .h5,
 h6, .h6 {
-  margin-top: (@computedLineHeight / 2);
-  margin-bottom: (@computedLineHeight / 2);
+  // margin-top: (@computedLineHeight / 2);
+  // margin-bottom: (@computedLineHeight / 2);
 
   small,
   .small {
@@ -217,13 +218,13 @@ dd {
 // Misc
 // -------------------------
 
-// Abbreviations and acronyms
-abbr[title],
-// Add data-* attribute to help out our tooltip plugin, per https://github.com/twbs/bootstrap/issues/5257
-abbr[data-original-title] {
-  cursor: help;
-  border-bottom: 1px dotted @abbr-border-color;
-}
+// // Abbreviations and acronyms
+// abbr[title],
+// // Add data-* attribute to help out our tooltip plugin, per https://github.com/twbs/bootstrap/issues/5257
+// abbr[data-original-title] {
+//   cursor: help;
+//   border-bottom: 1px dotted @abbr-border-color;
+// }
 .initialism {
   font-size: 90%;
   text-transform: uppercase;
@@ -233,8 +234,8 @@ abbr[data-original-title] {
 blockquote {
   padding: (@computedLineHeight / 2) @computedLineHeight;
   margin: 0 0 @computedLineHeight;
-  font-size: @blockquote-font-size;
-  border-left: 5px solid @blockquote-border-color;
+  font-size: 14px;
+  border-left: 5px solid @grayLighter;
 
   p,
   ul,
@@ -252,7 +253,7 @@ blockquote {
     display: block;
     font-size: 80%; // back to default font-size
     line-height: @baseLineHeight;
-    color: @blockquote-small-color;
+    color: @grayLight;
 
     &:before {
       content: '\2014 \00A0'; // em dash, nbsp
@@ -267,7 +268,7 @@ blockquote {
 blockquote.pull-right {
   padding-right: 15px;
   padding-left: 0;
-  border-right: 5px solid @blockquote-border-color;
+  border-right: 5px solid @grayLighter;
   border-left: 0;
   text-align: right;
 

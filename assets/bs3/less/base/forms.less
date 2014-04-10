@@ -32,13 +32,13 @@ select,textarea{
 }
 
 select{
-	width:@controlNormal + 10;
+	width: @controlNormal + @paddingBaseHorizontal * 2 + 2;
 	border: none;
 }
 
 
 .input-control(){
-	display:inline-block;
+	.inline-block();
 	height: @controlRowHeight;
 	line-height: @controlRowHeight;
 	padding: @paddingBaseVertical @paddingBaseHorizontal;
@@ -60,7 +60,7 @@ select{
   // &[readonly],
   fieldset[disabled] & {
     cursor: not-allowed;
-    background-color: @input-bg-disabled;
+    background-color: @inputDisabledBackground;
     opacity: 1; // iOS fix for unreadable disabled content
   }
 
@@ -224,13 +224,13 @@ input.calendar-time{
 		}
 	}
 
-	.controls 
 	//错误提示
 	.valid-text{
 		display:block;
 		line-height: 16px;
 		.x-icon{
 			margin-right:5px;
+			vertical-align: text-bottom;
 		}
 		em{
 			font-style:normal;

@@ -9,14 +9,16 @@
 	width:22px;
 	overflow: hidden;
 	line-height:22px;
-	vertical-align: text-bottom;
+	// vertical-align: text-bottom;
 	.border-radius(2px);
 	text-shadow: 0 -1px 0 rgba(0,0,0,.25);
 	border: 1px solid transparent;
 	cursor: inherit;
 	//使用图片icon时，使用此标签
 	i{
-		vertical-align: middle;
+		vertical-align: baseline;
+		*margin-right: 0;
+		*vertical-align: middle;
 	}
 }
 
@@ -34,9 +36,7 @@
 	line-height:14px;
 	.border-radius(2px);
 	i{
-		*position:absolute;
-		*top:0;
-		*left:0;
+		vertical-align: baseline;
 	}
 }
 
@@ -48,20 +48,18 @@
 	line-height:12px;
 	.border-radius(2px);
 	i{
-		*position:absolute;
-		*top:0;
-		*left:0;
+		vertical-align: baseline;
 	}
 }
 
 .x-icon-disable{
-	.iconBackground(@iconBackground, @iconDisableBackGroundHighlight);
+	// .iconBackground(@iconBackground, @iconDisableBackGroundHighlight);
 	color:@iconDisableColor;
 	border: 1px solid @iconDisableBorderColor;			
 }
 
 .x-icon-hover,.x-icon-normal:hover{
-	.iconBackground(@iconBackground, @iconHoverBackGroundHighlight);
+	// .iconBackground(@iconBackground, @iconHoverBackGroundHighlight);
 	color:@iconHoverColor;
 	border: 1px solid @iconHoverBorderColor;	
 }
