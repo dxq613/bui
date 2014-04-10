@@ -18,6 +18,12 @@
       <li>4</li>
       <li>5</li>
     </ol>
+
+  </div>
+  <div class="row">
+    <div class="span8" id="c7" data-bl-true="true" data-bl-false="false" data-num-a="123" data-num-b="a234" data-value="test">
+      <a href="#">这是复杂的封装控件</a>
+    </div>
   </div>
   <div class="row">
     <div class="span8" id="t1">

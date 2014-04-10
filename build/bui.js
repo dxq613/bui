@@ -6990,6 +6990,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     FIELD_CFG = FIELD_PREFIX + 'cfg',
     PARSER = 'PARSER',
     Manager = require('bui/component/manage'),
+    RE_DASH_WORD = /-([a-z])/g,
     regx = /^[\{\[]/;
 
   function isConfigField(name,cfgFields){
@@ -7014,10 +7015,28 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       return constructorChains;
   }
 
+  function camelCase(str) {
+    return str.toLowerCase().replace(RE_DASH_WORD, function(all, letter) {
+      return (letter + '').toUpperCase()
+    })
+  }
+
   //\u5982\u679c\u5c5e\u6027\u4e3a\u5bf9\u8c61\u6216\u8005\u6570\u7ec4\uff0c\u5219\u8fdb\u884c\u8f6c\u6362
   function parseFieldValue(value){
+
     value = $.trim(value);
-    if(regx.test(value)){
+    if (value.toLowerCase() === 'false') {
+      value = false
+    }
+    else if (value.toLowerCase() === 'true') {
+      value = true
+    }else if (/\d/.test(value) && /[^a-z]/i.test(value)) {
+      var number = parseFloat(value)
+      if (number + '' === value) {
+        value = number
+      }
+    }
+    else if(regx.test(value)){
       value = JSON.looseParse(value);
     }
     return value;
@@ -7191,6 +7210,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
           }
           else if(isConfigField(name,decorateCfgFields)){
             name = name.replace(FIELD_PREFIX,'');
+            name = camelCase(name);
             var value = parseFieldValue(attr.nodeValue);
             if(config[name] && BUI.isObject(value)){
               BUI.mix(config[name],value);
