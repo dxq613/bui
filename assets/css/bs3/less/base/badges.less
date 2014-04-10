@@ -3,53 +3,75 @@
 // --------------------------------------------------
 
 
-// Base classes
+// Base class
 .badge {
   display: inline-block;
   min-width: 10px;
   padding: 3px 7px;
-  font-size: @font-size-small;
-  font-weight: @badge-font-weight;
-  color: @badge-color;
-  line-height: @badge-line-height;
+  font-size: @fontSizeSmall;
+  font-weight: bold;
+  color: #fff;
+  line-height: 1;
   vertical-align: baseline;
   white-space: nowrap;
   text-align: center;
-  background-color: @badge-bg;
-  border-radius: @badge-border-radius;
+  background-color: #fff;
+  border-radius: 10px;
 
   // Empty badges collapse automatically (not available in IE8)
   &:empty {
     display: none;
   }
 
-  // Quick fix for badges in buttons
-  .btn & {
-    position: relative;
-    top: -1px;
+
+  // Hover state, but only for links
+  a& {
+    &:hover,
+    &:focus {
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+    }
   }
-  .btn-xs & {
-    top: 0;
-    padding: 1px 5px;
+
+  // Account for badges in navs
+  a.list-group-item.active > &,
+  .nav-pills > .active > a > & {
+    color: @linkColor;
+    background-color: #fff;
   }
+  .nav-pills > li > a > & {
+    margin-left: 3px;
+  }
+  .badge-default;
 }
 
-// Hover state, but only for links
-a.badge {
-  &:hover,
-  &:focus {
-    color: @badge-link-hover-color;
-    text-decoration: none;
-    cursor: pointer;
-  }
+// Colors
+
+.badge-default {
+  .label-variant(@grayLight);
 }
 
-// Account for counters in navs
-a.list-group-item.active > .badge,
-.nav-pills > .active > a > .badge {
-  color: @badge-active-color;
-  background-color: @badge-active-bg;
+.badge-primary {
+  .label-variant(@brandPrimary);
 }
-.nav-pills > li > a > .badge {
-  margin-left: 3px;
+
+.badge-success {
+  .label-variant(@brandSuccess);
+}
+
+.badge-info {
+  .label-variant(@brandInfo);
+}
+
+.badge-warning {
+  .label-variant(@brandWarning);
+}
+
+.badge-error {
+  .label-variant(@brandDanger);
+}
+
+.badge-inverse {
+  .label-variant(@brandInverse);
 }

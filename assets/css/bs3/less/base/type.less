@@ -8,24 +8,24 @@
 
 h1, h2, h3, h4, h5, h6,
 .h1, .h2, .h3, .h4, .h5, .h6 {
-  font-family: @headings-font-family;
-  font-weight: @headings-font-weight;
-  line-height: @headings-line-height;
-  color: @headings-color;
+  font-family: @headingsFontFamily;
+  font-weight: @headingsFontWeight;
+  line-height: 1.4;
+  color: @headingsColor;
 
   small,
   .small {
     font-weight: normal;
     line-height: 1;
-    color: @headings-small-color;
+    color: @grayLight;
   }
 }
 
 h1, .h1,
 h2, .h2,
 h3, .h3 {
-  margin-top: @line-height-computed;
-  margin-bottom: (@line-height-computed / 2);
+  margin-top: @computedLineHeight;
+  margin-bottom: (@computedLineHeight / 2);
 
   small,
   .small {
@@ -35,8 +35,8 @@ h3, .h3 {
 h4, .h4,
 h5, .h5,
 h6, .h6 {
-  margin-top: (@line-height-computed / 2);
-  margin-bottom: (@line-height-computed / 2);
+  margin-top: (@computedLineHeight / 2);
+  margin-bottom: (@computedLineHeight / 2);
 
   small,
   .small {
@@ -56,18 +56,14 @@ h6, .h6 { font-size: @font-size-h6; }
 // -------------------------
 
 p {
-  margin: 0 0 (@line-height-computed / 2);
+  margin: 0 0 (@computedLineHeight / 2);
 }
 
 .lead {
-  margin-bottom: @line-height-computed;
-  font-size: floor((@font-size-base * 1.15));
+  margin-bottom: @computedLineHeight;
+  font-size: floor((@baseFontSize * 1.15));
   font-weight: 200;
   line-height: 1.4;
-
-  @media (min-width: @screen-sm-min) {
-    font-size: (@font-size-base * 1.5);
-  }
 }
 
 
@@ -81,6 +77,12 @@ small,
 // Undo browser default styling
 cite    { font-style: normal; }
 
+mark,
+.mark {
+  background-color: @warningBackground;
+  padding: .2em;
+}
+
 // Alignment
 .text-left           { text-align: left; }
 .text-right          { text-align: right; }
@@ -88,23 +90,27 @@ cite    { font-style: normal; }
 .text-justify        { text-align: justify; }
 
 // Contextual colors
-.text-muted {
-  color: @text-muted;
+.auxiliary-text{
+  color: @grayLight;
 }
 .text-primary {
-  .text-emphasis-variant(@brand-primary);
+  .text-emphasis-variant(@brandPrimary);
 }
 .text-success {
-  .text-emphasis-variant(@state-success-text);
+  .text-emphasis-variant(@successText);
 }
 .text-info {
-  .text-emphasis-variant(@state-info-text);
+  .text-emphasis-variant(@infoText);
 }
 .text-warning {
-  .text-emphasis-variant(@state-warning-text);
+  .text-emphasis-variant(@warningText);
 }
 .text-danger {
-  .text-emphasis-variant(@state-danger-text);
+  .text-emphasis-variant(@errorText);
+}
+
+.number-text, .letter-text {
+  font-family: "Tahoma","SimSun";
 }
 
 // Contextual backgrounds
@@ -114,19 +120,19 @@ cite    { font-style: normal; }
   // Given the contrast here, this is the only class to have its color inverted
   // automatically.
   color: #fff;
-  .bg-variant(@brand-primary);
+  .bg-variant(@brandPrimary);
 }
 .bg-success {
-  .bg-variant(@state-success-bg);
+  .bg-variant(@successBackground);
 }
 .bg-info {
-  .bg-variant(@state-info-bg);
+  .bg-variant(@infoBackground);
 }
 .bg-warning {
-  .bg-variant(@state-warning-bg);
+  .bg-variant(@warningBackground);
 }
 .bg-danger {
-  .bg-variant(@state-danger-bg);
+  .bg-variant(@errorBackground);
 }
 
 
@@ -134,20 +140,24 @@ cite    { font-style: normal; }
 // -------------------------
 
 .page-header {
-  padding-bottom: ((@line-height-computed / 2) - 1);
-  margin: (@line-height-computed * 2) 0 @line-height-computed;
-  border-bottom: 1px solid @page-header-border-color;
+  padding-bottom: ((@computedLineHeight / 2) - 1);
+  margin: (@computedLineHeight * 2) 0 @computedLineHeight;
+  border-bottom: 1px solid @grayLighter;
 }
 
 
 // Lists
-// --------------------------------------------------
+// -------------------------
 
 // Unordered and Ordered lists
 ul,
 ol {
-  margin-top: 0;
-  margin-bottom: (@line-height-computed / 2);
+  margin: 0;
+  margin-bottom: (@computedLineHeight / 2);
+
+  //默认去掉
+  padding-left: 0;
+  list-style: none;
   ul,
   ol {
     margin-bottom: 0;
@@ -157,14 +167,16 @@ ol {
 // List options
 
 // Unstyled keeps list items block level, just removes default browser padding and list-style
-.list-unstyled {
+ol.unstyled,
+ul.unstyled {
   padding-left: 0;
   list-style: none;
 }
 
 // Inline turns list items into inline-block
 .list-inline {
-  .list-unstyled();
+  padding-left: 0;
+  list-style: none;
   margin-left: -5px;
 
   > li {
@@ -177,11 +189,11 @@ ol {
 // Description Lists
 dl {
   margin-top: 0; // Remove browser default
-  margin-bottom: @line-height-computed;
+  margin-bottom: @computedLineHeight;
 }
 dt,
 dd {
-  line-height: @line-height-base;
+  line-height: @baseLineHeight;
 }
 dt {
   font-weight: bold;
@@ -195,24 +207,15 @@ dd {
 // Defaults to being stacked without any of the below styles applied, until the
 // grid breakpoint is reached (default of ~768px).
 
-@media (min-width: @grid-float-breakpoint) {
-  .dl-horizontal {
-    dt {
-      float: left;
-      width: (@component-offset-horizontal - 20);
-      clear: left;
-      text-align: right;
-      .text-overflow();
-    }
-    dd {
-      margin-left: @component-offset-horizontal;
-      &:extend(.clearfix all); // Clear the floated `dt` if an empty `dd` is present
-    }
+.dl-horizontal {
+  dd {
+    //&:extend(.clearfix all); // Clear the floated `dt` if an empty `dd` is present
   }
 }
 
-// MISC
-// ----
+
+// Misc
+// -------------------------
 
 // Abbreviations and acronyms
 abbr[title],
@@ -228,8 +231,8 @@ abbr[data-original-title] {
 
 // Blockquotes
 blockquote {
-  padding: (@line-height-computed / 2) @line-height-computed;
-  margin: 0 0 @line-height-computed;
+  padding: (@computedLineHeight / 2) @computedLineHeight;
+  margin: 0 0 @computedLineHeight;
   font-size: @blockquote-font-size;
   border-left: 5px solid @blockquote-border-color;
 
@@ -248,7 +251,7 @@ blockquote {
   .small {
     display: block;
     font-size: 80%; // back to default font-size
-    line-height: @line-height-base;
+    line-height: @baseLineHeight;
     color: @blockquote-small-color;
 
     &:before {
@@ -287,7 +290,7 @@ blockquote:after {
 
 // Addresses
 address {
-  margin-bottom: @line-height-computed;
+  margin-bottom: @computedLineHeight;
   font-style: normal;
-  line-height: @line-height-base;
+  line-height: @baseLineHeight;
 }

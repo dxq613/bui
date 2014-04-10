@@ -8,17 +8,17 @@
   font-size: 75%;
   font-weight: bold;
   line-height: 1;
-  color: @label-color;
+  color: #fff;
   text-align: center;
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: .25em;
 
   // Add hover effects, but only for links
-  &[href] {
+  a& {
     &:hover,
     &:focus {
-      color: @label-link-hover-color;
+      color: #fff;
       text-decoration: none;
       cursor: pointer;
     }
@@ -28,37 +28,37 @@
   &:empty {
     display: none;
   }
+  .label-default;
 
-  // Quick fix for labels in buttons
-  .btn & {
-    position: relative;
-    top: -1px;
-  }
 }
 
 // Colors
 // Contextual variations (linked labels get darker on :hover)
 
 .label-default {
-  .label-variant(@label-default-bg);
+  .label-variant(@grayLight);
 }
 
 .label-primary {
-  .label-variant(@label-primary-bg);
+  .label-variant(@brandPrimary);
 }
 
 .label-success {
-  .label-variant(@label-success-bg);
+  .label-variant(@brandSuccess);
 }
 
 .label-info {
-  .label-variant(@label-info-bg);
+  .label-variant(@brandInfo);
 }
 
 .label-warning {
-  .label-variant(@label-warning-bg);
+  .label-variant(@brandWarning);
 }
 
-.label-danger {
-  .label-variant(@label-danger-bg);
+.label-important {
+  .label-variant(@brandDanger);
+}
+
+.label-inverse {
+  .label-variant(@brandInverse);
 }

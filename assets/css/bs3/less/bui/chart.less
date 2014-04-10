@@ -1,0 +1,45 @@
+/**chart**/
+.node-info-container,.node-title-container{
+  position:absolute;
+}
+
+.node-info-container{
+  border:1px dashed @borderColor;
+  padding:5px;
+  line-height:14px;
+  font-size:11px;
+  z-index:10;
+  .opacity(90);
+  background-color:@white;
+  li{
+   line-height:14px;
+  }
+  .bui-caret{
+    position:absolute;
+    top:-7px;
+    *top:-12px;
+    left:2px;
+  }
+
+  .table{
+    border: 1px solid @borderColor;
+    border-left: 0;
+    border-bottom:0;
+    border-collapse: separate;
+    border-spacing: 0;
+    td,th{
+      border-left: 1px solid @borderColor;
+      border-bottom:1px solid @borderColor;
+    }
+  }
+}
+
+.node-info-container-selected{
+  z-index:11;
+}
+.node-pos-top .bui-caret{
+  top:auto;
+  left:auto;
+  bottom:-7px;
+  left:2px;
+}

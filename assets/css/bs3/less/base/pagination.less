@@ -4,71 +4,71 @@
 .pagination {
   display: inline-block;
   padding-left: 0;
-  margin: @line-height-computed 0;
-  border-radius: @border-radius-base;
+  margin: @computedLineHeight 0;
+  border-radius: @radius;
 
-  > li {
+  li {
     display: inline; // Remove list-style and block-level defaults
     > a,
     > span {
       position: relative;
       float: left; // Collapse white-space
-      padding: @padding-base-vertical @padding-base-horizontal;
-      line-height: @line-height-base;
+      padding: @paddingBaseVertical @paddingBaseHorizontal;
+      line-height: @baseLineHeight;
       text-decoration: none;
-      color: @pagination-color;
-      background-color: @pagination-bg;
-      border: 1px solid @pagination-border;
+      color: @linkColor;
+      background-color: @white;
+      border: 1px solid #ddd;
       margin-left: -1px;
     }
     &:first-child {
       > a,
       > span {
         margin-left: 0;
-        .border-left-radius(@border-radius-base);
+        .border-left-radius(@radius);
       }
     }
     &:last-child {
       > a,
       > span {
-        .border-right-radius(@border-radius-base);
+        .border-right-radius(@radius);
       }
     }
   }
 
-  > li > a,
-  > li > span {
+  li > a,
+  li > span {
     &:hover,
     &:focus {
-      color: @pagination-hover-color;
-      background-color: @pagination-hover-bg;
-      border-color: @pagination-hover-border;
+      color: @linkColor;
+      background-color: @grayLighter;
+      border-color: #ddd;
     }
   }
 
-  > .active > a,
-  > .active > span {
+  .active > a,
+  .active > span {
     &,
     &:hover,
     &:focus {
       z-index: 2;
-      color: @pagination-active-color;
-      background-color: @pagination-active-bg;
-      border-color: @pagination-active-border;
+      color: #fff;
+      background-color: @brandPrimary;
+      border-color: @brandPrimary;
       cursor: default;
     }
   }
 
-  > .disabled {
+  .disabled {
     > span,
     > span:hover,
     > span:focus,
     > a,
     > a:hover,
     > a:focus {
-      color: @pagination-disabled-color;
-      background-color: @pagination-disabled-bg;
-      border-color: @pagination-disabled-border;
+      color: @grayLight;
+      background-color: #fff;
+      border-color: #ddd;
       cursor: not-allowed;
     }
   }
@@ -78,11 +78,11 @@
 // --------------------------------------------------
 
 // Large
-.pagination-lg {
-  .pagination-size(@padding-large-vertical; @padding-large-horizontal; @font-size-large; @border-radius-large);
+.pagination-large {
+  .pagination-size(@paddingLargeVertical; @paddingLargeHorizontal; @fontSizeLarge; @radiusLarge);
 }
 
 // Small
-.pagination-sm {
-  .pagination-size(@padding-small-vertical; @padding-small-horizontal; @font-size-small; @border-radius-small);
+.pagination-small {
+  .pagination-size(@paddingSmallVertical; @paddingSmallHorizontal; @fontSizeSmall; @radiusSmall);
 }
