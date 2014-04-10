@@ -993,11 +993,11 @@ seajs.config = function(configData) {
 
 (function(){
   var requires = ['bui/util','bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'];
-  if(window.KISSY && !window.KISSY.Node){ //\u5982\u679c\u662fkissy\u540c\u65f6\u672a\u52a0\u8f7dcore\u6a21\u5757
+  if(window.KISSY && (!window.KISSY.Node || !window.jQuery)){ //\u5982\u679c\u662fkissy\u540c\u65f6\u672a\u52a0\u8f7dcore\u6a21\u5757
     requires.unshift('bui/adapter');
   }
   define('bui/common',requires,function(require){
-    if(window.KISSY && !window.KISSY.Node){
+    if(window.KISSY && (!window.KISSY.Node || !window.jQuery)){
       require('bui/adapter');
     }
     var BUI = require('bui/util');
@@ -7030,15 +7030,15 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     }
     else if (value.toLowerCase() === 'true') {
       value = true
+    }else if(regx.test(value)){
+      value = JSON.looseParse(value);
     }else if (/\d/.test(value) && /[^a-z]/i.test(value)) {
       var number = parseFloat(value)
       if (number + '' === value) {
         value = number
       }
     }
-    else if(regx.test(value)){
-      value = JSON.looseParse(value);
-    }
+    
     return value;
   }
 
@@ -7209,9 +7209,13 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
               BUI.mix(config,cfg);
           }
           else if(isConfigField(name,decorateCfgFields)){
-            name = name.replace(FIELD_PREFIX,'');
-            name = camelCase(name);
-            var value = parseFieldValue(attr.nodeValue);
+            var value = attr.nodeValue;
+            if(name.indexOf(FIELD_PREFIX) !== -1){
+              name = name.replace(FIELD_PREFIX,'');
+              name = camelCase(name);
+              value = parseFieldValue(value);
+            }
+            
             if(config[name] && BUI.isObject(value)){
               BUI.mix(config[name],value);
             }else{

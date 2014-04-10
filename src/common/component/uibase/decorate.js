@@ -52,15 +52,15 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     }
     else if (value.toLowerCase() === 'true') {
       value = true
+    }else if(regx.test(value)){
+      value = JSON.looseParse(value);
     }else if (/\d/.test(value) && /[^a-z]/i.test(value)) {
       var number = parseFloat(value)
       if (number + '' === value) {
         value = number
       }
     }
-    else if(regx.test(value)){
-      value = JSON.looseParse(value);
-    }
+    
     return value;
   }
 
@@ -231,9 +231,13 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
               BUI.mix(config,cfg);
           }
           else if(isConfigField(name,decorateCfgFields)){
-            name = name.replace(FIELD_PREFIX,'');
-            name = camelCase(name);
-            var value = parseFieldValue(attr.nodeValue);
+            var value = attr.nodeValue;
+            if(name.indexOf(FIELD_PREFIX) !== -1){
+              name = name.replace(FIELD_PREFIX,'');
+              name = camelCase(name);
+              value = parseFieldValue(value);
+            }
+            
             if(config[name] && BUI.isObject(value)){
               BUI.mix(config[name],value);
             }else{

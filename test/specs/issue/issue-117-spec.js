@@ -4,7 +4,7 @@ BUI.use('bui/form',function (Form) {
     srcNode : '#J_issue_117'
   }).render();
 
-  describe('测试日历生成',function(){
+  describe('issue117,测试日历生成',function(){
     it('测试日历',function(){
       var field = form.getField('date');
       expect(field).not.toBe(null);

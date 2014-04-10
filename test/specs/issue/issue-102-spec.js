@@ -10,7 +10,7 @@ BUI.use('bui/form',function (Form) {
 
   form.render();
   var  field = form.getField('a');
-  describe('测试验证失败时修改值',function(){
+  describe('issue102,测试验证失败时修改值',function(){
     it('出错',function(){
       form.valid();
       expect(form.isValid()).toBe(true)

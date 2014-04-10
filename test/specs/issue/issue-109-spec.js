@@ -15,7 +15,7 @@ BUI.use('bui/select',function (Select) {
   var input = suggest.get('el').find('input'),
     picker = suggest.get('picker');
 
-  describe('测试事件',function(){
+  describe('issue 109 测试事件',function(){
     it('显示suggest',function(){
       input.trigger('click');
       expect(picker.get('visible')).toBe(true);

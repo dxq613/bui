@@ -27,5 +27,5 @@
       combine : true
     });
    // http://a.tbcdn.cn/??s/kissy/1.3.0/seed-min.js 
-  </script>
-  -->
+  </script>-->
+  
