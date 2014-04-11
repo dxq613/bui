@@ -1,0 +1,142 @@
+
+
+// .bui-select-list{
+//   border:1px solid @borderColor;
+//   background-color:@white;
+//   overflow: auto;
+//   .bui-list-item{
+//     padding: 2px 4px 2px 8px;
+//     .user-select(none);
+//     cursor: pointer;
+//     border: 1px solid @white;
+//     .border-radius(@radius);
+//     margin: 1px;
+//     padding-left: 8px;
+//     *zoom:1;
+//   }
+
+//   .bui-list-item-hover{
+//     background: @optionHoverItemBack;
+//     border:1px solid @optionHoverItemBorder;
+//   }
+
+//   .bui-list-item-selected{
+//     background: @selectedItemBack;
+//     border: 1px solid @selectedItemBorder;
+//   }
+
+//   .bui-list-item-disabled{
+//     background:none;
+//     color: @disabledColor;
+//     cursor: default;
+//     a {
+//       color: @disabledColor;
+//       cursor: default;
+//     }
+//     a:hover{
+//       text-decoration: none;
+//     }
+//   }
+// }
+// 
+.bui-select-list{
+  background-color: #fff;
+  border: 1px solid #ccc; // IE8 fallback
+  border: 1px solid rgba(0,0,0,.15);;
+  border-radius: @radius;
+  .box-shadow(0 6px 12px rgba(0,0,0,.175));
+  background-clip: padding-box;
+
+  ul{
+    margin-top: 10px;
+  }
+
+  .bui-list-item{
+    display: block;
+    padding: 3px 20px;
+    color: @grayDark;
+    white-space: nowrap; // prevent links from randomly breaking onto new lines
+  }
+
+  .bui-list-item-hover{
+    text-decoration: none;
+    color: darken(@grayDark, 5%);
+    background-color: #f5f5f5;
+  }
+
+  .bui-list-item-selected{
+    color: #fff;
+    text-decoration: none;
+    outline: 0;
+    background-color: @brandPrimary;
+  }
+
+  .bui-list-item-disabled{
+    color: @grayLight;
+    cursor: not-allowed;
+  }
+}
+
+.bui-select{
+  display: inline-block;
+  .bui-select-input{
+    // _border:1px solid @borderColor;
+    // border-right:none;
+    // vertical-align:middle;
+    // outline: none;
+    // _height:22px;
+    // _padding:1px 4px;
+    // width: 118px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    // border-right: none;
+  }
+  .x-icon{
+    vertical-align:middle;
+    cursor: pointer;
+    height: 28px;
+    width: 28px;
+    border-left: none;
+    .border-radius(0);
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+}
+
+/** list-checkbox **/
+.x-checkbox{
+  background: url("@{checkIconPath}") no-repeat 0px 0px transparent;
+}
+
+.x-radio{
+  background: url("@{radioIconPath}") no-repeat 0 0 transparent;
+}
+
+.x-checkbox,.x-radio{
+  width: 13px;
+  height: 20px;
+  *height: 17px;
+  vertical-align: top;
+  *vertical-align: baseline;
+  margin-right: 5px;
+  .inline-block();
+}
+
+.x-checkbox:hover,.x-radio:hover,.bui-list-item-hover .x-checkbox,.bui-list-item-hover .x-radio{
+  background-position: -16px 0px;
+}
+
+.bui-list-item-selected .x-checkbox,.bui-list-item-selected .x-radio,.checked .x-checkbox{
+  background-position: 0 -20px;
+}
+
+.bui-list-item-disabled .x-checkbox,.bui-list-item-disabled .x-radio{
+  background-position: -48px 0px;
+}
+
+.bui-simple-list-disabled,.bui-list-item-selected.bui-list-item-disabled{
+
+  .x-checkbox, .x-radio{
+    background-position: -48px -20px;
+  }
+}

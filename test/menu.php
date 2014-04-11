@@ -1,6 +1,13 @@
 <?php  $title='菜单测试';$css="menu"; ?>
 <?php include("./templates/header.php"); ?>
-
+  <style>
+   .bui-side-menu  .bui-menu-item-collapsed .bui-menu{
+      height: 0;
+      display: block;
+      -webkit-transform: translate(0,-100%);
+      -webkit-transition: all 2s;
+    }
+  </style>
     <div class="container">
       <div id="m1"></div>
       <div id="m2"></div>
@@ -19,7 +26,42 @@
           </div>
         </div>
       </div>
-
+      <div class="row">
+        <ul id="m15" class="span6 test-menu">
+          <li><span class="title">1 <i class="icon icon-arrow-down"></i></span>
+            <ul>
+              <li>11</li>
+              <li>22</li>
+              <li>33</li>
+              <li>44</li>
+            </ul>
+          </li>
+          <li><span class="title">2</span>
+          <ul>
+              <li>211</li>
+              <li>2222</li>
+              <li>33</li>
+              <li>244</li>
+            </ul>
+          </li>
+          <li><span class="title">3</span>
+            <ul>
+              <li>311</li>
+              <li>322</li>
+              <li>333</li>
+              <li>344</li>
+            </ul>
+          </li>
+          <li><span class="title">4</span>
+            <ul>
+              <li>411</li>
+              <li>422</li>
+              <li>433</li>
+              <li>444</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
       <div class="row">
         <ul id="m20" class="span6">
           <li>1

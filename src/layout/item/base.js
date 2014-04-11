@@ -31,40 +31,82 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 	Item.ATTRS = {
 
 		/**
-		 * 自适应内部控件,自适应的类型：
+		 * 自适应内部控件,自适应的类型,注意设置了适应类型后，不应该再设置控件的对应的宽度或者高度
+		 * 
 		 *   - none : 内部控件不自适应（默认）
 		 *   - width : 内部控件自适应宽度，当layout重新布局时宽度自适应
 		 *   - height : 内部控件自适应高度，当layout重新布局时高度自适应
 		 *   - both : 内部控件自适应宽高，当layout重新布局时宽度、高度自适应
-		 * @type {String}
+		 * 	<pre>
+		 * <code>
+		 *
+		 *  new Controller({
+		 *    ...
+		 *    children : [
+		 *    	{
+		 *    		xclass : 'grid',
+		 *    		layout : {
+		 *    			fit : 'width'
+		 *    		}
+		 *    		//width : '100px',不要再设置宽度
+		 *    	}
+		 *    ],
+		 * 		plugins : [BUI.Layout.Anchor]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * 
+		 * @cfg {String} fit
 		 */
 		fit : {
 			value : 'none'
 		},
 		/**
 		 * 所属的layout
+		 * @readOnly
 		 * @type {BUI.Layout.Abstract}
 		 */
 		layout : {
 
 		},
 		/**
-		 * @private
 		 * 封装的控件
+		 * <pre>
+		 * <code>
+		 *  var control =	item.get('control');
+		 * </code>
+		 * </pre>
 		 * @type {Object}
 		 */
 		control : {
 
 		},
 		/**
-		 * 封装控件的容器的样式，默认为空
-		 * @type {string}
+		 * 封装控件的容器的样式，默认为空,也可以设置在layout上传递进来
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width',
+		 *  		wraperCls : 'b'
+		 *  	},
+		 *  	itemTpl : '&lt;div class="a">&lt;div class="b">&lt;/div>&lt;/div>'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {string} wraperCls
 		 */
 		wraperCls : {
 
 		},
 		/**
 		 * 容器
+		 * @readOnly
 		 * @type {jQuery}
 		 */
 		container : {
@@ -94,6 +136,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 
 		},
 		/**
+		 * @protected
 		 * 状态相关的字段
 		 * @type {Array}
 		 */
@@ -101,6 +144,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 
 		},
 		/**
+		 * @protected
 		 * 附加模板
 		 * @type {Object}
 		 */
@@ -109,6 +153,11 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		},
 		/**
 		 * 当前项的DOM
+		 * <pre>
+		 * <code>
+		 *  var el =	item.get('el');
+		 * </code>
+		 * </pre>
 		 * @type {jQuery}
 		 */
 		el : {
@@ -122,8 +171,24 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 
 		},
 		/**
-		 * 模板
-		 * @type {String}
+		 * 模板，也可以直接在layout上设置itemTpl
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	},
+		 *  	itemTpl : '&lt;div class="a">&lt;div class="b">&lt;/div>&lt;/div>',
+		 *  	wraperCls : 'b'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {String} tpl
 		 */
 		tpl : {
 
@@ -145,6 +210,11 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		},
 		/**
 		 * 获取选项的DOM节点
+		 * <pre>
+		 * <code>
+		 *  var el =	item.getElement();
+		 * </code>
+		 * </pre>
 		 * @return {jQuery} 操作节点
 		 */
 		getElement : function(){
@@ -183,7 +253,8 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 			return el;
 		},
 		/**
-		 * 同步属性到子项,同步css和attr
+		 * 同步属性到子项,同步css和attr，一般先设置宽高等信息后,再调用此方法
+		 * @protected
 		 */
 		syncItem : function(attrs){
 			attrs = attrs || this.getLayoutAttrs();
@@ -257,6 +328,20 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		},
 		/**
 		 * 同步自适应
+		 * <pre>
+		 * <code>
+		 *  var item = layout.getItem(control);
+		 *
+		 *  item.set('width',width);
+		 *
+		 *  //也可以设置多个属性
+		 *  item.set({
+		 *  	height : 100,
+		 *  	width : 100
+		 *  });
+		 *  item.syncFit();
+		 * </code>
+		 * </pre>
 		 */
 		syncFit : function(){
 			var _self = this,
@@ -281,7 +366,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		//同步控件的宽度
 		_syncControlWidth : function(control){
 			var _self = this,
-				width = _self.get('el').width(),
+				width = _self.get('width') || _self.get('el').width(),
 				appendWidth = control.getAppendWidth();
 			control.set('width',width - appendWidth);
 
@@ -303,7 +388,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl'),
 				siblings,
-				outerHeight = el.height(),
+				outerHeight = _self.get('height') || el.height(),
 				height = outerHeight;
 			if(bodyEl[0] == el[0]){ //如果控件的容器等于外层容器
 				return outerHeight;

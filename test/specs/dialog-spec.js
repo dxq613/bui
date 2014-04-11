@@ -139,7 +139,7 @@ BUI.use('bui/overlay/dialog',function (Dialog) {
   });
 });
 
-BUI.use(['bui/overlay/dialog','bui/mask'],function (Dialog) {
+BUI.use(['bui/overlay/dialog'],function (Dialog) {
   var config = {
       width:500,
       height:300,

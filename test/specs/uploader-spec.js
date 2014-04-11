@@ -134,7 +134,10 @@ BUI.use(['bui/uploader/type/flash'], function (Flash) {
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
-    url: 'data/uploader.json'
+    url: 'upload/upload.php?width=260&width=135',
+    button: {
+      //filter: {desc:'image', ext:".jpg,.jpeg,.png,.gif,.bmp"}
+    }
   });
   uploader.render();
   var el = uploader.get('el');

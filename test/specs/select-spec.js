@@ -47,11 +47,21 @@ BUI.use('bui/select',function (Select) {
       expect(control.get('items').length).toBe(3);
     });
 
-    it('设置值',function(){
-
+    it('禁用',function(){
+      select.set('disabled',true);
+      $('#s1').trigger('click');
+      waits(100);
+      runs(function(){
+        picker.get('visible',false);
+      });
     });
-    it('更改选项，获取值',function(){
-
+    it('可用',function(){
+      select.enable();
+      $('#s1').trigger('click');
+      waits(100);
+      runs(function(){
+        picker.get('visible',true);
+      });
     });
 
   });

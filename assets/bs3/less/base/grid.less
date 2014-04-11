@@ -1,0 +1,34 @@
+//ie6 support
+.span1,.span2,.span3,.span4,.span5,.span6,.span7,.span8,.span9,.span10,
+.span11,.span12,.span13,.span14,.span15,.span16,.span17,.span18,.span19,.span20,
+.span21,.span22,.span23,.span24{
+	_float:left;
+	_margin-left: @gridGutterWidth;
+	_display:inline;
+	_zoom:1;
+}
+
+
+
+// Fixed (950px)
+#grid > .core(@gridColumnWidth, @gridGutterWidth);
+
+// Fluid (950px)
+#grid > .fluid(@fluidGridColumnWidth, @fluidGridGutterWidth);
+
+[class*="span"] > [class*="span"]:first-child {
+	margin-left: 0;
+}
+.row-fluid{
+	_margin-left:-10px;
+}
+//ie6 栅格内嵌套栅格时，未使用.row时，请添加此样式
+.span-first{
+	margin-left: 0;
+}
+
+//跟 spanX连用，仅使用宽度
+.span-width{
+	margin-left: 0;
+	float:none;
+}

@@ -10,7 +10,7 @@ BUI.use('bui/overlay',function (Overlay) {
 
   dialog.show();
 
-  describe('测试dialog生成',function(){
+  describe('issue100,测试dialog生成',function(){
     it('生成',function(){
       var back = dialog.get('el').find('.back');
       expect(back.length).not.toBe(0);

@@ -43,10 +43,11 @@ define('bui/layout/tabitem',['bui/common','bui/layout/baseitem'],function(requir
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl');
 			bodyEl.animate({height : bodyHeight},duration,function(){
-				_self.set('collapsed',false);
+				
 				el.removeClass(CLS_COLLAPSED);
 				_self.syncFit();
 			});
+			_self.set('collapsed',false);
 		},
 		/**
 		 * 折叠
@@ -56,9 +57,10 @@ define('bui/layout/tabitem',['bui/common','bui/layout/baseitem'],function(requir
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl');
 			bodyEl.animate({height : 0},duration,function(){
-				_self.set('collapsed',true);
 				el.addClass(CLS_COLLAPSED);
 			});
+			_self.set('collapsed',true);
+
 		}
 	});
 

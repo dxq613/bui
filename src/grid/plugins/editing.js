@@ -95,7 +95,7 @@ define('bui/grid/plugins/editing',function (require) {
      * 确认编辑
      * @param {Object} ev 事件对象
      * @param {Object} ev.record 编辑的数据
-     * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+     * @param {BUI.Editor.Editor} ev.editor 编辑器
      */
     
     /**
@@ -103,7 +103,7 @@ define('bui/grid/plugins/editing',function (require) {
      * 取消编辑
      * @param {Object} ev 事件对象
      * @param {Object} ev.record 编辑的数据
-     * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+     * @param {BUI.Editor.Editor} ev.editor 编辑器
      */
     
     /**
@@ -111,8 +111,15 @@ define('bui/grid/plugins/editing',function (require) {
      * editor 显示
      * @param {Object} ev 事件对象
      * @param {Object} ev.record 编辑的数据
-     * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+     * @param {BUI.Editor.Editor} ev.editor 编辑器
      */
+    
+    /**
+     * @event editorready
+     * editor 创建完成，因为editor延迟创建，所以创建完成grid，等待editor创建成功
+     */
+    
+
   };
 
   BUI.augment(Editing,{
@@ -134,6 +141,7 @@ define('bui/grid/plugins/editing',function (require) {
         _self.initEditors(Editor);
         _self._initGridEvent(grid);
         _self.set('isInitEditors',true);
+        _self.fire('editorready');
       });
     },
     /**

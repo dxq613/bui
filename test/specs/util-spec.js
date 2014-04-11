@@ -1,5 +1,5 @@
 BUI.use('bui/common',function(){
-		
+	/*	*/
 		describe("测试 extend 继承", function () {
 
 			function base(){
@@ -404,7 +404,7 @@ BUI.use('bui/common',function(){
 				expect(callback).toHaveBeenCalled();
 			});
 		});
-		/**/
+		
 		describe('测试 decorate',function(){
 			
 			it('测试封装控件生成',function(){
@@ -429,6 +429,31 @@ BUI.use('bui/common',function(){
 				expect(control.get('value')).toBe(el.attr('data-value'));
 				expect(control.get('el').html()).toBe(el.html());
 			});
+
+			describe('测试复杂属性',function(){
+				var el = $('#c7'),
+					control = new BUI.Component.Controller({
+					srcNode : el
+				});
+				control.render();
+				it('测试属性名称',function(){
+					expect(control.get('blTrue')).not.toBe(null);
+				});
+				it('测试Boolean类型',function(){
+					expect(control.get('blTrue')).toBe(true);
+					expect(control.get('blFalse')).toBe(false);
+				});
+
+				it('测试数字类型',function(){
+					expect(control.get('numA')).toBe(123);
+					expect(control.get('numB')).toBe('a234');
+				});
+
+
+
+			});
+
+
 			
 			it('测试封装控件，封装子控件',function(){
 
@@ -470,8 +495,8 @@ BUI.use('bui/common',function(){
 					expect(item.get('a')).toBe(item.get('el').text());
 				});
 			});
-/**/
 		});
+
 
 	  describe("测试控件查找 ",function(){
 	  	var control = new BUI.Component.Controller({
@@ -556,5 +581,6 @@ BUI.use('bui/common',function(){
 			});
 			
 		});
+		/**/
 /**/
 });

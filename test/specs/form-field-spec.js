@@ -370,7 +370,7 @@ BUI.use('bui/form/numberfield',function  (NumberField) {
 
 
 //日期域
-BUI.use('bui/form/datefield',function  (DateField) {
+BUI.use(['bui/form/datefield','bui/calendar'],function  (DateField) {
 
   var tpl = ' <label class="control-label">{label}</label>\
               <div class="controls">\
@@ -394,10 +394,15 @@ BUI.use('bui/form/datefield',function  (DateField) {
     });
   dateField.render();
   var el = dateField.get('el'),
-    datePicker = dateField.get('datePicker');
-    datePicker._initControl();
+    datePicker;
   describe('测试日期域的生成',function(){
-
+    it('等待测试日历',function(){
+      waits(200);
+      runs(function(){
+        datePicker = dateField.get('datePicker');
+          datePicker._initControl();
+      });
+    });
     it('验证日期控件的生成',function(){
       expect(el.length).not.toBe(0);
       expect(datePicker).not.toBe(null);
@@ -471,6 +476,13 @@ BUI.use('bui/form/datefield',function  (DateField) {
   var el = dateField.get('el'),
     datePicker = dateField.get('datePicker');
   describe('测试日期域的销毁',function(){
+    it('等待测试日历',function(){
+      waits(200);
+      runs(function(){
+        datePicker = dateField.get('datePicker');
+          datePicker._initControl();
+      });
+    });
     it('测试数字日期值',function(){
       var date = new Date(),
         value = date.getTime();

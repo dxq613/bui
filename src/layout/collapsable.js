@@ -20,21 +20,21 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 
 		/**
 		 * 触发展开折叠的样式
-		 * @type {String}
+		 * @cfg {String} triggerCls
 		 */
 		triggerCls : {
 			
 		},
 		/**
 		 * 动画的持续时间
-		 * @type {Number}
+		 * @cfg {Number} duration
 		 */
 		duration : {
 			value : 400
 		},
 		/**
 		 * 是否只能展开一个
-		 * @type {String}
+		 * @cfg {Boolean} accordion
 		 */
 		accordion : {
 			value : false
@@ -56,6 +56,11 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 		},
 		/**
 		 * 获取展开的选项
+		 * <pre>
+		 * <code>
+		 * var item = layout.getExpandedItem();
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 * @return {BUI.Layout.Item} 选项
 		 */
 		getExpandedItem : function(){
@@ -65,6 +70,11 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 		},
 		/**
 		 * 展开
+		 * <pre>
+		 * <code>
+		 * var item = layout.getItemsByRegion('west')[0];
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 * @param  {BUI.Layout.Item} item 选项
 		 */
 		expandItem : function(item){
@@ -90,18 +100,25 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 		},
 		/**
 		 * 展开选项后
+		 * @protected
 		 */
 		afterExpanded : function(item){
 
 		},
 		/**
 		 * 展开选项前
+		 * @protected
 		 */
 		beforeExpanded : function(item,range){
 
 		},
 		/**
 		 * 收缩
+		 * <pre>
+		 * <code>
+		 * var item = layout.getExpandedItem();
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 * @param  {BUI.Layout.Item} item 选项
 		 */
 		collapseItem : function(item){
@@ -125,12 +142,14 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 		},
 		/**
 		 * 折叠选项前
+		 * @protected
 		 */
 		beforeCollapsed : function(item,range){
 
 		},
 		/**
 		 * 折叠选项后
+		 * @protected
 		 */
 		afterCollapsed : function(item){
 

@@ -84,7 +84,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} ev 事件对象
          * @param {Object} ev.record 编辑的数据
          * @param {BUI.Form.Form} form 表单
-         * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
          */
         
         /**
@@ -93,7 +93,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} ev 事件对象
          * @param {Object} ev.record 编辑的数据
          * @param {BUI.Form.Form} form 表单
-         * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
          */
         
         /**
@@ -101,7 +101,12 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * editor 显示
          * @param {Object} ev 事件对象
          * @param {Object} ev.record 编辑的数据
-         * @param {BUI.Eidtor.Editor} ev.editor 编辑器
+         * @param {BUI.Editor.Editor} ev.editor 编辑器
+         */
+        
+        /**
+         * @event editorready
+         * editor 创建完成，因为editor延迟创建，所以创建完成grid，等待editor创建成功
          */
       }
     },
@@ -123,6 +128,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       //延迟加载 editor模块
       BUI.use('bui/editor',function(Editor){
         _self._initEditor(Editor);
+        _self.fire('editorready');
       });
     },
     bindUI : function(grid){
