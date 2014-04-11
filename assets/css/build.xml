@@ -58,6 +58,10 @@
 		  <arg line="${tools.dir}/less/bin/lessc ${less.dir}/single/layout.less ${build.dir}/layout.css"/>
 		</exec>
 
+    <exec executable="node" failonerror="true">
+      <arg line="${tools.dir}/less/bin/lessc ${less.dir}/single/imgview.less ${build.dir}/imgview.css"/>
+    </exec>
+
 	<!--		-->
 	</target>
 	
