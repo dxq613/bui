@@ -21,6 +21,15 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    */
   var dialogView = Overlay.View.extend([UIBase.StdModView,UIBase.MaskView],{
 
+    /**
+     * 子组件将要渲染到的节点，在 render 类上覆盖对应方法
+     * @protected
+     * @ignore
+     */
+    getContentElement: function () {
+      return this.get('body');
+    },
+
     _uiSetTitle:function(v){
       var _self = this,
         el = _self.get('el');

@@ -83,38 +83,43 @@ BUI.use('bui/menu',function(Menu) {
 		});
 	});
 
-	describe("测试侧边栏菜单",function(){
-		var sideMenu = new Menu.SideMenu({
-			width:200,
-			render:'#m2',
-			items : [
-				{text:'基本结构',items:[
-					{text : '上部导航',href:'1.php'},{id:'ss1',text:'左边导航',href:'2.php'}
-				]},
-				{text:'常用页面',collapsed:true,items:[
-					{text : '上部导航',href:'1.php'},{text:'左边导航',href:'2.php'}
-				]}
-			]
-		});
+	
+});
+BUI.use('bui/menu',function(Menu) {
+	var sideMenu = new Menu.SideMenu({
+				width:200,
+				render:'#m2',
+				items : [
+					{text:'基本结构',items:[
+						{text : '上部导航',href:'1.php'},{id:'ss1',text:'左边导航',href:'2.php'}
+					]},
+					{text:'常用页面',collapsed:true,items:[
+						{text : '上部导航',href:'1.php'},{text:'左边导航',href:'2.php'}
+					]}
+				]
+			});
 
-		sideMenu.render();
-		var el = sideMenu.get('el');
-		it("测试菜单生成",function(){
-			expect(el).not.toBe(undefined);
-			var children = el.children();
-			expect(children.length).toBe(2);
-		});
-		it('设置选中的菜单',function(){
-			var id = 'ss1',
-				item = null;
-			sideMenu.setSelectedByField(id);
-			item = sideMenu.getSelected();
-			expect(item).not.toBe(null);
-			expect(item.get('id')).toBe(id);
+			sideMenu.render();
+	describe("测试侧边栏菜单",function(){
+			
+			var el = sideMenu.get('el');
+			it("测试菜单生成",function(){
+				expect(el).not.toBe(undefined);
+				var children = el.children();
+				expect(children.length).toBe(2);
+			});
+			it('设置选中的菜单',function(){
+				var id = 'ss1',
+					item = null;
+				sideMenu.setSelectedByField(id);
+				item = sideMenu.getSelected();
+				expect(item).not.toBe(null);
+				expect(item.get('id')).toBe(id);
+			});
+
 		});
 
 	});
-});
 
 BUI.use('bui/menu',function(Menu) {
 	var subMenu = new Menu.ContextMenu({
@@ -286,6 +291,7 @@ BUI.use('bui/menu',function(Menu) {
 	var link = $('#link');
 	
 });
+/*
 
 BUI.use('bui/menu',function(Menu) {
 
@@ -309,4 +315,13 @@ BUI.use('bui/menu',function(Menu) {
 });
 
 
-/**/
+BUI.use('bui/menu',function(Menu){
+	var sideMenu = new Menu.SideMenu({
+			width:200,
+			srcNode:'#m15',
+			collapsedCls : 'title'
+		});
+
+	sideMenu.render();
+});
+*/

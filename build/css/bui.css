@@ -507,6 +507,11 @@
   vertical-align: middle;
   margin-top: -4px;
 }
+.bui-select-disabled .x-icon {
+  opacity: 0.5;
+  filter: alpha(opacity=50);
+  cursor: default;
+}
 /** list-checkbox **/
 .x-checkbox {
   background: url("../img/check_icon-100-100.gif") no-repeat 0px 0px transparent;

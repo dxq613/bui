@@ -102,7 +102,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        
+
         picker.render();
         _self.set('list',picker.get('list'));
       },
@@ -178,6 +178,14 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           }
           
         }
+      },
+      //禁用
+      _uiSetDisabled : function(v){
+        var _self = this,
+          picker = _self.get('picker'),
+          textEl = _self._getTextEl();
+        picker.set('disabled',v);
+        textEl && textEl.attr('disabled',v);
       },
       _getTextEl : function(){
          var _self = this,

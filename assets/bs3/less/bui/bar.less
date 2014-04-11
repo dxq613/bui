@@ -1,0 +1,176 @@
+
+
+.image-pbar,.bui-grid .bui-pagingbar{
+ 
+
+  button,.bui-bar-item-button,.bui-pb-page{
+     background:url("@{tablePath}") no-repeat -999px -999px transparent;
+     overflow:hidden;
+  }
+  button{
+    height: 16px;
+    width: 16px;
+    margin: 0;
+    text-indent:-100px;
+    *text-indent:0;
+    *font-size:0;
+    border:none;
+    overfow:hidden;
+   vertical-align: middle;
+  }
+
+  .bui-button-disabled{
+    .opacity(100);
+  }
+
+  .bui-pb-first button{
+    background-position: 3px 2px;
+  }
+  .bui-pb-first .bui-button-disabled{
+    background-position: 3px -18px;
+  }
+
+   .bui-pb-prev button{
+    background-position: -57px 2px;
+  }
+  .bui-pb-prev .bui-button-disabled{
+    background-position: -57px -18px;
+  }
+
+  .bui-pb-next button{
+    background-position:-37px 2px ;
+  } 
+  .bui-pb-next .bui-button-disabled{
+    background-position: -37px -18px;
+  }
+  
+   .bui-pb-last button{
+    background-position:-17px 2px ;
+  } 
+  .bui-pb-last .bui-button-disabled{
+    background-position: -17px -18px;
+  }
+
+   .bui-bar-item{
+     outline:none;
+     margin:0 2px;
+     vertical-align:middle;
+   }
+  .bui-bar-item-button{
+    padding:1px;
+   
+  }
+  .bui-bar-item-button-hover{
+    background-position: -130px 2px;
+  }
+
+  .bui-bar-item-button-disabled{
+    background-position: -999px -999px;
+  }
+
+  .bui-pb-page{
+    color:@red;
+    font: 11px tahoma, arial, verdana, sans-serif;
+    height: 14px;
+    margin: 0;
+    width: 20px;
+    vertical-align: baseline;
+    *vertical-align:middle;
+    background-color: white;
+    padding: 0 2px;
+  }
+  .bui-bar-item-text{
+    vertical-align:middle;
+  }
+
+  .bui-pb-skip{
+    background-position: -999px -999px;
+
+    button{
+      text-indent: 0;
+      background-position: -80px -20px;
+      height: 20px;
+      font-size: 11px;
+      width: 41px;
+    }
+
+    button:hover{
+       background-position: -150px -20px;
+    }
+  }
+
+  .bui-bar-item-separator{
+    margin: 0 5px;
+  }
+}
+
+.pagination{
+  .bui-bar-item{
+    float:left;
+    margin: 0;
+  }
+
+  .disabled{
+    _background-color:@white;
+    a:hover{
+      text-decoration: none;
+    }
+  }
+}
+
+.bar-btn-add,.bar-btn-del,.bar-btn-edit,.bar-btn-close,.bar-btn-import,.bar-btn-export,.bar-btn-save,.bar-btn-create,.bui-bar-item-separator{
+  background:url("@{tablePath}") no-repeat -999px -999px transparent;
+}
+
+.bui-bar-item-separator{
+  height: 14px;
+  margin: 0 3px 0 2px;
+  width: 2px;
+  background-position: -80px 0;
+  vertical-align: middle;
+}
+
+.bui-grid-button-bar{
+  float:left;
+
+  .bui-bar-item{
+    margin-right:10px;
+  }
+
+  .bar-btn-add,.bar-btn-edit,.bar-btn-del,.bar-btn-close,.bar-btn-import,.bar-btn-export,.bar-btn-save,.bar-btn-create{
+    padding-left:18px;
+  }
+  .bar-btn-edit{
+    background-position:2px -307px ;
+  }
+  .bar-btn-add{
+    background-position:-48px -137px ;
+  }
+  .bar-btn-del{
+    background-position:2px -247px ;
+  }
+  .bar-btn-close{
+    background-position:-48px -157px ;
+  }
+  .bar-btn-import{
+    background-position:2px -187px ;
+  }
+  .bar-btn-export{
+    background-position:2px -217px ;
+  }
+  .bar-btn-save{
+    background-position:2px -277px ;
+  }
+  .bar-btn-create{
+    background-position:2px -307px ;
+  }
+
+  .button-small [class^="icon-"]{
+    margin: -2px 2px 0 -5px;
+  }
+}
+
+
+
+
+

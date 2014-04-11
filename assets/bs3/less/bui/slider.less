@@ -1,0 +1,60 @@
+
+.bui-slider{
+  border : 1px solid @borderColor;
+  position: relative;
+  overflow: visible;
+  .border-radius(4px);
+  
+  .x-slider-back{
+    position: absolute;
+    background-color: @sliderBackground;
+  }
+}
+
+.x-slider-handle{
+  //border : 1px solid @borderColor;
+  z-index: 1;
+  cursor:pointer;
+  .inline-block();
+  position: absolute;
+  #gradient > .vertical(@btnBackground,@btnBackgroundHighlight);
+  border:1px solid @sliderHandlerBorder;
+  .border-radius(4px);
+  height: 15px;
+  width: 15px;
+}
+
+.x-slider-handle:hover{
+  border:1px solid @sliderHandlerOverBorder;
+  background-color: darken(@white, 10%);
+  background-position: 0 -5px;
+  // transition is only when going to hover, otherwise the background
+  // behind the gradient (there for IE<=9 fallback) gets mismatched
+  .transition(background-position .1s linear);
+}
+
+.x-slider-horizontal{
+  height: 10px;
+  .x-slider-handle{
+    top: -3px;
+    margin-left: -9px;
+  }
+  .x-slider-back{
+    height: 100%;
+  }
+}
+
+.x-slider-vertical{
+  width: 10px;
+  .x-slider-handle{
+    left: -3px;
+    margin-left: 0;
+    margin-bottom: -10px;
+  }
+  .x-slider-back{
+    width: 100%;
+  }
+}
+
+
+

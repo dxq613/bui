@@ -67,7 +67,8 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      */
     handleMouseEnter : function (ev) {
       var _self = this;
-      if(this.get('subMenu')){
+
+      if(this.get('subMenu') && this.get('openable')){
         this.set('open',true);
       }
       menuItem.superclass.handleMouseEnter.call(this,ev);
@@ -77,13 +78,15 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      * @protected
      */
     handleMouseLeave :function (ev) {
-      var _self = this,
-        subMenu = _self.get('subMenu'),
-        toElement = ev.toElement || ev.relatedTarget;;
-      if(toElement && subMenu && subMenu.containsElement(toElement)){
-        _self.set('open',true);
-      }else{
-        _self.set('open',false);
+      if(this.get('openable')){
+        var _self = this,
+          subMenu = _self.get('subMenu'),
+          toElement = ev.toElement || ev.relatedTarget;;
+        if(toElement && subMenu && subMenu.containsElement(toElement)){
+          _self.set('open',true);
+        }else{
+          _self.set('open',false);
+        }
       }
       menuItem.superclass.handleMouseLeave.call(this,ev);
     },
@@ -103,21 +106,23 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     }, 
     //设置打开子菜单 
     _uiSetOpen : function (v) {
-      var _self = this,
-        subMenu = _self.get('subMenu'),
-        subMenuAlign = _self.get('subMenuAlign');
-      if(subMenu){
-        if(v){
-          subMenuAlign.node = _self.get('el');
-          subMenu.set('align',subMenuAlign);
-          subMenu.show();
-        }else{
-          var menuAlign = subMenu.get('align');
-          //防止子菜单被公用时
-          if(!menuAlign || menuAlign.node == _self.get('el')){
-            subMenu.hide();
+      if(this.get('openable')){
+        var _self = this,
+          subMenu = _self.get('subMenu'),
+          subMenuAlign = _self.get('subMenuAlign');
+        if(subMenu){
+          if(v){
+            subMenuAlign.node = _self.get('el');
+            subMenu.set('align',subMenuAlign);
+            subMenu.show();
+          }else{
+            var menuAlign = subMenu.get('align');
+            //防止子菜单被公用时
+            if(!menuAlign || menuAlign.node == _self.get('el')){
+              subMenu.hide();
+            }
+            
           }
-          
         }
       }
     },
@@ -181,6 +186,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : false
       },
       /**
+       * 是否可以展开
+       * @type {Boolean}
+       */
+      openable : {
+        value : true
+      },
+      /**
        * 下级菜单
        * @cfg {BUI.Menu.Menu} subMenu
        */
@@ -217,21 +229,31 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : {
           'afterOpenChange' : true
         }
+      },
+      subMenuType : {
+        value : 'pop-menu'
       }
     },
     PARSER : {
       subMenu : function(el){
         var 
           subList = el.find('ul'),
+          type = this.get('subMenuType'),
           sub;
         if(subList && subList.length){
           sub = BUI.Component.create({
             srcNode : subList,
-            xclass : 'pop-menu',
-            autoHide : true,
-            autoHideType : 'leave'
+            xclass : type
           });
-          subList.appendTo('body');
+          if(type == 'pop-menu'){
+            subList.appendTo('body');
+            sub.setInternal({
+              autoHide : true,
+              autoHideType : 'leave'
+            });
+          }else{
+            this.get('children').push(sub);
+          }
         }
         return sub;
       }

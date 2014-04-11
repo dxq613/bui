@@ -1,0 +1,92 @@
+// steps
+// 进度条的样式
+
+@flowStepsWidth: 950px;
+//
+@flowItemPaddingRight: 15px;
+
+@imageBg: 'http://img02.taobaocdn.com/tps/i2/T1rPjKXXJrXXXVYvLb-15-188.png';
+
+@colorDefaultBg: #e8e9ef;
+@colorCurrentBg: #3366cc;
+@colorDoneBg: #e8e9ef;
+
+@colorDefault: #666;
+@colorCurrent: #fff;
+@colorDone: #666;
+
+.calc-steps-item-width(@mainWidth, @itemNum, @offset){
+  width: floor(@mainWidth / @itemNum - @offset);
+}
+
+.border-radius(@leftTop, @topRight, @rightBottom, @bottomLeft){
+  -webkit-border-radius: @leftTop @topRight @rightBottom @bottomLeft;
+  -moz-border-radius: @leftTop @topRight @rightBottom @bottomLeft;
+  border-radius: @leftTop @topRight @rightBottom @bottomLeft;
+}
+
+.flow-steps{
+  //chearfix
+  //.clearfix();
+  overflow: hidden;
+  padding-bottom: 20px;
+  ol, ul{
+    //dpl里面ol默认有个margin,用unstyle去掉margin和list-style
+    //.unstyled;
+    list-style: none;
+    margin:0;
+  }
+
+  .num3 li{
+    .calc-steps-item-width(@flowStepsWidth, 3, @flowItemPaddingRight);
+  }
+  .num4 li{
+    .calc-steps-item-width(@flowStepsWidth, 4, @flowItemPaddingRight);
+  }
+  .num5 li{
+    .calc-steps-item-width(@flowStepsWidth, 5, @flowItemPaddingRight);
+  }
+  .num6 li{
+    .calc-steps-item-width(@flowStepsWidth, 6, @flowItemPaddingRight);
+  }
+
+  li{
+    float: left;
+    background: @colorDefaultBg url("@{imageBg}") no-repeat 100% 0;
+    height: 23px;
+    line-height: 23px;
+    text-align: center;
+    color: @colorDefault;
+    padding-right: @flowItemPaddingRight;
+    overflow: hidden;
+    span{
+      display: block;
+    }
+    &.first{
+      .border-radius(@radius, 0, 0, @radius);
+    }
+    &.last{
+      .border-radius(0px, @radius, @radius, 0px);
+      background-position: -9999px -9999px;
+    }
+  }
+  
+  .current {
+    background-color: @colorCurrentBg;
+    background-position: 100% 0px ;
+    color: @colorCurrent;
+  }
+
+  .current-prev {
+    background-color: @colorDoneBg;
+    background-position: 100% -23px;
+    color: @colorDone;
+  }
+
+  li.done {
+    background-color: @colorDoneBg;
+    background-position: 100% -46px;
+    color: @colorDone;
+  }
+   
+}
