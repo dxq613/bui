@@ -1,0 +1,77 @@
+//
+// Badges
+// --------------------------------------------------
+
+
+// Base class
+.badge {
+  display: inline-block;
+  min-width: 10px;
+  padding: 3px 7px;
+  font-size: @fontSizeSmall;
+  font-weight: bold;
+  color: #fff;
+  line-height: 1;
+  vertical-align: baseline;
+  white-space: nowrap;
+  text-align: center;
+  background-color: #fff;
+  border-radius: 10px;
+
+  // Empty badges collapse automatically (not available in IE8)
+  &:empty {
+    display: none;
+  }
+
+
+  // Hover state, but only for links
+  a& {
+    &:hover,
+    &:focus {
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+
+  // Account for badges in navs
+  a.list-group-item.active > &,
+  .nav-pills > .active > a > & {
+    color: @linkColor;
+    background-color: #fff;
+  }
+  .nav-pills > li > a > & {
+    margin-left: 3px;
+  }
+  .badge-default;
+}
+
+// Colors
+
+.badge-default {
+  .label-variant(@grayLight);
+}
+
+.badge-primary {
+  .label-variant(@brandPrimary);
+}
+
+.badge-success {
+  .label-variant(@brandSuccess);
+}
+
+.badge-info {
+  .label-variant(@brandInfo);
+}
+
+.badge-warning {
+  .label-variant(@brandWarning);
+}
+
+.badge-error {
+  .label-variant(@brandDanger);
+}
+
+.badge-inverse {
+  .label-variant(@brandInverse);
+}

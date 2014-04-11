@@ -1,0 +1,238 @@
+
+/** 公共的一些定义 **/
+.bui-uploader{
+
+  .bui-uploader-button-wrap {
+    display: inline-block;
+    padding: 0 5px;
+    height: 24px;
+    overflow: hidden;
+    line-height: 24px;
+    position: relative;
+    z-index: 500;
+    margin-right: 10px;
+    text-decoration: none;
+    font-size: 12px;
+    text-align: center; 
+    cursor: pointer;
+
+    //input的样式
+    .file-input-wrapper{
+      display: block;
+      width: 200px;
+      height: 26px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: hidden;
+      z-index: 300;
+
+      .file-input{
+        background: none repeat scroll 0 0 transparent;
+        border: medium none;
+        cursor: pointer;
+        height: 200px;
+        width: 200px;
+        top: -50px;
+        opacity: 0;
+        filter:alpha(opacity=0);
+        position: absolute;
+        font-size: 100px;
+        left: 0;
+      }
+    }
+
+    //swf的样式
+    .uploader-button-swf{
+      .file-input-wrapper;
+    }
+  } 
+}
+
+/**默认定义的样式**/
+.defaultTheme{
+  //按钮
+  .bui-uploader-button-wrap {
+    display: inline-block;
+    padding: 0 5px;
+    height: 24px;
+    overflow: hidden;
+    line-height: 24px;
+    position: relative;
+    z-index: 500;
+    margin-right: 10px;
+    text-decoration: none;
+    font-size: 12px;
+    text-align: center;
+    border: 1px solid #C4DAED;
+    /** 渐变 **/
+    // #gradient > .horizontal(#FDFEFE, #DFE7EF);
+    background: -webkit-gradient(linear, left top, left bottom, from(#FDFEFE), to(#DFE7EF));
+    background: -moz-linear-gradient(top, #FDFEFE, #DFE7EF);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FDFEFE', endColorstr = '#DFE7EF');
+
+    &:link, &:visited{
+      color:#404040;
+    }
+
+    &:hover{
+      text-decoration: none;
+      color: black;
+      // #gradient > .horizontal(#DFE7EF, #FDFEFE);
+      background: -webkit-gradient(linear, left top, left bottom, from(#DFE7EF), to(#FDFEFE));
+      background: -moz-linear-gradient(top, #DFE7EF, #FDFEFE);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#DFE7EF', endColorstr = '#FDFEFE');
+    }
+
+    &:active{
+      background: #DFE7EF;
+      filter: none;
+    }
+
+  }
+
+  //禁用的样式
+  .bui-uploader-htmlButton-disabled .bui-uploader-button-wrap{
+    border: 1px solid #bfbfbf;
+    color: #404040;
+    cursor: default;
+    background: -webkit-gradient(linear,left top,left bottom,from(#fafafa),to(#e5e5e5));
+    background: -moz-linear-gradient(top,#fafafa,#e5e5e5);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FAFAFA',endColorstr = '#E5E5E5');
+  }
+
+  //对列
+  .bui-queue-item{
+    position: relative;
+
+    .default, .success, .progress, .error{
+      margin-right: 40px;
+    }
+
+    .error .uploader-error{
+      color: #fd7316;
+    }
+
+    .action{
+      display: block;
+      position: absolute;
+      padding-left: 10px;
+      width: 30px;
+      top: 0px;
+      right: 0px;
+
+      .bui-queue-item-del{
+        cursor: pointer;
+        &:hover{
+          color: #fd7316;
+        }
+      }
+    }
+  }
+}
+
+
+/**带图片预览的主题样式**/
+.imageViewTheme{
+  .bui-uploader-button-wrap{
+    color: #333;
+    border: 1px solid #ddd;
+    background-color: #fdfcfc;
+    #gradient > .horizontal(#fdfcfc, #eee);
+    .border-radius(3px);
+
+    &:hover{
+      border-color: #369bd7;
+      background-color: #fdfcfc;
+      #gradient > .horizontal(#fdfcfc, #e2f1fc);
+    }
+  }
+
+  //禁用的样式
+  .bui-uploader-htmlButton-disabled .bui-uploader-button-wrap{
+    border-color: #eee;
+    color: #404040;
+    cursor: default;
+    background-color: #eee;
+
+    &:hover{
+      border-color: #eee;
+      background-color: #eee;
+      #gradient > .horizontal(#fdfcfc, #eee);
+    }
+  }
+
+  .bui-queue{
+
+    ul{
+      .clearfix();
+    }
+
+    .bui-queue-item{
+      display: inline;
+      float: left;
+      margin: 0 10px 10px 0;
+      padding: 0;
+      width: 120px;
+      height: 120px;
+      overflow: hidden;
+      position: relative;
+      border: solid 1px #e0e0e0;
+      background-color: #fff;
+      .border-radius(4px);
+      @shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+      .box-shadow(@shadow);
+
+      .error,.progress{
+        margin-top: -10px;
+        width: 120px;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        z-index: 30;
+        color: #f00;
+        text-align: center;
+      }
+      
+      .progress{
+        // height: 10px;
+        // .bar{
+        //   background-color: #75b9f0;
+        // }
+      }
+
+      .action{
+        .bui-queue-item-del{
+          display: none;
+          color: #676767;
+          width: 60px;
+          height: 24px;
+          line-height: 24px;
+          position: absolute;
+          top: 50px;
+          left: 50px;
+          margin-left: -20px;
+          text-decoration: none;
+          z-index: 3000;
+          border: 1px solid #ddd;
+          background-color: #fff;
+          .border-radius(3px);
+          text-align: center;
+          cursor: pointer;
+        }
+      }
+
+      &:hover {
+        .action{
+          .bui-queue-item-del{
+            display: block;
+          }
+        }
+      }
+    }
+
+    .bui-queue-item-error{
+      border-color: #f00;
+    }
+  }
+}
