@@ -20,9 +20,11 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
 		 */
 		toFront : function(){
 			this.get('el').toFront();
+			return this;
 		},
 		toBack : function(){
 			this.get('el').toBack();
+			return this;
 		},
 		/**
 		 * 移动
@@ -33,6 +35,7 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
 			var _self = this,
   			el = _self.get('el');
   		el.translate(dx,dy);
+			return this;
 		},
 		index : function(){
 			var _self = this,
@@ -48,12 +51,21 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
 		 */
 		animate : function(params,ms,easing,callback){
 			this.get('el').animate(params,ms,easing,callback);
+			return this;
 		},
 		/**
 		 * 停止当前动画
 		 */
 		stopAnimate : function(){
 			this.get('el').stop();
+			return this;
+		},
+		/**
+		 * 拖动方法
+		 */
+		drag : function(onmove, onstart, onend, mcontext, scontext, econtext){
+			this.get('el').drag(onmove, onstart, onend, mcontext, scontext, econtext)
+			return this;
 		}
 	});
 
