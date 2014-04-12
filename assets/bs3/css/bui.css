@@ -598,6 +598,12 @@
   padding: 0;
   border-bottom: none;
 }
+.bui-message .header-title {
+  padding-bottom: 15px;
+}
+.bui-message .header-title:empty {
+  padding-bottom: 0;
+}
 .bui-message .bui-stdmod-body {
   padding: 0 30px 20px 0;
 }

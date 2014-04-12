@@ -1420,6 +1420,25 @@ fieldset[disabled] .x-icon-question.active {
   height: 8px;
   display: inline-block;
 }
+@font-face {
+  font-family: 'bui-iconfont';
+  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot');
+  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('http://at.alicdn.com/t/font_1395889527_6888435.woff') format('woff'), /* chrome、firefox */ url('http://at.alicdn.com/t/font_1395889527_5368805.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/ url('http://at.alicdn.com/t/font_1395889527_7487144.svg#iconfont') format('svg');
+  
+  /* IE9*/
+  /* iOS 4.1- */
+}
+.iconfont {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'bui-iconfont';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 .icon {
   display: inline-block;
   *display: inline;
@@ -4149,7 +4168,7 @@ form h3 {
 }
 @keyframes progress-bar-stripes {
   from {
-    background-position: 40px 0;
+    background-position: 20px 0;
   }
   to {
     background-position: 0 0;
