@@ -13,14 +13,12 @@ var through = require('through2');
 var spawn = require('child_process').spawn;
 
 
-// Plugin level function(dealing with files)
+//执行子任务
 function subTask() {
-
   // Creating a stream through which each file will pass
   var stream = through.obj(function(file, enc, callback) {
     //src 必须使用{read: false}
     if (file.isNull()) {
-      
       var task = spawn('gulp', ['--gulpfile', file.path]);
       task.stdout.on('data', function (data) {
         console.log('stdout: ' + data);
@@ -28,16 +26,12 @@ function subTask() {
       task.stderr.on('data', function (data) {
         console.log('stderr: ' + data);
       });
-
       task.on('close', function (code) {
         console.log('child process exited with code ' + code);
       });
-       // Do nothing if no contents
     }
 
-    //this.push(file);
     return callback();
-
   });
 
   // returning the file stream
