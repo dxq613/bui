@@ -1,0 +1,147 @@
+
+.x-icon{
+	.inline-block();
+	font-size:20px;
+	font-weight:bold;
+	font-family:"Arial";
+	text-align:center;
+	height:22px;
+	width:22px;
+	overflow: hidden;
+	line-height:22px;
+	// vertical-align: text-bottom;
+	.border-radius(2px);
+	text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+	border: 1px solid transparent;
+	cursor: inherit;
+	//使用图片icon时，使用此标签
+	i{
+		vertical-align: baseline;
+		*margin-right: 0;
+		*vertical-align: middle;
+	}
+}
+
+.x-icon-normal{
+	text-shadow: none;
+	color: @iconColor;
+	.button-variant(@buttonDefaultColor; @buttonDefaultBg; @buttonDefaultBorder);
+}
+
+.x-icon-small{
+	font-size:17px;
+	*font-size:15px;
+	height:14px;
+	width:14px;
+	line-height:14px;
+	.border-radius(2px);
+	i{
+		vertical-align: baseline;
+	}
+}
+
+.x-icon-mini{
+	font-size:14px;
+	*font-size:12px;
+	height:12px;
+	width:12px;
+	line-height:12px;
+	.border-radius(2px);
+	i{
+		vertical-align: baseline;
+	}
+}
+
+.x-icon-disable{
+	// .iconBackground(@iconBackground, @iconDisableBackGroundHighlight);
+	color:@iconDisableColor;
+	border: 1px solid @iconDisableBorderColor;			
+}
+
+.x-icon-hover,.x-icon-normal:hover{
+	// .iconBackground(@iconBackground, @iconHoverBackGroundHighlight);
+	color:@iconHoverColor;
+	border: 1px solid @iconHoverBorderColor;	
+}
+
+.x-icon-success{
+	.button-variant(@buttonSuccessColor; @buttonSuccessBg; @buttonSuccessBorder);
+}
+
+.x-icon-warning{
+	.button-variant(@buttonWarningColor; @buttonWarningBg; @buttonWarningBorder);
+}
+
+.x-icon-error{
+	.button-variant(@buttonDangerColor; @buttonDangerBg; @buttonDangerBorder);
+}
+.x-icon-info,.x-icon-question{
+	.button-variant(@buttonInfoColor; @buttonInfoBg; @buttonInfoBorder);
+}
+
+
+//x-caret
+
+.x-caret{
+	.inline-block();
+	width: 0;
+	height: 0;
+	border: 4px solid transparent;
+	line-height:0;
+	_border-color:tomato;
+	_filter:chroma(color=tomato);
+}
+
+.x-caret-down{
+	border-top: 4px solid @black;
+	border-bottom:0;
+}
+
+.x-caret-up{
+	border-top:0;
+	border-bottom:4px solid @black;
+	*border-width:5px;
+}
+
+.x-caret-left{
+	border-left: 4px solid @black;
+	border-right:0;
+	*border-width:5px;
+}
+
+.x-caret-right{
+	border-right: 4px solid @black;
+	border-left:0;
+	*border-width:5px;
+}
+
+.x-caret-left-top{
+	border-top:none;
+	border-right:none;
+	border-left: 6px solid @black;
+	border-width:6px;
+}
+
+.x-caret-right-top{
+	border-top:none;
+	border-right: 6px solid @black;
+	border-left:none;
+	border-width:6px;
+}
+
+.button{
+	.x-caret{
+		vertical-align:middle;
+		margin-left:3px;
+	}
+}
+
+.icon-caret{
+	width: 8px;
+	height: 8px;
+	display: inline-block;
+}
+
+
+
+

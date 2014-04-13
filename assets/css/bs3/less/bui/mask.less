@@ -1,0 +1,50 @@
+/*Mask*/
+
+.lp-ext-mask,.lp-el-mask,.bui-ext-mask {
+  height:100%;
+  left:0;
+  .opacity(0.5);
+  position:absolute;
+  top:0;
+  width:100%;
+  z-index:@zindexMask;
+  background-color:@grayDark;
+}
+
+.x-masked SELECT{
+  _visibility: hidden;
+}
+
+.x-masked .bui-dialog SELECT{
+  _visibility: visible;
+}
+
+.x-masked-relative {
+  position: relative;
+}
+
+.lp-el-mask-msg,.bui-ext-mask-msg {
+  background:none repeat-x scroll 0 -16px @backColor;
+  border:1px solid @borderColor;
+  left:0;
+  padding:2px;
+  position:absolute;
+  top:0;
+  z-index:@zindexMaskMsg;
+}
+
+.lp-el-mask-msg div {
+  border:1px solid;
+  cursor:wait;
+  padding:5px 10px;
+  background-color: @white;
+  border-color:@borderColor;
+  color:@grayDark;
+}
+
+.x-mask-loading div {
+  background:none no-repeat scroll 5px 5px @white;
+  line-height:16px;
+  padding:5px 10px 5px 25px;
+  background-image:url("@{loadPath}");
+}

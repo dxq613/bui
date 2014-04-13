@@ -1,0 +1,168 @@
+//
+// Buttons
+// --------------------------------------------------
+
+
+// Base styles
+// --------------------------------------------------
+
+.button {
+  .inline-block();
+  margin-bottom: 0; // For input.button
+  font-weight: normal;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+  border: 1px solid transparent;
+  white-space: nowrap;
+  line-height: @baseLineHeight;
+  .button-size(@paddingBaseVertical; @paddingBaseHorizontal; @baseFontSize + 2; @baseLineHeight; @radius);
+  .user-select(none);
+  .button-default;
+
+  
+
+  &,
+  &:active,
+  &.active {
+    &:focus {
+      .tab-focus();
+    }
+  }
+
+  &:hover,
+  &:focus {
+    color: @buttonDefaultColor;
+    text-decoration: none;
+  }
+
+  &:active,
+  &.active {
+    outline: 0;
+    background-image: none;
+    .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
+  }
+
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    cursor: not-allowed;
+    pointer-events: none; // Future-proof disabling of clicks
+    .opacity(.65);
+    .box-shadow(none);
+  }
+}
+
+
+// Alternate buttons
+// --------------------------------------------------
+
+.button-default {
+  .button-variant(@buttonDefaultColor; @buttonDefaultBg; @buttonDefaultBorder);
+}
+.button-primary {
+  .button-variant(@buttonPrimaryColor; @buttonPrimaryBg; @buttonPrimaryBorder);
+}
+// Success appears as green
+.button-success {
+  .button-variant(@buttonSuccessColor; @buttonSuccessBg; @buttonSuccessBorder);
+}
+// Info appears as blue-green
+.button-info {
+  .button-variant(@buttonInfoColor; @buttonInfoBg; @buttonInfoBorder);
+}
+// Warning appears as orange
+.button-warning {
+  .button-variant(@buttonWarningColor; @buttonWarningBg; @buttonWarningBorder);
+}
+// Danger and error appear as red
+.button-danger {
+  .button-variant(@buttonDangerColor; @buttonDangerBg; @buttonDangerBorder);
+}
+
+//这是一种替代的按钮
+.button-inverse {
+  .button-variant(@buttonInverseColor; @buttonInverseBg; @buttonInverseBorder);
+}
+
+
+// Link buttons
+// -------------------------
+
+// Make a button look and behave like a link
+.button-link {
+  color: @linkColor;
+  font-weight: normal;
+  cursor: pointer;
+  border-radius: 0;
+
+  &,
+  &:active,
+  &[disabled],
+  fieldset[disabled] & {
+    background-color: transparent;
+    .box-shadow(none);
+  }
+  &,
+  &:hover,
+  &:focus,
+  &:active {
+    border-color: transparent;
+  }
+  &:hover,
+  &:focus {
+    color: @linkColorHover;
+    text-decoration: underline;
+    background-color: transparent;
+  }
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus {
+      color: @buttonLinkDisabledColor;
+      text-decoration: none;
+    }
+  }
+}
+
+
+// Button Sizes
+// --------------------------------------------------
+
+.button-large {
+  // line-height: ensure even-numbered height of button next to large input
+  .button-size(@paddingLargeVertical; @paddingLargeHorizontal; @fontSizeLarge; @lineHeightLarge; @radiusLarge);
+}
+.button-small {
+  // line-height: ensure proper height of button next to small input
+  .button-size(@paddingSmallVertical; @paddingSmallHorizontal; @fontSizeSmall; @lineHeightSmall; @radiusSmall);
+}
+.button-mini {
+  .button-size(@paddingMiniVertical; @paddingMiniHorizontal; @fontSizeSmall; @lineHeightSmall; @radiusSmall);
+}
+
+
+// Block button
+// --------------------------------------------------
+
+.button-block {
+  display: block;
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+// Vertically space out multiple block buttons
+.button-block + .button-block {
+  margin-top: 5px;
+}
+
+// Specificity overrides
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  &.button-block {
+    width: 100%;
+  }
+}

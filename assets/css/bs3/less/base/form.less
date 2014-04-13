@@ -1,0 +1,319 @@
+// 修正 from页面 iframe 底部间距 导致 大外框 滚动条问题 by 黄甲
+.form-page,.search-page,.detail-page{
+  padding: 25px 0 0 20px;
+}
+
+//修正 查询页面 grid tbar 与 button 无间隔问题 by 黄甲
+.search-grid-container{
+  margin-top:5px;
+}
+
+
+//控件宽度
+//设置默认宽度
+select,textarea{
+  width:@controlNormal;
+  border:1px solid @inputBorder;
+}
+
+select{
+  width:@controlNormal + 10;
+}
+
+
+.input-control(){
+  display:inline-block;
+  height:@controlRowHeight;
+  padding: 1px 4px;
+  border:1px solid @inputBorder;
+}
+//因为ie6,所以需要在文本框上面添加样式
+.control-text{
+  width:@controlNormal;
+  .input-control();
+  height: @controlRowHeight;
+}
+
+label,span{
+  &.control-text{
+    width:auto;
+    height:auto;
+    border:none;
+    padding:0;
+    display:inline;
+    vertical-align:middle;
+  }
+}
+
+input[type="text"],input[type="password"],input[type="email"]{
+  width:@controlNormal;
+  height: @controlRowHeight;
+}
+
+#grid > .input(@gridColumnWidth, @gridGutterWidth);
+
+//控件高度
+.control-rowX(@rows){
+  height: (@controlRowHeight * @rows) + @controlAppendHeight;
+}
+
+// Inputs, Textareas, Selects
+/**/
+input[type="text"],input[type="password"],
+textarea,
+select{
+  .input-control();
+}
+
+select{
+  .control-rowX(1);
+  padding:0;
+}
+textarea{
+  height: @controlRowHeight * 3;
+}
+
+//宽度
+input,select,textarea,select{
+  font-family: @baseFontFamily;
+  line-height:@baseLineHeight;
+  &.input-normal{
+    width:@controlNormal;
+  }
+
+  &.input-small{
+    width:@controlSmall;
+  }
+
+  &.input-large{
+    width:@controlLarge;
+  }
+}
+
+input.calendar{
+  width: @controlSmall;
+}
+input.calendar-time{
+  width: @controlNormal;
+}
+.checkbox,.radio{
+  input{
+    vertical-align:middle;
+    margin-right: 5px;
+    margin-top:-4px;
+  }
+}
+
+fieldset{
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+legend {
+  display: block;
+  width: 100%;
+  padding: 0;
+  margin-bottom: @baseLineHeight;
+  font-size: 14px;
+  line-height: 40px;
+  border: 0;
+  border-bottom: 1px solid @borderColor;
+}
+
+.form-vertical{
+  label{
+    display: block;
+    margin-bottom: 5px;
+  }
+}
+
+//水平表单下的布局
+.form-horizontal{
+  .control-group{
+    .clearfix();
+  }
+  .control-label{
+    float:left;
+    text-align: right;
+    line-height:@controlRowHeight + @controlAppendHeight;
+    .inline-block();
+    .spanWidth(3);
+    s{
+      color:red;
+      padding-right:5px;
+      text-decoration: none;
+    }
+  }
+
+  .control-label-small{
+    .spanWidth(2);
+  }
+  .control-label-auto{
+    width:auto;
+  }
+  .controls{
+    //因为前面的label没有margin
+    //margin-left:((@gridColumnWidth + @gridGutterWidth) * 3);
+    margin-left:@gridGutterWidth;//
+    float:left;
+    display:inline;
+    *zoom:1;
+    .control-rowX(2);
+  }
+
+  input[class*="span"],select[class*="span"]{
+    float:none;
+    margin:0;
+  }
+
+  //高度
+  .control-row1{
+    .control-rowX(1);
+  }
+
+  .control-row2{
+    .control-rowX(2);
+  }
+
+  .control-row3{
+    .control-rowX(3);
+  }
+
+  .control-row4{
+    .control-rowX(4);
+  }
+
+  .control-row-auto{
+    height: auto;
+    padding-bottom:@controlRowHeight;
+    .well{
+      margin-bottom:0;
+    }
+  }
+
+  .controls 
+  //错误提示
+  .valid-text{
+    display:block;
+    .x-icon{
+      margin-right:5px;
+    }
+    em{
+      font-style:normal;
+    }
+  }
+
+  .valid-text em{
+    line-height: 16px;
+    line-height: 16px;
+    background-color:transparent;
+    font-style:normal;
+    color:red;
+  }
+
+
+  .form-link{
+    margin-left:20px;
+    vertical-align: bottom;
+  }
+
+  fieldset{
+    border:none;
+    padding:0;
+  }
+
+  .detail-row{
+    margin-bottom:5px;
+  }
+}
+
+.valid-text .label{
+  font-weight: normal;
+  color: red;
+  vertical-align: baseline;
+  text-shadow: none;
+  background-color: transparent;
+}
+
+.form-panel{
+  background-color:@grayLighter;
+  margin-bottom:@baseLineHeight;
+  border:1px solid @tableBorder;
+  .border-radius(@radius);
+  input,select{
+    width:100px;
+  }
+  .panel-title{
+    background-color:@backColor;
+    padding:0 15px;
+    height:@baseLineHeight*2;
+    line-height:@baseLineHeight*2;
+    .border-radius(@radius @radius 0 0);
+    label{
+      font-weight:bold;
+    }
+    border-bottom:1px solid @tableBorder;
+  }
+  .panel-content{
+    padding:7px 12px;
+    li{
+      height:@baseLineHeight*2;
+      line-height:@baseLineHeight*2;
+    }
+  }
+}
+
+.actions-bar{
+  padding: 19px 20px 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  background-color: @backColor;
+
+  border-top: 1px solid @borderColor;
+}
+.actions-bar-small{
+  padding: 10px;
+  margin-top: 10px;
+  margin-bottom: 10px;  
+}
+
+.form-links{
+  .nav-tabs{
+    margin:0 5px;
+    background-color: @backColor;
+    .border-radius(2px 2px 0 0);
+    .active,.active a{
+      background-color: @borderColor;
+      color: @white;
+    }
+  }
+  border-bottom: 2px solid @borderColor;
+  margin-bottom: @baseLineHeight;
+}
+
+//示例展示
+form.form-horizontal{
+  padding-left:0;
+  padding-right:0;
+  *padding:0;
+  border:none;
+}
+.show-grid .controls{
+  text-align: left;
+  line-height: @baseLineHeight + 2;
+}
+
+
+//表单分区块
+
+form{
+  h2, h3{
+    margin-bottom:@baseLineHeight + 2;
+  }
+}
+
+.form-horizontal hr{
+  margin-top:0;
+  margin-bottom:@controlRowHeight;
+}

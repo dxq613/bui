@@ -1,0 +1,241 @@
+
+.nav-tabs{
+  .bui-tab-item-text{
+    .inline-block();
+    margin-right: 3px;
+    padding: 5px 15px;
+    border:1px solid @borderColor;
+    border-bottom-color: transparent;
+    .border-radius(2px 2px 0 0);
+    background-color:@grayLighter;
+    position:relative;
+  }
+  
+  .bui-tab-item-selected{
+    background-color:@white;
+    .border-radius(2px 2px 0 0);
+    .bui-tab-item-text{
+      background-color:@white;
+      position:relative;
+      border-bottom:-1px;
+      z-index:10;
+    }  
+  }
+}
+
+.button-tabs{
+  margin-bottom:10px;
+  .bui-tab-item{
+    margin-right:5px;
+    .border-radius(@radius);
+  }
+
+  .bui-tab-item-text{
+    border-radius: 4px;
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+  }
+
+  .bui-tab-item-hover{
+    background-color: @grayLighter;
+  }
+
+  .bui-tab-item-selected{
+    color:@white;
+    font-weight:bold;
+    .bui-tab-item-text{
+      color: @white;
+      background-color: @brandPrimary;
+    }
+  }
+}
+
+.link-tabs{
+  .bui-tab-item-selected a{
+    color: @gray;
+    background-color: @white;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+    cursor: default;
+    &:hover{
+      background-color: @white;
+      border: 1px solid #ddd;
+      border-bottom-color: transparent;
+    }
+  }
+}
+
+.tab-nav-bar,.tab-nav-arrow,.tab-nav-wrapper,.tab-nav-inner,.bui-nav-tab-item,.tab-item-close,
+.bui-nav-tab-item .tab-item-inner,.bui-nav-tab-item .l,.bui-nav-tab-item .r{
+  background:url("@{tabPath}") -9999px -9999px no-repeat
+}
+
+.tab-nav-bar{
+  position: relative;
+  width: 100%;
+  z-index: 1;
+  overflow: hidden;
+  height: 21px;
+  background-position: 0 20px;
+  background-repeat: repeat-x;
+}
+
+.tab-content-container{
+  width: 100%;
+  iframe{
+    border:none;
+  }
+}
+.tab-content{
+  height:100%;
+}
+.tab-nav-arrow{
+  display: block;
+  position: absolute;
+  text-decoration: none;
+  overflow: hidden;
+  width: 13px;
+  height: 13px;
+  text-indent: -99px;
+  top: 4px;
+}
+
+.bui-tab-force{
+  .tab-nav-arrow{
+    display: none;
+  }
+  .tab-nav-wrapper{
+    margin: 0;
+  }
+}
+
+.bui-nav-tab .tab-nav-list{
+  padding-left: 15px;
+}
+.arrow-left{
+  background-position: 0 -60px;
+  left: 5px;
+}
+
+.arrow-left-active .arrow-left{
+  background-position: -40px -60px;
+  cursor:pointer;
+}
+
+
+.arrow-right{
+  background-position: -20px -60px;
+  right: 5px;
+}
+
+.arrow-right-active .arrow-right{
+  background-position: -100px -60px;
+  cursor:pointer;
+}
+
+.tab-nav-wrapper{
+  margin: 0 23px;
+  background-position: 0 -100px;
+  background-repeat: repeat-x;
+}
+
+.tab-nav-inner{
+  background-position: 0 20px;
+  background-repeat: repeat-x;
+  background-color: @tableBackground;
+  margin: 0 2px;
+  overflow: hidden;
+  position: relative;
+}
+
+.tab-nav-list{
+  position: relative;
+  left: 0;
+  padding:0;
+  margin:0;
+  .clearfix();
+}
+.bui-nav-tab-item{
+  color:@tabColor;
+  float:left;
+  width: 140px;
+  height: 21px;
+  position: relative;
+  cursor: pointer;
+  padding:0;
+  z-index: 1;
+}
+
+.bui-nav-tab-item .tab-item-inner{
+  background-position: -15px -4px;
+  margin:0 20px 0 5px;
+  background-color: transparent;
+}
+
+.bui-nav-tab-item{
+  .l,.r{
+    position: absolute;
+    display: block;
+    height: 21px;
+    top:0;
+  }
+
+  .l{
+    background-position: 0 -4px;
+    width: 20px;
+    left: -15px;
+  }
+  .r{
+    background-position: right -4px;
+    width: 33px;
+    right: 0;
+  }
+} 
+
+
+
+.tab-item-title{
+  cursor:pointer;
+}
+
+.tab-nav-actived {
+  z-index: 2;
+  .tab-item-inner{
+    background-position: -15px -29px;
+  }
+  .l{
+    background-position: 0 -29px;
+    z-index: 2;
+  }
+  .r{
+    background-position: right -29px;
+    z-index: 2;
+  }
+}
+
+
+.tab-item-close{
+  display: block;
+  position: absolute;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  width: 13px;
+  height: 13px;
+  text-indent: -99px;
+  z-index: 3;
+  top: 4px;
+  right: 17px;
+  background-position: 0 -80px;
+}
+.tab-item-close:hover{
+  background-position: -20px -80px;
+}
+
+
+.bui-tab-panel{
+  .bui-tab-item{
+
+  }
+}

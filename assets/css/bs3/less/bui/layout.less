@@ -1,0 +1,86 @@
+.x-viewport-container{
+  overflow: hidden;
+}
+.ext-border-layout{
+  padding: 10px;
+  background-color: #3892d3;
+	.x-border-north,.x-border-east,.x-border-west,.x-border-south,.x-border-center{
+		border : 1px solid #3892d3;
+	}
+  .x-border-east,.x-border-west,.x-border-center{
+    height: 100%;
+  }
+
+  .x-collapsed .x-border-title-east,.x-collapsed .x-border-title-west {
+    height: 100%;
+    padding : 25px 5px 0;
+    width: 18px;
+  }
+  .x-border-east{
+    float: right;
+  }
+  .x-border-west{
+    float: left;
+  }
+  .x-layout-border{
+    height: 100%;
+  }
+
+  .x-layout-item-border{
+    position: relative;
+  }
+  .x-border-title{
+    font-weight: bold;
+    font-size: 14px;
+    padding: 5px 10px;
+    background-color: #157fcc;
+    color: white;
+  }
+
+  .x-border-middle{
+    overflow: hidden;
+  }
+
+  .x-collapsed-btn{
+    background: url('@{layoutIconPath}') no-repeat 0 -192px transparent;
+    display: block;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    right: 7px;
+    top:5px;
+  }
+
+  .x-border-north .x-collapsed-btn{
+    background-position: 0 -224px;
+  }
+
+  .x-border-south .x-collapsed-btn,.x-collapsed .x-collapsed-north{
+    background-position: 0 -208px;
+  }
+  .x-collapsed .x-collapsed-south{
+    background-position: 0 -224px;
+  }
+
+  .x-border-east .x-collapsed-btn{
+    background-position: 0 -176px;
+  }
+
+
+  .x-border-west .x-collapsed-btn,.x-collapsed .x-collapsed-east{
+    background-position: 0 -192px;
+  }
+
+  .x-collapsed .x-collapsed-west{
+    background-position: 0 -176px;
+  }
+
+  .x-collapsed .x-border-body{
+    display: none;
+  }
+
+  .x-layout-item-border{
+  	background-color: @white;
+  }
+
+}
