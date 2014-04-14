@@ -9,7 +9,34 @@ var less = require('gulp-less');
 var minifyCSS = require('gulp-minify-css');
 var n2a = require('gulp-native2ascii');
 var chug = require( 'gulp-chug' );
+var through = require('through2');
+var spawn = require('child_process').spawn;
 
+
+//执行子任务
+function subTask() {
+  // Creating a stream through which each file will pass
+  var stream = through.obj(function(file, enc, callback) {
+    //src 必须使用{read: false}
+    if (file.isNull()) {
+      var task = spawn('gulp', ['--gulpfile', file.path]);
+      task.stdout.on('data', function (data) {
+        console.log('stdout: ' + data);
+      });
+      task.stderr.on('data', function (data) {
+        console.log('stderr: ' + data);
+      });
+      task.on('close', function (code) {
+        console.log('child process exited with code ' + code);
+      });
+    }
+
+    return callback();
+  });
+
+  // returning the file stream
+  return stream;
+};
 
 var desDir = './build';
 
@@ -35,8 +62,8 @@ gulp.task('chug', function () {
       '!./gulpfile.js',
       //除去node_modules目录下的gulpfile.js
       '!./node_modules/**/gulpfile.js'
-    ])
-    .pipe(chug())
+    ], {read: false})
+    .pipe(subTask())
 });
 
 
