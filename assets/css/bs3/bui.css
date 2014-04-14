@@ -1271,7 +1271,7 @@ textarea.bui-form-field-error,
   filter: alpha(opacity=5000);
 }
 .calendar {
-  background: url("../../img/calendar-200-300.gif") no-repeat right -186px #ffffff;
+  background: url("../../img/calendar-200-300.gif") no-repeat right -182px #ffffff;
 }
 .bui-calendar {
   border: 1px solid #c3c3d6;
