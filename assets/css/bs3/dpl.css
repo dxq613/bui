@@ -385,7 +385,6 @@ a.bg-danger:hover {
 ul,
 ol {
   margin: 0;
-  margin-bottom: 10px;
   padding-left: 0;
   list-style: none;
 }
@@ -3456,7 +3455,7 @@ select.input-large {
   width: 300px;
 }
 input.calendar {
-  width: 80px;
+  width: 90px;
 }
 input.calendar-time {
   width: 140px;
