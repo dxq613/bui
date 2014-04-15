@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 82,
+            subVersion : 84,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -1716,7 +1716,8 @@ define('bui/util',function(require){
     };
 
     return BUI;
-});/**
+});
+/**
  * @fileOverview \u6570\u7ec4\u5e2e\u52a9\u7c7b
  * @ignore
  */
