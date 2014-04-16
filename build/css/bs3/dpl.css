@@ -385,7 +385,6 @@ a.bg-danger:hover {
 ul,
 ol {
   margin: 0;
-  margin-bottom: 10px;
   padding-left: 0;
   list-style: none;
 }
@@ -1448,7 +1447,7 @@ fieldset[disabled] .x-icon-question.active {
   height: 14px;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("../img/sprite-469-300.png");
+  background-image: url("../../img/sprite-469-300.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
   *margin-right: .3em;
@@ -1476,7 +1475,7 @@ fieldset[disabled] .x-icon-question.active {
   height: 14px;
   line-height: 14px;
   vertical-align: text-top;
-  background-image: url("../img/sprite-469-300.png");
+  background-image: url("../../img/sprite-469-300.png");
   background-position: 14px 14px;
   background-repeat: no-repeat;
   *margin-right: .3em;
@@ -1498,7 +1497,7 @@ fieldset[disabled] .x-icon-question.active {
   display: inline-block;
 }
 .icon-white {
-  background-image: url("../img/white_sprite-469-300.png");
+  background-image: url("../../img/white_sprite-469-300.png");
 }
 .icon-glass {
   background-position: 0      0;
@@ -3456,10 +3455,10 @@ select.input-large {
   width: 300px;
 }
 input.calendar {
-  width: 80px;
+  width: 85px;
 }
 input.calendar-time {
-  width: 140px;
+  width: 145px;
 }
 .checkbox input,
 .radio input {
