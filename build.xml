@@ -111,6 +111,7 @@
           </fileset>
       </copy>
 
+<!--
       <copy todir="${des.dir}/css/bs3/css">
           <fileset dir="${base.dir}/assets/bs3"  includes="*.css">
           </fileset>
@@ -119,5 +120,6 @@
           <fileset dir="${base.dir}/assets/bs3/img"  includes="*.*">
           </fileset>
       </copy>
+    -->
   </target>
 </project>
