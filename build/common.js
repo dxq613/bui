@@ -114,7 +114,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {Number}
              */
-            subVersion : 82,
+            subVersion : 84,
 
             /**
              * 是否为函数
@@ -723,7 +723,8 @@ define('bui/util',function(require){
     };
 
     return BUI;
-});/**
+});
+/**
  * @fileOverview 数组帮助类
  * @ignore
  */

@@ -10,39 +10,36 @@ var minifyCSS = require('gulp-minify-css');
 var n2a = require('gulp-native2ascii');
 var chug = require( 'gulp-chug' );
 
-
-var desDir = './build';
-
-gulp.task('prepare', function() {
-  gulp.src('./build/uploader.js')
-    .pipe(clean());
-});
+// gulp.task('prepare', function() {
+//   gulp.src('./build/uploader.js')
+//     .pipe(clean());
+// });
 
 
 //合并js 
 gulp.task('uploader.js', function(){
   gulp.src([
-      './src/uploader/button/ajbridge.js',
-      './src/uploader/button/filter.js',
-      './src/uploader/button/base.js',
-      './src/uploader/button/htmlButton.js',
-      './src/uploader/button/swfButton.js',
-      './src/uploader/type/base.js',
-      './src/uploader/type/ajax.js',
-      './src/uploader/type/flash.js',
-      './src/uploader/type/iframe.js',
-      './src/uploader/queue.js',
-      './src/uploader/theme.js',
-      './src/uploader/validator.js',
-      './src/uploader/factory.js',
-      './src/uploader/uploader.js',
-      './src/uploader/base.js'
+      './button/ajbridge.js',
+      './button/filter.js',
+      './button/base.js',
+      './button/htmlButton.js',
+      './button/swfButton.js',
+      './type/base.js',
+      './type/ajax.js',
+      './type/flash.js',
+      './type/iframe.js',
+      './queue.js',
+      './theme.js',
+      './validator.js',
+      './factory.js',
+      './uploader.js',
+      './base.js'
     ]).pipe(concat('uploader.js'))
-    .pipe(gulp.dest(desDir));
+    .pipe(gulp.dest('../../build'));
 });
 
 
 // 默认任务
-gulp.task('default', ['prepare'], function() {
+gulp.task('default', function() {
   gulp.start('uploader.js');
 });

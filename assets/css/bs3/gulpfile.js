@@ -7,30 +7,35 @@ var minifyCSS = require('gulp-minify-css');
 var rename = require('gulp-rename');
 
 gulp.task('prepare', function() {
-  return gulp.src('./assets/bs3/css', {read: false})
+  return gulp.src('./*.css', {read: false})
     .pipe(clean());
 });
 
 gulp.task('less', function(){
   return gulp.src([
-    './assets/bs3/less/dpl.less',
-    './assets/bs3/less/bui.less'
+    './less/dpl.less',
+    './less/bui.less'
     ])
     .pipe(less())
-    .pipe(gulp.dest('./assets/bs3/css'));
+    .pipe(gulp.dest('./'));
 });
 
 gulp.task('minify-css',['less'], function() {
-  return gulp.src('./assets/bs3/css/**.css')
+  return gulp.src('./*.css')
     .pipe(minifyCSS())
     .pipe(rename({suffix: '-min'}))
-    .pipe(gulp.dest('./assets/bs3/css'));
+    .pipe(gulp.dest('./'));
 });
 
 gulp.task('watch', function(){
-  gulp.watch('./assets/bs3/less/**/*.less', ['less']);
+  gulp.watch('./**/*.less', ['less']);
 });
 
+gulp.task('copy', ['minify-css'], function(){
+  gulp.src('./*.css')
+    .pipe(gulp.dest('../../../build/css/bs3/'));
+})
+
 gulp.task('default',['prepare'], function(){
-  gulp.start('less', 'minify-css');
+  gulp.start('less', 'minify-css', 'copy');
 })

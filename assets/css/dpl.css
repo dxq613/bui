@@ -1119,6 +1119,26 @@ s {
   height: 8px;
   display: inline-block;
 }
+@font-face {
+  font-family: 'bui-iconfont';
+  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot');
+  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+   url('http://at.alicdn.com/t/font_1395889527_6888435.woff') format('woff'), /* chrome、firefox */
+   url('http://at.alicdn.com/t/font_1395889527_5368805.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/
+   url('http://at.alicdn.com/t/font_1395889527_7487144.svg#iconfont') format('svg');/* IE9*/
+  /* iOS 4.1- */
+}
+.iconfont {
+  position: relative;
+  top: 1px;
+  display: inline-block;
+  font-family: 'bui-iconfont';
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 .icon {
   display: inline-block;
   *display: inline;
@@ -1175,9 +1195,6 @@ s {
 }
 [class^="icon-caret"],
 [class*=" icon-caret"] {
-  width: 8px;
-  height: 8px;
-  display: inline-block;
   width: 8px;
   height: 8px;
   display: inline-block;
@@ -1704,8 +1721,6 @@ table {
   border-spacing: 0;
   /**/
 
-  /**/
-
 }
 .table th,
 .table td {
@@ -1800,8 +1815,6 @@ table {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  /**/
-
   /**/
 
 }
@@ -2056,7 +2069,6 @@ select {
 .control-text {
   width: 140px;
   display: inline-block;
-  height: 18px;
   padding: 1px 4px;
   border: 1px solid #c3c3d6;
   height: 18px;
@@ -2290,17 +2302,16 @@ legend {
 .form-horizontal .control-row-auto .well {
   margin-bottom: 0;
 }
-.form-horizontal .valid-text {
+.form-horizontal .controls .valid-text {
   display: block;
 }
-.form-horizontal .valid-text .x-icon {
+.form-horizontal .controls .valid-text .x-icon {
   margin-right: 5px;
 }
-.form-horizontal .valid-text em {
+.form-horizontal .controls .valid-text em {
   font-style: normal;
 }
 .form-horizontal .valid-text em {
-  line-height: 16px;
   line-height: 16px;
   background-color: transparent;
   font-style: normal;
