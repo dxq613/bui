@@ -12,7 +12,10 @@
     </target>
 	<target name="prepare">
         <delete>
-			<fileset dir="${build.dir}" includes="**/*.css"/>
+			<fileset dir="${build.dir}" includes="**/*.css" excludes="bs3/**.css"/>
+        </delete>
+        <delete>
+          <fileset dir="${build.dir}" includes="bs3/**-min.css"/>
         </delete>
     </target>
 
