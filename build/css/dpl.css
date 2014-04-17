@@ -2290,13 +2290,13 @@ legend {
 .form-horizontal .control-row-auto .well {
   margin-bottom: 0;
 }
-.form-horizontal .valid-text {
+.form-horizontal .controls .valid-text {
   display: block;
 }
-.form-horizontal .valid-text .x-icon {
+.form-horizontal .controls .valid-text .x-icon {
   margin-right: 5px;
 }
-.form-horizontal .valid-text em {
+.form-horizontal .controls .valid-text em {
   font-style: normal;
 }
 .form-horizontal .valid-text em {
