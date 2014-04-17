@@ -19331,7 +19331,7 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     },
     //\u8986\u76d6 \u8bbe\u7f6e\u503c\u7684\u65b9\u6cd5
     _uiSetValue : function(v){
-
+      this.setControlValue(v);
     },
     //\u8986\u76d6\u4e0d\u8bbe\u7f6e\u5bbd\u5ea6
     _uiSetWidth : function(v){
@@ -20299,7 +20299,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
             if(item.field){
               item.clearErrors(reset);
             }else{
-              item.clearErrors(deep,reset);
+              item.clearErrors(reset,deep);
             }
           }
         });
@@ -24436,7 +24436,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
    * @mixins BUI.Component.UIBase.Align
    * @mixins BUI.Component.UIBase.AutoHide
    */
-  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,,UIBase.AutoHide],{
+  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,UIBase.AutoHide],{
 
   },{
     ATTRS:{

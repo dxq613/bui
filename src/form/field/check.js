@@ -41,7 +41,7 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     },
     //覆盖 设置值的方法
     _uiSetValue : function(v){
-
+      this.setControlValue(v);
     },
     //覆盖不设置宽度
     _uiSetWidth : function(v){
