@@ -31,11 +31,11 @@ gulp.task('watch', function(){
   gulp.watch('./**/*.less', ['less']);
 });
 
-gulp.task('copy', ['minify-css'], function(){
+gulp.task('copy', function(){
   gulp.src('./*.css')
     .pipe(gulp.dest('../../../build/css/bs3/'));
 })
 
 gulp.task('default',['prepare'], function(){
-  gulp.start('less', 'minify-css', 'copy');
+  gulp.start('less', 'copy');
 })
