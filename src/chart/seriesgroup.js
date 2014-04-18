@@ -173,7 +173,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         canvas.on('click',function(ev){
           _self.onCanvasMove(ev);
           setTimeout(function(){
-            $(document).on('click', __documentClick);
+            $(document).off('click', __documentClick).on('click', __documentClick);
           })
         });
 
@@ -181,7 +181,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         canvas.on('mousemove',BUI.wrapBehavior(_self,'onCanvasMove'));
         canvas.on('mouseout',BUI.wrapBehavior(_self,'onMouseOut'));
       }
-    },
+    }
     //处理鼠标在画板上移动
     onCanvasMove : function(ev){
       var _self = this,
