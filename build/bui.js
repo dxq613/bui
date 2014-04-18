@@ -9857,7 +9857,10 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @default null
      */
     params : {
-
+        setter : function(v){
+            this.set('lastParams',params);
+            return v;
+        }
     },
     /**
      * \u9644\u52a0\u53c2\u6570\uff0c\u6bcf\u6b21\u8bf7\u6c42\u90fd\u5e26\u7684\u53c2\u6570
@@ -10033,6 +10036,10 @@ define('bui/component/loader',['bui/util'],function (require) {
         callback = _self.get('callback'),
         renderer = _self.get('renderer'),
         target = _self.get('target');
+
+      if(BUI.isString(data)){
+        target.set(property,'');//\u9632\u6b622\u6b21\u8fd4\u56de\u7684\u6570\u636e\u4e00\u6837
+      }
       target.set(property,renderer.call(_self,data));
 
       /**/
@@ -19324,7 +19331,7 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     },
     //\u8986\u76d6 \u8bbe\u7f6e\u503c\u7684\u65b9\u6cd5
     _uiSetValue : function(v){
-
+      this.setControlValue(v);
     },
     //\u8986\u76d6\u4e0d\u8bbe\u7f6e\u5bbd\u5ea6
     _uiSetWidth : function(v){
@@ -20292,7 +20299,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
             if(item.field){
               item.clearErrors(reset);
             }else{
-              item.clearErrors(deep,reset);
+              item.clearErrors(reset,deep);
             }
           }
         });
@@ -24429,7 +24436,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
    * @mixins BUI.Component.UIBase.Align
    * @mixins BUI.Component.UIBase.AutoHide
    */
-  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,,UIBase.AutoHide],{
+  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,UIBase.AutoHide],{
 
   },{
     ATTRS:{

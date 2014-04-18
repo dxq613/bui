@@ -477,7 +477,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
    * @mixins BUI.Component.UIBase.Align
    * @mixins BUI.Component.UIBase.AutoHide
    */
-  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,,UIBase.AutoHide],{
+  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,UIBase.AutoHide],{
 
   },{
     ATTRS:{
