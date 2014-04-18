@@ -8432,7 +8432,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         canvas.on('click',function(ev){
           _self.onCanvasMove(ev);
           setTimeout(function(){
-            $(document).on('click', __documentClick);
+            $(document).off('click', __documentClick).on('click', __documentClick);
           })
         });
 
