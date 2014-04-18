@@ -227,7 +227,10 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @default null
      */
     params : {
-
+        setter : function(v){
+            this.set('lastParams',params);
+            return v;
+        }
     },
     /**
      * 附加参数，每次请求都带的参数
@@ -403,6 +406,10 @@ define('bui/component/loader',['bui/util'],function (require) {
         callback = _self.get('callback'),
         renderer = _self.get('renderer'),
         target = _self.get('target');
+
+      if(BUI.isString(data)){
+        target.set(property,'');//防止2次返回的数据一样
+      }
       target.set(property,renderer.call(_self,data));
 
       /**/
