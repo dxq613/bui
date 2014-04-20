@@ -17,7 +17,8 @@
     "gulp-less": "~1.2.3",
     "gulp-minify-css": "~0.3.0",
     "gulp-native2ascii": "~0.0.2",
-    "gulp-chug": "~0.1.9"
+    "gulp-chug": "~0.1.9",
+    "through2": "^0.4.1"
   },
   "readmeFilename": "README.md"
 }

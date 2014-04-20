@@ -304,7 +304,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
  
       },
       width:{
-        value:180
+        // value:180
       },
       /**
        * 选中的月
