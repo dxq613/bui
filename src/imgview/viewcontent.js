@@ -1,5 +1,5 @@
 /**
- * @fileOverview 图片预览控件
+ * @fileOverview 图片预览
  * @ignore
  */
 define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
@@ -23,6 +23,12 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
     return obj;
   }
 
+
+  /**
+   * @class BUI.ImgView.ViewContent
+   * 单纯的图片展示控件,兼容IE6,支持旋转、拖动、缩放
+   * @extends BUI.Component.Controller
+   */
   var ViewContent = BUI.Component.Controller.extend({
     initializer: function(){
       var _self = this,
@@ -76,14 +82,28 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
       canvas.destroy();
       _self.set('isPaint', false);
     },
-    // reset图形
+    /**
+     * 重置位置
+     */
     reset: function(){
       // 旋转置0，缩放置0，fit置true。
       this.set('angle', 0);
       this.rotate(0, 0);
       this.scale('fit', 0);
     },
-    // 左旋
+    /**
+     * 左旋
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.leftHand(function(){
+     *    //TODO
+     *  })
+     *  viewContent.leftHand("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     leftHand: function(easeing, callback){
       var _self = this,
         rotateTime = _self.get('rotateTime'),
@@ -91,7 +111,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.rotate(-90, rotateTime, easeing, callback);
     },
-    // 右旋
+    /**
+     * 右旋
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.rightHand(function(){
+     *    //TODO
+     *  })
+     *  viewContent.rightHand("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     rightHand: function(easeing, callback){
       var _self = this,
         rotateTime = _self.get('rotateTime'),
@@ -117,7 +149,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
       }
       _self.set('isFit',false);
     },
-    // 放大
+    /**
+     * 放大
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.zoom(function(){
+     *    //TODO
+     *  })
+     *  viewContent.zoom("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     zoom: function(easeing,callback){
       var _self = this,
         zoomRate = _self.get('zoomRate'),
@@ -126,7 +170,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.scale(zoomRate,scaleTime,easeing,callback);
     },
-    // 缩小
+    /**
+     * 缩小
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.micrify(function(){
+     *    //TODO
+     *  })
+     *  viewContent.micrify("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     micrify: function(easeing,callback){
       var _self = this,
         micrifyRate = _self.get('micrifyRate'),
@@ -135,7 +191,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.scale(micrifyRate,scaleTime,easeing,callback);
     },
-    // 原始大小
+    /**
+     * 原始大小
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.resume(function(){
+     *    //TODO
+     *  })
+     *  viewContent.resume("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     resume: function(easeing,callback){
       var _self = this,
         scaleTime = _self.get('scaleTime'),
@@ -143,7 +211,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.scale("resume",scaleTime,easeing,callback);
     },
-    // 适合窗口大小
+    /**
+     * 适合窗口大小
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.fit(function(){
+     *    //TODO
+     *  })
+     *  viewContent.fit("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     fit: function(easeing,callback){
       var _self = this,
         scaleTime = _self.get('scaleTime'),
@@ -151,7 +231,12 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.scale("fit",scaleTime,easeing,callback);
     },
-    // 根据当前情况选择是原始大小还是适合窗口大小
+    /**
+     * 自动决定是fit还resume
+     * <pre><code>
+     *  viewContent.fitToggle()
+     * </code></pre>
+     */
     fitToggle: function(){
       var _self = this,
         isFit = _self.get('isFit');
@@ -203,7 +288,13 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
         _self.set('isFit',isFit);
       }
     },
-    // 获得原始图片
+    /**
+     * 获取当前图片的src
+     * @return {String} 当前图片的src
+     * <pre><code>
+     *  var imgSrc = viewContent.getSrc()
+     * </code></pre>
+     */
     getSrc: function(){
       return this.get('imgSrc');
     },
@@ -258,6 +349,12 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
         overflowSize = Math.min(imgNowWidth,imgNowHeight,_self.get('overflowSize'));
       })
     },
+    /**
+     * 决定是否可以拖动
+     * <pre><code>
+     *  viewContent.dragToggle()
+     * </code></pre>
+     */
     dragToggle: function(){
       if (this.get('drag')) {
         this.set('drag', false);
@@ -296,40 +393,56 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
     }
   },{
     ATTRS: {
+      /**
+       * 图片的url
+       * @type {String}
+       */
       imgSrc: {
+
       },
+      /**
+       * @private
+       */
       isPaint: {
         value: false
       },
+      /**
+       * @private
+       */
       angle: {
         value: 0
       },
       /**
        * 旋转速度
+       * @type {Number}
        */
       rotateTime: {
         value: 300
       },
       /**
        * 放大缩小速度
+       * @type {Number}
        */
       scaleTime: {
         value: 300
       },
       /**
        * 放大比率
+       * @type {Number}
        */
       zoomRate: {
         value: 3/2
       },
       /**
        * 缩小比率
+       * @type {Number}
        */
       micrifyRate: {
         value: 2/3
       },
       /**
-       * drag回弹边界值
+       * drag边界回弹,超过多少像素无法拖动.
+       * @type {Number}
        */
       overflowSize: {
         value: 100
@@ -337,36 +450,22 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
       elCls: {
         value: "ui-view-content"
       },
+      /**
+       * 是否可以拖动,默认为true
+       * @type {Boolean}
+       */
       drag: {
         value: true
       },
+      /**
+       * 图片变换后出发的事件
+       * @type {Function}
+       */
       afterChanged: {
         value: function(src){
 
         }
       }
-      // 不应该对内部方法增加键盘操纵！
-      // keyControl: {
-      //   value: false
-      // },
-      // keyScope: {
-      //   value: "bui-imgview"
-      // },
-      // keyable: {
-      //   value: true,
-      // },
-      // keyControls: {
-      //   value: {
-      //     "q"         : "leftHand",   // 左旋
-      //     "e"         : "rightHand",  // 右旋
-      //     "r"         : "reset",      // 复位
-      //     "w"         : "zoom",       // 放大
-      //     "s"         : "micrify",    // 缩小
-      //     "/"         : "fit",        // 适合窗口
-      //     "f"         : "fitToggle",  // 原始大小
-      //     "ctrl+i,⌘+i": "keyToggle"   // 开启/禁用键盘事件
-      //   }
-      // }
     }
   })
 

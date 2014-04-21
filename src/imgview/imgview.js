@@ -1,17 +1,21 @@
 /**
- * @fileOverview ImgView 模块的入口
+ * @fileOverview 带样式的图片浏览
  * @ignore
  */
 
 // 依赖关系数组写在第二参数，这样require关键字就可以压缩成"r"了。
-define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/imgview/previewlist'],function (r) {
+define('bui/imgview/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/imgview/previewlist'],function (r) {
 
   var BUI = r('bui/common'),
     ViewContent = r('bui/imgview/viewcontent'),
     PreviewList = r('bui/imgview/previewlist'),
     Toolbar = r('bui/toolbar');
 
-  // 继承BUI的base基类，提供一些基础方法。
+  /**
+   * @class BUI.ImgView.ImgView
+   * 自带小图预览及动作条的图片预览.
+   * @extends BUI.Component.Controller
+   */
   var ImgView = BUI.Component.Controller.extend({
     initializer : function(){
       var _self = this,
@@ -55,6 +59,7 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
       this._bindSelectedChange();
       this._bindPrevNext();
     },
+    // 绑定上下按钮的事件
     _bindPrevNext: function(){
       var _self = this,
         viewContent = _self.get('viewContent'),
@@ -74,6 +79,7 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         _self.paintNext();
       });
     },
+    // 绑定动作条的事件
     _bindToolbar: function(){
       var _self = this,
         viewContent = _self.get('viewContent'),
@@ -91,6 +97,7 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         }
       });
     },
+    // 绑定选中事件
     _bindSelectedChange: function(){
       var _self = this;
 
@@ -108,9 +115,19 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         }
       });
     },
+    /**
+     * 获得viewContet对象
+     * @return {Object}
+     * <pre><code>
+     *  var viewContent = imgview.getViewContent();
+     * </code></pre>
+     */
     getViewContent: function(){
       return this.get('viewContent');
     },
+    /**
+     * 显示上一个
+     */
     paintPrev: function(){
       var _self = this,
         imgNum = _self.get('imgNum');
@@ -119,6 +136,9 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         _self.set('imgNum', imgNum - 1);
       }
     },
+    /**
+     * 显示下一个
+     */
     paintNext: function(){
       var _self = this,
         imgList = _self.get('imgList'),
@@ -128,12 +148,23 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         _self.set('imgNum', imgNum + 1);
       }
     },
+    /**
+     * 充值viewcontent的装填
+     */
     reset: function(){
       this.getViewContent().reset();
     },
+    /**
+     * 获得当前imgList的长度
+     * @return {Number}
+     */
     getLength: function(){
       return this.get('imgList').length;
     },
+    /**
+     * 获得当前选中图片的src
+     * @return {Number}
+     */
     getSrc: function(){
       return this.getViewContent().get('imgSrc');
     },
@@ -184,11 +215,16 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         value: []
       },
       /**
-       * 默认显示第几张图片
+       * 默认显示的当前图片
+       * @type {Number}
        */
       imgNum: {
         value: 0
       },
+      /**
+       * 动作条的默认动作.
+       * @type {Object}
+       */
       commands: {
         value: [{
           cmd: 'fitToggle',
@@ -218,17 +254,22 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
       },
       /**
        * 右边滚动条的宽度
+       * @type {Number}
        */
       sidebarWidth: {
         value: 100
       },
       /**
        * 底下toolbar的高度
+       * @type {Number}
        */
       toolbarHeight: {
         value: 50
       },
-      // viewContet的配置
+      /**
+       * viewContent的配置
+       * @type {Object}
+       */
       viewContent:{
         value: {
           rotateTime: 300, // 旋转速度
@@ -241,7 +282,10 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
       elCls:{
         value: "ui-img-view-wrap"
       },
-      // 图片切换之后触发的方法
+      /**
+       * 图片变换后出发的事件
+       * @type {Function}
+       */
       selectedchange: {
         value: function(){
 

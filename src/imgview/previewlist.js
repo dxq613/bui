@@ -7,9 +7,8 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
   var BUI = r('bui/common'),
     List = r('bui/list');
 
-  $.fn.loadCenterImg = function(src){
-    var self = jQuery(this),
-      w = self.width(),
+  var loadCenterImg = function(self, src){
+    var w = self.width(),
       h = self.height(),
       targetImg = new Image(),
       imgObj = jQuery("<img>");
@@ -49,6 +48,7 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
       return -1;
     }
   }
+
 
   var PreviewList = BUI.Component.Controller.extend({
     initializer: function(){
@@ -117,6 +117,15 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
         _self.goPrev();
       });
     },
+    /**
+     * 滚到第几页
+     * @param {Number} 滚动到第几页
+     * @param {Number} 滚动的时间
+     * @return {Boolean} 页码是否属于正常范围之内
+     * * <pre><code>
+     *  previewList.setPage(2, 500);
+     * </code></pre>
+     */
     setPage: function(pageNum, scrollTime){
       var _self = this,
         pageNum = typeof pageNum == "number" ? pageNum : parseInt(_self.get('selected') / _self.get('pageSize')),
@@ -149,9 +158,15 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
         ul.clearQueue().animate({'marginLeft': -pageNum * scrollSize}, scrollTime);
       }
     },
+    /**
+     * 上一页, 到了第一页就进入到尾页
+     */
     goPrev: function(){
       this.setPage(this.get('pageNum') - 1);
     },
+    /**
+     * 下一页, 到了第一页就进入到尾页
+     */
     goNext: function(){
       this.setPage(this.get('pageNum') + 1);
     },
@@ -207,7 +222,8 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
       _self.get('list').setItems(items);
       _self.get('el').find(".ui-preview-mini-wrap").each(function(i){
         // 因为有4px的border。所以减8
-        $(this).width(itemWidth - 8).height(itemHeight - 8).loadCenterImg(items[i].miniSrc);
+        $(this).width(itemWidth - 8).height(itemHeight - 8);
+        loadCenterImg($(this), items[i].miniSrc)
       });
       _self.__initPageInfo();
 
