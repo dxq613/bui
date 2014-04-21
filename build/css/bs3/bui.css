@@ -265,7 +265,7 @@
 .bui-nav-tab-item .tab-item-inner,
 .bui-nav-tab-item .l,
 .bui-nav-tab-item .r {
-  background: url("../../img/tab-140-120.gif") -9999px -9999px no-repeat;
+  background: url("../../img/tab-140-120.gif") -9998.99999999px -9999px no-repeat;
 }
 .tab-nav-bar {
   position: relative;
@@ -1525,7 +1525,7 @@ textarea.bui-form-field-error,
   *margin-left: 117px;
 }
 .bui-monthpicker .bui-calendar-year-panel .x-monthpicker-yearnav {
-  padding: 14px 0 4px 0;
+  padding: 14px 0 0px 0;
   height: 26px;
 }
 .bui-monthpicker .bui-calendar-year-panel .x-monthpicker-yearnav .x-icon {
@@ -1534,6 +1534,9 @@ textarea.bui-form-field-error,
 }
 .bui-monthpicker .bui-calendar-year-panel .x-monthpicker-yearnav .x-icon .icon {
   margin-top: 2px;
+}
+.bui-monthpicker .bui-calendar-year-panel ul {
+  *padding-bottom: 4px;
 }
 .bui-monthpicker .x-monthpicker-footer {
   padding: 6px 0 4px;
