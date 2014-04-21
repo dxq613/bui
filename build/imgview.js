@@ -1,17 +1,39 @@
 /**
- * @fileOverview ImgView 模块的入口
+ * @fileOverview imgview 命名空间入口
+ * @ignore
+ */
+;(function(){
+var BASE = 'bui/imgview';
+define(BASE, ['bui/common',BASE + '/imgview',BASE + '/viewcontent',BASE + '/previewlist'],function (r) {
+  var BUI = r('bui/common'),
+    ImgView = BUI.namespace('ImgView');
+
+  BUI.mix(ImgView,{
+    ImgView: r(BASE + '/imgview'),
+    ViewContent: r(BASE + '/viewcontent'),
+    PreviewList: r(BASE + '/previewlist')
+  });
+  return ImgView;
+});
+})();
+/**
+ * @fileOverview 带样式的图片浏览
  * @ignore
  */
 
 // 依赖关系数组写在第二参数，这样require关键字就可以压缩成"r"了。
-define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/imgview/previewlist'],function (r) {
+define('bui/imgview/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/imgview/previewlist'],function (r) {
 
   var BUI = r('bui/common'),
     ViewContent = r('bui/imgview/viewcontent'),
     PreviewList = r('bui/imgview/previewlist'),
     Toolbar = r('bui/toolbar');
 
-  // 继承BUI的base基类，提供一些基础方法。
+  /**
+   * @class BUI.ImgView.ImgView
+   * 自带小图预览及动作条的图片预览.
+   * @extends BUI.Component.Controller
+   */
   var ImgView = BUI.Component.Controller.extend({
     initializer : function(){
       var _self = this,
@@ -55,6 +77,7 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
       this._bindSelectedChange();
       this._bindPrevNext();
     },
+    // 绑定上下按钮的事件
     _bindPrevNext: function(){
       var _self = this,
         viewContent = _self.get('viewContent'),
@@ -74,6 +97,7 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         _self.paintNext();
       });
     },
+    // 绑定动作条的事件
     _bindToolbar: function(){
       var _self = this,
         viewContent = _self.get('viewContent'),
@@ -91,6 +115,7 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         }
       });
     },
+    // 绑定选中事件
     _bindSelectedChange: function(){
       var _self = this;
 
@@ -108,9 +133,19 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         }
       });
     },
+    /**
+     * 获得viewContet对象
+     * @return {Object}
+     * <pre><code>
+     *  var viewContent = imgview.getViewContent();
+     * </code></pre>
+     */
     getViewContent: function(){
       return this.get('viewContent');
     },
+    /**
+     * 显示上一个
+     */
     paintPrev: function(){
       var _self = this,
         imgNum = _self.get('imgNum');
@@ -119,6 +154,9 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         _self.set('imgNum', imgNum - 1);
       }
     },
+    /**
+     * 显示下一个
+     */
     paintNext: function(){
       var _self = this,
         imgList = _self.get('imgList'),
@@ -128,12 +166,23 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         _self.set('imgNum', imgNum + 1);
       }
     },
+    /**
+     * 充值viewcontent的装填
+     */
     reset: function(){
       this.getViewContent().reset();
     },
+    /**
+     * 获得当前imgList的长度
+     * @return {Number}
+     */
     getLength: function(){
       return this.get('imgList').length;
     },
+    /**
+     * 获得当前选中图片的src
+     * @return {Number}
+     */
     getSrc: function(){
       return this.getViewContent().get('imgSrc');
     },
@@ -184,11 +233,16 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
         value: []
       },
       /**
-       * 默认显示第几张图片
+       * 默认显示的当前图片
+       * @type {Number}
        */
       imgNum: {
         value: 0
       },
+      /**
+       * 动作条的默认动作.
+       * @type {Object}
+       */
       commands: {
         value: [{
           cmd: 'fitToggle',
@@ -218,17 +272,22 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
       },
       /**
        * 右边滚动条的宽度
+       * @type {Number}
        */
       sidebarWidth: {
         value: 100
       },
       /**
        * 底下toolbar的高度
+       * @type {Number}
        */
       toolbarHeight: {
         value: 50
       },
-      // viewContet的配置
+      /**
+       * viewContent的配置
+       * @type {Object}
+       */
       viewContent:{
         value: {
           rotateTime: 300, // 旋转速度
@@ -241,7 +300,10 @@ define('bui/imgview',['bui/common','bui/toolbar','bui/imgview/viewcontent','bui/
       elCls:{
         value: "ui-img-view-wrap"
       },
-      // 图片切换之后触发的方法
+      /**
+       * 图片变换后出发的事件
+       * @type {Function}
+       */
       selectedchange: {
         value: function(){
 
@@ -266,9 +328,8 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
   var BUI = r('bui/common'),
     List = r('bui/list');
 
-  $.fn.loadCenterImg = function(src){
-    var self = jQuery(this),
-      w = self.width(),
+  var loadCenterImg = function(self, src){
+    var w = self.width(),
       h = self.height(),
       targetImg = new Image(),
       imgObj = jQuery("<img>");
@@ -308,6 +369,7 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
       return -1;
     }
   }
+
 
   var PreviewList = BUI.Component.Controller.extend({
     initializer: function(){
@@ -376,6 +438,15 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
         _self.goPrev();
       });
     },
+    /**
+     * 滚到第几页
+     * @param {Number} 滚动到第几页
+     * @param {Number} 滚动的时间
+     * @return {Boolean} 页码是否属于正常范围之内
+     * * <pre><code>
+     *  previewList.setPage(2, 500);
+     * </code></pre>
+     */
     setPage: function(pageNum, scrollTime){
       var _self = this,
         pageNum = typeof pageNum == "number" ? pageNum : parseInt(_self.get('selected') / _self.get('pageSize')),
@@ -408,9 +479,15 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
         ul.clearQueue().animate({'marginLeft': -pageNum * scrollSize}, scrollTime);
       }
     },
+    /**
+     * 上一页, 到了第一页就进入到尾页
+     */
     goPrev: function(){
       this.setPage(this.get('pageNum') - 1);
     },
+    /**
+     * 下一页, 到了第一页就进入到尾页
+     */
     goNext: function(){
       this.setPage(this.get('pageNum') + 1);
     },
@@ -466,7 +543,8 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
       _self.get('list').setItems(items);
       _self.get('el').find(".ui-preview-mini-wrap").each(function(i){
         // 因为有4px的border。所以减8
-        $(this).width(itemWidth - 8).height(itemHeight - 8).loadCenterImg(items[i].miniSrc);
+        $(this).width(itemWidth - 8).height(itemHeight - 8);
+        loadCenterImg($(this), items[i].miniSrc)
       });
       _self.__initPageInfo();
 
@@ -570,7 +648,7 @@ define('bui/imgview/previewlist',['bui/common','bui/list'],function (r) {
   return PreviewList;
 });
 /**
- * @fileOverview 图片预览控件
+ * @fileOverview 图片预览
  * @ignore
  */
 define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
@@ -594,6 +672,12 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
     return obj;
   }
 
+
+  /**
+   * @class BUI.ImgView.ViewContent
+   * 单纯的图片展示控件,兼容IE6,支持旋转、拖动、缩放
+   * @extends BUI.Component.Controller
+   */
   var ViewContent = BUI.Component.Controller.extend({
     initializer: function(){
       var _self = this,
@@ -647,14 +731,28 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
       canvas.destroy();
       _self.set('isPaint', false);
     },
-    // reset图形
+    /**
+     * 重置位置
+     */
     reset: function(){
       // 旋转置0，缩放置0，fit置true。
       this.set('angle', 0);
       this.rotate(0, 0);
       this.scale('fit', 0);
     },
-    // 左旋
+    /**
+     * 左旋
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.leftHand(function(){
+     *    //TODO
+     *  })
+     *  viewContent.leftHand("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     leftHand: function(easeing, callback){
       var _self = this,
         rotateTime = _self.get('rotateTime'),
@@ -662,7 +760,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.rotate(-90, rotateTime, easeing, callback);
     },
-    // 右旋
+    /**
+     * 右旋
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.rightHand(function(){
+     *    //TODO
+     *  })
+     *  viewContent.rightHand("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     rightHand: function(easeing, callback){
       var _self = this,
         rotateTime = _self.get('rotateTime'),
@@ -688,7 +798,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
       }
       _self.set('isFit',false);
     },
-    // 放大
+    /**
+     * 放大
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.zoom(function(){
+     *    //TODO
+     *  })
+     *  viewContent.zoom("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     zoom: function(easeing,callback){
       var _self = this,
         zoomRate = _self.get('zoomRate'),
@@ -697,7 +819,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.scale(zoomRate,scaleTime,easeing,callback);
     },
-    // 缩小
+    /**
+     * 缩小
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.micrify(function(){
+     *    //TODO
+     *  })
+     *  viewContent.micrify("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     micrify: function(easeing,callback){
       var _self = this,
         micrifyRate = _self.get('micrifyRate'),
@@ -706,7 +840,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.scale(micrifyRate,scaleTime,easeing,callback);
     },
-    // 原始大小
+    /**
+     * 原始大小
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.resume(function(){
+     *    //TODO
+     *  })
+     *  viewContent.resume("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     resume: function(easeing,callback){
       var _self = this,
         scaleTime = _self.get('scaleTime'),
@@ -714,7 +860,19 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.scale("resume",scaleTime,easeing,callback);
     },
-    // 适合窗口大小
+    /**
+     * 适合窗口大小
+     * @param {String} easeing 可选参数,如果是function的话就是callback
+     * @param {Function} callback [description]
+     * <pre><code>
+     *  viewContent.fit(function(){
+     *    //TODO
+     *  })
+     *  viewContent.fit("<>", function(){
+     *    //TODO
+     *  })
+     * </code></pre>
+     */
     fit: function(easeing,callback){
       var _self = this,
         scaleTime = _self.get('scaleTime'),
@@ -722,7 +880,12 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
 
       _self.scale("fit",scaleTime,easeing,callback);
     },
-    // 根据当前情况选择是原始大小还是适合窗口大小
+    /**
+     * 自动决定是fit还resume
+     * <pre><code>
+     *  viewContent.fitToggle()
+     * </code></pre>
+     */
     fitToggle: function(){
       var _self = this,
         isFit = _self.get('isFit');
@@ -774,7 +937,13 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
         _self.set('isFit',isFit);
       }
     },
-    // 获得原始图片
+    /**
+     * 获取当前图片的src
+     * @return {String} 当前图片的src
+     * <pre><code>
+     *  var imgSrc = viewContent.getSrc()
+     * </code></pre>
+     */
     getSrc: function(){
       return this.get('imgSrc');
     },
@@ -829,6 +998,12 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
         overflowSize = Math.min(imgNowWidth,imgNowHeight,_self.get('overflowSize'));
       })
     },
+    /**
+     * 决定是否可以拖动
+     * <pre><code>
+     *  viewContent.dragToggle()
+     * </code></pre>
+     */
     dragToggle: function(){
       if (this.get('drag')) {
         this.set('drag', false);
@@ -867,40 +1042,56 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
     }
   },{
     ATTRS: {
+      /**
+       * 图片的url
+       * @type {String}
+       */
       imgSrc: {
+
       },
+      /**
+       * @private
+       */
       isPaint: {
         value: false
       },
+      /**
+       * @private
+       */
       angle: {
         value: 0
       },
       /**
        * 旋转速度
+       * @type {Number}
        */
       rotateTime: {
         value: 300
       },
       /**
        * 放大缩小速度
+       * @type {Number}
        */
       scaleTime: {
         value: 300
       },
       /**
        * 放大比率
+       * @type {Number}
        */
       zoomRate: {
         value: 3/2
       },
       /**
        * 缩小比率
+       * @type {Number}
        */
       micrifyRate: {
         value: 2/3
       },
       /**
-       * drag回弹边界值
+       * drag边界回弹,超过多少像素无法拖动.
+       * @type {Number}
        */
       overflowSize: {
         value: 100
@@ -908,36 +1099,22 @@ define('bui/imgview/viewcontent',['bui/common','bui/graphic'],function (r) {
       elCls: {
         value: "ui-view-content"
       },
+      /**
+       * 是否可以拖动,默认为true
+       * @type {Boolean}
+       */
       drag: {
         value: true
       },
+      /**
+       * 图片变换后出发的事件
+       * @type {Function}
+       */
       afterChanged: {
         value: function(src){
 
         }
       }
-      // 不应该对内部方法增加键盘操纵！
-      // keyControl: {
-      //   value: false
-      // },
-      // keyScope: {
-      //   value: "bui-imgview"
-      // },
-      // keyable: {
-      //   value: true,
-      // },
-      // keyControls: {
-      //   value: {
-      //     "q"         : "leftHand",   // 左旋
-      //     "e"         : "rightHand",  // 右旋
-      //     "r"         : "reset",      // 复位
-      //     "w"         : "zoom",       // 放大
-      //     "s"         : "micrify",    // 缩小
-      //     "/"         : "fit",        // 适合窗口
-      //     "f"         : "fitToggle",  // 原始大小
-      //     "ctrl+i,⌘+i": "keyToggle"   // 开启/禁用键盘事件
-      //   }
-      // }
     }
   })
 
