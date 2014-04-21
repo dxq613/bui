@@ -294,7 +294,7 @@
 .bui-calendar{
   padding: 4px 0px;
   margin: 2px 0 0;
-  width: 232px;
+  width: 232px !important;
   .box-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
   color: @grayDark;
   background-color: @white;
@@ -372,7 +372,7 @@
   
     th{
       padding: 4px 5px;
-      min-width: 22px;
+      width: 22px;
     }
 
     td.x-datepicker-date{
@@ -384,7 +384,7 @@
         padding: 5px 0;
         text-align: center;
         color: @grayDark;
-        &:hover{
+        &:hover, &:focus{
           background-color: @grayLighter;
           text-decoration: none;
         }
@@ -397,12 +397,23 @@
       }
     }
 
+    td.x-datepicker-disabled{
+      a{
+        color: @grayLight;
+        cursor: default;
+        &:hover, &:focus{
+          background-color: transparent;
+          // rgb(139, 154, 163)
+        }
+      }
+    }
+
     td.x-datepicker-today{
       a{
         color: #000;
         background-color: #ffdb99;
 
-        &:hover{
+        &:hover, &:focus{
           background-color: #ffcd70;
         }
       }
@@ -413,11 +424,13 @@
         color: @white;
         background-color: #3276b1;
 
-        &:hover{
+        &:hover, &:focus{
           background-color: #3276b1;
         }
       }
     }
+
+
 
   }
 
@@ -427,82 +440,136 @@
     padding: 6px 4px 5px;
     border-top: 1px solid #ccc;
     text-align: center;
-  }
 
-  //月份选择
+    input.x-datepicker-time{
+      padding: 4px 10px;
+      width: 18px;
+      height:15px;
+      cursor: pointer;
+    }
+
+    .x-datepicker-second{
+      margin-right: 5px;
+    }
+  }
   .bui-monthpicker{
     position: absolute;
     width: 100%;
     top: 0px;
     left: 0px;
     background-color: @white;
+    border: none;
+  }
+}
 
-    .bui-calendar-month-panel, .bui-calendar-year-panel{
-      ul{
-        .clearfix();
-      }
-      li{
-        float: left;
-        margin: 4px 0 0 4px;
-        width: 50px;
-        height: 36px;
 
-        a{
-          display: block;
-          // padding: 9px 0 11px;
-          text-align: center;
-          color: @grayDark;
-          height: 36px;
-          line-height: 36px;
-          &:hover{
-            background-color: @grayLighter;
-            text-decoration: none;
-          }
-        }
-      }
-      .x-monthpicker-item-selected{
-        a{
-          color: @white;
-          background-color: #3276b1;
-          
-          &:hover{
-            background-color: #3276b1;
-          }
-        }
-      }
-    }
-    .bui-calendar-month-panel{
-      float: left;
-      padding:0 0 4px 1px;
-      width: 114px;
-      border-right: 1px solid #ccc;
-    }
-    .bui-calendar-year-panel{
-      margin-left: 118px;
-      width: 115px;
-
-      .x-monthpicker-yearnav{
-        padding-top: 14px;
-        height: 26px;
-
-        .x-icon{
-          margin: 0px 18px 0px 20px;
-          cursor: pointer;
-          .icon{
-            margin-top: 2px;
-          }
-        }
-      }
-    }
-
-    .x-monthpicker-footer{
-      padding: 6px 0 4px;
-      border-top: 1px solid #ccc;
+//时间选择
+.x-timepicker{
+  .bui-simple-list{
+    padding: 0px 2px;
+    // margin: -18px 0 0;
+    width: 228px;
+    color: #333333;
+    background-color: #ffffff;
+    font-size: 13px;
+    border: 1px solid #ccc;
+    position: relative;
+  }
+  ul{
+    .clearfix();
+  }
+  li{
+    float: left;
+    width: 32px;
+    a{
+      display: block;
+      padding: 5px 0;
       text-align: center;
-
-      .bui-bar-item-button{
-        margin-right: 5px;
+      color: @grayDark;
+      &:hover, &:focus{
+        background-color: @grayLighter;
+        text-decoration: none;
       }
+    }
+  }
+}
+
+//月份选择
+.bui-monthpicker{
+  position: absolute;
+  width: 232px !important;
+  top: 0px;
+  left: 0px;
+  background-color: @white;
+  border: 1px solid #ccc;
+
+  .bui-calendar-month-panel, .bui-calendar-year-panel{
+    ul{
+      .clearfix();
+    }
+    li{
+      float: left;
+      margin: 4px 0 0 4px;
+      width: 50px;
+      height: 36px;
+
+      a{
+        display: block;
+        // padding: 9px 0 11px;
+        text-align: center;
+        color: @grayDark;
+        height: 36px;
+        line-height: 36px;
+        &:hover{
+          background-color: @grayLighter;
+          text-decoration: none;
+        }
+      }
+    }
+    .x-monthpicker-item-selected{
+      a{
+        color: @white;
+        background-color: #3276b1;
+        
+        &:hover{
+          background-color: #3276b1;
+        }
+      }
+    }
+  }
+  .bui-calendar-month-panel{
+    float: left;
+    padding:0 0 4px 1px;
+    width: 114px;
+    border-right: 1px solid #ccc;
+  }
+  .bui-calendar-year-panel{
+    margin-left: 118px;
+    *margin-left: 117px;
+    // clear: left;
+
+    .x-monthpicker-yearnav{
+      padding: 14px 0 4px 0;
+      // min-width: 200px;
+      height: 26px;
+
+      .x-icon{
+        margin: 0px 18px 0px 20px;
+        cursor: pointer;
+        .icon{
+          margin-top: 2px;
+        }
+      }
+    }
+  }
+
+  .x-monthpicker-footer{
+    padding: 6px 0 4px;
+    border-top: 1px solid #ccc;
+    text-align: center;
+
+    .bui-bar-item-button{
+      margin-right: 5px;
     }
   }
 }

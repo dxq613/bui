@@ -65,14 +65,14 @@
       <arg line="${tools.dir}/less/bin/lessc ${less.dir}/single/imgview.less ${build.dir}/imgview.css"/>
     </exec>
 
-    
-<!--
+    <!--
     <exec executable="node" failonerror="true">
       <arg line="${tools.dir}/less/bin/lessc ${build.dir}/bs3/less/dpl.less ${build.dir}/bs3/dpl.css"/>
     </exec>
     <exec executable="node" failonerror="true">
       <arg line="${tools.dir}/less/bin/lessc ${build.dir}/bs3/less/bui.less ${build.dir}/bs3/bui.css"/>
-    </exec>-->
+    </exec>
+    -->
 
 	<!--		-->
 	</target>

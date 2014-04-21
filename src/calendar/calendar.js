@@ -374,7 +374,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
 
       },
       width:{
-        //value:180
+        value:180
       },
       events:{
         value:{
