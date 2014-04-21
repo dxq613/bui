@@ -1824,10 +1824,10 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -168px -120px;
 }
 .icon-calendar {
-  background-position: -192px -120px;
+  background-position: -191.99999999px -120px;
 }
 .icon-random {
-  background-position: -216px -119.99999999px;
+  background-position: -216px -120px;
 }
 .icon-comment {
   background-position: -240px -120px;
@@ -1950,10 +1950,10 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -1px -209px;
 }
 .icon-caret-down {
-  background-position: -1px -217.99999999px;
+  background-position: -1px -218px;
 }
 .icon-caret-left {
-  background-position: -1px -227px;
+  background-position: -1px -226.99999999px;
 }
 .icon-caret-right {
   background-position: -1px -235px;
