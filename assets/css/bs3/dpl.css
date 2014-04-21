@@ -1731,7 +1731,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -384px -72px;
 }
 .icon-eject {
-  background-position: -408px -71.99999999px;
+  background-position: -408px -72px;
 }
 .icon-chevron-left {
   background-position: -432px -72px;
@@ -1743,7 +1743,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: 0 -96px;
 }
 .icon-minus-sign {
-  background-position: -24px -96px;
+  background-position: -24px -95.99999999px;
 }
 .icon-remove-sign {
   background-position: -48px -96px;
@@ -1932,13 +1932,13 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -1px -188px;
 }
 .icon-info-mini {
-  background-position: -25px -187.99999999px;
+  background-position: -25px -188px;
 }
 .icon-ok-mini {
   background-position: -49px -188px;
 }
 .icon-remove-mini {
-  background-position: -73px -188px;
+  background-position: -72.99999999px -188px;
 }
 .icon-plus-mini {
   background-position: -97px -188px;
