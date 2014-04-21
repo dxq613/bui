@@ -1,7 +1,7 @@
 
-BUI.use(['bui/imgview'],function (Imgview) {
+BUI.use('bui/imgview',function (ImgView) {
 
-  var viewContent = new Imgview.ViewContent({
+  var viewContent = new ImgView.ViewContent({
     render: "#img-preview-wrap",
     autoRender: false, // 设置为true就自动渲染，默认为false！
     // 以下属性全部可以set来修改。
