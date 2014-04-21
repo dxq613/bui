@@ -1358,6 +1358,7 @@ textarea.bui-form-field-error,
   background: url("../img/calendar-200-300.gif") no-repeat right -130px #ffffff;
 }
 .bui-calendar {
+  width: 180px;
   border: 1px solid #c3c3d6;
   background-color: #ffffff;
   position: relative;
@@ -1547,6 +1548,7 @@ input.x-datepicker-time {
 /**monthpicker**/
 .bui-monthpicker,
 .x-monthpicker {
+  width: 180px;
   border: 1px solid #c3c3d6;
   position: absolute;
   background-color: #ffffff;

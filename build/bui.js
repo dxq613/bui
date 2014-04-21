@@ -28023,7 +28023,8 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
   });
   return monthPicker;
 
-});/**
+});
+/**
  * @fileOverview \u65e5\u671f\u63a7\u4ef6\u6765\u9009\u62e9\u5e74\u6708\u7684\u90e8\u5206
  * @ignore
  */
@@ -29041,7 +29042,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
   });
 
   return calendar;
-});/**
+});
+/**
  * @fileOverview \u65e5\u671f\u9009\u62e9\u5668
  * @author dxq613@gmail.com
  * @ignore

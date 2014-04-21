@@ -351,7 +351,8 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
   });
   return monthPicker;
 
-});/**
+});
+/**
  * @fileOverview 日期控件来选择年月的部分
  * @ignore
  */
@@ -1369,7 +1370,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
   });
 
   return calendar;
-});/**
+});
+/**
  * @fileOverview 日期选择器
  * @author dxq613@gmail.com
  * @ignore
