@@ -1503,7 +1503,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: 0      0;
 }
 .icon-music {
-  background-position: -24px 0;
+  background-position: -23.99999999px 0;
 }
 .icon-search {
   background-position: -48px 0;
@@ -1827,7 +1827,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -192px -120px;
 }
 .icon-random {
-  background-position: -216px -120px;
+  background-position: -216px -119.99999999px;
 }
 .icon-comment {
   background-position: -240px -120px;
@@ -1950,7 +1950,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -1px -209px;
 }
 .icon-caret-down {
-  background-position: -1px -218px;
+  background-position: -1px -217.99999999px;
 }
 .icon-caret-left {
   background-position: -1px -227px;
