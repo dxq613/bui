@@ -20,6 +20,7 @@
   <!-- 合并js -->
   <target name="combine.js" depends="prepare">
     <concat destfile="${des.dir}/imgview.js" encoding="${charset}" outputencoding="${charset}">
+      <path path="base.js"/>
       <path path="imgview.js"/>
       <path path="previewlist.js"/>
       <path path="viewcontent.js"/>

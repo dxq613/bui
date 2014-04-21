@@ -112,6 +112,7 @@
       </copy>
 
       <copy todir="${des.dir}/css/bs3">
+
           <fileset dir="${base.dir}/assets/css/bs3"  includes="*.css">
           </fileset>
       </copy>

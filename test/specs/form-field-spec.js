@@ -834,6 +834,8 @@ BUI.use('bui/form/checkboxfield',function(CheckBox){
       expect(el.length).toBe(1);
       expect(el.find('input').length).toBe(1);
       expect(el.find('input').attr('checked')).toBe('checked');
+      expect(checkbox.get('value')).toBe('a');
+      expect(el.find('input').val()).toBe('a');
     });
   });
 });

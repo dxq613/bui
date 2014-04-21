@@ -40,6 +40,7 @@
   <script type="text/javascript" src="../../src/graphic/canvas.js"></script>
 
 
+  <script type="text/javascript" src="../../src/imgview/base.js"></script>
   <script type="text/javascript" src="../../src/imgview/imgview.js"></script>
   <script type="text/javascript" src="../../src/imgview/previewlist.js"></script>
   <script type="text/javascript" src="../../src/imgview/viewcontent.js"></script>
