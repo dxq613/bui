@@ -860,7 +860,8 @@
 }
 .bui-grid-header {
   border-top: 1px solid #dddddd;
-  height: 25px;
+  /*height:25px;*/
+
 }
 .bui-grid-body,
 .bui-grid-height .bui-grid-body .bui-grid-table {
@@ -963,6 +964,9 @@ td.bui-grid-cell-empty {
   font-weight: normal;
   background-position: 0 0;
   position: relative;
+}
+.bui-grid-table .bui-grid-db-hd .bui-grid-hd-inner {
+  padding: 12px 0 13px;
 }
 .bui-grid-table .bui-grid-hd-title {
   line-height: 22px;
