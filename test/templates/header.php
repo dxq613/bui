@@ -9,8 +9,8 @@
      } 
     ?>
     <link rel="stylesheet" href="<?php echo $base;?>../tools/jasmine/jasmine.css">
-    <link href="<?php echo $base;?>../assets/css/bs3/dpl-min.css" rel="stylesheet">
-    <link href="<?php echo $base;?>../assets/css/bs3/bui.css" rel="stylesheet">
+    <link href="<?php echo $base;?>../assets/css/dpl-min.css" rel="stylesheet">
+    <link href="<?php echo $base;?>../assets/css/bui.css" rel="stylesheet">
     <!-- <?php if(isset($css)) {?>
     <link href="<?php echo $base;?>../assets/css/<?php echo $css;?>.css" rel="stylesheet">
     <?php }else { ?>
