@@ -8864,10 +8864,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @default null
      */
     params : {
-        setter : function(v){
-            this.set('lastParams',params);
-            return v;
-        }
+        
     },
     /**
      * 附加参数，每次请求都带的参数

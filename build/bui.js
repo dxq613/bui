@@ -9857,10 +9857,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @default null
      */
     params : {
-        setter : function(v){
-            this.set('lastParams',params);
-            return v;
-        }
+        
     },
     /**
      * \u9644\u52a0\u53c2\u6570\uff0c\u6bcf\u6b21\u8bf7\u6c42\u90fd\u5e26\u7684\u53c2\u6570
