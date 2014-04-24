@@ -46,7 +46,7 @@ BUI.use(['bui/grid/grid','bui/grid/plugins/columngroup'],function(Grid,Group){
       render:'#J_Grid8',
       columns : columns,
       plugins : [group],
-      forceFit : true
+      forceFit : true/**/
     });
   grid.render();
   grid.showData(data);

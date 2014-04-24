@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 88,
+            subVersion : 89,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -33010,7 +33010,7 @@ define('bui/grid/format',function (require) {
 ;(function(){
 var BASE = 'bui/grid/plugins/';
 define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',
-	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber'],function (r) {
+	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber',BASE + 'columngroup'],function (r) {
 	var BUI = r('bui/common'),
 		Selection = r(BASE + 'selection'),
 
@@ -33026,7 +33026,8 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 			AutoFit : r(BASE + 'autofit'),
 			GridMenu : r(BASE + 'menu'),
 			Summary : r(BASE + 'summary'),
-			RowNumber : r(BASE + 'rownumber')
+			RowNumber : r(BASE + 'rownumber'),
+			ColumnGroup : r(BASE + 'columngroup')
 		});
 		
 	return Plugins;
@@ -35524,6 +35525,109 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   
   return RowNumber;
   
+});define('bui/grid/plugins/columngroup',['bui/common'],function(require){
+
+  var BUI = require('bui/common'),
+    PREFIX = BUI.prefix,
+    CLS_HD_TITLE = PREFIX + 'grid-hd-title',
+    CLS_GROUP = PREFIX + 'grid-column-group',
+    CLS_DOUBLE = PREFIX + 'grid-db-hd';
+
+  /**
+   * \u8868\u5934\u5217\u5206\u7ec4\u529f\u80fd
+   * @class BUI.Grid.Plugins.ColumnGroup
+   * @extends BUI.Base
+   */
+  var Group = function (cfg) {
+    Group.superclass.constructor.call(this,cfg);
+  };
+
+  Group.ATTRS = {
+
+    /**
+     * \u5206\u7ec4
+     * @type {Array}
+     */
+    groups : {
+      value : []
+    },
+    /**
+     * \u5217\u6a21\u677f
+     * @type {String}
+     */
+    columnTpl : {
+      value : '<th class="bui-grid-hd center" colspan="{colspan}"><div class="' + PREFIX + 'grid-hd-inner">' +
+                        '<span class="' + CLS_HD_TITLE + '">{title}</span>' +
+              '</div></th>'
+    }
+  };
+
+  BUI.extend(Group,BUI.Base);
+
+  BUI.augment(Group,{
+
+    renderUI : function (grid) {
+      var _self = this,
+        groups = _self.get('groups'),
+        header = grid.get('header'),
+        headerEl = header.get('el'),
+        columns = header.get('children'),
+        wraperEl = $('<tr class="'+CLS_GROUP+'"></tr>').prependTo(headerEl.find('thead'));
+
+      //\u904d\u5386\u5206\u7ec4\uff0c\u6807\u5fd7\u5206\u7ec4
+      BUI.each(groups,function (group) {
+        var tpl = _self._getGroupTpl(group),
+          gEl = $(tpl).appendTo(wraperEl);
+        
+        group.el = gEl;
+        for(var i = group.from; i <= group.to; i++){
+          var column = columns[i];
+          if(column){
+            column.set('group',group);
+          }
+        }
+      });
+
+      var afterEl;
+      //\u4fee\u6539\u672a\u5206\u7ec4\u7684rowspan\u548c\u8c03\u6574\u4f4d\u7f6e
+      for(var i = columns.length - 1; i >=0 ; i--){
+        var column = columns[i],
+          group = column.get('group');
+        if(group){
+          afterEl = group.el;
+
+        }else{
+          var cEl = column.get('el');//$(_self.get('emptyTpl'));
+          cEl.addClass(CLS_DOUBLE);
+          cEl.attr('rowspan',2);
+          if(afterEl){
+            cEl.insertBefore(afterEl);
+          }else{
+            cEl.appendTo(wraperEl);
+          }
+          afterEl = cEl;
+        }
+      }
+      if(groups[0].from !== 0){ //\u5904\u7406\u7b2c\u4e00\u4e2a\u5355\u5143\u683c\u8fb9\u6846\u95ee\u9898
+        var firstCol = columns[groups[0].from];
+        if(firstCol){
+          firstCol.get('el').css('border-left-width',1);
+        }
+      }
+
+       //\u79fb\u9664\u7a7a\u767d\u5217
+
+    },
+    _getGroupTpl : function (group) {
+      var _self = this,
+        columnTpl = _self.get('columnTpl'),
+        colspan = group.to - group.from + 1;
+      return BUI.substitute(columnTpl,{colspan : colspan,title : group.title});
+    }
+  });
+
+  return Group;
+
 });/**
  * @fileOverview \u9009\u62e9\u6846\u547d\u540d\u7a7a\u95f4\u5165\u53e3\u6587\u4ef6
  * @ignore
