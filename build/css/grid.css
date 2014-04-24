@@ -323,8 +323,13 @@
 }
 .bui-grid-header {
   border-top: 1px solid #dddddd;
-  /*height:25px;*/
-
+  *height: 25px;
+}
+.bui-grid-group-header {
+  *height: 51px;
+}
+.bui-grid-group-header .bui-grid-hd-empty {
+  display: none;
 }
 .bui-grid-body,
 .bui-grid-height .bui-grid-body .bui-grid-table {

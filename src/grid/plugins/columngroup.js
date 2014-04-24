@@ -4,6 +4,7 @@ define('bui/grid/plugins/columngroup',['bui/common'],function(require){
     PREFIX = BUI.prefix,
     CLS_HD_TITLE = PREFIX + 'grid-hd-title',
     CLS_GROUP = PREFIX + 'grid-column-group',
+    CLS_GROUP_HEADER = PREFIX + 'grid-group-header',
     CLS_DOUBLE = PREFIX + 'grid-db-hd';
 
   /**
@@ -46,6 +47,8 @@ define('bui/grid/plugins/columngroup',['bui/common'],function(require){
         headerEl = header.get('el'),
         columns = header.get('children'),
         wraperEl = $('<tr class="'+CLS_GROUP+'"></tr>').prependTo(headerEl.find('thead'));
+
+      headerEl.addClass(CLS_GROUP_HEADER);
 
       //遍历分组，标志分组
       BUI.each(groups,function (group) {

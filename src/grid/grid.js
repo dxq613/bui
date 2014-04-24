@@ -89,7 +89,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         cellsTpl.push(_self._getCellTpl(column, dataIndex, record,index));
       });
 
-      if(_self.get('useEmptyCell') && !_self.get('forceFit')){
+      if(_self.get('useEmptyCell') /*&& !_self.get('forceFit')*/){
         cellsTpl.push(_self._getEmptyCellTpl());
       }
 
@@ -278,7 +278,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       });
 
       //if this component set width,add a empty column to fit row width
-      if(_self.get('useEmptyCell') && !_self.get('forceFit')){
+      if(_self.get('useEmptyCell')/* && !_self.get('forceFit')*/){
         cellsTpl.push(_self._getEmptyCellTpl());
       }
       rowTpl = BUI.substitute(rowTpl,{cellsTpl:cellsTpl.join('')});

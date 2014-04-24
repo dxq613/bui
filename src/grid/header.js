@@ -124,11 +124,11 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
             children[index] = columnControl;
             columns[index] = columnControl;
         });
-        if(!_self.get('forceFit')){
+        //if(!_self.get('forceFit')){
           emptyColumn = _self._createEmptyColumn();
           children.push(emptyColumn);
           _self.set('emptyColumn',emptyColumn);
-        }
+        //}
         
       },
       /**
