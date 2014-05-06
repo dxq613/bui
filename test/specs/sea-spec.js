@@ -92,7 +92,8 @@ seajs.use(['bui/common','bui/data','bui/list','bui/picker',
         BUI.Grid.Plugins.CellEditing,
         BUI.Grid.Plugins.RowEditing,
         BUI.Grid.Plugins.DialogEditing,
-        BUI.Grid.Plugins.ColumnGroup
+        BUI.Grid.Plugins.ColumnGroup,
+        BUI.Grid.Plugins.RowGroup
       ];
       isExist(arr);
     });

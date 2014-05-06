@@ -969,6 +969,9 @@ td.bui-grid-cell-empty {
   border-top: 1px solid #dddddd;
   position: relative;
 }
+.bui-grid-table .bui-grid-row-group td {
+  border-top: 1px solid #dddddd;
+}
 .bui-grid-table .bui-grid-cell-empty {
   border-top: 1px solid #dddddd;
 }
