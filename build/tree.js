@@ -234,6 +234,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       value : 'custom'
     },
     /**
+     * 是否级联选择
+     * @type {Boolean}
+     */
+    cascadeCheckd : {
+      value : true
+    },
+    /**
      * 是否只允许一个节点展开
      * @type {Boolean}
      */
@@ -651,43 +658,55 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       var _self = this,
         parent,
         multipleCheck = _self.get('multipleCheck'),
+        cascadeCheckd = _self.get('cascadeCheckd'),
         element;
-      node = makeSureNode(this,node);
+      node = makeSureNode(this,node); //将id转换成节点
       if(!node){
         return;
       }
       parent = node.parent;
-      if(!_self.isCheckable(node)){
+      if(!_self.isCheckable(node)){ //不可选返回
         return;
       }
 
+      //如果节点当前的选中状态不等于 checked
       if(_self.isChecked(node) !== checked || _self.hasStatus(node,'checked') !== checked){
 
-        
         element =  _self.findElement(node);
-        if(element){
-          _self.setItemStatus(node,CHECKED,checked,element); //设置选中状态
-          if(multipleCheck){ //多选状态下设置半选状态
-            _self._resetPatialChecked(node,checked,checked,element); //设置部分勾选状态
-          }else{
-            if(checked && parent && _self.isChecked(parent) != checked){
-              _self.setNodeChecked(parent,checked,false);
-            }
-          }/**/
-        }else if(!_self.isItemDisabled(node)){
-          _self.setStatusValue(node,'checked',checked);
-        }
+        //如果级联选择
+        if(cascadeCheckd){ 
 
-        if(parent){ //设置父元素选中
-          if(_self.isChecked(parent) != checked){
-            _self._resetParentChecked(parent);
-          }else if(multipleCheck){
-            _self._resetPatialChecked(parent,null,null,null,true);
+          if(element){
+            _self.setItemStatus(node,CHECKED,checked,element); //设置选中状态
+            if(multipleCheck){ //多选状态下设置半选状态
+              _self._resetPatialChecked(node,checked,checked,element); //设置部分勾选状态
+            }else{
+              if(checked && parent && _self.isChecked(parent) != checked){
+                _self.setNodeChecked(parent,checked,false);
+              }
+            }
+          }else if(!_self.isItemDisabled(node)){
+            _self.setStatusValue(node,CHECKED,checked);
           }
+
+          if(parent){ //设置父元素选中
+            if(_self.isChecked(parent) != checked){
+              _self._resetParentChecked(parent);
+            }else if(multipleCheck){
+              _self._resetPatialChecked(parent,null,null,null,true);
+            }
+          }
+          
+        }else if(!_self.isItemDisabled(node)){
+          if(element){
+            _self.setItemStatus(node,CHECKED,checked,element)
+          }else{
+            _self.setStatusValue(node,CHECKED,checked);
+          } 
         }
 
         //如果是单选则，清除兄弟元素的选中
-        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
+        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root') || !cascadeCheckd)){
           var nodes = parent.children;
           BUI.each(nodes,function(slibNode){
             if(slibNode !== node && _self.isChecked(slibNode)){
@@ -695,10 +714,11 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
             } 
           });
         }
+          
         _self.fire('checkedchange',{node : node,element: element,checked : checked});
         
       }
-      if(!node.leaf && deep){ //树节点，勾选所有子节点
+      if(!node.leaf && deep && cascadeCheckd){ //树节点，勾选所有子节点
         BUI.each(node.children,function(subNode,index){
           if(multipleCheck || !checked || (!multipleCheck && index == 0)){ //多选或者单选时第一个
             _self.setNodeChecked(subNode,checked,deep);
@@ -756,6 +776,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         checkedField = _self.get('checkedField'),
         multipleCheck = _self.get('multipleCheck'),
         checkableField = _self.get('checkableField'),
+        cascadeCheckd = _self.get('cascadeCheckd'),
         parent; 
       if(checkType === MAP_TYPES.NONE){ //不允许选中
         node[checkableField] = false;
@@ -794,7 +815,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
 
       parent = node.parent;
-      if(!_self.isChecked(node)){ //节点未被选择，根据父、子节点处理勾选
+      if(!_self.isChecked(node) && cascadeCheckd){ //节点未被选择，根据父、子节点处理勾选
 
         if(parent && _self.isChecked(parent)){ //如果父节点选中，当前节点必须勾选
           if(multipleCheck || !_self._hasChildChecked(parent)){ //多选或者兄弟节点没有被选中
@@ -844,7 +865,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       _self.setStatusValue(parentNode,'checked',allChecked);
       _self.setNodeChecked(parentNode,allChecked,false);
 
-      multipleCheck && _self._resetPatialChecked(parentNode,allChecked,null,null);
+      multipleCheck && _self._resetPatialChecked(parentNode,allChecked,null,null,true);
     },
     //绑定事件
     __bindUI : function(){
@@ -873,7 +894,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         var node = ev.item,
           element = ev.domTarget;
         _self._resetIcons(node,element);
-        if(_self.isCheckable(node) && multipleCheck){
+        if(_self.isCheckable(node) && multipleCheck && _self.get('cascadeCheckd')){
           _self._resetPatialChecked(node,null,null,element);
         }
         if(_self._isExpanded(node,element)){

@@ -20,7 +20,15 @@
 .bui-grid-header
 {
     border-top:1px solid @tableBorder;
-    height:25px;
+    *height:25px;
+}
+
+.bui-grid-group-header{
+  *height:51px;
+}
+
+.bui-grid-group-header .bui-grid-hd-empty{
+  display: none;
 }
 
 .bui-grid{
@@ -119,6 +127,10 @@ th.bui-grid-hd-empty,td.bui-grid-cell-empty{
     position:relative;
    }
 
+  .bui-grid-db-hd .bui-grid-hd-inner{
+    padding: 12px 0 13px;
+  }
+
   .bui-grid-hd-title
   {
     line-height:22px;
@@ -201,6 +213,11 @@ th.bui-grid-hd-empty,td.bui-grid-cell-empty{
       border-top:1px solid @tableRowBorder;
       position: relative;
   }
+
+  .bui-grid-row-group td{
+    border-top:1px solid @tableRowBorder;
+  }
+
 
   .bui-grid-cell-empty{
     border-top:1px solid @tableRowBorder;

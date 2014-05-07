@@ -20,7 +20,6 @@ BUI.use('bui/tree/treelist',function (TreeList) {
   tree.render();
 
   describe('勾选的tree',function(){
-
     describe('初始化勾选',function(){
       
       it('测试是否可以勾选',function(){
@@ -85,6 +84,7 @@ BUI.use('bui/tree/treelist',function (TreeList) {
         });
       });
     });
+
     describe('勾选操作',function(){
       it('勾选子节点',function(){
         var node = tree.getItem('22');
@@ -172,6 +172,23 @@ BUI.use('bui/tree/treelist',function (TreeList) {
         var node = tree.getItem('21');
         expect(tree.hasStatus(node,'checked')).toBe(true);
         
+      });
+
+      it('清除选中父节点',function () {
+        var node = tree.findNode('2');
+        tree.setNodeChecked(node,false);
+        expect(tree.isChecked('21')).toBe(false);
+        expect(tree.isChecked('211')).toBe(false);
+        expect(tree.isChecked('22')).toBe(false);
+      });
+      
+      it('设置孙子节点',function() {
+        var node = tree.findNode('2'),
+          element = tree.findElement(node);
+
+        tree.setNodeChecked('211',true);
+        expect($(element).hasClass('bui-tree-item-partial-checked')).toBe(true);
+
       });
 
 
@@ -323,20 +340,8 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       tree.set('nodes',BUI.cloneObject(nodes));
       BUI.each(tree.get('root').children,function(subNode){
         expect(tree.isCheckable(subNode)).toBe(subNode.leaf);
-        /*if(subNode.leaf){
-          expect(tree.hasStatus(subNode,'checked')).toBe(subNode.checked);
-        }else{
-          expect(tree.hasStatus(subNode,'checked')).toBe(false);
-        }*/
+        
       });
-
-
-      /*var node = tree.findNode('11');
-      expect(node.checked).toBe(false);
-
-      var node = tree.findNode('21');
-      expect(tree.hasStatus(node,'checked')).toBe(false);
-      */
     });
 
     it('禁用节点',function(){
@@ -346,6 +351,52 @@ BUI.use('bui/tree/treelist',function (TreeList) {
       tree.setItemDisabled(node);
       expect(node.checkable).toBe(false);
     });
+  });
+
+});
+
+BUI.use('bui/tree/treelist',function (TreeList) {
+  var nodes = [
+      {text : '1',id : '1',leaf : false,checked:false,children : [{text : '11',id : '11',checked:true},{text : '12',checked:true,id : '12',children:[{text : '121',id : '121'},{text : '122',id : '122'}]}]},
+      {text : '2',id : '2',expanded : true,checked:true,children : [
+          {text : '21',id : '21',children : [{text : '211',id : '211',checked : false},{text : '212',id : '212',checked : false}]},
+          {text : '22',id : '22',checked : false}
+      ]},
+      {text : '3',id : '3',checked : false,children : [{id : '31',text : '31'},{id : '32',text : '32'}]},
+      {text : '4',id : '4',checked : true},
+      {text : '5',id : '5'},
+      {text : '6',id : '6'},
+      {text : '7',id : '7'}
+    ];
+  var tree = new TreeList({
+    render : '#t32',
+    showLine : true,
+    cascadeCheckd : false,
+    checkType : 'all',
+    nodes : BUI.cloneObject(nodes)
+  });
+  tree.render();
+
+  describe('测试非级联选择',function(){
+
+    it('测试勾选字段',function(){
+      expect(tree.get('checkedField')).toBe('checked');
+    });
+
+    it('测试默认勾选',function () {
+      var node = tree.findNode('2');
+      expect(tree.isChecked(node)).toBe(true);
+
+      expect(tree.findNode('11').checked).toBe(true);
+
+    });
+
+    it('测试子节点不默认勾选',function () {
+      var node = tree.findNode('21');
+      expect(tree.isChecked(node)).toBe(false);
+      expect(tree.findNode('1').checked).toBe(false);
+    });
+
   });
 
 });

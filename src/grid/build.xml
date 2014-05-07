@@ -37,6 +37,9 @@
 			  <path path="plugins/rowediting.js"/>
 			  <path path="plugins/dialog.js"/>
 			  <path path="plugins/rownumber.js"/>
+        <path path="plugins/columngroup.js"/>
+         <path path="plugins/rowgroup.js"/>
+
 		</concat>
   </target>
 

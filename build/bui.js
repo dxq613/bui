@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 84,
+            subVersion : 89,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -9857,7 +9857,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @default null
      */
     params : {
-
+        
     },
     /**
      * \u9644\u52a0\u53c2\u6570\uff0c\u6bcf\u6b21\u8bf7\u6c42\u90fd\u5e26\u7684\u53c2\u6570
@@ -10033,6 +10033,10 @@ define('bui/component/loader',['bui/util'],function (require) {
         callback = _self.get('callback'),
         renderer = _self.get('renderer'),
         target = _self.get('target');
+
+      if(BUI.isString(data)){
+        target.set(property,'');//\u9632\u6b622\u6b21\u8fd4\u56de\u7684\u6570\u636e\u4e00\u6837
+      }
       target.set(property,renderer.call(_self,data));
 
       /**/
@@ -19324,7 +19328,7 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     },
     //\u8986\u76d6 \u8bbe\u7f6e\u503c\u7684\u65b9\u6cd5
     _uiSetValue : function(v){
-
+      this.setControlValue(v);
     },
     //\u8986\u76d6\u4e0d\u8bbe\u7f6e\u5bbd\u5ea6
     _uiSetWidth : function(v){
@@ -20292,7 +20296,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
             if(item.field){
               item.clearErrors(reset);
             }else{
-              item.clearErrors(deep,reset);
+              item.clearErrors(reset,deep);
             }
           }
         });
@@ -24429,7 +24433,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
    * @mixins BUI.Component.UIBase.Align
    * @mixins BUI.Component.UIBase.AutoHide
    */
-  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,,UIBase.AutoHide],{
+  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,UIBase.AutoHide],{
 
   },{
     ATTRS:{
@@ -28016,7 +28020,8 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
   });
   return monthPicker;
 
-});/**
+});
+/**
  * @fileOverview \u65e5\u671f\u63a7\u4ef6\u6765\u9009\u62e9\u5e74\u6708\u7684\u90e8\u5206
  * @ignore
  */
@@ -29034,7 +29039,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
   });
 
   return calendar;
-});/**
+});
+/**
  * @fileOverview \u65e5\u671f\u9009\u62e9\u5668
  * @author dxq613@gmail.com
  * @ignore
@@ -31143,14 +31149,18 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
         var _self = this,
             children = _self.get('children'),
             columns = _self.get('columns'),
-            emptyColumn = _self._createEmptyColumn();
+            emptyColumn;
         $.each(columns, function (index,item) {
             var columnControl = _self._createColumn(item);
             children[index] = columnControl;
             columns[index] = columnControl;
         });
-        children.push(emptyColumn);
-        _self.set('emptyColumn',emptyColumn);
+        //if(!_self.get('forceFit')){
+          emptyColumn = _self._createEmptyColumn();
+          children.push(emptyColumn);
+          _self.set('emptyColumn',emptyColumn);
+        //}
+        
       },
       /**
        * get the columns of this header,the result equals the 'children' property .
@@ -31405,7 +31415,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
           //_self.get('el').find('table').width()
           return;
         }
-        if (_self.get('forceFit')) {
+        if(_self.get('forceFit')) {
           _self.forceFitColumns();
         }else if(_self._isAllowScrollLeft()){
           totalWidth = _self.getColumnsWidth();
@@ -31610,7 +31620,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         cellsTpl.push(_self._getCellTpl(column, dataIndex, record,index));
       });
 
-      if(_self.get('useEmptyCell')){
+      if(_self.get('useEmptyCell') /*&& !_self.get('forceFit')*/){
         cellsTpl.push(_self._getEmptyCellTpl());
       }
 
@@ -31799,7 +31809,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       });
 
       //if this component set width,add a empty column to fit row width
-      if(_self.get('useEmptyCell')){
+      if(_self.get('useEmptyCell')/* && !_self.get('forceFit')*/){
         cellsTpl.push(_self._getEmptyCellTpl());
       }
       rowTpl = BUI.substitute(rowTpl,{cellsTpl:cellsTpl.join('')});
@@ -32555,6 +32565,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
        */
       forceFit:{
         sync:false,
+        view : true,
         value:false
       },
       /**
@@ -32999,7 +33010,7 @@ define('bui/grid/format',function (require) {
 ;(function(){
 var BASE = 'bui/grid/plugins/';
 define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',
-	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber'],function (r) {
+	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber',BASE + 'columngroup',BASE + 'rowgroup'],function (r) {
 	var BUI = r('bui/common'),
 		Selection = r(BASE + 'selection'),
 
@@ -33015,7 +33026,9 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 			AutoFit : r(BASE + 'autofit'),
 			GridMenu : r(BASE + 'menu'),
 			Summary : r(BASE + 'summary'),
-			RowNumber : r(BASE + 'rownumber')
+			RowNumber : r(BASE + 'rownumber'),
+			ColumnGroup : r(BASE + 'columngroup'),
+			RowGroup : r(BASE + 'rowgroup')
 		});
 		
 	return Plugins;
@@ -35513,6 +35526,267 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   
   return RowNumber;
   
+});define('bui/grid/plugins/columngroup',['bui/common'],function(require){
+
+  var BUI = require('bui/common'),
+    PREFIX = BUI.prefix,
+    CLS_HD_TITLE = PREFIX + 'grid-hd-title',
+    CLS_GROUP = PREFIX + 'grid-column-group',
+    CLS_GROUP_HEADER = PREFIX + 'grid-group-header',
+    CLS_DOUBLE = PREFIX + 'grid-db-hd';
+
+  /**
+   * \u8868\u5934\u5217\u5206\u7ec4\u529f\u80fd
+   * @class BUI.Grid.Plugins.ColumnGroup
+   * @extends BUI.Base
+   */
+  var Group = function (cfg) {
+    Group.superclass.constructor.call(this,cfg);
+  };
+
+  Group.ATTRS = {
+
+    /**
+     * \u5206\u7ec4
+     * @type {Array}
+     */
+    groups : {
+      value : []
+    },
+    /**
+     * \u5217\u6a21\u677f
+     * @type {String}
+     */
+    columnTpl : {
+      value : '<th class="bui-grid-hd center" colspan="{colspan}"><div class="' + PREFIX + 'grid-hd-inner">' +
+                        '<span class="' + CLS_HD_TITLE + '">{title}</span>' +
+              '</div></th>'
+    }
+  };
+
+  BUI.extend(Group,BUI.Base);
+
+  BUI.augment(Group,{
+
+    renderUI : function (grid) {
+      var _self = this,
+        groups = _self.get('groups'),
+        header = grid.get('header'),
+        headerEl = header.get('el'),
+        columns = header.get('children'),
+        wraperEl = $('<tr class="'+CLS_GROUP+'"></tr>').prependTo(headerEl.find('thead'));
+
+      headerEl.addClass(CLS_GROUP_HEADER);
+
+      //\u904d\u5386\u5206\u7ec4\uff0c\u6807\u5fd7\u5206\u7ec4
+      BUI.each(groups,function (group) {
+        var tpl = _self._getGroupTpl(group),
+          gEl = $(tpl).appendTo(wraperEl);
+        
+        group.el = gEl;
+        for(var i = group.from; i <= group.to; i++){
+          var column = columns[i];
+          if(column){
+            column.set('group',group);
+          }
+        }
+      });
+
+      var afterEl;
+      //\u4fee\u6539\u672a\u5206\u7ec4\u7684rowspan\u548c\u8c03\u6574\u4f4d\u7f6e
+      for(var i = columns.length - 1; i >=0 ; i--){
+        var column = columns[i],
+          group = column.get('group');
+        if(group){
+          afterEl = group.el;
+
+        }else{
+          var cEl = column.get('el');//$(_self.get('emptyTpl'));
+          cEl.addClass(CLS_DOUBLE);
+          cEl.attr('rowspan',2);
+          if(afterEl){
+            cEl.insertBefore(afterEl);
+          }else{
+            cEl.appendTo(wraperEl);
+          }
+          afterEl = cEl;
+        }
+      }
+      if(groups[0].from !== 0){ //\u5904\u7406\u7b2c\u4e00\u4e2a\u5355\u5143\u683c\u8fb9\u6846\u95ee\u9898
+        var firstCol = columns[groups[0].from];
+        if(firstCol){
+          firstCol.get('el').css('border-left-width',1);
+        }
+      }
+
+       //\u79fb\u9664\u7a7a\u767d\u5217
+
+    },
+    _getGroupTpl : function (group) {
+      var _self = this,
+        columnTpl = _self.get('columnTpl'),
+        colspan = group.to - group.from + 1;
+      return BUI.substitute(columnTpl,{colspan : colspan,title : group.title});
+    }
+  });
+
+  return Group;
+
+});define('bui/grid/plugins/rowgroup',['bui/common'],function(require){
+
+  var BUI = require('bui/common'),
+    DATA_GROUP = 'data-group',
+    PREFIX = BUI.prefix,
+    CLS_GROUP = PREFIX + 'grid-row-group',
+    CLS_TRIGGER = PREFIX + 'grid-cascade',
+    CLS_EXPAND = PREFIX + 'grid-cascade-expand';
+
+  //\u65b0\u7684\u5206\u7ec4
+  function newGroup (value,text) {
+    return {items : [],value : value,text : text};
+  }
+
+  /**
+   * \u8868\u5934\u5217\u5206\u7ec4\u529f\u80fd\uff0c\u4ec5\u5904\u7406\u6570\u636e\u5c55\u793a\uff0c\u6392\u5e8f\uff0c\u4e0d\u5904\u7406\u8fd9\u4e2a\u8fc7\u7a0b\u4e2d\u7684\u589e\u5220\u6539\uff0c\u6dfb\u52a0\u5220\u9664\u5217
+   * @class BUI.Grid.Plugins.RowGroup
+   * @extends BUI.Base
+   */
+  var Group = function (cfg) {
+    Group.superclass.constructor.call(this,cfg);
+  };
+
+  Group.ATTRS = {
+   
+    groups : {
+      shared : false,
+      value : []
+    }
+  };
+
+  BUI.extend(Group,BUI.Base);
+
+  BUI.augment(Group,{
+
+    renderUI : function (grid) {
+      var _self = this,
+        tbodyEl = grid.get('el').find('tbody');
+      _self.set('grid',grid);
+      _self.set('tbodyEl',tbodyEl);
+
+    },
+    bindUI : function (grid) {
+      var _self = this,
+         groups = [];
+
+      //\u663e\u793a\u5b8c\u6210\u8bb0\u5f55\u65f6
+      grid.on('aftershow',function () {
+        var items = grid.getItems(),
+          column = _self._getSortColumn();
+        _self._clear();
+        if(column){
+          grid.get('view').getAllElements().hide();
+          var field = column.get('dataIndex');
+          BUI.each(items,function (item,index) {
+            var last = groups[groups.length - 1],
+              renderer = column.get('renderer'),
+              value = item[field],
+              text;
+            if(!last || value != last.value){
+              text = renderer ? renderer(value,item) : value;
+              last = newGroup(value,text);
+              last.begin = index;
+
+              _self._createGroup(last,item);
+              groups.push(last);
+            }
+            if(last){
+              last.items.push(item);
+            }
+            
+          });
+
+          _self.set('groups',groups);
+        }
+        
+      });
+
+      //\u6e05\u9664\u6240\u6709\u8bb0\u5f55\u65f6
+      grid.on('clear',function () {
+        _self._clear();
+      });
+
+      _self.get('tbodyEl').delegate('.' + CLS_TRIGGER,'click',function (ev) {
+        var sender = $(ev.currentTarget),
+          group = _self._getGroupData(sender);
+        if(sender.hasClass(CLS_EXPAND)){
+          _self._collapse(group);
+          sender.removeClass(CLS_EXPAND);
+        }else{
+          _self._expand(group);
+          sender.addClass(CLS_EXPAND);
+        }
+
+      });
+    },
+    //\u83b7\u53d6\u6392\u5e8f\u7684\u5b57\u6bb5\u5bf9\u5e94\u7684\u5217
+    _getSortColumn: function(){
+      var _self = this,
+        grid = _self.get('grid'),
+        store = grid.get('store'),
+        field = store.get('sortField');
+
+      return grid.findColumnByField(field);
+    },
+    //\u83b7\u53d6\u5206\u7ec4\u7684\u6570\u636e
+    _getGroupData : function (el) {
+      var _self = this,
+        groupEl = el.closest('.' + CLS_GROUP);
+      return groupEl.data(DATA_GROUP);
+    },
+    _createGroup : function (group,item) {
+      var _self = this,
+        grid = _self.get('grid'),
+        firstEl = grid.findElement(item),
+        count = grid.get('columns').length,
+        tpl = '<tr class="'+CLS_GROUP+'"><td colspan="' + count + '"><div class="bui-grid-cell-inner"><span class="bui-grid-cell-text"><span class="bui-grid-cascade"><i class="bui-grid-cascade-icon"></i></span> ' + group.text + '</span></div></td></tr>',
+        node = $(tpl).insertBefore(firstEl);
+      node.data(DATA_GROUP,group);
+    },
+    _getGroupedElements : function(group){
+      var _self = this,
+        grid = _self.get('grid'),
+        elements = grid.get('view').getAllElements(),
+        begin = group.begin,
+        end = group.items.length + begin,
+        rst = [];
+      for(var i = begin; i < end; i++){
+        rst.push(elements[i]);
+      }
+      return $(rst);
+    },
+    _expand : function (group) {
+      var _self = this,
+        subEls = _self._getGroupedElements(group);
+      subEls.show();
+    },
+    _collapse : function (group) {
+       var _self = this,
+        subEls = _self._getGroupedElements(group);
+      subEls.hide();
+    },
+    _clear : function () {
+      var _self = this,
+        groups = _self.get('groups'),
+        tbodyEl = _self.get('tbodyEl');
+
+      BUI.Array.empty(groups);
+      tbodyEl.find('.' + CLS_GROUP).remove();
+
+    }
+  });
+
+  return Group;
+
 });/**
  * @fileOverview \u9009\u62e9\u6846\u547d\u540d\u7a7a\u95f4\u5165\u53e3\u6587\u4ef6
  * @ignore
@@ -35747,6 +36021,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     checkType : {
       value : 'custom'
+    },
+    /**
+     * \u662f\u5426\u7ea7\u8054\u9009\u62e9
+     * @type {Boolean}
+     */
+    cascadeCheckd : {
+      value : true
     },
     /**
      * \u662f\u5426\u53ea\u5141\u8bb8\u4e00\u4e2a\u8282\u70b9\u5c55\u5f00
@@ -36166,43 +36447,55 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       var _self = this,
         parent,
         multipleCheck = _self.get('multipleCheck'),
+        cascadeCheckd = _self.get('cascadeCheckd'),
         element;
-      node = makeSureNode(this,node);
+      node = makeSureNode(this,node); //\u5c06id\u8f6c\u6362\u6210\u8282\u70b9
       if(!node){
         return;
       }
       parent = node.parent;
-      if(!_self.isCheckable(node)){
+      if(!_self.isCheckable(node)){ //\u4e0d\u53ef\u9009\u8fd4\u56de
         return;
       }
 
+      //\u5982\u679c\u8282\u70b9\u5f53\u524d\u7684\u9009\u4e2d\u72b6\u6001\u4e0d\u7b49\u4e8e checked
       if(_self.isChecked(node) !== checked || _self.hasStatus(node,'checked') !== checked){
 
-        
         element =  _self.findElement(node);
-        if(element){
-          _self.setItemStatus(node,CHECKED,checked,element); //\u8bbe\u7f6e\u9009\u4e2d\u72b6\u6001
-          if(multipleCheck){ //\u591a\u9009\u72b6\u6001\u4e0b\u8bbe\u7f6e\u534a\u9009\u72b6\u6001
-            _self._resetPatialChecked(node,checked,checked,element); //\u8bbe\u7f6e\u90e8\u5206\u52fe\u9009\u72b6\u6001
-          }else{
-            if(checked && parent && _self.isChecked(parent) != checked){
-              _self.setNodeChecked(parent,checked,false);
-            }
-          }/**/
-        }else if(!_self.isItemDisabled(node)){
-          _self.setStatusValue(node,'checked',checked);
-        }
+        //\u5982\u679c\u7ea7\u8054\u9009\u62e9
+        if(cascadeCheckd){ 
 
-        if(parent){ //\u8bbe\u7f6e\u7236\u5143\u7d20\u9009\u4e2d
-          if(_self.isChecked(parent) != checked){
-            _self._resetParentChecked(parent);
-          }else if(multipleCheck){
-            _self._resetPatialChecked(parent,null,null,null,true);
+          if(element){
+            _self.setItemStatus(node,CHECKED,checked,element); //\u8bbe\u7f6e\u9009\u4e2d\u72b6\u6001
+            if(multipleCheck){ //\u591a\u9009\u72b6\u6001\u4e0b\u8bbe\u7f6e\u534a\u9009\u72b6\u6001
+              _self._resetPatialChecked(node,checked,checked,element); //\u8bbe\u7f6e\u90e8\u5206\u52fe\u9009\u72b6\u6001
+            }else{
+              if(checked && parent && _self.isChecked(parent) != checked){
+                _self.setNodeChecked(parent,checked,false);
+              }
+            }
+          }else if(!_self.isItemDisabled(node)){
+            _self.setStatusValue(node,CHECKED,checked);
           }
+
+          if(parent){ //\u8bbe\u7f6e\u7236\u5143\u7d20\u9009\u4e2d
+            if(_self.isChecked(parent) != checked){
+              _self._resetParentChecked(parent);
+            }else if(multipleCheck){
+              _self._resetPatialChecked(parent,null,null,null,true);
+            }
+          }
+          
+        }else if(!_self.isItemDisabled(node)){
+          if(element){
+            _self.setItemStatus(node,CHECKED,checked,element)
+          }else{
+            _self.setStatusValue(node,CHECKED,checked);
+          } 
         }
 
         //\u5982\u679c\u662f\u5355\u9009\u5219\uff0c\u6e05\u9664\u5144\u5f1f\u5143\u7d20\u7684\u9009\u4e2d
-        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
+        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root') || !cascadeCheckd)){
           var nodes = parent.children;
           BUI.each(nodes,function(slibNode){
             if(slibNode !== node && _self.isChecked(slibNode)){
@@ -36210,10 +36503,11 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
             } 
           });
         }
+          
         _self.fire('checkedchange',{node : node,element: element,checked : checked});
         
       }
-      if(!node.leaf && deep){ //\u6811\u8282\u70b9\uff0c\u52fe\u9009\u6240\u6709\u5b50\u8282\u70b9
+      if(!node.leaf && deep && cascadeCheckd){ //\u6811\u8282\u70b9\uff0c\u52fe\u9009\u6240\u6709\u5b50\u8282\u70b9
         BUI.each(node.children,function(subNode,index){
           if(multipleCheck || !checked || (!multipleCheck && index == 0)){ //\u591a\u9009\u6216\u8005\u5355\u9009\u65f6\u7b2c\u4e00\u4e2a
             _self.setNodeChecked(subNode,checked,deep);
@@ -36271,6 +36565,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         checkedField = _self.get('checkedField'),
         multipleCheck = _self.get('multipleCheck'),
         checkableField = _self.get('checkableField'),
+        cascadeCheckd = _self.get('cascadeCheckd'),
         parent; 
       if(checkType === MAP_TYPES.NONE){ //\u4e0d\u5141\u8bb8\u9009\u4e2d
         node[checkableField] = false;
@@ -36309,7 +36604,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
 
       parent = node.parent;
-      if(!_self.isChecked(node)){ //\u8282\u70b9\u672a\u88ab\u9009\u62e9\uff0c\u6839\u636e\u7236\u3001\u5b50\u8282\u70b9\u5904\u7406\u52fe\u9009
+      if(!_self.isChecked(node) && cascadeCheckd){ //\u8282\u70b9\u672a\u88ab\u9009\u62e9\uff0c\u6839\u636e\u7236\u3001\u5b50\u8282\u70b9\u5904\u7406\u52fe\u9009
 
         if(parent && _self.isChecked(parent)){ //\u5982\u679c\u7236\u8282\u70b9\u9009\u4e2d\uff0c\u5f53\u524d\u8282\u70b9\u5fc5\u987b\u52fe\u9009
           if(multipleCheck || !_self._hasChildChecked(parent)){ //\u591a\u9009\u6216\u8005\u5144\u5f1f\u8282\u70b9\u6ca1\u6709\u88ab\u9009\u4e2d
@@ -36359,7 +36654,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       _self.setStatusValue(parentNode,'checked',allChecked);
       _self.setNodeChecked(parentNode,allChecked,false);
 
-      multipleCheck && _self._resetPatialChecked(parentNode,allChecked,null,null);
+      multipleCheck && _self._resetPatialChecked(parentNode,allChecked,null,null,true);
     },
     //\u7ed1\u5b9a\u4e8b\u4ef6
     __bindUI : function(){
@@ -36388,7 +36683,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         var node = ev.item,
           element = ev.domTarget;
         _self._resetIcons(node,element);
-        if(_self.isCheckable(node) && multipleCheck){
+        if(_self.isCheckable(node) && multipleCheck && _self.get('cascadeCheckd')){
           _self._resetPatialChecked(node,null,null,element);
         }
         if(_self._isExpanded(node,element)){

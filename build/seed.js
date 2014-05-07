@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {Number}
              */
-            subVersion : 84,
+            subVersion : 89,
 
             /**
              * 是否为函数
@@ -9857,7 +9857,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @default null
      */
     params : {
-
+        
     },
     /**
      * 附加参数，每次请求都带的参数
@@ -10033,6 +10033,10 @@ define('bui/component/loader',['bui/util'],function (require) {
         callback = _self.get('callback'),
         renderer = _self.get('renderer'),
         target = _self.get('target');
+
+      if(BUI.isString(data)){
+        target.set(property,'');//防止2次返回的数据一样
+      }
       target.set(property,renderer.call(_self,data));
 
       /**/

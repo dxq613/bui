@@ -2013,6 +2013,7 @@ define('bui/layout/viewport',['bui/common'],function (require) {
 				appendHeight = _self.getAppendHeight();
 			_self.set('width',viewportWidth - appendWidth);
 			_self.set('height',viewportHeight - appendHeight);
+			_self.fire('resize');
 
 		},
 		destructor : function(){
@@ -2023,6 +2024,11 @@ define('bui/layout/viewport',['bui/common'],function (require) {
 			render : {
 				value : 'body'
 			}
+
+			/**
+			 * @event resize
+			 * ViewPort 重新布局
+			 */
 		}
 	},{
 		xclass : 'view-port'
