@@ -11,6 +11,10 @@ BUI.use(['bui/grid/grid','bui/grid/plugins/columnresize'],function(Grid,Resize){
         dataIndex :'b',
         sortable:false
       },{
+        title : '隐藏',
+        sortable:false,
+        visible : false
+      },{
         title : '表头3',
         dataIndex : 'c'
     }],

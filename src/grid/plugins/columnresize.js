@@ -112,9 +112,13 @@ define('bui/grid/plugins/columnresize',function (require) {
           _self.hideDrag();
           if(grid.get('forceFit')){
             var originWidth = col.get('originWidth'),
-              factor = width / originWidth;
-            console.log(factor);
-            col.set('width',(width + dif) / factor);
+              factor = width / originWidth,
+              toWidth = (width + dif) / factor;
+           // console.log(originWidth + ' ,'+width);
+            col.set('originWidth',toWidth);
+            col.set('width',toWidth);
+            //
+
           }else{
             col.set('width',width + dif);
           }
@@ -172,6 +176,7 @@ define('bui/grid/plugins/columnresize',function (require) {
         dragEl = _self.get('dragEl');
       dragEl && dragEl.css('left',pageX);
     },
+    //获取点击的列
     _getColumn : function(element){
       var _self = this,
         columns = _self.get('grid').get('columns'),
@@ -185,6 +190,7 @@ define('bui/grid/plugins/columnresize',function (require) {
 
       return rst;
     },
+    //获取前一个列
     _getPreCol : function(col){
       var _self = this,
         columns = _self.get('grid').get('columns'),
@@ -192,8 +198,10 @@ define('bui/grid/plugins/columnresize',function (require) {
       BUI.each(columns,function(column,index){
         if(column == col){
           return false;
+        }else if(column.get('visible')){
+          rst = column;
         }
-        rst = column;
+        
       });
 
       return rst;
