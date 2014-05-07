@@ -656,9 +656,15 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         y2 = cy + r * Math.sin(endAngle * RAD);
 
       //不存在内部圆
-      if(!ir){
-        path =  ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(endAngle - startAngle > 180), 1, x2, y2, "z"];
-      }else{
+      if (!ir) {
+        if (endAngle - startAngle == 360) {
+          // 如果只有一个图形100%.
+          path = [['M', cx, cy - r], ['a', r, r, 0, 1, 1, 0, 2 * r], ['a', r, r, 0, 1, 1, 0, -2 * r], ['z']];
+        } else {
+          path =  ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(endAngle - startAngle > 180), 1, x2, y2, "z"];
+        }
+      } else {
+        // 圆环
         var ix1 = cx + ir * Math.cos(startAngle * RAD),
           ix2 = cx + ir * Math.cos(endAngle * RAD),
           iy1 = cy + ir * Math.sin(startAngle * RAD),
@@ -666,12 +672,30 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
 
         path = [];
 
-        path.push(['M',ix1,iy1]);
-        path.push(['L',x1, y1]);
-        path.push(["A", r, r, 0, +(endAngle - startAngle > 180), 1, x2, y2]);
-        path.push(['L',ix2,iy2]);
-        path.push(['A',ir,ir,0,+(endAngle - startAngle > 180),0,ix1,iy1]);
-        path.push(['z']);
+        if (endAngle - startAngle == 360) {
+          // 如果只有一个图形100%.
+          // path = [['M', cx, cy - r], ['a', r, r, 0, 1, 1, 0, 2 * r], ['a', r, r, 0, 1, 1, 0, -2 * r], ['z']];
+          path.push(['M', cx, cy - r]);
+          path.push(["a", r, r, 0, 1, 1, 0, 2 * r]);
+          path.push(["a", r, r, 0, 1, 1, 0, -2 * r]);
+          // 这里如果用L就会有一根白线.
+          path.push(['M', cx, cy - ir]);
+          path.push(["a", ir, ir, 0, 1, 0, 0, 2 * ir]);
+          path.push(["a", ir, ir, 0, 1, 0, 0, -2 * ir]);
+          path.push(['z']);
+        } else {
+          path.push(['M',ix1,iy1]);
+          path.push(['L',x1, y1]);
+          path.push(["A", r, r, 0, +(endAngle - startAngle > 180), 1, x2, y2]);
+          path.push(['L',ix2,iy2]);
+          path.push(['A',ir,ir,0,+(endAngle - startAngle > 180),0,ix1,iy1]);
+          path.push(['z']);
+        }
+
+        
+
+
+
       }
       return path;
     },

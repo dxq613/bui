@@ -721,26 +721,27 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
       }
     },
     animate : function(params,ms,easing,callback){
-      var _self = this;
-
+      var _self = this,
+        attrs = _self.get('attrs'),
+        path;
+          
       if(_self.get('el').type == 'image'){
         var radius = params.radius || _self.attr('radius');
         params.x = params.x - radius;
         params.y = params.y - radius;
+        BUI.mix(attrs,{
+          x : params.x,
+          y : params.y
+        });
         _self.get('el').animate(params,ms,easing,callback);
       }else{
-        var attrs = _self.get('attrs'),
-          path;
-          BUI.mix(attrs,{
-            x : params.x,
-            y : params.y
-          });
-          
-          path = _self._getPath(attrs);
-
+        BUI.mix(attrs,{
+          x : params.x,
+          y : params.y
+        });
+        path = _self._getPath(attrs);
         _self.get('el').animate({path : path},ms,easing,callback);
       }
-
     },
 
     /**
@@ -752,12 +753,17 @@ define('bui/graphic/shape',['bui/common','bui/graphic/base','bui/graphic/canvasi
         symbol = attrs.symbol,
         radius = attrs.radius || 5;
       if(symbol && symbol.indexOf('url') != -1){ //图片
-          attrs.type = 'image';
-          attrs.src = symbol.replace(/url\((.*)\)/,'$1');
-          attrs.width = attrs.radius * 2;
-          attrs.height = attrs.radius * 2;
+        attrs.type = 'image';
+        attrs.src = symbol.replace(/url\((.*)\)/,'$1');
+        attrs.width = attrs.radius * 2;
+        attrs.height = attrs.radius * 2;
+        if (Util.vml) {
+          attrs.x -= radius-1,
+          attrs.y -= radius-1;
+        } else {
           attrs.x -= radius,
           attrs.y -= radius;
+        }
       }else{
         attrs.type = 'path';
         attrs.path = _self._getPath(attrs);
