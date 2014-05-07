@@ -23,11 +23,17 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins/rowgroup'],function(Grid,D
       },
       url : 'data/group.json'
     }),
-
+    group = new Group({
+      renderer : function(text,group){
+        var items = group.items,
+          sum = store.sum('b',items);
+        return text + '（'+items.length+'）- total : ' + sum;
+      }
+    }),
     grid = new Grid({
       render:'#J_Grid9',
       columns : columns,
-      plugins : [Group],
+      plugins : [group],
       forceFit : true,
       store : store
     });

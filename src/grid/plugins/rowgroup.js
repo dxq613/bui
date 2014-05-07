@@ -26,6 +26,16 @@ define('bui/grid/plugins/rowgroup',['bui/common'],function(require){
     groups : {
       shared : false,
       value : []
+    },
+    /**
+     * 渲染分组内容，函数原型 function(text,group){}
+     *
+     *  - text 是分组字段格式化后的文本
+     *  - group 是当前分组，包括,text(文本）,value（值）,items（分组包含的项）
+     * @type {Function}
+     */
+    renderer : {
+
     }
   };
 
@@ -59,18 +69,19 @@ define('bui/grid/plugins/rowgroup',['bui/common'],function(require){
               text;
             if(!last || value != last.value){
               text = renderer ? renderer(value,item) : value;
-              last = newGroup(value,text);
-              last.begin = index;
-
-              _self._createGroup(last,item);
-              groups.push(last);
-            }
-            if(last){
-              last.items.push(item);
+              var current = newGroup(value,text);
+              current.begin = index;
+              groups.push(current);
+              last && _self._createGroup(last);
+              last = current;
             }
             
+            last.items.push(item);
+            
+            
           });
-
+          var last = groups[groups.length - 1];
+          last && _self._createGroup(last);
           _self.set('groups',groups);
         }
         
@@ -109,12 +120,15 @@ define('bui/grid/plugins/rowgroup',['bui/common'],function(require){
         groupEl = el.closest('.' + CLS_GROUP);
       return groupEl.data(DATA_GROUP);
     },
-    _createGroup : function (group,item) {
+    _createGroup : function (group) {
       var _self = this,
         grid = _self.get('grid'),
+        item = group.items[0],
         firstEl = grid.findElement(item),
         count = grid.get('columns').length,
-        tpl = '<tr class="'+CLS_GROUP+'"><td colspan="' + count + '"><div class="bui-grid-cell-inner"><span class="bui-grid-cell-text"><span class="bui-grid-cascade"><i class="bui-grid-cascade-icon"></i></span> ' + group.text + '</span></div></td></tr>',
+        renderer = _self.get('renderer'),
+        text = renderer ? renderer(group.text,group) : group.text,
+        tpl = '<tr class="'+CLS_GROUP+'"><td colspan="' + count + '"><div class="bui-grid-cell-inner"><span class="bui-grid-cell-text"><span class="bui-grid-cascade"><i class="bui-grid-cascade-icon"></i></span> ' + text + '</span></div></td></tr>',
         node = $(tpl).insertBefore(firstEl);
       node.data(DATA_GROUP,group);
     },

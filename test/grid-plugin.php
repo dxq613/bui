@@ -1,6 +1,13 @@
 <?php  $title='表格插件测试' ?>
 <?php include("./templates/header.php"); ?>
 
+<style>
+    .bui-drag-line{
+        position: absolute;
+        border-left: 1px solid #ccc;
+    }
+</style>
+
   <div class="container">
     <div id="J_Grid"></div>
     <hr>
@@ -26,7 +33,7 @@
     <h2>行分组</h2>
     <div id="J_Grid9"></div>
 
-    <h2>单元格合并</h2>
+    <h2>resize</h2>
     <div id="J_Grid10"></div>
 
  </div>
@@ -51,7 +58,9 @@
     <script type="text/javascript" src="../src/grid/plugins/autofit.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/rownumber.js"></script>
     <script type="text/javascript" src="../src/grid/plugins/columngroup.js"></script>
-        <script type="text/javascript" src="../src/grid/plugins/rowgroup.js"></script>
+    <script type="text/javascript" src="../src/grid/plugins/rowgroup.js"></script>
+    <script type="text/javascript" src="../src/grid/plugins/columnresize.js"></script>
+
 
 
     <script type="text/javascript" src="../src/grid/plugins/base.js"></script>
@@ -65,7 +74,9 @@
     <script type="text/javascript" src="specs/plugin-auto-spec.js"></script> 
     <script type="text/javascript" src="specs/plugin-rownumber-spec.js"></script>
     
-    <script type="text/javascript" src="specs/plugin-columngroup-spec.js"></script> -->
-    <script type="text/javascript" src="specs/plugin-row-group-spec.js"></script>
+    <script type="text/javascript" src="specs/plugin-columngroup-spec.js"></script>
+    <script type="text/javascript" src="specs/plugin-row-group-spec.js"></script> -->
+
+    <script type="text/javascript" src="specs/plugin-colresize-spec.js"></script>
     
 <?php include("./templates/footer.php"); ?>       
