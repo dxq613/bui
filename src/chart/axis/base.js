@@ -306,6 +306,10 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
             var _self = this,
                 tickOffset = _self.get('tickOffset'),
                 directfactor;
+            
+            if(typeof tickOffset !== "number"){
+              tickOffset = tickOffset[0];
+            }
             if(tickOffset){
                 directfactor = _self._getDirectFactor();
                 if(offset == 0){
@@ -431,15 +435,22 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
                 offset = _self.get('tickOffset'),
                 end = _self.get('end'),
                 length;
+
+            if(typeof offset !== "number"){
+              offset = offset[0] + offset[1];
+            }else{
+              offset = offset * 2;
+            }
+
             if(_self.isVertical()){
                 length = end.y - start.y;
             }else{
                 length = end.x - start.x;
             }
             if(length > 0){
-                length = length - offset * 2;
+                length = length - offset;
             }else{
-                length = length + offset * 2;
+                length = length + offset;
             }
             return length;
         },
@@ -479,7 +490,11 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
                 tickShape = _self.get('tickShape'),
                 tickItems = _self.get('tickItems'),
                 path = '';
+            
             if(!tickShape){
+                if(tickItems && tickItems.length){
+                    _self._renderTicks();
+                }
                 return;
             }
             BUI.each(tickItems,function(item){

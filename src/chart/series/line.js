@@ -89,7 +89,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
         var line = _self.get('line'),
           markers = _self.get('markers');
         trySet(line,'stroke',color);
-        if(markers){
+        if(markers && !/http/.test(markers.marker.symbol)){
           trySet(markers.marker,'stroke',color);
           trySet(markers.marker,'fill',color);
         }
