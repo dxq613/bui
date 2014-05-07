@@ -135,7 +135,12 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		},
 		items : [
 
-		]
+		],
+		crossLine:{
+			value: {
+				stroke: "#C0C0C0"
+			}
+		}
 	};
 
 	BUI.extend(Tooltip,PlotItem);
@@ -195,7 +200,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 					visible : false,
 					zIndex : 3,
 					attrs : {
-						stroke : '#C0C0C0',
+						stroke : _self.get('crossLine').stroke,
 						x1 : 0,
 						y1 : plotRange.bl.y,
 						x2 : 0,

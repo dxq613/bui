@@ -788,11 +788,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      * @param  {BUI.Chart.Series} series 数据序列对象
      */
     showSeries : function(series){
-      var _self = this;
+      var _self = this,
+        yAxis = _self.get('yAxis');
       if(!series.get('visible')){
         series.show();
-        _self._resetAxis(series.get('yAxis'));
-        _self._resetSeries();
+        if(yAxis){
+          _self._resetAxis(yAxis);
+          _self._resetSeries();
+        }
       }
     },
     /**
@@ -800,11 +803,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      * @param  {BUI.Chart.Series} series 数据序列对象
      */
     hideSeries : function(series){
-      var _self = this;
+      var _self = this,
+        yAxis = _self.get('yAxis');
       if(series.get('visible')){
         series.hide();
-        _self._resetAxis(series.get('yAxis'));
-        _self._resetSeries();
+        if(yAxis){
+          _self._resetAxis(yAxis);
+          _self._resetSeries();
+        }
       }
     },
     _addLegendItem : function(series){
