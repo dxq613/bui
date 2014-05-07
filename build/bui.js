@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 89,
+            subVersion : 90,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -18899,8 +18899,13 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   }
 
   function appendItem(value,text,select){
-     var str = '<option value="' + value +'">'+text+'</option>'
-    $(str).appendTo(select);
+    // var str = '<option value="' + value +'">'+text+'</option>'
+    // $(str).appendTo(select);
+    
+    // \u4e0a\u9762\u90a3\u79cd\u5199\u6cd5\u5728ie6\u4e0b\u4f1a\u62a5\u4e00\u4e2a\u5947\u602a\u7684\u9519\u8bef\uff0c\u4f7f\u7528new Option\u5219\u4e0d\u4f1a\u6709\u8fd9\u4e2a\u95ee\u9898
+    var option = new Option(text, value),
+      options = select[0].options;
+    options[options.length] = option;
   }
   /**
    * \u8868\u5355\u9009\u62e9\u57df
@@ -19097,7 +19102,8 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   });
 
   return selectField;
-});/**
+});
+/**
  * @fileOverview \u8868\u5355\u65e5\u5386\u57df
  * @author dxq613@gmail.com
  * @ignore
