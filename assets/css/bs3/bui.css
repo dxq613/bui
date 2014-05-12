@@ -16,7 +16,7 @@
 .bui-side-menu .bui-menu-title s,
 .bui-side-menu .menu-leaf a,
 .bui-side-menu .menu-leaf em {
-  background: url("../../img/menu-500-188.png") -9999px -9999px no-repeat;
+  background: url("../../img/menu-500-188.png") -9998.99999999px -9999px no-repeat;
 }
 .bui-side-menu a {
   color: #5c637b;
@@ -424,7 +424,7 @@
   background-clip: padding-box;
 }
 .bui-select-list ul {
-  margin-top: 10px;
+  margin: 10px 0;
 }
 .bui-select-list .bui-list-item {
   display: block;
@@ -680,7 +680,7 @@
 .image-pbar .bui-bar-item,
 .bui-grid .bui-pagingbar .bui-bar-item {
   outline: none;
-  margin: 0 2px;
+  margin: 0 4px;
   vertical-align: middle;
 }
 .image-pbar .bui-bar-item-button,
@@ -1055,7 +1055,7 @@ td.bui-grid-cell-empty {
 /**grid-bar**/
 .bui-grid .bui-pagingbar {
   float: right;
-  margin: 3px 0 0;
+  margin: 6px 0;
 }
 .bui-grid-tbar,
 .bui-grid-bbar {
@@ -1077,11 +1077,6 @@ td.bui-grid-cell-empty {
   line-height: 34px;
 }
 .bui-grid-bbar {
-  background-image: -webkit-linear-gradient(top, #ffffff 0%, #e4e4e4 100%);
-  background-image: -o-linear-gradient(top, #ffffff 0%, #e4e4e4 100%);
-  background-image: linear-gradient(to bottom, #ffffff 0%, #e4e4e4 100%);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffe4e4e4', GradientType=0);
   border: 1px solid #dddddd;
   border-top: none;
 }
