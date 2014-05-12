@@ -128,7 +128,7 @@ define('bui/grid/plugins/rowgroup',['bui/common'],function(require){
         count = grid.get('columns').length,
         renderer = _self.get('renderer'),
         text = renderer ? renderer(group.text,group) : group.text,
-        tpl = '<tr class="'+CLS_GROUP+'"><td colspan="' + count + '"><div class="bui-grid-cell-inner"><span class="bui-grid-cell-text"><span class="bui-grid-cascade"><i class="bui-grid-cascade-icon"></i></span> ' + text + '</span></div></td></tr>',
+        tpl = '<tr class="'+CLS_GROUP+'"><td colspan="' + (count + 1) + '"><div class="bui-grid-cell-inner"><span class="bui-grid-cell-text"><span class="bui-grid-cascade"><i class="bui-grid-cascade-icon"></i></span> ' + text + '</span></div></td></tr>',
         node = $(tpl).insertBefore(firstEl);
       node.data(DATA_GROUP,group);
     },

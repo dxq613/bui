@@ -818,6 +818,10 @@
 .bui-grid-header {
   border-top: 1px solid #dddddd;
 }
+.bui-drag-line {
+  position: absolute;
+  border-left: 1px solid #ccc;
+}
 .bui-grid-body,
 .bui-grid-height .bui-grid-body .bui-grid-table {
   border-bottom: 1px solid #dddddd;
