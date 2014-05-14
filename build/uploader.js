@@ -1545,12 +1545,24 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
         delCls = _self.get('delCls');
 
       el.delegate('.' + delCls, 'click', function (ev) {
-        var itemContainer = $(ev.target).parents('.bui-queue-item'),
-          uploader = _self.get('uploader'),
-          item = _self.getItemByElement(itemContainer);
-        uploader && uploader.cancel && uploader.cancel(item);
-        _self.removeItem(item);
+          var itemContainer = $(ev.target).parents('.bui-queue-item'),
+            item = _self.getItemByElement(itemContainer);
+
+        if(_self.fire('beforeremove', {item: item}) !== false) {
+          _self.removeItem(item);
+        }
       });
+    },
+    /**
+     * 从队列中删除一项
+     * @param  {Object} item
+     */
+    removeItem: function(item){
+      var _self = this,
+        uploader = _self.get('uploader');
+
+      uploader && uploader.cancel && uploader.cancel(item);
+      Queue.superclass.removeItem.call(_self, item);
     },
     /**
      * 更新文件上传的状态
@@ -2326,13 +2338,36 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
      * 取消正在上传的文件 
      */
     cancel: function(item){
+      var _self = this;
+      if(item){
+        _self._cancel(item);
+        return
+      }
+      //只对将要进行上传的文件进行取消
+      BUI.each(_self.get('queue').getItemsByStatus('wait'), function(item){
+        _self._cancel(item);
+      });
+    },
+    /**
+     * 取消
+     * @param  {[type]} item [description]
+     * @return {[type]}      [description]
+     */
+    _cancel: function(item){
       var _self = this,
-        uploaderType = _self.get('uploaderType');
-      item = item || _self.get('curUploadItem');
+        queue = _self.get('queue'),
+        uploaderType = _self.get('uploaderType'),
+        curUploadItem = _self.get('curUploadItem');
+
+      //说明要取消项正在进行上传
+      if (curUploadItem === item) {
+        uploaderType.cancel();
+        _self.set('curUploadItem', null);
+      }
+
+      queue.updateFileStatus(item, 'cancel');
 
       _self.fire('cancel', {item: item});
-      uploaderType.cancel();
-      _self.set('curUploadItem', null);
     },
     /**
      * 校验是否通过
