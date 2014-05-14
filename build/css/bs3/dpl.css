@@ -3423,8 +3423,8 @@ textareaselect {
 }
 select {
   height: 28px;
-  padding: 0;
   height: 30px;
+  -moz-box-sizing: border-box;
 }
 textarea {
   height: 60px;
