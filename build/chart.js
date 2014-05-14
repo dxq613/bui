@@ -1086,7 +1086,10 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 				children = _self.get('children'),
 				xCache = [];
 			
-
+			// 假如是single模式,就不change
+			if (_self.get('single')) {
+				return ;
+			}
 			_self.set('items',items);
 
 			BUI.each(items,function(item,index){
@@ -1177,7 +1180,8 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 	});
 
 	return Markers;
-});/**
+});
+/**
  * @fileOverview 坐标系内部区域,用于显示背景
  * @ignore
  */
@@ -5773,6 +5777,11 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       var _self = this,
         group = _self.get('group'),
         cfg;
+
+      // 假如出现断点,point.value为空.则不处理
+      if(point.value == null){
+        return ;
+      }
       if(index == null){
         index = _self.getItems().length;
       }
@@ -6031,7 +6040,8 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
 
 
   return Group;
-});/**
+});
+/**
  * @fileOverview 在x,y坐标轴中渲染的数据序列
  * @ignore
  */
@@ -6653,10 +6663,12 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
       var _self = this,
         tolerance = _self.get('tolerance'),
         first = points[0],
-        path = 'M' + (points[0].x - tolerance) + ' ' + points[0].y;
+        path = 'M' + (points[0].x - tolerance) + ' ' + (points[0].y || 0);
       BUI.each(points,function(item,index){
-        var str = 'L{x} {y}';
-        path += BUI.substitute(str,item);
+        if (item.value != null) {
+          var str = 'L{x} {y}';
+          path += BUI.substitute(str,item);
+        }
       });
       if(_self.isInCircle()){
         path += 'z';
@@ -9014,15 +9026,21 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         arr = stackedData;
       }else{
         data = _self.getSeriesData(axis,name);
-        first = data[0];
+        first = data[0],
+        min = null;
 
         BUI.each(first,function(value,index){
           var temp = value;
           for(var i = 1 ; i< data.length; i++){
-            temp += data[i][index];
+            var val = data[i][index];
+            temp += val;
+            if(min == null || val < min){
+              min = val;
+            }
           }
           arr.push(temp);
         });
+        arr.push(min);
         _self.set('stackedData',arr);
       }
 
@@ -9076,11 +9094,12 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }
       type = type || 'yAxis';
 
+      this.set('stackedData',null);
+
       var _self = this,
         info = _self._caculateAxisInfo(axis,type),
         series = _self.getSeries();
 
-      _self.set('stackedData',null);
       //如果是非自动计算坐标轴，不进行重新计算
 
       axis.change(info);
