@@ -316,10 +316,12 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
       var _self = this,
         tolerance = _self.get('tolerance'),
         first = points[0],
-        path = 'M' + (points[0].x - tolerance) + ' ' + points[0].y;
+        path = 'M' + (points[0].x - tolerance) + ' ' + (points[0].y || 0);
       BUI.each(points,function(item,index){
-        var str = 'L{x} {y}';
-        path += BUI.substitute(str,item);
+        if (item.value != null) {
+          var str = 'L{x} {y}';
+          path += BUI.substitute(str,item);
+        }
       });
       if(_self.isInCircle()){
         path += 'z';

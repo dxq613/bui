@@ -115,7 +115,10 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 				children = _self.get('children'),
 				xCache = [];
 			
-
+			// 假如是single模式,就不change
+			if (_self.get('single')) {
+				return ;
+			}
 			_self.set('items',items);
 
 			BUI.each(items,function(item,index){
