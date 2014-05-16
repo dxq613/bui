@@ -75,7 +75,8 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this,
         calendar = this.get('calendar'),
         date = DateUtil.parse(val,_self.get("dateMask"));
-      date = date || new Date(new Date().setSeconds(0));
+      //date = date || new Date(new Date().setSeconds(0));
+      date = date || _self.get('defaultSelectedDate');
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
           var lockTime = this.get("lockTime"),
@@ -219,6 +220,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        */
       calendar:{
 
+      },
+      /**
+       * 默认选中的日期
+       * @type {Date}
+       */
+      defaultSelectedDate: {
+      	value: BUI.Date.today()
       }
     }
   },{
