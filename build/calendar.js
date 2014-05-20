@@ -49,7 +49,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
       _self.get('el').delegate('a','click',function(ev){
         ev.preventDefault();
       }).delegate('.' + CLS_MONTH,'dblclick',function(){
-        _self.fire('dblclick');
+        _self.fire('monthdblclick');
       });
     }
   },{
@@ -86,7 +86,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
       });
 
       el.delegate('.' + CLS_YEAR,'dblclick',function(){
-        _self.fire('dblclick');
+        _self.fire('yeardblclick');
       });
 
       el.delegate('.x-icon','click',function(ev){
@@ -226,7 +226,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         if(ev.item){
           _self.setInternal('month',ev.item.value);
         }
-      }).on('dblclick',function(){
+      }).on('monthdblclick',function(){
         _self._successCall();
       });
 
@@ -234,7 +234,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         if(ev.item){
           _self.setInternal('year',ev.item.value);
         }
-      }).on('dblclick',function(){
+      }).on('yeardblclick',function(){
         _self._successCall();
       });
 
@@ -1448,7 +1448,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this,
         calendar = this.get('calendar'),
         date = DateUtil.parse(val,_self.get("dateMask"));
-      date = date || new Date(new Date().setSeconds(0));
+      date = date || _self.get('selectedDate');
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
           var lockTime = this.get("lockTime"),
@@ -1592,6 +1592,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        */
       calendar:{
 
+      },
+      /**
+       * 默认选中的日期
+       * @type {Date}
+       */
+      selectedDate: {
+      	value: new Date(new Date().setSeconds(0))
       }
     }
   },{

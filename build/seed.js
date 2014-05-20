@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {Number}
              */
-            subVersion : 92,
+            subVersion : 93,
 
             /**
              * 是否为函数
@@ -2293,7 +2293,12 @@ define('bui/observable',['bui/util'],function (r) {
       var _self = this,
         callbacks = _self._getCallbacks(eventType);
       if(callbacks){
-        callbacks.remove(fn);
+        if(fn){
+          callbacks.remove(fn);
+        }else{
+          callbacks.empty();
+        }
+        
       }
       return _self;
     },

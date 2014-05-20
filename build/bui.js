@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 92,
+            subVersion : 93,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -2293,7 +2293,12 @@ define('bui/observable',['bui/util'],function (r) {
       var _self = this,
         callbacks = _self._getCallbacks(eventType);
       if(callbacks){
-        callbacks.remove(fn);
+        if(fn){
+          callbacks.remove(fn);
+        }else{
+          callbacks.empty();
+        }
+        
       }
       return _self;
     },
@@ -18016,6 +18021,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     Valid = require('bui/form/valid'),
     Remote = require('bui/form/remote'),
     CLS_FIELD_ERROR = BUI.prefix + 'form-field-error',
+    CLS_TIP_CONTAINER = 'bui-form-tip-container',
     DATA_ERROR = 'data-error';
 
   /**
@@ -18124,7 +18130,9 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       _self.on('afterRenderUI',function(){
         var tip = _self.get('tip');
         if(tip){
-          tip.trigger = _self.getTipTigger();
+          var trigger = _self.getTipTigger();
+          trigger && trigger.addClass(CLS_TIP_CONTAINER);
+          tip.trigger = trigger;
           tip.autoRender = true;
           tip = new TipItem(tip);
           _self.set('tip',tip);
@@ -27724,7 +27732,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
       _self.get('el').delegate('a','click',function(ev){
         ev.preventDefault();
       }).delegate('.' + CLS_MONTH,'dblclick',function(){
-        _self.fire('dblclick');
+        _self.fire('monthdblclick');
       });
     }
   },{
@@ -27761,7 +27769,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
       });
 
       el.delegate('.' + CLS_YEAR,'dblclick',function(){
-        _self.fire('dblclick');
+        _self.fire('yeardblclick');
       });
 
       el.delegate('.x-icon','click',function(ev){
@@ -27901,7 +27909,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         if(ev.item){
           _self.setInternal('month',ev.item.value);
         }
-      }).on('dblclick',function(){
+      }).on('monthdblclick',function(){
         _self._successCall();
       });
 
@@ -27909,7 +27917,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         if(ev.item){
           _self.setInternal('year',ev.item.value);
         }
-      }).on('dblclick',function(){
+      }).on('yeardblclick',function(){
         _self._successCall();
       });
 
@@ -29123,7 +29131,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this,
         calendar = this.get('calendar'),
         date = DateUtil.parse(val,_self.get("dateMask"));
-      date = date || new Date(new Date().setSeconds(0));
+      date = date || _self.get('selectedDate');
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
           var lockTime = this.get("lockTime"),
@@ -29267,6 +29275,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        */
       calendar:{
 
+      },
+      /**
+       * \u9ed8\u8ba4\u9009\u4e2d\u7684\u65e5\u671f
+       * @type {Date}
+       */
+      selectedDate: {
+      	value: new Date(new Date().setSeconds(0))
       }
     }
   },{
