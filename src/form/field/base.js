@@ -121,7 +121,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
         var tip = _self.get('tip');
         if(tip){
           var trigger = _self.getTipTigger();
-          trigger && trigger.addClass(CLS_TIP_CONTAINER);
+          trigger && trigger.parent().addClass(CLS_TIP_CONTAINER);
           tip.trigger = trigger;
           tip.autoRender = true;
           tip = new TipItem(tip);
