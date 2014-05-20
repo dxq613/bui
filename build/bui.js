@@ -22946,7 +22946,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         var _self = this,
           picker = _self.get('picker'),
           el = _self.get('el'),
-          textEl = el.find('.' + _self.get('inputCls'));
+          textEl = _self._getTextEl();
         picker.set('trigger',el);
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
@@ -23039,7 +23039,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       _getTextEl : function(){
          var _self = this,
           el = _self.get('el');
-        return el.find('.' + _self.get('inputCls'));
+        return el.is('input') ? el : el.find('input');
       },
       /**
        * \u6790\u6784\u51fd\u6570

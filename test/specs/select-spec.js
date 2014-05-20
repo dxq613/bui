@@ -157,6 +157,29 @@ BUI.use('bui/select',function (Select) {
   });
 });
 
+
+BUI.use('bui/select',function (Select) {
+  var data = ['选项1','选项2','选项3','选项4'],
+    select = new Select.Combox({
+    srcNode:'#c11',
+    items : data
+  });
+  select.render();
+  
+  var picker = select.get('picker'),
+    list = picker.get('list');
+
+  describe('测试生成',function(){
+
+    it('测试生成项',function(){
+      var items = list.getItems();
+      BUI.each(items,function(item,index){
+        expect(item.text).toBe(data[index])
+      });
+    });
+  });
+});
+
 BUI.use('bui/select',function (Select) {
 
   var suggest = new Select.Suggest({
