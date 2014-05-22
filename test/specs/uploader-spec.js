@@ -240,37 +240,35 @@ BUI.use(['bui/uploader'], function (Uploader) {
 
   describe('测试文件的上传', function(){
 
-
-    // uploader.get('queue').addItems(BUI.cloneObject(files));
-
-    // waits(100);
-    // it('测试success的回调', function(){
-    //   //runs(function(){
-    //     expect(successCallback).toHaveBeenCalled();
-    //   //});
-    // });
-    // it('测试complete的回调', function(){
-    //   runs(function(){
-    //     expect(completeCallback).toHaveBeenCalled();
-    //   });
-    // });
-    // it('测试回调执行的次数是否正确', function(){
-    //   runs(function(){
-    //     expect(successCallback.callCount).toBe(1);
-    //   })
-    // });
+    if(!!window.FormData){
+      uploader.get('queue').addItems(BUI.cloneObject(files));
+      waits(100);
+      it('测试success的回调', function(){
+        runs(function(){
+          expect(successCallback).toHaveBeenCalled();
+        });
+      });
+      it('测试complete的回调', function(){
+        runs(function(){
+          expect(completeCallback).toHaveBeenCalled();
+        });
+      });
+      it('测试回调执行的次数是否正确', function(){
+        runs(function(){
+          expect(successCallback.callCount).toBe(1);
+        })
+      });
+    }
   })
 
   describe('测试不进行自动上传', function(){
 
     uploader.set('autoUpload', false);
-    uploader.get('queue').addItems(BUI.cloneObject(files));
 
     it('添加的数量是否正确', function(){
+      uploader.get('queue').addItems(BUI.cloneObject(files));
       expect(uploader.get('queue').getItemsByStatus('add').length).toBe(1);
     })
-
-    uploader.set('autoUpload', true);
 
   //   waits(100);
   //   it('测试success的回调', function(){
