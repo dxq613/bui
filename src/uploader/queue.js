@@ -77,7 +77,7 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
       var _self = this,
         resultTpl = _self.get('resultTpl'),
         itemTpl = resultTpl[status] || resultTpl['default'],
-        tplData = BUI.mix({}, item.attr, item.result);
+        tplData = BUI.mix(item, item.result);
       item.resultTpl = BUI.substitute(itemTpl, tplData);
     },
     /**
