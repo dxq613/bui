@@ -594,9 +594,11 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
 		 */
 		toFront : function(){
 			this.get('el').toFront();
+			return this;
 		},
 		toBack : function(){
 			this.get('el').toBack();
+			return this;
 		},
 		/**
 		 * 移动
@@ -607,6 +609,7 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
 			var _self = this,
   			el = _self.get('el');
   		el.translate(dx,dy);
+			return this;
 		},
 		index : function(){
 			var _self = this,
@@ -622,12 +625,21 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
 		 */
 		animate : function(params,ms,easing,callback){
 			this.get('el').animate(params,ms,easing,callback);
+			return this;
 		},
 		/**
 		 * 停止当前动画
 		 */
 		stopAnimate : function(){
 			this.get('el').stop();
+			return this;
+		},
+		/**
+		 * 拖动方法
+		 */
+		drag : function(onmove, onstart, onend, mcontext, scontext, econtext){
+			this.get('el').drag(onmove, onstart, onend, mcontext, scontext, econtext)
+			return this;
 		}
 	});
 
@@ -1355,26 +1367,27 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
       }
     },
     animate : function(params,ms,easing,callback){
-      var _self = this;
-
+      var _self = this,
+        attrs = _self.get('attrs'),
+        path;
+          
       if(_self.get('el').type == 'image'){
         var radius = params.radius || _self.attr('radius');
         params.x = params.x - radius;
         params.y = params.y - radius;
+        BUI.mix(attrs,{
+          x : params.x,
+          y : params.y
+        });
         _self.get('el').animate(params,ms,easing,callback);
       }else{
-        var attrs = _self.get('attrs'),
-          path;
-          BUI.mix(attrs,{
-            x : params.x,
-            y : params.y
-          });
-          
-          path = _self._getPath(attrs);
-
+        BUI.mix(attrs,{
+          x : params.x,
+          y : params.y
+        });
+        path = _self._getPath(attrs);
         _self.get('el').animate({path : path},ms,easing,callback);
       }
-
     },
 
     /**
@@ -1386,12 +1399,17 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
         symbol = attrs.symbol,
         radius = attrs.radius || 5;
       if(symbol && symbol.indexOf('url') != -1){ //图片
-          attrs.type = 'image';
-          attrs.src = symbol.replace(/url\((.*)\)/,'$1');
-          attrs.width = attrs.radius * 2;
-          attrs.height = attrs.radius * 2;
+        attrs.type = 'image';
+        attrs.src = symbol.replace(/url\((.*)\)/,'$1');
+        attrs.width = attrs.radius * 2;
+        attrs.height = attrs.radius * 2;
+        if (Util.vml) {
+          attrs.x -= radius-1,
+          attrs.y -= radius-1;
+        } else {
           attrs.x -= radius,
           attrs.y -= radius;
+        }
       }else{
         attrs.type = 'path';
         attrs.path = _self._getPath(attrs);
@@ -1460,7 +1478,8 @@ define('bui/graphic/canvasitem',['bui/common'],function(require) {
 
   
   return Shape;
-});define('bui/graphic/group',['bui/common','bui/graphic/util','bui/graphic/container','bui/graphic/shape','bui/graphic/canvasitem','bui/graphic/raphael/group'],function(require) {
+});
+define('bui/graphic/group',['bui/common','bui/graphic/util','bui/graphic/container','bui/graphic/shape','bui/graphic/canvasitem','bui/graphic/raphael/group'],function(require) {
 
 	var Container = require('bui/graphic/container'),
 		Item = require('bui/graphic/canvasitem'),

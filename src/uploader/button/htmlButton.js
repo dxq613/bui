@@ -3,10 +3,11 @@
  * @fileoverview 文件上传按钮,使用input[type=file]
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(require) {
+define('bui/uploader/button/htmlButton', ['bui/uploader/file', 'bui/uploader/button/base'], function(require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
+    File = require('bui/uploader/file'),
     ButtonBase = require('bui/uploader/button/base'),
     UA = BUI.UA;
 
@@ -68,10 +69,10 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
         //IE取不到files
         if(oFiles){
           BUI.each(oFiles, function(v){
-            files.push(_self._getFile({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput}));
+            files.push(File.create({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput}));
           });
         }else{
-          files.push(_self._getFile({'name': value, input: fileInput}));
+          files.push(File.create({'name': value, input: fileInput}));
         }
         _self.fire('change', {
           files: files,

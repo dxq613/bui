@@ -220,7 +220,8 @@ define('bui/uploader/button/filter',['bui/common'], function(require){
       return type.join(',');
     }
   }
-});/**
+});
+/**
  * @ignore
  * @fileoverview 文件上传按钮的基类
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
@@ -775,7 +776,8 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
   });
 
   return SwfButton;
-});/**
+});
+/**
  * @fileoverview 上传方式类的基类
  * @ignore
  **/
@@ -912,7 +914,8 @@ define('bui/uploader/type/base',['bui/common'], function(require) {
   });
 
   return UploadType;
-});/**
+});
+/**
  * @fileoverview ajax方案上传
  * @author
  * @ignore
@@ -1083,7 +1086,8 @@ define('bui/uploader/type/ajax', ['./base'], function(require) {
     }
     });
     return AjaxType;
-});/**
+});
+/**
  * @ignore
  * @fileoverview flash上传方案
  * @author 
@@ -1279,7 +1283,8 @@ define('bui/uploader/type/flash',['./base'], function (require) {
         }
     }});
     return FlashType;
-});/**
+});
+/**
  * @fileoverview iframe方案上传
  * @ignore
  **/
@@ -1508,7 +1513,8 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
     }});
 
     return IframeType;
-});/**
+});
+/**
  * @ignore
  * @fileoverview 文件上传队列列表显示和处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
@@ -1663,7 +1669,8 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
   });
   return Queue;
 
-});/**
+});
+/**
  * @ignore
  * @fileoverview 文件上传主题的处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
@@ -1743,7 +1750,8 @@ define('bui/uploader/theme',['bui/common'], function (require) {
 
   return Theme;
 
-});/**
+});
+/**
  * @ignore
  * @fileoverview 异步文件上传的验证器
  * @author 索丘 zengyue.yezy@alibaba-inc.com
@@ -1886,7 +1894,8 @@ define('bui/uploader/validator',['bui/common'], function (require) {
 
   return Validator;
 
-});/**
+});
+/**
  * @fileoverview 文件上传的工厂类
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
  * @ignore
@@ -1952,7 +1961,8 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
 
   return new Factory();
 
-});/**
+});
+/**
  * @ignore
  * @fileoverview 异步文件上传组件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
@@ -2302,7 +2312,6 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     },
     /**
      * 上传所有新添加的文件
-     * @return {[type]} [description]
      */
     upload: function(){
       var _self = this,
@@ -2421,7 +2430,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
        *
        * <pre><code>
        * filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
-       * </pre></code>
+       * </code></pre>
        *
        */
       filter: {
@@ -2584,7 +2593,8 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
 
   return Uploader;
 
-});/**
+});
+/**
  * @fileoverview 异步文件上传组件入口文件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  * @ignore

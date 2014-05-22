@@ -1,10 +1,10 @@
 (function(){
   var requires = ['bui/util','bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'];
-  if(window.KISSY && !window.KISSY.Node){ //如果是kissy同时未加载core模块
+  if(window.KISSY && (!window.KISSY.Node || !window.jQuery)){ //如果是kissy同时未加载core模块
     requires.unshift('bui/adapter');
   }
   define('bui/common',requires,function(require){
-    if(window.KISSY && !window.KISSY.Node){
+    if(window.KISSY && (!window.KISSY.Node || !window.jQuery)){
       require('bui/adapter');
     }
     var BUI = require('bui/util');
@@ -114,7 +114,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {Number}
              */
-            subVersion : 80,
+            subVersion : 93,
 
             /**
              * 是否为函数
@@ -723,7 +723,8 @@ define('bui/util',function(require){
     };
 
     return BUI;
-});/**
+});
+/**
  * @fileOverview 数组帮助类
  * @ignore
  */
@@ -1218,6 +1219,9 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 暂停事件的执行
+     * <pre><code>
+     *  list.pauseEvent('itemclick');
+     * </code></pre>
      * @param  {String} eventType 事件类型
      */
     pauseEvent : function(eventType){
@@ -1227,6 +1231,9 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * 唤醒事件
+     * <pre><code>
+     *  list.resumeEvent('itemclick');
+     * </code></pre>
      * @param  {String} eventType 事件类型
      */
     resumeEvent : function(eventType){
@@ -1293,7 +1300,12 @@ define('bui/observable',['bui/util'],function (r) {
       var _self = this,
         callbacks = _self._getCallbacks(eventType);
       if(callbacks){
-        callbacks.remove(fn);
+        if(fn){
+          callbacks.remove(fn);
+        }else{
+          callbacks.empty();
+        }
+        
       }
       return _self;
     },
@@ -4149,7 +4161,7 @@ define('bui/component/uibase/autoshow',function () {
      * @type {Object}
      */
     triggerActiveCls : {
-
+      
     },
     /**
      * 控件显示时由此trigger触发，当配置项 trigger 选择器代表多个DOM 对象时，
@@ -4267,6 +4279,9 @@ define('bui/component/uibase/autoshow',function () {
 
       //触发显示
       function tiggerShow (ev) {
+        if(_self.get('disabled')){ //如果禁用则中断
+          return;
+        }
         var prevTrigger = _self.get('curTrigger'),
           curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
           align = _self.get('align');
@@ -5988,6 +6003,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     FIELD_CFG = FIELD_PREFIX + 'cfg',
     PARSER = 'PARSER',
     Manager = require('bui/component/manage'),
+    RE_DASH_WORD = /-([a-z])/g,
     regx = /^[\{\[]/;
 
   function isConfigField(name,cfgFields){
@@ -6012,12 +6028,30 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       return constructorChains;
   }
 
+  function camelCase(str) {
+    return str.toLowerCase().replace(RE_DASH_WORD, function(all, letter) {
+      return (letter + '').toUpperCase()
+    })
+  }
+
   //如果属性为对象或者数组，则进行转换
   function parseFieldValue(value){
+
     value = $.trim(value);
-    if(regx.test(value)){
-      value = JSON.looseParse(value);
+    if (value.toLowerCase() === 'false') {
+      value = false
     }
+    else if (value.toLowerCase() === 'true') {
+      value = true
+    }else if(regx.test(value)){
+      value = JSON.looseParse(value);
+    }else if (/\d/.test(value) && /[^a-z]/i.test(value)) {
+      var number = parseFloat(value)
+      if (number + '' === value) {
+        value = number
+      }
+    }
+    
     return value;
   }
 
@@ -6188,8 +6222,13 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
               BUI.mix(config,cfg);
           }
           else if(isConfigField(name,decorateCfgFields)){
-            name = name.replace(FIELD_PREFIX,'');
-            var value = parseFieldValue(attr.nodeValue);
+            var value = attr.nodeValue;
+            if(name.indexOf(FIELD_PREFIX) !== -1){
+              name = name.replace(FIELD_PREFIX,'');
+              name = camelCase(name);
+              value = parseFieldValue(value);
+            }
+            
             if(config[name] && BUI.isObject(value)){
               BUI.mix(config[name],value);
             }else{
@@ -8053,6 +8092,9 @@ define('bui/component/uibase/bindable',function(){
 			store.on('localsort',function(e){
 				_self.onLocalSort(e);
 			});
+			store.on('filtered',function(e){
+				_self.onFiltered(e);
+			});
 		},
 		__syncUI : function(){
 			var _self = this,
@@ -8133,6 +8175,15 @@ define('bui/component/uibase/bindable',function(){
 		*/
 		onLocalSort : function(e){
 			
+		},
+		/**
+		* @protected
+    * @template
+		* after filter data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-filtered}
+		*/
+		onFiltered : function(e){
 		}
 	});
 
@@ -8818,7 +8869,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @default null
      */
     params : {
-
+        
     },
     /**
      * 附加参数，每次请求都带的参数
@@ -8994,6 +9045,10 @@ define('bui/component/loader',['bui/util'],function (require) {
         callback = _self.get('callback'),
         renderer = _self.get('renderer'),
         target = _self.get('target');
+
+      if(BUI.isString(data)){
+        target.set(property,'');//防止2次返回的数据一样
+      }
       target.set(property,renderer.call(_self,data));
 
       /**/

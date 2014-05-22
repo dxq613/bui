@@ -4,7 +4,7 @@
  */
 
 define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],function (require) {
-	
+
 	var BUI = require('bui/common'),
 		PlotItem = require('bui/chart/plotitem'),
 		Util = require('bui/graphic').Util;
@@ -135,7 +135,12 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		},
 		items : [
 
-		]
+		],
+		crossLine:{
+			value: {
+				stroke: "#C0C0C0"
+			}
+		}
 	};
 
 	BUI.extend(Tooltip,PlotItem);
@@ -151,7 +156,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 			_self._renderText();
 			_self._renderItemGroup();
 			_self._renderCrossLine();
-			
+
 		},
 		//渲染边框
 		_renderBorer : function(){
@@ -195,7 +200,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 					visible : false,
 					zIndex : 3,
 					attrs : {
-						stroke : '#C0C0C0',
+						stroke : _self.get('crossLine').stroke,
 						x1 : 0,
 						y1 : plotRange.bl.y,
 						x2 : 0,
@@ -271,7 +276,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 			var hideHandler = setTimeout(function(){
 				Tooltip.superclass.hide.call(_self);
 				_self.set('hideHandler',null);
-			},500);
+			},_self.get('duration'));
 			_self.set('hideHandler',hideHandler);
 			crossShape && crossShape.hide();
 		},
@@ -323,7 +328,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 						y : y
 					},_self.get('duration'));
 				}
-				
+
 				_self.move(x,y);/**/
 
 				if(crossShape){
@@ -387,7 +392,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		  	itemValue = valueSuffix ? item.value + ' ' + valueSuffix : item.value;
 		  	addValue(itemValue);
 		  }
-		  	
+
 		  function addValue (text,params){
 		  	var cfg = BUI.merge(value,{
 					x : width,
@@ -396,7 +401,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 				},params);
 			  return group.addShape('text',cfg);
 		  }
-		  
+
 
 		},
 		/**
@@ -405,7 +410,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		 * - name : 序列的标题
 		 * - value : 序列的值
 		 * - color : 序列的颜色
-		 * 
+		 *
 		 * @param {Array} items 信息列表
 		 */
 		setItems : function(items){

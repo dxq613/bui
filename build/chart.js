@@ -1086,7 +1086,10 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 				children = _self.get('children'),
 				xCache = [];
 			
-
+			// 假如是single模式,就不change
+			if (_self.get('single')) {
+				return ;
+			}
 			_self.set('items',items);
 
 			BUI.each(items,function(item,index){
@@ -1177,7 +1180,8 @@ define('bui/chart/markers',['bui/chart/plotitem','bui/graphic','bui/chart/active
 	});
 
 	return Markers;
-});/**
+});
+/**
  * @fileOverview 坐标系内部区域,用于显示背景
  * @ignore
  */
@@ -1608,43 +1612,41 @@ define('bui/chart/theme',function (requrie) {
    * @param {Object} cfg  样式的配置项
    * @param {Object} base 扩展的样式
    */
-  var Theme = function(cfg,base){
+  var Theme = function(base,cfg){
 
-    Theme.initTheme(cfg,base);
-    return cfg;
+    return Theme.initTheme(base,cfg);
   };
 
-  Theme.initTheme = function(cfg,base){
-    BUI.mix(true,cfg,base);
+  Theme.initTheme = function(base,cfg){
+    return BUI.mix(true,{},base,cfg);
   };
 
   var lineCfg = {
-        duration : 1000,
-        line : {
-          'stroke-width': 2,
-          'stroke-linejoin': 'round',
-          'stroke-linecap': 'round'
-        },
-        lineActived : {
-          'stroke-width': 3
-        },
-        markers : {
-          marker : {
-            radius : 3
-          },
-          actived : {
-            radius : 6,
-            stroke: '#fff'
-          }
-        },
-        animate : true
-      };
-  Theme.Base = Theme({
-    colors : [ '#5e90c9','#1c2d3f','#a9d052','#a12d2d','#43bbb4','#5a2a94','#fabe3c','#2279dc','#e360e5','#48000c'],
-    //['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
-    symbols : ['circle','diamond','square','triangle','triangle-down'],
+    duration : 1000,
+    line : {
+      'stroke-width': 2,
+      'stroke-linejoin': 'round',
+      'stroke-linecap': 'round'
+    },
+    lineActived : {
+      'stroke-width': 3
+    },
+    markers : {
+      marker : {
+        radius : 3
+      },
+      actived : {
+        radius : 6,
+        stroke: '#fff'
+      }
+    },
+    animate : true
+  };
+
+  Theme.Origin = Theme({
+    // colors : [ '#5e90c9','#1c2d3f','#a9d052','#a12d2d','#43bbb4','#5a2a94','#fabe3c','#2279dc','#e360e5','#48000c'],
     plotCfg : {
-      margin : [50,50,100]
+      margin : [50]
     },
     title : {
       'font-size' : '16px',
@@ -1700,8 +1702,6 @@ define('bui/chart/theme',function (requrie) {
       },
       pieCfg : {
         colors : [ '#5e90c9','#1c2d3f','#a9d052','#a12d2d','#43bbb4','#5a2a94','#fabe3c','#2279dc','#e360e5','#48000c'],
-        //['#2f7ed8','#0d233a','#8bbc21','#910000','#1aadce','#492970','#f28f43','#77a1e5','#c42525','#a6c96a'],
-        //[ '#ff6600','#b01111','#ac5724','#572d8a','#333333','#7bab12','#c25e5e','#a6c96a','#133960','#2586e7'],
         item : {
           stroke : '#fff'
         },
@@ -1710,27 +1710,168 @@ define('bui/chart/theme',function (requrie) {
           label : {
 
           }
-         }
+        }
       }
-      
+
     },
     tooltip : {
-      offset : 10
-    }
 
-  },{
+    }
 
   });
 
+  // 所有的基础样式.由于深度继承,所以数组类的自己覆盖
+  Theme.Base = Theme.initTheme(Theme.Origin, {
+    colors : [ '#5e90c9','#1c2d3f','#a9d052','#a12d2d','#43bbb4','#5a2a94','#fabe3c','#2279dc','#e360e5','#48000c'],
+    symbols : ['circle','diamond','square','triangle','triangle-down'],
+    plotCfg : {
+      margin : [50,50,100]
+    },
+    seriesOptions : {
+      pieCfg : {
+        colors : [ '#5e90c9','#1c2d3f','#a9d052','#a12d2d','#43bbb4','#5a2a94','#fabe3c','#2279dc','#e360e5','#48000c']
+      }
+    }
+  });
+
+
+
+
+
+  // smooth风格的基础样式,色系分布均为6种.
+  Theme.SmoothBase = Theme.initTheme(Theme.Origin, {
+    title : {
+      'fill' : '#444'
+    },
+    subTitle : {
+      'fill' : '#999'
+    },
+    xAxis : {
+      line : {
+        'stroke-width' : 1,
+        'stroke' : '#a7a7a7'
+      },
+      tickLine : {
+        'stroke' : '#a7a7a7',
+        'stroke-width' : 1,
+        value : 5
+      },
+      labels : {
+        label : {
+          y : 12,
+          fill: "#444"
+        }
+      }
+    },
+    yAxis : {
+      grid : {
+        line : {
+          stroke : '#a7a7a7',//c9c3bb
+          // "stroke-linecap" : "round",
+          "stroke-dasharray" : "."
+        }
+      },
+      title : {
+        text : '',
+        rotate : -90,
+        x : -30,
+        fill : "#444"
+      },
+      position:'left',
+      labels : {
+        label : {
+          x : -12,
+          fill: "#444"
+        }
+      }
+    },
+    plotCfg : {
+      margin : [50,50,100]
+    },
+    colors : [ '#00a3d7','#6ebb46','#f6c100','#ff6a00','#e32400','#423ba8'],
+    symbols : ['circle','diamond','square','triangle','triangle-down'],
+    seriesOptions : {
+      pieCfg : {
+        colors : [ '#00a3d7','#6ebb46','#f6c100','#ff6a00','#e32400','#423ba8']
+      }
+    },
+    tooltip: {
+      offset : 10,
+      title : {
+        'font-size' : '10',
+        'text-anchor' : 'start',
+        x : 5,
+        y : 15,
+        fill:"#444"
+      },
+      value : {
+        'font-size' : '12',
+        'font-weight' :'normal',
+        'text-anchor' : 'start',
+        fill:"#444"
+      },
+      crossLine : {
+        stroke : "#a7a7a7"
+      }
+    }
+  });
+
+
+  Theme.Smooth1 = Theme.initTheme(Theme.SmoothBase)
+
+  Theme.Smooth2 = Theme.initTheme(Theme.SmoothBase, {
+    colors : [ '#7179cb','#4dceff','#79c850','#ffb65d','#fc694b','#9a9792'],
+    seriesOptions : {pieCfg : {
+      colors : [ '#7179cb','#4dceff','#79c850','#ffb65d','#fc694b','#9a9792']
+    }}
+  })
+
+  Theme.Smooth3 = Theme.initTheme(Theme.SmoothBase, {
+    colors : [ '#40a00e','#444444','#85cc82','#5e5e64','#60b336','#89847f'],
+    seriesOptions : {pieCfg : {
+      colors : [ '#40a00e','#444444','#85cc82','#5e5e64','#60b336','#89847f']
+    }}
+  })
+
+  Theme.Smooth4 = Theme.initTheme(Theme.SmoothBase, {
+    colors : [ '#e1c673','#c49756','#8c6c42','#595348','#c86c4b','#7c4f34'],
+    seriesOptions : {pieCfg : {
+      colors : [ '#e1c673','#c49756','#8c6c42','#595348','#c86c4b','#7c4f34']
+    }}
+  })
+
+  Theme.Smooth5 = Theme.initTheme(Theme.SmoothBase, {
+    colors : [ '#89847f','#aea9a2','#606060','#232323','#d8d2c7','#444444'],
+    seriesOptions : {pieCfg : {
+      colors : [ '#89847f','#aea9a2','#606060','#232323','#d8d2c7','#444444']
+    }}
+  })
+
+  Theme.Smooth6 = Theme.initTheme(Theme.SmoothBase, {
+    colors : [ '#ff9d40','#89847f','#ff8127','#b4aea7','#ffba66','#606060'],
+    seriesOptions : {pieCfg : {
+      colors : [ '#ff9d40','#89847f','#ff8127','#b4aea7','#ffba66','#606060']
+    }}
+  })
+
+  Theme.Smooth7 = Theme.initTheme(Theme.SmoothBase, {
+    colors : [ '#25b0dd','#7fdcff','#30b2c8','#5dc5ee','#266796','#258bca'],
+    seriesOptions : {pieCfg : {
+      colors : [ '#25b0dd','#7fdcff','#30b2c8','#5dc5ee','#266796','#258bca']
+    }}
+  })
+
+
 
   return Theme;
-});/**
+});
+/**
  * @fileOverview 提示信息
  * @ignore
  */
 
 define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],function (require) {
-	
+
 	var BUI = require('bui/common'),
 		PlotItem = require('bui/chart/plotitem'),
 		Util = require('bui/graphic').Util;
@@ -1861,7 +2002,12 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		},
 		items : [
 
-		]
+		],
+		crossLine:{
+			value: {
+				stroke: "#C0C0C0"
+			}
+		}
 	};
 
 	BUI.extend(Tooltip,PlotItem);
@@ -1877,7 +2023,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 			_self._renderText();
 			_self._renderItemGroup();
 			_self._renderCrossLine();
-			
+
 		},
 		//渲染边框
 		_renderBorer : function(){
@@ -1921,7 +2067,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 					visible : false,
 					zIndex : 3,
 					attrs : {
-						stroke : '#C0C0C0',
+						stroke : _self.get('crossLine').stroke,
 						x1 : 0,
 						y1 : plotRange.bl.y,
 						x2 : 0,
@@ -1997,7 +2143,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 			var hideHandler = setTimeout(function(){
 				Tooltip.superclass.hide.call(_self);
 				_self.set('hideHandler',null);
-			},500);
+			},_self.get('duration'));
 			_self.set('hideHandler',hideHandler);
 			crossShape && crossShape.hide();
 		},
@@ -2049,7 +2195,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 						y : y
 					},_self.get('duration'));
 				}
-				
+
 				_self.move(x,y);/**/
 
 				if(crossShape){
@@ -2113,7 +2259,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		  	itemValue = valueSuffix ? item.value + ' ' + valueSuffix : item.value;
 		  	addValue(itemValue);
 		  }
-		  	
+
 		  function addValue (text,params){
 		  	var cfg = BUI.merge(value,{
 					x : width,
@@ -2122,7 +2268,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 				},params);
 			  return group.addShape('text',cfg);
 		  }
-		  
+
 
 		},
 		/**
@@ -2131,7 +2277,7 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 		 * - name : 序列的标题
 		 * - value : 序列的值
 		 * - color : 序列的颜色
-		 * 
+		 *
 		 * @param {Array} items 信息列表
 		 */
 		setItems : function(items){
@@ -2168,7 +2314,8 @@ define('bui/chart/tooltip',['bui/common','bui/graphic','bui/chart/plotitem'],fun
 
 	return Tooltip;
 
-});/**
+});
+/**
  * @fileOverview 抽象的坐标轴
  * @ignore
  */
@@ -2827,6 +2974,10 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
             var _self = this,
                 tickOffset = _self.get('tickOffset'),
                 directfactor;
+            
+            if(typeof tickOffset !== "number"){
+              tickOffset = tickOffset[0];
+            }
             if(tickOffset){
                 directfactor = _self._getDirectFactor();
                 if(offset == 0){
@@ -2952,15 +3103,22 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
                 offset = _self.get('tickOffset'),
                 end = _self.get('end'),
                 length;
+
+            if(typeof offset !== "number"){
+              offset = offset[0] + offset[1];
+            }else{
+              offset = offset * 2;
+            }
+
             if(_self.isVertical()){
                 length = end.y - start.y;
             }else{
                 length = end.x - start.x;
             }
             if(length > 0){
-                length = length - offset * 2;
+                length = length - offset;
             }else{
-                length = length + offset * 2;
+                length = length + offset;
             }
             return length;
         },
@@ -3000,7 +3158,11 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
                 tickShape = _self.get('tickShape'),
                 tickItems = _self.get('tickItems'),
                 path = '';
+            
             if(!tickShape){
+                if(tickItems && tickItems.length){
+                    _self._renderTicks();
+                }
                 return;
             }
             BUI.each(tickItems,function(item){
@@ -3123,7 +3285,8 @@ define('bui/chart/baseaxis',['bui/common','bui/graphic','bui/chart/abstractaxis'
     });
 
     return Axis;
-});/**
+});
+/**
  * @fileOverview 自动计算坐标轴的坐标点、起始点，间距等信息
  * @ignore
  */
@@ -5614,6 +5777,11 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       var _self = this,
         group = _self.get('group'),
         cfg;
+
+      // 假如出现断点,point.value为空.则不处理
+      if(point.value == null){
+        return ;
+      }
       if(index == null){
         index = _self.getItems().length;
       }
@@ -5872,7 +6040,8 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
 
 
   return Group;
-});/**
+});
+/**
  * @fileOverview 在x,y坐标轴中渲染的数据序列
  * @ignore
  */
@@ -6267,7 +6436,7 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
         var line = _self.get('line'),
           markers = _self.get('markers');
         trySet(line,'stroke',color);
-        if(markers){
+        if(markers && !/http/.test(markers.marker.symbol)){
           trySet(markers.marker,'stroke',color);
           trySet(markers.marker,'fill',color);
         }
@@ -6494,10 +6663,12 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
       var _self = this,
         tolerance = _self.get('tolerance'),
         first = points[0],
-        path = 'M' + (points[0].x - tolerance) + ' ' + points[0].y;
+        path = 'M' + (points[0].x - tolerance) + ' ' + (points[0].y || 0);
       BUI.each(points,function(item,index){
-        var str = 'L{x} {y}';
-        path += BUI.substitute(str,item);
+        if (item.value != null) {
+          var str = 'L{x} {y}';
+          path += BUI.substitute(str,item);
+        }
       });
       if(_self.isInCircle()){
         path += 'z';
@@ -6545,7 +6716,8 @@ define('bui/chart/lineseries',['bui/chart/cartesianseries','bui/graphic'],functi
   });
 
   return Line;
-});/**
+});
+/**
  * @fileOverview 区域图序列
  * @ignore
  */
@@ -8172,9 +8344,15 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
         y2 = cy + r * Math.sin(endAngle * RAD);
 
       //不存在内部圆
-      if(!ir){
-        path =  ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(endAngle - startAngle > 180), 1, x2, y2, "z"];
-      }else{
+      if (!ir) {
+        if (endAngle - startAngle == 360) {
+          // 如果只有一个图形100%.
+          path = [['M', cx, cy - r], ['a', r, r, 0, 1, 1, 0, 2 * r], ['a', r, r, 0, 1, 1, 0, -2 * r], ['z']];
+        } else {
+          path =  ["M", cx, cy, "L", x1, y1, "A", r, r, 0, +(endAngle - startAngle > 180), 1, x2, y2, "z"];
+        }
+      } else {
+        // 圆环
         var ix1 = cx + ir * Math.cos(startAngle * RAD),
           ix2 = cx + ir * Math.cos(endAngle * RAD),
           iy1 = cy + ir * Math.sin(startAngle * RAD),
@@ -8182,12 +8360,30 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
 
         path = [];
 
-        path.push(['M',ix1,iy1]);
-        path.push(['L',x1, y1]);
-        path.push(["A", r, r, 0, +(endAngle - startAngle > 180), 1, x2, y2]);
-        path.push(['L',ix2,iy2]);
-        path.push(['A',ir,ir,0,+(endAngle - startAngle > 180),0,ix1,iy1]);
-        path.push(['z']);
+        if (endAngle - startAngle == 360) {
+          // 如果只有一个图形100%.
+          // path = [['M', cx, cy - r], ['a', r, r, 0, 1, 1, 0, 2 * r], ['a', r, r, 0, 1, 1, 0, -2 * r], ['z']];
+          path.push(['M', cx, cy - r]);
+          path.push(["a", r, r, 0, 1, 1, 0, 2 * r]);
+          path.push(["a", r, r, 0, 1, 1, 0, -2 * r]);
+          // 这里如果用L就会有一根白线.
+          path.push(['M', cx, cy - ir]);
+          path.push(["a", ir, ir, 0, 1, 0, 0, 2 * ir]);
+          path.push(["a", ir, ir, 0, 1, 0, 0, -2 * ir]);
+          path.push(['z']);
+        } else {
+          path.push(['M',ix1,iy1]);
+          path.push(['L',x1, y1]);
+          path.push(["A", r, r, 0, +(endAngle - startAngle > 180), 1, x2, y2]);
+          path.push(['L',ix2,iy2]);
+          path.push(['A',ir,ir,0,+(endAngle - startAngle > 180),0,ix1,iy1]);
+          path.push(['z']);
+        }
+
+        
+
+
+
       }
       return path;
     },
@@ -8238,7 +8434,8 @@ define('bui/chart/pieseries',['bui/common','bui/graphic','bui/chart/baseseries',
   });
 
   return Pie;
-});/**
+});
+/**
  * @fileOverview 数据序列的入口文件
  * @ignore
  */
@@ -8315,7 +8512,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       value : ['circle','diamond','square','triangle','triangle-down']
     },
     /**
-     * 序列图的统一配置项，不同的序列图有不同的配置项例如： 
+     * 序列图的统一配置项，不同的序列图有不同的配置项例如：
      *
      *  - lineCfg : 折线图的配置项
      *  - columnCfg : 柱状图的配置项
@@ -8391,14 +8588,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
 
   BUI.augment(Group,{
 
-    
+
     //渲染控件
     renderUI : function(){
       var _self = this;
       Group.superclass.renderUI.call(_self);
       //_self._renderTracer();
       _self._renderLegend();
-      
+
       _self._renderSeries();
       _self._renderAxis();
       _self._addSeriesAxis();
@@ -8418,9 +8615,27 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
     //绑定鼠标在画板上移动事件
     bindCanvasEvent : function(){
       var _self = this,
+        triggerEvent = _self.get('tipGroup').get('triggerEvent'),
         canvas = _self.get('canvas');
-      canvas.on('mousemove',BUI.wrapBehavior(_self,'onCanvasMove'));
-      canvas.on('mouseout',BUI.wrapBehavior(_self,'onMouseOut'));
+
+      if (triggerEvent == 'click') {
+        function __documentClick(ev){
+          if(!$.contains(canvas.get('node'), ev.target)&&canvas.get('node') != ev.target){
+            _self.onTriggerOut(ev);
+            $(document).off('click', __documentClick);
+          }
+        }
+        canvas.on('click',function(ev){
+          _self.onCanvasMove(ev);
+          setTimeout(function(){
+            $(document).off('click', __documentClick).on('click', __documentClick);
+          })
+        });
+
+      } else {
+        canvas.on('mousemove',BUI.wrapBehavior(_self,'onCanvasMove'));
+        canvas.on('mouseout',BUI.wrapBehavior(_self,'onMouseOut'));
+      }
     },
     //处理鼠标在画板上移动
     onCanvasMove : function(ev){
@@ -8441,18 +8656,13 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         _self.onMouseOut();
       }
     },
-    
-    onMouseOut : function(ev){
+    // 处理隐藏tip事件
+    onTriggerOut : function(ev){
       var _self = this,
         tipGroup = _self.get('tipGroup');
-      if(ev && ev.target != _self.get('canvas').get('none')){
-        return;
-      }
       _self.clearActivedItem();
-
       //标志从显示到隐藏
       if(tipGroup.get('visible')){
-        
         if(tipGroup.get('shared')){
           BUI.each(_self.getVisibleSeries(),function(series){
             var markers = series.get('markersGroup');
@@ -8461,6 +8671,15 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         }
         _self._hideTip();
       }
+    },
+
+    onMouseOut : function(ev){
+      var _self = this;
+      if(ev && ev.target != _self.get('canvas').get('none')){
+        return;
+      }
+      _self.onTriggerOut(ev);
+
     },
     /**
      * 获取所有的数据序列
@@ -8494,7 +8713,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         if(tipInfo.items.length){
           _self._showTooltip(tipInfo.title,tipInfo.point,tipInfo.items);
         }
-        
+
       }
     },
     //获取显示tooltip的内容
@@ -8509,7 +8728,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         var info = series.getTrackingInfo(point),
             item = {},
             title;
-        
+
         if(info){
           if(series.get('visible')){
             count = count + 1;
@@ -8544,7 +8763,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
               rst.point.x = point.x;
               rst.point.y = point.y;
             }
-            
+
           }
         }
       });
@@ -8639,7 +8858,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         _self.set('yAxis',yAxis);
       }
 
-      
+
     },
     //创建坐标轴
     _createAxis : function(axis){
@@ -8699,15 +8918,15 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           }
           autoUtil = Axis.Auto.Time;
         }
-        
+
         interval = axis.getCfgAttr('tickInterval');
-      
+
       series = _self.getSeries();
 
       var cfg = {
         min : min,
         max : max,
-        
+
         interval: interval
       };
       if(name == 'yAxis'){
@@ -8729,7 +8948,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           ticks : []
         };
       }
-      
+
 
       return rst;
 
@@ -8775,7 +8994,7 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           if(arr.length){
             data.push(arr);
           }
-          
+
         }
       });
 
@@ -8807,15 +9026,21 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         arr = stackedData;
       }else{
         data = _self.getSeriesData(axis,name);
-        first = data[0];
+        first = data[0],
+        min = null;
 
         BUI.each(first,function(value,index){
           var temp = value;
           for(var i = 1 ; i< data.length; i++){
-            temp += data[i][index];
+            var val = data[i][index];
+            temp += val;
+            if(min == null || val < min){
+              min = val;
+            }
           }
           arr.push(temp);
         });
+        arr.push(min);
         _self.set('stackedData',arr);
       }
 
@@ -8837,14 +9062,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           if(item.get('autoTicks')){
             var info = _self._caculateAxisInfo(item,name);
             item.changeInfo(info);
-            
+
           }
-          
+
           item.paint();
         }
-        
+
       });
-      
+
     },
     //是否存在关联的数据序列
     _hasRelativeSeries : function(axis,name){
@@ -8869,13 +9094,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }
       type = type || 'yAxis';
 
+      this.set('stackedData',null);
+
       var _self = this,
         info = _self._caculateAxisInfo(axis,type),
         series = _self.getSeries();
 
-      _self.set('stackedData',null);
       //如果是非自动计算坐标轴，不进行重新计算
-      
+
       axis.change(info);
     },
     _resetSeries : function(){
@@ -9017,18 +9243,21 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
           item.set('yAxis',yAxis[item.get('yAxis')]);
         }
       });
-      
+
     },
     /**
      * 显示series
      * @param  {BUI.Chart.Series} series 数据序列对象
      */
     showSeries : function(series){
-      var _self = this;
+      var _self = this,
+        yAxis = _self.get('yAxis');
       if(!series.get('visible')){
         series.show();
-        _self._resetAxis(series.get('yAxis'));
-        _self._resetSeries();
+        if(yAxis){
+          _self._resetAxis(yAxis);
+          _self._resetSeries();
+        }
       }
     },
     /**
@@ -9036,11 +9265,14 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
      * @param  {BUI.Chart.Series} series 数据序列对象
      */
     hideSeries : function(series){
-      var _self = this;
+      var _self = this,
+        yAxis = _self.get('yAxis');
       if(series.get('visible')){
         series.hide();
-        _self._resetAxis(series.get('yAxis'));
-        _self._resetSeries();
+        if(yAxis){
+          _self._resetAxis(yAxis);
+          _self._resetSeries();
+        }
       }
     },
     _addLegendItem : function(series){
@@ -9075,9 +9307,9 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         }else{
           item.data = data;
         }
-        
+
       }
-      
+
       return item;
     },
     //根据类型获取构造函数
@@ -9098,7 +9330,8 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
   });
 
   return Group;
-});/**
+});
+/**
  * @fileOverview 图表控件
  * @ignore
  */

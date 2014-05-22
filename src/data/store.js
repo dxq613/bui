@@ -526,6 +526,10 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
         _self.load({start:0});
       }else{
         _self._setResult(data);
+        //如果有filter则进行过滤
+        if(_self.get('filter')){
+          _self.filter();
+        }
       }
     },
 
@@ -896,6 +900,11 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }
 
       _self.fire('load',{ params : params });
+
+      //如果有本地过滤，则本地过滤
+      if(!_self.get('remoteFilter') && _self.get('filter')){
+        _self.filter(_self.get('filter'));
+      }
     },
     //设置结果集
     _setResult : function(rows,totalCount){

@@ -3,10 +3,11 @@
  * @fileoverview 异步文件上传组件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/uploader', ['bui/common', './theme', './factory', './validator'], function (require) {
+define('bui/uploader/uploader', ['bui/common', './file', './theme', './factory', './validator'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
+    File = require('bui/uploader/file'),
     Theme = require('bui/uploader/theme'),
     Factory = require('bui/uploader/factory'),
     Validator = require('bui/uploader/validator');
@@ -203,6 +204,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     _bindQueue: function () {
       var _self = this,
         queue = _self.get('queue'),
+        button = _self.get('button'),
         validator = _self.get('validator');
 
       //渲染完了之后去设置文件状态，这个是会在添加完后触发的
@@ -211,9 +213,16 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
           //如果文件已经存在某一状态，则不再去设置add状态
           status = queue.status(item) || 'add';
 
+
+        //如果是通过回显的方式添加进来的
+        if(!item.attr){
+          item = File.create(item);
+        }
+
         if(!validator.valid(item)){
           status = 'error';
         }
+
         queue.updateFileStatus(item, status);
 
         if(_self.get('autoUpload')){
@@ -348,7 +357,6 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     },
     /**
      * 上传所有新添加的文件
-     * @return {[type]} [description]
      */
     upload: function(){
       var _self = this,
@@ -490,7 +498,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
        *
        * <pre><code>
        * filter: {ext:".jpg,.jpeg,.png,.gif,.bmp"}
-       * </pre></code>
+       * </code></pre>
        *
        */
       filter: {

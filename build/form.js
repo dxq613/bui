@@ -281,6 +281,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     Valid = require('bui/form/valid'),
     Remote = require('bui/form/remote'),
     CLS_FIELD_ERROR = BUI.prefix + 'form-field-error',
+    CLS_TIP_CONTAINER = 'bui-form-tip-container',
     DATA_ERROR = 'data-error';
 
   /**
@@ -389,7 +390,9 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       _self.on('afterRenderUI',function(){
         var tip = _self.get('tip');
         if(tip){
-          tip.trigger = _self.getTipTigger();
+          var trigger = _self.getTipTigger();
+          trigger && trigger.addClass(CLS_TIP_CONTAINER);
+          tip.trigger = trigger;
           tip.autoRender = true;
           tip = new TipItem(tip);
           _self.set('tip',tip);
@@ -1164,8 +1167,13 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   }
 
   function appendItem(value,text,select){
-     var str = '<option value="' + value +'">'+text+'</option>'
-    $(str).appendTo(select);
+    // var str = '<option value="' + value +'">'+text+'</option>'
+    // $(str).appendTo(select);
+    
+    // 上面那种写法在ie6下会报一个奇怪的错误，使用new Option则不会有这个问题
+    var option = new Option(text, value),
+      options = select[0].options;
+    options[options.length] = option;
   }
   /**
    * 表单选择域
@@ -1362,7 +1370,8 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   });
 
   return selectField;
-});/**
+});
+/**
  * @fileOverview 表单日历域
  * @author dxq613@gmail.com
  * @ignore
@@ -1593,7 +1602,7 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     },
     //覆盖 设置值的方法
     _uiSetValue : function(v){
-
+      this.setControlValue(v);
     },
     //覆盖不设置宽度
     _uiSetWidth : function(v){
@@ -2561,7 +2570,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
             if(item.field){
               item.clearErrors(reset);
             }else{
-              item.clearErrors(deep,reset);
+              item.clearErrors(reset,deep);
             }
           }
         });
@@ -2688,7 +2697,20 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   GroupValid.ATTRS = ATTRS =BUI.merge(true,Valid.ATTRS,{
     events: {
       value : {
+        /**
+         * @event
+         * 验证结果发生改变，从true变成false或者相反
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.target 触发事件的子控件
+         * @param {Boolean} ev.valid 是否通过验证
+         */
         validchange : true,
+        /**
+         * @event
+         * 值改变，仅当通过验证时触发
+         * @param {Object} ev 事件对象
+         * @param {Object} ev.target 触发事件的子控件
+         */
         change : true
       }
     }
@@ -3437,8 +3459,8 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
           store.url = url;
         }
         store = new Data.TreeStore(store);
-        _self.set('store',store);
       }
+      _self.set('store',store);
     },
     bindUI : function  () {
       var _self = this;
@@ -4337,6 +4359,9 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     name : 'min',
     msg : '输入值不能小于{0}！',
     validator : function(value,min,formatedMsg){
+      if(BUI.isString(value)){
+        value = value.replace(/\,/g,'');
+      }
       if(value !== '' && toNumber(value) < toNumber(min)){
         return formatedMsg;
       }
@@ -4364,6 +4389,9 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     name : 'max',
     msg : '输入值不能大于{0}！',
     validator : function(value,max,formatedMsg){
+      if(BUI.isString(value)){
+        value = value.replace(/\,/g,'');
+      }
       if(value !== '' && toNumber(value) > toNumber(max)){
         return formatedMsg;
       }
@@ -4571,8 +4599,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * 数字验证，会对值去除空格，无数据不进行校验
-   * 允许千分符，例如： 12,000,000的格式
+   * 手机验证，11位手机数字
    * <ol>
    *  <li>name: mobile</li>
    *  <li>msg: 不是有效的手机号码！</li>
@@ -4809,7 +4836,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       var _self = this,
         loadingEl = _self.get('loadingEl'),
         loadingTpl = _self.get('loadingTpl');
-      if(!loadingEl){
+      if(loadingTpl && !loadingEl){
         loadingEl = $(loadingTpl).appendTo(_self.getLoadingContainer());
         _self.setInternal('loadingEl',loadingEl);
       }

@@ -1,0 +1,16 @@
+
+
+.toolbar{
+  height:@baseLineHeight * 2;
+  font-weight:normal;
+  li,.toolbar-item{
+    //line-height: (@baseLineHeight * 2);
+    .inline-block();
+  }
+
+  li + li,.toolbar-item + .toolbar-item{
+    margin-left:5px;
+    *margin-left:10px;
+  }
+
+}

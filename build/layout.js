@@ -38,7 +38,7 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 
 	/**
 	 * @class BUI.Layout.Abstract
-	 * 控件布局插件的抽象类
+	 * 控件布局插件的抽象类，此插件不要直接使用
 	 * @extends BUI.Base
 	 */
 	var Abstract = function(config){
@@ -51,70 +51,144 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 
 		/**
 		 * 子项对应的构造函数
+		 * @protected
 		 * @type {Function}
 		 */
 		itemConstructor : {
 			value : Item
 		},
 		/**
-		 * 使用此插件的控件
+		 * 使用此插件的控件,只读属性
+		 * <pre>
+		 * <code>
+		 *  var control =	layout.get('control');
+		 * </code>
+		 * </pre>
+		 * @readOnly
 		 * @type {BUI.Component.Controller}
 		 */
 		control : {
 
 		},
 		/**
-		 * 控件的的那些事件会引起重新布局
+		 * 控件的的哪些事件会引起重新布局，一般场景下控件的宽高改变都会引起重新布局
 		 * @type {Array}
 		 */
 		layoutEvents : {
 			value : ['afterWidthChange','afterHeightChange']
 		},
 		/**
-		 * 内部选项
+		 * 内部选项，获取布局插件的布局项
+		 * <pre>
+		 * <code>
+		 *  var items =	layout.get('items');
+		 * </code>
+		 * </pre>
 		 * @type {String}
 		 */
 		items : {
 
 		},
 		/**
-		 * 布局容器上添加的样式
-		 * @type {String}
+		 * 布局容器上添加的样式,布局插件在放置子项的节点上设置的样式
+		 * @cfg {String} elCls
 		 */
 		elCls : {
 
 		},
 		/**
 		 * 布局子项的默认得配置项
-		 * @type {Object}
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	}
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {Object} defaultCfg
 		 */
 		defaultCfg : {
 			value : {}
 		},
 		/**
-		 * 放置控件的容器css
-		 * @type {string}
+		 * 放置控件的容器css,当设置itemTpl时指定布局项放置的位置
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	},
+		 *  	itempl : '&lt;div class="a">&lt;div class="b">&lt;/div>&lt;/div>',
+		 *  	wraperCls : 'b'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {string} wraperCls
 		 */
 		wraperCls : {
 
 		},
 		/**
 		 * 放置布局的容器
+		 * @readOnly
 		 * @type {jQuery}
 		 */
 		container : {
 
 		},
 		/**
-		 * 布局相关的模板,将所有的子控件放置其中
+		 * 布局的模板,将所有的子控件放置其中,默认为空
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	},
+		 *  	tpl : '&lt;div class="custom-a">&lt;/div>'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
 		 * @type {String}
 		 */
 		tpl : {
 
 		},
 		/**
-		 * 每一个布局子项的模板
-		 * @type {String}
+		 * 每一个布局子项的模板，会将使用此插件的子控件放入其中
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	},
+		 *  	itemTpl : '&lt;div class="a">&lt;div class="b">&lt;/div>&lt;/div>',
+		 *  	wraperCls : 'b'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {String} itemTpl
 		 */
 		itemTpl : {
 			value : '<div></div>'
@@ -190,6 +264,12 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 通过DOM查找子项
+		 * <pre>
+		 * <code>
+		 *  var node = $('#id');//一般可以通过点击事件等获取
+		 *  var item = layout.getItemByElement(node);
+		 * </code>
+		 * </pre>
 		 * @param  {jQuery} element DOM元素
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
@@ -232,6 +312,12 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 获取下一项选项,如果当前项是最后一条记录，则返回第一条记录
+		 * <pre>
+		 * <code>
+		 *  var preItem = ...;//通过各种方式获得
+		 *  var next = layout.getNextItem(preItem); //下一个
+		 * </code>
+		 * </pre>
 		 * @param  {BUI.Layout.Item} item 选项
 		 * @return {BUI.Layout.Item}  下一个选项
 		 */
@@ -300,6 +386,13 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 通过匹配函数获取布局选项
+		 * <pre>
+		 * <code>
+		 *  var item = layout.getItemBy(function(item){
+		 *    return item.get('control').get('id') == 'tree';//查找内部控件的id='grid'的布局项
+		 *  });
+		 * </code>
+		 * </pre>
 		 * @param  {Function} fn 匹配函数
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
@@ -318,6 +411,13 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 通过匹配函数获取布局选项集合
+		 * <pre>
+		 * <code>
+		 *  var items = layout.getItemsBy(function(item){
+		 *    return item.get('region') == 'north';//查找
+		 *  });
+		 * </code>
+		 * </pre>
 		 * @param  {Function} fn 匹配函数
 		 * @return {Array} 布局选项集合
 		 */
@@ -335,6 +435,12 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 获取布局选项
+		 * <pre>
+		 * <code>
+		 *  var grid = BUI.getControl('grid');//根据id获取grid
+		 *  var next = layout.getItem(grid); //下一个
+		 * </code>
+		 * </pre>
 		 * @param {Object} controlChild 子控件
 		 * @return {BUI.Layout.Item} 布局选项
 		 */
@@ -345,13 +451,23 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 返回子项的数目
+		 * <pre>
+		 * <code>
+		 *  var count = layout.getCount();
+		 * </code>
+		 * </pre>
 		 * @return {Number} 数目
 		 */
 		getCount : function(){
 			return this.getItems().length;
 		},
 		/**
-		 * 根据索引返回选项
+		 * 根据索引返回选项,索引从0开始
+		 * <pre>
+		 * <code>
+		 *  var item = layout.getItemAt(2);
+		 * </code>
+		 * </pre>
 		 * @return {BUI.Layout.Item}} 返回选项
 		 */
 		getItemAt : function(index){
@@ -359,6 +475,11 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 获取索引
+		 * <pre>
+		 * <code>
+		 *  var index = layout.getItemIndex(item);
+		 * </code>
+		 * </pre>
 		 * @param  {BUI.Layout.Item} item 选项
 		 * @return {Number} 索引
 		 */
@@ -398,6 +519,11 @@ define('bui/layout/abstract',['bui/common','bui/layout/baseitem'],function(requi
 		},
 		/**
 		 * 重新布局
+		 * <pre>
+		 * <code>
+		 *  layout.reset();
+		 * </code>
+		 * </pre>
 		 */
 		reset: function(){
 			this.resetLayout();
@@ -436,21 +562,21 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 
 		/**
 		 * 触发展开折叠的样式
-		 * @type {String}
+		 * @cfg {String} triggerCls
 		 */
 		triggerCls : {
 			
 		},
 		/**
 		 * 动画的持续时间
-		 * @type {Number}
+		 * @cfg {Number} duration
 		 */
 		duration : {
 			value : 400
 		},
 		/**
 		 * 是否只能展开一个
-		 * @type {String}
+		 * @cfg {Boolean} accordion
 		 */
 		accordion : {
 			value : false
@@ -472,6 +598,11 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 		},
 		/**
 		 * 获取展开的选项
+		 * <pre>
+		 * <code>
+		 * var item = layout.getExpandedItem();
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 * @return {BUI.Layout.Item} 选项
 		 */
 		getExpandedItem : function(){
@@ -481,6 +612,11 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 		},
 		/**
 		 * 展开
+		 * <pre>
+		 * <code>
+		 * var item = layout.getItemsByRegion('west')[0];
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 * @param  {BUI.Layout.Item} item 选项
 		 */
 		expandItem : function(item){
@@ -506,18 +642,25 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 		},
 		/**
 		 * 展开选项后
+		 * @protected
 		 */
 		afterExpanded : function(item){
 
 		},
 		/**
 		 * 展开选项前
+		 * @protected
 		 */
 		beforeExpanded : function(item,range){
 
 		},
 		/**
 		 * 收缩
+		 * <pre>
+		 * <code>
+		 * var item = layout.getExpandedItem();
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 * @param  {BUI.Layout.Item} item 选项
 		 */
 		collapseItem : function(item){
@@ -541,12 +684,14 @@ define('bui/layout/collapsable',['bui/common'],function (require) {
 		},
 		/**
 		 * 折叠选项前
+		 * @protected
 		 */
 		beforeCollapsed : function(item,range){
 
 		},
 		/**
 		 * 折叠选项后
+		 * @protected
 		 */
 		afterCollapsed : function(item){
 
@@ -1113,6 +1258,9 @@ define('bui/layout/table',['bui/common','bui/layout/abstract','bui/layout/cellit
 		tpl : {
 			value : '<table class="x-layout-table"><tbody></tbody></table>'
 		},
+		defaultCfg : {
+			value : {fit : 'both'}
+		},
 		/**
 		 * 列的数目
 		 * @type {Number}
@@ -1162,6 +1310,74 @@ define('bui/layout/table',['bui/common','bui/layout/abstract','bui/layout/cellit
 			var _self = this,
 				container = this.get('container');
 			return $(container.find('tr')[itemAttrs.row]);
+		},
+		//获取单元格附加的高度
+		_getItemAppend : function(){
+			var _self = this,
+				append = _self.get('appendHeight');
+			if(append == null){
+				var item = _self.getItemAt(0),
+					el;
+				if(item){
+					append = {};
+					el = item.get('el');
+					append.width = el.outerHeight() - el.height();
+					append.height = el.outerWidth() - el.width();
+					_self.set('append',append);
+				}
+			}
+			return append || {width :0,height : 0};
+		},
+		_getCellAvg : function(){
+			var _self = this,
+				control = _self.get('control'),
+				count = _self.get('rows'),
+				height = control.get('height'),
+				width = control.get('width'),
+				append = _self._getItemAppend(),
+				avgHeight = (height - append.height * count) / count,
+				avgWidth = (width - append.width * count) / count;
+
+			return {
+				append : append,
+				avgHeight : avgHeight,
+				avgWidth : avgWidth
+			};
+		},
+		//获取单元格的高度,高度
+		_getItemDime : function(rowspan,colspan){
+			var _self = this,
+				avg = _self._getCellAvg();
+
+			rowspan = rowspan || 1;
+			colspan = colspan || 1;
+
+			return {
+			  height :	avg.avgHeight * rowspan + (rowspan - 1) * avg.append.height,
+			  width : avg.avgWidth * colspan + (colspan -1) * avg.append.width
+			};
+		},
+		/**
+		 * @protected
+		 * 重置布局，子类覆盖此类
+		 */
+		resetLayout : function(){
+			var _self = this,
+			 	items = _self.getItems();
+
+			BUI.each(items,function(item){
+				var diem = _self._getItemDime(item.get('rowspan'),item.get('colspan'));
+				item.set(diem);
+			});
+
+			Table.superclass.resetLayout.call(this);
+		},
+		/**
+		 * 布局选项初始化完毕
+		 * @protected
+		 */
+		afterInitItems : function(){
+			this.resetLayout();
 		}
 	});
 
@@ -1252,6 +1468,7 @@ define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borde
 			control.render();
 	 * 	</code>
 	 * </pre>
+	 * @mixins BUI.Layout.Collapsable
 	 */
 	var Border = function(config){
 		Border.superclass.constructor.call(this,config);
@@ -1377,6 +1594,11 @@ define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borde
 		},
 		/**
 		 * 获取选项，根据位置类型
+		 * <pre>
+		 * <code>
+		 * var item = layout.getItemsByRegion('west')[0];
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 * @param  {String} region 类型
 		 * @return {Array}  选项集合
 		 */
@@ -1427,6 +1649,7 @@ define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borde
 		},
 		/**
 		 * 展开选项前
+		 * @protected
 		 */
 		beforeExpanded : function(item,range){
 			this.beforeCollapsedChange(item,range,false);
@@ -1479,6 +1702,7 @@ define('bui/layout/border',['bui/common','bui/layout/abstract','bui/layout/borde
 		},
 		/**
 		 * 折叠选项后
+		 * @protected
 		 */
 		beforeCollapsed : function(item,range){
 			this.beforeCollapsedChange(item,range,true);
@@ -1789,6 +2013,7 @@ define('bui/layout/viewport',['bui/common'],function (require) {
 				appendHeight = _self.getAppendHeight();
 			_self.set('width',viewportWidth - appendWidth);
 			_self.set('height',viewportHeight - appendHeight);
+			_self.fire('resize');
 
 		},
 		destructor : function(){
@@ -1799,6 +2024,11 @@ define('bui/layout/viewport',['bui/common'],function (require) {
 			render : {
 				value : 'body'
 			}
+
+			/**
+			 * @event resize
+			 * ViewPort 重新布局
+			 */
 		}
 	},{
 		xclass : 'view-port'
@@ -1841,40 +2071,82 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 	Item.ATTRS = {
 
 		/**
-		 * 自适应内部控件,自适应的类型：
+		 * 自适应内部控件,自适应的类型,注意设置了适应类型后，不应该再设置控件的对应的宽度或者高度
+		 * 
 		 *   - none : 内部控件不自适应（默认）
 		 *   - width : 内部控件自适应宽度，当layout重新布局时宽度自适应
 		 *   - height : 内部控件自适应高度，当layout重新布局时高度自适应
 		 *   - both : 内部控件自适应宽高，当layout重新布局时宽度、高度自适应
-		 * @type {String}
+		 * 	<pre>
+		 * <code>
+		 *
+		 *  new Controller({
+		 *    ...
+		 *    children : [
+		 *    	{
+		 *    		xclass : 'grid',
+		 *    		layout : {
+		 *    			fit : 'width'
+		 *    		}
+		 *    		//width : '100px',不要再设置宽度
+		 *    	}
+		 *    ],
+		 * 		plugins : [BUI.Layout.Anchor]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * 
+		 * @cfg {String} fit
 		 */
 		fit : {
 			value : 'none'
 		},
 		/**
 		 * 所属的layout
+		 * @readOnly
 		 * @type {BUI.Layout.Abstract}
 		 */
 		layout : {
 
 		},
 		/**
-		 * @private
 		 * 封装的控件
+		 * <pre>
+		 * <code>
+		 *  var control =	item.get('control');
+		 * </code>
+		 * </pre>
 		 * @type {Object}
 		 */
 		control : {
 
 		},
 		/**
-		 * 封装控件的容器的样式，默认为空
-		 * @type {string}
+		 * 封装控件的容器的样式，默认为空,也可以设置在layout上传递进来
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width',
+		 *  		wraperCls : 'b'
+		 *  	},
+		 *  	itemTpl : '&lt;div class="a">&lt;div class="b">&lt;/div>&lt;/div>'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {string} wraperCls
 		 */
 		wraperCls : {
 
 		},
 		/**
 		 * 容器
+		 * @readOnly
 		 * @type {jQuery}
 		 */
 		container : {
@@ -1904,6 +2176,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 
 		},
 		/**
+		 * @protected
 		 * 状态相关的字段
 		 * @type {Array}
 		 */
@@ -1911,6 +2184,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 
 		},
 		/**
+		 * @protected
 		 * 附加模板
 		 * @type {Object}
 		 */
@@ -1919,6 +2193,11 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		},
 		/**
 		 * 当前项的DOM
+		 * <pre>
+		 * <code>
+		 *  var el =	item.get('el');
+		 * </code>
+		 * </pre>
 		 * @type {jQuery}
 		 */
 		el : {
@@ -1932,8 +2211,24 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 
 		},
 		/**
-		 * 模板
-		 * @type {String}
+		 * 模板，也可以直接在layout上设置itemTpl
+		 * <pre>
+		 * <code>
+		 *  var layout = new BUI.Layout.Anchor({
+		 *  	defaultCfg : {
+		 *  		fit : 'width'
+		 *  	},
+		 *  	itemTpl : '&lt;div class="a">&lt;div class="b">&lt;/div>&lt;/div>',
+		 *  	wraperCls : 'b'
+		 *  });
+		 *
+		 *  new Controller({
+		 *    ...
+		 * 		plugins : [layout]
+		 *  });
+		 * </code>
+		 * </pre>
+		 * @cfg {String} tpl
 		 */
 		tpl : {
 
@@ -1955,6 +2250,11 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		},
 		/**
 		 * 获取选项的DOM节点
+		 * <pre>
+		 * <code>
+		 *  var el =	item.getElement();
+		 * </code>
+		 * </pre>
 		 * @return {jQuery} 操作节点
 		 */
 		getElement : function(){
@@ -1993,7 +2293,8 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 			return el;
 		},
 		/**
-		 * 同步属性到子项,同步css和attr
+		 * 同步属性到子项,同步css和attr，一般先设置宽高等信息后,再调用此方法
+		 * @protected
 		 */
 		syncItem : function(attrs){
 			attrs = attrs || this.getLayoutAttrs();
@@ -2067,6 +2368,20 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		},
 		/**
 		 * 同步自适应
+		 * <pre>
+		 * <code>
+		 *  var item = layout.getItem(control);
+		 *
+		 *  item.set('width',width);
+		 *
+		 *  //也可以设置多个属性
+		 *  item.set({
+		 *  	height : 100,
+		 *  	width : 100
+		 *  });
+		 *  item.syncFit();
+		 * </code>
+		 * </pre>
 		 */
 		syncFit : function(){
 			var _self = this,
@@ -2091,7 +2406,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 		//同步控件的宽度
 		_syncControlWidth : function(control){
 			var _self = this,
-				width = _self.get('el').width(),
+				width = _self.get('width') || _self.get('el').width(),
 				appendWidth = control.getAppendWidth();
 			control.set('width',width - appendWidth);
 
@@ -2113,7 +2428,7 @@ define('bui/layout/baseitem',['bui/common'],function (require) {
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl'),
 				siblings,
-				outerHeight = el.height(),
+				outerHeight = _self.get('height') || el.height(),
 				height = outerHeight;
 			if(bodyEl[0] == el[0]){ //如果控件的容器等于外层容器
 				return outerHeight;
@@ -2351,32 +2666,88 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 
 		/**
 		 * 位置
-		 * @type {String}
+		 *<ol>
+     * <li>fit: 'none', 内部控件不跟随布局项的宽高自适应</li>
+     * <li>fit: 'width',内部控件跟随布局项的宽度进行自适应</li>
+     * <li>fit: 'height',内部控件跟随布局项的高度进行自适应</li>
+     * <li>fit: 'both',内部控件跟随布局项的宽度、高度都进行自适应</li>
+     *</ol>
+		 * @cfg {String} region
 		 */
 		region : {
 
 		},
 		/**
 		 * 标题的模板
-		 * @type {Object}
+		 * <pre><code>
+		 * 	children : [{
+					layout : {
+						title : 'north',
+						region : 'north',
+						height : 50,
+						titleTpl : '&lt;div class="x-border-title x-border-title-{region}">{title}&lt;/div>'
+					},
+					width : 100,
+					height :15,
+					elCls : 'red',
+					xclass : 'grid',
+					content : "无自适应"
+				}]
+		 * </code></pre>
+		 * @cfg {Object} titleTpl
 		 */
 		titleTpl : {
 			value : '<div class="x-border-title x-border-title-{region}">{title}</div>'
 		},
 		/**
-		 * 附加元素
-		 * @type {Object}
+		 * 收缩展开的dom的模板
+		 * <pre><code>
+		 * 	children : [{
+					layout : {
+						title : 'north',
+						region : 'north',
+						height : 50,
+						collapsable : true,//只有callapsable:true，collapseTpl才会生效
+						collapseTpl : '&lt;s class="x-collapsed-btn x-collapsed-{region}">&lt;/s>'
+					},
+					width : 100,
+					height :15,
+					elCls : 'red',
+					xclass : 'grid',
+					content : "无自适应"
+				}]
+		 * </code></pre>
+		 * @cfg {Object} collapseTpl
 		 */
 		collapseTpl : {
 			value : '<s class="x-collapsed-btn x-collapsed-{region}"></s>'
 		},
 		/**
 		 * 是否可以折叠
-		 * @type {Boolean}
+		 *  <pre><code>
+		 * 	children : [{
+					layout : {
+						title : 'north',
+						region : 'north',
+						height : 50,
+						collapsable : true
+					},
+					width : 100,
+					height :15,
+					elCls : 'red',
+					xclass : 'grid',
+					content : "无自适应"
+				}]
+		 * </code></pre>
+		 * @cfg {Boolean} collapsable
 		 */
 		collapsable : {
 			value : false
 		},
+		/**
+		 * 是否默认折叠
+		 * @cfg {Boolean} collapsed
+		 */
 		/**
 		 * 是否折叠
 		 * @type {Boolean}
@@ -2386,7 +2757,7 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 		},
 		/**
 		 * 收缩后剩余的宽度或者高度，如果存在title，则以title的高度为准
-		 * @type {Object}
+		 * @cfg {Number} leftRange
 		 */
 		leftRange : {
 			value : 28
@@ -2426,6 +2797,12 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 		},
 		/**
 		 * 展开
+		 * <pre>
+		 * <code>
+		 * var item = layout.getItemsByRegion('west')[0];
+		 * item && item.expand()
+		 * </code>
+		 * </pre>
 		 */
 		expand : function(range,duration,callback){
 			var _self = this,
@@ -2454,8 +2831,7 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 		_getLeftRange : function(){
 			var _self = this,
 				el = _self.get('el'),
-				left = _self.get('leftRange'),
-				titleEl = _self.get('_titleEl');
+				left = _self.get('leftRange');
 			return left;
 		},
 		/**
@@ -2465,11 +2841,29 @@ define('bui/layout/borderitem',['bui/common','bui/layout/baseitem'],function (re
 		getCollapsedRange : function(){
 			var _self = this,
 				property = _self.getCollapseProperty(),
-				el = _self.get('el');
-			return _self.get(property) - _self._getLeftRange(property);
+				el = _self.get('el'),
+				val = _self.get(property);
+			if(BUI.isString(val)){
+				var dynacAttrs = _self._getDynacAttrs();
+				if(val.indexOf('{') != -1){
+					val = BUI.substitute(val,dynacAttrs);
+					val = BUI.JSON.looseParse(val);
+				}
+				else if(val.indexOf('%') != -1){
+					val = parseInt(val,10) * 0.01 * dynacAttrs[property];
+				}else{
+					val = parseInt(val,10);
+				}
+			}
+			return val - _self._getLeftRange(property);
 		},
 		/**
 		 * 折叠
+		 * <pre>
+		 * <code>
+		 * var item = layout.getItemsByRegion('west')[0];
+		 * item && layout.collapseItem(item);
+		 * </code></pre>
 		 */
 		collapse : function(duration,callback){
 			var _self = this,
@@ -2603,10 +2997,11 @@ define('bui/layout/tabitem',['bui/common','bui/layout/baseitem'],function(requir
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl');
 			bodyEl.animate({height : bodyHeight},duration,function(){
-				_self.set('collapsed',false);
+				
 				el.removeClass(CLS_COLLAPSED);
 				_self.syncFit();
 			});
+			_self.set('collapsed',false);
 		},
 		/**
 		 * 折叠
@@ -2616,9 +3011,10 @@ define('bui/layout/tabitem',['bui/common','bui/layout/baseitem'],function(requir
 				el = _self.get('el'),
 				bodyEl = _self.get('bodyEl');
 			bodyEl.animate({height : 0},duration,function(){
-				_self.set('collapsed',true);
 				el.addClass(CLS_COLLAPSED);
 			});
+			_self.set('collapsed',true);
+
 		}
 	});
 

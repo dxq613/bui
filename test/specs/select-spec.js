@@ -47,11 +47,21 @@ BUI.use('bui/select',function (Select) {
       expect(control.get('items').length).toBe(3);
     });
 
-    it('设置值',function(){
-
+    it('禁用',function(){
+      select.set('disabled',true);
+      $('#s1').trigger('click');
+      waits(100);
+      runs(function(){
+        picker.get('visible',false);
+      });
     });
-    it('更改选项，获取值',function(){
-
+    it('可用',function(){
+      select.enable();
+      $('#s1').trigger('click');
+      waits(100);
+      runs(function(){
+        picker.get('visible',true);
+      });
     });
 
   });
@@ -133,6 +143,29 @@ BUI.use('bui/select',function (Select) {
     items : data
   });
   select.render();
+  var picker = select.get('picker'),
+    list = picker.get('list');
+
+  describe('测试生成',function(){
+
+    it('测试生成项',function(){
+      var items = list.getItems();
+      BUI.each(items,function(item,index){
+        expect(item.text).toBe(data[index])
+      });
+    });
+  });
+});
+
+
+BUI.use('bui/select',function (Select) {
+  var data = ['选项1','选项2','选项3','选项4'],
+    select = new Select.Combox({
+    srcNode:'#c11',
+    items : data
+  });
+  select.render();
+  
   var picker = select.get('picker'),
     list = picker.get('list');
 

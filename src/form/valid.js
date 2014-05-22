@@ -298,7 +298,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
             if(item.field){
               item.clearErrors(reset);
             }else{
-              item.clearErrors(deep,reset);
+              item.clearErrors(reset,deep);
             }
           }
         });

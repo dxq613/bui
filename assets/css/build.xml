@@ -12,7 +12,10 @@
     </target>
 	<target name="prepare">
         <delete>
-			<fileset dir="${build.dir}" includes="**/*.css"/>
+			<fileset dir="${build.dir}" includes="**/*.css" excludes="bs3/**.css"/>
+        </delete>
+        <delete>
+          <fileset dir="${build.dir}" includes="bs3/**-min.css"/>
         </delete>
     </target>
 
@@ -57,6 +60,19 @@
 		<exec executable="node" failonerror="true">
 		  <arg line="${tools.dir}/less/bin/lessc ${less.dir}/single/layout.less ${build.dir}/layout.css"/>
 		</exec>
+
+    <exec executable="node" failonerror="true">
+      <arg line="${tools.dir}/less/bin/lessc ${less.dir}/single/imgview.less ${build.dir}/imgview.css"/>
+    </exec>
+
+    <!--
+    <exec executable="node" failonerror="true">
+      <arg line="${tools.dir}/less/bin/lessc ${build.dir}/bs3/less/dpl.less ${build.dir}/bs3/dpl.css"/>
+    </exec>
+    <exec executable="node" failonerror="true">
+      <arg line="${tools.dir}/less/bin/lessc ${build.dir}/bs3/less/bui.less ${build.dir}/bs3/bui.css"/>
+    </exec>
+    -->
 
 	<!--		-->
 	</target>

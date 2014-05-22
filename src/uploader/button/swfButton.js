@@ -3,10 +3,11 @@
  * @fileoverview flash上传按钮
  * @author: zengyue.yezy
  **/
-define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbridge'], function (require) {
+define('bui/uploader/button/swfButton',['bui/common', 'bui/uploader/file', './base','./swfButton/ajbridge'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
+    File = require('bui/uploader/file'),
     ButtonBase = require('bui/uploader/button/base'),
     baseUrl = getBaseUrl(),
     SWF = require('bui/uploader/button/swfButton/ajbridge');

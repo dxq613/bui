@@ -1,3 +1,23 @@
+BUI.use(['bui/uploader/file'], function(UploaderFile){
+  describe('测试获取文件类型', function(){
+    var file = UploaderFile.create({
+      name: 'a/b.php.jpg',
+      size: 1024,
+      type: 'image/jpeg'
+    });
+
+    it('测试文件名是否正确', function(){
+      expect(file.name).toBe('b.php.jpg');
+    })
+    it('测试后缀名是否正确', function(){
+      expect(file.ext).toBe('.jpg');
+    })
+    it('测试textSize是否正确', function(){
+      expect(file.textSize).toBe('1.0KB');
+    })
+  })
+})
+
 BUI.use(['bui/uploader/button/filter'], function(Filter){
   describe('测试获取文件类型', function(){
     it('getTypeByDesc函数是否正确', function(){
@@ -208,8 +228,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
 
   var file = {'name': 'a.jpg', 'size': 1000},
     files = [
-      {id: '1','name': 'a.jpg', 'size': 1000, ext:'.jpg', file: file, attr: file, success:true},
-      {id: '2','name': 'b.jpg', 'size': 1000, ext:'.jpg', file: file, attr: file}
+      {id: '1','name': 'a.jpg', 'size': 1000, ext:'.jpg', success:true},
+      {id: '2','name': 'b.jpg', 'size': 1000, ext:'.jpg'}
     ];
 
   var successCallback = jasmine.createSpy(),

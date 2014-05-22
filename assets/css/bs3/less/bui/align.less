@@ -1,0 +1,138 @@
+
+.x-align-arrow ,.x-align-arrow-inner{
+  border: 6px solid transparent;
+  _border-color: tomato;
+  _filter: chroma(color=tomato);
+  position: absolute;
+}
+//居上
+.x-align-top,.x-align-top-left,.x-align-top-right{
+  .x-align-arrow {
+    border-top: 8px solid @borderColor;
+    bottom: -15px;
+  }
+  .x-align-arrow-inner{
+    border-top: 8px solid @white;
+    top: -9px;
+    left: -6px;
+  }
+}
+.x-align-top,.x-align-bottom{
+  .x-align-arrow {
+    left:50%;
+  }
+}
+
+.x-align-top-left,.x-align-bottom-left{
+  .x-align-arrow {
+    left : 10px;
+  }
+}
+
+
+.x-align-top-right, .x-align-bottom-right{
+  .x-align-arrow {
+    right : 10px;
+  }
+}
+
+//居右
+.x-align-right{
+  .x-align-arrow {
+    border-right:8px solid @borderColor;
+    top:50%;
+    left:-15px;
+  }
+  .x-align-arrow-inner{
+    border-right:8px solid @white;
+    top: -6px;
+    left: -4px;
+  }
+}
+//居左
+.x-align-left{
+  .x-align-arrow {
+    border-left:8px solid @borderColor;
+    top:50%;
+    right: -15px;
+  }
+  .x-align-arrow-inner{
+    border-left:8px solid @white;
+    top: -6px;
+    left: -9px;
+  }
+}
+//居下
+.x-align-bottom,.x-align-bottom-left,.x-align-bottom-right{
+  .x-align-arrow {
+    border-bottom:8px solid @borderColor;
+    top : -15px;
+  }
+  .x-align-arrow-inner{
+    border-bottom:8px solid @white;
+    top: -5px;
+    left: -6px;
+  }
+}
+
+
+.align-func(@color,@border){
+  &[class^="x-align-top"],
+  &[class*=" x-align-top"]{
+    .x-align-arrow{
+      border-top-color:@border;
+    }
+    .x-align-arrow-inner{
+      border-top-color:@color;
+    }
+  }
+  
+  &.x-align-right{
+    .x-align-arrow{
+      border-right-color:@border;
+    }
+    .x-align-arrow-inner{
+      border-right-color:@color;
+    }
+  }
+  
+  &.x-align-left{
+    .x-align-arrow{
+      border-left-color:@border;
+    }
+    .x-align-arrow-inner{
+      border-left-color:@color;
+    }
+  }
+    
+  &[class^="x-align-bottom"],
+  &[class*=" x-align-bottom"] {
+    .x-align-arrow{
+      border-bottom-color:@border;
+    }
+    .x-align-arrow-inner{
+      border-bottom-color:@color;
+    }
+  }
+  
+}
+
+//跟tips联用
+.tips{
+  .align-func(@tipNormalBackground,@tipNormalBorder);
+}
+.tips-success{
+  .align-func(@tipSuccessBackground,@tipSuccessBorder);
+}
+
+.tips-warning{
+  .align-func(@tipWaringBackground,@tipWaringBorder);
+}
+
+.tips-info{
+  .align-func(@tipInfoBackground,@tipInfoBorder);
+}
+
+.tips-notice{
+  .align-func(@tipNoticeBackground,@tipNoticeBorder);
+}

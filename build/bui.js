@@ -993,11 +993,11 @@ seajs.config = function(configData) {
 
 (function(){
   var requires = ['bui/util','bui/ua','bui/json','bui/date','bui/array','bui/keycode','bui/observable','bui/base','bui/component'];
-  if(window.KISSY && !window.KISSY.Node){ //\u5982\u679c\u662fkissy\u540c\u65f6\u672a\u52a0\u8f7dcore\u6a21\u5757
+  if(window.KISSY && (!window.KISSY.Node || !window.jQuery)){ //\u5982\u679c\u662fkissy\u540c\u65f6\u672a\u52a0\u8f7dcore\u6a21\u5757
     requires.unshift('bui/adapter');
   }
   define('bui/common',requires,function(require){
-    if(window.KISSY && !window.KISSY.Node){
+    if(window.KISSY && (!window.KISSY.Node || !window.jQuery)){
       require('bui/adapter');
     }
     var BUI = require('bui/util');
@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 80,
+            subVersion : 93,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -1716,7 +1716,8 @@ define('bui/util',function(require){
     };
 
     return BUI;
-});/**
+});
+/**
  * @fileOverview \u6570\u7ec4\u5e2e\u52a9\u7c7b
  * @ignore
  */
@@ -2211,6 +2212,9 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u6682\u505c\u4e8b\u4ef6\u7684\u6267\u884c
+     * <pre><code>
+     *  list.pauseEvent('itemclick');
+     * </code></pre>
      * @param  {String} eventType \u4e8b\u4ef6\u7c7b\u578b
      */
     pauseEvent : function(eventType){
@@ -2220,6 +2224,9 @@ define('bui/observable',['bui/util'],function (r) {
     },
     /**
      * \u5524\u9192\u4e8b\u4ef6
+     * <pre><code>
+     *  list.resumeEvent('itemclick');
+     * </code></pre>
      * @param  {String} eventType \u4e8b\u4ef6\u7c7b\u578b
      */
     resumeEvent : function(eventType){
@@ -2286,7 +2293,12 @@ define('bui/observable',['bui/util'],function (r) {
       var _self = this,
         callbacks = _self._getCallbacks(eventType);
       if(callbacks){
-        callbacks.remove(fn);
+        if(fn){
+          callbacks.remove(fn);
+        }else{
+          callbacks.empty();
+        }
+        
       }
       return _self;
     },
@@ -5142,7 +5154,7 @@ define('bui/component/uibase/autoshow',function () {
      * @type {Object}
      */
     triggerActiveCls : {
-
+      
     },
     /**
      * \u63a7\u4ef6\u663e\u793a\u65f6\u7531\u6b64trigger\u89e6\u53d1\uff0c\u5f53\u914d\u7f6e\u9879 trigger \u9009\u62e9\u5668\u4ee3\u8868\u591a\u4e2aDOM \u5bf9\u8c61\u65f6\uff0c
@@ -5260,6 +5272,9 @@ define('bui/component/uibase/autoshow',function () {
 
       //\u89e6\u53d1\u663e\u793a
       function tiggerShow (ev) {
+        if(_self.get('disabled')){ //\u5982\u679c\u7981\u7528\u5219\u4e2d\u65ad
+          return;
+        }
         var prevTrigger = _self.get('curTrigger'),
           curTrigger = isDelegate ?$(ev.currentTarget) : $(this),
           align = _self.get('align');
@@ -6981,6 +6996,7 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
     FIELD_CFG = FIELD_PREFIX + 'cfg',
     PARSER = 'PARSER',
     Manager = require('bui/component/manage'),
+    RE_DASH_WORD = /-([a-z])/g,
     regx = /^[\{\[]/;
 
   function isConfigField(name,cfgFields){
@@ -7005,12 +7021,30 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
       return constructorChains;
   }
 
+  function camelCase(str) {
+    return str.toLowerCase().replace(RE_DASH_WORD, function(all, letter) {
+      return (letter + '').toUpperCase()
+    })
+  }
+
   //\u5982\u679c\u5c5e\u6027\u4e3a\u5bf9\u8c61\u6216\u8005\u6570\u7ec4\uff0c\u5219\u8fdb\u884c\u8f6c\u6362
   function parseFieldValue(value){
+
     value = $.trim(value);
-    if(regx.test(value)){
-      value = JSON.looseParse(value);
+    if (value.toLowerCase() === 'false') {
+      value = false
     }
+    else if (value.toLowerCase() === 'true') {
+      value = true
+    }else if(regx.test(value)){
+      value = JSON.looseParse(value);
+    }else if (/\d/.test(value) && /[^a-z]/i.test(value)) {
+      var number = parseFloat(value)
+      if (number + '' === value) {
+        value = number
+      }
+    }
+    
     return value;
   }
 
@@ -7181,8 +7215,13 @@ define('bui/component/uibase/decorate',['bui/array','bui/json','bui/component/ma
               BUI.mix(config,cfg);
           }
           else if(isConfigField(name,decorateCfgFields)){
-            name = name.replace(FIELD_PREFIX,'');
-            var value = parseFieldValue(attr.nodeValue);
+            var value = attr.nodeValue;
+            if(name.indexOf(FIELD_PREFIX) !== -1){
+              name = name.replace(FIELD_PREFIX,'');
+              name = camelCase(name);
+              value = parseFieldValue(value);
+            }
+            
             if(config[name] && BUI.isObject(value)){
               BUI.mix(config[name],value);
             }else{
@@ -9046,6 +9085,9 @@ define('bui/component/uibase/bindable',function(){
 			store.on('localsort',function(e){
 				_self.onLocalSort(e);
 			});
+			store.on('filtered',function(e){
+				_self.onFiltered(e);
+			});
 		},
 		__syncUI : function(){
 			var _self = this,
@@ -9126,6 +9168,15 @@ define('bui/component/uibase/bindable',function(){
 		*/
 		onLocalSort : function(e){
 			
+		},
+		/**
+		* @protected
+    * @template
+		* after filter data to store
+		* @param {Object} e The event object
+		* @see {@link BUI.Data.Store#event-filtered}
+		*/
+		onFiltered : function(e){
 		}
 	});
 
@@ -9811,7 +9862,7 @@ define('bui/component/loader',['bui/util'],function (require) {
      * @default null
      */
     params : {
-
+        
     },
     /**
      * \u9644\u52a0\u53c2\u6570\uff0c\u6bcf\u6b21\u8bf7\u6c42\u90fd\u5e26\u7684\u53c2\u6570
@@ -9987,6 +10038,10 @@ define('bui/component/loader',['bui/util'],function (require) {
         callback = _self.get('callback'),
         renderer = _self.get('renderer'),
         target = _self.get('target');
+
+      if(BUI.isString(data)){
+        target.set(property,'');//\u9632\u6b622\u6b21\u8fd4\u56de\u7684\u6570\u636e\u4e00\u6837
+      }
       target.set(property,renderer.call(_self,data));
 
       /**/
@@ -12611,7 +12666,16 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
         * @param {Object} e.field \u6392\u5e8f\u7684\u5b57\u6bb5
         * @param {Object} e.direction \u6392\u5e8f\u7684\u65b9\u5411 'ASC'\uff0c'DESC'
         */
-        'localsort'
+        'localsort',
+
+        /**  
+        * \u524d\u7aef\u53d1\u751f\u8fc7\u6ee4\u65f6\u89e6\u53d1
+        * @event  
+        * @param {jQuery.Event} e  \u4e8b\u4ef6\u5bf9\u8c61
+        * @param {Array} e.data \u8fc7\u6ee4\u5b8c\u6210\u7684\u6570\u636e
+        * @param {Function} e.filter \u8fc7\u6ee4\u5668
+        */
+        'filtered'
       ]
     },
     /**
@@ -12768,6 +12832,11 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
       }
     },
     /**
+     * \u83b7\u53d6\u5f53\u524d\u7f13\u5b58\u7684\u7eaa\u5f55
+     */
+    getResult : function(){
+    },
+    /**
      * \u8fc7\u6ee4\u6570\u636e\uff0c\u6b64\u51fd\u6570\u7684\u6267\u884c\u540c\u5c5e\u6027 remoteFilter\u5173\u8054\u5bc6\u5207
      *
      *  - remoteFilter == true\u65f6\uff1a\u6b64\u51fd\u6570\u53ea\u63a5\u53d7\u5b57\u7b26\u4e32\u7c7b\u578b\u7684\u8fc7\u6ee4\u53c2\u6570\uff0c\u5c06{filter : filterStr}\u53c2\u6570\u4f20\u8f93\u5230\u670d\u52a1\u5668\u7aef
@@ -12781,12 +12850,17 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
             remoteFilter = _self.get('remoteFilter'),
             result;
 
+        filter = filter || _self.get('filter');
+
         if(remoteFilter){
             _self.load({filter : filter});
-        }else{
+        }else if(filter){
             _self.set('filter',filter);
-            result = _self._filterLocal(filter);
-            _self.onFiltered(result,filter);
+            //\u5982\u679cresult\u6709\u503c\u65f6\u624d\u4f1a\u8fdb\u884cfilter
+            if(_self.getResult().length > 0){
+                result = _self._filterLocal(filter);
+                _self.onFiltered(result,filter);
+            }
         }
     },
     /**
@@ -12798,10 +12872,21 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
     _filterLocal : function(fn){
         
     },
+    /**
+     * \u83b7\u53d6\u8fc7\u6ee4\u540e\u7684\u6570\u636e\uff0c\u4ec5\u5f53\u672c\u5730\u8fc7\u6ee4(remoteFilter = false)\u65f6\u6709\u6548
+     * @return {Array} \u8fc7\u6ee4\u8fc7\u7684\u6570\u636e
+     */
+    getFilterResult: function(){
+        var filter = this.get('filter');
+        if(filter) {
+            return this._filterLocal(filter);
+        }
+        else {
+            return this.getResult();
+        }
+    },
     _clearLocalFilter : function(){
-        this._filterLocal(function(){
-            return true;
-        });
+        this.set('filter', null);
     },
     /**
      * \u6e05\u7406\u8fc7\u6ee4
@@ -12815,6 +12900,8 @@ define('bui/data/abstractstore',['bui/common','bui/data/proxy'],function (requir
             _self.load({filter : ''});
         }else{
             _self._clearLocalFilter();
+            result = _self.getFilterResult();
+            _self.onFiltered(result, null);
         }
     },
     /**
@@ -14110,6 +14197,10 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
         _self.load({start:0});
       }else{
         _self._setResult(data);
+        //\u5982\u679c\u6709filter\u5219\u8fdb\u884c\u8fc7\u6ee4
+        if(_self.get('filter')){
+          _self.filter();
+        }
       }
     },
 
@@ -14480,6 +14571,11 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
       }
 
       _self.fire('load',{ params : params });
+
+      //\u5982\u679c\u6709\u672c\u5730\u8fc7\u6ee4\uff0c\u5219\u672c\u5730\u8fc7\u6ee4
+      if(!_self.get('remoteFilter') && _self.get('filter')){
+        _self.filter(_self.get('filter'));
+      }
     },
     //\u8bbe\u7f6e\u7ed3\u679c\u96c6
     _setResult : function(rows,totalCount){
@@ -14778,6 +14874,15 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    * @private
    */
   var dialogView = Overlay.View.extend([UIBase.StdModView,UIBase.MaskView],{
+
+    /**
+     * \u5b50\u7ec4\u4ef6\u5c06\u8981\u6e32\u67d3\u5230\u7684\u8282\u70b9\uff0c\u5728 render \u7c7b\u4e0a\u8986\u76d6\u5bf9\u5e94\u65b9\u6cd5
+     * @protected
+     * @ignore
+     */
+    getContentElement: function () {
+      return this.get('body');
+    },
 
     _uiSetTitle:function(v){
       var _self = this,
@@ -16897,6 +17002,15 @@ define('bui/list/simplelist',['bui/common','bui/list/domlist','bui/list/keynav',
         store = _self.get('store'),
         items = store.getResult();
       _self.set('items',items);
+    },
+    /**
+     * \u8fc7\u6ee4\u6570\u636e
+     * @protected
+     */
+    onFiltered: function(e){
+      var _self = this,
+        items = e.data;
+      _self.set('items', items);
     }
   },{
     ATTRS : 
@@ -17154,24 +17268,301 @@ define('bui/list/list',['bui/common'],function (require) {
  * @ignore
  */
 
-define('bui/picker',['bui/common','bui/picker/picker','bui/picker/listpicker'],function (require) {
+define('bui/picker',['bui/common','bui/picker/mixin','bui/picker/picker','bui/picker/listpicker'],function (require) {
   var BUI = require('bui/common'),
     Picker = BUI.namespace('Picker');
 
   BUI.mix(Picker,{
+    Mixin : require('bui/picker/mixin'),
     Picker : require('bui/picker/picker'),
     ListPicker : require('bui/picker/listpicker')
   });
 
   return Picker;
 });/**
+ * @fileOverview picker\u7684\u6269\u5c55
+ * @ignore
+ */
+
+define('bui/picker/mixin', function (require) {
+  
+
+  /**
+   * @class BUI.Picker.Mixin
+   */
+  var Mixin = function () {
+  };
+
+  Mixin.ATTRS = {
+    /**
+     * \u7528\u4e8e\u9009\u62e9\u7684\u63a7\u4ef6\uff0c\u9ed8\u8ba4\u4e3a\u7b2c\u4e00\u4e2a\u5b50\u5143\u7d20,\u6b64\u63a7\u4ef6\u5b9e\u73b0 @see {BUI.Component.UIBase.Selection} \u63a5\u53e3
+     * @protected
+     * @type {Object|BUI.Component.Controller}
+     */
+    innerControl : {
+      getter:function(){
+        return this.get('children')[0];
+      }
+    },
+    /**
+     * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+     * @cfg {String} [triggerEvent='click']
+     */
+    /**
+     * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+     * @type {String}
+     * @default 'click'
+     */
+    triggerEvent:{
+      value:'click'
+    },
+    /**
+     * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
+     * @cfg {Boolean} [autoSetValue=true]
+     */
+    /**
+     * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
+     * @type {Boolean}
+     */
+    autoSetValue : {
+      value : true
+    },
+    /**
+     * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
+     * @cfg {String} [changeEvent='selectedchange']
+     */
+    /**
+     * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
+     * @type {String}
+     */
+    changeEvent : {
+      value:'selectedchange'
+    },
+    /**
+     * \u81ea\u52a8\u9690\u85cf
+     * @type {Boolean}
+     * @override
+     */
+    autoHide:{
+      value : true
+    },
+    /**
+     * \u9690\u85cf\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
+     * @protected
+     * @type {String}
+     */
+    hideEvent:{
+      value:'itemclick'
+    },
+    /**
+     * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
+     * @cfg {String|HTMLElement|jQuery} textField
+     */
+    /**
+     * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
+     * @type {String|HTMLElement|jQuery}
+     */
+    textField : {
+
+    },
+    align : {
+      value : {
+         points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
+         offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
+      }
+    },
+    /**
+     * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
+     * @cfg {String|HTMLElement|jQuery} valueField
+     */
+    /**
+     * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
+     * @type {String|HTMLElement|jQuery}
+     */
+    valueField:{
+
+    }
+    /**
+     * @event selectedchange
+     * \u9009\u4e2d\u503c\u6539\u53d8\u4e8b\u4ef6
+     * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {String} text \u9009\u4e2d\u7684\u6587\u672c
+     * @param {string} value \u9009\u4e2d\u7684\u503c
+     * @param {jQuery} curTrigger \u5f53\u524d\u89e6\u53d1picker\u7684\u5143\u7d20
+     */
+  }
+
+  Mixin.prototype = {
+
+    __bindUI : function(){
+      var _self = this,
+        //innerControl = _self.get('innerControl'),
+        hideEvent = _self.get('hideEvent'),
+        trigger = $(_self.get('trigger'));
+
+      _self.on('show',function(ev){
+      //trigger.on(_self.get('triggerEvent'),function(e){
+        if(!_self.get('isInit')){
+          _self._initControl();
+        }
+        if(_self.get('autoSetValue')){
+          var valueField = _self.get('valueField') || _self.get('textField') || _self.get('curTrigger'),
+            val = $(valueField).val();
+          _self.setSelectedValue(val);
+        }
+      });
+
+      //_self.initControlEvent();
+    },
+    _initControl : function(){
+      var _self = this;
+      if(_self.get('isInit')){ //\u5df2\u7ecf\u521d\u59cb\u5316\u8fc7
+        return ;
+      }
+      if(!_self.get('innerControl')){
+        var control = _self.createControl();
+        _self.get('children').push(control);
+      }
+      _self.initControlEvent();
+      _self.set('isInit',true);
+    },
+    /**
+     * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\uff0c\u7ed1\u5b9a\u4e8b\u4ef6
+     */
+    initControl : function(){
+      this._initControl();
+    },  
+    /**
+     * @protected
+     * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6
+     */
+    createControl : function(){
+      
+    },
+    //\u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\u7684\u4e8b\u4ef6
+    initControlEvent : function(){
+      var _self = this,
+        innerControl = _self.get('innerControl'),
+        trigger = $(_self.get('trigger')),
+        hideEvent = _self.get('hideEvent');
+
+      innerControl.on(_self.get('changeEvent'),function(e){
+        var curTrigger = _self.get('curTrigger'),
+          textField = _self.get('textField') || curTrigger || trigger,
+          valueField = _self.get('valueField'),
+          selValue = _self.getSelectedValue(),
+          isChange = false;
+
+        if(textField){
+          var selText = _self.getSelectedText(),
+            preText = $(textField).val();
+          if(selText != preText){
+            $(textField).val(selText);
+            isChange = true;
+            $(textField).trigger('change');
+          }
+        }
+        
+        if(valueField){
+          var preValue = $(valueField).val();  
+          if(valueField != preValue){
+            $(valueField).val(selValue);
+            isChange = true;
+            $(valueField).trigger('change');
+          }
+        }
+        if(isChange){
+          _self.onChange(selText,selValue,e);
+        }
+      });
+      
+      if(hideEvent){
+        innerControl.on(_self.get('hideEvent'),function(){
+          var curTrigger = _self.get('curTrigger');
+          try{ //\u9690\u85cf\u65f6\uff0c\u5728ie6,7\u4e0b\u4f1a\u62a5\u9519
+            if(curTrigger){
+              curTrigger.focus();
+            }
+          }catch(e){
+            BUI.log(e);
+          }
+          _self.hide();
+        });
+      }
+    },
+    /**
+     * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
+     * @template
+     * @protected
+     * @param {String} val \u8bbe\u7f6e\u503c
+     */
+    setSelectedValue : function(val){
+      
+    },
+    /**
+     * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
+     * @template
+     * @protected
+     * @return {String} \u9009\u4e2d\u7684\u503c
+     */
+    getSelectedValue : function(){
+      
+    },
+    /**
+     * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
+     * @template
+     * @protected
+     * @return {String} \u9009\u4e2d\u7684\u6587\u672c
+     */
+    getSelectedText : function(){
+
+    },
+    /**
+     * \u9009\u62e9\u5668\u83b7\u53d6\u7126\u70b9\u65f6\uff0c\u9ed8\u8ba4\u9009\u4e2d\u5185\u90e8\u63a7\u4ef6
+     */
+    focus : function(){
+      this.get('innerControl').focus();
+    },
+    /**
+     * @protected
+     * \u53d1\u751f\u6539\u53d8
+     */
+    onChange : function(selText,selValue,ev){
+      var _self = this,
+        curTrigger = _self.get('curTrigger');
+      //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
+      _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
+    },
+    /**
+     * \u5904\u7406 esc \u952e
+     * @protected
+     * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
+     */
+    handleNavEsc : function (ev) {
+      this.hide();
+    },
+    _uiSetValueField : function(v){
+      var _self = this;
+      if(v != null && v !== ''){ //if(v)\u95ee\u9898\u592a\u591a
+        _self.setSelectedValue($(v).val());
+      }
+    },
+    _getTextField : function(){
+      var _self = this;
+      return _self.get('textField') || _self.get('curTrigger');
+    }
+  }
+
+  return Mixin;
+});/**
  * @fileOverview \u9009\u62e9\u5668
  * @ignore
  */
 
-define('bui/picker/picker',['bui/overlay'],function (require) {
+define('bui/picker/picker',['bui/overlay', 'bui/picker/mixin'],function (require) {
   
-  var Overlay = require('bui/overlay').Overlay;
+  var Overlay = require('bui/overlay').Overlay,
+    Mixin = require('bui/picker/mixin');
 
   /**
    * \u9009\u62e9\u5668\u63a7\u4ef6\u7684\u57fa\u7c7b\uff0c\u5f39\u51fa\u4e00\u4e2a\u5c42\u6765\u9009\u62e9\u6570\u636e\uff0c\u4e0d\u8981\u4f7f\u7528\u6b64\u7c7b\u521b\u5efa\u63a7\u4ef6\uff0c\u4ec5\u7528\u4e8e\u7ee7\u627f\u5b9e\u73b0\u63a7\u4ef6
@@ -17199,267 +17590,14 @@ define('bui/picker/picker',['bui/overlay'],function (require) {
    * </code></pre>
    * @abstract
    * @class BUI.Picker.Picker
+   * @mixins BUI.Picker.Mixin
    * @extends BUI.Overlay.Overlay
    */
-  var picker = Overlay.extend({
+  var picker = Overlay.extend([Mixin], {
     
-      bindUI : function(){
-        var _self = this,
-          //innerControl = _self.get('innerControl'),
-          hideEvent = _self.get('hideEvent'),
-          trigger = $(_self.get('trigger'));
-
-        _self.on('show',function(ev){
-        //trigger.on(_self.get('triggerEvent'),function(e){
-          if(!_self.get('isInit')){
-            _self._initControl();
-          }
-          if(_self.get('autoSetValue')){
-            var valueField = _self.get('valueField') || _self.get('textField') || _self.get('curTrigger'),
-              val = $(valueField).val();
-            _self.setSelectedValue(val);
-          }
-        });
-
-
-        //_self.initControlEvent();
-      },
-      _initControl : function(){
-        var _self = this;
-        if(_self.get('isInit')){ //\u5df2\u7ecf\u521d\u59cb\u5316\u8fc7
-          return ;
-        }
-        if(!_self.get('innerControl')){
-          var control = _self.createControl();
-          _self.get('children').push(control);
-        }
-        _self.initControlEvent();
-        _self.set('isInit',true);
-      },
-      /**
-       * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\uff0c\u7ed1\u5b9a\u4e8b\u4ef6
-       */
-      initControl : function(){
-        this._initControl();
-      },  
-      /**
-       * @protected
-       * \u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6
-       */
-      createControl : function(){
-        
-      },
-      //\u521d\u59cb\u5316\u5185\u90e8\u63a7\u4ef6\u7684\u4e8b\u4ef6
-      initControlEvent : function(){
-        var _self = this,
-          innerControl = _self.get('innerControl'),
-          trigger = $(_self.get('trigger')),
-          hideEvent = _self.get('hideEvent');
-
-        innerControl.on(_self.get('changeEvent'),function(e){
-          var curTrigger = _self.get('curTrigger'),
-            textField = _self.get('textField') || curTrigger || trigger,
-            valueField = _self.get('valueField'),
-            selValue = _self.getSelectedValue(),
-            isChange = false;
-
-          if(textField){
-            var selText = _self.getSelectedText(),
-              preText = $(textField).val();
-            if(selText != preText){
-              $(textField).val(selText);
-              isChange = true;
-              $(textField).trigger('change');
-            }
-          }
-          
-          if(valueField){
-            var preValue = $(valueField).val();  
-            if(valueField != preValue){
-              $(valueField).val(selValue);
-              isChange = true;
-              $(valueField).trigger('change');
-            }
-          }
-          if(isChange){
-            _self.onChange(selText,selValue,e);
-          }
-        });
-        
-        if(hideEvent){
-          innerControl.on(_self.get('hideEvent'),function(){
-            var curTrigger = _self.get('curTrigger');
-            try{ //\u9690\u85cf\u65f6\uff0c\u5728ie6,7\u4e0b\u4f1a\u62a5\u9519
-              if(curTrigger){
-                curTrigger.focus();
-              }
-            }catch(e){
-              BUI.log(e);
-            }
-            _self.hide();
-          });
-        }
-      },
-      /**
-       * \u8bbe\u7f6e\u9009\u4e2d\u7684\u503c
-       * @template
-       * @protected
-       * @param {String} val \u8bbe\u7f6e\u503c
-       */
-      setSelectedValue : function(val){
-        
-      },
-      /**
-       * \u83b7\u53d6\u9009\u4e2d\u7684\u503c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u503c\u4ee5','\u5206\u5272
-       * @template
-       * @protected
-       * @return {String} \u9009\u4e2d\u7684\u503c
-       */
-      getSelectedValue : function(){
-        
-      },
-      /**
-       * \u83b7\u53d6\u9009\u4e2d\u9879\u7684\u6587\u672c\uff0c\u591a\u9009\u72b6\u6001\u4e0b\uff0c\u6587\u672c\u4ee5','\u5206\u5272
-       * @template
-       * @protected
-       * @return {String} \u9009\u4e2d\u7684\u6587\u672c
-       */
-      getSelectedText : function(){
-
-      },
-      /**
-       * \u9009\u62e9\u5668\u83b7\u53d6\u7126\u70b9\u65f6\uff0c\u9ed8\u8ba4\u9009\u4e2d\u5185\u90e8\u63a7\u4ef6
-       */
-      focus : function(){
-        this.get('innerControl').focus();
-      },
-      /**
-       * @protected
-       * \u53d1\u751f\u6539\u53d8
-       */
-      onChange : function(selText,selValue,ev){
-        var _self = this,
-          curTrigger = _self.get('curTrigger');
-        //curTrigger && curTrigger.trigger('change'); //\u89e6\u53d1\u6539\u53d8\u4e8b\u4ef6
-        _self.fire('selectedchange',{value : selValue,text : selText,curTrigger : curTrigger});
-      },
-      /**
-       * \u5904\u7406 esc \u952e
-       * @protected
-       * @param  {jQuery.Event} ev \u4e8b\u4ef6\u5bf9\u8c61
-       */
-      handleNavEsc : function (ev) {
-        this.hide();
-      },
-      _uiSetValueField : function(v){
-        var _self = this;
-        if(v != null && v !== ''){ //if(v)\u95ee\u9898\u592a\u591a
-          _self.setSelectedValue($(v).val());
-        }
-      },
-      _getTextField : function(){
-        var _self = this;
-        return _self.get('textField') || _self.get('curTrigger');
-      }
   },{
     ATTRS : {
-      
-      /**
-       * \u7528\u4e8e\u9009\u62e9\u7684\u63a7\u4ef6\uff0c\u9ed8\u8ba4\u4e3a\u7b2c\u4e00\u4e2a\u5b50\u5143\u7d20,\u6b64\u63a7\u4ef6\u5b9e\u73b0 @see {BUI.Component.UIBase.Selection} \u63a5\u53e3
-       * @protected
-       * @type {Object|BUI.Component.Controller}
-       */
-      innerControl : {
-        getter:function(){
-          return this.get('children')[0];
-        }
-      },
-      /**
-       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @cfg {String} [triggerEvent='click']
-       */
-      /**
-       * \u663e\u793a\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @type {String}
-       * @default 'click'
-       */
-      triggerEvent:{
-        value:'click'
-      },
-      /**
-       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
-       * @cfg {Boolean} [autoSetValue=true]
-       */
-      /**
-       * \u9009\u62e9\u5668\u9009\u4e2d\u7684\u9879\uff0c\u662f\u5426\u968f\u7740\u89e6\u53d1\u5668\u6539\u53d8
-       * @type {Boolean}
-       */
-      autoSetValue : {
-        value : true
-      },
-      /**
-       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
-       * @cfg {String} [changeEvent='selectedchange']
-       */
-      /**
-       * \u9009\u62e9\u53d1\u751f\u6539\u53d8\u7684\u4e8b\u4ef6
-       * @type {String}
-       */
-      changeEvent : {
-        value:'selectedchange'
-      },
-      /**
-       * \u81ea\u52a8\u9690\u85cf
-       * @type {Boolean}
-       * @override
-       */
-      autoHide:{
-        value : true
-      },
-      /**
-       * \u9690\u85cf\u9009\u62e9\u5668\u7684\u4e8b\u4ef6
-       * @protected
-       * @type {String}
-       */
-      hideEvent:{
-        value:'itemclick'
-      },
-      /**
-       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
-       * @cfg {String|HTMLElement|jQuery} textField
-       */
-      /**
-       * \u8fd4\u56de\u7684\u6587\u672c\u653e\u5728\u7684DOM\uff0c\u4e00\u822c\u662finput
-       * @type {String|HTMLElement|jQuery}
-       */
-      textField : {
 
-      },
-      align : {
-        value : {
-           points: ['bl','tl'], // ['tr', 'tl'] \u8868\u793a overlay \u7684 tl \u4e0e\u53c2\u8003\u8282\u70b9\u7684 tr \u5bf9\u9f50
-           offset: [0, 0]      // \u6709\u6548\u503c\u4e3a [n, m]
-        }
-      },
-      /**
-       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
-       * @cfg {String|HTMLElement|jQuery} valueField
-       */
-      /**
-       * \u8fd4\u56de\u7684\u503c\u653e\u7f6eDOM ,\u4e00\u822c\u662finput
-       * @type {String|HTMLElement|jQuery}
-       */
-      valueField:{
-
-      }
-      /**
-       * @event selectedchange
-       * \u9009\u4e2d\u503c\u6539\u53d8\u4e8b\u4ef6
-       * @param {Object} e \u4e8b\u4ef6\u5bf9\u8c61
-       * @param {String} text \u9009\u4e2d\u7684\u6587\u672c
-       * @param {string} value \u9009\u4e2d\u7684\u503c
-       * @param {jQuery} curTrigger \u5f53\u524d\u89e6\u53d1picker\u7684\u5143\u7d20
-       */
     }
   },{
     xclass:'picker'
@@ -17883,6 +18021,7 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
     Valid = require('bui/form/valid'),
     Remote = require('bui/form/remote'),
     CLS_FIELD_ERROR = BUI.prefix + 'form-field-error',
+    CLS_TIP_CONTAINER = 'bui-form-tip-container',
     DATA_ERROR = 'data-error';
 
   /**
@@ -17991,7 +18130,9 @@ define('bui/form/basefield',['bui/common','bui/form/tips','bui/form/valid','bui/
       _self.on('afterRenderUI',function(){
         var tip = _self.get('tip');
         if(tip){
-          tip.trigger = _self.getTipTigger();
+          var trigger = _self.getTipTigger();
+          trigger && trigger.addClass(CLS_TIP_CONTAINER);
+          tip.trigger = trigger;
           tip.autoRender = true;
           tip = new TipItem(tip);
           _self.set('tip',tip);
@@ -18766,8 +18907,13 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   }
 
   function appendItem(value,text,select){
-     var str = '<option value="' + value +'">'+text+'</option>'
-    $(str).appendTo(select);
+    // var str = '<option value="' + value +'">'+text+'</option>'
+    // $(str).appendTo(select);
+    
+    // \u4e0a\u9762\u90a3\u79cd\u5199\u6cd5\u5728ie6\u4e0b\u4f1a\u62a5\u4e00\u4e2a\u5947\u602a\u7684\u9519\u8bef\uff0c\u4f7f\u7528new Option\u5219\u4e0d\u4f1a\u6709\u8fd9\u4e2a\u95ee\u9898
+    var option = new Option(text, value),
+      options = select[0].options;
+    options[options.length] = option;
   }
   /**
    * \u8868\u5355\u9009\u62e9\u57df
@@ -18964,7 +19110,8 @@ define('bui/form/selectfield',['bui/common','bui/form/basefield'],function (requ
   });
 
   return selectField;
-});/**
+});
+/**
  * @fileOverview \u8868\u5355\u65e5\u5386\u57df
  * @author dxq613@gmail.com
  * @ignore
@@ -19195,7 +19342,7 @@ define('bui/form/checkfield',['bui/form/basefield'],function (require) {
     },
     //\u8986\u76d6 \u8bbe\u7f6e\u503c\u7684\u65b9\u6cd5
     _uiSetValue : function(v){
-
+      this.setControlValue(v);
     },
     //\u8986\u76d6\u4e0d\u8bbe\u7f6e\u5bbd\u5ea6
     _uiSetWidth : function(v){
@@ -20163,7 +20310,7 @@ define('bui/form/valid',['bui/common','bui/form/rules'],function (require) {
             if(item.field){
               item.clearErrors(reset);
             }else{
-              item.clearErrors(deep,reset);
+              item.clearErrors(reset,deep);
             }
           }
         });
@@ -20290,7 +20437,20 @@ define('bui/form/groupvalid',['bui/form/valid'],function (require) {
   GroupValid.ATTRS = ATTRS =BUI.merge(true,Valid.ATTRS,{
     events: {
       value : {
+        /**
+         * @event
+         * \u9a8c\u8bc1\u7ed3\u679c\u53d1\u751f\u6539\u53d8\uff0c\u4ecetrue\u53d8\u6210false\u6216\u8005\u76f8\u53cd
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5b50\u63a7\u4ef6
+         * @param {Boolean} ev.valid \u662f\u5426\u901a\u8fc7\u9a8c\u8bc1
+         */
         validchange : true,
+        /**
+         * @event
+         * \u503c\u6539\u53d8\uff0c\u4ec5\u5f53\u901a\u8fc7\u9a8c\u8bc1\u65f6\u89e6\u53d1
+         * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+         * @param {Object} ev.target \u89e6\u53d1\u4e8b\u4ef6\u7684\u5b50\u63a7\u4ef6
+         */
         change : true
       }
     }
@@ -21039,8 +21199,8 @@ define('bui/form/group/select',['bui/form/group/base','bui/data'],function (requ
           store.url = url;
         }
         store = new Data.TreeStore(store);
-        _self.set('store',store);
       }
+      _self.set('store',store);
     },
     bindUI : function  () {
       var _self = this;
@@ -21939,6 +22099,9 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     name : 'min',
     msg : '\u8f93\u5165\u503c\u4e0d\u80fd\u5c0f\u4e8e{0}\uff01',
     validator : function(value,min,formatedMsg){
+      if(BUI.isString(value)){
+        value = value.replace(/\,/g,'');
+      }
       if(value !== '' && toNumber(value) < toNumber(min)){
         return formatedMsg;
       }
@@ -21966,6 +22129,9 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
     name : 'max',
     msg : '\u8f93\u5165\u503c\u4e0d\u80fd\u5927\u4e8e{0}\uff01',
     validator : function(value,max,formatedMsg){
+      if(BUI.isString(value)){
+        value = value.replace(/\,/g,'');
+      }
       if(value !== '' && toNumber(value) > toNumber(max)){
         return formatedMsg;
       }
@@ -22173,8 +22339,7 @@ define('bui/form/rules',['bui/form/rule'],function (require) {
   });
 
   /**
-   * \u6570\u5b57\u9a8c\u8bc1\uff0c\u4f1a\u5bf9\u503c\u53bb\u9664\u7a7a\u683c\uff0c\u65e0\u6570\u636e\u4e0d\u8fdb\u884c\u6821\u9a8c
-   * \u5141\u8bb8\u5343\u5206\u7b26\uff0c\u4f8b\u5982\uff1a 12,000,000\u7684\u683c\u5f0f
+   * \u624b\u673a\u9a8c\u8bc1\uff0c11\u4f4d\u624b\u673a\u6570\u5b57
    * <ol>
    *  <li>name: mobile</li>
    *  <li>msg: \u4e0d\u662f\u6709\u6548\u7684\u624b\u673a\u53f7\u7801\uff01</li>
@@ -22411,7 +22576,7 @@ define('bui/form/remote',['bui/common'],function(require) {
       var _self = this,
         loadingEl = _self.get('loadingEl'),
         loadingTpl = _self.get('loadingTpl');
-      if(!loadingEl){
+      if(loadingTpl && !loadingEl){
         loadingEl = $(loadingTpl).appendTo(_self.getLoadingContainer());
         _self.setInternal('loadingEl',loadingEl);
       }
@@ -22781,12 +22946,12 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         var _self = this,
           picker = _self.get('picker'),
           el = _self.get('el'),
-          textEl = el.find('.' + _self.get('inputCls'));
+          textEl = _self._getTextEl();
         picker.set('trigger',el);
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
-        
+
         picker.render();
         _self.set('list',picker.get('list'));
       },
@@ -22863,10 +23028,18 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           
         }
       },
+      //\u7981\u7528
+      _uiSetDisabled : function(v){
+        var _self = this,
+          picker = _self.get('picker'),
+          textEl = _self._getTextEl();
+        picker.set('disabled',v);
+        textEl && textEl.attr('disabled',v);
+      },
       _getTextEl : function(){
          var _self = this,
           el = _self.get('el');
-        return el.find('.' + _self.get('inputCls'));
+        return el.is('input') ? el : el.find('input');
       },
       /**
        * \u6790\u6784\u51fd\u6570
@@ -23883,7 +24056,8 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      */
     handleMouseEnter : function (ev) {
       var _self = this;
-      if(this.get('subMenu')){
+
+      if(this.get('subMenu') && this.get('openable')){
         this.set('open',true);
       }
       menuItem.superclass.handleMouseEnter.call(this,ev);
@@ -23893,13 +24067,15 @@ define('bui/menu/menuitem',['bui/common'],function(require){
      * @protected
      */
     handleMouseLeave :function (ev) {
-      var _self = this,
-        subMenu = _self.get('subMenu'),
-        toElement = ev.toElement || ev.relatedTarget;;
-      if(toElement && subMenu && subMenu.containsElement(toElement)){
-        _self.set('open',true);
-      }else{
-        _self.set('open',false);
+      if(this.get('openable')){
+        var _self = this,
+          subMenu = _self.get('subMenu'),
+          toElement = ev.toElement || ev.relatedTarget;;
+        if(toElement && subMenu && subMenu.containsElement(toElement)){
+          _self.set('open',true);
+        }else{
+          _self.set('open',false);
+        }
       }
       menuItem.superclass.handleMouseLeave.call(this,ev);
     },
@@ -23919,21 +24095,23 @@ define('bui/menu/menuitem',['bui/common'],function(require){
     }, 
     //\u8bbe\u7f6e\u6253\u5f00\u5b50\u83dc\u5355 
     _uiSetOpen : function (v) {
-      var _self = this,
-        subMenu = _self.get('subMenu'),
-        subMenuAlign = _self.get('subMenuAlign');
-      if(subMenu){
-        if(v){
-          subMenuAlign.node = _self.get('el');
-          subMenu.set('align',subMenuAlign);
-          subMenu.show();
-        }else{
-          var menuAlign = subMenu.get('align');
-          //\u9632\u6b62\u5b50\u83dc\u5355\u88ab\u516c\u7528\u65f6
-          if(!menuAlign || menuAlign.node == _self.get('el')){
-            subMenu.hide();
+      if(this.get('openable')){
+        var _self = this,
+          subMenu = _self.get('subMenu'),
+          subMenuAlign = _self.get('subMenuAlign');
+        if(subMenu){
+          if(v){
+            subMenuAlign.node = _self.get('el');
+            subMenu.set('align',subMenuAlign);
+            subMenu.show();
+          }else{
+            var menuAlign = subMenu.get('align');
+            //\u9632\u6b62\u5b50\u83dc\u5355\u88ab\u516c\u7528\u65f6
+            if(!menuAlign || menuAlign.node == _self.get('el')){
+              subMenu.hide();
+            }
+            
           }
-          
         }
       }
     },
@@ -23997,6 +24175,13 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : false
       },
       /**
+       * \u662f\u5426\u53ef\u4ee5\u5c55\u5f00
+       * @type {Boolean}
+       */
+      openable : {
+        value : true
+      },
+      /**
        * \u4e0b\u7ea7\u83dc\u5355
        * @cfg {BUI.Menu.Menu} subMenu
        */
@@ -24033,21 +24218,31 @@ define('bui/menu/menuitem',['bui/common'],function(require){
         value : {
           'afterOpenChange' : true
         }
+      },
+      subMenuType : {
+        value : 'pop-menu'
       }
     },
     PARSER : {
       subMenu : function(el){
         var 
           subList = el.find('ul'),
+          type = this.get('subMenuType'),
           sub;
         if(subList && subList.length){
           sub = BUI.Component.create({
             srcNode : subList,
-            xclass : 'pop-menu',
-            autoHide : true,
-            autoHideType : 'leave'
+            xclass : type
           });
-          subList.appendTo('body');
+          if(type == 'pop-menu'){
+            subList.appendTo('body');
+            sub.setInternal({
+              autoHide : true,
+              autoHideType : 'leave'
+            });
+          }else{
+            this.get('children').push(sub);
+          }
         }
         return sub;
       }
@@ -24186,6 +24381,7 @@ define('bui/menu/menu',['bui/common'],function(require){
 		  idField:{
         value:'id'
       },
+      
       /**
        * @protected
        * \u662f\u5426\u6839\u636eDOM\u751f\u6210\u5b50\u63a7\u4ef6
@@ -24251,7 +24447,7 @@ define('bui/menu/popmenu',['bui/common','bui/menu/menu'],function (require) {
    * @mixins BUI.Component.UIBase.Align
    * @mixins BUI.Component.UIBase.AutoHide
    */
-  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,,UIBase.AutoHide],{
+  var popMenu =  Menu.extend([UIBase.Position,UIBase.Align,UIBase.AutoShow,UIBase.AutoHide],{
 
   },{
     ATTRS:{
@@ -24442,7 +24638,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       //\u5904\u7406\u70b9\u51fb\u4e8b\u4ef6\uff0c\u5c55\u5f00\u3001\u6298\u53e0\u3001\u9009\u4e2d
       _self.on('itemclick',function(ev){
         var item = ev.item,
-          titleEl = $(ev.domTarget).closest('.' + CLS_MENU_TITLE);
+          titleEl = $(ev.domTarget).closest('.' + _self.get('collapsedCls'));
         if(titleEl.length){
           var collapsed = item.get('collapsed');
             item.set('collapsed',!collapsed);
@@ -24473,16 +24669,18 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
         items = item.items,
         subItems = [],
         cfg = {
-          xclass : 'menu-item',
-          elCls : 'menu-second',
-          collapsed : item.collapsed,
           selectable: false,
           children : [{
             xclass : 'menu',
             children : subItems
-          }],
-          content: '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">'+item.text+'</span></div>'
+          }]
         };
+
+      BUI.mix(cfg,{
+        xclass : 'menu-item',
+        elCls : 'menu-second'
+      },item);
+
       BUI.each(items,function(subItem){
         var subItemCfg = _self._initSubMenuCfg(subItem);
         subItems.push(subItemCfg);
@@ -24497,7 +24695,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
         cfg = {
           xclass : 'menu-item',
           elCls : 'menu-leaf',
-          tpl : '<a href="{href}"><em>{text}</em></a>'
+          tpl : _self.get('subMenuItemTpl')
         };
       return BUI.mix(cfg,subItem);
     }
@@ -24505,6 +24703,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
     ATTRS : 
     {
+      defaultChildCfg : {
+        value : {
+          subMenuType : 'menu',
+          openable : false,
+          arrowTpl : ''
+        }
+      },
       
       /**
        * \u914d\u7f6e\u7684items \u9879\u662f\u5728\u521d\u59cb\u5316\u65f6\u4f5c\u4e3achildren
@@ -24513,6 +24718,27 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
        */
       autoInitItems : {
           value : false
+      },
+      /**
+       * \u83dc\u5355\u9879\u7684\u6a21\u677f
+       * @type {String}
+       */
+      itemTpl : {
+        value : '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">{text}</span></div>'
+      },
+      /**
+       * \u5b50\u83dc\u5355\u7684\u9009\u9879\u6a21\u677f
+       * @cfg {String} subMenuTpl
+       */
+      subMenuItemTpl : {
+        value : '<a href="{href}"><em>{text}</em></a>'
+      },
+      /**
+       * \u5c55\u5f00\u6536\u7f29\u7684\u6837\u5f0f\uff0c\u7528\u6765\u89e6\u53d1\u5c55\u5f00\u6298\u53e0\u4e8b\u4ef6,\u9ed8\u8ba4\u662f 'bui-menu-title'
+       * @type {String} 
+       */
+      collapsedCls : {
+        value : CLS_MENU_TITLE
       },
       events : {
         value : {
@@ -24863,8 +25089,8 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     _uiSetTitle : function(v){
       var _self = this,
         el = _self.get('el');
-      el.attr('title',v);
-      $('.' + CLS_ITEM_TITLE,el).text(v);
+      //el.attr('title',v);
+      $('.' + CLS_ITEM_TITLE,el).html(v);
     },
     _uiSetActived : function(v){
       var _self = this,
@@ -27506,7 +27732,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
       _self.get('el').delegate('a','click',function(ev){
         ev.preventDefault();
       }).delegate('.' + CLS_MONTH,'dblclick',function(){
-        _self.fire('dblclick');
+        _self.fire('monthdblclick');
       });
     }
   },{
@@ -27543,7 +27769,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
       });
 
       el.delegate('.' + CLS_YEAR,'dblclick',function(){
-        _self.fire('dblclick');
+        _self.fire('yeardblclick');
       });
 
       el.delegate('.x-icon','click',function(ev){
@@ -27683,7 +27909,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         if(ev.item){
           _self.setInternal('month',ev.item.value);
         }
-      }).on('dblclick',function(){
+      }).on('monthdblclick',function(){
         _self._successCall();
       });
 
@@ -27691,7 +27917,7 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
         if(ev.item){
           _self.setInternal('year',ev.item.value);
         }
-      }).on('dblclick',function(){
+      }).on('yeardblclick',function(){
         _self._successCall();
       });
 
@@ -27808,7 +28034,8 @@ define('bui/calendar/monthpicker',['bui/common','bui/overlay','bui/list','bui/to
   });
   return monthPicker;
 
-});/**
+});
+/**
  * @fileOverview \u65e5\u671f\u63a7\u4ef6\u6765\u9009\u62e9\u5e74\u6708\u7684\u90e8\u5206
  * @ignore
  */
@@ -28826,7 +29053,8 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
   });
 
   return calendar;
-});/**
+});
+/**
  * @fileOverview \u65e5\u671f\u9009\u62e9\u5668
  * @author dxq613@gmail.com
  * @ignore
@@ -28903,7 +29131,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
       var _self = this,
         calendar = this.get('calendar'),
         date = DateUtil.parse(val,_self.get("dateMask"));
-      date = date || new Date(new Date().setSeconds(0));
+      date = date || _self.get('selectedDate');
       calendar.set('selectedDate',DateUtil.getDate(date));
       if(_self.get('showTime')){
           var lockTime = this.get("lockTime"),
@@ -29047,6 +29275,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        */
       calendar:{
 
+      },
+      /**
+       * \u9ed8\u8ba4\u9009\u4e2d\u7684\u65e5\u671f
+       * @type {Date}
+       */
+      selectedDate: {
+      	value: new Date(new Date().setSeconds(0))
       }
     }
   },{
@@ -29123,7 +29358,7 @@ define('bui/editor/mixin',function (require) {
      * @type {Boolean}
      */
     ignoreInputFields: {
-      value :true
+      value :false
     },
     /**
      * \u5185\u90e8\u63a7\u4ef6\u7684\u4ee3\u8868Value\u7684\u5b57\u6bb5
@@ -30935,14 +31170,18 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
         var _self = this,
             children = _self.get('children'),
             columns = _self.get('columns'),
-            emptyColumn = _self._createEmptyColumn();
+            emptyColumn;
         $.each(columns, function (index,item) {
             var columnControl = _self._createColumn(item);
             children[index] = columnControl;
             columns[index] = columnControl;
         });
-        children.push(emptyColumn);
-        _self.set('emptyColumn',emptyColumn);
+        //if(!_self.get('forceFit')){
+          emptyColumn = _self._createEmptyColumn();
+          children.push(emptyColumn);
+          _self.set('emptyColumn',emptyColumn);
+        //}
+        
       },
       /**
        * get the columns of this header,the result equals the 'children' property .
@@ -31197,7 +31436,7 @@ define('bui/grid/header',['bui/common','bui/grid/column'],function(require) {
           //_self.get('el').find('table').width()
           return;
         }
-        if (_self.get('forceFit')) {
+        if(_self.get('forceFit')) {
           _self.forceFitColumns();
         }else if(_self._isAllowScrollLeft()){
           totalWidth = _self.getColumnsWidth();
@@ -31402,7 +31641,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
         cellsTpl.push(_self._getCellTpl(column, dataIndex, record,index));
       });
 
-      if(_self.get('useEmptyCell')){
+      if(_self.get('useEmptyCell') /*&& !_self.get('forceFit')*/){
         cellsTpl.push(_self._getEmptyCellTpl());
       }
 
@@ -31591,7 +31830,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
       });
 
       //if this component set width,add a empty column to fit row width
-      if(_self.get('useEmptyCell')){
+      if(_self.get('useEmptyCell')/* && !_self.get('forceFit')*/){
         cellsTpl.push(_self._getEmptyCellTpl());
       }
       rowTpl = BUI.substitute(rowTpl,{cellsTpl:cellsTpl.join('')});
@@ -31796,26 +32035,20 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
    * @extends BUI.List.SimpleList
    */
   var grid = List.SimpleList.extend({
-    
-    /**
-     * \u521d\u59cb\u5316\uff0c\u5982\u679c\u672a\u8bbe\u7f6e\u5bbd\u5ea6\uff0c\u5219\u4f7f\u7528\u8868\u683c\u5bb9\u5668\u7684\u5bbd\u5ea6
-     * @protected
-     * @ignore
-     */
-    initializer : function(){
-        var _self = this,
-            render = _self.get('render'),
-            width = _self.get('width');
-        if(!width){
-            _self.set('width',$(render).width());
-        }
-    },
     /**
      * @protected
      * @ignore
      */
     createDom:function () {
-      var _self = this;
+      var _self = this,
+            render = _self.get('render'),
+            outerWidth = $(render).width(),
+            width = _self.get('width');
+            
+      if(!width && outerWidth){
+        var appendWidth = _self.getAppendWidth();
+        _self.set('width',outerWidth - appendWidth);
+      }
 
       // \u63d0\u524d,\u4e2d\u9014\u8bbe\u7f6e\u5bbd\u5ea6\u65f6\u4f1a\u5931\u8d25\uff01\uff01
       if (_self.get('width')) {
@@ -32353,6 +32586,7 @@ define('bui/grid/grid',['bui/common','bui/mask','bui/toolbar','bui/list','bui/gr
        */
       forceFit:{
         sync:false,
+        view : true,
         value:false
       },
       /**
@@ -32797,7 +33031,7 @@ define('bui/grid/format',function (require) {
 ;(function(){
 var BASE = 'bui/grid/plugins/';
 define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE + 'cellediting',BASE + 'rowediting',BASE + 'autofit',
-	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber'],function (r) {
+	BASE + 'dialogediting',BASE + 'menu',BASE + 'summary',BASE + 'rownumber',BASE + 'columngroup',BASE + 'rowgroup',BASE + 'columnresize'],function (r) {
 	var BUI = r('bui/common'),
 		Selection = r(BASE + 'selection'),
 
@@ -32813,7 +33047,10 @@ define('bui/grid/plugins',['bui/common',BASE + 'selection',BASE + 'cascade',BASE
 			AutoFit : r(BASE + 'autofit'),
 			GridMenu : r(BASE + 'menu'),
 			Summary : r(BASE + 'summary'),
-			RowNumber : r(BASE + 'rownumber')
+			RowNumber : r(BASE + 'rownumber'),
+			ColumnGroup : r(BASE + 'columngroup'),
+			RowGroup : r(BASE + 'rowgroup'),
+			ColumnResize : r(BASE + 'columnresize')
 		});
 		
 	return Plugins;
@@ -34132,7 +34369,7 @@ define('bui/grid/plugins/editing',function (require) {
      * \u786e\u8ba4\u7f16\u8f91
      * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
      * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
-     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
      */
     
     /**
@@ -34140,7 +34377,7 @@ define('bui/grid/plugins/editing',function (require) {
      * \u53d6\u6d88\u7f16\u8f91
      * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
      * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
-     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
      */
     
     /**
@@ -34148,8 +34385,15 @@ define('bui/grid/plugins/editing',function (require) {
      * editor \u663e\u793a
      * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
      * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
-     * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+     * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
      */
+    
+    /**
+     * @event editorready
+     * editor \u521b\u5efa\u5b8c\u6210\uff0c\u56e0\u4e3aeditor\u5ef6\u8fdf\u521b\u5efa\uff0c\u6240\u4ee5\u521b\u5efa\u5b8c\u6210grid\uff0c\u7b49\u5f85editor\u521b\u5efa\u6210\u529f
+     */
+    
+
   };
 
   BUI.augment(Editing,{
@@ -34171,6 +34415,7 @@ define('bui/grid/plugins/editing',function (require) {
         _self.initEditors(Editor);
         _self._initGridEvent(grid);
         _self.set('isInitEditors',true);
+        _self.fire('editorready');
       });
     },
     /**
@@ -34796,6 +35041,13 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
      */
     triggerCls : {
       value : CLS_ROW
+    },
+    /**
+     * \u7f16\u8f91\u5668\u7684\u9ed8\u8ba4\u914d\u7f6e\u4fe1\u606f
+     * @type {Object}
+     */
+    editor : {
+
     }
   };
 
@@ -34809,17 +35061,21 @@ define('bui/grid/plugins/rowediting',['bui/common','bui/grid/plugins/editing'],f
      * @param  {Array} fields \u5b57\u6bb5\u914d\u7f6e
      */ 
     getEditorCfgs : function(fields){
-      var rst = [];
-      rst.push({
-        changeSourceEvent : null,
-        autoUpdate : false,
-        form : {
-          children : fields,
-          buttonBar : {
-            elCls : 'centered toolbar'
+      var _self = this,
+        editor = _self.get('editor'),
+        rst = [],
+        cfg = BUI.mix(true,{
+          changeSourceEvent : null,
+          autoUpdate : false,
+          form : {
+            children : fields,
+            buttonBar : {
+              elCls : 'centered toolbar'
+            }
           }
-        }
-      });
+        },editor);
+        
+      rst.push(cfg);
       return rst;
     },
     /**
@@ -35065,7 +35321,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
          * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
          * @param {BUI.Form.Form} form \u8868\u5355
-         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
          */
         
         /**
@@ -35074,7 +35330,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
          * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
          * @param {BUI.Form.Form} form \u8868\u5355
-         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
          */
         
         /**
@@ -35082,7 +35338,12 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
          * editor \u663e\u793a
          * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
          * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
-         * @param {BUI.Eidtor.Editor} ev.editor \u7f16\u8f91\u5668
+         * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
+         */
+        
+        /**
+         * @event editorready
+         * editor \u521b\u5efa\u5b8c\u6210\uff0c\u56e0\u4e3aeditor\u5ef6\u8fdf\u521b\u5efa\uff0c\u6240\u4ee5\u521b\u5efa\u5b8c\u6210grid\uff0c\u7b49\u5f85editor\u521b\u5efa\u6210\u529f
          */
       }
     },
@@ -35104,6 +35365,7 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
       //\u5ef6\u8fdf\u52a0\u8f7d editor\u6a21\u5757
       BUI.use('bui/editor',function(Editor){
         _self._initEditor(Editor);
+        _self.fire('editorready');
       });
     },
     bindUI : function(grid){
@@ -35286,6 +35548,492 @@ define('bui/grid/plugins/dialogediting',['bui/common'],function (require) {
   
   return RowNumber;
   
+});define('bui/grid/plugins/columngroup',['bui/common'],function(require){
+
+  var BUI = require('bui/common'),
+    PREFIX = BUI.prefix,
+    CLS_HD_TITLE = PREFIX + 'grid-hd-title',
+    CLS_GROUP = PREFIX + 'grid-column-group',
+    CLS_GROUP_HEADER = PREFIX + 'grid-group-header',
+    CLS_DOUBLE = PREFIX + 'grid-db-hd';
+
+  /**
+   * \u8868\u5934\u5217\u5206\u7ec4\u529f\u80fd
+   * @class BUI.Grid.Plugins.ColumnGroup
+   * @extends BUI.Base
+   */
+  var Group = function (cfg) {
+    Group.superclass.constructor.call(this,cfg);
+  };
+
+  Group.ATTRS = {
+
+    /**
+     * \u5206\u7ec4
+     * @type {Array}
+     */
+    groups : {
+      value : []
+    },
+    /**
+     * \u5217\u6a21\u677f
+     * @type {String}
+     */
+    columnTpl : {
+      value : '<th class="bui-grid-hd center" colspan="{colspan}"><div class="' + PREFIX + 'grid-hd-inner">' +
+                        '<span class="' + CLS_HD_TITLE + '">{title}</span>' +
+              '</div></th>'
+    }
+  };
+
+  BUI.extend(Group,BUI.Base);
+
+  BUI.augment(Group,{
+
+    renderUI : function (grid) {
+      var _self = this,
+        groups = _self.get('groups'),
+        header = grid.get('header'),
+        headerEl = header.get('el'),
+        columns = header.get('children'),
+        wraperEl = $('<tr class="'+CLS_GROUP+'"></tr>').prependTo(headerEl.find('thead'));
+
+      headerEl.addClass(CLS_GROUP_HEADER);
+
+      //\u904d\u5386\u5206\u7ec4\uff0c\u6807\u5fd7\u5206\u7ec4
+      BUI.each(groups,function (group) {
+        var tpl = _self._getGroupTpl(group),
+          gEl = $(tpl).appendTo(wraperEl);
+        
+        group.el = gEl;
+        for(var i = group.from; i <= group.to; i++){
+          var column = columns[i];
+          if(column){
+            column.set('group',group);
+          }
+        }
+      });
+
+      var afterEl;
+      //\u4fee\u6539\u672a\u5206\u7ec4\u7684rowspan\u548c\u8c03\u6574\u4f4d\u7f6e
+      for(var i = columns.length - 1; i >=0 ; i--){
+        var column = columns[i],
+          group = column.get('group');
+        if(group){
+          afterEl = group.el;
+
+        }else{
+          var cEl = column.get('el');//$(_self.get('emptyTpl'));
+          cEl.addClass(CLS_DOUBLE);
+          cEl.attr('rowspan',2);
+          if(afterEl){
+            cEl.insertBefore(afterEl);
+          }else{
+            cEl.appendTo(wraperEl);
+          }
+          afterEl = cEl;
+        }
+      }
+      if(groups[0].from !== 0){ //\u5904\u7406\u7b2c\u4e00\u4e2a\u5355\u5143\u683c\u8fb9\u6846\u95ee\u9898
+        var firstCol = columns[groups[0].from];
+        if(firstCol){
+          firstCol.get('el').css('border-left-width',1);
+        }
+      }
+
+       //\u79fb\u9664\u7a7a\u767d\u5217
+
+    },
+    _getGroupTpl : function (group) {
+      var _self = this,
+        columnTpl = _self.get('columnTpl'),
+        colspan = group.to - group.from + 1;
+      return BUI.substitute(columnTpl,{colspan : colspan,title : group.title});
+    }
+  });
+
+  return Group;
+
+});define('bui/grid/plugins/rowgroup',['bui/common'],function(require){
+
+  var BUI = require('bui/common'),
+    DATA_GROUP = 'data-group',
+    PREFIX = BUI.prefix,
+    CLS_GROUP = PREFIX + 'grid-row-group',
+    CLS_TRIGGER = PREFIX + 'grid-cascade',
+    CLS_EXPAND = PREFIX + 'grid-cascade-expand';
+
+  //\u65b0\u7684\u5206\u7ec4
+  function newGroup (value,text) {
+    return {items : [],value : value,text : text};
+  }
+
+  /**
+   * \u8868\u5934\u5217\u5206\u7ec4\u529f\u80fd\uff0c\u4ec5\u5904\u7406\u6570\u636e\u5c55\u793a\uff0c\u6392\u5e8f\uff0c\u4e0d\u5904\u7406\u8fd9\u4e2a\u8fc7\u7a0b\u4e2d\u7684\u589e\u5220\u6539\uff0c\u6dfb\u52a0\u5220\u9664\u5217
+   * @class BUI.Grid.Plugins.RowGroup
+   * @extends BUI.Base
+   */
+  var Group = function (cfg) {
+    Group.superclass.constructor.call(this,cfg);
+  };
+
+  Group.ATTRS = {
+   
+    groups : {
+      shared : false,
+      value : []
+    },
+    /**
+     * \u6e32\u67d3\u5206\u7ec4\u5185\u5bb9\uff0c\u51fd\u6570\u539f\u578b function(text,group){}
+     *
+     *  - text \u662f\u5206\u7ec4\u5b57\u6bb5\u683c\u5f0f\u5316\u540e\u7684\u6587\u672c
+     *  - group \u662f\u5f53\u524d\u5206\u7ec4\uff0c\u5305\u62ec,text(\u6587\u672c\uff09,value\uff08\u503c\uff09,items\uff08\u5206\u7ec4\u5305\u542b\u7684\u9879\uff09
+     * @type {Function}
+     */
+    renderer : {
+
+    }
+  };
+
+  BUI.extend(Group,BUI.Base);
+
+  BUI.augment(Group,{
+
+    renderUI : function (grid) {
+      var _self = this,
+        tbodyEl = grid.get('el').find('tbody');
+      _self.set('grid',grid);
+      _self.set('tbodyEl',tbodyEl);
+
+    },
+    bindUI : function (grid) {
+      var _self = this,
+         groups = [];
+
+      //\u663e\u793a\u5b8c\u6210\u8bb0\u5f55\u65f6
+      grid.on('aftershow',function () {
+        var items = grid.getItems(),
+          column = _self._getSortColumn();
+        _self._clear();
+        if(column){
+          grid.get('view').getAllElements().hide();
+          var field = column.get('dataIndex');
+          BUI.each(items,function (item,index) {
+            var last = groups[groups.length - 1],
+              renderer = column.get('renderer'),
+              value = item[field],
+              text;
+            if(!last || value != last.value){
+              text = renderer ? renderer(value,item) : value;
+              var current = newGroup(value,text);
+              current.begin = index;
+              groups.push(current);
+              last && _self._createGroup(last);
+              last = current;
+            }
+            
+            last.items.push(item);
+            
+            
+          });
+          var last = groups[groups.length - 1];
+          last && _self._createGroup(last);
+          _self.set('groups',groups);
+        }
+        
+      });
+
+      //\u6e05\u9664\u6240\u6709\u8bb0\u5f55\u65f6
+      grid.on('clear',function () {
+        _self._clear();
+      });
+
+      _self.get('tbodyEl').delegate('.' + CLS_TRIGGER,'click',function (ev) {
+        var sender = $(ev.currentTarget),
+          group = _self._getGroupData(sender);
+        if(sender.hasClass(CLS_EXPAND)){
+          _self._collapse(group);
+          sender.removeClass(CLS_EXPAND);
+        }else{
+          _self._expand(group);
+          sender.addClass(CLS_EXPAND);
+        }
+
+      });
+    },
+    //\u83b7\u53d6\u6392\u5e8f\u7684\u5b57\u6bb5\u5bf9\u5e94\u7684\u5217
+    _getSortColumn: function(){
+      var _self = this,
+        grid = _self.get('grid'),
+        store = grid.get('store'),
+        field = store.get('sortField');
+
+      return grid.findColumnByField(field);
+    },
+    //\u83b7\u53d6\u5206\u7ec4\u7684\u6570\u636e
+    _getGroupData : function (el) {
+      var _self = this,
+        groupEl = el.closest('.' + CLS_GROUP);
+      return groupEl.data(DATA_GROUP);
+    },
+    _createGroup : function (group) {
+      var _self = this,
+        grid = _self.get('grid'),
+        item = group.items[0],
+        firstEl = grid.findElement(item),
+        count = grid.get('columns').length,
+        renderer = _self.get('renderer'),
+        text = renderer ? renderer(group.text,group) : group.text,
+        tpl = '<tr class="'+CLS_GROUP+'"><td colspan="' + (count + 1) + '"><div class="bui-grid-cell-inner"><span class="bui-grid-cell-text"><span class="bui-grid-cascade"><i class="bui-grid-cascade-icon"></i></span> ' + text + '</span></div></td></tr>',
+        node = $(tpl).insertBefore(firstEl);
+      node.data(DATA_GROUP,group);
+    },
+    _getGroupedElements : function(group){
+      var _self = this,
+        grid = _self.get('grid'),
+        elements = grid.get('view').getAllElements(),
+        begin = group.begin,
+        end = group.items.length + begin,
+        rst = [];
+      for(var i = begin; i < end; i++){
+        rst.push(elements[i]);
+      }
+      return $(rst);
+    },
+    _expand : function (group) {
+      var _self = this,
+        subEls = _self._getGroupedElements(group);
+      subEls.show();
+    },
+    _collapse : function (group) {
+       var _self = this,
+        subEls = _self._getGroupedElements(group);
+      subEls.hide();
+    },
+    _clear : function () {
+      var _self = this,
+        groups = _self.get('groups'),
+        tbodyEl = _self.get('tbodyEl');
+
+      BUI.Array.empty(groups);
+      tbodyEl.find('.' + CLS_GROUP).remove();
+
+    }
+  });
+
+  return Group;
+
+});/**
+ * @fileOverview \u62d6\u62fd\u6539\u53d8\u5217\u7684\u5bbd\u5ea6
+ * @ignore
+ */
+
+define('bui/grid/plugins/columnresize',function (require) {
+  
+
+  var BUI = require('bui/common'),
+    NUM_DIS = 15,
+    NUM_MIN = 30,
+    STYLE_CURSOR = 'col-resize';
+
+  var Resize = function(cfg){
+    Resize.superclass.constructor.call(this,cfg);
+  };
+
+  Resize.ATTRS = {
+    /**
+     * @private
+     * \u662f\u5426\u6b63\u5728\u62d6\u62fd
+     * @type {Boolean}
+     */
+    resizing : {
+      value : false
+    },
+    //\u62d6\u62fd\u5c5e\u6027
+    draging : {
+
+    }
+  };
+
+  BUI.extend(Resize,BUI.Base);
+
+  BUI.augment(Resize,{
+
+    renderUI : function(grid){
+      this.set('grid',grid);
+    },
+
+    bindUI : function(grid){
+      var _self = this,
+        header = grid.get('header'),
+        curCol,
+        preCol,
+        direction;
+
+      header.get('el').delegate('.bui-grid-hd','mouseenter',function(ev){
+        var resizing = _self.get('resizing');
+        if(!resizing){
+          var sender = ev.currentTarget;
+          curCol = _self._getColumn(sender);
+          preCol = _self._getPreCol(curCol);
+        }
+      }).delegate('.bui-grid-hd','mouseleave',function(ev){
+        var resizing = _self.get('resizing');
+        if(!resizing && curCol){
+          curCol.get('el').css('cursor','');
+          curCol = null; 
+        }
+      }).delegate('.bui-grid-hd','mousemove',function(ev){
+        var resizing = _self.get('resizing');
+
+        if(!resizing && curCol){
+          var el = curCol.get('el'),
+            pageX = ev.pageX,
+            offset = el.offset(),
+            left = offset.left,
+            width = el.width();
+            
+          if(pageX - left < NUM_DIS && preCol){
+            el.css('cursor',STYLE_CURSOR);
+            direction = -1;
+          }else if((left + width) - pageX < NUM_DIS){
+            direction = 1;
+            el.css('cursor',STYLE_CURSOR);
+          }else{
+            curCol.get('el').css('cursor','');
+          }
+        }
+
+        if(resizing){
+          ev.preventDefault();
+          var draging = _self.get('draging'),
+            start = draging.start,
+            pageX = ev.pageX,
+            dif = pageX - start,
+            width = direction > 0 ? curCol.get('width') : preCol.get('width'),
+            toWidth = width + dif;
+          if(toWidth > NUM_MIN && toWidth < grid.get('el').width()){
+            draging.end = pageX;
+            _self.moveDrag(pageX);
+          }
+        }
+
+      }).delegate('.bui-grid-hd','mousedown',function(ev){
+        var resizing = _self.get('resizing');
+        if(!resizing && curCol && curCol.get('el').css('cursor') == STYLE_CURSOR){
+          ev.preventDefault();
+          _self.showDrag(ev.pageX);
+          bindDraging();
+        }
+      });
+
+      function callback(ev){
+        var draging = _self.get('draging')
+        if(curCol && draging){
+          var col = direction > 0 ? curCol : preCol,
+            width = col.get('width'),
+            dif = draging.end - draging.start;
+
+          _self.hideDrag();
+          if(grid.get('forceFit')){
+            var originWidth = col.get('originWidth'),
+              factor = width / originWidth,
+              toWidth = (width + dif) / factor;
+           // console.log(originWidth + ' ,'+width);
+            col.set('originWidth',toWidth);
+            col.set('width',toWidth);
+            //
+
+          }else{
+            col.set('width',width + dif);
+          }
+          
+        }    
+        $(document).off('mouseup',callback);
+      }
+
+      function bindDraging(){
+        $(document).on('mouseup',callback);
+      }
+
+    },
+    //\u663e\u793a\u62d6\u62fd
+    showDrag : function(pageX){
+      var _self = this,
+        grid = _self.get('grid'),
+        header = grid.get('header'),
+        bodyEl = grid.get('el').find('.bui-grid-body'),
+        height = header.get('el').height() + bodyEl.height(),
+        offset = header.get('el').offset(),
+        dragEl = _self.get('dragEl');
+
+      if(!dragEl){
+        var  tpl = '<div class="bui-drag-line"></div>';
+        dragEl = $(tpl).appendTo('body');
+        _self.set('dragEl',dragEl);
+      }
+
+      dragEl.css({
+        top: offset.top,
+        left: pageX,
+        height : height
+      });
+
+      _self.set('resizing',true);
+
+      _self.set('draging',{
+        start : pageX,
+        end : pageX
+      });
+      dragEl.show();
+    },
+    //\u5173\u95ed\u62d6\u62fd
+    hideDrag : function(){
+      var _self = this,
+        dragEl = _self.get('dragEl');
+      dragEl && dragEl.hide();
+      _self.set('draging',null);
+      _self.set('resizing',false);
+    },
+    //\u79fb\u52a8drag
+    moveDrag : function(pageX){
+      var _self = this,
+        dragEl = _self.get('dragEl');
+      dragEl && dragEl.css('left',pageX);
+    },
+    //\u83b7\u53d6\u70b9\u51fb\u7684\u5217
+    _getColumn : function(element){
+      var _self = this,
+        columns = _self.get('grid').get('columns'),
+        rst = null;
+      BUI.each(columns,function(column){
+        if(column.containsElement(element)){
+          rst = column;
+          return false;
+        }
+      });
+
+      return rst;
+    },
+    //\u83b7\u53d6\u524d\u4e00\u4e2a\u5217
+    _getPreCol : function(col){
+      var _self = this,
+        columns = _self.get('grid').get('columns'),
+        rst = null;
+      BUI.each(columns,function(column,index){
+        if(column == col){
+          return false;
+        }else if(column.get('visible')){
+          rst = column;
+        }
+        
+      });
+
+      return rst;
+    }
+  });
+
+  return Resize;
 });/**
  * @fileOverview \u9009\u62e9\u6846\u547d\u540d\u7a7a\u95f4\u5165\u53e3\u6587\u4ef6
  * @ignore
@@ -35520,6 +36268,13 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
      */
     checkType : {
       value : 'custom'
+    },
+    /**
+     * \u662f\u5426\u7ea7\u8054\u9009\u62e9
+     * @type {Boolean}
+     */
+    cascadeCheckd : {
+      value : true
     },
     /**
      * \u662f\u5426\u53ea\u5141\u8bb8\u4e00\u4e2a\u8282\u70b9\u5c55\u5f00
@@ -35939,43 +36694,55 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       var _self = this,
         parent,
         multipleCheck = _self.get('multipleCheck'),
+        cascadeCheckd = _self.get('cascadeCheckd'),
         element;
-      node = makeSureNode(this,node);
+      node = makeSureNode(this,node); //\u5c06id\u8f6c\u6362\u6210\u8282\u70b9
       if(!node){
         return;
       }
       parent = node.parent;
-      if(!_self.isCheckable(node)){
+      if(!_self.isCheckable(node)){ //\u4e0d\u53ef\u9009\u8fd4\u56de
         return;
       }
 
+      //\u5982\u679c\u8282\u70b9\u5f53\u524d\u7684\u9009\u4e2d\u72b6\u6001\u4e0d\u7b49\u4e8e checked
       if(_self.isChecked(node) !== checked || _self.hasStatus(node,'checked') !== checked){
 
-        
         element =  _self.findElement(node);
-        if(element){
-          _self.setItemStatus(node,CHECKED,checked,element); //\u8bbe\u7f6e\u9009\u4e2d\u72b6\u6001
-          if(multipleCheck){ //\u591a\u9009\u72b6\u6001\u4e0b\u8bbe\u7f6e\u534a\u9009\u72b6\u6001
-            _self._resetPatialChecked(node,checked,checked,element); //\u8bbe\u7f6e\u90e8\u5206\u52fe\u9009\u72b6\u6001
-          }else{
-            if(checked && parent && _self.isChecked(parent) != checked){
-              _self.setNodeChecked(parent,checked,false);
-            }
-          }/**/
-        }else if(!_self.isItemDisabled(node)){
-          _self.setStatusValue(node,'checked',checked);
-        }
+        //\u5982\u679c\u7ea7\u8054\u9009\u62e9
+        if(cascadeCheckd){ 
 
-        if(parent){ //\u8bbe\u7f6e\u7236\u5143\u7d20\u9009\u4e2d
-          if(_self.isChecked(parent) != checked){
-            _self._resetParentChecked(parent);
-          }else if(multipleCheck){
-            _self._resetPatialChecked(parent,null,null,null,true);
+          if(element){
+            _self.setItemStatus(node,CHECKED,checked,element); //\u8bbe\u7f6e\u9009\u4e2d\u72b6\u6001
+            if(multipleCheck){ //\u591a\u9009\u72b6\u6001\u4e0b\u8bbe\u7f6e\u534a\u9009\u72b6\u6001
+              _self._resetPatialChecked(node,checked,checked,element); //\u8bbe\u7f6e\u90e8\u5206\u52fe\u9009\u72b6\u6001
+            }else{
+              if(checked && parent && _self.isChecked(parent) != checked){
+                _self.setNodeChecked(parent,checked,false);
+              }
+            }
+          }else if(!_self.isItemDisabled(node)){
+            _self.setStatusValue(node,CHECKED,checked);
           }
+
+          if(parent){ //\u8bbe\u7f6e\u7236\u5143\u7d20\u9009\u4e2d
+            if(_self.isChecked(parent) != checked){
+              _self._resetParentChecked(parent);
+            }else if(multipleCheck){
+              _self._resetPatialChecked(parent,null,null,null,true);
+            }
+          }
+          
+        }else if(!_self.isItemDisabled(node)){
+          if(element){
+            _self.setItemStatus(node,CHECKED,checked,element)
+          }else{
+            _self.setStatusValue(node,CHECKED,checked);
+          } 
         }
 
         //\u5982\u679c\u662f\u5355\u9009\u5219\uff0c\u6e05\u9664\u5144\u5f1f\u5143\u7d20\u7684\u9009\u4e2d
-        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root'))){
+        if(checked && !multipleCheck && (_self.isChecked(parent) || parent == _self.get('root') || !cascadeCheckd)){
           var nodes = parent.children;
           BUI.each(nodes,function(slibNode){
             if(slibNode !== node && _self.isChecked(slibNode)){
@@ -35983,10 +36750,11 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
             } 
           });
         }
+          
         _self.fire('checkedchange',{node : node,element: element,checked : checked});
         
       }
-      if(!node.leaf && deep){ //\u6811\u8282\u70b9\uff0c\u52fe\u9009\u6240\u6709\u5b50\u8282\u70b9
+      if(!node.leaf && deep && cascadeCheckd){ //\u6811\u8282\u70b9\uff0c\u52fe\u9009\u6240\u6709\u5b50\u8282\u70b9
         BUI.each(node.children,function(subNode,index){
           if(multipleCheck || !checked || (!multipleCheck && index == 0)){ //\u591a\u9009\u6216\u8005\u5355\u9009\u65f6\u7b2c\u4e00\u4e2a
             _self.setNodeChecked(subNode,checked,deep);
@@ -36044,6 +36812,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         checkedField = _self.get('checkedField'),
         multipleCheck = _self.get('multipleCheck'),
         checkableField = _self.get('checkableField'),
+        cascadeCheckd = _self.get('cascadeCheckd'),
         parent; 
       if(checkType === MAP_TYPES.NONE){ //\u4e0d\u5141\u8bb8\u9009\u4e2d
         node[checkableField] = false;
@@ -36082,7 +36851,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       }
 
       parent = node.parent;
-      if(!_self.isChecked(node)){ //\u8282\u70b9\u672a\u88ab\u9009\u62e9\uff0c\u6839\u636e\u7236\u3001\u5b50\u8282\u70b9\u5904\u7406\u52fe\u9009
+      if(!_self.isChecked(node) && cascadeCheckd){ //\u8282\u70b9\u672a\u88ab\u9009\u62e9\uff0c\u6839\u636e\u7236\u3001\u5b50\u8282\u70b9\u5904\u7406\u52fe\u9009
 
         if(parent && _self.isChecked(parent)){ //\u5982\u679c\u7236\u8282\u70b9\u9009\u4e2d\uff0c\u5f53\u524d\u8282\u70b9\u5fc5\u987b\u52fe\u9009
           if(multipleCheck || !_self._hasChildChecked(parent)){ //\u591a\u9009\u6216\u8005\u5144\u5f1f\u8282\u70b9\u6ca1\u6709\u88ab\u9009\u4e2d
@@ -36132,7 +36901,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
       _self.setStatusValue(parentNode,'checked',allChecked);
       _self.setNodeChecked(parentNode,allChecked,false);
 
-      multipleCheck && _self._resetPatialChecked(parentNode,allChecked,null,null);
+      multipleCheck && _self._resetPatialChecked(parentNode,allChecked,null,null,true);
     },
     //\u7ed1\u5b9a\u4e8b\u4ef6
     __bindUI : function(){
@@ -36161,7 +36930,7 @@ define('bui/tree/treemixin',['bui/common','bui/data'],function (require) {
         var node = ev.item,
           element = ev.domTarget;
         _self._resetIcons(node,element);
-        if(_self.isCheckable(node) && multipleCheck){
+        if(_self.isCheckable(node) && multipleCheck && _self.get('cascadeCheckd')){
           _self._resetPatialChecked(node,null,null,element);
         }
         if(_self._isExpanded(node,element)){

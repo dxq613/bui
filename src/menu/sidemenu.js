@@ -48,7 +48,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
       //处理点击事件，展开、折叠、选中
       _self.on('itemclick',function(ev){
         var item = ev.item,
-          titleEl = $(ev.domTarget).closest('.' + CLS_MENU_TITLE);
+          titleEl = $(ev.domTarget).closest('.' + _self.get('collapsedCls'));
         if(titleEl.length){
           var collapsed = item.get('collapsed');
             item.set('collapsed',!collapsed);
@@ -79,16 +79,18 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
         items = item.items,
         subItems = [],
         cfg = {
-          xclass : 'menu-item',
-          elCls : 'menu-second',
-          collapsed : item.collapsed,
           selectable: false,
           children : [{
             xclass : 'menu',
             children : subItems
-          }],
-          content: '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">'+item.text+'</span></div>'
+          }]
         };
+
+      BUI.mix(cfg,{
+        xclass : 'menu-item',
+        elCls : 'menu-second'
+      },item);
+
       BUI.each(items,function(subItem){
         var subItemCfg = _self._initSubMenuCfg(subItem);
         subItems.push(subItemCfg);
@@ -103,7 +105,7 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
         cfg = {
           xclass : 'menu-item',
           elCls : 'menu-leaf',
-          tpl : '<a href="{href}"><em>{text}</em></a>'
+          tpl : _self.get('subMenuItemTpl')
         };
       return BUI.mix(cfg,subItem);
     }
@@ -111,6 +113,13 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
 
     ATTRS : 
     {
+      defaultChildCfg : {
+        value : {
+          subMenuType : 'menu',
+          openable : false,
+          arrowTpl : ''
+        }
+      },
       
       /**
        * 配置的items 项是在初始化时作为children
@@ -119,6 +128,27 @@ define('bui/menu/sidemenu',['bui/common','bui/menu/menu'],function(require){
        */
       autoInitItems : {
           value : false
+      },
+      /**
+       * 菜单项的模板
+       * @type {String}
+       */
+      itemTpl : {
+        value : '<div class="'+CLS_MENU_TITLE+'"><s></s><span class="'+CLS_MENU_TITLE+'-text">{text}</span></div>'
+      },
+      /**
+       * 子菜单的选项模板
+       * @cfg {String} subMenuTpl
+       */
+      subMenuItemTpl : {
+        value : '<a href="{href}"><em>{text}</em></a>'
+      },
+      /**
+       * 展开收缩的样式，用来触发展开折叠事件,默认是 'bui-menu-title'
+       * @type {String} 
+       */
+      collapsedCls : {
+        value : CLS_MENU_TITLE
       },
       events : {
         value : {

@@ -105,6 +105,7 @@ define('bui/menu/menu',['bui/common'],function(require){
 		  idField:{
         value:'id'
       },
+      
       /**
        * @protected
        * 是否根据DOM生成子控件

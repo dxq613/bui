@@ -1,0 +1,440 @@
+.bui-simple-list-focused{
+  outline: none;
+}
+
+.bui-grid-table{
+  .sort-asc .bui-grid-sort-icon,.sort-desc .bui-grid-sort-icon,.bui-grid-hd-menu-trigger,.bui-grid-cascade-icon{
+    background-image:url("@{tablePath}");
+    background-repeat: no-repeat;
+  }
+}
+
+
+//simple grid
+.bui-simple-grid{
+  .bui-grid-table{
+    border:1px solid @tableBorder;
+  }
+}
+
+.bui-grid-header
+{
+    border-top:1px solid @tableBorder;
+    //height:25px;
+}
+
+.bui-drag-line{
+        position: absolute;
+        border-left: 1px solid #ccc;
+}
+
+.bui-grid{
+    //border-left:1px solid @tableBorder;
+    //border-right:1px solid @tableBorder;
+}
+
+.bui-grid-body,.bui-grid-height .bui-grid-body .bui-grid-table{
+  border-bottom:1px solid @tableBorder;
+}
+
+.bui-grid-body,.bui-grid-header{
+  border-right:1px solid @tableBorder;
+  border-left:1px solid @tableBorder;
+}
+.bui-grid-header{
+	overflow: hidden;
+
+	*position:relative;
+  .table{
+    margin:0;
+  }
+
+}
+.bui-grid-header .bui-grid-table{
+	// *position:absolute;
+	// *top:0;
+	// *left:0;
+	// *z-index:@zindexGridHeader;
+}
+
+.bui-grid-table
+{
+  width:100%;
+	table-layout:fixed;
+  border-collapse:separate;
+}
+
+.bui-grid,.bui-simple-grid
+{
+  /*width:100%;    */
+	background-color: @white;
+
+  th.left,td.left{
+    text-align:left;
+  }
+  th.right,td.right{
+    text-align:right;
+  }
+  th.center,td.center{
+    text-align:center;
+  }
+}
+.bui-grid-border{
+  .bui-grid-hd,.bui-grid-cell,.bui-grid-header-row td{
+    border-left:1px solid @tableCellBorder;
+   
+  }
+  .bui-grid-cell-empty,.bui-grid-hd-empty{
+    border-left:none;
+  }
+}
+.bui-grid-header-row {
+  td,th{
+    padding:0;
+    margin:0;
+  }
+}
+th.bui-grid-hd-empty,td.bui-grid-cell-empty{
+    padding:0;
+    margin:0;
+    border-left:none;
+}
+
+.bui-grid-group-header .bui-grid-hd-empty {
+  display: none;
+}
+
+.bui-grid-table
+{
+  .bui-grid-hd {
+  	border-bottom:1px solid @tableCellBorder;
+    text-align:left;
+  	cursor:default;
+  }
+
+  tr td:first-child, tr th:first-child {
+    border-left-width: 0;
+  }
+
+  .bui-grid-hd-inner{
+    //#gradient > .vertical(@btnBackground,@btnBackgroundHighlight);
+  }
+
+  .bui-grid-hd-inner {
+    padding: 10px 0;
+    height:24px;
+    overflow:hidden;
+    font-weight:bold;
+    background-position: 0 0;
+    position:relative;
+  }
+  .bui-grid-db-hd .bui-grid-hd-inner{
+    padding: 32px 0 33px;
+  }
+
+  .bui-grid-hd-title
+  {
+    line-height:22px;
+    font-size: 12px;
+    padding: 0 8px;
+  }
+
+  .bui-grid-sort-icon{
+   .bui-inline-block();
+   height:15px;
+   width:15px;
+  }
+   
+  .bui-grid-hd-menu-trigger{
+    cursor:pointer;
+    display:none;
+    position:absolute;
+    right:0;
+    top:0;
+    width:14px;
+    height:24px;
+    background-position: 0 -140px;
+  }
+
+  th.sortable{
+    cursor:pointer;
+  }
+
+  .bui-grid-hd-hover .bui-grid-hd-inner,.bui-grid-hd-open .bui-grid-hd-inner{
+    // #gradient > .vertical(@tableHeaderHover,@tableHeaderHover);
+    background-color: @tableBackgroundHover;
+  }
+  .bui-grid-hd-hover,.bui-grid-hd-open{
+    .bui-grid-hd-menu-trigger{
+      display:block;
+    }
+  }
+
+  .sort-asc .bui-grid-sort-icon
+  {
+    background-position:5px -52px;
+  }
+  .sort-asc:hover .bui-grid-sort-icon
+  {
+    background-position:5px -92px;
+  }
+
+  .sort-desc .bui-grid-sort-icon
+  {
+       background-position:5px -72px;
+  }
+  .sort-desc:hover .bui-grid-sort-icon
+  {
+      background-position:5px -112px;
+  }
+
+  .grid-header-checked-column ,.bui-grid-row-checked-column{
+     text-align:center;
+     width:30px;
+     vertical-align: middle;
+     border-left-width: 0;
+  }
+
+  .grid-header-checked-column .bui-grid-hd-inner,.bui-grid-row-checked-column .bui-grid-cell-inner
+  {
+      width:30px;
+  }
+
+  /* row */
+  .bui-grid-row{
+    
+  }
+
+  .bui-grid-cell{
+
+  }
+
+  .bui-grid-cell
+  {   
+      overflow:hidden;
+      border-top:1px solid @tableRowBorder;
+  }
+
+  .bui-grid-row-group td{
+    border-top:1px solid @tableRowBorder;
+  }
+
+  .bui-grid-cell-empty{
+    border-top:1px solid @tableRowBorder;
+  }
+
+  .bui-grid-body .bui-grid-row-first td{
+    border-top:none;
+  }
+
+  .bui-grid-body .bui-grid-table{
+     border-bottom:1px solid @tableRowBorder;
+  }
+
+  .bui-grid-cell-empty,.bui-grid-hd-empty {
+     
+  }
+  .bui-grid-header-row .bui-grid-cell-empty{
+    line-height:0;
+    border:none;
+  }
+
+  .bui-grid-cell-inner{
+    padding: 10px 0;  
+    position:relative;
+    overflow: hidden;
+  }
+
+  .bui-grid-cell-text{
+  
+    padding:0 8px;    
+    display:block;
+    min-height:20px;
+    min-width:25px;
+    _height:20px;
+      
+  }
+
+  .bui-grid-error-cell .bui-grid-cell-text{
+    padding-right:20px;
+  }
+
+  .bui-grid-error-cell{
+    position:relative;
+  }
+
+  .bui-grid-cell,.bui-grid-cell-empty{
+    word-break: break-all;
+    word-wrap:break-word;
+  }
+
+  .grid-command{
+    color:#3366cc;
+    cursor:pointer;
+    display:inline-block;
+	margin-right:5px;
+  }
+
+  .grid-command:hover{
+    color:#ff6600;
+  }
+  .grid-command.disable{
+    color:#ccc;
+  }
+}
+
+td.bui-grid-cell-empty{
+  height: 0;
+  line-height: 0;
+}
+
+
+.bui-grid-width .bui-grid-body{
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+.bui-grid-height .bui-grid-body
+{
+   overflow-x: auto;
+   overflow-y: scroll;
+
+	 position:relative;
+}
+
+
+/**stripe**/
+.bui-grid-strip{
+  .bui-grid-row-odd{
+    background-color:@white;
+  }
+
+  .bui-grid-row-even{
+    background-color:@tableRowEvenColor;
+  }
+}
+.bui-simple-grid,.bui-grid{
+  .bui-grid-table{
+    .bui-grid-row-hover
+    {
+        background-color:@tableRowHover;
+    }
+
+    .bui-grid-row-selected 
+    {
+        background-color:@tableRowSelect;
+    }
+  }
+}
+
+
+
+
+/**grid-bar**/
+
+.bui-grid .bui-pagingbar{
+   float:right;
+   margin:6px 0;
+  
+}
+
+
+.bui-grid-tbar,.bui-grid-bbar{
+  .clearfix();
+}
+
+.bui-grid-tbar{
+  height:34px;
+  line-height:34px;
+
+  //border-top:1px solid @tableBorder;
+}
+.bui-grid-bbar{
+  border:1px solid @tableBorder;
+  border-top:none;
+}
+//plugins 
+.bui-grid-radio-container,.bui-grid-checkBox-container{
+  text-align: center;
+}
+
+.bui-grid .x-grid-checkbox{
+  background: url("@{checkIconPath}") no-repeat 0px 3px transparent;
+  width: 13px;
+  height: 20px;
+  .inline-block();
+}
+
+.x-grid-checkbox:hover{
+  background-position: -16px 3px;
+}
+
+
+.bui-grid-row-selected .x-grid-checkbox,.checked .x-grid-checkbox{
+  background-position: 0 -17px;
+}
+
+.bui-grid-row-disabled .x-grid-checkbox{
+  background-position: -48px 3px;
+}
+
+.bui-grid-row-selected.bui-grid-row-disabled .x-grid-checkbox{
+  background-position: -48px -18px;
+}
+
+
+//cascade 
+.bui-grid-cascade{
+  vertical-align: middle;
+}
+
+.bui-grid-cascade-icon{
+  cursor: pointer;
+  .bui-inline-block();
+  height: 10px;
+  width: 10px;
+  background-position: 0 -440px;
+}
+.bui-grid-cascade-expand .bui-grid-cascade-icon{
+  background-position: -30px -440px;
+}
+.bui-grid-cascade-collapse{
+  display: none;
+
+}
+
+//grid-menu
+.grid-column-menu{
+  .bui-menu-item-selected .icon{
+    background-position: -144px -72px; 
+  }
+}
+
+//grid-error
+.bui-grid-cell-error{
+  position: absolute;
+  right: 10px;
+  top: 6px;
+}
+
+//bootstrape 表格样式
+
+.bui-grid-header{
+  .table {
+    height:auto;
+  }
+}
+
+.bui-grid-summary-row{
+  font-weight: bold;
+}
+
+.bui-grid-summary-row:first-child td{
+  border-top: 2px solid @tableCellBorder;
+}
+
+//row-number
+td.x-grid-rownumber{
+  //#gradient > .horizontal(@btnBackground,@btnBackgroundHighlight);
+  text-align: center;
+  background-color: @tableActive;
+}

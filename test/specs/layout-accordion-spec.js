@@ -69,14 +69,18 @@ BUI.use(['bui/layout/accordion'],function(Accordion) {
 
 	describe('操作',function(){
 		it('更改展开',function(){
-			var item = layout.getActivedItem(),
-				nextItem = layout.getNextItem(item);
-			layout.expandItem(nextItem);
-			waits(600);
+			waits(400);
 			runs(function(){
-				expect(item.get('collapsed')).toBe(true);
-				expect(nextItem.get('collapsed')).toBe(false);
+				var item = layout.getActivedItem(),
+					nextItem = layout.getNextItem(item);
+				layout.expandItem(nextItem);
+				waits(600);
+				runs(function(){
+					expect(item.get('collapsed')).toBe(true);
+					expect(nextItem.get('collapsed')).toBe(false);
+				});
 			});
+			
 
 		});
 

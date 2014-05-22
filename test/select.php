@@ -5,7 +5,8 @@
     <div class="row">
       <div class="span8">
         <h2>组合框</h2>
-        <div id="c1"></div>
+        <div id="c1"></div><br>
+        <input id="c11" type="text">
         <h2>suggest</h2>
         <div id="c2"></div>
         <h2>复杂suggest</h2>
