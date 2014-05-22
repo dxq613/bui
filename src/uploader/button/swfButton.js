@@ -41,7 +41,7 @@ define('bui/uploader/button/swfButton',['bui/common', 'bui/uploader/file', './ba
           var fileList = ev.fileList,
             files = [];
           BUI.each(fileList, function(file){
-            files.push(_self._getFile(file));
+            files.push(File.create(file));
           });
           _self.fire('change', {files: files});
         });

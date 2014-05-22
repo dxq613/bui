@@ -229,7 +229,7 @@ BUI.use(['bui/uploader'], function (Uploader) {
   var file = {'name': 'a.jpg', 'size': 1000},
     files = [
       {id: '1','name': 'a.jpg', 'size': 1000, ext:'.jpg', success:true},
-      {id: '2','name': 'b.jpg', 'size': 1000, ext:'.jpg'}
+      {id: '2','name': 'b.jpg', 'size': 1000, ext:'.jpg', file: 'a'}
     ];
 
   var successCallback = jasmine.createSpy(),
@@ -269,6 +269,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
     it('添加的数量是否正确', function(){
       expect(uploader.get('queue').getItemsByStatus('add').length).toBe(1);
     })
+
+    uploader.set('autoUpload', true);
 
   //   waits(100);
   //   it('测试success的回调', function(){
