@@ -157,7 +157,7 @@ BUI.use(['bui/uploader'], function (Uploader) {
     url: 'data/uploader.json',
     rules: {
       //文的类型
-      ext: ['.doc,.docx,.png,.jpg','文件类型只能为{0}']
+      //ext: ['.doc,.docx,.png,.jpg','文件类型只能为{0}']
     }
   });
   uploader.render();
@@ -268,7 +268,10 @@ BUI.use(['bui/uploader'], function (Uploader) {
     it('添加的数量是否正确', function(){
       uploader.get('queue').addItems(BUI.cloneObject(files));
       expect(uploader.get('queue').getItemsByStatus('add').length).toBe(1);
-    })
+    });
+
+    // waits(200);
+    // uploader.set('autoUpload', true);
 
   //   waits(100);
   //   it('测试success的回调', function(){

@@ -53,19 +53,19 @@ define('bui/uploader/file', ['bui/common'], function (require) {
   }
 
   return {
-    /**
-     * 创建一个上传对列里面的内容对象
-     */
-    getFileAttr: function(file){
-      return {
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        textSize: file.textSize,
-        ext: file.extName,
-        id: file.id
-      }
-    },
+    // /**
+    //  * 创建一个上传对列里面的内容对象
+    //  */
+    // getFileAttr: function(file){
+    //   return {
+    //     name: file.name,
+    //     size: file.size,
+    //     type: file.type,
+    //     textSize: file.textSize,
+    //     ext: file.extName,
+    //     id: file.id
+    //   }
+    // },
     create: function(file){
       file.id = file.id || BUI.guid('bui-uploader-file');
       // 去掉文件的前面的路径，获取一个纯粹的文件名
