@@ -213,12 +213,6 @@ define('bui/uploader/uploader', ['bui/common', './file', './theme', './factory',
           //如果文件已经存在某一状态，则不再去设置add状态
           status = queue.status(item) || 'add';
 
-
-        //如果是通过回显的方式添加进来的
-        if(!item.attr){
-          item = File.create(item);
-        }
-
         if(!validator.valid(item)){
           status = 'error';
         }
@@ -255,7 +249,7 @@ define('bui/uploader/uploader', ['bui/common', './file', './theme', './factory',
         var curUploadItem = _self.get('curUploadItem'),
           loaded = ev.loaded,
           total = ev.total;
-        BUI.mix(curUploadItem.attr, {
+        BUI.mix(curUploadItem, {
           //文件总大小, 这里的单位是byte
           total: total,
           //已经上传的大小
