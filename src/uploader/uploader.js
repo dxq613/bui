@@ -213,6 +213,12 @@ define('bui/uploader/uploader', ['bui/common', './file', './theme', './factory',
           //如果文件已经存在某一状态，则不再去设置add状态
           status = queue.status(item) || 'add';
 
+        // 说明是通过addItem直接添加进来的
+        if(!item.isUploaderFile){
+          item.result = BUI.cloneObject(item);
+          item = File.create(item);
+        }
+
         if(!validator.valid(item)){
           status = 'error';
         }

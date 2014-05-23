@@ -72,6 +72,8 @@ define('bui/uploader/file', ['bui/common'], function (require) {
       file.name = getFileName(file.name);
       file.ext = getFileExtName(file.name);
       file.textSize = convertByteSize(file.size);
+      
+      file.isUploaderFile = true;
 
       //file.attr = this.getFileAttr(file);
 
