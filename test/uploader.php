@@ -30,6 +30,7 @@
     <?php include("./templates/script.php"); ?>
     <script src="../src/swf/src/swf.js"></script>
     <script src="../src/swf/src/swf/ua.js"></script>
+    <script src="../src/uploader/file.js"></script>
     <script src="../src/uploader/base.js"></script>
     <script src="../src/uploader/uploader.js"></script>
     <script src="../src/uploader/factory.js"></script>
