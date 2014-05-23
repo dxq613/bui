@@ -16,7 +16,7 @@
 .bui-side-menu .bui-menu-title s,
 .bui-side-menu .menu-leaf a,
 .bui-side-menu .menu-leaf em {
-  background: url("../../img/menu-500-188.png") -9999px -9999px no-repeat;
+  background: url("../../img/menu-500-188.png") -9998.99999999px -9999px no-repeat;
 }
 .bui-side-menu a {
   color: #5c637b;
@@ -971,7 +971,6 @@ td.bui-grid-cell-empty {
 .bui-grid-table .bui-grid-cell {
   overflow: hidden;
   border-top: 1px solid #dddddd;
-  position: relative;
 }
 .bui-grid-table .bui-grid-row-group td {
   border-top: 1px solid #dddddd;
