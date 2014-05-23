@@ -3,10 +3,11 @@
  * @fileoverview 异步文件上传组件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/uploader', ['bui/common', './theme', './factory', './validator'], function (require) {
+define('bui/uploader/uploader', ['bui/common', './file', './theme', './factory', './validator'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
+    File = require('bui/uploader/file'),
     Theme = require('bui/uploader/theme'),
     Factory = require('bui/uploader/factory'),
     Validator = require('bui/uploader/validator');
@@ -203,6 +204,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     _bindQueue: function () {
       var _self = this,
         queue = _self.get('queue'),
+        button = _self.get('button'),
         validator = _self.get('validator');
 
       //渲染完了之后去设置文件状态，这个是会在添加完后触发的
@@ -211,9 +213,16 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
           //如果文件已经存在某一状态，则不再去设置add状态
           status = queue.status(item) || 'add';
 
+        // 说明是通过addItem直接添加进来的
+        if(!item.isUploaderFile){
+          item.result = BUI.cloneObject(item);
+          item = File.create(item);
+        }
+
         if(!validator.valid(item)){
           status = 'error';
         }
+
         queue.updateFileStatus(item, status);
 
         if(_self.get('autoUpload')){
@@ -246,7 +255,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         var curUploadItem = _self.get('curUploadItem'),
           loaded = ev.loaded,
           total = ev.total;
-        BUI.mix(curUploadItem.attr, {
+        BUI.mix(curUploadItem, {
           //文件总大小, 这里的单位是byte
           total: total,
           //已经上传的大小
@@ -362,13 +371,36 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
      * 取消正在上传的文件 
      */
     cancel: function(item){
+      var _self = this;
+      if(item){
+        _self._cancel(item);
+        return
+      }
+      //只对将要进行上传的文件进行取消
+      BUI.each(_self.get('queue').getItemsByStatus('wait'), function(item){
+        _self._cancel(item);
+      });
+    },
+    /**
+     * 取消
+     * @param  {[type]} item [description]
+     * @return {[type]}      [description]
+     */
+    _cancel: function(item){
       var _self = this,
-        uploaderType = _self.get('uploaderType');
-      item = item || _self.get('curUploadItem');
+        queue = _self.get('queue'),
+        uploaderType = _self.get('uploaderType'),
+        curUploadItem = _self.get('curUploadItem');
+
+      //说明要取消项正在进行上传
+      if (curUploadItem === item) {
+        uploaderType.cancel();
+        _self.set('curUploadItem', null);
+      }
+
+      queue.updateFileStatus(item, 'cancel');
 
       _self.fire('cancel', {item: item});
-      uploaderType.cancel();
-      _self.set('curUploadItem', null);
     },
     /**
      * 校验是否通过
