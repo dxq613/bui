@@ -1421,8 +1421,8 @@ fieldset[disabled] .x-icon-question.active {
 }
 @font-face {
   font-family: 'bui-iconfont';
-  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot');
-  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('http://at.alicdn.com/t/font_1395889527_6888435.woff') format('woff'), /* chrome、firefox */ url('http://at.alicdn.com/t/font_1395889527_5368805.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/ url('http://at.alicdn.com/t/font_1395889527_7487144.svg#iconfont') format('svg');
+  src: url('../../img/iconfont/iconfont.eot');
+  src: url('../../img/iconfont/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('../../img/iconfont/iconfont.woff') format('woff'), /* chrome、firefox */ url('../../img/iconfont/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/ url('../../img/iconfont/iconfont.svg#iconfont') format('svg');
   
   /* IE9*/
   /* iOS 4.1- */
@@ -1953,10 +1953,10 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -1px -218px;
 }
 .icon-caret-left {
-  background-position: -1px -227px;
+  background-position: -1px -226.99999999px;
 }
 .icon-caret-right {
-  background-position: -1px -234.99999999px;
+  background-position: -1px -235px;
 }
 .icon-caret-left-top {
   background-position: -1px -244px;

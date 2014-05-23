@@ -107,7 +107,7 @@
           </fileset>
       </copy>
 	    <copy todir="${des.dir}/img">
-          <fileset dir="${base.dir}/assets/img"  includes="*.*">
+          <fileset dir="${base.dir}/assets/img"  includes="**/*.*">
           </fileset>
       </copy>
 
