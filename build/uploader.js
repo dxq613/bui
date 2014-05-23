@@ -237,48 +237,6 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
     CLS_UPLOADER_BUTTON = CLS_UPLOADER + '-button',
     CLS_UPLOADER_BUTTON_TEXT = CLS_UPLOADER_BUTTON + '-text';
 
-  /**
-   * 获取文件名称
-   * @param {String} path 文件路径
-   * @return {String}
-   * @ignore
-   */
-  function getFileName (path) {
-    return path.replace(/.*(\/|\\)/, "");
-  }
-
-  /**
-   * 获取文件扩展名
-   * @param {String} filename 文件名
-   * @return {String}
-   * @private
-   * @ignore
-   */
-  function getFileExtName(filename){
-    var result = /\.[^\.]+$/.exec(filename) || [];
-    return result.join('').toLowerCase();
-  }
-
-  /**
-   * 转换文件大小字节数
-   * @param {Number} bytes 文件大小字节数
-   * @return {String} 文件大小
-   * @private
-   * @ignore
-   */
-  function convertByteSize(bytes) {
-    var i = -1;
-    do {
-      bytes = bytes / 1024;
-      i++;
-    } while (bytes > 99);
-    return Math.max(bytes, 0.1).toFixed(1) + ['KB', 'MB', 'GB', 'TB', 'PB', 'EB'][i];
-  }
-
-  function getFileId (file) {
-    return file.id || BUI.guid('bui-uploader-file');
-  }
-
 
   var ButtonView = Component.View.extend({
     _uiSetText: function (v) {
@@ -302,41 +260,7 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
    * @extends BUI.Component.Controller
    */
   var Button = Component.Controller.extend({
-    /**
-     * 获取文件的扩展信息
-     * @param  {Object} file 文件对象
-     * @return {Object} 返回文件扩展信息
-     */
-    getExtFileData: function(file){
-      var filename = getFileName(file.name),
-        textSize = convertByteSize(file.size || 0),
-        extName = getFileExtName(file.name),
-        fileAttrs = {
-          name: filename,
-          size: file.size,
-          type: file.type,
-          textSize: textSize,
-          ext: extName,
-          id: getFileId(file)
-        };
-      return fileAttrs;
-    },
-    /**
-     * @protected
-     * 不知道含义，貌似是给file附加信息，命名有问题，无法见到名字想到含义
-     * formatFile或许更合适
-     * @ignore
-     */
-    _getFile: function(file){
-      var _self = this,
-        fileAttrs = _self.getExtFileData(file);
-      BUI.mix(file, fileAttrs);
-
-      //因为在结果模板构建的时候很有可能会使用文件本身的属性，如name，size之类的
-      //所以将这些属性放到一个变量里，在渲染模板的时候和result mix一下
-      file.attr = fileAttrs;
-      return file;
-    },
+    
     getFilter: function(v){
       if(v){
         var desc = [],
@@ -454,10 +378,11 @@ define('bui/uploader/button/base', ['bui/common', './filter'], function(require)
  * @fileoverview 文件上传按钮,使用input[type=file]
  * @author: 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(require) {
+define('bui/uploader/button/htmlButton', ['bui/uploader/file', 'bui/uploader/button/base'], function(require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
+    File = require('bui/uploader/file'),
     ButtonBase = require('bui/uploader/button/base'),
     UA = BUI.UA;
 
@@ -519,10 +444,10 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
         //IE取不到files
         if(oFiles){
           BUI.each(oFiles, function(v){
-            files.push(_self._getFile({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput}));
+            files.push(File.create({'name': v.name, 'type': v.type, 'size': v.size, file:v, input: fileInput}));
           });
         }else{
-          files.push(_self._getFile({'name': value, input: fileInput}));
+          files.push(File.create({'name': value, input: fileInput}));
         }
         _self.fire('change', {
           files: files,
@@ -626,10 +551,11 @@ define('bui/uploader/button/htmlButton', ['bui/uploader/button/base'], function(
  * @fileoverview flash上传按钮
  * @author: zengyue.yezy
  **/
-define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbridge'], function (require) {
+define('bui/uploader/button/swfButton',['bui/common', 'bui/uploader/file', './base','./swfButton/ajbridge'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
+    File = require('bui/uploader/file'),
     ButtonBase = require('bui/uploader/button/base'),
     baseUrl = getBaseUrl(),
     SWF = require('bui/uploader/button/swfButton/ajbridge');
@@ -663,7 +589,7 @@ define('bui/uploader/button/swfButton',['bui/common', './base','./swfButton/ajbr
           var fileList = ev.fileList,
             files = [];
           BUI.each(fileList, function(file){
-            files.push(_self._getFile(file));
+            files.push(File.create(file));
           });
           _self.fire('change', {files: files});
         });
@@ -1515,6 +1441,90 @@ define('bui/uploader/type/iframe',['./base'], function(require) {
     return IframeType;
 });
 /**
+ * @fileoverview 异步文件上传组件的文件对像
+ * @author 索丘 zengyue.yezy@alibaba-inc.com
+ * @ignore
+ **/
+define('bui/uploader/file', ['bui/common'], function (require) {
+
+  var BUI = require('bui/common');
+
+  /**
+   * 获取文件的id
+   */
+  function getFileId (file) {
+    return file.id || BUI.guid('bui-uploader-file');
+  }
+
+  /**
+   * 获取文件名称
+   * @param {String} path 文件路径
+   * @return {String}
+   * @ignore
+   */
+  function getFileName (path) {
+    return path.replace(/.*(\/|\\)/, "");
+  }
+
+  /**
+   * 获取文件扩展名
+   * @param {String} filename 文件名
+   * @return {String}
+   * @private
+   * @ignore
+   */
+  function getFileExtName(filename){
+    var result = /\.[^\.]+$/.exec(filename) || [];
+    return result.join('').toLowerCase();
+  }
+
+  /**
+   * 转换文件大小字节数
+   * @param {Number} bytes 文件大小字节数
+   * @return {String} 文件大小
+   * @private
+   * @ignore
+   */
+  function convertByteSize(bytes) {
+    var i = -1;
+    do {
+      bytes = bytes / 1024;
+      i++;
+    } while (bytes > 99);
+    return Math.max(bytes, 0.1).toFixed(1) + ['KB', 'MB', 'GB', 'TB', 'PB', 'EB'][i];
+  }
+
+  return {
+    // /**
+    //  * 创建一个上传对列里面的内容对象
+    //  */
+    // getFileAttr: function(file){
+    //   return {
+    //     name: file.name,
+    //     size: file.size,
+    //     type: file.type,
+    //     textSize: file.textSize,
+    //     ext: file.extName,
+    //     id: file.id
+    //   }
+    // },
+    create: function(file){
+      file.id = file.id || BUI.guid('bui-uploader-file');
+      // 去掉文件的前面的路径，获取一个纯粹的文件名
+      file.name = getFileName(file.name);
+      file.ext = getFileExtName(file.name);
+      file.textSize = convertByteSize(file.size);
+      
+      file.isUploaderFile = true;
+
+      //file.attr = this.getFileAttr(file);
+
+      return file;
+    }
+  };
+
+});
+/**
  * @ignore
  * @fileoverview 文件上传队列列表显示和处理
  * @author 索丘 <zengyue.yezy@alibaba-inc.com>
@@ -1545,12 +1555,24 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
         delCls = _self.get('delCls');
 
       el.delegate('.' + delCls, 'click', function (ev) {
-        var itemContainer = $(ev.target).parents('.bui-queue-item'),
-          uploader = _self.get('uploader'),
-          item = _self.getItemByElement(itemContainer);
-        uploader && uploader.cancel && uploader.cancel(item);
-        _self.removeItem(item);
+          var itemContainer = $(ev.target).parents('.bui-queue-item'),
+            item = _self.getItemByElement(itemContainer);
+
+        if(_self.fire('beforeremove', {item: item}) !== false) {
+          _self.removeItem(item);
+        }
       });
+    },
+    /**
+     * 从队列中删除一项
+     * @param  {Object} item
+     */
+    removeItem: function(item){
+      var _self = this,
+        uploader = _self.get('uploader');
+
+      uploader && uploader.cancel && uploader.cancel(item);
+      Queue.superclass.removeItem.call(_self, item);
     },
     /**
      * 更新文件上传的状态
@@ -1581,7 +1603,7 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
       var _self = this,
         resultTpl = _self.get('resultTpl'),
         itemTpl = resultTpl[status] || resultTpl['default'],
-        tplData = BUI.mix({}, item.attr, item.result);
+        tplData = BUI.mix(item, item.result);
       item.resultTpl = BUI.substitute(itemTpl, tplData);
     },
     /**
@@ -1967,10 +1989,11 @@ define('bui/uploader/factory',['bui/common', './queue', './button/htmlButton', '
  * @fileoverview 异步文件上传组件
  * @author 索丘 zengyue.yezy@alibaba-inc.com
  **/
-define('bui/uploader/uploader', ['bui/common', './theme', './factory', './validator'], function (require) {
+define('bui/uploader/uploader', ['bui/common', './file', './theme', './factory', './validator'], function (require) {
 
   var BUI = require('bui/common'),
     Component = BUI.Component,
+    File = require('bui/uploader/file'),
     Theme = require('bui/uploader/theme'),
     Factory = require('bui/uploader/factory'),
     Validator = require('bui/uploader/validator');
@@ -2167,6 +2190,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
     _bindQueue: function () {
       var _self = this,
         queue = _self.get('queue'),
+        button = _self.get('button'),
         validator = _self.get('validator');
 
       //渲染完了之后去设置文件状态，这个是会在添加完后触发的
@@ -2175,9 +2199,16 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
           //如果文件已经存在某一状态，则不再去设置add状态
           status = queue.status(item) || 'add';
 
+        // 说明是通过addItem直接添加进来的
+        if(!item.isUploaderFile){
+          item.result = BUI.cloneObject(item);
+          item = File.create(item);
+        }
+
         if(!validator.valid(item)){
           status = 'error';
         }
+
         queue.updateFileStatus(item, status);
 
         if(_self.get('autoUpload')){
@@ -2210,7 +2241,7 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
         var curUploadItem = _self.get('curUploadItem'),
           loaded = ev.loaded,
           total = ev.total;
-        BUI.mix(curUploadItem.attr, {
+        BUI.mix(curUploadItem, {
           //文件总大小, 这里的单位是byte
           total: total,
           //已经上传的大小
@@ -2326,13 +2357,36 @@ define('bui/uploader/uploader', ['bui/common', './theme', './factory', './valida
      * 取消正在上传的文件 
      */
     cancel: function(item){
+      var _self = this;
+      if(item){
+        _self._cancel(item);
+        return
+      }
+      //只对将要进行上传的文件进行取消
+      BUI.each(_self.get('queue').getItemsByStatus('wait'), function(item){
+        _self._cancel(item);
+      });
+    },
+    /**
+     * 取消
+     * @param  {[type]} item [description]
+     * @return {[type]}      [description]
+     */
+    _cancel: function(item){
       var _self = this,
-        uploaderType = _self.get('uploaderType');
-      item = item || _self.get('curUploadItem');
+        queue = _self.get('queue'),
+        uploaderType = _self.get('uploaderType'),
+        curUploadItem = _self.get('curUploadItem');
+
+      //说明要取消项正在进行上传
+      if (curUploadItem === item) {
+        uploaderType.cancel();
+        _self.set('curUploadItem', null);
+      }
+
+      queue.updateFileStatus(item, 'cancel');
 
       _self.fire('cancel', {item: item});
-      uploaderType.cancel();
-      _self.set('curUploadItem', null);
     },
     /**
      * 校验是否通过
