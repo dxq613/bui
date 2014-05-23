@@ -23319,6 +23319,220 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
   return select;
 
 });/**
+ * @fileOverview \u8f93\u5165\u3001\u9009\u62e9\u5b8c\u6bd5\u540e\u663e\u793atag
+ * @ignore
+ */
+
+define('bui/select/tag',['bui/common','bui/list'],function (require) {
+  var BUI = require('bui/common'),
+    List = require('bui/list'),
+    KeyCode = BUI.KeyCode,
+    WARN = 'warn';
+
+  /**
+   * @class BUI.Select.Tag
+   * \u663e\u793atag\u7684\u6269\u5c55
+   */
+  var Tag = function(){
+
+  };
+
+  Tag.ATTRS = {
+    /**
+     * \u663e\u793atag
+     * @type {Boolean}
+     */
+    showTag : {
+      value : false
+    },
+    /**
+     * tag\u7684\u6a21\u677f
+     * @type {String}
+     */
+    tagItemTpl : {
+      value : '<li>{value}<button>\u00d7</button></li>'
+    },
+    /**
+     * @private
+     * tag \u7684\u5217\u8868
+     * @type {Object}
+     */
+    tagList : {
+      value : null
+    },
+    tagPlaceholder : {
+      value : '\u8f93\u5165\u6807\u7b7e'
+    },
+    /**
+     * \u9ed8\u8ba4\u7684value\u5206\u9694\u7b26\uff0c\u5c06\u503c\u5206\u5272\u663e\u793a\u6210tag
+     * @type {String}
+     */
+    separator : {
+      value : ';'
+    }
+  };
+
+  BUI.augment(Tag,{
+
+    __renderUI : function(){
+      var _self = this,
+        showTag = _self.get('showTag'),
+        tagPlaceholder = _self.get('tagPlaceholder'),
+        tagInput = _self.getTagInput();
+      if(showTag && !tagInput.attr('placeholder')){
+        tagInput.attr('placeholder',tagPlaceholder);
+        _self.set('inputForceFit',false);
+      }
+    },
+    __bindUI : function(){
+      var _self = this,
+        showTag = _self.get('showTag'),
+        tagInput = _self.getTagInput();
+      if(showTag){
+        tagInput.on('keydown',function(ev){
+          if(!tagInput.val()){
+            var tagList =  _self.get('tagList'),
+              last = tagList.getLastItem(),
+              picker = _self.get('picker');
+            if(ev.which == KeyCode.DELETE || ev.which == KeyCode.BACKSPACE){
+              if(tagList.hasStatus(last,WARN)){
+                _self._delTag(last);
+              }else{
+                tagList.setItemStatus(last,WARN,true);
+              }
+              picker.hide();
+            }else{
+              tagList.setItemStatus(last,WARN,false);
+            }
+          }
+        });
+
+        tagInput.on('change',function(ev){
+          setTimeout(function(){
+            var val = tagInput.val();
+            if(val){
+              _self._addTag(val);
+            }
+          });
+          
+        });
+      }
+    },
+    __syncUI : function(){
+      var _self = this,
+        showTag = _self.get('showTag'),
+        valueField = _self.get('valueField');
+      if(showTag && valueField){
+        _self._setTags($(valueField).val());
+      }
+    },
+    //\u8bbe\u7f6etags\uff0c\u521d\u59cb\u5316\u65f6\u5904\u7406
+    _setTags : function(value){
+      var _self = this,
+        tagList = _self.get('tagList'),
+        separator = _self.get('separator'),
+        values = value.split(separator);
+      if(!tagList){
+        tagList = _self._initTagList();
+      }
+      if(value){
+        BUI.each(values,function(val){
+          tagList.addItem({value : val});
+        });
+      }
+      
+
+    },
+    //\u6dfb\u52a0tag
+    _addTag : function(value){
+      var _self = this,
+        tagList = _self.get('tagList'),
+        tagInput = _self.getTagInput(),
+        preItem = tagList.getItem(value);
+      if(!preItem){
+        tagList.addItem({value : value});
+        _self._synTagsValue();
+      }else{
+        _self._blurItem(tagList,preItem);
+      }
+      tagInput.val('');
+
+    },
+    //\u63d0\u793a\u7528\u6237\u9009\u9879\u5df2\u7ecf\u5b58\u5728
+    _blurItem : function(list,item){
+      list.setItemStatus(item,'active',true);
+      setTimeout(function(){
+        list.setItemStatus(item,'active',false);
+      },400);
+    },
+    //\u5220\u9664tag
+    _delTag : function(item){
+      var _self = this,
+        tagList = _self.get('tagList');
+
+      tagList.removeItem(item);
+      _self._synTagsValue();
+    },
+
+    /**
+     * \u83b7\u53d6tag \u5217\u8868\u7684\u503c
+     * @return {String} \u5217\u8868\u5bf9\u5e94\u7684\u503c
+     */
+    getTagsValue : function(){
+      var _self = this,
+        tagList = _self.get('tagList'),
+        items = tagList.getItems(),
+        vals = [];
+
+      BUI.each(items,function(item){
+        vals.push(item.value);
+      });
+      return vals.join(_self.get('separator'));
+    },
+    //\u521d\u59cb\u5316tagList
+    _initTagList : function(){
+      var _self = this,
+        tagInput = _self.getTagInput(),
+        tagList = new List.SimpleList({
+          elBefore : tagInput,
+          itemTpl : _self.get('tagItemTpl'),
+          idField : 'value'
+        });
+      tagList.render();
+      _self._initTagEvent(tagList);
+      _self.set('tagList',tagList);
+      return tagList;
+    },
+    //\u521d\u59cb\u5316tag\u5220\u9664\u4e8b\u4ef6
+    _initTagEvent : function(list){
+      var _self = this;
+      list.on('itemclick',function(ev){
+        var sender = $(ev.domTarget);
+        if(sender.is('button')){
+          _self._delTag(ev.item);
+        }
+      });
+    },
+    /**
+     * \u83b7\u53d6\u8f93\u5165\u7684\u6587\u672c\u6846
+     * @protected
+     * @return {jQuery} \u8f93\u5165\u6846
+     */
+    getTagInput : function(){
+      var _self = this,
+          el = _self.get('el');
+      return el.is('input') ? el : el.find('input');
+    },
+    _synTagsValue : function(){
+      var _self = this,
+        valueEl = _self.get('valueField');
+       valueEl && $(valueEl).val(_self.getTagsValue());
+    }
+  });
+
+  return Tag;
+});
+/**
  * @fileOverview \u7ec4\u5408\u6846\u53ef\u7528\u4e8e\u9009\u62e9\u8f93\u5165\u6587\u672c
  * @ignore
  */
