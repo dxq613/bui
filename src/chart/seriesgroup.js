@@ -321,13 +321,13 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         tooltip = _self.get('tipGroup'),
         prePoint = _self.get('prePoint');
       if(!prePoint || prePoint.x != point.x || prePoint.y != point.y){
-        tooltip.setTitle(title);
-        tooltip.setItems(items);
         tooltip.setPosition(point.x,point.y);
+        _self.set('prePoint',point);
         if(!tooltip.get('visible')){
           tooltip.show();
         }
-        _self.set('prePoint',point);
+        tooltip.setTitle(title);
+        tooltip.setItems(items);
       }
     },
     //隐藏tip
@@ -571,21 +571,15 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
         arr = stackedData;
       }else{
         data = _self.getSeriesData(axis,name);
-        first = data[0],
-        min = null;
+        first = data[0];
 
         BUI.each(first,function(value,index){
           var temp = value;
           for(var i = 1 ; i< data.length; i++){
-            var val = data[i][index];
-            temp += val;
-            if(min == null || val < min){
-              min = val;
-            }
+            temp += data[i][index];
           }
           arr.push(temp);
         });
-        arr.push(min);
         _self.set('stackedData',arr);
       }
 
@@ -639,12 +633,11 @@ define('bui/chart/seriesgroup',['bui/common','bui/chart/plotitem','bui/chart/leg
       }
       type = type || 'yAxis';
 
-      this.set('stackedData',null);
-
       var _self = this,
         info = _self._caculateAxisInfo(axis,type),
         series = _self.getSeries();
 
+      _self.set('stackedData',null);
       //如果是非自动计算坐标轴，不进行重新计算
 
       axis.change(info);
