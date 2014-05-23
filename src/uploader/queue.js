@@ -29,12 +29,24 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
         delCls = _self.get('delCls');
 
       el.delegate('.' + delCls, 'click', function (ev) {
-        var itemContainer = $(ev.target).parents('.bui-queue-item'),
-          uploader = _self.get('uploader'),
-          item = _self.getItemByElement(itemContainer);
-        uploader && uploader.cancel && uploader.cancel(item);
-        _self.removeItem(item);
+          var itemContainer = $(ev.target).parents('.bui-queue-item'),
+            item = _self.getItemByElement(itemContainer);
+
+        if(_self.fire('beforeremove', {item: item}) !== false) {
+          _self.removeItem(item);
+        }
       });
+    },
+    /**
+     * 从队列中删除一项
+     * @param  {Object} item
+     */
+    removeItem: function(item){
+      var _self = this,
+        uploader = _self.get('uploader');
+
+      uploader && uploader.cancel && uploader.cancel(item);
+      Queue.superclass.removeItem.call(_self, item);
     },
     /**
      * 更新文件上传的状态
@@ -65,7 +77,7 @@ define('bui/uploader/queue', ['bui/common', 'bui/list'], function (require) {
       var _self = this,
         resultTpl = _self.get('resultTpl'),
         itemTpl = resultTpl[status] || resultTpl['default'],
-        tplData = BUI.mix({}, item.attr, item.result);
+        tplData = BUI.mix(item, item.result);
       item.resultTpl = BUI.substitute(itemTpl, tplData);
     },
     /**

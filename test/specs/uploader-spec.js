@@ -1,3 +1,23 @@
+BUI.use(['bui/uploader/file'], function(UploaderFile){
+  describe('测试获取文件类型', function(){
+    var file = UploaderFile.create({
+      name: 'a/b.php.jpg',
+      size: 1024,
+      type: 'image/jpeg'
+    });
+
+    it('测试文件名是否正确', function(){
+      expect(file.name).toBe('b.php.jpg');
+    })
+    it('测试后缀名是否正确', function(){
+      expect(file.ext).toBe('.jpg');
+    })
+    it('测试textSize是否正确', function(){
+      expect(file.textSize).toBe('1.0KB');
+    })
+  })
+})
+
 BUI.use(['bui/uploader/button/filter'], function(Filter){
   describe('测试获取文件类型', function(){
     it('getTypeByDesc函数是否正确', function(){
@@ -134,9 +154,10 @@ BUI.use(['bui/uploader/type/flash'], function (Flash) {
 BUI.use(['bui/uploader'], function (Uploader) {
   var uploader = new Uploader.Uploader({
     render: '#J_Uploader',
-    url: 'upload/upload.php?width=260&width=135',
-    button: {
-      //filter: {desc:'image', ext:".jpg,.jpeg,.png,.gif,.bmp"}
+    url: 'data/uploader.json',
+    rules: {
+      //文的类型
+      //ext: ['.doc,.docx,.png,.jpg','文件类型只能为{0}']
     }
   });
   uploader.render();
@@ -207,8 +228,8 @@ BUI.use(['bui/uploader'], function (Uploader) {
 
   var file = {'name': 'a.jpg', 'size': 1000},
     files = [
-      {id: '1','name': 'a.jpg', 'size': 1000, file: file, attr: file, success:true},
-      {id: '2','name': 'b.jpg', 'size': 1000, file: file, attr: file}
+      {id: '1','name': 'a.jpg', 'size': 1000, ext:'.jpg', success:true},
+      {id: '2','name': 'b.jpg', 'size': 1000, ext:'.jpg', file: 'a'}
     ];
 
   var successCallback = jasmine.createSpy(),
@@ -219,35 +240,38 @@ BUI.use(['bui/uploader'], function (Uploader) {
 
   describe('测试文件的上传', function(){
 
-
-    // uploader.get('queue').addItems(BUI.cloneObject(files));
-
-    // waits(100);
-    // it('测试success的回调', function(){
-    //   //runs(function(){
-    //     expect(successCallback).toHaveBeenCalled();
-    //   //});
-    // });
-    // it('测试complete的回调', function(){
-    //   runs(function(){
-    //     expect(completeCallback).toHaveBeenCalled();
-    //   });
-    // });
-    // it('测试回调执行的次数是否正确', function(){
-    //   runs(function(){
-    //     expect(successCallback.callCount).toBe(1);
-    //   })
-    // });
+    if(!!window.FormData){
+      uploader.get('queue').addItems(BUI.cloneObject(files));
+      waits(100);
+      it('测试success的回调', function(){
+        runs(function(){
+          expect(successCallback).toHaveBeenCalled();
+        });
+      });
+      it('测试complete的回调', function(){
+        runs(function(){
+          expect(completeCallback).toHaveBeenCalled();
+        });
+      });
+      it('测试回调执行的次数是否正确', function(){
+        runs(function(){
+          expect(successCallback.callCount).toBe(1);
+        })
+      });
+    }
   })
 
   describe('测试不进行自动上传', function(){
 
     uploader.set('autoUpload', false);
-    uploader.get('queue').addItems(BUI.cloneObject(files));
 
     it('添加的数量是否正确', function(){
+      uploader.get('queue').addItems(BUI.cloneObject(files));
       expect(uploader.get('queue').getItemsByStatus('add').length).toBe(1);
-    })
+    });
+
+    // waits(200);
+    // uploader.set('autoUpload', true);
 
   //   waits(100);
   //   it('测试success的回调', function(){
