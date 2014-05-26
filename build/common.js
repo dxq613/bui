@@ -114,7 +114,7 @@ define('bui/util',function(require){
              * 子版本号
              * @type {Number}
              */
-            subVersion : 93,
+            subVersion : 94,
 
             /**
              * 是否为函数
