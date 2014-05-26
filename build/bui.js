@@ -4937,7 +4937,24 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
                 /**/
             }
         },
+        __bindUI : function(){
+            var _self = this;
+            
+            _self.on('show',function(){
+                $(window).on('resize',BUI.wrapBehavior(_self,'handleWindowResize'));
+            });
 
+            _self.on('hide',function(){
+                $(window).off('resize',BUI.getWrapBehavior(_self,'handleWindowResize'));
+            });
+        },
+        //\u5904\u7406window resize\u4e8b\u4ef6
+        handleWindowResize : function(){
+            var _self = this,
+                align = _self.get('align');
+
+            _self.set('align',align);
+        },
         /*
          \u5bf9\u9f50 Overlay \u5230 node \u7684 points \u70b9, \u504f\u79fb offset \u5904
          @method
@@ -14974,12 +14991,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    */
   var dialog = Overlay.extend([UIBase.StdMod,UIBase.Mask,UIBase.Drag],{
     
-    show:function(){
+    /*show:function(){
       var _self = this;
 
       dialog.superclass.show.call(this);
       _self.center();
-    },
+    },*/
     //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(){
       var _self = this;
@@ -15174,6 +15191,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       title : {
         view:true,
         value : ''
+      },
+      align : {
+        value : {
+          node : window,
+          points : ['cc','cc']
+        }
       },
       mask : {
         value:true
@@ -34646,6 +34669,13 @@ define('bui/grid/plugins/editing',function (require) {
      * editor \u521b\u5efa\u5b8c\u6210\uff0c\u56e0\u4e3aeditor\u5ef6\u8fdf\u521b\u5efa\uff0c\u6240\u4ee5\u521b\u5efa\u5b8c\u6210grid\uff0c\u7b49\u5f85editor\u521b\u5efa\u6210\u529f
      */
     
+    /**
+     * @event beforeeditorshow
+     * editor\u663e\u793a\u524d\uff0c\u53ef\u4ee5\u66f4\u6539editor\u7684\u4e00\u4e9b\u5c5e\u6027
+     * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+     * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
+     */
 
   };
 
@@ -34902,6 +34932,8 @@ define('bui/grid/plugins/editing',function (require) {
 
       _self.beforeShowEditor(editor,options);
       _self.set('record',options.record);
+      _self.fire('beforeeditorshow',{editor : editor,record : options.record});
+
       editor.setValue(value);
       if(alignNode){
         var align = _self.get('align');
@@ -34912,7 +34944,7 @@ define('bui/grid/plugins/editing',function (require) {
       editor.show();
       _self.focusEditor(editor,options.field);
       _self.set('curEditor',editor);
-      _self.fire('editorshow',{editor : editor});
+      _self.fire('editorshow',{editor : editor,record : options.record});
     },
     /**
      * @protected

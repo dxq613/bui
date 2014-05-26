@@ -120,12 +120,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    */
   var dialog = Overlay.extend([UIBase.StdMod,UIBase.Mask,UIBase.Drag],{
     
-    show:function(){
+    /*show:function(){
       var _self = this;
 
       dialog.superclass.show.call(this);
       _self.center();
-    },
+    },*/
     //绑定事件
     bindUI : function(){
       var _self = this;
@@ -320,6 +320,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       title : {
         view:true,
         value : ''
+      },
+      align : {
+        value : {
+          node : window,
+          points : ['cc','cc']
+        }
       },
       mask : {
         value:true
