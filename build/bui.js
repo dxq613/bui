@@ -13090,6 +13090,26 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     Proxy = require('bui/data/proxy'),
     AbstractStore = require('bui/data/abstractstore');
 
+  //\u6784\u5efa\u6811\u7ed3\u6784
+  function processData(data,pidField){
+
+    BUI.each(data,function(obj){
+      if(!obj.children){
+        var id = obj.id,
+          children = BUI.Array.filter(data,function(item){
+          return item[pidField] == id;
+        });
+
+        if(children.length){
+          obj.children = children;
+          obj.leaf = false;
+        }else{
+          obj.leaf = true;
+        }
+      }
+    });
+  }
+
   /**
    * @class BUI.Data.TreeStore
    * \u6811\u5f62\u6570\u636e\u7f13\u51b2\u7c7b
@@ -13199,6 +13219,29 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     dataProperty : {
       value : 'nodes'
     },
+
+    /**
+     * \u672c\u5730\u6570\u636e\u6e90
+     * @type {Array}
+     */
+    data : {
+      setter : function(data){
+        var _self = this,
+          proxy = _self.get('proxy'),
+          pidField = _self.get('pidField');
+        
+        if(proxy.set){
+          proxy.set('data',data);
+          if(pidField){
+            processData(data,pidField);
+          }
+        }else{
+          proxy.data = data;
+        }
+        //\u8bbe\u7f6e\u672c\u5730\u6570\u636e\u65f6\uff0c\u628aautoLoad\u7f6e\u4e3atrue
+        _self.set('autoLoad',true);
+      }
+    },
     events : {
       value : [
         /**  
@@ -13269,15 +13312,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         autoLoad = _self.get('autoLoad'),
         pidField = _self.get('pidField'),
         proxy = _self.get('proxy'),
+        data = _self.get('data'),
         root = _self.get('root');
 
       //\u6dfb\u52a0\u9ed8\u8ba4\u7684\u5339\u914d\u7236\u5143\u7d20\u7684\u5b57\u6bb5
       if(!proxy.get('url') && pidField){
         proxy.get('matchFields').push(pidField);
       }
-      
+
+      if(pidField && data && data.length){
+        processData(data,pidField);
+      }
       if(autoLoad && !root.children){
-        //params = root.id ? {id : root.id}: {};
         _self.loadNode(root);
       }
     },
@@ -13779,7 +13825,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * \u5220\u9664\u6389\u7684\u7eaa\u5f55
      * @readOnly
-     * @private
      * @type {Array}
      */
     deletedRecords : {
@@ -13855,7 +13900,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * \u66f4\u6539\u7684\u7eaa\u5f55\u96c6\u5408
      * @type {Array}
-     * @private
      * @readOnly
      */
     modifiedRecords : {
@@ -13865,7 +13909,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * \u65b0\u6dfb\u52a0\u7684\u7eaa\u5f55\u96c6\u5408\uff0c\u53ea\u8bfb
      * @type {Array}
-     * @private
      * @readOnly
      */
     newRecords : {
@@ -14997,6 +15040,8 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       
       dialog.superclass.show.call(this);
       _self.set('align',align);
+      
+      
     },/**/
     //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(){
@@ -34481,10 +34526,10 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       var firstCell = rowEl.find('td').first(),
           textEl = firstCell.find('.' + CLS_GRID_CELL_INNER);
       if(textEl.length){
-        var textPrefix = title + ': ';
+        var textPrefix = title + ':';
           text = textEl.text();
         if(text.indexOf(textPrefix) === -1){
-          text = textPrefix + text;
+          text = textPrefix +' ' + text;
         }
         firstCell.html(getInnerTemplate(text));
       }else{

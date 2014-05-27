@@ -1243,6 +1243,26 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     Proxy = require('bui/data/proxy'),
     AbstractStore = require('bui/data/abstractstore');
 
+  //构建树结构
+  function processData(data,pidField){
+
+    BUI.each(data,function(obj){
+      if(!obj.children){
+        var id = obj.id,
+          children = BUI.Array.filter(data,function(item){
+          return item[pidField] == id;
+        });
+
+        if(children.length){
+          obj.children = children;
+          obj.leaf = false;
+        }else{
+          obj.leaf = true;
+        }
+      }
+    });
+  }
+
   /**
    * @class BUI.Data.TreeStore
    * 树形数据缓冲类
@@ -1352,6 +1372,29 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
     dataProperty : {
       value : 'nodes'
     },
+
+    /**
+     * 本地数据源
+     * @type {Array}
+     */
+    data : {
+      setter : function(data){
+        var _self = this,
+          proxy = _self.get('proxy'),
+          pidField = _self.get('pidField');
+        
+        if(proxy.set){
+          proxy.set('data',data);
+          if(pidField){
+            processData(data,pidField);
+          }
+        }else{
+          proxy.data = data;
+        }
+        //设置本地数据时，把autoLoad置为true
+        _self.set('autoLoad',true);
+      }
+    },
     events : {
       value : [
         /**  
@@ -1422,15 +1465,18 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
         autoLoad = _self.get('autoLoad'),
         pidField = _self.get('pidField'),
         proxy = _self.get('proxy'),
+        data = _self.get('data'),
         root = _self.get('root');
 
       //添加默认的匹配父元素的字段
       if(!proxy.get('url') && pidField){
         proxy.get('matchFields').push(pidField);
       }
-      
+
+      if(pidField && data && data.length){
+        processData(data,pidField);
+      }
       if(autoLoad && !root.children){
-        //params = root.id ? {id : root.id}: {};
         _self.loadNode(root);
       }
     },
@@ -1932,7 +1978,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 删除掉的纪录
      * @readOnly
-     * @private
      * @type {Array}
      */
     deletedRecords : {
@@ -2008,7 +2053,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 更改的纪录集合
      * @type {Array}
-     * @private
      * @readOnly
      */
     modifiedRecords : {
@@ -2018,7 +2062,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 新添加的纪录集合，只读
      * @type {Array}
-     * @private
      * @readOnly
      */
     newRecords : {

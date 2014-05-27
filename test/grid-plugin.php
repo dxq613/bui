@@ -69,14 +69,14 @@
   <!--  <script type="text/javascript" src="specs/plugin-check-spec.js"></script>
    <script type="text/javascript" src="specs/plugin-radio-spec.js"></script>
     <script type="text/javascript" src="specs/plugin-cascade-spec.js"></script>
-	  <script type="text/javascript" src="specs/plugin-menu-spec.js"></script>  
+	  <script type="text/javascript" src="specs/plugin-menu-spec.js"></script>  -->
     <script type="text/javascript" src="specs/plugin-summary-spec.js"></script> 
-    <script type="text/javascript" src="specs/plugin-auto-spec.js"></script> 
+   <!-- <script type="text/javascript" src="specs/plugin-auto-spec.js"></script> 
     <script type="text/javascript" src="specs/plugin-rownumber-spec.js"></script>
     
     <script type="text/javascript" src="specs/plugin-columngroup-spec.js"></script>
-    <script type="text/javascript" src="specs/plugin-row-group-spec.js"></script> -->
+    <script type="text/javascript" src="specs/plugin-row-group-spec.js"></script>
 
-    <script type="text/javascript" src="specs/plugin-colresize-spec.js"></script>
+    <script type="text/javascript" src="specs/plugin-colresize-spec.js"></script> -->
     
 <?php include("./templates/footer.php"); ?>       
