@@ -386,6 +386,8 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       
       dialog.superclass.show.call(this);
       _self.set('align',align);
+      
+      
     },/**/
     //绑定事件
     bindUI : function(){

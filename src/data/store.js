@@ -91,7 +91,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 删除掉的纪录
      * @readOnly
-     * @private
      * @type {Array}
      */
     deletedRecords : {
@@ -167,7 +166,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 更改的纪录集合
      * @type {Array}
-     * @private
      * @readOnly
      */
     modifiedRecords : {
@@ -177,7 +175,6 @@ define('bui/data/store',['bui/data/proxy','bui/data/abstractstore','bui/data/sor
     /**
      * 新添加的纪录集合，只读
      * @type {Array}
-     * @private
      * @readOnly
      */
     newRecords : {

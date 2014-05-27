@@ -259,10 +259,10 @@ define('bui/grid/plugins/summary',['bui/common'],function (require) {
       var firstCell = rowEl.find('td').first(),
           textEl = firstCell.find('.' + CLS_GRID_CELL_INNER);
       if(textEl.length){
-        var textPrefix = title + ': ';
+        var textPrefix = title + ':';
           text = textEl.text();
         if(text.indexOf(textPrefix) === -1){
-          text = textPrefix + text;
+          text = textPrefix +' ' + text;
         }
         firstCell.html(getInnerTemplate(text));
       }else{
