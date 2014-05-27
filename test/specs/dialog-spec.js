@@ -139,11 +139,15 @@ BUI.use('bui/overlay/dialog',function (Dialog) {
   });
 });
 
-BUI.use(['bui/overlay/dialog'],function (Dialog) {
+BUI.use(['bui/overlay/dialog','bui/mask'],function (Dialog) {
   var config = {
       width:500,
       height:300,
       title:'异步弹出库',
+      effect : {
+        effect : 'slide',
+        duration : 1000
+      },
       loader : {
         url : 'data/text.php',
         lazyLoad : {
@@ -153,7 +157,11 @@ BUI.use(['bui/overlay/dialog'],function (Dialog) {
         loadMask : {
           msg : '正在加载dialog ,请等待。。。'
         }*/
-      }
+      }/*,
+      align : {
+        node : window,
+        points : ['tl','tl']
+      }*/
     },
     dialog = new Dialog(config);
   $('#btnAsyn').on('click',function(){
@@ -161,7 +169,11 @@ BUI.use(['bui/overlay/dialog'],function (Dialog) {
   });
   describe('测试加载异步数据',function(){
     it('显示dialog',function(){
-
+      dialog.show();
+      waits(2000);
+      runs(function(){
+        expect(dialog.get('body').text()).not.toBe('');
+      });
     });
   });
 });

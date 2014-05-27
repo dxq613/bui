@@ -14991,12 +14991,13 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
    */
   var dialog = Overlay.extend([UIBase.StdMod,UIBase.Mask,UIBase.Drag],{
     
-    /*show:function(){
+    show:function(){
       var _self = this;
-
+      align = _self.get('align');
+      
       dialog.superclass.show.call(this);
-      _self.center();
-    },*/
+      _self.set('align',align);
+    },/**/
     //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(){
       var _self = this;
