@@ -274,7 +274,6 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           id:'clsBtn',
           listeners:{
             click:function(){
-              var day = today();
               _self.set('selectedDate','');
               _self.fire('accept');
             }
