@@ -14997,6 +14997,8 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       
       dialog.superclass.show.call(this);
       _self.set('align',align);
+      
+      
     },/**/
     //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(){
@@ -24050,12 +24052,12 @@ define('bui/mask/mask',['bui/common'],function (require) {
          * @param {String} [msgCls] \u663e\u793a\u6587\u672c\u5e94\u7528\u7684\u6837\u5f0f
          * <pre><code>
          *   BUI.Mask.maskElement('#domId');
-         *   
+         *   BUI.Mask.maskElement('body'); //\u5c4f\u853d\u6574\u4e2a\u7a97\u53e3
          * </code></pre>
          */
         maskElement:function (element, msg, msgCls) {
             var maskedEl = $(element),
-                maskDiv = $('.' + CLS_MASK, maskedEl),
+                maskDiv = maskedEl.children('.' + CLS_MASK),
                 tpl = null,
                 msgDiv = null,
                 top = null,
@@ -24063,9 +24065,19 @@ define('bui/mask/mask',['bui/common'],function (require) {
             if (!maskDiv.length) {
                 maskDiv = $('<div class="' + CLS_MASK + '"></div>').appendTo(maskedEl);
                 maskedEl.addClass('x-masked-relative x-masked');
-                if (UA.ie === 6) {
-                    maskDiv.height(maskedEl.height());
+                
+                if(element == 'body'){
+                  if(UA.ie == 6){
+                    maskDiv.height(BUI.docHeight());
+                  }else{
+                    maskDiv.css('position','fixed');
+                  }
+                }else{
+                  if (UA.ie === 6) {
+                      maskDiv.height(maskedEl.height());
+                  }
                 }
+               
                 if (msg) {
                     tpl = ['<div class="' + CLS_MASK_MSG + '"><div>', msg, '</div></div>'].join('');
                     msgDiv = $(tpl).appendTo(maskedEl);
@@ -29113,6 +29125,18 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
             click:function(){
               var day = today();
               _self.set('selectedDate',day);
+              _self.fire('accept');
+            }
+          }
+        });
+        items.push({
+          xclass:'bar-item-button',
+          text:'\u6e05\u9664',
+          btnCls: 'button button-small',
+          id:'clsBtn',
+          listeners:{
+            click:function(){
+              _self.set('selectedDate','');
               _self.fire('accept');
             }
           }
