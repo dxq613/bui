@@ -23,6 +23,15 @@ BUI.use('bui/mask',function () {
       expect(el.find('.bui-ext-mask').length).toBe(0);
     });
 
+    it('屏蔽整个窗口',function(){
+      Mask.maskElement('body');
+      if(BUI.UA.ie == 6){
+        expect(el.find('.bui-ext-mask').height()).toBe(BUI.docHeight());
+      }else{
+        expect(el.find('.bui-ext-mask').css('position')).toBe('fixed');
+      }
+    });
+
   });
 
   describe('加载数据，屏蔽元素',function(){
