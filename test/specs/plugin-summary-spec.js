@@ -1,4 +1,4 @@
-/*
+/**/
 BUI.use(['bui/grid/grid','bui/grid/plugins','bui/data'],function(Grid,Plugins,Data){
 
   var  columns = [{
@@ -106,7 +106,7 @@ BUI.use(['bui/grid/grid','bui/grid/plugins','bui/data'],function(Grid,Plugins,Da
   });
 });
 
-*/
+
 BUI.use(['bui/grid/grid','bui/grid/plugins','bui/data'],function(Grid,Plugins,Data){
 
   var  columns = [{
