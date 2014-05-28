@@ -167,8 +167,8 @@ BUI.use('bui/data',function(Data){
     it('加载子节点',function(){
       var node = store.findNode('13');
       expect(node).not.toBe(null);
-      /*expect(node.children.length).toBe(0);
-      store.loadNode(node);*/
+      expect(node.children.length).toBe(0);
+      store.loadNode(node);
       expect(node.children.length).toBe(2);
     });
   });
