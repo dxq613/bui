@@ -32,12 +32,12 @@ define('bui/mask/mask',['bui/common'],function (require) {
          * @param {String} [msgCls] 显示文本应用的样式
          * <pre><code>
          *   BUI.Mask.maskElement('#domId');
-         *   
+         *   BUI.Mask.maskElement('body'); //屏蔽整个窗口
          * </code></pre>
          */
         maskElement:function (element, msg, msgCls) {
             var maskedEl = $(element),
-                maskDiv = $('.' + CLS_MASK, maskedEl),
+                maskDiv = maskedEl.children('.' + CLS_MASK),
                 tpl = null,
                 msgDiv = null,
                 top = null,
@@ -45,9 +45,19 @@ define('bui/mask/mask',['bui/common'],function (require) {
             if (!maskDiv.length) {
                 maskDiv = $('<div class="' + CLS_MASK + '"></div>').appendTo(maskedEl);
                 maskedEl.addClass('x-masked-relative x-masked');
-                if (UA.ie === 6) {
-                    maskDiv.height(maskedEl.height());
+                
+                if(element == 'body'){
+                  if(UA.ie == 6){
+                    maskDiv.height(BUI.docHeight());
+                  }else{
+                    maskDiv.css('position','fixed');
+                  }
+                }else{
+                  if (UA.ie === 6) {
+                      maskDiv.height(maskedEl.height());
+                  }
                 }
+               
                 if (msg) {
                     tpl = ['<div class="' + CLS_MASK_MSG + '"><div>', msg, '</div></div>'].join('');
                     msgDiv = $(tpl).appendTo(maskedEl);
