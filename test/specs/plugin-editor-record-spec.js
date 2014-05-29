@@ -181,6 +181,10 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins/rowediting','bui/grid/form
 
 BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins/rowediting','bui/grid/format'],function (Grid,Data,RowEditing,Format) {
 
+
+  var btn = $('<button class="button">destroy</button>').appendTo('body');
+
+
   var enumObj = {'1' : '选项一','2' : '选项二'},
       columns = [{
         title : '表头1',
@@ -244,6 +248,9 @@ BUI.use(['bui/grid/grid','bui/data','bui/grid/plugins/rowediting','bui/grid/form
 
   grid.render();
 
+  btn.on('click',function(){
+    grid.destroy();
+  });
 
   function getField(field){
     return form.getField(field);

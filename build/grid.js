@@ -4218,6 +4218,13 @@ define('bui/grid/plugins/editing',function (require) {
      * editor 创建完成，因为editor延迟创建，所以创建完成grid，等待editor创建成功
      */
     
+    /**
+     * @event beforeeditorshow
+     * editor显示前，可以更改editor的一些属性
+     * @param {Object} ev 事件对象
+     * @param {Object} ev.record 编辑的数据
+     * @param {BUI.Editor.Editor} ev.editor 编辑器
+     */
 
   };
 
@@ -4474,6 +4481,8 @@ define('bui/grid/plugins/editing',function (require) {
 
       _self.beforeShowEditor(editor,options);
       _self.set('record',options.record);
+      _self.fire('beforeeditorshow',{editor : editor,record : options.record});
+
       editor.setValue(value);
       if(alignNode){
         var align = _self.get('align');
@@ -4484,7 +4493,7 @@ define('bui/grid/plugins/editing',function (require) {
       editor.show();
       _self.focusEditor(editor,options.field);
       _self.set('curEditor',editor);
-      _self.fire('editorshow',{editor : editor});
+      _self.fire('editorshow',{editor : editor,record : options.record});
     },
     /**
      * @protected
@@ -4643,7 +4652,7 @@ define('bui/grid/plugins/editing',function (require) {
         editors = _self.get('editors');
       
       BUI.each(editors,function(editor){
-        editor.destroy || editor.destroy();
+        editor.destroy && editor.destroy();
       });
       _self.off();
       _self.clearAttrVals();

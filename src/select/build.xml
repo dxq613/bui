@@ -22,6 +22,7 @@
         <concat destfile="${des.dir}/select.js" encoding="${charset}" outputencoding="${charset}">
 			<path path="base.js"/>
 			<path path="select.js"/>
+            <path path="tag.js"/>
 			<path path="combox.js"/>
             <path path="suggest.js"/>
 		</concat>
