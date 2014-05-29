@@ -29136,8 +29136,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           id:'clsBtn',
           listeners:{
             click:function(){
-              _self.set('selectedDate','');
-              _self.fire('accept');
+              _self.fire('clear');
             }
           }
         });
@@ -29406,6 +29405,11 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
           autoRender : true
         });
 
+      calendar.on('clear', function(){
+        var curTrigger = _self.get('curTrigger');
+        curTrigger.val('');
+      });
+
       if (!_self.get('dateMask')) {
         if (_self.get('showTime')) {
             _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
@@ -29568,7 +29572,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         value:'accept'
       },
       hideEvent:{
-        value:'accept'
+        value:'accept clear'
       },
       /**
        * \u65e5\u5386\u5bf9\u8c61,\u53ef\u4ee5\u8fdb\u884c\u66f4\u591a\u7684\u64cd\u4f5c\uff0c\u53c2\u770b{@link BUI.Calendar.Calendar}
@@ -29591,7 +29595,8 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
   });
   return datepicker;
   
-});/**
+});
+/**
  * @fileOverview \u7f16\u8f91\u5668\u547d\u540d\u7a7a\u95f4\u5165\u53e3
  * @ignore
  */

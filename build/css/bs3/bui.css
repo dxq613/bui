@@ -16,7 +16,7 @@
 .bui-side-menu .bui-menu-title s,
 .bui-side-menu .menu-leaf a,
 .bui-side-menu .menu-leaf em {
-  background: url("../../img/menu-500-188.png") -9999px -9999px no-repeat;
+  background: url("../../img/menu-500-188.png") -9998.99999999px -9999px no-repeat;
 }
 .bui-side-menu a {
   color: #5c637b;
@@ -265,7 +265,7 @@
 .bui-nav-tab-item .tab-item-inner,
 .bui-nav-tab-item .l,
 .bui-nav-tab-item .r {
-  background: url("../../img/tab-140-120.gif") -9999px -9999px no-repeat;
+  background: url("../../img/tab-140-120.gif") -9998.99999999px -9999px no-repeat;
 }
 .tab-nav-bar {
   position: relative;
@@ -1490,6 +1490,9 @@ textarea.bui-form-field-error,
   padding: 6px 4px 5px;
   border-top: 1px solid #ccc;
   text-align: center;
+}
+.bui-calendar .bui-calendar-footer .bui-bar-item-button {
+  margin-right: 5px;
 }
 .bui-calendar .bui-calendar-footer input.x-datepicker-time {
   padding: 4px 10px;

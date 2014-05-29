@@ -1421,8 +1421,8 @@ fieldset[disabled] .x-icon-question.active {
 }
 @font-face {
   font-family: 'bui-iconfont';
-  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot');
-  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('http://at.alicdn.com/t/font_1395889527_6888435.woff') format('woff'), /* chrome、firefox */ url('http://at.alicdn.com/t/font_1395889527_5368805.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/ url('http://at.alicdn.com/t/font_1395889527_7487144.svg#iconfont') format('svg');
+  src: url('../../img/iconfont/iconfont.eot');
+  src: url('../../img/iconfont/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('../../img/iconfont/iconfont.woff') format('woff'), /* chrome、firefox */ url('../../img/iconfont/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/ url('../../img/iconfont/iconfont.svg#iconfont') format('svg');
   
   /* IE9*/
   /* iOS 4.1- */
@@ -1503,7 +1503,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: 0      0;
 }
 .icon-music {
-  background-position: -24px 0;
+  background-position: -23.99999999px 0;
 }
 .icon-search {
   background-position: -48px 0;
@@ -1683,7 +1683,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: 0 -72px;
 }
 .icon-map-marker {
-  background-position: -24px -72px;
+  background-position: -23.99999999px -72px;
 }
 .icon-adjust {
   background-position: -48px -72px;
@@ -1947,7 +1947,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -120px -189px;
 }
 .icon-caret-up {
-  background-position: -1px -209px;
+  background-position: -1px -208.99999999px;
 }
 .icon-caret-down {
   background-position: -1px -218px;
