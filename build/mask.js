@@ -55,7 +55,7 @@ define('bui/mask/mask',['bui/common'],function (require) {
             if (!maskDiv.length) {
                 maskDiv = $('<div class="' + CLS_MASK + '"></div>').appendTo(maskedEl);
                 maskedEl.addClass('x-masked-relative x-masked');
-                
+                //屏蔽整个窗口
                 if(element == 'body'){
                   if(UA.ie == 6){
                     maskDiv.height(BUI.docHeight());
@@ -74,14 +74,23 @@ define('bui/mask/mask',['bui/common'],function (require) {
                     if (msgCls) {
                         msgDiv.addClass(msgCls);
                     }
-                    try {
-                        top = (maskedEl.height() - msgDiv.height()) / 2;
-                        left = (maskedEl.width() - msgDiv.width()) / 2;
 
-                        msgDiv.css({ left:left, top:top });
-                    } catch (ex) {
-                        BUI.log('mask error occurred');
+                  try {
+                    //屏蔽整个窗口
+                    if(element == 'body' && UA.ie != 6){
+                      top = '50%',
+                      left = '50%';
+                      msgDiv.css('position','fixed');
+                    }else{
+                      top = (maskDiv.height() - msgDiv.height()) / 2;
+                      left = (maskDiv.width() - msgDiv.width()) / 2;                      
                     }
+                    msgDiv.css({ left:left, top:top });
+
+                  } catch (ex) {
+                    BUI.log('mask error occurred');
+                  }
+                    
                 }
             }
             return maskDiv;
