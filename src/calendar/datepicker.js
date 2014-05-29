@@ -49,6 +49,11 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
           autoRender : true
         });
 
+      calendar.on('clear', function(){
+        var curTrigger = _self.get('curTrigger');
+        curTrigger.val('');
+      });
+
       if (!_self.get('dateMask')) {
         if (_self.get('showTime')) {
             _self.set('dateMask', 'yyyy-mm-dd HH:MM:ss');
@@ -211,7 +216,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         value:'accept'
       },
       hideEvent:{
-        value:'accept'
+        value:'accept clear'
       },
       /**
        * 日历对象,可以进行更多的操作，参看{@link BUI.Calendar.Calendar}

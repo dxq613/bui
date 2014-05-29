@@ -1491,6 +1491,9 @@ textarea.bui-form-field-error,
   border-top: 1px solid #ccc;
   text-align: center;
 }
+.bui-calendar .bui-calendar-footer .bui-bar-item-button {
+  margin-right: 5px;
+}
 .bui-calendar .bui-calendar-footer input.x-datepicker-time {
   padding: 4px 10px;
   width: 18px;

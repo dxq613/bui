@@ -274,8 +274,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           id:'clsBtn',
           listeners:{
             click:function(){
-              _self.set('selectedDate','');
-              _self.fire('accept');
+              _self.fire('clear');
             }
           }
         });
