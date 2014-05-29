@@ -1157,6 +1157,18 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
             }
           }
         });
+        items.push({
+          xclass:'bar-item-button',
+          text:'清除',
+          btnCls: 'button button-small',
+          id:'clsBtn',
+          listeners:{
+            click:function(){
+              _self.set('selectedDate','');
+              _self.fire('accept');
+            }
+          }
+        });
       }
 
       return new Toolbar.Bar({

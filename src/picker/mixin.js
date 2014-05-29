@@ -182,7 +182,7 @@ define('bui/picker/mixin', function (require) {
           }
         }
         
-        if(valueField){
+        if(valueField && _self.get('autoSetValue')){
           var preValue = $(valueField).val();  
           if(valueField != preValue){
             $(valueField).val(selValue);
@@ -262,7 +262,7 @@ define('bui/picker/mixin', function (require) {
     },
     _uiSetValueField : function(v){
       var _self = this;
-      if(v != null && v !== ''){ //if(v)问题太多
+      if(v != null && v !== '' && _self.get('autoSetValue')){ //if(v)问题太多
         _self.setSelectedValue($(v).val());
       }
     },

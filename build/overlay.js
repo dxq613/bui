@@ -382,10 +382,13 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
     
     show:function(){
       var _self = this;
-
+      align = _self.get('align');
+      
       dialog.superclass.show.call(this);
-      _self.center();
-    },
+      _self.set('align',align);
+      
+      
+    },/**/
     //绑定事件
     bindUI : function(){
       var _self = this;
@@ -580,6 +583,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       title : {
         view:true,
         value : ''
+      },
+      align : {
+        value : {
+          node : window,
+          points : ['cc','cc']
+        }
       },
       mask : {
         value:true

@@ -15,6 +15,7 @@ BUI.use('bui/select',function (Select) {
   });
   var picker = select.get('picker'),
     control = picker.get('list');
+  picker.show();
   describe('测试初始化',function(){
 
     it('测试选择器是否存在',function(){

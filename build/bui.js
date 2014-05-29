@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 93,
+            subVersion : 94,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -4937,7 +4937,24 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
                 /**/
             }
         },
+        __bindUI : function(){
+            var _self = this;
+            
+            _self.on('show',function(){
+                $(window).on('resize',BUI.wrapBehavior(_self,'handleWindowResize'));
+            });
 
+            _self.on('hide',function(){
+                $(window).off('resize',BUI.getWrapBehavior(_self,'handleWindowResize'));
+            });
+        },
+        //\u5904\u7406window resize\u4e8b\u4ef6
+        handleWindowResize : function(){
+            var _self = this,
+                align = _self.get('align');
+
+            _self.set('align',align);
+        },
         /*
          \u5bf9\u9f50 Overlay \u5230 node \u7684 points \u70b9, \u504f\u79fb offset \u5904
          @method
@@ -14976,10 +14993,13 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
     
     show:function(){
       var _self = this;
-
+      align = _self.get('align');
+      
       dialog.superclass.show.call(this);
-      _self.center();
-    },
+      _self.set('align',align);
+      
+      
+    },/**/
     //\u7ed1\u5b9a\u4e8b\u4ef6
     bindUI : function(){
       var _self = this;
@@ -15174,6 +15194,12 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
       title : {
         view:true,
         value : ''
+      },
+      align : {
+        value : {
+          node : window,
+          points : ['cc','cc']
+        }
       },
       mask : {
         value:true
@@ -17463,7 +17489,7 @@ define('bui/picker/mixin', function (require) {
           }
         }
         
-        if(valueField){
+        if(valueField && _self.get('autoSetValue')){
           var preValue = $(valueField).val();  
           if(valueField != preValue){
             $(valueField).val(selValue);
@@ -17543,7 +17569,7 @@ define('bui/picker/mixin', function (require) {
     },
     _uiSetValueField : function(v){
       var _self = this;
-      if(v != null && v !== ''){ //if(v)\u95ee\u9898\u592a\u591a
+      if(v != null && v !== '' && _self.get('autoSetValue')){ //if(v)\u95ee\u9898\u592a\u591a
         _self.setSelectedValue($(v).val());
       }
     },
@@ -22945,9 +22971,8 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       renderUI : function(){
         var _self = this,
           picker = _self.get('picker'),
-          el = _self.get('el'),
           textEl = _self._getTextEl();
-        picker.set('trigger',el);
+        picker.set('trigger',_self.getTrigger());
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
@@ -22985,7 +23010,13 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
 
         return Component.Controller.prototype.containsElement.call(this,elem) || picker.containsElement(elem);
       },
-
+      /**
+       * @protected
+       * \u83b7\u53d6\u89e6\u53d1\u70b9
+       */
+      getTrigger : function(){
+        return this.get('el');
+      },
       //\u8bbe\u7f6e\u5b50\u9879
       _uiSetItems : function(items){
         if(!items){
@@ -23016,13 +23047,17 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       _uiSetWidth : function(v){
         var _self = this;
         if(v != null){
-          var textEl = _self._getTextEl(),
+          if(_self.get('inputForceFit')){
+            var textEl = _self._getTextEl(),
             iconEl = _self.get('el').find('.x-icon'),
             appendWidth = textEl.outerWidth() - textEl.width(),
-            picker = _self.get('picker'),
+            
             width = v - iconEl.outerWidth() - appendWidth;
-          textEl.width(width);
+            textEl.width(width);
+          }
+          
           if(_self.get('forceFit')){
+            var picker = _self.get('picker');
             picker.set('width',v);
           }
           
@@ -23177,6 +23212,13 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           value:true
         },
         /**
+         * \u662f\u5426\u8ddfvalueField\u81ea\u52a8\u540c\u6b65
+         * @type {Boolean}
+         */
+        autoSetValue : {
+          value : true
+        },
+        /**
          * \u662f\u5426\u53ef\u4ee5\u591a\u9009
          * @cfg {Boolean} [multipleSelect=false]
          */
@@ -23187,6 +23229,13 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         multipleSelect:{
           value:false
         },
+        /**
+         * \u5185\u90e8\u7684input\u662f\u5426\u8ddf\u968f\u5bbd\u5ea6\u7684\u53d8\u5316\u800c\u53d8\u5316
+         * @type {Object}
+         */
+        inputForceFit : {
+          value : true
+        },  
         /**
          * \u63a7\u4ef6\u7684name\uff0c\u7528\u4e8e\u5b58\u653e\u9009\u4e2d\u7684\u6587\u672c\uff0c\u4fbf\u4e8e\u8868\u5355\u63d0\u4ea4
          * @cfg {Object} name
@@ -23296,6 +23345,220 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
   return select;
 
 });/**
+ * @fileOverview \u8f93\u5165\u3001\u9009\u62e9\u5b8c\u6bd5\u540e\u663e\u793atag
+ * @ignore
+ */
+
+define('bui/select/tag',['bui/common','bui/list'],function (require) {
+  var BUI = require('bui/common'),
+    List = require('bui/list'),
+    KeyCode = BUI.KeyCode,
+    WARN = 'warn';
+
+  /**
+   * @class BUI.Select.Tag
+   * \u663e\u793atag\u7684\u6269\u5c55
+   */
+  var Tag = function(){
+
+  };
+
+  Tag.ATTRS = {
+    /**
+     * \u663e\u793atag
+     * @type {Boolean}
+     */
+    showTag : {
+      value : false
+    },
+    /**
+     * tag\u7684\u6a21\u677f
+     * @type {String}
+     */
+    tagItemTpl : {
+      value : '<li>{value}<button>\u00d7</button></li>'
+    },
+    /**
+     * @private
+     * tag \u7684\u5217\u8868
+     * @type {Object}
+     */
+    tagList : {
+      value : null
+    },
+    tagPlaceholder : {
+      value : '\u8f93\u5165\u6807\u7b7e'
+    },
+    /**
+     * \u9ed8\u8ba4\u7684value\u5206\u9694\u7b26\uff0c\u5c06\u503c\u5206\u5272\u663e\u793a\u6210tag
+     * @type {String}
+     */
+    separator : {
+      value : ';'
+    }
+  };
+
+  BUI.augment(Tag,{
+
+    __renderUI : function(){
+      var _self = this,
+        showTag = _self.get('showTag'),
+        tagPlaceholder = _self.get('tagPlaceholder'),
+        tagInput = _self.getTagInput();
+      if(showTag && !tagInput.attr('placeholder')){
+        tagInput.attr('placeholder',tagPlaceholder);
+        _self.set('inputForceFit',false);
+      }
+    },
+    __bindUI : function(){
+      var _self = this,
+        showTag = _self.get('showTag'),
+        tagInput = _self.getTagInput();
+      if(showTag){
+        tagInput.on('keydown',function(ev){
+          if(!tagInput.val()){
+            var tagList =  _self.get('tagList'),
+              last = tagList.getLastItem(),
+              picker = _self.get('picker');
+            if(ev.which == KeyCode.DELETE || ev.which == KeyCode.BACKSPACE){
+              if(tagList.hasStatus(last,WARN)){
+                _self._delTag(last);
+              }else{
+                tagList.setItemStatus(last,WARN,true);
+              }
+              picker.hide();
+            }else{
+              tagList.setItemStatus(last,WARN,false);
+            }
+          }
+        });
+
+        tagInput.on('change',function(ev){
+          setTimeout(function(){
+            var val = tagInput.val();
+            if(val){
+              _self._addTag(val);
+            }
+          });
+          
+        });
+      }
+    },
+    __syncUI : function(){
+      var _self = this,
+        showTag = _self.get('showTag'),
+        valueField = _self.get('valueField');
+      if(showTag && valueField){
+        _self._setTags($(valueField).val());
+      }
+    },
+    //\u8bbe\u7f6etags\uff0c\u521d\u59cb\u5316\u65f6\u5904\u7406
+    _setTags : function(value){
+      var _self = this,
+        tagList = _self.get('tagList'),
+        separator = _self.get('separator'),
+        values = value.split(separator);
+      if(!tagList){
+        tagList = _self._initTagList();
+      }
+      if(value){
+        BUI.each(values,function(val){
+          tagList.addItem({value : val});
+        });
+      }
+      
+
+    },
+    //\u6dfb\u52a0tag
+    _addTag : function(value){
+      var _self = this,
+        tagList = _self.get('tagList'),
+        tagInput = _self.getTagInput(),
+        preItem = tagList.getItem(value);
+      if(!preItem){
+        tagList.addItem({value : value});
+        _self._synTagsValue();
+      }else{
+        _self._blurItem(tagList,preItem);
+      }
+      tagInput.val('');
+
+    },
+    //\u63d0\u793a\u7528\u6237\u9009\u9879\u5df2\u7ecf\u5b58\u5728
+    _blurItem : function(list,item){
+      list.setItemStatus(item,'active',true);
+      setTimeout(function(){
+        list.setItemStatus(item,'active',false);
+      },400);
+    },
+    //\u5220\u9664tag
+    _delTag : function(item){
+      var _self = this,
+        tagList = _self.get('tagList');
+
+      tagList.removeItem(item);
+      _self._synTagsValue();
+    },
+
+    /**
+     * \u83b7\u53d6tag \u5217\u8868\u7684\u503c
+     * @return {String} \u5217\u8868\u5bf9\u5e94\u7684\u503c
+     */
+    getTagsValue : function(){
+      var _self = this,
+        tagList = _self.get('tagList'),
+        items = tagList.getItems(),
+        vals = [];
+
+      BUI.each(items,function(item){
+        vals.push(item.value);
+      });
+      return vals.join(_self.get('separator'));
+    },
+    //\u521d\u59cb\u5316tagList
+    _initTagList : function(){
+      var _self = this,
+        tagInput = _self.getTagInput(),
+        tagList = new List.SimpleList({
+          elBefore : tagInput,
+          itemTpl : _self.get('tagItemTpl'),
+          idField : 'value'
+        });
+      tagList.render();
+      _self._initTagEvent(tagList);
+      _self.set('tagList',tagList);
+      return tagList;
+    },
+    //\u521d\u59cb\u5316tag\u5220\u9664\u4e8b\u4ef6
+    _initTagEvent : function(list){
+      var _self = this;
+      list.on('itemclick',function(ev){
+        var sender = $(ev.domTarget);
+        if(sender.is('button')){
+          _self._delTag(ev.item);
+        }
+      });
+    },
+    /**
+     * \u83b7\u53d6\u8f93\u5165\u7684\u6587\u672c\u6846
+     * @protected
+     * @return {jQuery} \u8f93\u5165\u6846
+     */
+    getTagInput : function(){
+      var _self = this,
+          el = _self.get('el');
+      return el.is('input') ? el : el.find('input');
+    },
+    _synTagsValue : function(){
+      var _self = this,
+        valueEl = _self.get('valueField');
+       valueEl && $(valueEl).val(_self.getTagsValue());
+    }
+  });
+
+  return Tag;
+});
+/**
  * @fileOverview \u7ec4\u5408\u6846\u53ef\u7528\u4e8e\u9009\u62e9\u8f93\u5165\u6587\u672c
  * @ignore
  */
@@ -23304,6 +23567,7 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
 
   var BUI = require('bui/common'),
     Select = require('bui/select/select'),
+    Tag = require('bui/select/tag'),
     CLS_INPUT = BUI.prefix + 'combox-input';
 
   /**
@@ -23323,12 +23587,13 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
    * @class BUI.Select.Combox
    * @extends BUI.Select.Select
    */
-  var combox = Select.extend({
+  var combox = Select.extend([Tag],{
 
     renderUI : function(){
       var _self = this,
         picker = _self.get('picker');
       picker.set('autoFocused',false);
+
     },
     _uiSetItems : function(v){
       var _self = this;
@@ -23354,6 +23619,17 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
           list.clearItemStatus(item);
         }
       });
+    },
+    //\u8986\u5199\u6b64\u65b9\u6cd5
+    _uiSetValueField : function(){
+
+    },
+    /**
+     * @protected
+     * \u83b7\u53d6\u89e6\u53d1\u70b9
+     */
+    getTrigger : function(){
+      return this._getTextEl();
     }
   },{
     ATTRS : 
@@ -23379,6 +23655,9 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
        */
       inputCls:{
         value:CLS_INPUT
+      },
+      autoSetValue : {
+        value : false
       }
     }
   },{
@@ -23773,12 +24052,12 @@ define('bui/mask/mask',['bui/common'],function (require) {
          * @param {String} [msgCls] \u663e\u793a\u6587\u672c\u5e94\u7528\u7684\u6837\u5f0f
          * <pre><code>
          *   BUI.Mask.maskElement('#domId');
-         *   
+         *   BUI.Mask.maskElement('body'); //\u5c4f\u853d\u6574\u4e2a\u7a97\u53e3
          * </code></pre>
          */
         maskElement:function (element, msg, msgCls) {
             var maskedEl = $(element),
-                maskDiv = $('.' + CLS_MASK, maskedEl),
+                maskDiv = maskedEl.children('.' + CLS_MASK),
                 tpl = null,
                 msgDiv = null,
                 top = null,
@@ -23786,9 +24065,19 @@ define('bui/mask/mask',['bui/common'],function (require) {
             if (!maskDiv.length) {
                 maskDiv = $('<div class="' + CLS_MASK + '"></div>').appendTo(maskedEl);
                 maskedEl.addClass('x-masked-relative x-masked');
-                if (UA.ie === 6) {
-                    maskDiv.height(maskedEl.height());
+                
+                if(element == 'body'){
+                  if(UA.ie == 6){
+                    maskDiv.height(BUI.docHeight());
+                  }else{
+                    maskDiv.css('position','fixed');
+                  }
+                }else{
+                  if (UA.ie === 6) {
+                      maskDiv.height(maskedEl.height());
+                  }
                 }
+               
                 if (msg) {
                     tpl = ['<div class="' + CLS_MASK_MSG + '"><div>', msg, '</div></div>'].join('');
                     msgDiv = $(tpl).appendTo(maskedEl);
@@ -28836,6 +29125,18 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
             click:function(){
               var day = today();
               _self.set('selectedDate',day);
+              _self.fire('accept');
+            }
+          }
+        });
+        items.push({
+          xclass:'bar-item-button',
+          text:'\u6e05\u9664',
+          btnCls: 'button button-small',
+          id:'clsBtn',
+          listeners:{
+            click:function(){
+              _self.set('selectedDate','');
               _self.fire('accept');
             }
           }
@@ -34393,6 +34694,13 @@ define('bui/grid/plugins/editing',function (require) {
      * editor \u521b\u5efa\u5b8c\u6210\uff0c\u56e0\u4e3aeditor\u5ef6\u8fdf\u521b\u5efa\uff0c\u6240\u4ee5\u521b\u5efa\u5b8c\u6210grid\uff0c\u7b49\u5f85editor\u521b\u5efa\u6210\u529f
      */
     
+    /**
+     * @event beforeeditorshow
+     * editor\u663e\u793a\u524d\uff0c\u53ef\u4ee5\u66f4\u6539editor\u7684\u4e00\u4e9b\u5c5e\u6027
+     * @param {Object} ev \u4e8b\u4ef6\u5bf9\u8c61
+     * @param {Object} ev.record \u7f16\u8f91\u7684\u6570\u636e
+     * @param {BUI.Editor.Editor} ev.editor \u7f16\u8f91\u5668
+     */
 
   };
 
@@ -34649,6 +34957,8 @@ define('bui/grid/plugins/editing',function (require) {
 
       _self.beforeShowEditor(editor,options);
       _self.set('record',options.record);
+      _self.fire('beforeeditorshow',{editor : editor,record : options.record});
+
       editor.setValue(value);
       if(alignNode){
         var align = _self.get('align');
@@ -34659,7 +34969,7 @@ define('bui/grid/plugins/editing',function (require) {
       editor.show();
       _self.focusEditor(editor,options.field);
       _self.set('curEditor',editor);
-      _self.fire('editorshow',{editor : editor});
+      _self.fire('editorshow',{editor : editor,record : options.record});
     },
     /**
      * @protected
@@ -34818,7 +35128,7 @@ define('bui/grid/plugins/editing',function (require) {
         editors = _self.get('editors');
       
       BUI.each(editors,function(editor){
-        editor.destroy || editor.destroy();
+        editor.destroy && editor.destroy();
       });
       _self.off();
       _self.clearAttrVals();
