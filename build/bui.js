@@ -29019,7 +29019,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           for(var key in lockTime){
               var noCls = _timePickerEnum[key.toLowerCase()];
               _self.set(key,lockTime[key]);
-              _self.get('el').find("."+noCls).attr("disabled","");
+              if(!lockTime.editable){
+                _self.get('el').find("."+noCls).attr("disabled","");
+              }
           }
       }
       var  picker = new Picker({
@@ -29077,7 +29079,11 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         selectedDate = _self.get('selectedDate'),
         date = selectedDate.getDate();
       if(year !== selectedDate.getFullYear() || month !== selectedDate.getMonth()){
-        _self.set('selectedDate',new Date(year,month,date));
+        var newDate = new Date(year,month,date);
+        if(newDate.getMonth() != month){ //\u4e0b\u4e00\u4e2a\u6708\u6ca1\u6709\u5bf9\u5e94\u7684\u65e5\u671f,\u5b9a\u4f4d\u5230\u4e0b\u4e00\u4e2a\u6708\u6700\u540e\u4e00\u5929
+          newDate = DateUtil.addDay(-1,new Date(year,month + 1));
+        }
+        _self.set('selectedDate',newDate);
       }
     },
     //\u521b\u5efa\u9009\u62e9\u6708\u7684\u63a7\u4ef6
@@ -29447,11 +29453,22 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         date = DateUtil.parse(val,_self.get("dateMask"));
       date = date || _self.get('selectedDate');
       calendar.set('selectedDate',DateUtil.getDate(date));
+
       if(_self.get('showTime')){
+
           var lockTime = this.get("lockTime"),
-              hour = lockTime&&lockTime['hour']?lockTime['hour']:date.getHours(),
-              minute = lockTime&&lockTime['minute']?lockTime['minute']:date.getMinutes(),
-              second = lockTime&&lockTime['second']?lockTime['second']:date.getSeconds();
+            hour = date.getHours(),
+            minute = date.getMinutes(),
+            second = date.getSeconds();
+
+          if(lockTime){
+            if(!val || !lockTime.editable){
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:hour,
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:hour,
+              second = lockTime&&lockTime['second']?lockTime['second']:hour;
+            }
+          }
+
         calendar.set('hour',hour);
         calendar.set('minute',minute);
         calendar.set('second',second);
@@ -29525,7 +29542,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         value:false
       },
        /**
-       * \u9501\u5b9a\u65f6\u95f4\u9009\u62e9
+       * \u9501\u5b9a\u65f6\u95f4\u9009\u62e9\uff0c\u9ed8\u8ba4\u9501\u5b9a\u7684\u65f6\u95f4\u4e0d\u80fd\u4fee\u6539\u53ef\u4ee5\u901a\u8fc7 editable : true \u6765\u5141\u8bb8\u4fee\u6539\u9501\u5b9a\u7684\u65f6\u95f4
        *<pre><code>
        *  var calendar = new Calendar.Calendar({
        *  render:'#calendar',
@@ -29536,6 +29553,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        * @type {Object}
        */
       lockTime :{
+
       },
       /**
        * \u6700\u5927\u65e5\u671f
