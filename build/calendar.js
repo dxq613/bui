@@ -1038,7 +1038,9 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
           for(var key in lockTime){
               var noCls = _timePickerEnum[key.toLowerCase()];
               _self.set(key,lockTime[key]);
-              _self.get('el').find("."+noCls).attr("disabled","");
+              if(!lockTime.editable){
+                _self.get('el').find("."+noCls).attr("disabled","");
+              }
           }
       }
       var  picker = new Picker({
@@ -1096,7 +1098,11 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
         selectedDate = _self.get('selectedDate'),
         date = selectedDate.getDate();
       if(year !== selectedDate.getFullYear() || month !== selectedDate.getMonth()){
-        _self.set('selectedDate',new Date(year,month,date));
+        var newDate = new Date(year,month,date);
+        if(newDate.getMonth() != month){ //下一个月没有对应的日期,定位到下一个月最后一天
+          newDate = DateUtil.addDay(-1,new Date(year,month + 1));
+        }
+        _self.set('selectedDate',newDate);
       }
     },
     //创建选择月的控件
@@ -1466,11 +1472,22 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         date = DateUtil.parse(val,_self.get("dateMask"));
       date = date || _self.get('selectedDate');
       calendar.set('selectedDate',DateUtil.getDate(date));
+
       if(_self.get('showTime')){
+
           var lockTime = this.get("lockTime"),
-              hour = lockTime&&lockTime['hour']?lockTime['hour']:date.getHours(),
-              minute = lockTime&&lockTime['minute']?lockTime['minute']:date.getMinutes(),
-              second = lockTime&&lockTime['second']?lockTime['second']:date.getSeconds();
+            hour = date.getHours(),
+            minute = date.getMinutes(),
+            second = date.getSeconds();
+
+          if(lockTime){
+            if(!val || !lockTime.editable){
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:hour,
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:hour,
+              second = lockTime&&lockTime['second']?lockTime['second']:hour;
+            }
+          }
+
         calendar.set('hour',hour);
         calendar.set('minute',minute);
         calendar.set('second',second);
@@ -1544,7 +1561,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         value:false
       },
        /**
-       * 锁定时间选择
+       * 锁定时间选择，默认锁定的时间不能修改可以通过 editable : true 来允许修改锁定的时间
        *<pre><code>
        *  var calendar = new Calendar.Calendar({
        *  render:'#calendar',
@@ -1555,6 +1572,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        * @type {Object}
        */
       lockTime :{
+
       },
       /**
        * 最大日期

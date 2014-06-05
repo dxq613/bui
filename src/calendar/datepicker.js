@@ -87,11 +87,22 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         date = DateUtil.parse(val,_self.get("dateMask"));
       date = date || _self.get('selectedDate');
       calendar.set('selectedDate',DateUtil.getDate(date));
+
       if(_self.get('showTime')){
+
           var lockTime = this.get("lockTime"),
-              hour = lockTime&&lockTime['hour']?lockTime['hour']:date.getHours(),
-              minute = lockTime&&lockTime['minute']?lockTime['minute']:date.getMinutes(),
-              second = lockTime&&lockTime['second']?lockTime['second']:date.getSeconds();
+            hour = date.getHours(),
+            minute = date.getMinutes(),
+            second = date.getSeconds();
+
+          if(lockTime){
+            if(!val || !lockTime.editable){
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:hour,
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:hour,
+              second = lockTime&&lockTime['second']?lockTime['second']:hour;
+            }
+          }
+
         calendar.set('hour',hour);
         calendar.set('minute',minute);
         calendar.set('second',second);
@@ -165,7 +176,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         value:false
       },
        /**
-       * 锁定时间选择
+       * 锁定时间选择，默认锁定的时间不能修改可以通过 editable : true 来允许修改锁定的时间
        *<pre><code>
        *  var calendar = new Calendar.Calendar({
        *  render:'#calendar',
@@ -176,6 +187,7 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
        * @type {Object}
        */
       lockTime :{
+
       },
       /**
        * 最大日期
