@@ -24128,7 +24128,8 @@ define('bui/mask/mask',['bui/common'],function (require) {
     });
     
     return Mask;
-});/**
+});
+/**
  * @fileOverview \u52a0\u8f7d\u6570\u636e\u65f6\u5c4f\u853d\u5c42
  * @ignore
  */

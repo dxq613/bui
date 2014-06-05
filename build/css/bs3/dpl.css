@@ -1683,7 +1683,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: 0 -72px;
 }
 .icon-map-marker {
-  background-position: -23.99999999px -72px;
+  background-position: -24px -72px;
 }
 .icon-adjust {
   background-position: -48px -72px;
@@ -1872,7 +1872,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -72px -144px;
 }
 .icon-thumbs-up {
-  background-position: -96px -144px;
+  background-position: -95.99999999px -144px;
 }
 .icon-thumbs-down {
   background-position: -120px -144px;
@@ -1968,7 +1968,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -1px -273px;
 }
 .icon-caret-right-down {
-  background-position: -1px -264px;
+  background-position: -1px -263.99999999px;
 }
 .breadcrumb {
   padding: 7px 14px;

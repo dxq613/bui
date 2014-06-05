@@ -36,7 +36,6 @@ BUI.use('bui/mask',function () {
       Mask.unmaskElement('body');
       expect($('body').find('.bui-ext-mask').length).toBe(0);
     });
-
   });
 
   describe('加载数据，屏蔽元素',function(){
