@@ -1109,6 +1109,7 @@ define('bui/util',function(require){
              */
             subVersion : 96,
 
+
             /**
              * 是否为函数
              * @param  {*} fn 对象

@@ -118,7 +118,8 @@ define('bui/mask/mask',['bui/common'],function (require) {
     });
     
     return Mask;
-});/**
+});
+/**
  * @fileOverview 加载数据时屏蔽层
  * @ignore
  */

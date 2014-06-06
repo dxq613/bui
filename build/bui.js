@@ -1109,6 +1109,7 @@ define('bui/util',function(require){
              */
             subVersion : 96,
 
+
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
              * @param  {*} fn \u5bf9\u8c61
@@ -24128,7 +24129,8 @@ define('bui/mask/mask',['bui/common'],function (require) {
     });
     
     return Mask;
-});/**
+});
+/**
  * @fileOverview \u52a0\u8f7d\u6570\u636e\u65f6\u5c4f\u853d\u5c42
  * @ignore
  */
