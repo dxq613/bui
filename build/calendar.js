@@ -1440,8 +1440,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         });
 
       calendar.on('clear', function(){
-        var curTrigger = _self.get('curTrigger');
-        curTrigger.val('');
+        var curTrigger = _self.get('curTrigger'),
+          oldValue = curTrigger.val();
+
+        if(oldValue){
+          curTrigger.val('');
+          curTrigger.trigger('change');
+        }
       });
 
       if (!_self.get('dateMask')) {
@@ -1482,9 +1487,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
           if(lockTime){
             if(!val || !lockTime.editable){
-              hour = lockTime&&lockTime['hour']?lockTime['hour']:hour,
-              minute = lockTime&&lockTime['minute']?lockTime['minute']:hour,
-              second = lockTime&&lockTime['second']?lockTime['second']:hour;
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:hour;
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:minute;
+              second = lockTime&&lockTime['second']?lockTime['second']:second;
             }
           }
 

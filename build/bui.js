@@ -1107,7 +1107,7 @@ define('bui/util',function(require){
              * \u5b50\u7248\u672c\u53f7
              * @type {Number}
              */
-            subVersion : 94,
+            subVersion : 96,
 
             /**
              * \u662f\u5426\u4e3a\u51fd\u6570
@@ -29421,8 +29421,13 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
         });
 
       calendar.on('clear', function(){
-        var curTrigger = _self.get('curTrigger');
-        curTrigger.val('');
+        var curTrigger = _self.get('curTrigger'),
+          oldValue = curTrigger.val();
+
+        if(oldValue){
+          curTrigger.val('');
+          curTrigger.trigger('change');
+        }
       });
 
       if (!_self.get('dateMask')) {
@@ -29463,9 +29468,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
           if(lockTime){
             if(!val || !lockTime.editable){
-              hour = lockTime&&lockTime['hour']?lockTime['hour']:hour,
-              minute = lockTime&&lockTime['minute']?lockTime['minute']:hour,
-              second = lockTime&&lockTime['second']?lockTime['second']:hour;
+              hour = lockTime&&lockTime['hour']?lockTime['hour']:hour;
+              minute = lockTime&&lockTime['minute']?lockTime['minute']:minute;
+              second = lockTime&&lockTime['second']?lockTime['second']:second;
             }
           }
 

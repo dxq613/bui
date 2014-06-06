@@ -365,7 +365,7 @@ BUI.use('bui/calendar/datepicker',function(DatePicker){
 });
 
 BUI.use('bui/calendar/datepicker',function(DatePicker){
-  var lockTime ={minute:55,second:44};
+  var lockTime ={hour : 10,minute:55,second:44,editable : true};
   var datepicker = new DatePicker({
     trigger:'#lt1',
     showTime : true,
