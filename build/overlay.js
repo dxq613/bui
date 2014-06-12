@@ -793,6 +793,7 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
         'msg':msg,
         'success' : callback
       });
+      return singlelon;
     };
   }
 

@@ -15405,6 +15405,7 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
         'msg':msg,
         'success' : callback
       });
+      return singlelon;
     };
   }
 
@@ -29470,9 +29471,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
 
           if(lockTime){
             if(!val || !lockTime.editable){
-              hour = lockTime&&lockTime['hour']?lockTime['hour']:hour;
-              minute = lockTime&&lockTime['minute']?lockTime['minute']:minute;
-              second = lockTime&&lockTime['second']?lockTime['second']:second;
+              hour = lockTime['hour'] != null ?lockTime['hour']:hour;
+              minute = lockTime['minute'] != null ?lockTime['minute']:minute;
+              second = lockTime['second'] != null ?lockTime['second']:second;
             }
           }
 
