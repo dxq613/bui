@@ -4349,7 +4349,7 @@ define('bui/grid/plugins/editing',function (require) {
         var field = _self.getFieldConfig(column);
         if(field){
           field.name = column.get('dataIndex');
-          field.id = column.get('id');
+          //field.id = column.get('id');
           if(field.validator){
             field.validator = _self.wrapValidator(field.validator);
           }
