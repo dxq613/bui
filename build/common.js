@@ -3947,13 +3947,15 @@ define('bui/component/uibase/align',['bui/ua'],function (require) {
         },
         __bindUI : function(){
             var _self = this;
+
+            var fn = BUI.wrapBehavior(_self,'handleWindowResize');
             
             _self.on('show',function(){
-                $(window).on('resize',BUI.wrapBehavior(_self,'handleWindowResize'));
+                $(window).on('resize',fn);
             });
 
             _self.on('hide',function(){
-                $(window).off('resize',BUI.getWrapBehavior(_self,'handleWindowResize'));
+                $(window).off('resize',fn);
             });
         },
         //处理window resize事件
