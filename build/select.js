@@ -759,6 +759,11 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
           list.clearItemStatus(item);
         }
       });
+
+      picker.on('show',function(){
+        list.clearSelected();
+      });
+
     },
     //覆写此方法
     _uiSetValueField : function(){

@@ -23623,6 +23623,11 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
           list.clearItemStatus(item);
         }
       });
+
+      picker.on('show',function(){
+        list.clearSelected();
+      });
+
     },
     //\u8986\u5199\u6b64\u65b9\u6cd5
     _uiSetValueField : function(){
