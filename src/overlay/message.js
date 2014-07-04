@@ -217,7 +217,7 @@ define('bui/overlay/message',['bui/overlay/dialog'],function (require) {
           handler : success
         },{
             text:'取消',
-            elCls : 'button button-primary',
+            elCls : 'button',
             handler : hide
           }
       ],'question');
