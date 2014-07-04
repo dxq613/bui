@@ -109,3 +109,63 @@
     background-position: -48px -20px;
   }
 }
+.bui-combox{
+  border: 1px solid @borderColor;
+  ul{
+    .clearfix();
+  }
+  .bui-list-item{
+    float: left;
+    display: inline-block;
+    float: left;
+    margin: 2px;
+    padding: 1px 6px;
+
+    transition: color 200ms;
+    -moz-transition: color 200ms; /* Firefox 4 */
+    -webkit-transition: color 200ms; /* Safari 和 Chrome */
+    -o-transition: color 200ms; /* Opera */
+
+    background-color: @btnInfoBackground;
+    color: @grayLighter;
+    button{
+      border: none;
+      padding: 0;
+      background: transparent;
+      margin-left: 5px;
+      cursor: pointer;
+      color: @grayLighter;
+    }
+  }
+
+  .bui-list-item-warn{
+    background-color:  @btnDangerBackground;
+  }
+
+  .bui-list-item-active{
+    background-color: @btnWarningBackground;
+  }
+
+  .bui-combox-input{
+    border : none;
+  }
+
+  .bui-combox-input:focus{
+    border:none;
+    outline: none;
+  }
+}
+
+.bui-tag-follow{
+  .bui-simple-list{
+    float: left;
+  }
+  
+  .bui-combox-input{
+    float: left;
+    margin-top: 2px;
+    width: 50px;
+  }
+}
+
+

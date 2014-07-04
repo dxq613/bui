@@ -1,44 +1,4 @@
 
-
-// .bui-select-list{
-//   border:1px solid @borderColor;
-//   background-color:@white;
-//   overflow: auto;
-//   .bui-list-item{
-//     padding: 2px 4px 2px 8px;
-//     .user-select(none);
-//     cursor: pointer;
-//     border: 1px solid @white;
-//     .border-radius(@radius);
-//     margin: 1px;
-//     padding-left: 8px;
-//     *zoom:1;
-//   }
-
-//   .bui-list-item-hover{
-//     background: @optionHoverItemBack;
-//     border:1px solid @optionHoverItemBorder;
-//   }
-
-//   .bui-list-item-selected{
-//     background: @selectedItemBack;
-//     border: 1px solid @selectedItemBorder;
-//   }
-
-//   .bui-list-item-disabled{
-//     background:none;
-//     color: @disabledColor;
-//     cursor: default;
-//     a {
-//       color: @disabledColor;
-//       cursor: default;
-//     }
-//     a:hover{
-//       text-decoration: none;
-//     }
-//   }
-// }
-// 
 .bui-select-list{
   background-color: #fff;
   border: 1px solid #ccc; // IE8 fallback
@@ -48,7 +8,7 @@
   background-clip: padding-box;
 
   ul{
-    margin-top: 10px;
+    margin: 10px 0;
   }
 
   .bui-list-item{
@@ -140,3 +100,70 @@
     background-position: -48px -20px;
   }
 }
+
+.bui-combox{
+  border: 1px solid @borderColor;
+  .form-control-focus();
+  .border-radius(@radius);
+  ul{
+    .clearfix();
+  }
+  .bui-list-item{
+    float: left;
+    display: inline-block;
+    float: left;
+    margin: 4px;
+    padding: 4px 8px;
+
+    transition: color 200ms;
+    -moz-transition: color 200ms; /* Firefox 4 */
+    -webkit-transition: color 200ms; /* Safari 和 Chrome */
+    -o-transition: color 200ms; /* Opera */
+    .border-radius(@radius);
+
+    background-color: @buttonInfoBg;
+    color: @grayLighter;
+    button{
+      border: none;
+      padding: 0;
+      background: transparent;
+      margin-left: 5px;
+      cursor: pointer;
+      color: @grayLighter;
+    }
+  }
+
+  .bui-list-item-warn{
+    background-color:  @buttonDangerBg;
+  }
+
+  .bui-list-item-active{
+    background-color: @buttonWarningBg;
+  }
+
+  .bui-combox-input{
+    border : none;
+    .box-shadow(none);
+  }
+
+  .bui-combox-input:focus{
+    border:none;
+    outline: none;
+    .box-shadow(none);
+  }
+}
+
+
+.bui-tag-follow{
+  .bui-simple-list{
+    float: left;
+  }
+  
+  .bui-combox-input{
+    float: left;
+    margin-top: 4px;
+    width: 50px;
+  }
+}
+
+

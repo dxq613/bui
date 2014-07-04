@@ -55,6 +55,11 @@ define('bui/chart/series/itemgroup',['bui/chart/baseseries'],function (require) 
       var _self = this,
         group = _self.get('group'),
         cfg;
+
+      // 假如出现断点,point.value为空.则不处理
+      if(point.value == null){
+        return ;
+      }
       if(index == null){
         index = _self.getItems().length;
       }

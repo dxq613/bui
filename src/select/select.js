@@ -96,9 +96,8 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       renderUI : function(){
         var _self = this,
           picker = _self.get('picker'),
-          el = _self.get('el'),
-          textEl = el.find('.' + _self.get('inputCls'));
-        picker.set('trigger',el);
+          textEl = _self._getTextEl();
+        picker.set('trigger',_self.getTrigger());
         picker.set('triggerEvent', _self.get('triggerEvent'));
         picker.set('autoSetValue', _self.get('autoSetValue'));
         picker.set('textField',textEl);
@@ -136,7 +135,13 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
 
         return Component.Controller.prototype.containsElement.call(this,elem) || picker.containsElement(elem);
       },
-
+      /**
+       * @protected
+       * 获取触发点
+       */
+      getTrigger : function(){
+        return this.get('el');
+      },
       //设置子项
       _uiSetItems : function(items){
         if(!items){
@@ -167,13 +172,17 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       _uiSetWidth : function(v){
         var _self = this;
         if(v != null){
-          var textEl = _self._getTextEl(),
+          if(_self.get('inputForceFit')){
+            var textEl = _self._getTextEl(),
             iconEl = _self.get('el').find('.x-icon'),
             appendWidth = textEl.outerWidth() - textEl.width(),
-            picker = _self.get('picker'),
+            
             width = v - iconEl.outerWidth() - appendWidth;
-          textEl.width(width);
+            textEl.width(width);
+          }
+          
           if(_self.get('forceFit')){
+            var picker = _self.get('picker');
             picker.set('width',v);
           }
           
@@ -190,7 +199,7 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
       _getTextEl : function(){
          var _self = this,
           el = _self.get('el');
-        return el.find('.' + _self.get('inputCls'));
+        return el.is('input') ? el : el.find('input');
       },
       /**
        * 析构函数
@@ -328,6 +337,13 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
           value:true
         },
         /**
+         * 是否跟valueField自动同步
+         * @type {Boolean}
+         */
+        autoSetValue : {
+          value : true
+        },
+        /**
          * 是否可以多选
          * @cfg {Boolean} [multipleSelect=false]
          */
@@ -338,6 +354,13 @@ define('bui/select/select',['bui/common','bui/picker'],function (require) {
         multipleSelect:{
           value:false
         },
+        /**
+         * 内部的input是否跟随宽度的变化而变化
+         * @type {Object}
+         */
+        inputForceFit : {
+          value : true
+        },  
         /**
          * 控件的name，用于存放选中的文本，便于表单提交
          * @cfg {Object} name

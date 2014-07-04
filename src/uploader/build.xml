@@ -29,6 +29,7 @@
             <path path="type/ajax.js"/>
             <path path="type/flash.js"/>
             <path path="type/iframe.js"/>
+            <path path="file.js"/>
             <path path="queue.js"/>
             <path path="theme.js"/>
             <path path="validator.js"/>

@@ -19,4 +19,9 @@
     <script type="text/javascript" src="../src/overlay/dialog.js"></script>
     <script type="text/javascript" src="specs/dialog-spec.js"></script>
 
+<script>
+    $(window).on('resize',function  () {
+        console.log('resize');
+    })
+</script>
 <?php include("./templates/footer.php"); ?>

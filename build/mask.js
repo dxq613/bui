@@ -42,12 +42,12 @@ define('bui/mask/mask',['bui/common'],function (require) {
          * @param {String} [msgCls] 显示文本应用的样式
          * <pre><code>
          *   BUI.Mask.maskElement('#domId');
-         *   
+         *   BUI.Mask.maskElement('body'); //屏蔽整个窗口
          * </code></pre>
          */
         maskElement:function (element, msg, msgCls) {
             var maskedEl = $(element),
-                maskDiv = $('.' + CLS_MASK, maskedEl),
+                maskDiv = maskedEl.children('.' + CLS_MASK),
                 tpl = null,
                 msgDiv = null,
                 top = null,
@@ -55,23 +55,42 @@ define('bui/mask/mask',['bui/common'],function (require) {
             if (!maskDiv.length) {
                 maskDiv = $('<div class="' + CLS_MASK + '"></div>').appendTo(maskedEl);
                 maskedEl.addClass('x-masked-relative x-masked');
-                if (UA.ie === 6) {
-                    maskDiv.height(maskedEl.height());
+                //屏蔽整个窗口
+                if(element == 'body'){
+                  if(UA.ie == 6){
+                    maskDiv.height(BUI.docHeight());
+                  }else{
+                    maskDiv.css('position','fixed');
+                  }
+                }else{
+                  if (UA.ie === 6) {
+                      maskDiv.height(maskedEl.height());
+                  }
                 }
+               
                 if (msg) {
                     tpl = ['<div class="' + CLS_MASK_MSG + '"><div>', msg, '</div></div>'].join('');
                     msgDiv = $(tpl).appendTo(maskedEl);
                     if (msgCls) {
                         msgDiv.addClass(msgCls);
                     }
-                    try {
-                        top = (maskedEl.height() - msgDiv.height()) / 2;
-                        left = (maskedEl.width() - msgDiv.width()) / 2;
 
-                        msgDiv.css({ left:left, top:top });
-                    } catch (ex) {
-                        BUI.log('mask error occurred');
+                  try {
+                    //屏蔽整个窗口
+                    if(element == 'body' && UA.ie != 6){
+                      top = '50%',
+                      left = '50%';
+                      msgDiv.css('position','fixed');
+                    }else{
+                      top = (maskDiv.height() - msgDiv.height()) / 2;
+                      left = (maskDiv.width() - msgDiv.width()) / 2;                      
                     }
+                    msgDiv.css({ left:left, top:top });
+
+                  } catch (ex) {
+                    BUI.log('mask error occurred');
+                  }
+                    
                 }
             }
             return maskDiv;
@@ -99,7 +118,8 @@ define('bui/mask/mask',['bui/common'],function (require) {
     });
     
     return Mask;
-});/**
+});
+/**
  * @fileOverview 加载数据时屏蔽层
  * @ignore
  */

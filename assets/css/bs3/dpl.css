@@ -1421,8 +1421,8 @@ fieldset[disabled] .x-icon-question.active {
 }
 @font-face {
   font-family: 'bui-iconfont';
-  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot');
-  src: url('http://at.alicdn.com/t/font_1395889527_662993.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('http://at.alicdn.com/t/font_1395889527_6888435.woff') format('woff'), /* chrome、firefox */ url('http://at.alicdn.com/t/font_1395889527_5368805.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/ url('http://at.alicdn.com/t/font_1395889527_7487144.svg#iconfont') format('svg');
+  src: url('../../img/iconfont/iconfont.eot');
+  src: url('../../img/iconfont/iconfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('../../img/iconfont/iconfont.woff') format('woff'), /* chrome、firefox */ url('../../img/iconfont/iconfont.ttf') format('truetype'), /* chrome、firefox、opera、Safari, Android, iOS 4.2+*/ url('../../img/iconfont/iconfont.svg#iconfont') format('svg');
   
   /* IE9*/
   /* iOS 4.1- */
@@ -1503,7 +1503,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: 0      0;
 }
 .icon-music {
-  background-position: -24px 0;
+  background-position: -23.99999999px 0;
 }
 .icon-search {
   background-position: -48px 0;
@@ -1872,7 +1872,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -72px -144px;
 }
 .icon-thumbs-up {
-  background-position: -96px -144px;
+  background-position: -95.99999999px -144px;
 }
 .icon-thumbs-down {
   background-position: -120px -144px;
@@ -1947,7 +1947,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -120px -189px;
 }
 .icon-caret-up {
-  background-position: -1px -209px;
+  background-position: -1px -208.99999999px;
 }
 .icon-caret-down {
   background-position: -1px -218px;
@@ -1968,7 +1968,7 @@ fieldset[disabled] .x-icon-question.active {
   background-position: -1px -273px;
 }
 .icon-caret-right-down {
-  background-position: -1px -264px;
+  background-position: -1px -263.99999999px;
 }
 .breadcrumb {
   padding: 7px 14px;
@@ -3423,8 +3423,8 @@ textareaselect {
 }
 select {
   height: 28px;
-  padding: 0;
   height: 30px;
+  -moz-box-sizing: border-box;
 }
 textarea {
   height: 60px;

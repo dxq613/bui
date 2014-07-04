@@ -7,6 +7,7 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
 
   var BUI = require('bui/common'),
     Select = require('bui/select/select'),
+    Tag = require('bui/select/tag'),
     CLS_INPUT = BUI.prefix + 'combox-input';
 
   /**
@@ -26,12 +27,13 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
    * @class BUI.Select.Combox
    * @extends BUI.Select.Select
    */
-  var combox = Select.extend({
+  var combox = Select.extend([Tag],{
 
     renderUI : function(){
       var _self = this,
         picker = _self.get('picker');
       picker.set('autoFocused',false);
+
     },
     _uiSetItems : function(v){
       var _self = this;
@@ -57,6 +59,22 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
           list.clearItemStatus(item);
         }
       });
+
+      picker.on('show',function(){
+        list.clearSelected();
+      });
+
+    },
+    //覆写此方法
+    _uiSetValueField : function(){
+
+    },
+    /**
+     * @protected
+     * 获取触发点
+     */
+    getTrigger : function(){
+      return this._getTextEl();
     }
   },{
     ATTRS : 
@@ -82,6 +100,9 @@ define('bui/select/combox',['bui/common','bui/select/select'],function (require)
        */
       inputCls:{
         value:CLS_INPUT
+      },
+      autoSetValue : {
+        value : false
       }
     }
   },{

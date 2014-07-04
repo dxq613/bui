@@ -554,6 +554,68 @@
 .bui-list-item-selected.bui-list-item-disabled .x-radio {
   background-position: -48px -20px;
 }
+.bui-combox {
+  border: 1px solid #c3c3d6;
+}
+.bui-combox ul {
+  *zoom: 1;
+}
+.bui-combox ul:before,
+.bui-combox ul:after {
+  display: table;
+  content: "";
+}
+.bui-combox ul:after {
+  clear: both;
+}
+.bui-combox .bui-list-item {
+  float: left;
+  display: inline-block;
+  float: left;
+  margin: 2px;
+  padding: 1px 6px;
+  transition: color 200ms;
+  -moz-transition: color 200ms;
+  /* Firefox 4 */
+
+  -webkit-transition: color 200ms;
+  /* Safari 和 Chrome */
+
+  -o-transition: color 200ms;
+  /* Opera */
+
+  background-color: #5bc0de;
+  color: #eeeeee;
+}
+.bui-combox .bui-list-item button {
+  border: none;
+  padding: 0;
+  background: transparent;
+  margin-left: 5px;
+  cursor: pointer;
+  color: #eeeeee;
+}
+.bui-combox .bui-list-item-warn {
+  background-color: #ee5f5b;
+}
+.bui-combox .bui-list-item-active {
+  background-color: #fbb450;
+}
+.bui-combox .bui-combox-input {
+  border: none;
+}
+.bui-combox .bui-combox-input:focus {
+  border: none;
+  outline: none;
+}
+.bui-tag-follow .bui-simple-list {
+  float: left;
+}
+.bui-tag-follow .bui-combox-input {
+  float: left;
+  margin-top: 2px;
+  width: 50px;
+}
 .bui-overlay {
   position: absolute;
   left: -9999px;
@@ -1044,7 +1106,6 @@ td.bui-grid-cell-empty {
 .bui-grid-table .bui-grid-cell {
   overflow: hidden;
   border-top: 1px solid #ededed;
-  position: relative;
 }
 .bui-grid-table .bui-grid-row-group td {
   border-top: 1px solid #ededed;
