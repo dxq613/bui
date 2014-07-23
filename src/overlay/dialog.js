@@ -235,7 +235,7 @@ define('bui/overlay/dialog',['bui/overlay/overlay'],function (require) {
             }
           },{
             text:'取消',
-            elCls : 'button button-primary',
+            elCls : 'button',
             handler : function(dialog,btn){
               if(this.onCancel() !== false){
                 this.close();
