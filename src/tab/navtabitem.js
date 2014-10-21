@@ -34,7 +34,12 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
       this._setHref(v);
     },
     _setHref : function(href){
-      var _self = this;
+      var _self = this,
+        tabContentEl = _self.get('tabContentEl');
+      href = href || _self.get('href');
+      if(tabContentEl){
+        $('iframe',tabContentEl).attr('src',href);
+      }
     },
     resetHref : function(){
       this._setHref();
@@ -49,7 +54,6 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
     _uiSetActived : function(v){
       var _self = this,
         el = _self.get('el');
-
 
       _self.setTabContentVisible(v);
       if(v){
@@ -175,12 +179,6 @@ define('bui/tab/navtabitem',['bui/common'],function(requrie){
      */
     reload : function(){
       this.get('view').resetHref();
-      var _self = this;
-      var tabContentEl = _self.__view.get('tabContentEl');
-      if(tabContentEl){
-      	$('iframe',tabContentEl).attr('src',_self.get('href'));
-      }
-      
     },
     /**
      * @protected

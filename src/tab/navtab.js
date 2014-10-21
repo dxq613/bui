@@ -508,8 +508,6 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       //设置当前选中的标签
       _setItemActived:function(item){
-
-
         var _self = this,
           preActivedItem = _self.getActivedItem();
         if(item === preActivedItem){
@@ -523,11 +521,6 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         if(item){
           if(!item.get('actived')){
             item.set('actived',true);
-          }
-          var tabContentEl = item.__view.get('tabContentEl');
-          var tabContentIframe = $('iframe',tabContentEl);
-          if(tabContentIframe.attr('src')!=item.get('href')){
-            tabContentIframe.attr('src',item.get('href'));
           }
           //当标签项可见时，否则无法计算位置信息
           if(item.get('visible')){
