@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @fileOverview 导航标签
  * @author dxq613@gmail.com
  * @ignore              
@@ -320,10 +320,13 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
       },
       closeAll:function(){
         var _self = this,
-          children = _self.get('children');
+          children = _self.get('children'),actived;
         BUI.each(children,function(item){
           if(item.get('closeable')){
             item.close();
+          }else if(!actived){
+            _self.setActived(item.get('id'));
+            actived = true;
           }
         });
       },
@@ -331,7 +334,7 @@ define('bui/tab/navtab',['bui/common','bui/menu'],function(require){
         var _self = this,
           children = _self.get('children');
         BUI.each(children,function(item){
-          if(curItem !==item){
+          if(curItem !==item&&item.get('closeable')){
             item.close();
           }
           
