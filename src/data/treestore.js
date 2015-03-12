@@ -573,7 +573,9 @@ define('bui/data/treestore',['bui/common','bui/data/node','bui/data/abstractstor
       }
       params = {id : node.id};
       if(pidField){
-        params[pidField] = node.id;
+        //params[pidField] = node.id;
+        //pid应该是当前节点父节点的id，而不是当前节点的id，如果没有父节点，就是0
+        params[pidField] = node.parent ? node.parent.id : 0;
       }
       _self.load(params);  
     },
