@@ -481,11 +481,11 @@ define('bui/toolbar/pagingbar',['bui/toolbar/bar'],function(require) {
                 totalPage = totalPage > 0 ? totalPage : 1;
                 curPage = parseInt(start / pageSize, 10) + 1;
 
-                _self.set('start', start);
-                _self.set('end', end);
-                _self.set('totalCount', totalCount);
-                _self.set('curPage', curPage);
-                _self.set('totalPage', totalPage);
+                _self._set('start', start);
+                _self._set('end', end);
+                _self._set('totalCount', totalCount);
+                _self._set('curPage', curPage);
+                _self._set('totalPage', totalPage);
 
                 //设置按钮状态
                 _self._setAllButtonsState();
