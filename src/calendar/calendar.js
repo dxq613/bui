@@ -191,6 +191,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
       });
 
       picker.on('selectedchange',function(ev){
+
         var curTrigger = ev.curTrigger,
           val = ev.value;
         if(curTrigger.hasClass(CLS_PICKER_HOUR)){
@@ -284,6 +285,7 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
             }
           }
         });
+
       }
 
       return new Toolbar.Bar({
@@ -293,23 +295,24 @@ define('bui/calendar/calendar',['bui/picker','bui/calendar/monthpicker','bui/cal
     },
 	//更新今天按钮的状态
     _updateTodayBtnAble: function () {
-            var _self = this;
-            if (!_self.get('showTime')) {
-                var footer = _self.get("footer"),
-                    panelView = _self.get("panel").get("view"),
-                    now = today(),
-                    btn = footer.getItem("todayBtn");
-                panelView._isInRange(now) ? btn.enable() : btn.disable();
-            }
+      var _self = this;
+      if (!_self.get('showTime')) {
+          var footer = _self.get("footer"),
+              panelView = _self.get("panel").get("view"),
+              now = today(),
+              btn = footer.getItem("todayBtn");
+          panelView._isInRange(now) ? btn.enable() : btn.disable();
+      }
     },
     //设置所选日期
     _uiSetSelectedDate : function(v){
-      var _self = this,
-        year = v.getFullYear(),
-        month = v.getMonth();
-
-      _self.get('header').setMonth(year,month);
-      _self.get('panel').set('selected',v);
+      var _self = this;
+      if(v!== ''){
+        var year = v.getFullYear(),
+          month = v.getMonth();
+        _self.get('header').setMonth(year,month);
+        _self.get('panel').set('selected',v);
+      }
       _self.fire('datechange',{date:v});
     },
     _uiSetHour : function(v){

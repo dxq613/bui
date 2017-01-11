@@ -114,12 +114,16 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      * @return {String} 选中的值
      */
     getSelectedValue : function(){
+
       if(!this.get('calendar')){
         return null;
       }
       var _self = this, 
-        calendar = _self.get('calendar'),
-      date =  DateUtil.getDate(calendar.get('selectedDate'));
+        calendar = _self.get('calendar');
+      if(calendar.get('selectedDate') === ''){  //如果是空日期，则返回''
+        return '';
+      }
+     var  date =  DateUtil.getDate(calendar.get('selectedDate'));
       if(_self.get('showTime')){
         date = DateUtil.addHour(calendar.get('hour'),date);
         date = DateUtil.addMinute(calendar.get('minute'),date);
@@ -134,6 +138,9 @@ define('bui/calendar/datepicker',['bui/common','bui/picker','bui/calendar/calend
      */
     getSelectedText : function(){
       if(!this.get('calendar')){
+        return '';
+      }
+      if(this.getSelectedValue() === ''){
         return '';
       }
       return DateUtil.format(this.getSelectedValue(),this._getFormatType());
